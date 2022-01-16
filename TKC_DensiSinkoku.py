@@ -58,14 +58,6 @@ def DriverCheck(Hub,ObjName,driver):#XPATH要素を取得するまで待機
             else:
                 #異常待機後処理
                 print("要素取得に失敗しました。")
-        elif Hub == "LOOP":
-            if DriverUILoop(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
-                #正常待機後処理
-                OMSObj = driver.find_element_by_Name(ObjName)#一括電子申告送信ボタン
-                return True
-            else:
-                #異常待機後処理
-                print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
 def DriverClick(Hub,ObjName,driver):
     if Hub == "AutomationID":
@@ -624,11 +616,11 @@ import shutil
 
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-FolURL2 = "D:/RPAPhoto/TKC_DensiSinkoku"#先
-try:
-    shutil.copytree(FolURL,FolURL2)
-except:
-    print(FolURL2 + "あります。")
+FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
+#try:
+#    shutil.copytree(FolURL,FolURL2)
+#except:
+#    print(FolURL2 + "あります。")
 #--------------------------------------------------------------------------------
 try:
     MainFlow(FolURL2)
