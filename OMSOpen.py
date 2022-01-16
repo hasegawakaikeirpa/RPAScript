@@ -1,7 +1,7 @@
 def ExeOpen(AppURL):#URL指定でアプリ起動関数
     subprocess.Popen(AppURL)
 #----------------------------------------------------------------------------------------------------------------------
-def DriverUIWaitXPATH(UIPATH):#XPATH要素を取得するまで待機
+def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     Flag = 0
     for x in range(1000000):
         try:

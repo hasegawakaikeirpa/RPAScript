@@ -387,8 +387,9 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
 
 
 def MainFlow(FolURL2):
-    BatUrl = "D:/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl)#OMSを起動しログイン後インスタンス化
+    FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"
@@ -616,7 +617,8 @@ import shutil
 
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
+#FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
+FolURL2 = os.getcwd().replace('\\','/')#先
 #try:
 #    shutil.copytree(FolURL,FolURL2)
 #except:
