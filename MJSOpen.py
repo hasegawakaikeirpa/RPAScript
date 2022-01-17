@@ -1,7 +1,7 @@
 def ExeOpen(AppURL):#URL指定でアプリ起動関数
     subprocess.Popen(AppURL)
 #----------------------------------------------------------------------------------------------------------------------
-def DriverUIWaitXPATH(UIPATH):#XPATH要素を取得するまで待機
+def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     Flag = 0
     for x in range(1000000):
         try:
@@ -82,7 +82,7 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
         else:
             #異常待機後処理
             print("要素取得に失敗しました。")
-def MainFlow(BatUrl):
+def MainFlow(BatUrl,FolURL2,ImgFolName):
     #WebDriver起動バッチを管理者権限で起動---------------------------------------------------------------------------------
     WDO = ExeOpen(BatUrl)
     desired_caps = {}
@@ -92,8 +92,8 @@ def MainFlow(BatUrl):
     #----------------------------------------------------------------------------------------------------------------------
     #OMSを起動-------------------------------------------------------------------------------------------------------------
     MJSURL = "C:\Program Files (x86)\MJS\MJSNXSVA\MJSDesktopNX.exe"
-    FolURL2 ="D:/RPAPhoto/MJS_DensiSinkoku"
     ExeOpen(MJSURL)
+    FolURL2 = FolURL2 + "/" + ImgFolName
     #time.sleep(10)
     #画像が出現するまで待機-------------------------------------------------------------------------------------------
     List = ["PassTxtBox.png","PassTxtBox2.png"]

@@ -388,7 +388,7 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
 
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    driver = OMSOpen.MainFlow(BatUrl)#OMSを起動しログイン後インスタンス化
+    driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------

@@ -81,14 +81,6 @@ def DriverCheck(Hub,ObjName,driver):#XPATH要素を取得するまで待機
             else:
                 #異常待機後処理
                 print("要素取得に失敗しました。")
-        elif Hub == "LOOP":
-            if DriverUILoop(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
-                #正常待機後処理
-                OMSObj = driver.find_element_by_Name(ObjName)#一括電子申告送信ボタン
-                return True
-            else:
-                #異常待機後処理
-                print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
 def DriverClick(Hub,ObjName,driver):
     if Hub == "AutomationID":
@@ -197,8 +189,9 @@ def SortCSVItem(SortURL,SortName,Key):#CSVと列名を4つ与えて4つの複合
             C_CforCount = C_CforCount + 1
 
 def MainFlow(FolURL2):
-    BatUrl = "D:/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    driver = MJSOpen.MainFlow(BatUrl)#OMSを起動しログイン後インスタンス化
+    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
+    FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
     #----------------------------------------------------------------------------------------------------------------------
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
     List = ["DensiSinkokuIcon.png","DensiSinkokuIcon2.png"]
@@ -300,7 +293,7 @@ def MainFlow(FolURL2):
     pg.keyUp('alt')
 
     #出力したCSVを読込み----------------------------------------------------------------------------------------------------------
-    CSVURL = 'D:\RPAPhoto\MJS_DensiSinkoku'
+    CSVURL = FolURL2
     CSVName = '電子申告データ署名一覧'
     C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.csv'
     with codecs.open(C_url, "r", "Shift-JIS", "ignore") as file:
@@ -363,7 +356,7 @@ def MainFlow(FolURL2):
         time.sleep(1)
         #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
         List = ["FindCheckBox.png","FindCheckBox2.png","FindCheckBox3.png"]
-        conf = 0.9#画像認識感度
+        conf = 0.9999#画像認識感度
         LoopVal = 10000#検索回数
         ListCheck = ImgCheckForList(FolURL2,List,conf)#画像検索関数
         if ListCheck[0] == True:
@@ -418,11 +411,12 @@ import shutil
 import codecs
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"#元
-FolURL2 = "D:/RPAPhoto/MJS_DensiSinkoku"#先
-try:
-    shutil.copytree(FolURL,FolURL2)
-except:
-    print(FolURL2 + "あります。")
+#FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
+FolURL2 = os.getcwd().replace('\\','/')#先
+#try:
+#    shutil.copytree(FolURL,FolURL2)
+#except:
+#    print(FolURL2 + "あります。")
 #--------------------------------------------------------------------------------
 try:
     MainFlow(FolURL2)

@@ -26,7 +26,7 @@ def DriverUIWaitAutomationId(UIPATH,driver):#XPATH要素を取得するまで待
     #if Flag == 0:
     #    return False
 #----------------------------------------------------------------------------------------------------------------------
-def MainFlow(BatUrl):
+def MainFlow(BatUrl,FolURL2,ImgFolName):
     #WebDriver起動バッチを管理者権限で起動---------------------------------------------------------------------------------
     WDO = ExeOpen(BatUrl)
     desired_caps = {}

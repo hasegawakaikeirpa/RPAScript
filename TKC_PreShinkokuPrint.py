@@ -144,7 +144,7 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #異常待機後処理
             print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
-def CSVOutPut(CSVURL,CSVName,driver):#TKCのCSVダイアログでの書出し操作
+def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書出し操作
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"
     ObjName = "outputDirTextBox"
@@ -250,8 +250,8 @@ def TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver):#選択済と�
             if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
                 ImgClick(FolURL2,FileName,conf,LoopVal)
                 time.sleep(1)
-                CSVURL = 'D:\RPAPhoto\TKC_DensiSinkoku'
-                CSVOutPut(CSVURL,CSVName,driver)
+                CSVURL = FolURL2
+                CSVOutPut(CSVURL,CSVName,driver,FolURL2)
                 C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
                 C_Array = pd.read_csv(C_url,encoding='shiftjis')
                 return C_Array,True
@@ -387,8 +387,9 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
 
 
 def MainFlow(FolURL2):
-    BatUrl = "D:/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    driver = OMSOpen.MainFlow(BatUrl)#OMSを起動しログイン後インスタンス化
+    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
+    FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"
@@ -616,11 +617,12 @@ import shutil
 
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-FolURL2 = "D:/RPAPhoto/TKC_DensiSinkoku"#先
-try:
-    shutil.copytree(FolURL,FolURL2)
-except:
-    print(FolURL2 + "あります。")
+#FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
+FolURL2 = os.getcwd().replace('\\','/')#先
+#try:
+#    shutil.copytree(FolURL,FolURL2)
+#except:
+#    print(FolURL2 + "あります。")
 #--------------------------------------------------------------------------------
 try:
     MainFlow(FolURL2)
