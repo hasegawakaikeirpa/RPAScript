@@ -144,7 +144,7 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #異常待機後処理
             print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
-def CSVOutPut(CSVURL,CSVName,driver):#TKCのCSVダイアログでの書出し操作
+def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書出し操作
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"
     ObjName = "outputDirTextBox"
@@ -250,8 +250,8 @@ def TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver):#選択済と�
             if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
                 ImgClick(FolURL2,FileName,conf,LoopVal)
                 time.sleep(1)
-                CSVURL = 'D:\RPAPhoto\TKC_DensiSinkoku'
-                CSVOutPut(CSVURL,CSVName,driver)
+                CSVURL = FolURL2
+                CSVOutPut(CSVURL,CSVName,driver,FolURL2)
                 C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
                 C_Array = pd.read_csv(C_url,encoding='shiftjis')
                 return C_Array,True
