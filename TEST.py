@@ -313,7 +313,9 @@ FolURL2 = "D:/RPAPhoto"#先
 CSVURL = 'D:\RPAPhoto\MJS_DensiSinkoku\ミロク税目分岐'
 CSVName = '法人市民税'
 C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
-with codecs.open(C_url, "r", "Utf-8", "ignore") as file:
-    C_df = pd.read_table(file, delimiter=",")
-C_dfRow = np.array(C_Child).shape[0]#配列行数取得
-C_dfCol = np.array(C_Child).shape[1]#配列列数取得
+C_Child = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVChildName,driver)
+C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
+C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
+C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
