@@ -306,16 +306,3 @@ import pyautogui
 import time
 import shutil
 import codecs
-
-#RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto"#元
-FolURL2 = "D:/RPAPhoto"#先
-CSVURL = 'D:\RPAPhoto\MJS_DensiSinkoku\ミロク税目分岐'
-CSVName = '法人市民税'
-C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
-C_Child = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVChildName,driver)
-C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)

@@ -179,10 +179,11 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
 #----------------------------------------------------------------------------------------------------------------------
 def SortCSVItem(SortURL,SortName,Key):#CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
     Sort_url = SortURL.replace("\\","/") + '/' + SortName + '.CSV'
-    with codecs.open(Sort_url, "r", "Utf-8", "ignore") as file:
-        C_Child = pd.read_table(file, delimiter=",")
+    with codecs.open(Sort_url, "r", "utf-8", "ignore") as file:
+        C_Child = pd.read_table(file,delimiter=",")
     C_CforCount = 0
     for C_ChildItem in C_Child:
+        #C_ChildItemName = C_ChildItem['科目名']
         if Key == C_ChildItem:
             return C_CforCount
         else:
@@ -232,46 +233,47 @@ def MainFlow(FolURL2):
     conf = 0.9#画像認識感度
     LoopVal = 10000#検索回数
     ListCheck = ImgCheckForList(FolURL2,List,conf)#画像検索関数
-    if ListCheck[0] == True:
-        ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-        time.sleep(1)
-    time.sleep(1)
-    #----------------------------------------------------------------------------------------------------------------------
-    #pg.keyDown('alt')
-    #pg.press('p')
-    #pg.keyUp('alt')
-    #time.sleep(1)
-    ##画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    #List = ["FileOut.png","FileOut2.png"]
-    #conf = 0.9#画像認識感度
-    #LoopVal = 10000#検索回数
-    #ListCheck = ImgCheckForList(FolURL2,List,conf)#画像検索関数
     #if ListCheck[0] == True:
     #    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
     #    time.sleep(1)
-    #time.sleep(1)
+    time.sleep(1)
+
+
+
     #----------------------------------------------------------------------------------------------------------------------
-    #↓MJSの印刷設定を保存しているのでコメントアウト
-    ##クラス要素クリック----------------------------------------------------------------------------------------------------------
-    #Hub = "class_name"
-    #ObjName = "TdxImageComboBox"
-    #ClassList = DriverFindClass(ObjName,driver)
-    #ClassObjList = ClassList[1]
-    #ClassObjList[2].click()
-    #pg.press(['up','up','up','up','up'])
-    #pg.press(['return'])
-    ##----------------------------------------------------------------------------------------------------------------------
-    #FileURL = FolURL2.replece('/','\\') + "\SyomeiMaster.CSV"
-    #pg.write(FileURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
-    #pg.press(['return'])
-    ##----------------------------------------------------------------------------------------------------------------------
-    
-    
+    # pg.keyDown('alt')
+    # pg.press('p')
+    # pg.keyUp('alt')
+    # time.sleep(1)
+    # #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+    # List = ["FileOut.png","FileOut2.png"]
+    # conf = 0.9#画像認識感度
+    # LoopVal = 10000#検索回数
+    # ListCheck = ImgCheckForList(FolURL2,List,conf)#画像検索関数
+    # if ListCheck[0] == True:
+    #    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+    #    time.sleep(1)
+    # time.sleep(1)
+    #----------------------------------------------------------------------------------------------------------------------
+    # #↓MJSの印刷設定を保存しているのでコメントアウト
+    # #クラス要素クリック----------------------------------------------------------------------------------------------------------
+    # Hub = "class_name"
+    # ObjName = "TdxImageComboBox"
+    # ClassList = DriverFindClass(ObjName,driver)
+    # ClassObjList = ClassList[1]
+    # ClassObjList[0].click()
+    # pg.press(['up','up','up','up','up'])
+    # pg.press(['return'])
+    # #----------------------------------------------------------------------------------------------------------------------
+    # FileURL = os.getcwd().replace('\\','/') + "\RPAPhoto\MJS_DensiSinkoku\SyomeiMaster.CSV"
+    # pg.write(FileURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    # pg.press(['return'])
+    # # ---------------------------------------------------------------------------------------------------------------------- 
     #ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal)
-    #FileName = "FileOverCheck.png"
-    #conf = 0.9#画像認識感度
-    #LoopVal = 10000#検索回数
-    #if ImgNothingCheck(FolURL2,FileName,conf,LoopVal) == True:#画像がなければTrueを返す
+    # FileName = "FileOverCheck.png"
+    # conf = 0.9#画像認識感度
+    # LoopVal = 10#検索回数
+    # if ImgNothingCheck(FolURL2,FileName,conf,LoopVal) == True:#画像がなければTrueを返す
     #    pg.keyDown('alt')
     #    pg.press('j')
     #    pg.keyUp('alt')
@@ -280,7 +282,7 @@ def MainFlow(FolURL2):
     #    pg.press('g')
     #    pg.keyUp('alt')
     #    time.sleep(1)
-    #else:
+    # else:
     #    pg.press('y')
     #    time.sleep(1)
     #    pg.keyDown('alt')
@@ -288,14 +290,17 @@ def MainFlow(FolURL2):
     #    pg.keyUp('alt')
     #    time.sleep(1)
 
+
+
     pg.keyDown('alt')
     pg.press('j')
     pg.keyUp('alt')
 
     #出力したCSVを読込み----------------------------------------------------------------------------------------------------------
     CSVURL = FolURL2
-    CSVName = '電子申告データ署名一覧'
-    C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.csv'
+    CSVName = '/SyomeiMaster'
+    #C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
+    C_url = CSVURL + '/' + CSVName + '.CSV'
     with codecs.open(C_url, "r", "Shift-JIS", "ignore") as file:
         C_df = pd.read_table(file, delimiter=",")
     C_dfRow = np.array(C_df).shape[0]#配列行数取得
@@ -333,14 +338,14 @@ def MainFlow(FolURL2):
         pg.press(['tab'])
         time.sleep(1)
         #----------------------------------------------------------------------------------------------------------------------
-        SortURL = 'D:\RPAPhoto\MJS_DensiSinkoku\ミロク税目分岐'
+        SortURL = FolURL2 + '/ミロク税目分岐'
         ZeimokuRow = SortCSVItem(SortURL,"Master",C_Zeimoku)
         for x in range(ZeimokuRow):
             pg.press(['down'])
         pg.press(['space'])
         pg.press(['down'])
         time.sleep(1)
-        SortURL = 'D:\RPAPhoto\MJS_DensiSinkoku\ミロク税目分岐'
+        SortURL = FolURL2 + '/ミロク税目分岐'
         ZeimokuRow = SortCSVItem(SortURL,C_Zeimoku,C_Syurui)
         for x in range(ZeimokuRow):
             pg.press(['down'])
@@ -353,21 +358,51 @@ def MainFlow(FolURL2):
         ClassObjList = ClassList[1]
         ClassObjList[1].click()
         #----------------------------------------------------------------------------------------------------------------------
-        time.sleep(1)
+        time.sleep(3)
         #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-        List = ["FindCheckBox.png","FindCheckBox2.png","FindCheckBox3.png"]
-        conf = 0.9999#画像認識感度
+        List = ["FindCheckBox.png","FindCheckBox2.png","FindCheckBox3.png","FindCheckBox4.png"]
+        conf = 0.999#画像認識感度
         LoopVal = 10000#検索回数
         ListCheck = ImgCheckForList(FolURL2,List,conf)#画像検索関数
-        if ListCheck[0] == True:
-            ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-            time.sleep(1)
-        time.sleep(1)
+        for x in range(100):
+            if ListCheck[0] == True:
+                ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+                time.sleep(1)
+                if ImgCheck(FolURL2,"Checkin.png",conf,LoopVal) == True:
+                    break
+            else:
+                time.sleep(1)
+
+        pg.keyDown('alt')
+        pg.press('s')
+        pg.keyUp('alt')
+
+        #クラス要素クリック----------------------------------------------------------------------------------------------------------
+        Hub = "AutomationID"
+        ObjName = "DropDown"
+        DriverClick(Hub,ObjName,driver)
+        pg.press(['up','up','up'])
+        pg.press(['return'])
         #----------------------------------------------------------------------------------------------------------------------
+        Todayng = dt.today() 
+        Fol = str(Todayng.year) + "-" + str(Todayng.month)
+        path = "//Sv05121a/e/電子ファイル/メッセージボックス" + "/" + Fol
+        if os.path.exists(path) == False:
+            os.mkdir(path)
+        else:
+            print("フォルダ有")
+        FileURL = path.replace('\\','/') + C_SCode + "_" + C_Name + ".pdf"
+        pg.write(FileURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press(['return'])
+        # ---------------------------------------------------------------------------------------------------------------------- 
 
-
-
-
+        #クラス要素クリック----------------------------------------------------------------------------------------------------------
+        Hub = "class_name"
+        ObjName = "TMBitBtn"#関与先コードボックス
+        ClassList = DriverFindClass(ObjName,driver)
+        ClassObjList = ClassList[1]
+        ClassObjList[1].click()
+        #----------------------------------------------------------------------------------------------------------------------
 
 #モジュールインポート
 from appium import webdriver
@@ -418,6 +453,7 @@ FolURL2 = os.getcwd().replace('\\','/')#先
 #except:
 #    print(FolURL2 + "あります。")
 #--------------------------------------------------------------------------------
+
 try:
     MainFlow(FolURL2)
 except:
