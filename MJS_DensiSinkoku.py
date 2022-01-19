@@ -275,6 +275,7 @@ def MasterCSVGet(FolURL2):
     pg.press(['return'])
     #----------------------------------------------------------------------------------------------------------------------
     FileURL = os.getcwd().replace('\\','/') + "\RPAPhoto\MJS_DensiSinkoku\SyomeiMaster.CSV"
+    FileURL = FileURL.replace('*',':')
     pg.write(FileURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
     pg.press(['return'])
     # ---------------------------------------------------------------------------------------------------------------------- 
