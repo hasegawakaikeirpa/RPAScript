@@ -312,21 +312,21 @@ def Sousin(driver,FolURL2,ItemRowArray):
         ObjName = "etaxPasswordTextBox"
         DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
         conf = 0.9
-        LoopVal = 10
-        FileName = "ZeiresiAnsyou.png"
+        LoopVal = 10000
+        FileName = "ZeirisiAnsyou.png"
         ZeiresiAnsyou = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
         if ZeiresiAnsyou == True:
-            FileName = "ZeiresiAnsyou.png"
+            FileName = "ZeirisiAnsyou.png"
             ImgClick(FolURL2,FileName,conf,LoopVal)
             pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
             pg.press('return')
-        time.sleep(1)
-        conf = 0.99999
-        LoopVal = 100
-        FileName = "ZeiresiAnsyouT.png"
+        time.sleep(5)
+        conf = 0.9
+        LoopVal = 10000
+        FileName = "ZeirisiAnsyouT.png"
         ZeiresiAnsyouT = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
         if ZeiresiAnsyouT == True:
-            FileName = "ZeiresiAnsyouT.png"
+            FileName = "ZeirisiAnsyouT.png"
             ImgClick(FolURL2,FileName,conf,LoopVal)
             pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
             pg.press('return')
@@ -347,23 +347,17 @@ def Sousin(driver,FolURL2,ItemRowArray):
         DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
         #----------------------------------------------------------------------------------------------------------------------            
         time.sleep(1)
+        FileName = "SousinKanryou.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        time.sleep(1)
+        pg.press('n')
         conf = 0.9
         LoopVal = 10
-        FileName = "KanryouHoukokuBtn.png"
-        for z in range(100):
-            if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
-                for ItemRow in ItemRowArray:
-                    FileName = "SinseiTrigger.png"
-                    conf = 0.9#画像認識感度
-                    LoopVal = 10
-                    xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
-                    ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 60
-                    ypos = ypos + (ItemRow*30)
-                    pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
-                    time.sleep(1)
-                break
-            else:
-                pg.press('n')
+        FileName = "KanryouHoukokuBtn2.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        time.sleep(1)
 
 def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2):
     C_forCount = 0

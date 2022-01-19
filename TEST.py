@@ -316,24 +316,26 @@ from datetime import datetime, timedelta
 import WarekiHenkan
 import PDFMarge
 
-FolURL2 = os.getcwd().replace('\\','/')#先
-
-# conf = 0.9
-# LoopVal = 10
-# FileName = "ZeiresiAnsyou.png"
-# ZeiresiAnsyou = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
-# if ZeiresiAnsyou == True:
-#     FileName = "ZeiresiAnsyou.png"
-#     ImgClick(FolURL2,FileName,conf,LoopVal)
-#     pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
-#     pg.press('return')
-time.sleep(1)
-conf = 0.99999
-LoopVal = 100
-FileName = "ZeiresiAnsyouT.png"
+FolURL2 = os.getcwd().replace('\\','/') + "/RPAPhoto/TKC_DensiSinkoku"#先
+conf = 0.9
+LoopVal = 10000
+FileName = "ZeirisiAnsyou.png"
+#while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+# while ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == False:
+     #time.sleep(1)
+ZeiresiAnsyou = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
+if ZeiresiAnsyou == True:
+    FileName = "ZeirisiAnsyou.png"
+    ImgClick(FolURL2,FileName,conf,LoopVal)
+    pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+time.sleep(5)
+conf = 0.9
+LoopVal = 10000
+FileName = "ZeirisiAnsyouT.png"
 ZeiresiAnsyouT = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
 if ZeiresiAnsyouT == True:
-    FileName = "ZeiresiAnsyouT.png"
+    FileName = "ZeirisiAnsyouT.png"
     ImgClick(FolURL2,FileName,conf,LoopVal)
     pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
     pg.press('return')
