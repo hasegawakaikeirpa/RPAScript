@@ -275,6 +275,7 @@ def MasterCSVGet(FolURL2):
     pg.press(['return'])
     #----------------------------------------------------------------------------------------------------------------------
     FileURL = os.getcwd().replace('\\','/') + "\RPAPhoto\MJS_DensiSinkoku\SyomeiMaster.CSV"
+    FileURL = FileURL.replace('*',':')
     pg.write(FileURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
     pg.press(['return'])
     # ---------------------------------------------------------------------------------------------------------------------- 
@@ -327,6 +328,14 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                 time.sleep(1)
                 pg.press('q')
                 #----------------------------------------------------------------------------------------------------------------------
+                conf = 0.9#画像認識感度
+                LoopVal = 20#検索回数
+                FileName = "EturanCheck.png"
+                if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                    pg.press('return')            
+                FileName = "MSGSyousaiErr.png"
+                if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                    pg.press('return')
                 #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
                 List = ["FileOut.png","FileOut2.png"]
                 conf = 0.9#画像認識感度
@@ -403,6 +412,14 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
             time.sleep(1)
             pg.press('q')
             #----------------------------------------------------------------------------------------------------------------------
+            conf = 0.9#画像認識感度
+            LoopVal = 20#検索回数
+            FileName = "EturanCheck.png"
+            if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                pg.press('return')            
+            FileName = "MSGSyousaiErr.png"
+            if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                pg.press('return')
             #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
             List = ["FileOut.png","FileOut2.png"]
             conf = 0.9#画像認識感度
