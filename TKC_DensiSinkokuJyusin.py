@@ -284,11 +284,18 @@ def SortPDF(PDFName):
             Cou = Cou + 1
     return str(Cou),pt
 #----------------------------------------------------------------------------------------------------------------------
+def NitijiBunki(FolURL2,conf,LoopVal):
+    List = ["SinkokuUketuke.png","SinkokuUketukeLire.png"]
+    Tar = ImgCheckForList(FolURL2,List,conf)
+    if Tar[0] == True:
+        Cli = ImgClick(FolURL2,Tar[1],conf,LoopVal)
+        FileName = "SinkokuUketukeTarget.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.99999) is None:
+            pyautogui.click(Cli[0], Cli[1])
 def TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver):#選択済と未選択状態のタブアイコンをクリックし、各税申告処理を分ける
     if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
         if ImgCheckForList(FolURL2,List,conf)[0] == True:
             FindURL = ImgCheckForList(FolURL2,List,conf)[1]
-            ImgClick(FolURL2,FindURL,conf,LoopVal)
         time.sleep(1)
     #----------------------------------------------------------------------------------------------------------------------
     time.sleep(1)
@@ -297,6 +304,8 @@ def TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver):#選択済と�
     conf = 0.9#画像認識感度
     if ImgNothingCheck(FolURL2,FileName,conf,10) == True:
         time.sleep(1)
+        if NitijiBunkiTrigger == True:
+            NitijiBunki(FolURL2,conf,LoopVal)
         #CSVOUT処理--------------------------------------------------------------------------------------------------------
         FileName = "NoCsvOutPut.png"
         conf = 0.9#画像認識感度
@@ -721,6 +730,9 @@ import shutil
 from datetime import datetime, timedelta
 import pyperclip #クリップボードへのコピーで使用
 import WarekiHenkan #WarekiHenkan.SeirekiDate("R",4,1,19) = 返り値2022/1/19(str)
+import sys
+from tkinter import messagebox
+
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
 #FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
@@ -730,6 +742,7 @@ FolURL2 = os.getcwd().replace('\\','/')#先
 #except:
 #    print(FolURL2 + "あります。")
 #--------------------------------------------------------------------------------
+NitijiBunkiTrigger = messagebox.askyesno('確認', '最新日時順にダウンロードしますか？')
 try:
     MainFlow(FolURL2)
 except:
