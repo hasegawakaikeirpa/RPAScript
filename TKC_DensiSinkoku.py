@@ -313,9 +313,23 @@ def Sousin(driver,FolURL2,ItemRowArray):
         DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
         conf = 0.9
         LoopVal = 10
-        FileName = "KokuzeiOK.png"
-        if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == False:
+        FileName = "ZeiresiAnsyou.png"
+        ZeiresiAnsyou = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
+        if ZeiresiAnsyou == True:
+            FileName = "ZeiresiAnsyou.png"
+            ImgClick(FolURL2,FileName,conf,LoopVal)
             pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press('return')
+        time.sleep(1)
+        conf = 0.99999
+        LoopVal = 100
+        FileName = "ZeiresiAnsyouT.png"
+        ZeiresiAnsyouT = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
+        if ZeiresiAnsyouT == True:
+            FileName = "ZeiresiAnsyouT.png"
+            ImgClick(FolURL2,FileName,conf,LoopVal)
+            pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press('return')
         #----------------------------------------------------------------------------------------------------------------------
         #要素クリック----------------------------------------------------------------------------------------------------------
         Hub = "AutomationID"

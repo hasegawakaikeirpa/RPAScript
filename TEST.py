@@ -1,3 +1,276 @@
+#----------------------------------------------------------------------------------------------------------------------
+def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
+    for x in range(1000):
+        try:
+            driver.find_element_by_xpath(UIPATH)
+            Flag = 1
+            return True
+        except:
+            Flag = 0
+    if Flag == 0:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def DriverUIWaitAutomationId(UIPATH,driver):#XPATH要素を取得するまで待機
+    for x in range(1000):
+        try:
+            driver.find_element_by_accessibility_id(UIPATH)
+            Flag = 1
+            return True
+        except:
+            Flag = 0
+    if Flag == 0:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def DriverUIWaitName(UIPATH,driver):#XPATH要素を取得するまで待機
+    for x in range(1000):
+        try:
+            driver.find_element_by_Name(UIPATH)
+            Flag = 1
+            return True
+        except:
+            Flag = 0
+    if Flag == 0:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
+    for x in range(10000):
+        try:
+            driver.find_element_by_class_name(UIPATH)
+            Flag = 1
+            return True
+        except:
+            Flag = 0
+    if Flag == 0:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------
+def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
+    for x in range(10000):
+        try:
+            elList = driver.find_elements_by_class_name(UIPATH)
+            Flag = 1
+            return True,elList
+        except:
+            Flag = 0
+    if Flag == 0:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def DriverCheck(Hub,ObjName,driver):#XPATH要素を取得するまで待機
+    for x in range(1000):
+        if Hub == "AutomationID":
+            if DriverUIWaitAutomationId(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
+                #正常待機後処理
+                OMSObj = driver.find_element_by_accessibility_id(ObjName)#一括電子申告送信ボタン
+                return True
+            else:
+                #異常待機後処理
+                print("要素取得に失敗しました。")
+        elif Hub == "XPATH":
+            if DriverUIWaitXPATH(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
+                #正常待機後処理
+                OMSObj = driver.find_element_by_xpath(ObjName)#一括電子申告送信ボタン
+                return True
+            else:
+                #異常待機後処理
+                print("要素取得に失敗しました。")
+        elif Hub == "Name":
+            if DriverUIWaitName(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
+                #正常待機後処理
+                OMSObj = driver.find_element_by_Name(ObjName)#一括電子申告送信ボタン
+                return True
+            else:
+                #異常待機後処理
+                print("要素取得に失敗しました。")
+#----------------------------------------------------------------------------------------------------------------------
+def DriverClick(Hub,ObjName,driver):
+    if Hub == "AutomationID":
+        if DriverUIWaitAutomationId(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
+            #正常待機後処理
+            OMSObj = driver.find_element_by_accessibility_id(ObjName)#一括電子申告送信ボタン
+            OMSObj.click()
+            return OMSObj
+        else:
+            #異常待機後処理
+            print("要素取得に失敗しました。")
+    elif Hub == "XPATH":
+        if DriverUIWaitXPATH(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
+            #正常待機後処理
+            OMSObj = driver.find_element_by_xpath(ObjName)#一括電子申告送信ボタン
+            OMSObj.click()
+            return OMSObj
+        else:
+            #異常待機後処理
+            print("要素取得に失敗しました。")
+    elif Hub == "Name":
+        if DriverUIWaitName(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
+            #正常待機後処理
+            OMSObj = driver.find_element_by_Name(ObjName)#一括電子申告送信ボタン
+            OMSObj.click()
+            return OMSObj
+        else:
+            #異常待機後処理
+            print("要素取得に失敗しました。")
+    elif Hub == "class_name":
+        if DriverUIWaitclassname(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
+            #正常待機後処理
+            OMSObj = driver.find_element_by_class_name(ObjName)#一括電子申告送信ボタン
+            OMSObj.click()
+            return OMSObj
+        else:
+            #異常待機後処理
+            print("要素取得に失敗しました。")
+#----------------------------------------------------------------------------------------------------------------------
+def ImgCheck(FolURL2,FileName,conf,LoopVal):#画像があればTrueを返す関数
+    ImgURL = FolURL2 + "/" + FileName
+    for x in range(LoopVal):
+        try:
+            p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
+            x, y = pyautogui.center(p)
+            return True,x,y
+        except:
+            Flag = 0
+    if Flag == 0:
+        return False,"",""
+#----------------------------------------------------------------------------------------------------------------------
+def ImgNothingCheck(FolURL2,FileName,conf,LoopVal):#画像がなければTrueを返す
+    ImgURL = FolURL2 + "/" + FileName
+    for x in range(LoopVal):
+        try:
+            p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
+            x, y = pyautogui.center(p)
+            return False
+        except:
+            Flag = 0
+    if Flag == 0:
+        return True
+#----------------------------------------------------------------------------------------------------------------------
+def ImgCheckForList(FolURL2,List,conf):#リスト内の画像があればTrueと画像名を返す
+    for x in range(10):
+        for ListItem in List:
+            ImgURL = FolURL2 + "/" + ListItem
+            try:
+                p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
+                x, y = pyautogui.center(p)
+                return True,ListItem
+                break
+            except:
+                Flag = 0
+    if Flag == 0:
+        return False,""
+#----------------------------------------------------------------------------------------------------------------------
+def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックしてx,y軸を返す
+    ImgURL = FolURL2 + "/" + FileName
+    for x in range(10):
+        if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
+            #正常待機後処理
+            for y in range(10):
+                try:
+                    p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
+                    x, y = pyautogui.center(p)
+                    pyautogui.click(x, y)
+                    time.sleep(1)
+                    return x, y
+                except:
+                    print("失敗")
+        else:
+            #異常待機後処理
+            print("要素取得に失敗しました。")
+#----------------------------------------------------------------------------------------------------------------------
+def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書出し操作
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "outputDirTextBox"
+    DriverClick(Hub,ObjName,driver)
+    pg.press(['right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'])
+    pg.press(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
+    pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    #----------------------------------------------------------------------------------------------------------------------
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "fileNameTextBox"
+    DriverClick(Hub,ObjName,driver)
+    pg.press(['right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'\
+        'right','right','right','right','right','right','right','right','right'])
+    pg.press(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
+        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
+    pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    #----------------------------------------------------------------------------------------------------------------------
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "fileTypeComboBox"
+    DriverClick(Hub,ObjName,driver)
+    pg.press('down')
+    pg.press('down')
+    pg.press('down')
+    pg.press('return')
+    #----------------------------------------------------------------------------------------------------------------------
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "saveButton"
+    CsvPath = CSVURL + "/" + CSVName + ".CSV"
+    if os.path.isfile(CsvPath) == True:
+        DriverClick(Hub,ObjName,driver)
+        time.sleep(1)
+        FileNameList = ["FileOverQ.png","FileOverQ2.png"]
+        conf = 0.9
+        LoopVal = 10
+        if ImgCheckForList(FolURL2,FileNameList,conf)[0] == True:
+            pg.press('y')
+    else:
+        DriverClick(Hub,ObjName,driver)
+        time.sleep(1)
+#----------------------------------------------------------------------------------------------------------------------
+def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
+        #切出CSVをループ処理-------------------------------------------------------------------------------------------------------
+    C_CforCount = 0
+    C_CdfRow = np.array(C_Child).shape[0]#配列行数取得
+    C_CdfCol = np.array(C_Child).shape[1]#配列列数取得
+    ItemList = []
+    for y in range(C_CdfRow):
+        #関与先DB配列をループして識別番号とPassを取得
+        C_CdfDataRow = C_Child.loc[y]
+        C_CSCode = C_CdfDataRow[Col1]
+        C_CName = C_CdfDataRow[Col2]
+        C_CZeimoku = C_CdfDataRow[Col3]
+        C_CSousin = C_CdfDataRow[Col4]
+        C_CAll = str(C_CSCode) + str(C_CName) 
+        if Key == C_CAll and C_CSousin == "可":
+            ItemList.append(C_CforCount)
+            C_CforCount = C_CforCount + 1
+        else:
+            C_CforCount = C_CforCount + 1
+    return ItemList 
+
     #モジュールインポート
 from appium import webdriver
 import subprocess
@@ -41,43 +314,26 @@ import codecs
 import pyperclip #クリップボードへのコピーで使用
 from datetime import datetime, timedelta
 import WarekiHenkan
+import PDFMarge
 
-C_forCount = 0
-NoAction = False
-Todays = dt.today()
-CSVURL = "D:\PythonScript\RPAScript\RPAPhoto\TKC_DensiSinkoku"
-CSVName = "HouteiKyuuhouJyusinMaster"
-C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
-C_Master = pd.read_csv(C_url,encoding='shiftjis')
-C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-#----------------------------------------------------------------------------------------------------------------------
-#切出MasterCSVをループ処理---------------------------------------------------------------------------------------------
-for x in range(C_dfRow):
-    #関与先DB配列をループして識別番号とPassを取得
-    if CSVName == 'SinseiJyusinMaster':#処理が申請の場合
-        C_dfDataRow = C_Master.loc[x]
-        C_SCode = C_dfDataRow["関与先コード"]
-        C_Name = C_dfDataRow["納税者(関与先)"]
-        C_Zeimoku = C_dfDataRow["申請・届出書類名"]
-        C_Sousin = C_dfDataRow["送信"]
-        C_UketukeDay = C_dfDataRow["申告受付日時"]
-        C_All =  str(C_SCode) + str(C_Name) 
-#元ネタ列名"→"行","事務所コード","関与先コード","納税者(関与先)","決算月","申請・届出書類名","提出先","電子申請データ作成","電子署名(納税者)","電子署名(税理士)","送信","申請受付日時","即時通知","受信通知","送付書","提出期限","報告書","実践報告","監査担当者"
-    else:
-        C_dfDataRow = C_Master.loc[x]
-        C_SCode = C_dfDataRow["関与先コード"]
-        C_Name = C_dfDataRow["納税者(関与先)"]
-        C_Zeimoku = C_dfDataRow["税目"]
-        C_Sousin = C_dfDataRow["送信"]
-        C_UketukeDay = C_dfDataRow["申告受付日時"]
-        C_All =  str(C_SCode) + str(C_Name) 
-#元ネタ列名"→行","事務所コード","関与先コード","納税者(関与先)","決算月","税目","申告区分","電子申告データ作成","事業年度／課税期間","電子署名(添付書面)","電子署名(納税者)","電子署名(税理士)","送信","申告受付日時","即時通知","受信通知","送付書","申告期限","完了目標(3日前まで)","期限内","TISC","報告書","実践報告","監査担当者"
-    C_UketukeDay = C_UketukeDay.replace("(",".").replace("（",".").replace(")","").replace("）","")
-    C_UkeSplit = C_UketukeDay.split(".")
-    WarekiSpl = WarekiHenkan.SeirekiDate("R",int(C_UkeSplit[0]),int(C_UkeSplit[1]),int(C_UkeSplit[2]))
-    WarekiSpl = WarekiSpl + " 00:00:00"
-    C_UketukeDay = dt.strptime(WarekiSpl, '%Y/%m/%d %H:%M:%S')
-    DayCount = Todays - C_UketukeDay
-    print(DayCount.days)
-    stop
+FolURL2 = os.getcwd().replace('\\','/')#先
+
+# conf = 0.9
+# LoopVal = 10
+# FileName = "ZeiresiAnsyou.png"
+# ZeiresiAnsyou = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
+# if ZeiresiAnsyou == True:
+#     FileName = "ZeiresiAnsyou.png"
+#     ImgClick(FolURL2,FileName,conf,LoopVal)
+#     pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+#     pg.press('return')
+time.sleep(1)
+conf = 0.99999
+LoopVal = 100
+FileName = "ZeiresiAnsyouT.png"
+ZeiresiAnsyouT = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
+if ZeiresiAnsyouT == True:
+    FileName = "ZeiresiAnsyouT.png"
+    ImgClick(FolURL2,FileName,conf,LoopVal)
+    pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
