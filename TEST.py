@@ -39,19 +39,45 @@ import time
 import shutil
 import codecs
 import pyperclip #クリップボードへのコピーで使用
+from datetime import datetime, timedelta
+import WarekiHenkan
 
-#出力したCSVを読込み----------------------------------------------------------------------------------------------------------
-CSVURL = 'D:\PythonScript\RPAScript\RPAPhoto\MJS_DensiSinkoku'
-CSVName = '/SyomeiMaster'
-#C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
-C_url = CSVURL + '/' + CSVName + '.CSV'
-with codecs.open(C_url, "r", "Shift-JIS", "ignore") as file:
-    C_df = pd.read_table(file, delimiter=",")
-print(C_df)
-C_df=C_df.drop_duplicates(subset=['顧問先コード', '税目','申告種類'])
-C_df=C_df.drop_duplicates(inplace=True)
-print(C_df)
-C_dfRow = np.array(C_df).shape[0]#配列行数取得
-C_dfCol = np.array(C_df).shape[1]#配列列数取得
-ItemList = []
-time.sleep(1)
+C_forCount = 0
+NoAction = False
+Todays = dt.today()
+CSVURL = "D:\PythonScript\RPAScript\RPAPhoto\TKC_DensiSinkoku"
+CSVName = "HouteiKyuuhouJyusinMaster"
+C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
+C_Master = pd.read_csv(C_url,encoding='shiftjis')
+C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+#----------------------------------------------------------------------------------------------------------------------
+#切出MasterCSVをループ処理---------------------------------------------------------------------------------------------
+for x in range(C_dfRow):
+    #関与先DB配列をループして識別番号とPassを取得
+    if CSVName == 'SinseiJyusinMaster':#処理が申請の場合
+        C_dfDataRow = C_Master.loc[x]
+        C_SCode = C_dfDataRow["関与先コード"]
+        C_Name = C_dfDataRow["納税者(関与先)"]
+        C_Zeimoku = C_dfDataRow["申請・届出書類名"]
+        C_Sousin = C_dfDataRow["送信"]
+        C_UketukeDay = C_dfDataRow["申告受付日時"]
+        C_All =  str(C_SCode) + str(C_Name) 
+#元ネタ列名"→"行","事務所コード","関与先コード","納税者(関与先)","決算月","申請・届出書類名","提出先","電子申請データ作成","電子署名(納税者)","電子署名(税理士)","送信","申請受付日時","即時通知","受信通知","送付書","提出期限","報告書","実践報告","監査担当者"
+    else:
+        C_dfDataRow = C_Master.loc[x]
+        C_SCode = C_dfDataRow["関与先コード"]
+        C_Name = C_dfDataRow["納税者(関与先)"]
+        C_Zeimoku = C_dfDataRow["税目"]
+        C_Sousin = C_dfDataRow["送信"]
+        C_UketukeDay = C_dfDataRow["申告受付日時"]
+        C_All =  str(C_SCode) + str(C_Name) 
+#元ネタ列名"→行","事務所コード","関与先コード","納税者(関与先)","決算月","税目","申告区分","電子申告データ作成","事業年度／課税期間","電子署名(添付書面)","電子署名(納税者)","電子署名(税理士)","送信","申告受付日時","即時通知","受信通知","送付書","申告期限","完了目標(3日前まで)","期限内","TISC","報告書","実践報告","監査担当者"
+    C_UketukeDay = C_UketukeDay.replace("(",".").replace("（",".").replace(")","").replace("）","")
+    C_UkeSplit = C_UketukeDay.split(".")
+    WarekiSpl = WarekiHenkan.SeirekiDate("R",int(C_UkeSplit[0]),int(C_UkeSplit[1]),int(C_UkeSplit[2]))
+    WarekiSpl = WarekiSpl + " 00:00:00"
+    C_UketukeDay = dt.strptime(WarekiSpl, '%Y/%m/%d %H:%M:%S')
+    DayCount = Todays - C_UketukeDay
+    print(DayCount.days)
+    stop
