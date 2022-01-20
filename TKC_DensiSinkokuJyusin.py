@@ -371,14 +371,19 @@ def Jyusin(driver,FolURL2,C_SCode,C_Name):
             pg.press(['s'])
             pg.keyUp('alt')
             time.sleep(1)
-            FileName = "IkkatuEndMsg.png"
+            FileName = "DensiSousintyu.png"
             EraceIMGWait(FolURL2,FileName)
             #要素クリック----------------------------------------------------------------------------------------------------------
             Hub = "AutomationID"
             ObjName = "cancelButton"
             DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
             time.sleep(1)
-            #----------------------------------------------------------------------------------------------------------------------   
+            FileName = "IkkatuEndMsg.png"
+            EraceIMGWait(FolURL2,FileName)
+            Syoridumi = 1
+            #----------------------------------------------------------------------------------------------------------------------
+        else:
+            Syoridumi = 0   
 
 def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2):
     C_forCount = 0
@@ -409,10 +414,11 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
         #申請処理----------------------------------------------------------------------------------------------------------
         conf = 0.9#画像認識感度
         LoopVal = 10
-        C_CM = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVChildName,driver)
-        C_Child = C_CM[0]
-        C_CdfRow = np.array(C_Child).shape[0]#配列行数取得
-        C_CdfCol = np.array(C_Child).shape[1]#配列列数取得
+        if Syoridumi == 0:
+            C_CM = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVChildName,driver)
+            C_Child = C_CM[0]
+            C_CdfRow = np.array(C_Child).shape[0]#配列行数取得
+            C_CdfCol = np.array(C_Child).shape[1]#配列列数取得
         C_CforCount = 0
         #-------------------------------------------------------------------------------------------------------------------
         C_UketukeDay = C_UketukeDay.replace("(",".").replace("（",".").replace(")","").replace("）","")
@@ -755,6 +761,7 @@ if NitijiBunkiTrigger == "y":
 else:
     DayC = 15
 try:
+    Syoridumi = 0
     MainFlow(FolURL2)
 except:
     traceback.print_exc()
