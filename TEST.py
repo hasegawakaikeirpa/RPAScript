@@ -272,6 +272,7 @@ def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4�
     return ItemList 
 
     #モジュールインポート
+from tracemalloc import stop
 from appium import webdriver
 import subprocess
 from subprocess import run
@@ -319,23 +320,13 @@ import PDFMarge
 FolURL2 = os.getcwd().replace('\\','/') + "/RPAPhoto/TKC_DensiSinkoku"#先
 conf = 0.9
 LoopVal = 10000
-FileName = "ZeirisiAnsyou.png"
-#while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
-# while ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == False:
-     #time.sleep(1)
-ZeiresiAnsyou = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
-if ZeiresiAnsyou == True:
-    FileName = "ZeirisiAnsyou.png"
-    ImgClick(FolURL2,FileName,conf,LoopVal)
-    pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
-    pg.press('return')
-time.sleep(5)
-conf = 0.9
-LoopVal = 10000
-FileName = "ZeirisiAnsyouT.png"
-ZeiresiAnsyouT = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
-if ZeiresiAnsyouT == True:
-    FileName = "ZeirisiAnsyouT.png"
-    ImgClick(FolURL2,FileName,conf,LoopVal)
-    pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
-    pg.press('return')
+FileName = "TEST.png"
+p = all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9))
+print(p)
+
+try:
+    while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
+        time.sleep(1)
+except:
+    print("待機終了")
+    stop
