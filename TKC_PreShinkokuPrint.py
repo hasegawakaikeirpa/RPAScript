@@ -346,6 +346,9 @@ def MainFlow(FolURL2,PreList,MasterCSV):
                 pg.press('return')
                 pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
                 pg.press('return')
+                Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
+                pg.write(Lday[1], interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pg.press('return')
                 time.sleep(1)
                 ImgClick(FolURL2,"FindBtn.png",conf,LoopVal)
                 time.sleep(1)
@@ -394,7 +397,7 @@ import traceback
 import pyautogui
 import time
 import shutil
-
+import calendar
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
@@ -402,6 +405,7 @@ FolURL2 = os.getcwd().replace('\\','/')#先
 TaisyouNen = input("対象[年]を西暦で入力してください。\n")
 TaisyouTuki = input("対象[月]を西暦で入力してください。\n")
 TaisyouFol = str(TaisyouNen) + "-" + str(TaisyouTuki)
+
 #プレ申告のお知らせ保管フォルダチェック---------------------------------------------------------
 Fol = TaisyouFol
 pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\eLTAX"
