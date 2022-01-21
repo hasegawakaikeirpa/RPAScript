@@ -197,26 +197,6 @@ def SortPDF(PDFName):
             Cou = Cou + 1
     return str(Cou),pt
 #----------------------------------------------------------------------------------------------------------------------
-def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
-        #切出CSVをループ処理-------------------------------------------------------------------------------------------------------
-    C_CforCount = 0
-    C_CdfRow = np.array(C_Child).shape[0]#配列行数取得
-    C_CdfCol = np.array(C_Child).shape[1]#配列列数取得
-    ItemList = []
-    for y in range(C_CdfRow):
-        #関与先DB配列をループして識別番号とPassを取得
-        C_CdfDataRow = C_Child.loc[y]
-        C_CSCode = C_CdfDataRow[Col1]
-        C_CName = C_CdfDataRow[Col2]
-        C_CZeimoku = C_CdfDataRow[Col3]
-        C_CSousin = C_CdfDataRow[Col4]
-        C_CAll = str(C_CSCode) + str(C_CName) 
-        if Key == C_CAll and C_CSousin == "可":
-            ItemList.append(C_CforCount)
-            C_CforCount = C_CforCount + 1
-        else:
-            C_CforCount = C_CforCount + 1
-    return ItemList
 #----------------------------------------------------------------------------------------------------------------------
 def TaxLogin(FolURL2,driver,Sikibetu,ID,Hub,ObjName):
     conf = 0.9
@@ -238,7 +218,7 @@ def TaxLogin(FolURL2,driver,Sikibetu,ID,Hub,ObjName):
     ImgClick(FolURL2,FileName,conf,LoopVal)
     FileName = "MSGOKTrigger.png"
     try:
-        while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) == None:
             List = ["KokuzeiLogErr.png","TihouzeiLogErr.png"]
             LogA = ImgCheckForList(FolURL2,List,conf)#リスト内の画像があればTrueと画像名を返す
             if LogA[0] == True:
@@ -270,7 +250,7 @@ def IconStart(Hub,ObjName,driver):
     except:
         return False 
 #----------------------------------------------------------------------------------------------------------------------
-def MaserFindSikibetu(MasterCSV,SyanaiCode,KeyCol,Col1,Col2,Col3,Col4):
+def MaserFindSikibetu(MasterCSV,SyanaiCode,KeyCol,Col1,Col2,Col3,Col4,Col5,Col6):
     MRow = np.array(MasterCSV).shape[0]#配列行数取得
     MCol = np.array(MasterCSV).shape[1]#配列列数取得
     Hantei = False
@@ -279,16 +259,18 @@ def MaserFindSikibetu(MasterCSV,SyanaiCode,KeyCol,Col1,Col2,Col3,Col4):
         MDataRow = MasterCSV.iloc[y,:]
         Key = MDataRow[KeyCol]
         Key = int(Key)
-        TSiki = str(MDataRow[Col1])
-        TID = str(MDataRow[Col2])
-        MSiki = str(MDataRow[Col3])
-        MID = str(MDataRow[Col4])
+        TSiki = MDataRow[Col1]
+        TID = MDataRow[Col2]
+        MSiki = MDataRow[Col3]
+        MID = MDataRow[Col4]
+        ep = MDataRow[Col5]
+        elp = MDataRow[Col6]
         if SyanaiCode == Key:
             Hantei = True
-            return TSiki,TID,MSiki,MID,True
+            return TSiki,TID,MSiki,MID,ep,elp,True
     if Hantei == True:
         Hantei = False
-        return "","","","",False
+        return "","","","","","",False
 #----------------------------------------------------------------------------------------------------------------------
 def SyanaiCDChange(intNo):
     if intNo<1000:
@@ -333,16 +315,14 @@ def MainFlow(FolURL2,PreList,MasterCSV):
         DriverClick(Hub,ObjName,driver)#事務所コードコンボクリック
         pg.write(SyanaiCDChange(PreListItem[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
         pg.press(['return'])
-        IDS = MaserFindSikibetu(MasterCSV,PreListItem[1],"SyanaiCode","TKCKokuzeiUserCode","TKCTihouzeiUserID","MirokuKokuzeiUserCode","MirokuTihouzeiUserID")#マスターから社内コードで国・地方税識別番号とIDを取得
+        IDS = MaserFindSikibetu(MasterCSV,PreListItem[1],"SyanaiCode","TKCKokuzeiUserCode","TKCTihouzeiUserID","MirokuKokuzeiUserCode","MirokuTihouzeiUserID","etaxPass","eltaxPass")#マスターから社内コードで国・地方税識別番号とIDを取得
         Hub = "AutomationID"
         ObjName = "tax1PictureButton"#法人決算ボタン
         IconStart(Hub,ObjName,driver)
         FileName = "KanyoMSG.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
-        LLog = TaxLogin(FolURL2,driver,IDS[0],IDS[1],Hub,ObjName)
-        if LLog == False:
-            LLog=TaxLogin(FolURL2,driver,IDS[2],IDS[3],Hub,ObjName) 
+        LLog = TaxLogin(FolURL2,driver,IDS[4],IDS[5],Hub,ObjName)
         if LLog == False:
             LoginErr = False
         else:
@@ -411,7 +391,8 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
         Nos = file_name.split("_")
         PreList.append([os.path.join(current_dir,file_name),int(Nos[0])])
 print(PreList)
-MasterCSV = pd.read_csv(FolURL2 + "/RPAPhoto/TKC_PreSinkokuDown/" + "MasterDB.csv")
+MasterCSV = pd.read_csv(FolURL2 + "/RPAPhoto/TKC_PreSinkokuDown/" + "MasterDB.csv",\
+    dtype={"TKCKokuzeiUserCode": str,"TKCTihouzeiUserID": str,"MirokuKokuzeiUserCode": str,"MirokuTihouzeiUserID": str,"etaxPass": str,"eltaxPass": str})
 print(MasterCSV)
 #--------------------------------------------------------------------------------
 try:

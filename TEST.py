@@ -176,119 +176,28 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #異常待機後処理
             print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
-def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書出し操作
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "outputDirTextBox"
-    DriverClick(Hub,ObjName,driver)
-    pg.press(['right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'])
-    pg.press(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "fileNameTextBox"
-    DriverClick(Hub,ObjName,driver)
-    pg.press(['right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'])
-    pg.press(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "fileTypeComboBox"
-    DriverClick(Hub,ObjName,driver)
-    pg.press('down')
-    pg.press('down')
-    pg.press('down')
-    pg.press('return')
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "saveButton"
-    CsvPath = CSVURL + "/" + CSVName + ".CSV"
-    if os.path.isfile(CsvPath) == True:
-        DriverClick(Hub,ObjName,driver)
-        time.sleep(1)
-        FileNameList = ["FileOverQ.png","FileOverQ2.png"]
-        conf = 0.9
-        LoopVal = 10
-        if ImgCheckForList(FolURL2,FileNameList,conf)[0] == True:
-            pg.press('y')
-    else:
-        DriverClick(Hub,ObjName,driver)
-        time.sleep(1)
+def EraceIMGWait(FolURL2,FileName):
+    try:
+        while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
+            time.sleep(1)
+    except:
+        print("待機終了")
 #----------------------------------------------------------------------------------------------------------------------
-def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
-        #切出CSVをループ処理-------------------------------------------------------------------------------------------------------
-    C_CforCount = 0
-    C_CdfRow = np.array(C_Child).shape[0]#配列行数取得
-    C_CdfCol = np.array(C_Child).shape[1]#配列列数取得
-    ItemList = []
-    for y in range(C_CdfRow):
-        #関与先DB配列をループして識別番号とPassを取得
-        C_CdfDataRow = C_Child.loc[y]
-        C_CSCode = C_CdfDataRow[Col1]
-        C_CName = C_CdfDataRow[Col2]
-        C_CZeimoku = C_CdfDataRow[Col3]
-        C_CSousin = C_CdfDataRow[Col4]
-        C_CAll = str(C_CSCode) + str(C_CName) 
-        if Key == C_CAll and C_CSousin == "可":
-            ItemList.append(C_CforCount)
-            C_CforCount = C_CforCount + 1
-        else:
-            C_CforCount = C_CforCount + 1
-    return ItemList 
-def MaserFindSikibetu(MasterCSV,SyanaiCode,KeyCol,Col1,Col2,Col3,Col4):
-    MRow = np.array(MasterCSV).shape[0]#配列行数取得
-    MCol = np.array(MasterCSV).shape[1]#配列列数取得
-    Hantei = False
-    for y in range(MRow):
-        #関与先DB配列をループして識別番号とPassを取得
-        MDataRow = MasterCSV.iloc[y,:]
-        Key = MDataRow[KeyCol]
-        Key = int(Key)
-        TSiki = MDataRow[Col1]
-        TID = MDataRow[Col2]
-        MSiki = MDataRow[Col3]
-        MID = MDataRow[Col4]
-        if SyanaiCode == Key:
-            Hantei = True
-            return TSiki,TID,MSiki,MID,True
-    if Hantei == True:
-        Hantei = False
-        return "","","","",False
+#----------------------------------------------------------------------------------------------------------------------
+def SortPDF(PDFName):
+    Fol = str(dt.today().year) + "-" + str(dt.today().month)
+    pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
+    #path = path.replace('\\','/')#先
+    PDFFileList = os.listdir(pt)
+    Cou = 1
+    for PDFItem in PDFFileList:
+        PDFName = PDFName.replace("\u3000","").replace("PDF","") .replace("pdf","")  
+        PDFItem = PDFItem.replace("\u3000","").replace("PDF","") .replace("pdf","")  
+        if PDFName in PDFItem:
+            Cou = Cou + 1
+    return str(Cou),pt
+#----------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------
 
     #モジュールインポート
 from tracemalloc import stop
@@ -336,7 +245,25 @@ from datetime import datetime, timedelta
 import WarekiHenkan
 import PDFMarge
 
-FolURL2 = os.getcwd().replace('\\','/') + "/RPAPhoto/TKC_PreSinkokuDown"#先
-MasterCSV = pd.read_csv(FolURL2 + "/" + "MasterDB.csv")
-C = MaserFindSikibetu(MasterCSV,12,"SyanaiCode","TKCKokuzeiUserCode","TKCTihouzeiUserID","MirokuKokuzeiUserCode","MirokuTihouzeiUserID")
-print(C)
+FolURL2 = os.getcwd().replace('\\','/') + "/RPAPhoto/TKC_PreSinkokuDown" #先
+
+conf = 0.9
+LoopVal = 10000
+FileName = "MSGOKTrigger.png"
+print(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9))
+try:
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) == None:
+        List = ["KokuzeiLogErr.png","TihouzeiLogErr.png"]
+        LogA = ImgCheckForList(FolURL2,List,conf)#リスト内の画像があればTrueと画像名を返す
+        if LogA[0] == True:
+            ImgClick(FolURL2,LogA[1],conf,LoopVal)
+            pg.press('return')
+            while all(pg.locateOnScreen(FolURL2 + "/" + "DataIdouKakunin.png", confidence=0.9)) == True:
+                time.sleep(1)
+                ImgClick(FolURL2,"DataIdouKakuninNo.png",conf,LoopVal)
+                EraceIMGWait(FolURL2,"DataCloseWait.png")
+                time.sleep(1)
+        time.sleep(1)
+    time.sleep(1)
+except:
+    time.sleep(1)
