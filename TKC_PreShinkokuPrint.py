@@ -327,6 +327,30 @@ def MainFlow(FolURL2,PreList,MasterCSV):
             LoginErr = False
         else:
             LoginErr = True
+        if LoginErr == True:
+            conf = 0.9
+            LoopVal = 100
+            List = ["TihouzeiTab.png","TihouzeiTab2.png"]
+            IA = ImgCheckForList(FolURL2,List,conf)
+            if IA[0] == True:
+                ImgClick(FolURL2,IA[1],conf,LoopVal)
+                time.sleep(1)
+                ImgClick(FolURL2,"DayStart.png",conf,LoopVal)
+                pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pg.press('return')
+                pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pg.press('return')
+                time.sleep(1)
+                pg.press(['return','return','return'])
+                pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pg.press('return')
+                pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pg.press('return')
+                time.sleep(1)
+                ImgClick(FolURL2,"FindBtn.png",conf,LoopVal)
+                time.sleep(1)
+                #月末最終日がわからないので関数作って入力操作を作成する事2022/1/21時点
+
 
         #tax1PictureButton#法人決算ボタン
         #tax3PictureButton#個人決算ボタン
