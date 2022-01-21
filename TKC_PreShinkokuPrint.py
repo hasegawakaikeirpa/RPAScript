@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
-    for x in range(10000):
+    for x in range(1000):
         try:
             driver.find_element_by_xpath(UIPATH)
             Flag = 1
@@ -11,7 +11,7 @@ def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
         return False
 #----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitAutomationId(UIPATH,driver):#XPATH要素を取得するまで待機
-    for x in range(10000):
+    for x in range(1000):
         try:
             driver.find_element_by_accessibility_id(UIPATH)
             Flag = 1
@@ -22,7 +22,7 @@ def DriverUIWaitAutomationId(UIPATH,driver):#XPATH要素を取得するまで待
         return False
 #----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitName(UIPATH,driver):#XPATH要素を取得するまで待機
-    for x in range(10000):
+    for x in range(1000):
         try:
             driver.find_element_by_Name(UIPATH)
             Flag = 1
@@ -32,8 +32,31 @@ def DriverUIWaitName(UIPATH,driver):#XPATH要素を取得するまで待機
     if Flag == 0:
         return False
 #----------------------------------------------------------------------------------------------------------------------
-def DriverCheck(Hub,ObjName,driver):#XPATH要素を取得するまで待機
+def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
+        try:
+            driver.find_element_by_class_name(UIPATH)
+            Flag = 1
+            return True
+        except:
+            Flag = 0
+    if Flag == 0:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------
+def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
+    for x in range(10000):
+        try:
+            elList = driver.find_elements_by_class_name(UIPATH)
+            Flag = 1
+            return True,elList
+        except:
+            Flag = 0
+    if Flag == 0:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def DriverCheck(Hub,ObjName,driver):#XPATH要素を取得するまで待機
+    for x in range(1000):
         if Hub == "AutomationID":
             if DriverUIWaitAutomationId(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
                 #正常待機後処理
@@ -87,6 +110,15 @@ def DriverClick(Hub,ObjName,driver):
         else:
             #異常待機後処理
             print("要素取得に失敗しました。")
+    elif Hub == "class_name":
+        if DriverUIWaitclassname(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
+            #正常待機後処理
+            OMSObj = driver.find_element_by_class_name(ObjName)#一括電子申告送信ボタン
+            OMSObj.click()
+            return OMSObj
+        else:
+            #異常待機後処理
+            print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
 def ImgCheck(FolURL2,FileName,conf,LoopVal):#画像があればTrueを返す関数
     ImgURL = FolURL2 + "/" + FileName
@@ -98,7 +130,7 @@ def ImgCheck(FolURL2,FileName,conf,LoopVal):#画像があればTrueを返す関�
         except:
             Flag = 0
     if Flag == 0:
-        return False
+        return False,"",""
 #----------------------------------------------------------------------------------------------------------------------
 def ImgNothingCheck(FolURL2,FileName,conf,LoopVal):#画像がなければTrueを返す
     ImgURL = FolURL2 + "/" + FileName
@@ -113,7 +145,7 @@ def ImgNothingCheck(FolURL2,FileName,conf,LoopVal):#画像がなければTrueを
         return True
 #----------------------------------------------------------------------------------------------------------------------
 def ImgCheckForList(FolURL2,List,conf):#リスト内の画像があればTrueと画像名を返す
-    for x in range(100):
+    for x in range(10):
         for ListItem in List:
             ImgURL = FolURL2 + "/" + ListItem
             try:
@@ -124,14 +156,14 @@ def ImgCheckForList(FolURL2,List,conf):#リスト内の画像があればTrueと
             except:
                 Flag = 0
     if Flag == 0:
-        return False
+        return False,""
 #----------------------------------------------------------------------------------------------------------------------
 def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックしてx,y軸を返す
     ImgURL = FolURL2 + "/" + FileName
-    for x in range(10000):
+    for x in range(10):
         if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
             #正常待機後処理
-            for y in range(10000):
+            for y in range(10):
                 try:
                     p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
                     x, y = pyautogui.center(p)
@@ -144,67 +176,26 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #異常待機後処理
             print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
-def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書出し操作
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "outputDirTextBox"
-    DriverClick(Hub,ObjName,driver)
-    pg.press(['right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'])
-    pg.press(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "fileNameTextBox"
-    DriverClick(Hub,ObjName,driver)
-    pg.press(['right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'])
-    pg.press(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "fileTypeComboBox"
-    DriverClick(Hub,ObjName,driver)
-    pg.press('down')
-    pg.press('down')
-    pg.press('down')
-    pg.press('return')
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "saveButton"
-    CsvPath = CSVURL + "/" + CSVName + ".CSV"
-    if os.path.isfile(CsvPath) == True:
-        DriverClick(Hub,ObjName,driver)
-        time.sleep(1)
-        FileNameList = ["FileOverQ.png","FileOverQ2.png"]
-        conf = 0.9
-        LoopVal = 10000
-        if ImgCheckForList(FolURL2,FileNameList,conf)[0] == True:
-            pg.press('y')
-    else:
-        DriverClick(Hub,ObjName,driver)
-        time.sleep(1)
+def EraceIMGWait(FolURL2,FileName):
+    try:
+        while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
+            time.sleep(1)
+    except:
+        print("待機終了")
+#----------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------
+def SortPDF(PDFName):
+    Fol = str(dt.today().year) + "-" + str(dt.today().month)
+    pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
+    #path = path.replace('\\','/')#先
+    PDFFileList = os.listdir(pt)
+    Cou = 1
+    for PDFItem in PDFFileList:
+        PDFName = PDFName.replace("\u3000","").replace("PDF","") .replace("pdf","")  
+        PDFItem = PDFItem.replace("\u3000","").replace("PDF","") .replace("pdf","")  
+        if PDFName in PDFItem:
+            Cou = Cou + 1
+    return str(Cou),pt
 #----------------------------------------------------------------------------------------------------------------------
 def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
         #切出CSVをループ処理-------------------------------------------------------------------------------------------------------
@@ -227,353 +218,138 @@ def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4�
             C_CforCount = C_CforCount + 1
     return ItemList
 #----------------------------------------------------------------------------------------------------------------------
-def TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver):#選択済と未選択状態のタブアイコンをクリックし、各税申告処理を分ける
-    if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
-        if ImgCheckForList(FolURL2,List,conf)[0] == True:
-            FindURL = ImgCheckForList(FolURL2,List,conf)[1]
-            ImgClick(FolURL2,FindURL,conf,LoopVal)
-        time.sleep(1)
-    #----------------------------------------------------------------------------------------------------------------------
+def TaxLogin(FolURL2,driver,Sikibetu,ID,Hub,ObjName):
+    conf = 0.9
+    LoopVal = 10000
+    FileName = "KokuzeiAnsyou.png"
+    TaxNoBox = ImgCheck(FolURL2,FileName,conf,LoopVal)
+    if TaxNoBox[0] == True:
+        ImgClick(FolURL2,FileName,conf,LoopVal)
+        pg.write(Sikibetu, interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press('return')
+    FileName = "TihouzeiAnsyou.png"
     time.sleep(1)
-    #読込画面が消える(ImgCheck==False)まで待機-----------------------------------------------------------------------------
-    FileName = "SinkokuLoad.png"
-    conf = 0.9#画像認識感度
-    if ImgNothingCheck(FolURL2,FileName,conf,20) == True:
-        time.sleep(1)
-        #CSVOUT処理--------------------------------------------------------------------------------------------------------
-        FileName = "NoCsvOutPut.png"
-        conf = 0.9#画像認識感度
-        time.sleep(1)
-        if ImgNothingCheck(FolURL2,FileName,conf,20) == True:
-            FileName = "CsvOutPut.png"
-            conf = 0.9#画像認識感度
-            if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
-                ImgClick(FolURL2,FileName,conf,LoopVal)
-                time.sleep(1)
-                CSVURL = FolURL2
-                CSVOutPut(CSVURL,CSVName,driver,FolURL2)
-                C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
-                C_Array = pd.read_csv(C_url,encoding='shiftjis')
-                return C_Array,True
-            else:
-                print("ChildCSV無")
-                return [],False
+    TaxNoBox = ImgCheck(FolURL2,FileName,conf,LoopVal)
+    if TaxNoBox[0] == True:
+        ImgClick(FolURL2,FileName,conf,LoopVal)
+        pg.write(ID, interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press('return')
+    FileName = "MSGLogin.png"
+    ImgClick(FolURL2,FileName,conf,LoopVal)
+    FileName = "MSGOKTrigger.png"
+    try:
+        while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
+            List = ["KokuzeiLogErr.png","TihouzeiLogErr.png"]
+            LogA = ImgCheckForList(FolURL2,List,conf)#リスト内の画像があればTrueと画像名を返す
+            if LogA[0] == True:
+                ImgClick(FolURL2,LogA[1],conf,LoopVal)
+                pg.press('return')
+                while all(pg.locateOnScreen(FolURL2 + "/" + "DataIdouKakunin.png", confidence=0.9)) == True:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"DataIdouKakuninNo.png",conf,LoopVal)
+                    EraceIMGWait(FolURL2,"DataCloseWait.png")
+                    return False
+            time.sleep(1)
+        return True
+    except:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def IconStart(Hub,ObjName,driver):
+    Hub = "AutomationID"
+    try:
+        if ObjName == "tax1PictureButton":
+            DriverClick(Hub,ObjName,driver)#法人
+            ObjName = "Button0101"#法人関与先MSG確認ボタン
+            DriverClick(Hub,ObjName,driver)
+            return True
         else:
-                print("ChildCSV無")
-                return [],False
-        #------------------------------------------------------------------------------------------------------------------
-def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver):
-    C_forCount = 0
-    NoAction = False
-    #----------------------------------------------------------------------------------------------------------------------
-    #切出MasterCSVをループ処理---------------------------------------------------------------------------------------------
-    for x in range(C_dfRow):
+            DriverClick(Hub,ObjName,driver)#個人
+            ObjName = "Button0105"#個人関与先MSG確認ボタン
+            DriverClick(Hub,ObjName,driver)
+            return True
+    except:
+        return False 
+#----------------------------------------------------------------------------------------------------------------------
+def MaserFindSikibetu(MasterCSV,SyanaiCode,KeyCol,Col1,Col2,Col3,Col4):
+    MRow = np.array(MasterCSV).shape[0]#配列行数取得
+    MCol = np.array(MasterCSV).shape[1]#配列列数取得
+    Hantei = False
+    for y in range(MRow):
         #関与先DB配列をループして識別番号とPassを取得
-        if CSVName == 'SinseiMaster':#処理が申請の場合
-            C_dfDataRow = C_Master.loc[x]
-            C_SCode = C_dfDataRow["関与先コード"]
-            C_Name = C_dfDataRow["納税者(関与先)"]
-            C_Zeimoku = C_dfDataRow["申請・届出書類名"]
-            C_Sousin = C_dfDataRow["送信"]
-            C_All =  str(C_SCode) + str(C_Name) 
-#元ネタ列名"→"行","事務所コード","関与先コード","納税者(関与先)","決算月","申請・届出書類名","提出先","電子申請データ作成","電子署名(納税者)","電子署名(税理士)","送信","申請受付日時","即時通知","受信通知","送付書","提出期限","報告書","実践報告","監査担当者"
-        else:
-            C_dfDataRow = C_Master.loc[x]
-            C_SCode = C_dfDataRow["関与先コード"]
-            C_Name = C_dfDataRow["納税者(関与先)"]
-            C_Zeimoku = C_dfDataRow["税目"]
-            C_Sousin = C_dfDataRow["送信"]
-            C_All =  str(C_SCode) + str(C_Name) 
-#元ネタ列名"→行","事務所コード","関与先コード","納税者(関与先)","決算月","税目","申告区分","電子申告データ作成","事業年度／課税期間","電子署名(添付書面)","電子署名(納税者)","電子署名(税理士)","送信","申告受付日時","即時通知","受信通知","送付書","申告期限","完了目標(3日前まで)","期限内","TISC","報告書","実践報告","監査担当者"
-        #申請処理----------------------------------------------------------------------------------------------------------
-        conf = 0.9#画像認識感度
-        LoopVal = 10000
-        if NoAction == False:#前周で操作した場合ChildCSVを再切出し
-            C_Child = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVChildName,driver)
-        C_CdfRow = np.array(C_Child).shape[0]#配列行数取得
-        C_CdfCol = np.array(C_Child).shape[1]#配列列数取得
-        C_CforCount = 0
-        #-------------------------------------------------------------------------------------------------------------------
-        if CSVName == 'SinseiMaster':
-            if C_Sousin == "可":
-                ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","申請・届出書類名","送信",C_All)
-                for ItemRow in ItemRowArray:
-                    FileName = "SinseiTrigger.png"
-                    conf = 0.9#画像認識感度
-                    LoopVal = 10000
-                    xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
-                    ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 75
-                    ypos = ypos + (ItemRow*30)
-                    pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
-                    time.sleep(1)
-                #要素クリック------------------------------------------------------------------------------------------------
-                Hub = "AutomationID"
-                ObjName = "soshinButton"
-                DriverClick(Hub,ObjName,driver)#電子申告送信ボタンを押す
-                #------------------------------------------------------------------------------------------------------------
-                #送信エラー画像判定------------------------------------------------------------------------------------------
-                List = ["SousinErr.png","SousinErr2.png"]#送信エラーウィンドウ画像を2つ指定
-                if ImgCheckForList(FolURL2,List,conf)[0] == True:#リスト内の画像があればTrueと画像名を返す
-                    pg.press('return')
-                    ErrMsg = "送信エラー"
-                    time.sleep(1)
-                #------------------------------------------------------------------------------------------------------------
-                if ErrMsg == "送信エラー":
-                    FileName = "jimusyoCD.png"#画面左上の事務所コード画像を元に読込判定
-                    conf = 0.9#画像認識感度
-                    LoopVal = 100000#検索回数
-                    if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
-                        print("送信エラーをスキップしました。")
-                    LoopVal = 10000#検索回数
-                else:
-                    for ItemRow in ItemRowArray:
-                        FileName = "SinseiTrigger.png"
-                        conf = 0.9#画像認識感度
-                        LoopVal = 10000
-                        xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
-                        ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 75
-                        ypos = ypos + (ItemRow*30)
-                        pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択解除
-                        time.sleep(1)
-                    NoAction = False
-            else:
-                NoAction = True
-                print("送信不可")
-        else:
-            if C_Sousin == "可":
-                ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","税目","送信",C_All)
-                for ItemRow in ItemRowArray:
-                    FileName = "AnotherTrigger.png"
-                    conf = 0.9#画像認識感度
-                    LoopVal = 10000
-                    xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
-                    ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 75
-                    ypos = ypos + (ItemRow*30)
-                    pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
-                    time.sleep(1)
-                #要素クリック------------------------------------------------------------------------------------------------
-                Hub = "AutomationID"
-                ObjName = "soshinButton"
-                DriverClick(Hub,ObjName,driver)#電子申告送信ボタンを押す
-                #------------------------------------------------------------------------------------------------------------
-                #送信エラー画像判定------------------------------------------------------------------------------------------
-                List = ["SousinErr.png","SousinErr2.png"]#送信エラーウィンドウ画像を2つ指定
-                if ImgCheckForList(FolURL2,List,conf)[0] == True:#リスト内の画像があればTrueと画像名を返す
-                    pg.press('return')
-                    ErrMsg = "送信エラー"
-                    time.sleep(1)
-                #------------------------------------------------------------------------------------------------------------
-                if ErrMsg == "送信エラー":
-                    FileName = "jimusyoCD.png"#画面左上の事務所コード画像を元に読込判定
-                    conf = 0.9#画像認識感度
-                    LoopVal = 100000#検索回数
-                    if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
-                        print("送信エラーをスキップしました。")
-                    LoopVal = 10000#検索回数
-                else:
-                    for ItemRow in ItemRowArray:
-                        FileName = "AnotherTrigger.png"
-                        conf = 0.9#画像認識感度
-                        LoopVal = 10000
-                        xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
-                        ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 75
-                        ypos = ypos + (ItemRow*30)
-                        pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択解除
-                        time.sleep(1)
-                    NoAction = False
-            else:
-                NoAction = True
-                print("送信不可")
-
-
-def MainFlow(FolURL2):
+        MDataRow = MasterCSV.iloc[y,:]
+        Key = MDataRow[KeyCol]
+        Key = int(Key)
+        TSiki = str(MDataRow[Col1])
+        TID = str(MDataRow[Col2])
+        MSiki = str(MDataRow[Col3])
+        MID = str(MDataRow[Col4])
+        if SyanaiCode == Key:
+            Hantei = True
+            return TSiki,TID,MSiki,MID,True
+    if Hantei == True:
+        Hantei = False
+        return "","","","",False
+#----------------------------------------------------------------------------------------------------------------------
+def SyanaiCDChange(intNo):
+    if intNo<1000:
+        return '{0:03d}'.format(intNo) 
+    elif intNo >= 1000 and intNo < 2000:
+        Te = intNo[-3:]
+        return Te
+    elif intNo >= 4000 and intNo < 5000:
+        Te = intNo[-3:]
+        return Te
+    else:
+        Te = intNo[-3:]
+        return Te       
+#----------------------------------------------------------------------------------------------------------------------
+def MainFlow(FolURL2,PreList,MasterCSV):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
-    FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"
+    FolURL2 = FolURL2 + "/RPAPhoto/TKC_PreSinkokuDown"
     #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "um12PictureButton"
-    DriverClick(Hub,ObjName,driver)#一括電子申告ボタンを押す
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    FileName = "DensiSinkokuHub.png"
-    conf = 0.9#画像認識感度
-    LoopVal = 10000#検索回数
-    ImgClick(FolURL2,FileName,conf,LoopVal)#電子申告・申請タブを押す
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "ao212Button"
-    DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
-    #----------------------------------------------------------------------------------------------------------------------
-    time.sleep(5)
-    for x in range(10000):#MSGが出てくるので、消えるまでエンターを押す
-        if not DriverCheck(Hub,ObjName,driver) == True:
-            pg.press('return')
+    for PreListItem in PreList:#PreListItem[0]=URL,PreListItem=[1]=関与先コード
+        #要素クリック----------------------------------------------------------------------------------------------------------
+        Hub = "AutomationID"
+        ObjName = "aoCodeComboBox"
+        DriverClick(Hub,ObjName,driver)#事務所コードコンボクリック
+        #社内コードに準じて事務所コード分岐----------------------------------------------------------------------------------------------------------------------
+        if PreListItem[1] < 1000:
+            pg.press(['up','up','up','up'])
+            pg.press(['return'])
+        elif PreListItem[1] >= 1000 and PreListItem[1] < 2000:
+            pg.press(['1'])
+            pg.press(['return'])
+        elif PreListItem[1] >= 4000 and PreListItem[1] < 5000:
+            pg.press(['up','up','up','up'])
+            pg.press(['down','down'])
+            pg.press(['return'])
+        else:        
+            pg.press(['down','down','down','down'])
+            pg.press(['return'])
+        #要素クリック----------------------------------------------------------------------------------------------------------
+        Hub = "AutomationID"
+        ObjName = "codeTextBox"
+        DriverClick(Hub,ObjName,driver)#事務所コードコンボクリック
+        pg.write(SyanaiCDChange(PreListItem[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press(['return'])
+        IDS = MaserFindSikibetu(MasterCSV,PreListItem[1],"SyanaiCode","TKCKokuzeiUserCode","TKCTihouzeiUserID","MirokuKokuzeiUserCode","MirokuTihouzeiUserID")#マスターから社内コードで国・地方税識別番号とIDを取得
+        Hub = "AutomationID"
+        ObjName = "tax1PictureButton"#法人決算ボタン
+        IconStart(Hub,ObjName,driver)
+        FileName = "KanyoMSG.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        LLog = TaxLogin(FolURL2,driver,IDS[0],IDS[1],Hub,ObjName)
+        if LLog == False:
+            LLog=TaxLogin(FolURL2,driver,IDS[2],IDS[3],Hub,ObjName) 
+        if LLog == False:
+            LoginErr = False
         else:
-            pg.press('return')
-            break
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"    
-    ObjName = "taxAccountantComboBox"#税理士選択コンボボックスをクリック
-    DriverClick(Hub,ObjName,driver)
-    time.sleep(1)
-    pg.press('down')
-    pg.press('return')#小林常務を選択
-    #FileName = "KanyoHasegawa.png"#担当税理士所長判定
-    ##法人税消費税処理------------------------------------------------------------------------------------------------------
-    #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    #conf = 0.9#画像認識感度
-    #LoopVal = 500
-    #CSVName = 'HoujinSyouhizeiMaster'
-    #CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
-    #List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
-    #TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    #C_Master = TaxAns[0]
-    #C_MasterFlag = TaxAns[1]
-    #if C_MasterFlag == False:
-    #    print("C_Masterは空です")
-    #else:
-    #    C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-    #    C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #    C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #    C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #    MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver)
-    ##-----------------------------------------------------------------------------------------------------------------------
-    ##所得税消費税処理------------------------------------------------------------------------------------------------------
-    #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    #conf = 0.9#画像認識感度
-    #LoopVal = 500
-    #CSVName = 'SyotokuSyouhizeiMaster'
-    #CSVChildName = 'SyotokuSyouhizeiChild'#チャイルドのCSVファイル名を指定
-    #List = ["SyotokuSyouhizei.png","SyotokuSyouhizei2.png"]
-    #TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    #C_Master = TaxAns[0]
-    #C_MasterFlag = TaxAns[1]
-    #if C_MasterFlag == False:
-    #    print("C_Masterは空です")
-    #else:
-    #    C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-    #    C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #    C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #    C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #    MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver)
-    ##-----------------------------------------------------------------------------------------------------------------------
-    ##法定調書給報処理------------------------------------------------------------------------------------------------------
-    #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    #conf = 0.9#画像認識感度
-    #LoopVal = 500
-    #CSVName = 'HouteiKyuuhouMaster'
-    #CSVChildName = 'HouteiKyuuhouChild'#チャイルドのCSVファイル名を指定
-    #List = ["HouteiKyuuhou.png","HouteiKyuuhou2.png"]
-    #TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    #C_Master = TaxAns[0]
-    #C_MasterFlag = TaxAns[1]
-    #if C_MasterFlag == False:
-    #    print("C_Masterは空です")
-    #else:
-    #    C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-    #    C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #    C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #    C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #    MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver)
-    ##-----------------------------------------------------------------------------------------------------------------------
-    #償却資産処理------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    conf = 0.9#画像認識感度
-    LoopVal = 500
-    CSVName = 'SyoukyakuMaster'
-    CSVChildName = 'SyoukyakuChild'#チャイルドのCSVファイル名を指定
-    List = ["Syoukyaku.png","Syoukyaku2.png"]
-    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag == False:
-        print("C_Masterは空です")
-    else:
-        C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver)
-    #-----------------------------------------------------------------------------------------------------------------------
-    #贈与税処理------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    conf = 0.9#画像認識感度
-    LoopVal = 500
-    CSVName = 'ZouyoMaster'
-    CSVChildName = 'ZouyoChild'#チャイルドのCSVファイル名を指定
-    List = ["Zouyo.png","Zouyo2.png"]
-    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag == False:
-        print("C_Masterは空です")
-    else:
-        C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver)
-    #-----------------------------------------------------------------------------------------------------------------------
-    #相続税処理------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    conf = 0.9#画像認識感度
-    LoopVal = 500
-    CSVName = 'SouzokuMaster'
-    CSVChildName = 'SouzokuChild'#チャイルドのCSVファイル名を指定
-    List = ["Souzoku.png","Souzoku2.png"]
-    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag == False:
-        print("C_Masterは空です")
-    else:
-        C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver)
-    #-----------------------------------------------------------------------------------------------------------------------
-    #配当調書処理------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    conf = 0.9#画像認識感度
-    LoopVal = 500
-    CSVName = 'HaitouMaster'
-    CSVChildName = 'HaitouChild'#チャイルドのCSVファイル名を指定
-    List = ["Haitou.png","Haitou2.png"]
-    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag == False:
-        print("C_Masterは空です")
-    else:
-        C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver)
-    #-----------------------------------------------------------------------------------------------------------------------
-    #申請処理---------------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    conf = 0.9#画像認識感度
-    LoopVal = 500
-    CSVName = 'SinseiMaster'#マスターのCSVファイル名を指定
-    CSVChildName = 'SinseiChild'#チャイルドのCSVファイル名を指定
-    List = ["Sinsei.png","Sinsei2.png"]#税種目のタブアイコン画像名を2つ指定
-    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag == False:
-        print("C_Masterは空です")
-    else:
-        C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver)
-    #-----------------------------------------------------------------------------------------------------------------------
+            LoginErr = True
+
+        #tax1PictureButton#法人決算ボタン
+        #tax3PictureButton#個人決算ボタン
 
 #モジュールインポート
 from appium import webdriver
@@ -617,14 +393,28 @@ import shutil
 
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-#FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
 FolURL2 = os.getcwd().replace('\\','/')#先
-#try:
-#    shutil.copytree(FolURL,FolURL2)
-#except:
-#    print(FolURL2 + "あります。")
+#--------------------------------------------------------------------------------
+TaisyouNen = input("対象[年]を西暦で入力してください。\n")
+TaisyouTuki = input("対象[月]を西暦で入力してください。\n")
+TaisyouFol = str(TaisyouNen) + "-" + str(TaisyouTuki)
+#プレ申告のお知らせ保管フォルダチェック---------------------------------------------------------
+Fol = TaisyouFol
+pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\eLTAX"
+#path = path.replace('\\','/')#先
+PDFFileList = os.walk(pt)
+Cou = 1
+PreList=[]
+for current_dir, sub_dirs, files_list  in PDFFileList:
+  for file_name in files_list: 
+    if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
+        Nos = file_name.split("_")
+        PreList.append([os.path.join(current_dir,file_name),int(Nos[0])])
+print(PreList)
+MasterCSV = pd.read_csv(FolURL2 + "/RPAPhoto/TKC_PreSinkokuDown/" + "MasterDB.csv")
+print(MasterCSV)
 #--------------------------------------------------------------------------------
 try:
-    MainFlow(FolURL2)
+    MainFlow(FolURL2,PreList,MasterCSV)
 except:
     traceback.print_exc()

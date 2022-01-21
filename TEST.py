@@ -270,6 +270,25 @@ def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4�
         else:
             C_CforCount = C_CforCount + 1
     return ItemList 
+def MaserFindSikibetu(MasterCSV,SyanaiCode,KeyCol,Col1,Col2,Col3,Col4):
+    MRow = np.array(MasterCSV).shape[0]#配列行数取得
+    MCol = np.array(MasterCSV).shape[1]#配列列数取得
+    Hantei = False
+    for y in range(MRow):
+        #関与先DB配列をループして識別番号とPassを取得
+        MDataRow = MasterCSV.iloc[y,:]
+        Key = MDataRow[KeyCol]
+        Key = int(Key)
+        TSiki = MDataRow[Col1]
+        TID = MDataRow[Col2]
+        MSiki = MDataRow[Col3]
+        MID = MDataRow[Col4]
+        if SyanaiCode == Key:
+            Hantei = True
+            return TSiki,TID,MSiki,MID,True
+    if Hantei == True:
+        Hantei = False
+        return "","","","",False
 
     #モジュールインポート
 from tracemalloc import stop
@@ -317,16 +336,7 @@ from datetime import datetime, timedelta
 import WarekiHenkan
 import PDFMarge
 
-FolURL2 = os.getcwd().replace('\\','/') + "/RPAPhoto/TKC_DensiSinkoku"#先
-conf = 0.9
-LoopVal = 10000
-FileName = "TEST.png"
-p = all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9))
-print(p)
-
-try:
-    while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
-        time.sleep(1)
-except:
-    print("待機終了")
-    stop
+FolURL2 = os.getcwd().replace('\\','/') + "/RPAPhoto/TKC_PreSinkokuDown"#先
+MasterCSV = pd.read_csv(FolURL2 + "/" + "MasterDB.csv")
+C = MaserFindSikibetu(MasterCSV,12,"SyanaiCode","TKCKokuzeiUserCode","TKCTihouzeiUserID","MirokuKokuzeiUserCode","MirokuTihouzeiUserID")
+print(C)
