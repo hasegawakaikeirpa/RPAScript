@@ -400,6 +400,7 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
             C_Zeimoku = C_dfDataRow["申請・届出書類名"]
             C_Sousin = C_dfDataRow["送信"]
             C_UketukeDay = C_dfDataRow["申告受付日時"]
+            C_Houkoku = C_dfDataRow["報告書"]
             C_All =  str(C_SCode) + str(C_Name) 
 #元ネタ列名"→"行","事務所コード","関与先コード","納税者(関与先)","決算月","申請・届出書類名","提出先","電子申請データ作成","電子署名(納税者)","電子署名(税理士)","送信","申請受付日時","即時通知","受信通知","送付書","提出期限","報告書","実践報告","監査担当者"
         else:
@@ -409,12 +410,13 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
             C_Zeimoku = C_dfDataRow["税目"]
             C_Sousin = C_dfDataRow["送信"]
             C_UketukeDay = C_dfDataRow["申告受付日時"]
+            C_Houkoku = C_dfDataRow["報告書"]
             C_All =  str(C_SCode) + str(C_Name) 
 #元ネタ列名"→行","事務所コード","関与先コード","納税者(関与先)","決算月","税目","申告区分","電子申告データ作成","事業年度／課税期間","電子署名(添付書面)","電子署名(納税者)","電子署名(税理士)","送信","申告受付日時","即時通知","受信通知","送付書","申告期限","完了目標(3日前まで)","期限内","TISC","報告書","実践報告","監査担当者"
         #申請処理----------------------------------------------------------------------------------------------------------
         conf = 0.9#画像認識感度
         LoopVal = 10
-        if Syoridumi == 0:
+        if Syoridumi == 0  and not C_Houkoku == "○":
             C_CM = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVChildName,driver)
             C_Child = C_CM[0]
             C_CdfRow = np.array(C_Child).shape[0]#配列行数取得
@@ -429,8 +431,17 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
         DayCount = Todays - C_UketukeDay
         DayCount.days
         if CSVName == 'SinseiJyusinMaster':
-            if C_Sousin == "済" and DayCount.days <= DayC and DayCount.days >= -DayC :
-                ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","申請・届出書類名","送信",C_All)
+            if C_Sousin == "済" and DayCount.days <= DayC and DayCount.days >= -DayC and not C_Houkoku == "○":
+                ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","税目","送信",C_All)
+                if ItemRowArray[0] >= 14:
+                    Pc = ItemRowArray[0]/14
+                    for p in range(int(Pc)):
+                        FileName = "densiIcon.png"
+                        conf = 0.9#画像認識感度
+                        LoopVal = 10
+                        ImgClick(FolURL2,FileName,conf,LoopVal)
+                        pg.press('pagedown') 
+                        ItemRowArray[0] = (ItemRowArray[0] - (14*int(Pc)))
                 FileName = "AnotherTrigger.png"
                 conf = 0.9#画像認識感度
                 LoopVal = 10
@@ -462,12 +473,25 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
                 else:
                     print("送信エラー無")
                     Jyusin(driver,FolURL2,C_SCode,C_Name)
+                    for x in range(int(Pc)):
+                        NitijiBunki(FolURL2,conf,LoopVal)
+                        pg.press('pageup') 
+                        
             else:
                 NoAction = True
                 print("送信不可")
         else:
-            if C_Sousin == "済" and DayCount.days <= DayC and DayCount.days >= -DayC :
+            if C_Sousin == "済" and DayCount.days <= DayC and DayCount.days >= -DayC and not C_Houkoku == "○":
                 ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","税目","送信",C_All)
+                if ItemRowArray[0] >= 14 :
+                    Pc = ItemRowArray[0]/14
+                    for p in range(int(Pc)):
+                        FileName = "densiIcon.png"
+                        conf = 0.9#画像認識感度
+                        LoopVal = 10
+                        ImgClick(FolURL2,FileName,conf,LoopVal)
+                        pg.press('pagedown') 
+                        ItemRowArray[0] = (ItemRowArray[0] - (14*int(Pc)))
                 FileName = "AnotherTrigger.png"
                 conf = 0.9#画像認識感度
                 LoopVal = 10
@@ -499,6 +523,9 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
                 else:
                     print("送信エラー無")
                     Jyusin(driver,FolURL2,C_SCode,C_Name)
+                    for x in range(int(Pc)):
+                        NitijiBunki(FolURL2,conf,LoopVal)
+                        pg.press('pageup') 
             else:
                 NoAction = True
                 print("送信不可")

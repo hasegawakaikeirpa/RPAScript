@@ -245,25 +245,17 @@ from datetime import datetime, timedelta
 import WarekiHenkan
 import PDFMarge
 
-FolURL2 = os.getcwd().replace('\\','/') + "/RPAPhoto/TKC_PreSinkokuDown" #先
-
-conf = 0.9
-LoopVal = 10000
-FileName = "MSGOKTrigger.png"
-print(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9))
-try:
-    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) == None:
-        List = ["KokuzeiLogErr.png","TihouzeiLogErr.png"]
-        LogA = ImgCheckForList(FolURL2,List,conf)#リスト内の画像があればTrueと画像名を返す
-        if LogA[0] == True:
-            ImgClick(FolURL2,LogA[1],conf,LoopVal)
-            pg.press('return')
-            while all(pg.locateOnScreen(FolURL2 + "/" + "DataIdouKakunin.png", confidence=0.9)) == True:
-                time.sleep(1)
-                ImgClick(FolURL2,"DataIdouKakuninNo.png",conf,LoopVal)
-                EraceIMGWait(FolURL2,"DataCloseWait.png")
-                time.sleep(1)
-        time.sleep(1)
-    time.sleep(1)
-except:
-    time.sleep(1)
+FolURL2 = os.getcwd().replace('\\','/')#先
+FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"
+def NonImgClickKeep(FileName):
+    
+    try:
+        while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
+            conf = 0.9#画像認識感度
+            LoopVal = 10
+            xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
+            ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2]
+            pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
+            time.sleep(1)
+    except:
+        return True

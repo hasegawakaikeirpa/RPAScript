@@ -307,58 +307,73 @@ def TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver):#選択済と�
                 return [],False
         #------------------------------------------------------------------------------------------------------------------
 def Sousin(driver,FolURL2,ItemRowArray):
-        #要素クリック----------------------------------------------------------------------------------------------------------
-        Hub = "AutomationID"
-        ObjName = "etaxPasswordTextBox"
-        DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
-        conf = 0.9
-        LoopVal = 10000
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "etaxPasswordTextBox"
+    DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
+    conf = 0.9
+    LoopVal = 10000
+    FileName = "ZeirisiAnsyou.png"
+    ZeiresiAnsyou = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
+    if ZeiresiAnsyou == True:
         FileName = "ZeirisiAnsyou.png"
-        ZeiresiAnsyou = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
-        if ZeiresiAnsyou == True:
-            FileName = "ZeirisiAnsyou.png"
-            ImgClick(FolURL2,FileName,conf,LoopVal)
-            pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
-            pg.press('return')
-        time.sleep(5)
-        conf = 0.9
-        LoopVal = 10000
+        ImgClick(FolURL2,FileName,conf,LoopVal)
+        pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press('return')
+    time.sleep(5)
+    conf = 0.9
+    LoopVal = 10000
+    FileName = "ZeirisiAnsyouT.png"
+    ZeiresiAnsyouT = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
+    if ZeiresiAnsyouT == True:
         FileName = "ZeirisiAnsyouT.png"
-        ZeiresiAnsyouT = ImgCheck(FolURL2,FileName,conf,LoopVal)[0] #== True:
-        if ZeiresiAnsyouT == True:
-            FileName = "ZeirisiAnsyouT.png"
-            ImgClick(FolURL2,FileName,conf,LoopVal)
-            pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
-            pg.press('return')
-        #----------------------------------------------------------------------------------------------------------------------
-        #要素クリック----------------------------------------------------------------------------------------------------------
-        Hub = "AutomationID"
-        ObjName = "ltaxPasswordTextBox"
-        DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
-        conf = 0.9
-        LoopVal = 10
-        FileName = "TihouzeiOK.png"
-        #if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == False:
-        #        pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
-        #----------------------------------------------------------------------------------------------------------------------
-        #要素クリック----------------------------------------------------------------------------------------------------------
-        Hub = "AutomationID"
-        ObjName = "okButton"
-        DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
-        #----------------------------------------------------------------------------------------------------------------------            
+        ImgClick(FolURL2,FileName,conf,LoopVal)
+        pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press('return')
+    #----------------------------------------------------------------------------------------------------------------------
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "ltaxPasswordTextBox"
+    DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
+    conf = 0.9
+    LoopVal = 10
+    FileName = "TihouzeiOK.png"
+    #if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == False:
+    #        pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+    #----------------------------------------------------------------------------------------------------------------------
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "okButton"
+    DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
+    #----------------------------------------------------------------------------------------------------------------------            
+    time.sleep(1)
+    FileName = "SousinKanryou.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
         time.sleep(1)
-        FileName = "SousinKanryou.png"
-        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
-            time.sleep(1)
+    time.sleep(1)
+    pg.press('n')
+    conf = 0.9
+    LoopVal = 10
+    FileName = "KanryouHoukokuBtn2.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
         time.sleep(1)
-        pg.press('n')
-        conf = 0.9
-        LoopVal = 10
-        FileName = "KanryouHoukokuBtn2.png"
-        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
-            time.sleep(1)
-        time.sleep(1)
+    time.sleep(1)
+    FileName = "SumiIcon.png"
+    NonImgClickKeep(FolURL2,FileName)
 
+#----------------------------------------------------------------------------------------------------------------------
+def NonImgClickKeep(FolURL2,FileName):
+    try:
+        while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
+            conf = 0.9#画像認識感度
+            LoopVal = 10
+            xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
+            ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2]
+            pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
+            time.sleep(1)
+    except:
+        return True
+#----------------------------------------------------------------------------------------------------------------------
 def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2):
     C_forCount = 0
     NoAction = False
@@ -367,7 +382,7 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
     for x in range(C_dfRow):
         #関与先DB配列をループして識別番号とPassを取得
         if CSVName == 'SinseiMaster':#処理が申請の場合
-            C_dfDataRow = C_Master.loc[x]
+            C_dfDataRow = C_Master.iloc[x,:]
             C_SCode = C_dfDataRow["関与先コード"]
             C_Name = C_dfDataRow["納税者(関与先)"]
             C_Zeimoku = C_dfDataRow["申請・届出書類名"]
@@ -375,7 +390,7 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
             C_All =  str(C_SCode) + str(C_Name) 
 #元ネタ列名"→"行","事務所コード","関与先コード","納税者(関与先)","決算月","申請・届出書類名","提出先","電子申請データ作成","電子署名(納税者)","電子署名(税理士)","送信","申請受付日時","即時通知","受信通知","送付書","提出期限","報告書","実践報告","監査担当者"
         else:
-            C_dfDataRow = C_Master.loc[x]
+            C_dfDataRow = C_Master.iloc[x,:]
             C_SCode = C_dfDataRow["関与先コード"]
             C_Name = C_dfDataRow["納税者(関与先)"]
             C_Zeimoku = C_dfDataRow["税目"]
@@ -557,10 +572,11 @@ def MainFlow(FolURL2):
     if C_MasterFlag == False:
         print("C_Masterは空です")
     else:
-        C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
+        C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
         C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
         C_dfRow = np.array(C_Master).shape[0]#配列行数取得
         C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+        print(C_Master)
         MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
         
     #-----------------------------------------------------------------------------------------------------------------------
