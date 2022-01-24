@@ -248,57 +248,57 @@ def MainStarter(FolURL2):
 
 def MasterCSVGet(FolURL2): 
     #----------------------------------------------------------------------------------------------------------------------
-    pg.keyDown('alt')
-    pg.press('p')
-    pg.keyUp('alt')
-    time.sleep(1)
-    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    List = ["FileOut.png","FileOut2.png"]
-    conf = 0.9#画像認識感度
-    LoopVal = 10000#検索回数
-    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-    if ListCheck[0] == True:
-       ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-       time.sleep(1)
-    time.sleep(1)
-    #----------------------------------------------------------------------------------------------------------------------
-    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    List = ["PDFIcon.png","CSVIcon.png"]
-    conf = 0.9#画像認識感度
-    LoopVal = 10#検索回数
-    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-    if ListCheck[0] == True:
-       ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-       time.sleep(1)
-    time.sleep(1)
-    pg.press(['up','up','up','up','up'])
-    pg.press(['return'])
-    #----------------------------------------------------------------------------------------------------------------------
-    FileURL = os.getcwd().replace('\\','/') + "\RPAPhoto\MJS_DensiSinkoku\SyomeiMaster.CSV"
-    FileURL = FileURL.replace('*',':')
-    pg.write(FileURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
-    pg.press(['return'])
-    # ---------------------------------------------------------------------------------------------------------------------- 
-    ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal)
-    FileName = "FileOverCheck.png"
-    conf = 0.9#画像認識感度
-    LoopVal = 10#検索回数
-    if ImgNothingCheck(FolURL2,FileName,conf,LoopVal) == True:#画像がなければTrueを返す
-       pg.keyDown('alt')
-       pg.press('j')
-       pg.keyUp('alt')
-       time.sleep(1)
-       pg.keyDown('alt')
-       pg.press('g')
-       pg.keyUp('alt')
-       time.sleep(1)
-    else:
-       pg.press('y')
-       time.sleep(1)
-       pg.keyDown('alt')
-       pg.press('j')
-       pg.keyUp('alt')
-       time.sleep(1)
+    # pg.keyDown('alt')
+    # pg.press('p')
+    # pg.keyUp('alt')
+    # time.sleep(1)
+    # #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+    # List = ["FileOut.png","FileOut2.png"]
+    # conf = 0.9#画像認識感度
+    # LoopVal = 10000#検索回数
+    # ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+    # if ListCheck[0] == True:
+    #    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+    #    time.sleep(1)
+    # time.sleep(1)
+    # #----------------------------------------------------------------------------------------------------------------------
+    # #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+    # List = ["PDFIcon.png","CSVIcon.png"]
+    # conf = 0.9#画像認識感度
+    # LoopVal = 10#検索回数
+    # ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+    # if ListCheck[0] == True:
+    #    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+    #    time.sleep(1)
+    # time.sleep(1)
+    # pg.press(['up','up','up','up','up'])
+    # pg.press(['return'])
+    # #----------------------------------------------------------------------------------------------------------------------
+    # FileURL = os.getcwd().replace('\\','/') + "\RPAPhoto\MJS_DensiSinkoku\SyomeiMaster.CSV"
+    # FileURL = FileURL.replace('*',':')
+    # pg.write(FileURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    # pg.press(['return'])
+    # # ---------------------------------------------------------------------------------------------------------------------- 
+    # ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal)
+    # FileName = "FileOverCheck.png"
+    # conf = 0.9#画像認識感度
+    # LoopVal = 10#検索回数
+    # if ImgNothingCheck(FolURL2,FileName,conf,LoopVal) == True:#画像がなければTrueを返す
+    #    pg.keyDown('alt')
+    #    pg.press('j')
+    #    pg.keyUp('alt')
+    #    time.sleep(1)
+    #    pg.keyDown('alt')
+    #    pg.press('g')
+    #    pg.keyUp('alt')
+    #    time.sleep(1)
+    # else:
+    #    pg.press('y')
+    #    time.sleep(1)
+    #    pg.keyDown('alt')
+    #    pg.press('j')
+    #    pg.keyUp('alt')
+    #    time.sleep(1)
 
     #出力したCSVを読込み----------------------------------------------------------------------------------------------------------
     CSVURL = FolURL2
@@ -307,8 +307,9 @@ def MasterCSVGet(FolURL2):
     C_url = CSVURL + '/' + CSVName + '.CSV'
     with codecs.open(C_url, "r", "Shift-JIS", "ignore") as file:
         C_df = pd.read_table(file, delimiter=",")
-    # C_df=C_df.drop_duplicates(subset=['顧問先コード', '税目','申告種類'],inplace=True)
-    # print(C_df)
+        ColLister = ['顧問先コード','年度', '税目','申告種類']
+        C_df = C_df.drop_duplicates(subset=ColLister)
+    print(C_df)
     return(C_df)
 def MainFirstAction(FolURL2,C_SCode,C_Name ):
     conf = 0.9#画像認識感度
@@ -378,8 +379,8 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                     List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
                     conf = 0.9#画像認識感度
                     LoopVal = 10#検索回数
-                    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-                    time.sleep(1) 
+                    while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
+                        time.sleep(1) 
                     pg.keyDown('alt')
                     pg.press('j')
                     pg.keyUp('alt') 
@@ -400,8 +401,8 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                 List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
                 conf = 0.9#画像認識感度
                 LoopVal = 10#検索回数
-                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-                time.sleep(1) 
+                while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
+                    time.sleep(1) 
                 pg.keyDown('alt')
                 pg.press('j')
                 pg.keyUp('alt')
@@ -462,8 +463,8 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                 List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
                 conf = 0.9#画像認識感度
                 LoopVal = 10#検索回数
-                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-                time.sleep(1) 
+                while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
+                    time.sleep(1) 
                 pg.keyDown('alt')
                 pg.press('j')
                 pg.keyUp('alt') 
@@ -490,8 +491,16 @@ def MainFlow(FolURL2):
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
     for y in range(C_dfRow):
+
+
+        pg.keyDown('alt')
+        pg.press('j')
+        pg.keyUp('alt')
+        time.sleep(1)
+
+
         #CSV要素取得-------------------------------------------------------------------------------------------------------------
-        C_dfDataRow = C_df.loc[y]
+        C_dfDataRow = C_df.iloc[y,:]
         C_SCode = str(C_dfDataRow["顧問先コード"])
         C_Name = str(C_dfDataRow["顧問先名称"])
         C_Nendo = str(C_dfDataRow["年度"])
@@ -579,6 +588,7 @@ def MainFlow(FolURL2):
             pg.keyUp('alt')
             time.sleep(1)
             if ImgCheck(FolURL2,"Tetuduki.png",conf,LoopVal)[0] == False:
+                time.sleep(1)
                 if ImgCheck(FolURL2,"TihouTourokuKakunin.png",conf,LoopVal)[0] == False:
                     #クラス要素クリック----------------------------------------------------------------------------------------------------------
                     Hub = "AutomationID"
@@ -594,6 +604,7 @@ def MainFlow(FolURL2):
                     ClassObjList[1].click()
                     #----------------------------------------------------------------------------------------------------------------------
                     MainFirstAction(FolURL2,C_SCode,C_Name )
+                    time.sleep(1)
                 else:
                     time.sleep(1)
                     conf = 0.9#画像認識感度
@@ -603,10 +614,13 @@ def MainFlow(FolURL2):
                         time.sleep(1)
                         pg.press('o')
                         print("手続き未登録")
+                        time.sleep(1)
                     else:
                         pg.press('o')
                         print("手続き未登録")
+                        time.sleep(1)
                     #クラス要素クリック----------------------------------------------------------------------------------------------------------
+                    time.sleep(1)
                     Hub = "AutomationID"
                     ObjName = "DropDown"
                     DriverClick(Hub,ObjName,driver)
@@ -629,10 +643,13 @@ def MainFlow(FolURL2):
                     time.sleep(1)
                     pg.press('o')
                     print("手続き未登録")
+                    time.sleep(1)
                 else:
                     pg.press('o')
                     print("手続き未登録")
+                    time.sleep(1)
                 #クラス要素クリック----------------------------------------------------------------------------------------------------------
+                time.sleep(1)
                 Hub = "AutomationID"
                 ObjName = "DropDown"
                 DriverClick(Hub,ObjName,driver)
@@ -661,8 +678,8 @@ def MainFlow(FolURL2):
                 List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
                 conf = 0.9#画像認識感度
                 LoopVal = 10#検索回数
-                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-                time.sleep(1)                   
+                while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
+                    time.sleep(1)                  
                 pg.keyDown('alt')
                 pg.press('j')
                 pg.keyUp('alt')

@@ -246,16 +246,15 @@ import WarekiHenkan
 import PDFMarge
 
 FolURL2 = os.getcwd().replace('\\','/')#先
-FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"
-def NonImgClickKeep(FileName):
-    
-    try:
-        while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
-            conf = 0.9#画像認識感度
-            LoopVal = 10
-            xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
-            ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2]
-            pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
-            time.sleep(1)
-    except:
-        return True
+FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
+CSVURL = FolURL2
+CSVName = '/SyomeiMaster'
+#C_url = CSVURL.replace("\\","/") + '/' + CSVName + '.CSV'
+C_url = CSVURL + '/' + CSVName + '.CSV'
+with codecs.open(C_url, "r", "Shift-JIS", "ignore") as file:
+    C_df = pd.read_table(file, delimiter=",")
+# C_df=C_df.drop_duplicates(subset=['顧問先コード', '税目','申告種類'],inplace=True)
+    ColLister = ['顧問先コード','年度', '税目','申告種類']
+    #C_df = C_df[C_df.duplicated(subset=ColLister)]
+    C_df = C_df.drop_duplicates(subset=ColLister)
+print(C_df)
