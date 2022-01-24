@@ -184,6 +184,8 @@ def EraceIMGWait(FolURL2,FileName):
         print("待機終了")
 
 def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書出し操作
+    while pg.locateOnScreen(FolURL2 + "/KiridasiWin.png" , confidence=0.99999) is None:
+        time.sleep(1)
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"
     ObjName = "outputDirTextBox"
