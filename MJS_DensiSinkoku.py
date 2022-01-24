@@ -248,57 +248,57 @@ def MainStarter(FolURL2):
 
 def MasterCSVGet(FolURL2): 
     #----------------------------------------------------------------------------------------------------------------------
-    # pg.keyDown('alt')
-    # pg.press('p')
-    # pg.keyUp('alt')
-    # time.sleep(1)
-    # #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    # List = ["FileOut.png","FileOut2.png"]
-    # conf = 0.9#画像認識感度
-    # LoopVal = 10000#検索回数
-    # ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-    # if ListCheck[0] == True:
-    #    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-    #    time.sleep(1)
-    # time.sleep(1)
-    # #----------------------------------------------------------------------------------------------------------------------
-    # #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    # List = ["PDFIcon.png","CSVIcon.png"]
-    # conf = 0.9#画像認識感度
-    # LoopVal = 10#検索回数
-    # ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-    # if ListCheck[0] == True:
-    #    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-    #    time.sleep(1)
-    # time.sleep(1)
-    # pg.press(['up','up','up','up','up'])
-    # pg.press(['return'])
-    # #----------------------------------------------------------------------------------------------------------------------
-    # FileURL = os.getcwd().replace('\\','/') + "\RPAPhoto\MJS_DensiSinkoku\SyomeiMaster.CSV"
-    # FileURL = FileURL.replace('*',':')
-    # pg.write(FileURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
-    # pg.press(['return'])
-    # # ---------------------------------------------------------------------------------------------------------------------- 
-    # ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal)
-    # FileName = "FileOverCheck.png"
-    # conf = 0.9#画像認識感度
-    # LoopVal = 10#検索回数
-    # if ImgNothingCheck(FolURL2,FileName,conf,LoopVal) == True:#画像がなければTrueを返す
-    #    pg.keyDown('alt')
-    #    pg.press('j')
-    #    pg.keyUp('alt')
-    #    time.sleep(1)
-    #    pg.keyDown('alt')
-    #    pg.press('g')
-    #    pg.keyUp('alt')
-    #    time.sleep(1)
-    # else:
-    #    pg.press('y')
-    #    time.sleep(1)
-    #    pg.keyDown('alt')
-    #    pg.press('j')
-    #    pg.keyUp('alt')
-    #    time.sleep(1)
+    pg.keyDown('alt')
+    pg.press('p')
+    pg.keyUp('alt')
+    time.sleep(1)
+    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+    List = ["FileOut.png","FileOut2.png"]
+    conf = 0.9#画像認識感度
+    LoopVal = 10000#検索回数
+    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+    if ListCheck[0] == True:
+       ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+       time.sleep(1)
+    time.sleep(1)
+    #----------------------------------------------------------------------------------------------------------------------
+    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+    List = ["PDFIcon.png","CSVIcon.png"]
+    conf = 0.9#画像認識感度
+    LoopVal = 10#検索回数
+    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+    if ListCheck[0] == True:
+       ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+       time.sleep(1)
+    time.sleep(1)
+    pg.press(['up','up','up','up','up'])
+    pg.press(['return'])
+    #----------------------------------------------------------------------------------------------------------------------
+    FileURL = os.getcwd().replace('\\','/') + "\RPAPhoto\MJS_DensiSinkoku\SyomeiMaster.CSV"
+    FileURL = FileURL.replace('*',':')
+    pg.write(FileURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press(['return'])
+    # ---------------------------------------------------------------------------------------------------------------------- 
+    ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal)
+    FileName = "FileOverCheck.png"
+    conf = 0.9#画像認識感度
+    LoopVal = 10#検索回数
+    if ImgNothingCheck(FolURL2,FileName,conf,LoopVal) == True:#画像がなければTrueを返す
+       pg.keyDown('alt')
+       pg.press('j')
+       pg.keyUp('alt')
+       time.sleep(1)
+       pg.keyDown('alt')
+       pg.press('g')
+       pg.keyUp('alt')
+       time.sleep(1)
+    else:
+       pg.press('y')
+       time.sleep(1)
+       pg.keyDown('alt')
+       pg.press('j')
+       pg.keyUp('alt')
+       time.sleep(1)
 
     #出力したCSVを読込み----------------------------------------------------------------------------------------------------------
     CSVURL = FolURL2
@@ -493,10 +493,10 @@ def MainFlow(FolURL2):
     for y in range(C_dfRow):
 
 
-        pg.keyDown('alt')
-        pg.press('j')
-        pg.keyUp('alt')
-        time.sleep(1)
+        # pg.keyDown('alt')
+        # pg.press('j')
+        # pg.keyUp('alt')
+        # time.sleep(1)
 
 
         #CSV要素取得-------------------------------------------------------------------------------------------------------------
