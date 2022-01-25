@@ -295,15 +295,17 @@ def SyanaiCDChange(intNo):
         return Te       
 #----------------------------------------------------------------------------------------------------------------------
 def OpenAction(LoopList,FolURL2):
-    x = 1
     conf = 0.9
     LoopVal = 100
     for LoopListItem in LoopList:
+        RowParList = LoopListItem[0].split("[")
+        RowPar = RowParList[1].split("]")
+        RowPar = RowPar[0]
         time.sleep(1)
         FileName = "Gyousuu.png"
         ImgClick(FolURL2,FileName,conf,LoopVal)
         pg.press(['delete','delete','delete'])
-        pg.press(str(x))
+        pg.press(RowPar)
         pg.press('return')
         time.sleep(1)                
         FileName = "PreMSGTrigger.png"
