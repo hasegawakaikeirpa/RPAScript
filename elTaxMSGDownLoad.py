@@ -22,7 +22,7 @@
     H_options.add_argument('--window-size=1024,768')
     H_options.add_argument("--kiosk-printing")
     #ドライバのpathを指定
-    H_path = 'D:\PythonScript/chromedriver'
+    H_path = os.getcwd().replace('\\','/') + '/chromedriver'
     #WEBURLの指定
     H_WEBurl = "https://www.portal.eltax.lta.go.jp/apa/web/webindexb#eLTAX"
     #ブラウザのウィンドウを表すオブジェクト"driver"を作成
@@ -203,11 +203,11 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou):
                     break
         else:
             print("ありません") #フォルダーがなかった場合
-    PDFfolder = glob.glob("D:\PythonScript/" + "*.pdf") #フォルダーがあった場合
+    PDFfolder = glob.glob(os.getcwd().replace('\\','/') + "/" + "*.pdf") #フォルダーがあった場合
     for PDFfolderItem in PDFfolder:
         PDFSerch = "メッセージ照会_お知らせ" in PDFfolderItem
         PDFName = KanyoFolName + "_" + Hakkoumoto + "_" + Hakkou + "_" + MTitle  + ".pdf"
-        PDFPath = "D:\PythonScript/" + PDFName
+        PDFPath = os.getcwd().replace('\\','/') + "/" + PDFName
         PDFPath = PDFPath.replace("/","\\")
 
         try:
@@ -255,7 +255,7 @@ def SortPDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou):
             return False
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
-    LogAns = eTaxWebCrawler(H_First,H_FirstP,"D:/PythonScript",H_SCode,H_TKCName)#Nanではない場合
+    LogAns = eTaxWebCrawler(H_First,H_FirstP,os.getcwd().replace('\\','/'),H_SCode,H_TKCName)#Nanではない場合
     LogArray = LogAns[0].split("\n",1)
     H_LogAns = LogArray[0]#ログオン後のH1テキストを代入
     H_LogAnsOBJ = LogAns[1]#ログオン後のWEBドライバーを代入
@@ -292,7 +292,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
         NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
         NGLog.append(NGstr)
         H_LogAnsOBJ.quit()
-        LogAns = eTaxWebCrawler(H_First,H_SecondP,"D:/PythonScript",H_SCode,H_TKCName)#Nanではない場合
+        LogAns = eTaxWebCrawler(H_First,H_SecondP,os.getcwd().replace('\\','/'),H_SCode,H_TKCName)#Nanではない場合
         LogArray = LogAns[0].split("\n",1)
         H_LogAns = LogArray[0]#ログオン後のH1テキストを代入
         H_LogAnsOBJ = LogAns[1]#ログオン後のWEBドライバーを代入
