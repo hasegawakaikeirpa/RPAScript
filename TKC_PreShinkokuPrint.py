@@ -1,4 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
+from msilib.schema import File
+
+
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -229,6 +232,12 @@ def TaxLogin(FolURL2,driver,Sikibetu,ID,Hub,ObjName):
                     ImgClick(FolURL2,"DataIdouKakuninNo.png",conf,LoopVal)
                     EraceIMGWait(FolURL2,"DataCloseWait.png")
                     return False
+            else:
+                conf = 0.9
+                LoopVal = 10
+                NoMsg = ImgCheck(FolURL2, "NoMessage.png", conf, LoopVal)
+                if NoMsg[0] == True:
+                    pg.press('return')
             time.sleep(1)
         return True
     except:
@@ -285,24 +294,147 @@ def SyanaiCDChange(intNo):
         Te = intNo[-3:]
         return Te       
 #----------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2,PreList,MasterCSV):
+def OpenAction(LoopList,FolURL2):
+    x = 1
+    conf = 0.9
+    LoopVal = 100
+    for LoopListItem in LoopList:
+        time.sleep(1)
+        FileName = "Gyousuu.png"
+        ImgClick(FolURL2,FileName,conf,LoopVal)
+        pg.press(['delete','delete','delete'])
+        pg.press(str(x))
+        pg.press('return')
+        time.sleep(1)                
+        FileName = "PreMSGTrigger.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        FileName = "PreKakuninBtn.png"
+        ImgClick(FolURL2,FileName,conf,LoopVal)
+        FileName = "Insatu.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        ImgClick(FolURL2,FileName,conf,LoopVal)
+        FileName = "SkyPDFBtn.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        ImgClick(FolURL2,FileName,conf,LoopVal)
+        time.sleep(1)
+        pyperclip.copy(LoopListItem[3])
+        pyautogui.hotkey('ctrl','v')
+        FileName = "FileOpenCheck.png"
+        FNO = ImgCheck(FolURL2, FileName, conf, LoopVal)
+        if FNO[0] == True:
+            ImgClick(FolURL2,FileName,conf,LoopVal)
+        pg.keyDown('alt')
+        pg.press('s')
+        pg.keyUp('alt')
+        time.sleep(1)
+        conf = 0.9
+        LoopVal = 10
+        if ImgCheck(FolURL2, "PDFReplace.png", conf, LoopVal)[0] == True:
+            pg.press('y')
+        time.sleep(1)
+        ImgClick(FolURL2,"PrintCancelBtn.png",conf,LoopVal) 
+        FileName = "Insatu.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        pg.press('f4')
+        FileName = "PreMSGTrigger.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        pg.press('f4') 
+        x = x + 1
+    FileName = "Gyousuu.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    ImgClick(FolURL2,FileName,conf,LoopVal)
+    pg.press('f10')
+    FileName = "DataMoveCheck.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    FileName = "DataPCMMove.png"
+    ImgClick(FolURL2, FileName, conf, LoopVal)
+    time.sleep(1) 
+#----------------------------------------------------------------------------------------------------------------------
+def DeleteOMSData(driver,FolURL2):
+    FileName = "OMSTITLE.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "hojoPictureButton"
+    DriverClick(Hub,ObjName,driver)
+    FileName = "HojyoKinouWin.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "Button0102"
+    DriverClick(Hub,ObjName,driver)
+    FileName = "DataIchiranCol.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    conf = 0.9 
+    LoopVal = 10
+    FileName = "Gyouari.png"
+    if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+        #要素クリック----------------------------------------------------------------------------------------------------------
+        Hub = "AutomationID"
+        ObjName = "allSelButton"
+        DriverClick(Hub,ObjName,driver)
+        #要素クリック----------------------------------------------------------------------------------------------------------
+        Hub = "AutomationID"
+        ObjName = "deleteButton"
+        DriverClick(Hub,ObjName,driver)
+        FileName = "DOMSWin.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        FileName = "DOMSOK.png"
+        ImgClick(FolURL2, FileName, conf, LoopVal)
+        #----------------------------------------------------------------------------------------------------------
+        FileName = "DeleteAfterList.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        print("削除データ無")
+    Hub = "AutomationID"
+    ObjName = "cancelButton"
+    DriverClick(Hub,ObjName,driver)
+    FileName = "HojyoKinouWin.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    #要素クリック----------------------------------------------------------------------------------------------------------
+    Hub = "AutomationID"
+    ObjName = "ButtonClose"
+    DriverClick(Hub,ObjName,driver)
+    FileName = "OMSTITLE.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    time.sleep(1)
+
+def MainFlow(FolURL2,PreList,MasterCSV,NoList):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKC_PreSinkokuDown"
     #----------------------------------------------------------------------------------------------------------------------
-    for PreListItem in PreList:#PreListItem[0]=URL,PreListItem=[1]=関与先コード
+    for NoListItem in NoList:
+        LoopList = []
+        for PreListItem in PreList:#PreListItem[0]=URL,PreListItem=[1]=関与先コード
+            if NoListItem == PreListItem[1]:
+                LoopList.append(PreListItem)
+        #for PreListItem in LoopList:#PreListItem[0]=URL,PreListItem=[1]=関与先コード
         #要素クリック----------------------------------------------------------------------------------------------------------
         Hub = "AutomationID"
         ObjName = "aoCodeComboBox"
         DriverClick(Hub,ObjName,driver)#事務所コードコンボクリック
         #社内コードに準じて事務所コード分岐----------------------------------------------------------------------------------------------------------------------
-        if PreListItem[1] < 1000:
+        if NoListItem < 1000:
             pg.press(['up','up','up','up'])
             pg.press(['return'])
-        elif PreListItem[1] >= 1000 and PreListItem[1] < 2000:
+        elif NoListItem >= 1000 and NoListItem < 2000:
             pg.press(['1'])
             pg.press(['return'])
-        elif PreListItem[1] >= 4000 and PreListItem[1] < 5000:
+        elif NoListItem >= 4000 and NoListItem < 5000:
             pg.press(['up','up','up','up'])
             pg.press(['down','down'])
             pg.press(['return'])
@@ -313,9 +445,9 @@ def MainFlow(FolURL2,PreList,MasterCSV):
         Hub = "AutomationID"
         ObjName = "codeTextBox"
         DriverClick(Hub,ObjName,driver)#事務所コードコンボクリック
-        pg.write(SyanaiCDChange(PreListItem[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.write(SyanaiCDChange(NoListItem), interval=0.01)#直接SENDできないのでpyautoguiで入力
         pg.press(['return'])
-        IDS = MaserFindSikibetu(MasterCSV,PreListItem[1],"SyanaiCode","TKCKokuzeiUserCode","TKCTihouzeiUserID","MirokuKokuzeiUserCode","MirokuTihouzeiUserID","etaxPass","eltaxPass")#マスターから社内コードで国・地方税識別番号とIDを取得
+        IDS = MaserFindSikibetu(MasterCSV,NoListItem,"SyanaiCode","TKCKokuzeiUserCode","TKCTihouzeiUserID","MirokuKokuzeiUserCode","MirokuTihouzeiUserID","etaxPass","eltaxPass")#マスターから社内コードで国・地方税識別番号とIDを取得
         Hub = "AutomationID"
         ObjName = "tax1PictureButton"#法人決算ボタン
         IconStart(Hub,ObjName,driver)
@@ -330,6 +462,8 @@ def MainFlow(FolURL2,PreList,MasterCSV):
         if LoginErr == True:
             conf = 0.9
             LoopVal = 100
+            while pg.locateOnScreen(FolURL2 + "/MSGOKTrigger.png", confidence=0.9) is None:
+                time.sleep(1)
             List = ["TihouzeiTab.png","TihouzeiTab2.png"]
             IA = ImgCheckForList(FolURL2,List,conf)
             if IA[0] == True:
@@ -341,20 +475,23 @@ def MainFlow(FolURL2,PreList,MasterCSV):
                 pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
                 pg.press('return')
                 time.sleep(1)
+                pg.press('1')
+                time.sleep(1)
                 pg.press(['return','return','return'])
                 pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
                 pg.press('return')
                 pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
                 pg.press('return')
                 Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
-                pg.write(Lday[1], interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
                 pg.press('return')
                 time.sleep(1)
                 ImgClick(FolURL2,"FindBtn.png",conf,LoopVal)
                 time.sleep(1)
-                #月末最終日がわからないので関数作って入力操作を作成する事2022/1/21時点
-
-
+                #同月同関与先のプレ申告のお知らせ数分ループ
+                OpenAction(LoopList,FolURL2)
+                DeleteOMSData(driver,FolURL2)
+                time.sleep(1)
         #tax1PictureButton#法人決算ボタン
         #tax3PictureButton#個人決算ボタン
 
@@ -398,6 +535,8 @@ import pyautogui
 import time
 import shutil
 import calendar
+import pyperclip
+from collections import OrderedDict
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
@@ -405,7 +544,6 @@ FolURL2 = os.getcwd().replace('\\','/')#先
 TaisyouNen = input("対象[年]を西暦で入力してください。\n")
 TaisyouTuki = input("対象[月]を西暦で入力してください。\n")
 TaisyouFol = str(TaisyouNen) + "-" + str(TaisyouTuki)
-
 #プレ申告のお知らせ保管フォルダチェック---------------------------------------------------------
 Fol = TaisyouFol
 pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\eLTAX"
@@ -414,16 +552,29 @@ PDFFileList = os.walk(pt)
 Cou = 1
 PreList=[]
 for current_dir, sub_dirs, files_list  in PDFFileList:
-  for file_name in files_list: 
-    if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
-        Nos = file_name.split("_")
-        PreList.append([os.path.join(current_dir,file_name),int(Nos[0])])
+    Count_dir = 0
+    for file_name in files_list: 
+        if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
+            Count_dir = Count_dir + 1
+    for file_name in files_list: 
+        if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
+            Nos = file_name.split("_")
+            NewTitle = os.path.join(current_dir,file_name)
+            NewTitle = NewTitle.split("プレ申告データ")
+            NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
+            PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
+
 print(PreList)
+myList = []
+for PreListItem in PreList: 
+    myList.append(PreListItem[1])
+NoList = list(OrderedDict.fromkeys(myList))
+print(NoList)
 MasterCSV = pd.read_csv(FolURL2 + "/RPAPhoto/TKC_PreSinkokuDown/" + "MasterDB.csv",\
     dtype={"TKCKokuzeiUserCode": str,"TKCTihouzeiUserID": str,"MirokuKokuzeiUserCode": str,"MirokuTihouzeiUserID": str,"etaxPass": str,"eltaxPass": str})
 print(MasterCSV)
 #--------------------------------------------------------------------------------
 try:
-    MainFlow(FolURL2,PreList,MasterCSV)
+    MainFlow(FolURL2,PreList,MasterCSV,NoList)
 except:
     traceback.print_exc()
