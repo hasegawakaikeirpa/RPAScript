@@ -48,8 +48,9 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
         OMSPassWindowClc = driver.find_element_by_accessibility_id("passwordTextBox")
         OMSPassWindowClc.click()
         pg.write("051210561111111", interval=0.01)#直接SENDできないのでpyautoguiで入力
-        OMSPassOKBtn = driver.find_element_by_accessibility_id("okButton")
-        OMSPassOKBtn.click()
+        # OMSPassOKBtn = driver.find_element_by_accessibility_id("okButton")
+        # OMSPassOKBtn.click()
+        pg.press(['return','return'])
     else:
         #異常待機後処理
         print("要素取得に失敗しました。")

@@ -200,10 +200,7 @@ def SortPDF(PDFName):
             Cou = Cou + 1
     return str(Cou),pt
 #----------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2,xls_data,KamokuCD,Lday):
-    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
-    FolURL2 = FolURL2 + "/RPAPhoto/TKC_SeikyuuNyuuryoku"
+def FMSOpen(driver,FolURL2,xls_data,KamokuCD,Lday):
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"
     ObjName = "um10PictureButton"
@@ -220,13 +217,132 @@ def MainFlow(FolURL2,xls_data,KamokuCD,Lday):
     LoopVal = 10
     FileName = "TTOK.png"
     ImgClick(FolURL2, FileName, conf, LoopVal)
+    time.sleep(3)
+    FileName = "BoxMenu.png"
+    ImgClick(FolURL2, FileName, conf, LoopVal)
+    pg.write('202', interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+    FileName = "KanyoItiWin.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    conf = 0.9
+    LoopVal = 10
+    FileName = "KanyoSyatyouTAB.png"
+    ImgClick(FolURL2, FileName, conf, LoopVal)
+    FileName = "SyatyouOpen.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+#----------------------------------------------------------------------------------------------------------------------
+def FindMenu(driver,FolURL2,xls_cd):
+    pg.press('f8')
+    FileName = "FindTitle.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    pg.write(xls_cd, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+    pg.write(xls_cd, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+    pg.press('f4')
+#----------------------------------------------------------------------------------------------------------------------
+def FirstAction(driver,FolURL2,xls_cd,xls_mn,UpList):
+    FindMenu(driver,FolURL2,xls_cd)
+    time.sleep(1)
+    conf = 0.9
+    LoopVal = 10
+    FileName = "BoxMenu.png"
+    ImgClick(FolURL2, FileName, conf, LoopVal)
+    pg.write("1", interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+    pg.press('f4')
+    FileName = "HousyuSaimoku.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    conf = 0.9
+    LoopVal = 10
+    FileName = "BoxMenu.png"
+    ImgClick(FolURL2, FileName, conf, LoopVal)
+    pg.write(KamokuCD, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+    pg.press('return')
+    if KamokuCD == "222":
+        pg.keyDown('alt')
+        pg.press('down')
+        pg.keyUp('alt')
+        pg.press('2')
+        pg.press('return')
+    else:
+        pg.keyDown('alt')
+        pg.press('down')
+        pg.keyUp('alt')
+        pg.press('4')
+        pg.press('return')
+    time.sleep(1)
+    pg.press(['return','return','return','return','return','return','return','return'])#一巡目
+    time.sleep(1)
+    pg.press(['return','return'])#一巡目
+    pg.write(xls_mn, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+    time.sleep(1)
+    pg.press('f4')
+    UpList.append([xls_cd,xls_mn])
+#----------------------------------------------------------------------------------------------------------------------        
+def OuterAction(driver,FolURL2,xls_cd,xls_mn,UpList):
+    FindMenu(driver,FolURL2,xls_cd)
+    time.sleep(1)
+    conf = 0.9
+    LoopVal = 10
+    FileName = "BoxMenu.png"
+    ImgClick(FolURL2, FileName, conf, LoopVal)
+    pg.write("1", interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+    pg.press('f4')
+    FileName = "HousyuSaimoku.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    conf = 0.9
+    LoopVal = 10
+    FileName = "BoxMenu.png"
+    ImgClick(FolURL2, FileName, conf, LoopVal)
+    pg.write(KamokuCD, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+    pg.press('return')
+    if KamokuCD == "222":
+        pg.keyDown('alt')
+        pg.press('down')
+        pg.keyUp('alt')
+        pg.press('2')
+        pg.press('return')
+    else:
+        pg.keyDown('alt')
+        pg.press('down')
+        pg.keyUp('alt')
+        pg.press('4')
+        pg.press('return')
+    time.sleep(1)
+    pg.press(['return','return','return','return','return','return','return','return'])#一巡目
+    time.sleep(1)
+    pg.press(['return','return'])#一巡目
+    pg.write(xls_mn, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.press('return')
+    time.sleep(1)
+    pg.press('f4')
+    UpList.append([xls_cd,xls_mn])
+#----------------------------------------------------------------------------------------------------------------------  
+def MainFlow(FolURL2,xls_data,KamokuCD,Lday):
+    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
+    FolURL2 = FolURL2 + "/RPAPhoto/TKC_SeikyuuNyuuryoku"
+    FMSOpen(driver,FolURL2,xls_data,KamokuCD,Lday)
+    UpList = []   
     for index, xls_Item in xls_data.iterrows():
-        print(index)
-        print(xls_Item)
-        xls_cd = str(xls_Item['ｺｰﾄﾞ'])
-        xls_mn = str(xls_Item['先生値決め'])
-
-
+        xls_cd = str(int(xls_Item['ｺｰﾄﾞ']))
+        xls_mn = str(int(xls_Item['先生値決め']))
+        if index == 0:
+            FirstAction(driver,FolURL2,xls_cd,xls_mn,UpList)
+        else:
+            OuterAction(driver,FolURL2,xls_cd,xls_mn,UpList)
+        #---------------------------------------------------------------------------------------------------------------------
+        
 #モジュールインポート
 from appium import webdriver
 import subprocess
