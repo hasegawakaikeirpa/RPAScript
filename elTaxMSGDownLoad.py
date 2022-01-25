@@ -278,7 +278,6 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
             H_P4 = H_Parameters[3]
             H_row = str(H_MSG_rowItem + 1)
             SPDF = SortPDF(H_P3,H_P4,H_SCode,H_TKCName,H_P1,H_P2,H_row)
-
             if SPDF == False or SPDF == None:
                 PrintIFS(H_P4,H_LogAnsOBJ)#メッセージボックスの内容に応じて処理分け
                 RenamePDF(H_P3,H_P4,H_SCode,H_TKCName,H_P1,H_P2,H_row)#PDF保存先フォルダー作成後リネーム&移動 DownTime,MTitle,KanyoNo,KanyoName
