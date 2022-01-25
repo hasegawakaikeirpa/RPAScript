@@ -22,16 +22,19 @@
     H_options.add_argument('--window-size=1024,768')
     H_options.add_argument("--kiosk-printing")
     #ドライバのpathを指定
-    H_path = 'D:\PythonScript/chromedriver'
+    H_path = os.getcwd().replace('\\','/') + '/chromedriver'
     #WEBURLの指定
     H_WEBurl = "https://uketsuke.e-tax.nta.go.jp/UF_APP/lnk/loginCtlKakutei"
     #ブラウザのウィンドウを表すオブジェクト"driver"を作成
     H_driver = webdriver.Chrome(executable_path=H_path, chrome_options=H_options)
     H_driver.get(H_WEBurl)
     #初めの拡張機能ポップアップを閉じる
-    H_PopupClose_btn = H_driver.find_element_by_xpath('/html/body/div[4]/div[2]/div[2]/form/input[1]')#閉じるボタンの要素指定
-    H_PopupClose_btn.click()
-    WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
+    try:
+        H_PopupClose_btn = H_driver.find_element_by_xpath('/html/body/div[4]/div[2]/div[2]/form/input[1]')#閉じるボタンの要素指定
+        H_PopupClose_btn.click()
+        WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
+    except:
+        WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
     #ログイン画面要素指定------------------------------------------------------------------------------------------------------
     #利用者識別番号入力欄をxpathで取得
     H_Sikibetu_box1 = H_driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/form[1]/table/tbody/tr/td/input[1]")
@@ -193,6 +196,7 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName):
                 break
             Tfolders = glob.glob(foldersItem + "\\eTAX" + "/*") #フォルダーがあった場合
             ChildFol = foldersItem + "\\eTAX" + "\\" + KanyoFolName
+            TFFlag = 0
             for TfoldersItem in Tfolders:
                 if TfoldersItem == ChildFol:
                     MovingFol = TfoldersItem
@@ -210,14 +214,14 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName):
             break
         else:
             print("ありません") #フォルダーがなかった場合
-    PDFfolder = glob.glob("D:\PythonScript/" + "*.pdf") #フォルダーがあった場合
+    PDFfolder = glob.glob(os.getcwd().replace('\\','/') + "/" + "*.pdf") #フォルダーがあった場合
     for PDFfolderItem in PDFfolder:
         PDFSerch = "国税電子申告・納税システム" in PDFfolderItem
         s = tdy.day
         ss = '{0:02}'.format(s)
         DTime = '{0:04}'.format(tdy.year) + '{0:02}'.format(tdy.month) + '{0:02}'.format(tdy.day) + " " + '{0:02}'.format(tdy.hour) + '{0:02}'.format(tdy.minute) + '{0:02}'.format(tdy.second)
         PDFName = KanyoFolName + "_" + MTitle + "_" + DTime + ".pdf"
-        PDFPath = "D:\PythonScript/" + PDFName
+        PDFPath = os.getcwd().replace('\\','/') + "/" + PDFName
         PDFPath = PDFPath.replace("/","\\")
 
         try:
@@ -262,7 +266,7 @@ def SortPDF(DownTime,MTitle,KanyoNo,KanyoName):
             Exception
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
-    LogAns = eTaxWebCrawler(str(math.floor(H_First)),H_FirstP,"D:/PythonScript",H_SCode,H_TKCName)#Nanではない場合
+    LogAns = eTaxWebCrawler(str(math.floor(H_First)),H_FirstP,os.getcwd().replace('\\','/') ,H_SCode,H_TKCName)#Nanではない場合
     H_LogAns = LogAns[0]#ログオン後のH1テキストを代入
     H_LogAnsOBJ = LogAns[1]#ログオン後のWEBドライバーを代入
     H_LogMSGAns = LogReturn(H_LogAns,H_LogAnsOBJ)#ログオン後のH1テキストをで処理分けしWEBテーブルページへ
@@ -287,19 +291,23 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                 RenamePDF(H_P2,H_P5,H_SCode,H_TKCName)#PDF保存先フォルダー作成後リネーム&移動
                 if H_MSG_rowItem == H_L_Row - 1:
                     H_LogAnsOBJ.quit()
+                    time.sleep(1)
                 else:
                     H_LogAnsOBJ.switch_to.window(H_LogAnsOBJ.window_handles[0])#タブ移動する
                     WebDriverWait(H_LogAnsOBJ, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
             else:
                 H_LogAnsOBJ.close()
+                time.sleep(1)
                 if H_MSG_rowItem == H_L_Row - 1:
                     H_LogAnsOBJ.quit()
+                    time.sleep(1)
                 else:
                     H_LogAnsOBJ.switch_to.window(H_LogAnsOBJ.window_handles[0])#タブ移動する
                     WebDriverWait(H_LogAnsOBJ, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
     elif H_LogMSGAns == "認証エラー":
         H_LogAnsOBJ.quit()
-        LogAns = eTaxWebCrawler(str(math.floor(H_First)),H_SecondP,"D:/PythonScript",H_SCode,H_TKCName)#Nanではない場合
+        time.sleep(1)
+        LogAns = eTaxWebCrawler(str(math.floor(H_First)),H_SecondP,os.getcwd().replace('\\','/'),H_SCode,H_TKCName)#Nanではない場合
         H_LogAns = LogAns[0]#ログオン後のH1テキストを代入
         H_LogAnsOBJ = LogAns[1]#ログオン後のWEBドライバーを代入
         H_LogMSGAns = LogReturn(H_LogAns,H_LogAnsOBJ)#ログオン後のH1テキストをで処理分けしWEBテーブルページへ
@@ -324,22 +332,27 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                     RenamePDF(H_P2,H_P5,H_SCode,H_TKCName)#PDF保存先フォルダー作成後リネーム&移動
                     if H_MSG_rowItem == H_L_Row - 1:
                         H_LogAnsOBJ.quit()
+                        time.sleep(1)
                     else:
                         H_LogAnsOBJ.switch_to.window(H_LogAnsOBJ.window_handles[0])#タブ移動する
                         WebDriverWait(H_LogAnsOBJ, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
                 else:
                     H_LogAnsOBJ.close()
+                    time.sleep(1)
                     if H_MSG_rowItem == H_L_Row - 1:
                         H_LogAnsOBJ.quit()
+                        time.sleep(1)
                     else:
                         H_LogAnsOBJ.switch_to.window(H_LogAnsOBJ.window_handles[0])#タブ移動する
                         WebDriverWait(H_LogAnsOBJ, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
         elif H_LogMSGAns == "認証エラー":
             H_LogAnsOBJ.quit()
+            time.sleep(1)
     elif H_LogMSGAns == "認証エラー":
         print(H_SCode + "_" + H_TKCName + "_" + "暗証番号の変更")
     else:
         H_LogAnsOBJ.quit()
+        time.sleep(1)
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 #lxmlインポート
 import lxml.html
@@ -376,14 +389,14 @@ import traceback
 H_url = '//Sv05121a/e/C 作業台/RPA/ALLDataBase/Heidi関与先DB.csv'
 H_df = pd.read_csv(H_url,encoding='utf-8')
 H_forCount = 0
-
+#テストケース
 H_dfRow = np.array(H_df).shape[0]#配列行数取得
 H_dfCol = np.array(H_df).shape[1]#配列列数取得
 OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x > 66:
+        if x > 0:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
