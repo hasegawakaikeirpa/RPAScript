@@ -38,6 +38,10 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
     OMSURL = "C:\Program Files (x86)\TKC\OMS\OMS.exe"
     ExeOpen(OMSURL)
     #time.sleep(10)
+    FolURL2 = os.getcwd().replace('\\','/')#先
+    FileName = "OpenWin.png"
+    while pg.locateOnScreen(FolURL2 + "/RPAPhoto/OMSOpen/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
     #tAutomationId要素が出現するまで待機-------------------------------------------------------------------------------------------
     if DriverUIWaitAutomationId("passwordTextBox",driver) == True:
         #正常待機後処理
@@ -65,5 +69,5 @@ from subprocess import run
 from subprocess import PIPE
 import pyautogui as pg
 import time
-
+import os
 from selenium.webdriver.common.keys import Keys
