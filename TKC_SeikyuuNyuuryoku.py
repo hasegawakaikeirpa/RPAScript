@@ -244,7 +244,7 @@ def FindMenu(driver,FolURL2,xls_cd):
     pg.press('return')
     pg.press('f4')
 #----------------------------------------------------------------------------------------------------------------------
-def FirstAction(driver,FolURL2,xls_cd,xls_mn,UpList):
+def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
     FindMenu(driver,FolURL2,xls_cd)
     time.sleep(1)
     conf = 0.9
@@ -264,6 +264,7 @@ def FirstAction(driver,FolURL2,xls_cd,xls_mn,UpList):
     pg.write(KamokuCD, interval=0.01)#直接SENDできないのでpyautoguiで入力
     pg.press('return')
     pg.press('return')
+    time.sleep(2)
     if KamokuCD == "222":
         pg.keyDown('alt')
         pg.press('down')
@@ -284,9 +285,20 @@ def FirstAction(driver,FolURL2,xls_cd,xls_mn,UpList):
     pg.press('return')
     time.sleep(1)
     pg.press('f4')
-    UpList.append([xls_cd,xls_mn])
+    pg.press('f4')
+    FileName = "InputOK.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    pg.press('return')
+    FileName = "KanyoItiWin.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1) 
+    UpList.append([KamokuCD,xls_cd,xls_name,xls_mn])
+    with open(FolURL2 + "/Log/請求入力フロー結果.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
+        pd.DataFrame(UpList).to_csv(f)
+    #pd.DataFrame(UpList).to_csv(FolURL2 + "/Log/請求入力フロー結果.csv", encoding = "shift-jis")
 #----------------------------------------------------------------------------------------------------------------------        
-def OuterAction(driver,FolURL2,xls_cd,xls_mn,UpList):
+def OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
     FindMenu(driver,FolURL2,xls_cd)
     time.sleep(1)
     conf = 0.9
@@ -306,6 +318,7 @@ def OuterAction(driver,FolURL2,xls_cd,xls_mn,UpList):
     pg.write(KamokuCD, interval=0.01)#直接SENDできないのでpyautoguiで入力
     pg.press('return')
     pg.press('return')
+    time.sleep(2)
     if KamokuCD == "222":
         pg.keyDown('alt')
         pg.press('down')
@@ -326,7 +339,18 @@ def OuterAction(driver,FolURL2,xls_cd,xls_mn,UpList):
     pg.press('return')
     time.sleep(1)
     pg.press('f4')
-    UpList.append([xls_cd,xls_mn])
+    pg.press('f4')
+    FileName = "InputOK.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1)
+    pg.press('return')
+    FileName = "KanyoItiWin.png"
+    while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+        time.sleep(1) 
+    UpList.append([KamokuCD,xls_cd,xls_name,xls_mn])
+    with open(FolURL2 + "/Log/請求入力フロー結果.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
+        pd.DataFrame(UpList).to_csv(f)
+    #pd.DataFrame(UpList).to_csv(FolURL2 + "/Log/請求入力フロー結果.csv", encoding = "shift-jis")
 #----------------------------------------------------------------------------------------------------------------------  
 def MainFlow(FolURL2,xls_data,KamokuCD,Lday):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
@@ -336,12 +360,14 @@ def MainFlow(FolURL2,xls_data,KamokuCD,Lday):
     UpList = []   
     for index, xls_Item in xls_data.iterrows():
         xls_cd = str(int(xls_Item['ｺｰﾄﾞ']))
+        xls_name = xls_Item['関与先名'].replace("\u3000","")
         xls_mn = str(int(xls_Item['先生値決め']))
         if index == 0:
-            FirstAction(driver,FolURL2,xls_cd,xls_mn,UpList)
+            FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList)
         else:
-            OuterAction(driver,FolURL2,xls_cd,xls_mn,UpList)
+            OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList)
         #---------------------------------------------------------------------------------------------------------------------
+    print("処理終了")
         
 #モジュールインポート
 from appium import webdriver
