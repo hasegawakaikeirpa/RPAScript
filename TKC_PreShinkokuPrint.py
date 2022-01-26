@@ -236,6 +236,11 @@ def TaxLogin(FolURL2,driver,Sikibetu,ID,Hub,ObjName):
                 NoMsg = ImgCheck(FolURL2, "NoMessage.png", conf, LoopVal)
                 if NoMsg[0] == True:
                     pg.press('return')
+                conf = 0.9
+                LoopVal = 10
+                NoMsg = ImgCheck(FolURL2, "KokuzeiKakunin.png", conf, LoopVal)
+                if NoMsg[0] == True:
+                    pg.press('return')
             time.sleep(1)
         return True
     except:
@@ -340,15 +345,18 @@ def OpenAction(LoopList,FolURL2):
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
         pg.press('f4')
+        time.sleep(1)
         FileName = "PreMSGTrigger.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
-        pg.press('f4') 
+        pg.press('f4')
+        time.sleep(1) 
     FileName = "Gyousuu.png"
     while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
         time.sleep(1)
     ImgClick(FolURL2,FileName,conf,LoopVal)
     pg.press('f10')
+    time.sleep(1)
     FileName = "DataMoveCheck.png"
     while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
         time.sleep(1)
@@ -561,7 +569,9 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
             NewTitle = os.path.join(current_dir,file_name)
             NewTitle = NewTitle.split("プレ申告データ")
             NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
-            PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
+            NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","211"]
+            if not Nos[0] in NGList:
+                PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
 
 print(PreList)
 myList = []
