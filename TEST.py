@@ -253,6 +253,7 @@ pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol 
 #path = path.replace('\\','/')#先
 PDFFileList = os.walk(pt)
 PreList = []
+#PreList = []
 for current_dir, sub_dirs, files_list  in PDFFileList:
     Count_dir = 0
     for file_name in files_list: 
