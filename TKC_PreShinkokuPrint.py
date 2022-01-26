@@ -571,7 +571,7 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
             NewTitle = os.path.join(current_dir,file_name)
             NewTitle = NewTitle.split("プレ申告データ")
             NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
-            NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","211"]
+            NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","221","223","240","249"]
             if not Nos[0] in NGList:
                 PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
 
