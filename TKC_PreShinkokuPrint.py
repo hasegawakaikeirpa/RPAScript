@@ -308,7 +308,7 @@ def OpenAction(LoopList,FolURL2):
         FileName = "Gyousuu.png"
         ImgClick(FolURL2,FileName,conf,LoopVal)
         pg.press(['delete','delete','delete'])
-        pg.press(RowPar)
+        pg.write(RowPar, interval=0.01)#直接SENDできないのでpyautoguiで入力
         pg.press('return')
         time.sleep(1)
         FileName = "PreMSGTrigger.png"
