@@ -210,6 +210,9 @@ def TaxLogin(FolURL2,driver,Sikibetu,ID,Hub,ObjName):
             pg.write(Sikibetu, interval=0.01)#直接SENDできないのでpyautoguiで入力
             pg.press('return')
     except:
+        if TaxNoBox[0] == True:
+            ImgClick(FolURL2,FileName,conf,LoopVal)
+            pg.write(ID, interval=0.01)#直接SENDできないのでpyautoguiで入力
             pg.press('return')
     FileName = "TihouzeiAnsyou.png"
     time.sleep(1)
@@ -220,6 +223,8 @@ def TaxLogin(FolURL2,driver,Sikibetu,ID,Hub,ObjName):
             pg.write(ID, interval=0.01)#直接SENDできないのでpyautoguiで入力
             pg.press('return')
     except:
+            ImgClick(FolURL2,FileName,conf,LoopVal)
+            pg.write(Sikibetu, interval=0.01)#直接SENDできないのでpyautoguiで入力
             pg.press('return')
     FileName = "MSGLogin.png"
     ImgClick(FolURL2,FileName,conf,LoopVal)
@@ -303,7 +308,7 @@ def SyanaiCDChange(intNo):
         Te = intNo[-3:]
         return Te       
 #----------------------------------------------------------------------------------------------------------------------
-def OpenAction(LoopList,FolURL2):
+def OpenAction(LoopList,FolURL2,LogList):
     conf = 0.9
     LoopVal = 100
     for LoopListItem in LoopList:
@@ -325,6 +330,8 @@ def OpenAction(LoopList,FolURL2):
         FileName = "Insatu.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
+            conf = 0.9
+            LoopVal = 10
             if ImgCheck(FolURL2, "PreMSG.png", conf, LoopVal)[0] == True:
                 pg.press('return')
         ImgClick(FolURL2,FileName,conf,LoopVal)
@@ -348,6 +355,8 @@ def OpenAction(LoopList,FolURL2):
         if ImgCheck(FolURL2, "PDFReplace.png", conf, LoopVal)[0] == True:
             pg.press('y')
         time.sleep(1)
+        LogList.append(LoopListItem[3])
+        pd.DataFrame(LogList).to_csv(FolURL2 + '/Log/Log.csv', encoding = "shift-jis")
         ImgClick(FolURL2,"PrintCancelBtn.png",conf,LoopVal) 
         FileName = "Insatu.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
@@ -431,6 +440,7 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKC_PreSinkokuDown"
+    LogList = []
     #----------------------------------------------------------------------------------------------------------------------
     for NoListItem in NoList:
         LoopList = []
@@ -469,46 +479,57 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
         FileName = "KanyoMSG.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
-        LLog = TaxLogin(FolURL2,driver,IDS[4],IDS[5],Hub,ObjName)
-        if LLog == False:
-            LoginErr = False
+            FileName = "NewEnt.png"
+            conf = 0.9 
+            LoopVal = 10
+            NewEnt = ImgCheck(FolURL2, FileName, conf, LoopVal)
+            if NewEnt[0] == True:
+                FileName = "NewEntCancel.png"
+                ImgClick(FolURL2, FileName, conf, LoopVal)
+                time.sleep(1)
+        if NewEnt[0] == True:
+            LLog = TaxLogin(FolURL2,driver,IDS[4],IDS[5],Hub,ObjName)
+            if LLog == False:
+                LoginErr = False
+            else:
+                LoginErr = True
+            if LoginErr == True:
+                conf = 0.9
+                LoopVal = 100
+                while pg.locateOnScreen(FolURL2 + "/MSGOKTrigger.png", confidence=0.9) is None:
+                    time.sleep(1)
+                List = ["TihouzeiTab.png","TihouzeiTab2.png"]
+                IA = ImgCheckForList(FolURL2,List,conf)
+                if IA[0] == True:
+                    ImgClick(FolURL2,IA[1],conf,LoopVal)
+                    time.sleep(1)
+                    ImgClick(FolURL2,"DayStart.png",conf,LoopVal)
+                    pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                    pg.press('return')
+                    pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                    pg.press('return')
+                    time.sleep(1)
+                    pg.press('1')
+                    time.sleep(1)
+                    pg.press(['return','return','return'])
+                    pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                    pg.press('return')
+                    pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                    pg.press('return')
+                    Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
+                    pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
+                    pg.press('return')
+                    time.sleep(1)
+                    ImgClick(FolURL2,"FindBtn.png",conf,LoopVal)
+                    time.sleep(1)
+                    #同月同関与先のプレ申告のお知らせ数分ループ
+                    OpenAction(LoopList,FolURL2,LogList)
+                    DeleteOMSData(driver,FolURL2)
+                    time.sleep(1)
+            #tax1PictureButton#法人決算ボタン
+            #tax3PictureButton#個人決算ボタン
         else:
-            LoginErr = True
-        if LoginErr == True:
-            conf = 0.9
-            LoopVal = 100
-            while pg.locateOnScreen(FolURL2 + "/MSGOKTrigger.png", confidence=0.9) is None:
-                time.sleep(1)
-            List = ["TihouzeiTab.png","TihouzeiTab2.png"]
-            IA = ImgCheckForList(FolURL2,List,conf)
-            if IA[0] == True:
-                ImgClick(FolURL2,IA[1],conf,LoopVal)
-                time.sleep(1)
-                ImgClick(FolURL2,"DayStart.png",conf,LoopVal)
-                pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
-                pg.press('return')
-                pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
-                pg.press('return')
-                time.sleep(1)
-                pg.press('1')
-                time.sleep(1)
-                pg.press(['return','return','return'])
-                pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
-                pg.press('return')
-                pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
-                pg.press('return')
-                Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
-                pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
-                pg.press('return')
-                time.sleep(1)
-                ImgClick(FolURL2,"FindBtn.png",conf,LoopVal)
-                time.sleep(1)
-                #同月同関与先のプレ申告のお知らせ数分ループ
-                OpenAction(LoopList,FolURL2)
-                DeleteOMSData(driver,FolURL2)
-                time.sleep(1)
-        #tax1PictureButton#法人決算ボタン
-        #tax3PictureButton#個人決算ボタン
+            print("未登録")
 
 #モジュールインポート
 from appium import webdriver
@@ -577,7 +598,8 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
             NewTitle = os.path.join(current_dir,file_name)
             NewTitle = NewTitle.split("プレ申告データ")
             NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
-            NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","221","223","240","249"]
+            NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","221",\
+                "223","240","249","251","268","282","285","305","306","309","317"]
             if not Nos[0] in NGList:
                 PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
 
