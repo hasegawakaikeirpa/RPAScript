@@ -319,6 +319,8 @@ def OpenAction(LoopList,FolURL2):
         FileName = "Insatu.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
+            if ImgCheck(FolURL2, "PreMSG.png", conf, LoopVal)[0] == True:
+                pg.press('return')
         ImgClick(FolURL2,FileName,conf,LoopVal)
         FileName = "SkyPDFBtn.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
