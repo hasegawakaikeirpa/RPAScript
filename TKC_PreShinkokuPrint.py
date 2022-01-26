@@ -1,7 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------------
 from msilib.schema import File
-
-
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -300,14 +298,14 @@ def OpenAction(LoopList,FolURL2):
     for LoopListItem in LoopList:
         RowParList = LoopListItem[0].split("[")
         RowPar = RowParList[1].split("]")
-        RowPar = RowPar[0]
+        RowPar = RowPar[0]        
         time.sleep(1)
         FileName = "Gyousuu.png"
         ImgClick(FolURL2,FileName,conf,LoopVal)
         pg.press(['delete','delete','delete'])
         pg.press(RowPar)
         pg.press('return')
-        time.sleep(1)                
+        time.sleep(1)
         FileName = "PreMSGTrigger.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
@@ -322,7 +320,7 @@ def OpenAction(LoopList,FolURL2):
             time.sleep(1)
         ImgClick(FolURL2,FileName,conf,LoopVal)
         time.sleep(1)
-        pyperclip.copy(LoopListItem[3])
+        pyperclip.copy(str(LoopListItem[3]))
         pyautogui.hotkey('ctrl','v')
         FileName = "FileOpenCheck.png"
         FNO = ImgCheck(FolURL2, FileName, conf, LoopVal)
@@ -346,7 +344,6 @@ def OpenAction(LoopList,FolURL2):
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
         pg.press('f4') 
-        x = x + 1
     FileName = "Gyousuu.png"
     while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
         time.sleep(1)
@@ -357,7 +354,7 @@ def OpenAction(LoopList,FolURL2):
         time.sleep(1)
     FileName = "DataPCMMove.png"
     ImgClick(FolURL2, FileName, conf, LoopVal)
-    time.sleep(1) 
+    time.sleep(1)
 #----------------------------------------------------------------------------------------------------------------------
 def DeleteOMSData(driver,FolURL2):
     FileName = "OMSTITLE.png"
