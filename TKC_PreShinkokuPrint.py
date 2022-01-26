@@ -204,17 +204,23 @@ def TaxLogin(FolURL2,driver,Sikibetu,ID,Hub,ObjName):
     LoopVal = 10000
     FileName = "KokuzeiAnsyou.png"
     TaxNoBox = ImgCheck(FolURL2,FileName,conf,LoopVal)
-    if TaxNoBox[0] == True:
-        ImgClick(FolURL2,FileName,conf,LoopVal)
-        pg.write(Sikibetu, interval=0.01)#直接SENDできないのでpyautoguiで入力
-        pg.press('return')
+    try:
+        if TaxNoBox[0] == True:
+            ImgClick(FolURL2,FileName,conf,LoopVal)
+            pg.write(Sikibetu, interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press('return')
+    except:
+            pg.press('return')
     FileName = "TihouzeiAnsyou.png"
     time.sleep(1)
     TaxNoBox = ImgCheck(FolURL2,FileName,conf,LoopVal)
-    if TaxNoBox[0] == True:
-        ImgClick(FolURL2,FileName,conf,LoopVal)
-        pg.write(ID, interval=0.01)#直接SENDできないのでpyautoguiで入力
-        pg.press('return')
+    try:
+        if TaxNoBox[0] == True:
+            ImgClick(FolURL2,FileName,conf,LoopVal)
+            pg.write(ID, interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press('return')
+    except:
+            pg.press('return')
     FileName = "MSGLogin.png"
     ImgClick(FolURL2,FileName,conf,LoopVal)
     FileName = "MSGOKTrigger.png"
