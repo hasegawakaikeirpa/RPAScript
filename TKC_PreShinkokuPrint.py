@@ -487,6 +487,7 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
                 FileName = "NewEntCancel.png"
                 ImgClick(FolURL2, FileName, conf, LoopVal)
                 time.sleep(1)
+                break
         if NewEnt[0] == True:
             LLog = TaxLogin(FolURL2,driver,IDS[4],IDS[5],Hub,ObjName)
             if LLog == False:
