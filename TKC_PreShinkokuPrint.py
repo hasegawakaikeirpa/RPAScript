@@ -488,7 +488,7 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
                 ImgClick(FolURL2, FileName, conf, LoopVal)
                 time.sleep(1)
                 break
-        if NewEnt[0] == True:
+        if NewEnt[0] == False:
             LLog = TaxLogin(FolURL2,driver,IDS[4],IDS[5],Hub,ObjName)
             if LLog == False:
                 LoginErr = False
