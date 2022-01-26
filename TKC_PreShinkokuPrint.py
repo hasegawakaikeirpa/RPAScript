@@ -479,16 +479,20 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
         FileName = "KanyoMSG.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
-            FileName = "NewEnt.png"
             conf = 0.9 
             LoopVal = 10
-            NewEnt = ImgCheck(FolURL2, FileName, conf, LoopVal)
+            NewEnt = ImgCheck(FolURL2, "NewEnt.png", conf, LoopVal)
+            DoubleOpen = ImgCheck(FolURL2, "DoubleOpen.png", conf, LoopVal)
             if NewEnt[0] == True:
-                FileName = "NewEntCancel.png"
-                ImgClick(FolURL2, FileName, conf, LoopVal)
+                ImgClick(FolURL2, "NewEntCancel.png", conf, LoopVal)
                 time.sleep(1)
                 break
-        if NewEnt[0] == False:
+            elif DoubleOpen[0] == True:
+                pg.press(['return'])
+                while pg.locateOnScreen(FolURL2 + "/ DoubleOpenNext.png", confidence=0.9) is None:
+                    time.sleep(1)
+                break
+        if NewEnt[0] == False or DoubleOpen[0] == False:
             LLog = TaxLogin(FolURL2,driver,IDS[4],IDS[5],Hub,ObjName)
             if LLog == False:
                 LoginErr = False
@@ -588,6 +592,10 @@ pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol 
 PDFFileList = os.walk(pt)
 Cou = 1
 PreList=[]
+NgLog = pd.read_csv(FolURL2 + "/RPAPhoto/TKC_PreSinkokuDown/Log/Log.csv",encoding='utf-8')
+NgRow = np.array(NgLog).shape[0]#配列行数取得
+NgCol = np.array(NgLog).shape[1]#配列列数取得
+
 for current_dir, sub_dirs, files_list  in PDFFileList:
     Count_dir = 0
     for file_name in files_list: 
@@ -599,12 +607,22 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
             NewTitle = os.path.join(current_dir,file_name)
             NewTitle = NewTitle.split("プレ申告データ")
             NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
-            NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","221",\
-                "223","240","249","251","268","282","285","305","306","309","317"]
-            if not Nos[0] in NGList:
+            #NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","221",\
+            #    "223","240","249","251","268","282","285","305","306","309","317"]
+            NoF = True
+            for x in range(NgRow):
+                NgDataRow = NgLog.iloc[x,:]
+                NgCodeCode = str(NgDataRow[1])
+                if not Nos[0] == NgCodeCode:
+                    NoF = True
+                else:
+                    NoF = False
+                    break
+            if NoF == True:
                 PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
-
+print(NgLog)
 print(PreList)
+
 myList = []
 for PreListItem in PreList: 
     myList.append(PreListItem[1])
