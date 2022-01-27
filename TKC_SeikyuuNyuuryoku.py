@@ -353,7 +353,9 @@ def OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         pg.press('return')
         time.sleep(1)
         pg.press('f4')
+        time.sleep(1)
         pg.press('f4')
+        time.sleep(1)
         FileName = "InputOK.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
@@ -436,10 +438,10 @@ Lday = calendar.monthrange(dt.today().year,dt.today().month)
 idir = r'\\Sv05121a\e\特２ 特別\Ⅲ総務\１　総務'
 file_path = tkinter.filedialog.askopenfilename(initialdir = idir)
 #file_path = file_path.replace("\u3000","\　")
-xls_data = pd.read_excel(file_path, sheet_name=0)
+xls_data = pd.read_excel(file_path, sheet_name=0,engine="openpyxl")
 print(xls_data)
 HeadRow = input("ヘッダー行を指定してください。\n")
-xls_data = pd.read_excel(file_path, sheet_name=0,header=int(HeadRow))
+xls_data = pd.read_excel(file_path, sheet_name=0,header=int(HeadRow),engine="openpyxl")
 print(xls_data)
 #--------------------------------------------------------------------------------
 KamokuCD = input("科目コードを指定してください。償却資産 = 190 支払調書 = 140\n")
