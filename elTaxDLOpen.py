@@ -40,6 +40,18 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             except:
                 print("失敗")
 #----------------------------------------------------------------------------------------------------------------------
+def ImgCheck(FolURL2,FileName,conf,LoopVal):#画像があればTrueを返す関数
+    ImgURL = FolURL2 + "/" + FileName
+    for x in range(LoopVal):
+        try:
+            p = pg.locateOnScreen(ImgURL, confidence=conf)
+            x, y = pg.center(p)
+            return True,x,y
+        except:
+            Flag = 0
+    if Flag == 0:
+        return False,"",""
+#----------------------------------------------------------------------------------------------------------------------
 def MainFlow(BatUrl,FolURL2,ImgFolName):
     #WebDriver起動バッチを管理者権限で起動---------------------------------------------------------------------------------
     WDO = ExeOpen(BatUrl)
@@ -49,23 +61,35 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
 
     #----------------------------------------------------------------------------------------------------------------------
     #elTaxを起動-------------------------------------------------------------------------------------------------------------
-    elTaxURL = "C:\Program Files (x86)\LT\LTN\BIN\LTVerUp.bat"
+    elTaxURL = "C:\Program Files (x86)\LT\LTN\BIN\LtnMain.exe"
     ExeOpen(elTaxURL)
     #time.sleep(10)
     FolURL2 = os.getcwd().replace('\\','/') + "/RPAPhoto/elTaxDLOpen/"
     FileName = "VCheck.png"
     while pg.locateOnScreen(FolURL2 + FileName, confidence=0.9) is None:
         time.sleep(1)
-    FileName = "VCheckNext.png"
-    conf = 0.9
-    LoopVal = 100
-    ImgClick(FolURL2,FileName,conf,LoopVal)
+        conf = 0.9
+        LoopVal = 100
+        OF = ImgCheck(FolURL2,"OpenWindow.png",conf,LoopVal)
+        if OF[0] == True:
+            break
+    if OF[0] == True:
+        FileName = "OpenWindow.png"
+        while pg.locateOnScreen(FolURL2 + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        print("起動しました。")
+        return driver
+    else:
+        FileName = "VCheckNext.png"
+        conf = 0.9
+        LoopVal = 100
+        ImgClick(FolURL2,FileName,conf,LoopVal)
     #----------------------------------------------------------------------------------------------------------------------
-    FileName = "OpenWindow.png"
-    while pg.locateOnScreen(FolURL2 + FileName, confidence=0.9) is None:
-        time.sleep(1)
-    print("起動しました。")
-    return driver
+        FileName = "OpenWindow.png"
+        while pg.locateOnScreen(FolURL2 + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        print("起動しました。")
+        return driver
     #----------------------------------------------------------------------------------------------------------------------
 #モジュールインポート
 from appium import webdriver

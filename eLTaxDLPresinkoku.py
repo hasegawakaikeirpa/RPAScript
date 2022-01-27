@@ -184,7 +184,6 @@ def EraceIMGWait(FolURL2,FileName):
     except:
         print("待機終了")
 #----------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------
 def SortPDF(PDFName):
     Fol = str(dt.today().year) + "-" + str(dt.today().month)
     pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
@@ -211,11 +210,68 @@ def DeleteData(FolURL2,Cou):#初めの画面で引数Cou分削除操作繰り返
         pg.press('y')
         pg.press('tab')
 #----------------------------------------------------------------------------------------------------------------------
+def ReturnPar(FolURL2,Loop_Code,Loop_Name,MasterCSV):
+    MRow = np.array(MasterCSV).shape[0]#配列行数取得
+    MCol = np.array(MasterCSV).shape[1]#配列列数取得
+    for x in range(MRow):
+        MDataRow = MasterCSV.iloc[x,:]
+        MCode = str(MDataRow["SyanaiCode"])
+        if str(Loop_Code) == MCode:
+            return str(Loop_Code),Loop_Name,MDataRow["TKCKokuzeiUserCode"],MDataRow["TKCTihouzeiUserID"],\
+                MDataRow["MirokuKokuzeiUserCode"],MDataRow["MirokuTihouzeiUserID"],MDataRow["etaxPass"],MDataRow["eltaxPass"]
+def NewEnt(FolURL2,MasterPar):
+    conf = 0.9
+    LoopVal = 100
+    List = ["NewEntBtn.png","NewEntBtn2.png"]
+    ILA = ImgCheckForList(FolURL2, List, conf)
+    SCode = MasterPar[0]
+    TName = MasterPar[1]
+    Tetax = MasterPar[2]
+    Teltax = MasterPar[3]
+    Metax = MasterPar[4]
+    Meltax = MasterPar[5]
+    etaxPass = MasterPar[6]
+    eltaxPass = MasterPar[7]
+    if ILA[0] == True:
+        ImgClick(FolURL2, ILA[1], conf, LoopVal)
+        while pg.locateOnScreen(FolURL2 + "NewEntWin.png", confidence=0.9) is None:
+            time.sleep(1)
+        try:
+            pg.write(Teltax, interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press('tab')
+        except:
+            pg.write(Meltax, interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press('tab')
+        try:
+            EntName = str(SCode + "_" + TName)
+            pyperclip.copy(EntName)
+            pyautogui.hotkey('ctrl','v')
+            pg.press('tab')
+        except:
+            pg.write("ななし", interval=0.01)#直接SENDできないのでpyautoguiで入力
+        ImgClick(FolURL2,"NewEntEndBtn.png", conf, LoopVal)
+        while pg.locateOnScreen(FolURL2 + "NewEntEndCheck.png", confidence=0.9) is None:
+            time.sleep(1)
+        pg.press('return')
+        time.sleep(1)
+
 def MainFlow(FolURL2,PreList,MasterCSV,NoList):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = elTaxDLOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
-    FolURL2 = FolURL2 + "/RPAPhoto/elTaxDLOpen"
-    return True
+    FolURL2 = FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku/"
+    LogList = []
+    #----------------------------------------------------------------------------------------------------------------------
+    for NoListItem in NoList:
+        LoopList = []
+        for PreListItem in PreList:#PreListItem[0]=URL,PreListItem=[1]=関与先コード
+            if NoListItem == PreListItem[1]:
+                LoopList.append(PreListItem)
+    for LoopListItem in LoopList:
+        Loop_Code = LoopListItem[1]
+        Loop_Name = LoopListItem[4]
+        MasterPar = ReturnPar(FolURL2,Loop_Code,Loop_Name,MasterCSV)
+        NewEnt(FolURL2,MasterPar)
+
 
 #モジュールインポート
 from appium import webdriver
@@ -285,6 +341,8 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
     for file_name in files_list: 
         if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
             Nos = file_name.split("_")
+            FolName = current_dir.split("_")
+            FolName = FolName[1]
             NewTitle = os.path.join(current_dir,file_name)
             NewTitle = NewTitle.split("プレ申告データ")
             NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
@@ -300,7 +358,7 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
                     NoF = False
                     break
             if NoF == True:
-                PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
+                PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle,FolName])
 print(NgLog)
 print(PreList)
 
