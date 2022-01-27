@@ -246,11 +246,13 @@ def TaxLogin(FolURL2,driver,Sikibetu,ID,Hub,ObjName):
                 LoopVal = 10
                 NoMsg = ImgCheck(FolURL2, "NoMessage.png", conf, LoopVal)
                 if NoMsg[0] == True:
+                    ImgClick(FolURL2,"NoMessage.png",conf,LoopVal)
                     pg.press('return')
                 conf = 0.9
                 LoopVal = 10
                 NoMsg = ImgCheck(FolURL2, "KokuzeiKakunin.png", conf, LoopVal)
                 if NoMsg[0] == True:
+                    ImgClick(FolURL2,"KokuzeiKakunin.png",conf,LoopVal)
                     pg.press('return')
             time.sleep(1)
         return True
@@ -355,8 +357,8 @@ def OpenAction(LoopList,FolURL2,LogList):
         if ImgCheck(FolURL2, "PDFReplace.png", conf, LoopVal)[0] == True:
             pg.press('y')
         time.sleep(1)
-        LogList.append(LoopListItem[3])
-        pd.DataFrame(LogList).to_csv(FolURL2 + '/Log/Log.csv', encoding = "shift-jis")
+        NgLog.append(LoopListItem[1])
+        pd.DataFrame(NgLog).to_csv(FolURL2 + '/Log/Log.csv', encoding = "utf-8")
         ImgClick(FolURL2,"PrintCancelBtn.png",conf,LoopVal) 
         FileName = "Insatu.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
@@ -488,9 +490,12 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
                 time.sleep(1)
                 break
             elif DoubleOpen[0] == True:
+                ImgClick(FolURL2, "DoubleOpen.png", conf, LoopVal)
                 pg.press(['return'])
-                while pg.locateOnScreen(FolURL2 + "/ DoubleOpenNext.png", confidence=0.9) is None:
+                while pg.locateOnScreen(FolURL2 + "/DoubleOpenNext.png", confidence=0.9) is None:
                     time.sleep(1)
+                ImgClick(FolURL2, "DoubleOpenNext.png", conf, LoopVal)
+                pg.press(['return'])
                 break
         if NewEnt[0] == False and DoubleOpen[0] == False:
             LLog = TaxLogin(FolURL2,driver,IDS[4],IDS[5],Hub,ObjName)
