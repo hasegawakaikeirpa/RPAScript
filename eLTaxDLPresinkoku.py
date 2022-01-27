@@ -125,8 +125,8 @@ def ImgCheck(FolURL2,FileName,conf,LoopVal):#画像があればTrueを返す関�
     ImgURL = FolURL2 + "/" + FileName
     for x in range(LoopVal):
         try:
-            p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
-            x, y = pyautogui.center(p)
+            p = pg.locateOnScreen(ImgURL, confidence=conf)
+            x, y = pg.center(p)
             return True,x,y
         except:
             Flag = 0
@@ -137,8 +137,8 @@ def ImgNothingCheck(FolURL2,FileName,conf,LoopVal):#画像がなければTrueを
     ImgURL = FolURL2 + "/" + FileName
     for x in range(LoopVal):
         try:
-            p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
-            x, y = pyautogui.center(p)
+            p = pg.locateOnScreen(ImgURL, confidence=conf)
+            x, y = pg.center(p)
             return False
         except:
             Flag = 0
@@ -150,8 +150,8 @@ def ImgCheckForList(FolURL2,List,conf):#リスト内の画像があればTrueと
         for ListItem in List:
             ImgURL = FolURL2 + "/" + ListItem
             try:
-                p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
-                x, y = pyautogui.center(p)
+                p = pg.locateOnScreen(ImgURL, confidence=conf)
+                x, y = pg.center(p)
                 return True,ListItem
                 break
             except:
@@ -166,9 +166,9 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #正常待機後処理
             for y in range(10):
                 try:
-                    p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
-                    x, y = pyautogui.center(p)
-                    pyautogui.click(x, y)
+                    p = pg.locateOnScreen(ImgURL, confidence=conf)
+                    x, y = pg.center(p)
+                    pg.click(x, y)
                     time.sleep(1)
                     return x, y
                 except:
@@ -219,48 +219,120 @@ def ReturnPar(FolURL2,Loop_Code,Loop_Name,MasterCSV):
         if str(Loop_Code) == MCode:
             return str(Loop_Code),Loop_Name,MDataRow["TKCKokuzeiUserCode"],MDataRow["TKCTihouzeiUserID"],\
                 MDataRow["MirokuKokuzeiUserCode"],MDataRow["MirokuTihouzeiUserID"],MDataRow["etaxPass"],MDataRow["eltaxPass"]
+#----------------------------------------------------------------------------------------------------------------------
 def NewEnt(FolURL2,MasterPar):
-    conf = 0.9
-    LoopVal = 100
-    List = ["NewEntBtn.png","NewEntBtn2.png"]
-    ILA = ImgCheckForList(FolURL2, List, conf)
-    SCode = MasterPar[0]
-    TName = MasterPar[1]
-    Tetax = MasterPar[2]
-    Teltax = MasterPar[3]
-    Metax = MasterPar[4]
-    Meltax = MasterPar[5]
-    etaxPass = MasterPar[6]
-    eltaxPass = MasterPar[7]
-    if ILA[0] == True:
-        ImgClick(FolURL2, ILA[1], conf, LoopVal)
-        while pg.locateOnScreen(FolURL2 + "NewEntWin.png", confidence=0.9) is None:
+    try:
+        conf = 0.9
+        LoopVal = 100
+        List = ["NewEntBtn.png","NewEntBtn2.png"]
+        ILA = ImgCheckForList(FolURL2, List, conf)
+        SCode = MasterPar[0]
+        TName = MasterPar[1]
+        Tetax = MasterPar[2]
+        Teltax = MasterPar[3]
+        Metax = MasterPar[4]
+        Meltax = MasterPar[5]
+        etaxPass = MasterPar[6]
+        eltaxPass = MasterPar[7]
+        if ILA[0] == True:
+            ImgClick(FolURL2, ILA[1], conf, LoopVal)
+            while pg.locateOnScreen(FolURL2 + "NewEntWin.png", confidence=0.9) is None:
+                time.sleep(1)
+            try:
+                pg.write(Teltax, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pg.press('tab')
+            except:
+                pg.write(Meltax, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pg.press('tab')
+            try:
+                EntName = jaconv.h2z(str(SCode + "_" + TName),digit=True, ascii=True,kana=True)
+                pyperclip.copy(EntName)
+                pg.hotkey('ctrl','v')
+                pg.press('tab')
+            except:
+                pg.write("ななし", interval=0.01)#直接SENDできないのでpyautoguiで入力
+            ImgClick(FolURL2,"NewEntEndBtn.png", conf, LoopVal)
+            while pg.locateOnScreen(FolURL2 + "NewEntEndCheck.png", confidence=0.9) is None:
+                time.sleep(1)
+            pg.press('return')
             time.sleep(1)
-        try:
-            pg.write(Teltax, interval=0.01)#直接SENDできないのでpyautoguiで入力
-            pg.press('tab')
-        except:
-            pg.write(Meltax, interval=0.01)#直接SENDできないのでpyautoguiで入力
-            pg.press('tab')
-        try:
-            EntName = str(SCode + "_" + TName)
-            pyperclip.copy(EntName)
-            pyautogui.hotkey('ctrl','v')
-            pg.press('tab')
-        except:
-            pg.write("ななし", interval=0.01)#直接SENDできないのでpyautoguiで入力
-        ImgClick(FolURL2,"NewEntEndBtn.png", conf, LoopVal)
-        while pg.locateOnScreen(FolURL2 + "NewEntEndCheck.png", confidence=0.9) is None:
-            time.sleep(1)
+        conf = 0.9
+        LoopVal = 100
+        List = ["DataSelectCombo.png","DataSelectCombo2.png"]
+        DSC = ImgCheckForList(FolURL2, List, conf)
+        if DSC[0] == True:
+            ImgClick(FolURL2, DSC[1], conf, LoopVal)
+        pg.press('down')
         pg.press('return')
-        time.sleep(1)
+        pg.press('tab')
+        pg.press('return')
+        while pg.locateOnScreen(FolURL2 + "MainWin.png", confidence=0.9) is None:
+            time.sleep(1)
+            return True
+    except:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def MsgOpenAction(FolURL2,MasterPar):
+    try:
+        SCode = MasterPar[0]
+        TName = MasterPar[1]
+        Tetax = MasterPar[2]
+        Teltax = MasterPar[3]
+        Metax = MasterPar[4]
+        Meltax = MasterPar[5]
+        etaxPass = MasterPar[6]
+        eltaxPass = MasterPar[7]
+        conf = 0.9
+        LoopVal = 10
+        FileName = "MsgCheck.png"
+        ImgClick(FolURL2, FileName, conf, LoopVal)
+        FileName = "MsgOpenBtn.png"
+        ImgClick(FolURL2, FileName, conf, LoopVal)
+        while pg.locateOnScreen(FolURL2 + "PotalLogMenu.png", confidence=0.9) is None:
+            time.sleep(1)
+        FileName = "PassTxtBox.png"
+        ImgClick(FolURL2, FileName, conf, LoopVal)
+        try:
+            pg.write(eltaxPass, interval=0.01)#直接SENDできないのでpyautoguiで入力
+        except:
+            pg.write(etaxPass, interval=0.01)#直接SENDできないのでpyautoguiで入力
+        FileName = "MsgLoginBtn.png"
+        ImgClick(FolURL2, FileName, conf, LoopVal)
+        while pg.locateOnScreen(FolURL2 + "MsgFirstWin.png", confidence=0.9) is None:
+            time.sleep(1)
+        return True
+    except:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def MsgAction(FolURL2,TaisyouNen,TaisyouTuki,MasterPar):
+    try:
+        DateF = str(TaisyouNen) + str('{0:02d}'.format(int(TaisyouTuki))) + "01"
+        Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
+        DateL = str(TaisyouNen) + str('{0:02d}'.format(int(TaisyouTuki))) + str(Lday[1])
+        conf = 0.9
+        LoopVal = 10
+        FileName = "DateTimeBox.png"
+        ImgClick(FolURL2, FileName, conf, LoopVal)
+        pg.press('delete')
+        pg.write(DateF, interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press('return')
+        pg.press(['tab','tab','tab'])
+        pg.press('delete')
+        pg.write(DateL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press('return')
+        FileName = "MsgFindBtn.png"
+        ImgClick(FolURL2, FileName, conf, LoopVal)
+        while pg.locateOnScreen(FolURL2 + "MsgWaitBar.png", confidence=0.9) is None:
+            time.sleep(1)
+        return True
+    except:
+        return False
 
 def MainFlow(FolURL2,PreList,MasterCSV,NoList):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = elTaxDLOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku/"
     LogList = []
-    #----------------------------------------------------------------------------------------------------------------------
     for NoListItem in NoList:
         LoopList = []
         for PreListItem in PreList:#PreListItem[0]=URL,PreListItem=[1]=関与先コード
@@ -270,8 +342,13 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
         Loop_Code = LoopListItem[1]
         Loop_Name = LoopListItem[4]
         MasterPar = ReturnPar(FolURL2,Loop_Code,Loop_Name,MasterCSV)
-        NewEnt(FolURL2,MasterPar)
-
+        NEF = NewEnt(FolURL2,MasterPar)
+        if NEF == True:
+            MOA = MsgOpenAction(FolURL2,MasterPar)
+            if MOA == True:
+                MA = MsgAction(FolURL2,TaisyouNen,TaisyouTuki,MasterPar)
+                if MA == True:
+                    
 
 #モジュールインポート
 from appium import webdriver
@@ -315,12 +392,15 @@ import shutil
 import calendar
 import pyperclip
 from collections import OrderedDict
-
+import jaconv
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL2 = os.getcwd().replace('\\','/')
 #--------------------------------------------------------------------------------
 TaisyouNen = input("対象[年]を西暦で入力してください。\n")
 TaisyouTuki = input("対象[月]を西暦で入力してください。\n")
+
+MsgAction(FolURL2,TaisyouNen,TaisyouTuki,[])
+
 TaisyouFol = str(TaisyouNen) + "-" + str(TaisyouTuki)
 #プレ申告のお知らせ保管フォルダチェック---------------------------------------------------------
 Fol = TaisyouFol
