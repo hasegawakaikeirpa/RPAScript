@@ -492,7 +492,7 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
                 while pg.locateOnScreen(FolURL2 + "/ DoubleOpenNext.png", confidence=0.9) is None:
                     time.sleep(1)
                 break
-        if NewEnt[0] == False or DoubleOpen[0] == False:
+        if NewEnt[0] == False and DoubleOpen[0] == False:
             LLog = TaxLogin(FolURL2,driver,IDS[4],IDS[5],Hub,ObjName)
             if LLog == False:
                 LoginErr = False
