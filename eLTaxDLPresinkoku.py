@@ -340,6 +340,8 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
                 LoopList.append(PreListItem)
     for LoopListItem in LoopList:
         Loop_Code = LoopListItem[1]
+        Loop_Row = int(int(LoopListItem[2]) - 1)
+        Loop_Title = LoopListItem[3]
         Loop_Name = LoopListItem[4]
         MasterPar = ReturnPar(FolURL2,Loop_Code,Loop_Name,MasterCSV)
         NEF = NewEnt(FolURL2,MasterPar)
@@ -348,7 +350,20 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
             if MOA == True:
                 MA = MsgAction(FolURL2,TaisyouNen,TaisyouTuki,MasterPar)
                 if MA == True:
-                    
+                    conf = 0.9
+                    LoopVal = 10                                     
+                    FileName = "MsgWaitBar.png"
+                    RowsTarget = ImgCheck(FolURL2, FileName, conf, LoopVal)
+                    xpos = RowsTarget[1]
+                    ypos = RowsTarget[2]
+                    xpos = xpos
+                    ypos = ypos + 30
+                    RowC = (25*Loop_Row)
+                    ypos = ypos + RowC       
+                    pg.click(xpos, ypos)
+                    time.sleep(1)
+
+
 
 #モジュールインポート
 from appium import webdriver
@@ -395,12 +410,12 @@ from collections import OrderedDict
 import jaconv
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL2 = os.getcwd().replace('\\','/')
+#既定のプリンターをMSPDFへ---------------------------------------------------------
+PT = os.getcwd().replace('\\','/') + '/PowerShellMyScripts/DefaultPrinterChangeMSPDF.ps1'
+proc = subprocess.call('powershell.exe -File ' + PT)
 #--------------------------------------------------------------------------------
 TaisyouNen = input("対象[年]を西暦で入力してください。\n")
 TaisyouTuki = input("対象[月]を西暦で入力してください。\n")
-
-MsgAction(FolURL2,TaisyouNen,TaisyouTuki,[])
-
 TaisyouFol = str(TaisyouNen) + "-" + str(TaisyouTuki)
 #プレ申告のお知らせ保管フォルダチェック---------------------------------------------------------
 Fol = TaisyouFol

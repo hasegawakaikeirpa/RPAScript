@@ -246,7 +246,7 @@ import WarekiHenkan
 import PDFMarge
 
 FolURL2 = os.getcwd().replace('\\','/')#先
-FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
+FolURL2 = FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku"
 CSVURL = FolURL2
 Fol = "2021-11"
 pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\eLTAX"
@@ -254,19 +254,6 @@ pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol 
 PDFFileList = os.walk(pt)
 PreList = []
 #PreList = []
-for current_dir, sub_dirs, files_list  in PDFFileList:
-    Count_dir = 0
-    for file_name in files_list: 
-        if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
-            Count_dir = Count_dir + 1
-    for file_name in files_list: 
-        if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
-            if not "[" in file_name:
-                Nos = file_name.split("_")
-                NewTitle = os.path.join(current_dir,file_name)
-                NewTitle = NewTitle.split("プレ申告データ")
-                NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
-                PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
-                FileUrl = os.path.join(current_dir,file_name)
-                os.remove(FileUrl)
-print(PreList)
+PT = os.getcwd().replace('\\','/') + '/PowerShellMyScripts/DefaultPrinterChangeMSPDF.ps1'
+proc = subprocess.call('powershell.exe -File ' + PT)
+time.sleep(1)
