@@ -285,21 +285,24 @@ def MasterCSVGet(FolURL2):
     conf = 0.9#画像認識感度
     LoopVal = 10#検索回数
     if ImgNothingCheck(FolURL2,FileName,conf,LoopVal) == True:#画像がなければTrueを返す
-       pg.keyDown('alt')
-       pg.press('j')
-       pg.keyUp('alt')
-       time.sleep(1)
-       pg.keyDown('alt')
-       pg.press('g')
-       pg.keyUp('alt')
-       time.sleep(1)
+        pg.keyDown('alt')
+        pg.press('j')
+        pg.keyUp('alt')
+        while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+            time.sleep(1) 
+        pg.keyDown('alt')
+        pg.press('g')
+        pg.keyUp('alt')
+        time.sleep(1)
     else:
-       pg.press('y')
-       time.sleep(1)
-       pg.keyDown('alt')
-       pg.press('j')
-       pg.keyUp('alt')
-       time.sleep(1)
+        pg.press('y')
+        time.sleep(1)
+        pg.keyDown('alt')
+        pg.press('j')
+        pg.keyUp('alt')
+        while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+            time.sleep(1) 
+        time.sleep(1)
 
     #出力したCSVを読込み----------------------------------------------------------------------------------------------------------
     CSVURL = FolURL2
@@ -387,7 +390,9 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                     time.sleep(1) 
                 pg.keyDown('alt')
                 pg.press('j')
-                pg.keyUp('alt') 
+                pg.keyUp('alt')
+                while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+                    time.sleep(1)  
                 time.sleep(1) 
                 pg.press('r') 
         else:
@@ -410,6 +415,8 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
             pg.keyDown('alt')
             pg.press('j')
             pg.keyUp('alt')
+            while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+                time.sleep(1) 
             time.sleep(1) 
             pg.press('r')
     else:
@@ -471,7 +478,9 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                 time.sleep(1) 
             pg.keyDown('alt')
             pg.press('j')
-            pg.keyUp('alt') 
+            pg.keyUp('alt')
+            while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+                time.sleep(1)  
             time.sleep(1) 
             pg.press('r') 
 def MainFlow(FolURL2):
@@ -484,6 +493,8 @@ def MainFlow(FolURL2):
     pg.keyDown('alt')
     pg.press('j')
     pg.keyUp('alt')
+    while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+        time.sleep(1) 
     CSVURL = FolURL2
     CSVName = '/SyomeiMaster'
     C_url = CSVURL + '/' + CSVName + '.CSV'
@@ -705,6 +716,8 @@ def MainFlow(FolURL2):
                     pg.keyDown('alt')
                     pg.press('j')
                     pg.keyUp('alt')
+                    while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+                        time.sleep(1) 
                     time.sleep(1)
                     pg.press('r') 
         else:
