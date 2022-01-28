@@ -516,9 +516,9 @@ def MainFlow(FolURL2):
             FileName = "Tantousya.png"
             while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
                 time.sleep(1) 
-                ImgClick(FolURL2,FileName,conf,LoopVal)
-                pg.press('Home')
-                pg.press('return')
+            ImgClick(FolURL2,FileName,conf,LoopVal)
+            pg.press('Home')
+            pg.press('return')
             time.sleep(1)
             #----------------------------------------------------------------------------------------------------------------------        
             Hub = "class_name"
