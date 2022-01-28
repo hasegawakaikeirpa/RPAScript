@@ -243,9 +243,9 @@ def FindMenu(driver,FolURL2,xls_cd):
     pg.write(xls_cd, interval=0.01)#直接SENDできないのでpyautoguiで入力
     pg.press('return')
     pg.press('f4')
-    time.sleep(5)
+    time.sleep(2)
     conf = 0.99999
-    LoopVal = 3
+    LoopVal = 1
     FileName = "NoData.png"
     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
         return False
@@ -450,14 +450,14 @@ FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_SeikyuuNyuuryoku
 FolURL2 = os.getcwd().replace('\\','/')#先
 #--------------------------------------------------------------------------------
 ErrList = []
-EndFlag = False
+EndFlag = True
 while EndFlag == True:
     try:
         MainFlow(FolURL2,xls_data,KamokuCD,Lday)
-        EndFlag = True
+        EndFlag = False
     except:
         traceback.print_exc()
         ErrList.append([KamokuCD,xls_cd,xls_name,"失敗"])
         with open(FolURL2 + "/Log/ErrList.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
             pd.DataFrame(ErrList).to_csv(f)
-        EndFlag = False
+        EndFlag = True
