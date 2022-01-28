@@ -1,4 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------------
+#UUUUUUUUUUUUUUUUUUUPS
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
         try:
