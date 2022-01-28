@@ -528,11 +528,13 @@ def MainFlow(FolURL2):
         #---------------------------------------------------------------------------------------------------------------------- 
         #---------------------------------------------------------------------------------------------------------------------- 
         #---------------------------------------------------------------------------------------------------------------------- 
-        Hub = "class_name"
-        ObjName = "TMDateEdit"
-        ClassList = DriverFindClass(ObjName,driver)
-        ClassObjList = ClassList[1]
-        ClassObjList[3].click()
+        time.sleep(1)
+        ImgClick(FolURL2,"NendoBox.png",conf,LoopVal)#電子申告・申請タブを押す
+        # Hub = "class_name"
+        # ObjName = "TMDateEdit"
+        # ClassList = DriverFindClass(ObjName,driver)
+        # ClassObjList = ClassList[1]
+        # ClassObjList[3].click()
         #---------------------------------------------------------------------------------------------------------------------- 
         #---------------------------------------------------------------------------------------------------------------------- 
         #---------------------------------------------------------------------------------------------------------------------- 
@@ -595,7 +597,9 @@ def MainFlow(FolURL2):
                     time.sleep(1)
                 if ImgCheck(FolURL2,"FindCheckBoxNext.png",conf,LoopVal)[0] == False:
                     break
+            time.sleep(1)
             pg.press('left')
+            time.sleep(1)
             pg.keyDown('alt')
             pg.press('s')
             pg.keyUp('alt')
