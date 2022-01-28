@@ -436,10 +436,10 @@ Lday = calendar.monthrange(dt.today().year,dt.today().month)
 idir = r'\\Sv05121a\e\特２ 特別\Ⅲ総務\１　総務'
 file_path = tkinter.filedialog.askopenfilename(initialdir = idir)
 #file_path = file_path.replace("\u3000","\　")
-xls_data = pd.read_excel(file_path, sheet_name=0)
+xls_data = pd.read_excel(file_path, sheet_name=0,engine="openpyxl")
 print(xls_data)
 HeadRow = input("ヘッダー行を指定してください。\n")
-xls_data = pd.read_excel(file_path, sheet_name=0,header=int(HeadRow))
+xls_data = pd.read_excel(file_path, sheet_name=0,header=int(HeadRow),engine="openpyxl)
 print(xls_data)
 #--------------------------------------------------------------------------------
 KamokuCD = input("科目コードを指定してください。償却資産 = 190 支払調書 = 140\n")
@@ -449,7 +449,15 @@ KamokuCD = input("科目コードを指定してください。償却資産 = 19
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_SeikyuuNyuuryoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
 #--------------------------------------------------------------------------------
-try:
-    MainFlow(FolURL2,xls_data,KamokuCD,Lday)
-except:
-    traceback.print_exc()
+ErrList = []
+EndFlag = False
+while EndFlag == True:
+    try:
+        MainFlow(FolURL2,xls_data,KamokuCD,Lday)
+        EndFlag = True
+    except:
+        traceback.print_exc()
+        ErrList.append([KamokuCD,xls_cd,xls_name,"失敗"])
+        with open(FolURL2 + "/Log/ErrList.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
+            pd.DataFrame(ErrList).to_csv(f)
+        EndFlag = False
