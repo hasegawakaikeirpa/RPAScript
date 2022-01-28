@@ -515,11 +515,10 @@ def MainFlow(FolURL2):
             conf = 0.9#画像認識感度
             LoopVal = 10#検索回数
             FileName = "Tantousya.png"
-            while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
-                time.sleep(1) 
-            ImgClick(FolURL2,FileName,conf,LoopVal)
-            pg.press('Home')
-            pg.press('return')
+            if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                ImgClick(FolURL2,FileName,conf,LoopVal)
+                pg.press('Home')
+                pg.press('return')
             time.sleep(1)
             #----------------------------------------------------------------------------------------------------------------------        
             Hub = "class_name"
