@@ -31,7 +31,7 @@ def DriverUIWaitName(UIPATH,driver):#XPATH要素を取得するまで待機
             Flag = 0
     if Flag == 0:
         return False
-#----------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------r----------------------------------------------------------
 def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
         try:
@@ -314,14 +314,17 @@ def MasterCSVGet(FolURL2):
 def MainFirstAction(FolURL2,C_SCode,C_Name ):
     conf = 0.9#画像認識感度
     LoopVal = 10000#検索回数
+    time.sleep(1)
     if ImgCheck(FolURL2,"SousinKekka.png",conf,LoopVal)[0] == True:
         conf = 0.9#画像認識感度
         LoopVal = 10#検索回数
+        time.sleep(1)
         if ImgCheck(FolURL2,"SousinAfterErr.png",conf,LoopVal)[0] == True:
             pg.press('x')
             conf = 0.9#画像認識感度
             LoopVal = 20#検索回数
             FileName = "MSGNokori.png"
+            time.sleep(1)
             if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
                 pg.press('n')
                 time.sleep(1)
@@ -506,122 +509,152 @@ def MainFlow(FolURL2):
         C_Nendo = str(C_dfDataRow["年度"])
         C_Zeimoku = str(C_dfDataRow["税目"])
         C_Syurui = str(C_dfDataRow["申告種類"])
-        #------------------------------------------------------------------------------------------------------------------------
-        conf = 0.9#画像認識感度
-        LoopVal = 10#検索回数
-        FileName = "Tantousya.png"
-        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
-            ImgClick(FolURL2,FileName,conf,LoopVal)
-            pg.press('Home')
-            pg.press('return')
-        time.sleep(1)
-        #----------------------------------------------------------------------------------------------------------------------        
-        Hub = "class_name"
-        ObjName = "TMNumEdit"#関与先コードボックス
-        DriverClick(Hub,ObjName,driver)
-        pg.write(C_SCode, interval=0.01)#直接SENDできないのでpyautoguiで入力
-        pg.press(['return'])
-        #クラス要素クリック----------------------------------------------------------------------------------------------------------
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
-        time.sleep(1)
-        ImgClick(FolURL2,"NendoBox.png",conf,LoopVal)#電子申告・申請タブを押す
-        # Hub = "class_name"
-        # ObjName = "TMDateEdit"
-        # ClassList = DriverFindClass(ObjName,driver)
-        # ClassObjList = ClassList[1]
-        # ClassObjList[3].click()
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
-        #---------------------------------------------------------------------------------------------------------------------- 
+        if not "法人" in C_Zeimoku:
+            #------------------------------------------------------------------------------------------------------------------------
+            conf = 0.9#画像認識感度
+            LoopVal = 10#検索回数
+            FileName = "Tantousya.png"
+            if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                ImgClick(FolURL2,FileName,conf,LoopVal)
+                pg.press('Home')
+                pg.press('return')
+            time.sleep(1)
+            #----------------------------------------------------------------------------------------------------------------------        
+            Hub = "class_name"
+            ObjName = "TMNumEdit"#関与先コードボックス
+            DriverClick(Hub,ObjName,driver)
+            pg.write(C_SCode, interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press(['return'])
+            #クラス要素クリック----------------------------------------------------------------------------------------------------------
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
+            time.sleep(1)
+            ImgClick(FolURL2,"NendoBox.png",conf,LoopVal)#電子申告・申請タブを押す
+            # Hub = "class_name"
+            # ObjName = "TMDateEdit"
+            # ClassList = DriverFindClass(ObjName,driver)
+            # ClassObjList = ClassList[1]
+            # ClassObjList[3].click()
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
+            #---------------------------------------------------------------------------------------------------------------------- 
 
-        pg.write(C_Nendo, interval=0.01)#直接SENDできないのでpyautoguiで入力
-        pg.press(['return'])
-        pg.write(C_Nendo, interval=0.01)#直接SENDできないのでpyautoguiで入力
-        pg.press(['return'])
-        #----------------------------------------------------------------------------------------------------------------------
-        conf = 0.9#画像認識感度
-        LoopVal = 10#検索回数
-        FileName = "ZeimokuRadio.png"
-        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
-            pg.press(['tab'])
-        else:
-            pg.press(['right'])
-            pg.press(['right'])
-            pg.press(['tab'])
-        time.sleep(1)
-        #----------------------------------------------------------------------------------------------------------------------
-        SortURL = FolURL2 + '/ミロク税目分岐'
-        ZeimokuRow = SortCSVItem(SortURL,"Master",C_Zeimoku)
-        for x in range(ZeimokuRow):
+            pg.write(C_Nendo, interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press(['return'])
+            pg.write(C_Nendo, interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press(['return'])
+            #----------------------------------------------------------------------------------------------------------------------
+            conf = 0.9#画像認識感度
+            LoopVal = 10#検索回数
+            FileName = "ZeimokuRadio.png"
+            if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                pg.press(['tab'])
+            else:
+                pg.press(['right'])
+                pg.press(['right'])
+                pg.press(['tab'])
+            time.sleep(1)
+            #----------------------------------------------------------------------------------------------------------------------
+            SortURL = FolURL2 + '/ミロク税目分岐'
+            ZeimokuRow = SortCSVItem(SortURL,"Master",C_Zeimoku)
+            for x in range(ZeimokuRow):
+                pg.press(['down'])
+            pg.press(['space'])
             pg.press(['down'])
-        pg.press(['space'])
-        pg.press(['down'])
-        time.sleep(1)
-        SortURL = FolURL2 + '/ミロク税目分岐'
-        ZeimokuRow = SortCSVItem(SortURL,C_Zeimoku,C_Syurui)
-        for x in range(ZeimokuRow):
-            pg.press(['down'])
-        pg.press(['space'])
-        time.sleep(1)
-        #クラス要素クリック----------------------------------------------------------------------------------------------------------
-        Hub = "class_name"
-        ObjName = "TMBitBtn"#関与先コードボックス
-        ClassList = DriverFindClass(ObjName,driver)
-        ClassObjList = ClassList[1]
-        ClassObjList[1].click()
-        #----------------------------------------------------------------------------------------------------------------------
-        time.sleep(3)
-        #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-        List = ["FindCheckBox.png","FindCheckBox2.png","FindCheckBox3.png","FindCheckBox4.png"]
-        conf = 0.9#画像認識感度
-        LoopVal = 10#検索回数
-        ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-        conf = 0.9#画像認識感度
-        LoopVal = 10000#検索回数
-        if ListCheck[0] == True:
-            for x in range(100):
-                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-                if ListCheck[0] == True:
-                    LoopVal = 10#検索回数
-                    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-                    time.sleep(1)
-                else:
-                    time.sleep(1)
-                if ImgCheck(FolURL2,"FindCheckBoxNext.png",conf,LoopVal)[0] == False:
-                    break
             time.sleep(1)
-            pg.press('left')
+            SortURL = FolURL2 + '/ミロク税目分岐'
+            ZeimokuRow = SortCSVItem(SortURL,C_Zeimoku,C_Syurui)
+            for x in range(ZeimokuRow):
+                pg.press(['down'])
+            pg.press(['space'])
             time.sleep(1)
-            pg.keyDown('alt')
-            pg.press('s')
-            pg.keyUp('alt')
-            time.sleep(1)
-            if ImgCheck(FolURL2,"Tetuduki.png",conf,LoopVal)[0] == False:
+            #クラス要素クリック----------------------------------------------------------------------------------------------------------
+            Hub = "class_name"
+            ObjName = "TMBitBtn"#関与先コードボックス
+            ClassList = DriverFindClass(ObjName,driver)
+            ClassObjList = ClassList[1]
+            ClassObjList[1].click()
+            #----------------------------------------------------------------------------------------------------------------------
+            time.sleep(3)
+            #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+            List = ["FindCheckBox.png","FindCheckBox2.png","FindCheckBox3.png","FindCheckBox4.png"]
+            conf = 0.9#画像認識感度
+            LoopVal = 10#検索回数
+            ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+            conf = 0.9#画像認識感度
+            LoopVal = 10000#検索回数
+            if ListCheck[0] == True:
+                for x in range(100):
+                    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+                    if ListCheck[0] == True:
+                        LoopVal = 10#検索回数
+                        ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+                        time.sleep(1)
+                    else:
+                        time.sleep(1)
+                    if ImgCheck(FolURL2,"FindCheckBoxNext.png",conf,LoopVal)[0] == False:
+                        break
                 time.sleep(1)
-                if ImgCheck(FolURL2,"TihouTourokuKakunin.png",conf,LoopVal)[0] == False:
-                    #クラス要素クリック----------------------------------------------------------------------------------------------------------
-                    Hub = "AutomationID"
-                    ObjName = "DropDown"
-                    DriverClick(Hub,ObjName,driver)
-                    pg.press(['up','up','up'])
-                    pg.press('return')
-                    #クラス要素クリック----------------------------------------------------------------------------------------------------------
-                    Hub = "class_name"
-                    ObjName = "TMBitBtn"#関与先コードボックス
-                    ClassList = DriverFindClass(ObjName,driver)
-                    ClassObjList = ClassList[1]
-                    ClassObjList[1].click()
-                    #----------------------------------------------------------------------------------------------------------------------
-                    MainFirstAction(FolURL2,C_SCode,C_Name )
+                pg.press('left')
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('s')
+                pg.keyUp('alt')
+                time.sleep(1)
+                if ImgCheck(FolURL2,"Tetuduki.png",conf,LoopVal)[0] == False:
                     time.sleep(1)
+                    if ImgCheck(FolURL2,"TihouTourokuKakunin.png",conf,LoopVal)[0] == False:
+                        #クラス要素クリック----------------------------------------------------------------------------------------------------------
+                        Hub = "AutomationID"
+                        ObjName = "DropDown"
+                        DriverClick(Hub,ObjName,driver)
+                        pg.press(['up','up','up'])
+                        pg.press('return')
+                        #クラス要素クリック----------------------------------------------------------------------------------------------------------
+                        Hub = "class_name"
+                        ObjName = "TMBitBtn"#関与先コードボックス
+                        ClassList = DriverFindClass(ObjName,driver)
+                        ClassObjList = ClassList[1]
+                        ClassObjList[1].click()
+                        #----------------------------------------------------------------------------------------------------------------------
+                        MainFirstAction(FolURL2,C_SCode,C_Name )
+                        time.sleep(1)
+                    else:
+                        time.sleep(1)
+                        conf = 0.9#画像認識感度
+                        LoopVal = 10#検索回数
+                        if ImgCheck(FolURL2,"Tetuduki.png",conf,LoopVal)[0] == True:
+                            pg.press('return')
+                            time.sleep(1)
+                            pg.press('o')
+                            print("手続き未登録")
+                            time.sleep(1)
+                        else:
+                            pg.press('o')
+                            print("手続き未登録")
+                            time.sleep(1)
+                        #クラス要素クリック----------------------------------------------------------------------------------------------------------
+                        time.sleep(1)
+                        Hub = "AutomationID"
+                        ObjName = "DropDown"
+                        DriverClick(Hub,ObjName,driver)
+                        pg.press(['up','up','up'])
+                        pg.press('return')
+                        #クラス要素クリック----------------------------------------------------------------------------------------------------------
+                        Hub = "class_name"
+                        ObjName = "TMBitBtn"#関与先コードボックス
+                        ClassList = DriverFindClass(ObjName,driver)
+                        ClassObjList = ClassList[1]
+                        ClassObjList[1].click()
+                        #----------------------------------------------------------------------------------------------------------------------
+                        MainFirstAction(FolURL2,C_SCode,C_Name )
                 else:
                     time.sleep(1)
                     conf = 0.9#画像認識感度
@@ -650,58 +683,32 @@ def MainFlow(FolURL2):
                     ClassObjList = ClassList[1]
                     ClassObjList[1].click()
                     #----------------------------------------------------------------------------------------------------------------------
-                    MainFirstAction(FolURL2,C_SCode,C_Name )
+                    MainFirstAction(FolURL2,C_SCode,C_Name )               
             else:
-                time.sleep(1)
-                conf = 0.9#画像認識感度
-                LoopVal = 10#検索回数
-                if ImgCheck(FolURL2,"Tetuduki.png",conf,LoopVal)[0] == True:
-                    pg.press('return')
+                    print("検索結果なし")
                     time.sleep(1)
-                    pg.press('o')
-                    print("手続き未登録")
+                    ImgClick(FolURL2,"DensiSyomeiXXX.png",conf,LoopVal)#電子申告・申請タブを押す
+                    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                    List = ["DensiSyomeiOpenXXX.png","DensiSyomeiOpenXXX2.png"]
+                    conf = 0.9#画像認識感度
+                    LoopVal = 10#検索回数
+                    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+                    time.sleep(1) 
+                    ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+                    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                    List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
+                    conf = 0.9#画像認識感度
+                    LoopVal = 10#検索回数
+                    while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
+                        time.sleep(1)                  
+                    pg.keyDown('alt')
+                    pg.press('j')
+                    pg.keyUp('alt')
                     time.sleep(1)
-                else:
-                    pg.press('o')
-                    print("手続き未登録")
-                    time.sleep(1)
-                #クラス要素クリック----------------------------------------------------------------------------------------------------------
-                time.sleep(1)
-                Hub = "AutomationID"
-                ObjName = "DropDown"
-                DriverClick(Hub,ObjName,driver)
-                pg.press(['up','up','up'])
-                pg.press('return')
-                #クラス要素クリック----------------------------------------------------------------------------------------------------------
-                Hub = "class_name"
-                ObjName = "TMBitBtn"#関与先コードボックス
-                ClassList = DriverFindClass(ObjName,driver)
-                ClassObjList = ClassList[1]
-                ClassObjList[1].click()
-                #----------------------------------------------------------------------------------------------------------------------
-                MainFirstAction(FolURL2,C_SCode,C_Name )               
+                    pg.press('r') 
         else:
-                print("検索結果なし")
-                time.sleep(1)
-                ImgClick(FolURL2,"DensiSyomeiXXX.png",conf,LoopVal)#電子申告・申請タブを押す
-                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-                List = ["DensiSyomeiOpenXXX.png","DensiSyomeiOpenXXX2.png"]
-                conf = 0.9#画像認識感度
-                LoopVal = 10#検索回数
-                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-                time.sleep(1) 
-                ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
-                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-                List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
-                conf = 0.9#画像認識感度
-                LoopVal = 10#検索回数
-                while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
-                    time.sleep(1)                  
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
-                time.sleep(1)
-                pg.press('r') 
+            print("決算なのでキャンセル")
+
 
 #モジュールインポート
 from appium import webdriver
