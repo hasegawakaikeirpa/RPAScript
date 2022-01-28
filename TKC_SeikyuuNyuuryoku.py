@@ -439,7 +439,7 @@ file_path = tkinter.filedialog.askopenfilename(initialdir = idir)
 xls_data = pd.read_excel(file_path, sheet_name=0,engine="openpyxl")
 print(xls_data)
 HeadRow = input("ヘッダー行を指定してください。\n")
-xls_data = pd.read_excel(file_path, sheet_name=0,header=int(HeadRow),engine="openpyxl)
+xls_data = pd.read_excel(file_path, sheet_name=0,header=int(HeadRow),engine="openpyxl")
 print(xls_data)
 #--------------------------------------------------------------------------------
 KamokuCD = input("科目コードを指定してください。償却資産 = 190 支払調書 = 140\n")
