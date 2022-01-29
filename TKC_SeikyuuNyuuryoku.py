@@ -263,6 +263,7 @@ def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         pg.write("1", interval=0.01)#直接SENDできないのでpyautoguiで入力
         pg.press('return')
         pg.press('f4')
+        time.sleep(1)
         FileName = "HousyuSaimoku.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
@@ -294,7 +295,9 @@ def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         pg.press('return')
         time.sleep(1)
         pg.press('f4')
+        time.sleep(1)
         pg.press('f4')
+        time.sleep(1)
         FileName = "InputOK.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
@@ -322,6 +325,7 @@ def OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         pg.write("1", interval=0.01)#直接SENDできないのでpyautoguiで入力
         pg.press('return')
         pg.press('f4')
+        time.sleep(1)
         FileName = "HousyuSaimoku.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
@@ -353,7 +357,9 @@ def OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         pg.press('return')
         time.sleep(1)
         pg.press('f4')
+        time.sleep(1)
         pg.press('f4')
+        time.sleep(1)
         FileName = "InputOK.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(1)
@@ -449,15 +455,8 @@ KamokuCD = input("科目コードを指定してください。償却資産 = 19
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_SeikyuuNyuuryoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
 #--------------------------------------------------------------------------------
-ErrList = []
-EndFlag = True
-while EndFlag == True:
-    try:
-        MainFlow(FolURL2,xls_data,KamokuCD,Lday)
-        EndFlag = False
-    except:
-        traceback.print_exc()
-        ErrList.append([KamokuCD,xls_cd,xls_name,"失敗"])
-        with open(FolURL2 + "/Log/ErrList.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
-            pd.DataFrame(ErrList).to_csv(f)
-        EndFlag = True
+try:
+    MainFlow(FolURL2,xls_data,KamokuCD,Lday)
+    EndFlag = False
+except:
+    traceback.print_exc()
