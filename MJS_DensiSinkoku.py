@@ -379,22 +379,33 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
             pg.press(['x'])
             conf = 0.9#画像認識感度
             LoopVal = 20#検索回数
-            FileName = "Kanryou.png"
-            if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+            while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is None:
+                time.sleep(1)
+                DSE = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+                DSETwo = ImgCheck(FolURL2, "DensiSyomeiOpen2.png", conf, LoopVal)
+                if DSE[0] == True:
+                    ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+                    break
+                elif DSETwo[0] == True:
+                    break
+            conf = 0.9 
+            LoopVal = 2
+            DSEL = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+            if DSEL[0] == True:  
                 ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
-                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-                List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
-                conf = 0.9#画像認識感度
-                LoopVal = 10#検索回数
-                while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
-                    time.sleep(1) 
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
-                while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
-                    time.sleep(1)  
+            #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+            List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
+            conf = 0.9#画像認識感度
+            LoopVal = 10#検索回数
+            while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
                 time.sleep(1) 
-                pg.press('r') 
+            pg.keyDown('alt')
+            pg.press('j')
+            pg.keyUp('alt')
+            while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+                time.sleep(1)  
+            time.sleep(1) 
+            pg.press('r') 
         else:
             print("送信エラー")
             time.sleep(1)
@@ -467,22 +478,33 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
         pg.press(['x'])
         conf = 0.9#画像認識感度
         LoopVal = 20#検索回数
-        FileName = "Kanryou.png"
-        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+        while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is None:
+            time.sleep(1)
+            DSE = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+            DSETwo = ImgCheck(FolURL2, "DensiSyomeiOpen2.png", conf, LoopVal)
+            if DSE[0] == True:
+                ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+                break
+            elif DSETwo[0] == True:
+                break
+        conf = 0.9 
+        LoopVal = 2
+        DSEL = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+        if DSEL[0] == True:  
             ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
-            #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-            List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
-            conf = 0.9#画像認識感度
-            LoopVal = 10#検索回数
-            while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
-                time.sleep(1) 
-            pg.keyDown('alt')
-            pg.press('j')
-            pg.keyUp('alt')
-            while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
-                time.sleep(1)  
+        #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+        List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
+        conf = 0.9#画像認識感度
+        LoopVal = 10#検索回数
+        while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
             time.sleep(1) 
-            pg.press('r') 
+        pg.keyDown('alt')
+        pg.press('j')
+        pg.keyUp('alt')
+        while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+            time.sleep(1)  
+        time.sleep(1) 
+        pg.press('r') 
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
