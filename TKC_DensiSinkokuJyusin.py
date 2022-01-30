@@ -185,7 +185,7 @@ def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
                 break
     detector.close()
     return detector.result[ "encoding" ]
- 
+#---------------------------------------------------------------------------------------------------------------------- 
 def main():
     ret = getFileEncoding( "sjis.csv" )
     print( "sjis.csv Encoding={0}".format( ret ) )
