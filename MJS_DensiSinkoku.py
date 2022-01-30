@@ -332,15 +332,115 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
     conf = 0.9#画像認識感度
     LoopVal = 10#検索回数
     time.sleep(1)
-    if ImgCheck(FolURL2,"SousinAfterErr.png",conf,LoopVal)[0] == True and IMGD == False:
-        pg.press('x')
-        conf = 0.9#画像認識感度
-        LoopVal = 20#検索回数
-        FileName = "MSGNokori.png"
-        time.sleep(1)
-        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
-            pg.press('n')
+    if IMGD == False:
+        if ImgCheck(FolURL2,"SousinAfterErr.png",conf,LoopVal)[0] == True:
+            pg.press('x')
+            conf = 0.9#画像認識感度
+            LoopVal = 20#検索回数
+            FileName = "MSGNokori.png"
             time.sleep(1)
+            if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                pg.press('n')
+                time.sleep(1)
+                ImgClick(FolURL2,"UnderArrow.png",conf,LoopVal) 
+                time.sleep(1)
+                pg.press('q')
+                #----------------------------------------------------------------------------------------------------------------------
+                conf = 0.9#画像認識感度
+                LoopVal = 20#検索回数
+                FileName = "EturanCheck.png"
+                if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                    pg.press('return')            
+                FileName = "MSGSyousaiErr.png"
+                if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                    pg.press('return')
+                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                List = ["FileOut.png","FileOut2.png"]
+                conf = 0.9#画像認識感度
+                LoopVal = 10000#検索回数
+                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+                if ListCheck[0] == True:
+                    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+                    time.sleep(1)
+                #----------------------------------------------------------------------------------------------------------------------
+                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                List = ["PDFIcon.png","CSVIcon.png"]
+                conf = 0.9#画像認識感度
+                LoopVal = 10#検索回数
+                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+                if ListCheck[0] == True:
+                    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+                    time.sleep(1)
+                    pg.press(['down','down','down','down','down'])
+                    pg.press(['return'])
+                #----------------------------------------------------------------------------------------------------------------------
+                Tyouhuku = SortPDF(C_SCode + "_" + C_Name + ".pdf")
+                if Tyouhuku[0] == str(1):
+                    FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + ".pdf"
+                else:
+                    FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Tyouhuku[0] + ".pdf"
+                pyperclip.copy(FileURL)
+                pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                pg.press(['return'])
+                # ---------------------------------------------------------------------------------------------------------------------- 
+                # ---------------------------------------------------------------------------------------------------------------------- 
+                ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
+                time.sleep(5)
+                pg.press(['x'])
+                conf = 0.9#画像認識感度
+                LoopVal = 20#検索回数
+                # while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is None:
+                #     time.sleep(1)
+                #     DSE = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+                #     DSETwo = ImgCheck(FolURL2, "DensiSyomeiOpen2.png", conf, LoopVal)
+                #     if DSE[0] == True:
+                #         ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+                #         break
+                #     elif DSETwo[0] == True:
+                #         break
+                # conf = 0.9 
+                # LoopVal = 2
+                DSEL = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+                if DSEL[0] == True:  
+                    ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
+                conf = 0.9#画像認識感度
+                LoopVal = 10#検索回数
+                while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
+                    time.sleep(1) 
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+                    time.sleep(1)  
+                time.sleep(1) 
+                pg.press('r') 
+            else:
+                print("送信エラー")
+                time.sleep(1)
+                ImgClick(FolURL2,"DensiSyomeiXXX.png",conf,LoopVal)#電子申告・申請タブを押す
+                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                List = ["DensiSyomeiOpenXXX.png","DensiSyomeiOpenXXX2.png"]
+                conf = 0.9#画像認識感度
+                LoopVal = 10#検索回数
+                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+                time.sleep(1) 
+                ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
+                conf = 0.9#画像認識感度
+                LoopVal = 10#検索回数
+                while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
+                    time.sleep(1) 
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+                    time.sleep(1) 
+                time.sleep(1) 
+                pg.press('r')
+        else:
             ImgClick(FolURL2,"UnderArrow.png",conf,LoopVal) 
             time.sleep(1)
             pg.press('q')
@@ -380,7 +480,7 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                 FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Tyouhuku[0] + ".pdf"
             pyperclip.copy(FileURL)
             pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-            pg.press(['return'])
+            pg.press(['return'])    
             # ---------------------------------------------------------------------------------------------------------------------- 
             # ---------------------------------------------------------------------------------------------------------------------- 
             ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
@@ -415,17 +515,10 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                 time.sleep(1)  
             time.sleep(1) 
             pg.press('r') 
-        else:
-            print("送信エラー")
-            time.sleep(1)
-            ImgClick(FolURL2,"DensiSyomeiXXX.png",conf,LoopVal)#電子申告・申請タブを押す
-            #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-            List = ["DensiSyomeiOpenXXX.png","DensiSyomeiOpenXXX2.png"]
-            conf = 0.9#画像認識感度
-            LoopVal = 10#検索回数
-            ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-            time.sleep(1) 
-            ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+    else:
+            DSEL = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+            if DSEL[0] == True:  
+                ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
             #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
             List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
             conf = 0.9#画像認識感度
@@ -436,84 +529,10 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
             pg.press('j')
             pg.keyUp('alt')
             while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
-                time.sleep(1) 
+                time.sleep(1)  
             time.sleep(1) 
             pg.press('r')
-    else:
-        ImgClick(FolURL2,"UnderArrow.png",conf,LoopVal) 
-        time.sleep(1)
-        pg.press('q')
-        #----------------------------------------------------------------------------------------------------------------------
-        conf = 0.9#画像認識感度
-        LoopVal = 20#検索回数
-        FileName = "EturanCheck.png"
-        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
-            pg.press('return')            
-        FileName = "MSGSyousaiErr.png"
-        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
-            pg.press('return')
-        #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-        List = ["FileOut.png","FileOut2.png"]
-        conf = 0.9#画像認識感度
-        LoopVal = 10000#検索回数
-        ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-        if ListCheck[0] == True:
-            ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-            time.sleep(1)
-        #----------------------------------------------------------------------------------------------------------------------
-        #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-        List = ["PDFIcon.png","CSVIcon.png"]
-        conf = 0.9#画像認識感度
-        LoopVal = 10#検索回数
-        ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-        if ListCheck[0] == True:
-            ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-            time.sleep(1)
-            pg.press(['down','down','down','down','down'])
-            pg.press(['return'])
-        #----------------------------------------------------------------------------------------------------------------------
-        Tyouhuku = SortPDF(C_SCode + "_" + C_Name + ".pdf")
-        if Tyouhuku[0] == str(1):
-            FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + ".pdf"
-        else:
-            FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Tyouhuku[0] + ".pdf"
-        pyperclip.copy(FileURL)
-        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-        pg.press(['return'])
-        # ---------------------------------------------------------------------------------------------------------------------- 
-        # ---------------------------------------------------------------------------------------------------------------------- 
-        ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
-        time.sleep(5)
-        pg.press(['x'])
-        conf = 0.9#画像認識感度
-        LoopVal = 20#検索回数
-        # while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is None:
-        #     time.sleep(1)
-        #     DSE = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
-        #     DSETwo = ImgCheck(FolURL2, "DensiSyomeiOpen2.png", conf, LoopVal)
-        #     if DSE[0] == True:
-        #         ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
-        #         break
-        #     elif DSETwo[0] == True:
-        #         break
-        # conf = 0.9 
-        # LoopVal = 2
-        DSEL = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
-        if DSEL[0] == True:  
-            ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
-        #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-        List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
-        conf = 0.9#画像認識感度
-        LoopVal = 10#検索回数
-        while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
-            time.sleep(1) 
-        pg.keyDown('alt')
-        pg.press('j')
-        pg.keyUp('alt')
-        while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
-            time.sleep(1)  
-        time.sleep(1) 
-        pg.press('r') 
+#------------------------------------------------------------------------------------------------------------------------------- 
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
