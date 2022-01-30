@@ -1,5 +1,8 @@
 #----------------------------------------------------------------------------------------------------------------------
 #UUUUUUUUUUUUUUUUUUUPS
+from pyparsing import And
+
+
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
         try:
@@ -317,13 +320,19 @@ def MasterCSVGet(FolURL2):
     return(C_df)
 def MainFirstAction(FolURL2,C_SCode,C_Name ):
     conf = 0.9#画像認識感度
+    LoopVal = 10
+    IMGD = False
     time.sleep(1)
     while pg.locateOnScreen(FolURL2 + "/" + "SousinKekka.png", confidence=0.9) is None:
-        time.sleep(1) 
+        time.sleep(1)
+        if ImgCheck(FolURL2, "DoujiSousin.png", conf, LoopVal)[0] == True:
+            ImgClick(FolURL2, "DoujiSousinPrint.png", conf, LoopVal)
+            IMGD = True
+            break
     conf = 0.9#画像認識感度
     LoopVal = 10#検索回数
     time.sleep(1)
-    if ImgCheck(FolURL2,"SousinAfterErr.png",conf,LoopVal)[0] == True:
+    if ImgCheck(FolURL2,"SousinAfterErr.png",conf,LoopVal)[0] == True and IMGD == False:
         pg.press('x')
         conf = 0.9#画像認識感度
         LoopVal = 20#検索回数
@@ -379,17 +388,17 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
             pg.press(['x'])
             conf = 0.9#画像認識感度
             LoopVal = 20#検索回数
-            while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is None:
-                time.sleep(1)
-                DSE = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
-                DSETwo = ImgCheck(FolURL2, "DensiSyomeiOpen2.png", conf, LoopVal)
-                if DSE[0] == True:
-                    ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
-                    break
-                elif DSETwo[0] == True:
-                    break
-            conf = 0.9 
-            LoopVal = 2
+            # while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is None:
+            #     time.sleep(1)
+            #     DSE = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+            #     DSETwo = ImgCheck(FolURL2, "DensiSyomeiOpen2.png", conf, LoopVal)
+            #     if DSE[0] == True:
+            #         ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+            #         break
+            #     elif DSETwo[0] == True:
+            #         break
+            # conf = 0.9 
+            # LoopVal = 2
             DSEL = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
             if DSEL[0] == True:  
                 ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
@@ -478,17 +487,17 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
         pg.press(['x'])
         conf = 0.9#画像認識感度
         LoopVal = 20#検索回数
-        while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is None:
-            time.sleep(1)
-            DSE = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
-            DSETwo = ImgCheck(FolURL2, "DensiSyomeiOpen2.png", conf, LoopVal)
-            if DSE[0] == True:
-                ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
-                break
-            elif DSETwo[0] == True:
-                break
-        conf = 0.9 
-        LoopVal = 2
+        # while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is None:
+        #     time.sleep(1)
+        #     DSE = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+        #     DSETwo = ImgCheck(FolURL2, "DensiSyomeiOpen2.png", conf, LoopVal)
+        #     if DSE[0] == True:
+        #         ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+        #         break
+        #     elif DSETwo[0] == True:
+        #         break
+        # conf = 0.9 
+        # LoopVal = 2
         DSEL = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
         if DSEL[0] == True:  
             ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
