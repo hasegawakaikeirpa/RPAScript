@@ -476,11 +476,11 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
             Tyouhuku = SortPDF(C_SCode + "_" + C_Name + ".pdf")
             if Tyouhuku[0] == str(1):
                 FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + ".pdf"
-            else:
+            elrse:
                 FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Tyouhuku[0] + ".pdf"
             pyperclip.copy(FileURL)
             pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-            pg.press(['return'])    
+            pg.press(['return'])
             # ---------------------------------------------------------------------------------------------------------------------- 
             # ---------------------------------------------------------------------------------------------------------------------- 
             ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
