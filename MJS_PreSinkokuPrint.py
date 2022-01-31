@@ -226,30 +226,20 @@ def MainStarter(FolURL2):
     time.sleep(1)
     #----------------------------------------------------------------------------------------------------------------------
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    List = ["DensiKaiteiClose.png","DensiKaiteiClose2.png"]
-    conf = 0.9#画像認識感度
-    LoopVal = 10#検索回数
-    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-    if ListCheck[0] == True:
-        ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+    while pg.locateOnScreen(FolURL2 + "/" + "MsgBtn.png", confidence=0.9) is None:
         time.sleep(1)
-    time.sleep(1)
+    ImgClick(FolURL2,"MsgBtn.png",conf,LoopVal)#電子申告・申請タブを押す
     #----------------------------------------------------------------------------------------------------------------------
-    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    List = ["DensiKidouIcon.png","DensiKidouIcon2.png"]
-    conf = 0.9#画像認識感度
-    LoopVal = 10#検索回数
-    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-    if ListCheck[0] == True:
-        ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+    while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzokuBtn.png", confidence=0.9) is None:
         time.sleep(1)
-    time.sleep(1)
-    #----------------------------------------------------------------------------------------------------------------------
-    ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す
+    ImgClick(FolURL2,"PreSetuzokuBtn.png",conf,LoopVal)#電子申告・申請タブを押す
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    List = ["DensiSyomeiOpen.png","DensiSyomeiOpen2.png"]
-    conf = 0.9#画像認識感度
-    LoopVal = 10#検索回数
+    while pg.locateOnScreen(FolURL2 + "/" + "KomonsakiTab.png", confidence=0.9) is None:
+        time.sleep(1)
+        if ImgCheck(FolURL2, "KomonsakiOpenTab.png", conf, LoopVal)[0] == True:
+            break
+        else:
+            ImgClick(FolURL2,"KomonsakiTab.png",conf,LoopVal)#電子申告・申請タブを押す
     ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
     #if ListCheck[0] == True:
     #    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
@@ -781,7 +771,8 @@ pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol 
 PDFFileList = os.walk(pt)
 Cou = 1
 PreList=[]
-NgLog = pd.read_csv(FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku/Log/Log.csv",encoding='utf-8')
+SerchEnc = format(getFileEncoding(FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku/Log/Log.csv"))
+NgLog = pd.read_csv(FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku/Log/Log.csv",encoding=SerchEnc)
 NgRow = np.array(NgLog).shape[0]#配列行数取得
 NgCol = np.array(NgLog).shape[1]#配列列数取得
 
@@ -818,8 +809,9 @@ for PreListItem in PreList:
     myList.append(PreListItem[1])
 NoList = list(OrderedDict.fromkeys(myList))
 print(NoList)
+SerchEnc = format(getFileEncoding(FolURL2 + "/RPAPhoto/MJS_DensiSinkoku/" + "MasterDB.csv"))
 MasterCSV = pd.read_csv(FolURL2 + "/RPAPhoto/MJS_DensiSinkoku/" + "MasterDB.csv",\
-    dtype={"TKCKokuzeiUserCode": str,"TKCTihouzeiUserID": str,"MirokuKokuzeiUserCode": str,"MirokuTihouzeiUserID": str,"etaxPass": str,"eltaxPass": str})
+    dtype={"TKCKokuzeiUserCode": str,"TKCTihouzeiUserID": str,"MirokuKokuzeiUserCode": str,"MirokuTihouzeiUserID": str,"etaxPass": str,"eltaxPass": str},encoding=SerchEnc)
 print(MasterCSV)
 try:
     MainFlow(FolURL2)
