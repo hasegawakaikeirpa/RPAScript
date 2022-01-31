@@ -191,8 +191,8 @@ def SortPDF(PDFName):
     PDFFileList = os.listdir(pt)
     Cou = 1
     for PDFItem in PDFFileList:
-        PDFName = PDFName.replace("\u3000","").replace("PDF","") .replace("pdf","")  
-        PDFItem = PDFItem.replace("\u3000","").replace("PDF","") .replace("pdf","")  
+        PDFName = PDFName.replace("\u3000","").replace(".PDF","") .replace(".pdf","")  
+        PDFItem = PDFItem.replace("\u3000","").replace(".PDF","") .replace(".pdf","")  
         if PDFName in PDFItem:
             Cou = Cou + 1
     return str(Cou),pt
@@ -247,13 +247,4 @@ import PDFMarge
 
 FolURL2 = os.getcwd().replace('\\','/')#先
 FolURL2 = FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku"
-CSVURL = FolURL2
-Fol = "2021-11"
-pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\eLTAX"
-#path = path.replace('\\','/')#先
-PDFFileList = os.walk(pt)
-PreList = []
-#PreList = []
-PT = os.getcwd().replace('\\','/') + '/PowerShellMyScripts/DefaultPrinterChangeMSPDF.ps1'
-proc = subprocess.call('powershell.exe -File ' + PT)
-time.sleep(1)
+SortPDF("40" + "_" + "株式会社　Ｒｅｇｉｓｔａ" + ".pdf")

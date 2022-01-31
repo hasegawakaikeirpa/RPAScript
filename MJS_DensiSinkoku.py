@@ -199,8 +199,8 @@ def SortPDF(PDFName):
     PDFFileList = os.listdir(pt)
     Cou = 1
     for PDFItem in PDFFileList:
-        PDFName = PDFName.replace("\u3000","").replace("PDF","") .replace("pdf","")  
-        PDFItem = PDFItem.replace("\u3000","").replace("PDF","") .replace("pdf","")  
+        PDFName = PDFName.replace("\u3000","").replace(".PDF","") .replace(".pdf","")  
+        PDFItem = PDFItem.replace("\u3000","").replace(".PDF","") .replace(".pdf","")  
         if PDFName in PDFItem:
             Cou = Cou + 1
     return str(Cou),pt
@@ -374,7 +374,7 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                     pg.press(['down','down','down','down','down'])
                     pg.press(['return'])
                 #----------------------------------------------------------------------------------------------------------------------
-                Tyouhuku = SortPDF(C_SCode + "_" + C_Name + ".pdf")
+                Tyouhuku = SortPDF(C_SCode + "_" + C_Name)
                 if Tyouhuku[0] == str(1):
                     FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + ".pdf"
                 else:
@@ -473,7 +473,7 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                 pg.press(['down','down','down','down','down'])
                 pg.press(['return'])
             #----------------------------------------------------------------------------------------------------------------------
-            Tyouhuku = SortPDF(C_SCode + "_" + C_Name + ".pdf")
+            Tyouhuku = SortPDF(C_SCode + "_" + C_Name)
             if Tyouhuku[0] == str(1):
                 FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + ".pdf"
             else:
@@ -484,21 +484,29 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
             # ---------------------------------------------------------------------------------------------------------------------- 
             # ---------------------------------------------------------------------------------------------------------------------- 
             ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
-            time.sleep(5)
+            time.sleep(7)
             conf = 0.9#画像認識感度
-            LoopVal = 1#検索回数
+            LoopVal = 10#検索回数
             if ImgCheck(FolURL2, "FileOverCheck.png", conf, LoopVal)[0] == True:
+                time.sleep(1)
                 pg.press('n')
                 time.sleep(1)
-                if Tyouhuku[0] == str(1):
-                    FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + ".pdf"
-                else:
+                List = ["PDFIcon.png","CSVIcon.png"]
+                conf = 0.9#画像認識感度x
+                LoopVal = 10#検索回数
+                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+                if ListCheck[0] == True:
+                    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+                    time.sleep(1)
+                    pg.press(['down','down','down','down','down'])
+                    pg.press(['return'])
                     Sums = str(int(Tyouhuku[0]) + 1)
                     FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Sums + ".pdf"
                 pyperclip.copy(FileURL)
                 pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-                pg.press(['return']) 
-                time.sleep(5)               
+                pg.press(['return'])
+                ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal)  
+                time.sleep(7)               
             pg.press(['x'])
             conf = 0.9#画像認識感度
             LoopVal = 20#検索回数
