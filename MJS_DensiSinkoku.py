@@ -487,7 +487,7 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
             time.sleep(5)
             conf = 0.9#画像認識感度
             LoopVal = 1#検索回数
-            if ImgCheck(FolURL2, "FileOverCheck.png", conf, LoopVal):
+            if ImgCheck(FolURL2, "FileOverCheck.png", conf, LoopVal)[0] == True:
                 pg.press('n')
                 time.sleep(1)
                 if Tyouhuku[0] == str(1):
