@@ -45,7 +45,6 @@ def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
     if Flag == 0:
         return False
 #----------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------
 def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
         try:
@@ -216,6 +215,16 @@ def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
     detector.close()
     return detector.result[ "encoding" ]
 #----------------------------------------------------------------------------------------------------------------------
+def SortPreList(PreList,Key):#CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
+    try:
+        PL_List = []
+        for PreListItem in PreList:
+            if Key == PreListItem[1]:
+                PL_List.append([PreListItem[3].replace(".pdf",""),PreListItem[2]])
+        return True,PL_List
+    except:
+        return False,""
+#----------------------------------------------------------------------------------------------------------------------
 def MainStarter(FolURL2):
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
     List = ["DensiSinkokuIcon.png","DensiSinkokuIcon2.png"]
@@ -248,7 +257,7 @@ def MainStarter(FolURL2):
     while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzoku.png", confidence=0.9) is None:
         time.sleep(1)
     time.sleep(1)
-
+#----------------------------------------------------------------------------------------------------------------------
 def MasterCSVGet(FolURL2): 
     # #出力したCSVを読込み----------------------------------------------------------------------------------------------------------
     CSVURL = FolURL2
@@ -263,6 +272,7 @@ def MasterCSVGet(FolURL2):
     return(C_df)
 #------------------------------------------------------------------------------------------------------------------------------- 
 def DataOpen(FolURL2,SFlag,No_dfItem):
+    try:
         if SFlag[0] == True:
             SortData = SFlag[1]
             SyaCD = str(No_dfItem)
@@ -314,24 +324,14 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
             Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                 ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
             return False,Dic
-def MainFlow(FolURL2,PreList,NoList,MasterCSV):
-    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
-    FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
-    #----------------------------------------------------------------------------------------------------------------------
-    MainStarter(FolURL2)#データ送信画面までの関数
-    No_df = NoList
-    No_dfRow = np.array(No_df).shape[0]#配列行数取得
-    ItemList = []
-    time.sleep(1)
-    #クラス要素クリック----------------------------------------------------------------------------------------------------------
-    for No_dfItem in No_df:
-        #CSV要素取得-------------------------------------------------------------------------------------------------------------
-        # No_dfDataRow = No_df.iloc[y,:]
-        # No_dfNo = str(No_dfDataRow[0])
-        SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
-        DOList = DataOpen(FolURL2,SFlag, No_dfItem)
-        time.sleep(1)
+    except:
+        print('データオープンエラー')
+        Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
+            ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
+        return False,Dic
+#------------------------------------------------------------------------------------------------------------------------------- 
+def DataDateSerch(FolURL2):
+    try:
         TCC = ImgCheck(FolURL2, "TihouCheck.png", 0.99999, 1)
         if TCC[0] == False:
             ImgClick(FolURL2, "TihouNoCheck.png", 0.9, 1)
@@ -351,9 +351,53 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
         time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
             time.sleep(1)
-        ImgClick(FolURL2, "MsgDateBox.png", 0.9, 1)
         time.sleep(1)
-
+        Wa = str(WarekiHenkan.Wareki.from_ad(int(TaisyouNen)))
+        Wa = Wa.replace("令和","").replace("年","")
+        Tuki = str('{0:02}'.format(int(TaisyouTuki)))
+        FDate = Wa + Tuki + "01"
+        Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
+        LDate = Wa + Tuki + str(Lday[1])
+        ImgClick(FolURL2, "MsgDateBox.png", 0.9, 1)
+        pg.write(FDate,interval=0.01)
+        pg.press(['return','return','return'])
+        pg.write(LDate,interval=0.01)
+        pg.press(['return','return','return'])
+        time.sleep(1)
+        ImgClick(FolURL2, "MsgFindOK.png", 0.9, 1)
+        time.sleep(1)
+        return True
+    except:
+        return False
+#------------------------------------------------------------------------------------------------------------------------------- 
+def MainFlow(FolURL2,PreList,NoList,MasterCSV):
+    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
+    FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
+    #----------------------------------------------------------------------------------------------------------------------
+    MainStarter(FolURL2)#データ送信画面までの関数
+    No_df = NoList
+    No_dfRow = np.array(No_df).shape[0]#配列行数取得
+    ItemList = []
+    time.sleep(1)
+    #クラス要素クリック----------------------------------------------------------------------------------------------------------
+    for No_dfItem in No_df:
+        #CSV要素取得-------------------------------------------------------------------------------------------------------------
+        S_List = SortPreList(PreList,No_dfItem)
+        SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
+        DOList = DataOpen(FolURL2,SFlag, No_dfItem)
+        time.sleep(1)
+        if DOList[0] == True:
+            DDS = DataDateSerch(FolURL2)
+            if DDS[0] == True:
+                for S_ListItem in S_List:
+                    FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
+                    FPosx = FPos[1]
+                    FPosy = FPos[2]
+                    FPosy = FPosy + (20*S_ListItem[1])
+                    pg.click(FPosx, FPosy)
+                    time.sleep(1)
+#------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
 import subprocess
@@ -396,7 +440,9 @@ import codecs
 import pyperclip #クリップボードへのコピーで使用
 from collections import OrderedDict
 import jaconv
+import WarekiHenkan
 from chardet.universaldetector import UniversalDetector
+import calendar
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
@@ -428,7 +474,7 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
             FolName = FolName[1]
             NewTitle = os.path.join(current_dir,file_name)
             NewTitle = NewTitle.split("プレ申告データ")
-            NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
+            NewTitle = NewTitle[0] + "プレ申告データ.xml"
             #NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","221",\
             #    "223","240","249","251","268","282","285","305","306","309","317"]
             NoF = True
