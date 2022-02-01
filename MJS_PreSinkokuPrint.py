@@ -1,4 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------------
+from queue import Empty
 from pyparsing import And
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
@@ -261,6 +262,58 @@ def MasterCSVGet(FolURL2):
     print(C_df)
     return(C_df)
 #------------------------------------------------------------------------------------------------------------------------------- 
+def DataOpen(FolURL2,SFlag,No_dfItem):
+        if SFlag[0] == True:
+            SortData = SFlag[1]
+            SyaCD = str(No_dfItem)
+            TKCName = SortData['TKCName']
+            MirokuName = SortData['MirokuName']
+            MKUC = str(int(SortData['MirokuKokuzeiUserCode']))
+            MTUID = SortData['MirokuTihouzeiUserID']
+            TKUC = str(int(SortData['TKCKokuzeiUserCode']))
+            TTUID = SortData['TKCTihouzeiUserID']
+            etaxPass = SortData['etaxPass']
+            eltaxPass = SortData['eltaxPass']
+            pg.write(SyaCD,interval=0.01)
+            pg.press('return')
+            time.sleep(1)
+            conf = 0.9
+            LoopVal = 10
+            FileName = "Nodata.png"
+            while ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+                time.sleep(1)
+            conf = 0.9
+            LoopVal = 10
+            FileName = "KokuPass.png"
+            ImgClick(FolURL2, FileName, conf, LoopVal)
+            time.sleep(1)
+            if not etaxPass == True:
+                pg.write(eltaxPass,interval=0.01)
+            else:
+                pg.write(etaxPass,interval=0.01)
+            conf = 0.9
+            LoopVal = 10
+            FileName = "TihoPass.png"
+            ImgClick(FolURL2, FileName, conf, LoopVal)
+            time.sleep(1)
+            if not eltaxPass == True:
+                pg.write(etaxPass,interval=0.01)
+            else:
+                pg.write(eltaxPass,interval=0.01)
+            time.sleep(1)
+            conf = 0.9
+            LoopVal = 10
+            FileName = "MSGSetuzokuOK.png"
+            ImgClick(FolURL2, FileName, conf, LoopVal)
+            time.sleep
+            Dic = {'SyaCD':SyaCD,'TKCName':TKCName,'MirokuName':MirokuName,'MKUC':MKUC\
+                ,'MTUID':MTUID,'TKUC':TKUC,'TTUID':TTUID,'etaxPass':etaxPass,'eltaxPass':eltaxPass}
+            return True,Dic
+        else:
+            print('マスターデータなし')
+            Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
+                ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
+            return False,Dic
 def MainFlow(FolURL2,PreList,NoList,MasterCSV):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
@@ -276,10 +329,30 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
         #CSV要素取得-------------------------------------------------------------------------------------------------------------
         # No_dfDataRow = No_df.iloc[y,:]
         # No_dfNo = str(No_dfDataRow[0])
-        M_row = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
-        Serch_Row = MasterCSV.iloc[M_row,:]
-        Serch_TName = Serch_Row
-        Serch_MName = Serch_Row
+        SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
+        DOList = DataOpen(FolURL2,SFlag, No_dfItem)
+        time.sleep(1)
+        TCC = ImgCheck(FolURL2, "TihouCheck.png", 0.99999, 1)
+        if TCC[0] == False:
+            ImgClick(FolURL2, "TihouNoCheck.png", 0.9, 1)
+        time.sleep(1)
+        pg.keyDown('alt')
+        pg.press('h')
+        pg.keyUp('alt')
+        time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/MsgOpenFlag.png", confidence=0.99999) == None:
+            if ImgCheck(FolURL2, "DensiSyoumeiMsg.png", 0.9, 1):
+                pg.press('y')
+            time.sleep(1)
+        time.sleep(1)
+        pg.keyDown('alt')
+        pg.press('j')
+        pg.keyUp('alt')
+        time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
+            time.sleep(1)
+        ImgClick(FolURL2, "MsgDateBox.png", 0.9, 1)
+        time.sleep(1)
 
 #モジュールインポート
 from appium import webdriver
