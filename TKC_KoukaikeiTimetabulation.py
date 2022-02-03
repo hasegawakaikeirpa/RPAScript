@@ -185,154 +185,232 @@ def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
                 break
     detector.close()
     return detector.result[ "encoding" ]
-#---------------------------------------------------------------------------------------------------------------------- 
-def main():
-    ret = getFileEncoding( "sjis.csv" )
-    print( "sjis.csv Encoding={0}".format( ret ) )
- 
-    ret = getFileEncoding( "utf8.csv" )
-    print( "utf8.csv Encoding={0}".format( ret ) )
-def EraceIMGWait(FolURL2,FileName):
+#----------------------------------------------------------------------------------------------------------------------
+def CSVGet(FileUrl): 
+    #出力したCSVを読込み----------------------------------------------------------------------------------------------------------
     try:
-        while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
-            time.sleep(1)
+        SerchEnc = format(getFileEncoding(FileUrl))
+        MasterCSV = pd.read_csv(FileUrl,encoding=SerchEnc)
+        return True,MasterCSV
     except:
-        print("待機終了")
-
-def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書出し操作
-    while pg.locateOnScreen(FolURL2 + "/KiridasiWin.png" , confidence=0.99999) is None:
-        time.sleep(1)
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "outputDirTextBox"
-    DriverClick(Hub,ObjName,driver)
-    pg.press(['right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'])
-    pg.press(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "fileNameTextBox"
-    DriverClick(Hub,ObjName,driver)
-    pg.press(['right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'\
-        'right','right','right','right','right','right','right','right','right'])
-    pg.press(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
-        'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "fileTypeComboBox"
-    DriverClick(Hub,ObjName,driver)
-    pg.press('down')
-    pg.press('down')
-    pg.press('down')
-    pg.press('return')
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "saveButton"
-    CsvPath = CSVURL + "/" + CSVName + ".CSV"
-    if os.path.isfile(CsvPath) == True:
-        DriverClick(Hub,ObjName,driver)
-        time.sleep(1)
-        FileNameList = ["FileOverQ.png","FileOverQ2.png"]
-        conf = 0.9
-        LoopVal = 10
-        if ImgCheckForList(FolURL2,FileNameList,conf)[0] == True:
-            pg.press('y')
-    else:
-        DriverClick(Hub,ObjName,driver)
-        time.sleep(1)
+        return False,""
 #----------------------------------------------------------------------------------------------------------------------
-def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
-        #切出CSVをループ処理-------------------------------------------------------------------------------------------------------
-    C_CforCount = 0
-    C_CdfRow = np.array(C_Child).shape[0]#配列行数取得
-    C_CdfCol = np.array(C_Child).shape[1]#配列列数取得
-    ItemList = []
-    for y in range(C_CdfRow):
-        #関与先DB配列をループして識別番号とPassを取得
-        C_CdfDataRow = C_Child.loc[y]
-        C_CSCode = C_CdfDataRow[Col1]
-        C_CName = C_CdfDataRow[Col2]
-        C_CZeimoku = C_CdfDataRow[Col3]
-        C_CSousin = C_CdfDataRow[Col4]
-        C_CAll = str(C_CSCode) + str(C_CName) 
-        if Key == C_CAll and C_CSousin == "済":
-            ItemList.append(C_CforCount)
-            C_CforCount = C_CforCount + 1
-        else:
-            C_CforCount = C_CforCount + 1
-    return ItemList
+def CSVCheck(Key,CSVArr,ColName):
+    CSVArrRow = np.array(CSVArr).shape[0]#配列行数取得
+    try:
+        for x in range(CSVArrRow):
+            CSVRowData = CSVArr.iloc[x,:]
+            CSVTarget = CSVRowData[ColName].replace("\u3000","")
+            if Key == CSVTarget:               
+                return True,x
+    except:
+        return False,""    
 #----------------------------------------------------------------------------------------------------------------------
-def SortPDF(PDFName):
-    Fol = str(dt.today().year) + "-" + str(dt.today().month)
-    pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
-    #path = path.replace('\\','/')#先
-    PDFFileList = os.listdir(pt)
-    Cou = 1
-    for PDFItem in PDFFileList:
-        PDFName = PDFName.replace("\u3000","").replace("PDF","") .replace("pdf","")  
-        PDFItem = PDFItem.replace("\u3000","").replace("PDF","") .replace("pdf","")  
-        if PDFName in PDFItem:
-            Cou = Cou + 1
-    return str(Cou),pt
+def FirstOpen(FolURL2):
+    try:
+        time.sleep(1)
+        ImgClick(FolURL2, "TMSOpen.png", 0.9, 2)
+        while pg.locateOnScreen(FolURL2 + "/GyoumuBunsekiBtn.png" , confidence=0.9) is None:
+            time.sleep(1)
+        time.sleep(1)
+        ImgClick(FolURL2, "GyoumuBunsekiBtn.png", 0.9, 2)
+        # while pg.locateOnScreen(FolURL2 + "/GyoumuBunsekiWin.png" , confidence=0.9) is None:
+        #     time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png" , confidence=0.9) is not None:
+            time.sleep(1)
+        time.sleep(1)
+        pg.press('f7')
+        time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/SiteiKikanStr.png" , confidence=0.9) is None:
+            time.sleep(1)
+        ImgClick(FolURL2, "SiteiKikanStr.png", 0.9, 2)
+        time.sleep(1)
+        ImgClick(FolURL2, "SiteiKikanOKBtn.png", 0.9, 2)
+        time.sleep(1)
+        ImgClick(FolURL2, "TimeBox.png", 0.9, 2)
+        time.sleep(1)
+        pg.press('return')
+        yPar = str(WarekiHenkan.Wareki.from_ad(dt.today().year).year)
+        mPar = str(dt.today().month - 1)
+        pg.write(yPar,interval=0.01)
+        pg.press('return')
+        pg.write(mPar,interval=0.01)
+        pg.press('return')
+        pg.press('return')
+        pg.write(yPar,interval=0.01)
+        pg.press('return')
+        pg.write(mPar,interval=0.01)
+        pg.press('return')
+        pg.press('return')
+        time.sleep(3)
+        ImgClick(FolURL2,"GyoumubetuTab.png",0.9,2)
+        while pg.locateOnScreen(FolURL2 + "/TyokusetuOpenFlag.png" , confidence=0.9) is None:
+            time.sleep(1)
+        return True
+    except:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def TKCCSVOut(FolURL2,Title):
+    try:
+        ImgClick(FolURL2,"ExcelTab.png",0.9,2)    
+        while pg.locateOnScreen(FolURL2 + "/KiridasiFlag.png" , confidence=0.9) is None:
+            time.sleep(1)
+        ImgList = ["KiridasiType.png","KiridasiType2.png"]
+        ImgListAns = ImgCheckForList(FolURL2,ImgList,0.9)
+        ImgClick(FolURL2,ImgListAns[1],0.9,2)
+        time.sleep(1)
+        pg.press(['down','down','down'])
+        pg.press(['return'])
+        pg.press(['tab','tab','tab'])           
+        pg.press('delete')
+        FolURL2 = FolURL2.replace("/","\\")
+        pyperclip.copy(FolURL2)
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press(['return'])
+        pg.press('delete')
+        pg.write(Title,interval=0.01)
+        pg.press(['return'])
+        pg.press(['return'])
+        ImgClick(FolURL2,"KiridasiSave.png",0.9,2)
+        time.sleep(1)
+        if ImgCheck(FolURL2,"OverFileList.png",0.9,1)[0] == True:
+            time.sleep(1)
+            ImgClick(FolURL2,"OverFileListYes.png",0.9,2)
+        return True
+    except:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def TKCTimeCSVOut(FolURL2,Title,FileURL):
+    try:
+        ImgClick(FolURL2,"ExcelTab.png",0.9,2)    
+        while pg.locateOnScreen(FolURL2 + "/KiridasiFlag.png" , confidence=0.9) is None:
+            time.sleep(1)
+        ImgList = ["KiridasiType.png","KiridasiType2.png"]
+        ImgListAns = ImgCheckForList(FolURL2,ImgList,0.9)
+        ImgClick(FolURL2,ImgListAns[1],0.9,2)
+        time.sleep(1)
+        pg.press(['down','down','down'])
+        pg.press(['return'])
+        pg.press(['tab','tab','tab'])           
+        pg.press('delete')
+        FileURL = FileURL.replace("/","\\")
+        pyperclip.copy(FileURL)
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press(['return'])
+        pg.press('delete')
+        pyperclip.copy(Title)
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press(['return'])
+        pg.press(['return'])
+        ImgClick(FolURL2,"KiridasiSave.png",0.9,2)
+        time.sleep(1)
+        if ImgCheck(FolURL2,"OverFileList.png",0.9,1)[0] == True:
+            time.sleep(1)
+            ImgClick(FolURL2,"OverFileListYes.png",0.9,2)
+        return True
+    except:
+        return False
 #----------------------------------------------------------------------------------------------------------------------
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKC_KoukaikeiTimetabulation"
-    time.sleep(1)
-    # while pg.locateOnScreen(FolURL2 + "/KiridasiWin.png" , confidence=0.99999) is None:
-    #     time.sleep(1)
-    ImgClick(FolURL2, "TMSOpen.png", 0.9, 2)
-    while pg.locateOnScreen(FolURL2 + "/GyoumuBunsekiBtn.png" , confidence=0.9) is None:
+    FMO = FirstOpen(FolURL2)
+    if FMO == True:
+        TCSVO = TKCCSVOut(FolURL2,'TGYOUMULIST')
+        if TCSVO == True:
+            TgyoumuList = CSVGet(FolURL2 + "/TGYOUMULIST.CSV")
+            if TgyoumuList[0] == True:
+                TgyoumuListRow = CSVCheck("A8公会計作業",TgyoumuList[1],"業務")
+                if TgyoumuListRow[0] == True:
+                    # GList = ["1gyou.png","1gyou2.png"]
+                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
+                    # ImgClick(FolURL2,GL[1],0.99999,1)
+                    time.sleep(1)
+                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press('down')
+                    time.sleep(1)
+                    pg.press('return')
+                    time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png" , confidence=0.9) is not None:
+                        time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/KanyoTab.png" , confidence=0.9) is None:
+                        time.sleep(1)
+                    ImgClick(FolURL2,"KanyoTab.png",0.9,1)
+                    time.sleep(1)
+                    KCSVO = TKCCSVOut(FolURL2,'KANYOSAKIBETU')
+                    if KCSVO == True:
+                        KanyosakibetuList = CSVGet(FolURL2 + "/KANYOSAKIBETU.CSV")
+                        if KanyosakibetuList[0] == True:
+                            KArr = KanyosakibetuList[1]
+                            KArrRow = np.array(KArr).shape[0]#配列行数取得
+                            for y in range(KArrRow):
+                                KArrRowData = KArr.iloc[y,:]
+                                KArrName = KArrRowData['関与先']
+                                KArrListRow = CSVCheck(KArrName,KArr,"関与先")
+                                if KArrListRow[0] == True:
+                                    # GList = ["1gyou.png","1gyou2.png"]
+                                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
+                                    # ImgClick(FolURL2,GL[1],0.99999,1)
+                                    time.sleep(1)
+                                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                                    for z in range(KArrListRow[1]):
+                                        pg.press('down')
+                                    time.sleep(1)
+                                    pg.press('return')
+                                    time.sleep(1)                                
+                                    while pg.locateOnScreen(FolURL2 + "/TantoubetuFlag.png" , confidence=0.9) is None:
+                                        time.sleep(1)
+                                    TantouCSVO = TKCCSVOut(FolURL2,'TANTOUBETU')
+                                    if TantouCSVO == True:
+                                        TantouList = CSVGet(FolURL2 + "/TANTOUBETU.CSV")
+                                        if TantouList[0] == True:
+                                            TanArr = TantouList[1]
+                                            TanArrRow = np.array(TanArr).shape[0]#配列行数取得
+                                            for z in range(TanArrRow):
+                                                TanArrData = TanArr.iloc[z,:]
+                                                TanName = TanArrData['担当者']
+                                                TanArrName = TanArrData['担当者'].replace("\u3000","")
+                                                TanArrTime = TanArrData['実\u3000績(A)']                                               
+                                                if not TanArrName == "【合計】":
+                                                    if not TanArrTime == False:
+                                                        TanArrRowListRow = CSVCheck(TanArrName,TanArr,"担当者")
+                                                        if TanArrRowListRow[0] == True:
+                                                            time.sleep(1)
+                                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                                                            for z in range(TanArrRowListRow[1]):
+                                                                pg.press('down')
+                                                            time.sleep(1)
+                                                            pg.press('return')
+                                                            time.sleep(1)
+                                                            while pg.locateOnScreen(FolURL2 + "/KatudouTab.png" , confidence=0.9) is None:
+                                                                time.sleep(1)
+                                                            FN = KArrName + "_" + TanName
+                                                            TKCTimeCSVOut(FolURL2,FN,"//Sv05121a/e/C 作業台/RPA/公会計時間分析/担当者別")
+                                                            time.sleep(1)
+                                                            pg.press('f10')
+                                                            time.sleep(1)
+                                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                                                            for z in range(TanArrRowListRow[1]):
+                                                                pg.press('up')
+                                            time.sleep(1)
+                                            while pg.locateOnScreen(FolURL2 + "/TantoubetuFlag.png" , confidence=0.9) is None:
+                                                time.sleep(1)
+                                            time.sleep(1)
+                                            pg.press('f10')
+                                            time.sleep(1)
+                                            while pg.locateOnScreen(FolURL2 + "/KousagyouOpen.png" , confidence=0.9) is None:
+                                                time.sleep(1)
+                                            time.sleep(1)
+                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                                            time.sleep(1)
+                                            for z in range(KArrListRow[1]):
+                                                pg.press('up')
+                                            time.sleep(1)                                                                                                   
+    else:
         time.sleep(1)
-    time.sleep(1)
-    ImgClick(FolURL2, "GyoumuBunsekiBtn.png", 0.9, 2)
-    while pg.locateOnScreen(FolURL2 + "/GyoumuBunsekiWin.png" , confidence=0.9) is None:
-        time.sleep(1)
-    time.sleep(1)
-    pg.press('f7')
-    time.sleep(1)
-    while pg.locateOnScreen(FolURL2 + "/SiteiKikanStr.png" , confidence=0.9) is None:
-        time.sleep(1)
-    time.sleep(1)
-    ImgClick(FolURL2, "SiteiKikanOKBtn.png", 0.9, 2)
-    time.sleep(1)
 #----------------------------------------------------------------------------------------------------------------------
-
 #モジュールインポート
 from appium import webdriver
 import subprocess
