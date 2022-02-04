@@ -43,7 +43,6 @@ def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
     if Flag == 0:
         return False
 #----------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------
 def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
         try:
@@ -246,6 +245,32 @@ def FirstOpen(FolURL2):
         ImgClick(FolURL2,"GyoumubetuTab.png",0.9,2)
         while pg.locateOnScreen(FolURL2 + "/TyokusetuOpenFlag.png" , confidence=0.9) is None:
             time.sleep(1)
+        ImgClick(FolURL2,"KansetuTab.png",0.9,2)
+        Kansetu = TKCCSVOut(FolURL2,'KANSETU')
+        if Kansetu == True:
+            KansetuList = CSVGet(FolURL2 + "/KANSETU.CSV")
+            if KansetuList[0] == True:
+                KansetuListRow = CSVCheck("E4移動時間",KansetuList[1],"業務")
+                if KansetuListRow[0] == True:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                    for x in range(KansetuListRow[1]):
+                        pg.press('down')
+                    time.sleep(1)
+                    pg.press('return')
+                    time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png" , confidence=0.9) is not None:
+                        time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/TantoubetuFlag.png" , confidence=0.9) is None:
+                        time.sleep(1)
+                    time.sleep(1)
+                    TKCTimeCSVOut(FolURL2,'移動時間',"//Sv05121a/e/C 作業台/RPA/公会計時間分析/担当者別")
+                    time.sleep(1)
+                    pg.press('f10')
+                    time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/TyokuKanTab.png" , confidence=0.9) is None:
+                        time.sleep(1)
+                    ImgClick(FolURL2,"TyokusetuTab.png",0.9,1)                    
         return True
     except:
         return False
@@ -407,7 +432,7 @@ def MainFlow(FolURL2):
                                             time.sleep(1)
                                             for z in range(KArrListRow[1]):
                                                 pg.press('up')
-                                            time.sleep(1)                                                                                                   
+                                            time.sleep(1)                                                                                                
     else:
         time.sleep(1)
 #----------------------------------------------------------------------------------------------------------------------

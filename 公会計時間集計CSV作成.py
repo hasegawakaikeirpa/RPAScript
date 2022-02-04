@@ -1,4 +1,14 @@
-#-----------------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------
+def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
+    detector = UniversalDetector()
+    with open(file_path, mode= "rb" ) as f:
+        for binary in f:
+            detector.feed( binary )
+            if detector.done:
+                break
+    detector.close()
+    return detector.result[ "encoding" ]
+#----------------------------------------------------------------------------------------------------------------------
 #lxmlインポート
 import lxml.html
 #pandasインポート
@@ -31,11 +41,15 @@ import shutil
 #例外処理判定の為のtracebackインポート
 import traceback
 import codecs
+from chardet.universaldetector import UniversalDetector
 #pandas(pd)で関与先データCSVを取得
+
 H_url = '//Sv05121a/e/C 作業台/RPA/ALLDataBase/Heidi関与先DB.csv'
-H_df = pd.read_csv(H_url,encoding='utf-8')
+Enc = getFileEncoding(H_url)
+H_df = pd.read_csv(H_url,encoding=Enc)
 H_Murl = '//Sv05121a/e/C 作業台/RPA/公会計時間分析/公会計名簿.csv'
-H_Mdf = pd.read_csv(H_Murl,encoding='utf-8')
+Enc = getFileEncoding(H_Murl)
+H_Mdf = pd.read_csv(H_Murl,encoding=Enc)
 H_forCount = 0
 tdy = dt.today()
 H_dfRow = np.array(H_df).shape[0]#配列行数取得
@@ -50,10 +64,11 @@ for x in range(12):
     Tan_path = dir_path + "/担当者別"
     for current_dir, sub_dirs, files_list in os.walk(Tan_path):
         for fileobj in files_list:
-            fileurl = Tan_path + "/" + fileobj.replace('\u3000', '　')#空白\u3000を置換 
-            with codecs.open(fileurl,mode ="r", encoding= "cp932",errors="ignore") as file:
+            fileurl = Tan_path + "/" + fileobj.replace('\u3000', '　')#空白\u3000を置換
+            Enc = getFileEncoding(fileurl) 
+            with codecs.open(fileurl,mode ="r", encoding= Enc,errors="ignore") as file:
                 H_df = pd.read_table(file,delimiter=",")
-
+                H_df = H_df.rename(columns={"実\u3000績(A)":"当  月(A)","前年実績(B)":"前年同月(B)"})
                 H_forCount = 0
                 H_dfRow = np.array(H_df).shape[0]#配列行数取得
                 H_MdfRow = np.array(H_Mdf).shape[0]#配列行数取得
@@ -74,6 +89,8 @@ for x in range(12):
                                     if  T == H_TTan:
                                         H_Katudou = H_dfDataRow["活動"]
                                         H_Tougetu = str(H_dfDataRow["当  月(A)"])
+                                        if H_Tougetu == "nan":
+                                            break
                                         H_ZDougetu = H_dfDataRow["前年同月(B)"]
                                         CSVWriteRow = "" + H_TTan + "","" + H_Kanyo + "","" + H_Katudou + "","" + H_Tougetu + ""
                                         H_Marges.append(CSVWriteRow)
@@ -88,6 +105,8 @@ for x in range(12):
                                     if  T == H_TTan:
                                         H_Katudou = "移動時間"
                                         H_Tougetu = H_dfDataRow["当  月(A)"]
+                                        if H_Tougetu == "nan":
+                                            break
                                         H_ZDougetu = H_dfDataRow["前年同月(B)"]
                                         CSVWriteRow = "" + H_TTan + "","" + H_Kanyo + "","" + H_Katudou + "","" + H_Tougetu + ""
                                         H_Marges.append(CSVWriteRow)
