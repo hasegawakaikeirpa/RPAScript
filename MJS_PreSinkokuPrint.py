@@ -246,17 +246,6 @@ def MainStarter(FolURL2):
     #----------------------------------------------------------------------------------------------------------------------
     while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzokuBtn.png", confidence=0.9) is None:
         time.sleep(1)
-    ImgClick(FolURL2,"PreSetuzokuBtn.png",conf,LoopVal)#電子申告・申請タブを押す
-    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzoku.png", confidence=0.9) is None:
-        time.sleep(1)
-    conf = 0.9
-    LoopVal = 1
-    if ImgCheck(FolURL2, "KomonsakiOpenTab.png", conf, LoopVal)[0] == False:
-        ImgClick(FolURL2,"KomonsakiTab.png",conf,LoopVal)#電子申告・申請タブを押す
-    while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzoku.png", confidence=0.9) is None:
-        time.sleep(1)
-    time.sleep(1)
 #----------------------------------------------------------------------------------------------------------------------
 def MasterCSVGet(FolURL2): 
     # #出力したCSVを読込み----------------------------------------------------------------------------------------------------------
@@ -274,6 +263,20 @@ def MasterCSVGet(FolURL2):
 def DataOpen(FolURL2,SFlag,No_dfItem):
     try:
         if SFlag[0] == True:
+            pg.keyDown('alt')
+            pg.press('z')
+            pg.keyUp('alt')
+            # ImgClick(FolURL2,"PreSetuzokuBtn.png",0.9,1)#電子申告・申請タブを押す
+            #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+            while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzoku.png", confidence=0.9) is None:
+                time.sleep(1)
+            conf = 0.9
+            LoopVal = 1
+            if ImgCheck(FolURL2, "KomonsakiOpenTab.png", 0.9, 1)[0] == False:
+                ImgClick(FolURL2,"KomonsakiTab.png",0.9,1)#電子申告・申請タブを押す
+            while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzoku.png", confidence=0.9) is None:
+                time.sleep(1)
+            time.sleep(1)
             SortData = SFlag[1]
             SyaCD = str(No_dfItem)
             TKCName = SortData['TKCName']
@@ -287,44 +290,51 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
             pg.write(SyaCD,interval=0.01)
             pg.press('return')
             time.sleep(1)
-            conf = 0.9
-            LoopVal = 10
-            FileName = "Nodata.png"
-            while ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
+            while pg.locateOnScreen(FolURL2 + "/Nodata.png", confidence=0.9) is None:
                 time.sleep(1)
-            conf = 0.9
-            LoopVal = 10
-            FileName = "KokuPass.png"
-            ImgClick(FolURL2, FileName, conf, LoopVal)
-            time.sleep(1)
-            if not etaxPass == True:
-                pg.write(eltaxPass,interval=0.01)
+            NC = ImgCheck(FolURL2,"NodataFlag.png",0.99999,1)
+            if NC[0] == False:
+                KC = ImgCheck(FolURL2,"KokuCheckBox.png",0.99999,1)
+                if KC[0] == True:
+                    ImgClick(FolURL2,"KokuCheckBox.png",0.99999,1)
+                FileName = "KokuPass.png"
+                ImgClick(FolURL2, FileName, 0.9, 10)
+                time.sleep(1)
+                if not etaxPass == True:
+                    pg.write(eltaxPass,interval=0.01)
+                else:
+                    pg.write(etaxPass,interval=0.01)
+                KC = ImgCheck(FolURL2,"TihoCheckBox.png",0.99999,1)
+                if KC[0] == True:
+                    ImgClick(FolURL2,"TihoCheckBox.png",0.99999,1)
+                FileName = "TihoPass.png"
+                ImgClick(FolURL2, FileName, 0.9, 10)
+                time.sleep(1)
+                if not eltaxPass == True:
+                    pg.write(etaxPass,interval=0.01)
+                else:
+                    pg.write(eltaxPass,interval=0.01)
+                time.sleep(1)
+                FileName = "MSGSetuzokuOK.png"
+                ImgClick(FolURL2, FileName, 0.9, 10)
+                time.sleep
+                Dic = {'SyaCD':SyaCD,'TKCName':TKCName,'MirokuName':MirokuName,'MKUC':MKUC\
+                    ,'MTUID':MTUID,'TKUC':TKUC,'TTUID':TTUID,'etaxPass':etaxPass,'eltaxPass':eltaxPass}
+                return True,Dic
             else:
-                pg.write(etaxPass,interval=0.01)
-            conf = 0.9
-            LoopVal = 10
-            FileName = "TihoPass.png"
-            ImgClick(FolURL2, FileName, conf, LoopVal)
-            time.sleep(1)
-            if not eltaxPass == True:
-                pg.write(etaxPass,interval=0.01)
-            else:
-                pg.write(eltaxPass,interval=0.01)
-            time.sleep(1)
-            conf = 0.9
-            LoopVal = 10
-            FileName = "MSGSetuzokuOK.png"
-            ImgClick(FolURL2, FileName, conf, LoopVal)
-            time.sleep
-            Dic = {'SyaCD':SyaCD,'TKCName':TKCName,'MirokuName':MirokuName,'MKUC':MKUC\
-                ,'MTUID':MTUID,'TKUC':TKUC,'TTUID':TTUID,'etaxPass':etaxPass,'eltaxPass':eltaxPass}
-            return True,Dic
+                ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
+                print(str(SyaCD) + "_" + TKCName + "_利用登録なし" )
+                Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
+                    ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
+                return False,Dic 
         else:
+            ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
             print('マスターデータなし')
             Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                 ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
             return False,Dic
     except:
+        ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
         print('データオープンエラー')
         Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
             ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
@@ -362,7 +372,11 @@ def DataDateSerch(FolURL2):
         pg.write(FDate,interval=0.01)
         pg.press(['return','return','return'])
         pg.write(LDate,interval=0.01)
-        pg.press(['return','return','return'])
+        pg.press(['return'])
+        pg.write('23',interval=0.01)
+        pg.press(['return'])        
+        pg.write('59',interval=0.01)        
+        pg.press(['return'])
         time.sleep(1)
         ImgClick(FolURL2, "MsgFindOK.png", 0.9, 1)
         time.sleep(1)
@@ -389,14 +403,42 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
         time.sleep(1)
         if DOList[0] == True:
             DDS = DataDateSerch(FolURL2)
-            if DDS[0] == True:
-                for S_ListItem in S_List:
+            if DDS == True:
+                for S_ListItem in S_List[1]:
                     FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
                     FPosx = FPos[1]
                     FPosy = FPos[2]
-                    FPosy = FPosy + (20*S_ListItem[1])
+                    FPosy = FPosy + (25*S_ListItem[1])
                     pg.click(FPosx, FPosy)
                     time.sleep(1)
+                    pg.press('return')
+                    time.sleep(1)
+                    ImgClick(FolURL2,"TenpDown.png",0.9,1)
+                    time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
+                        time.sleep(1)
+                    time.sleep(1)                        
+                    pyperclip.copy(S_ListItem[0])
+                    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                    pg.press(['return'])
+                    time.sleep(1)
+                    pg.keyDown('alt')
+                    pg.press('s')
+                    pg.keyUp('alt')
+                    time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
+                        time.sleep(1)
+                        if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
+                            pg.press('y')
+                            time.sleep(1)
+                        if ImgCheck(FolURL2,"DownOk.png",0.9,1)[0] == True:
+                            pg.press('return')
+                            time.sleep(1)
+                    time.sleep(1)
+                    pg.keyDown('alt')
+                    pg.press('x')
+                    pg.keyUp('alt')
+                    time.sleep(1)        
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
