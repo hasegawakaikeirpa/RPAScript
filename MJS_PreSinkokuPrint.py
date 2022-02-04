@@ -365,6 +365,9 @@ def DataDateSerch(FolURL2):
         time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
             time.sleep(1)
+            pg.keyDown('alt')
+            pg.press('r')
+            pg.keyUp('alt')
         time.sleep(1)
         Wa = str(WarekiHenkan.Wareki.from_ad(int(TaisyouNen)))
         Wa = Wa.replace("令和","").replace("年","")
