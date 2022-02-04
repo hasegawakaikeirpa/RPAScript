@@ -225,7 +225,7 @@ def SortPreList(PreList,Key):#CSVと列名を4つ与えて4つの複合と引数
     except:
         return False,""
 #----------------------------------------------------------------------------------------------------------------------
-def MainStarter(FolURL2):
+def MainStarter(FolURL2):    
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
     List = ["DensiSinkokuIcon.png","DensiSinkokuIcon2.png"]
     conf = 0.9#画像認識感度
@@ -242,6 +242,10 @@ def MainStarter(FolURL2):
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
     while pg.locateOnScreen(FolURL2 + "/" + "MsgBtn.png", confidence=0.9) is None:
         time.sleep(1)
+        if ImgCheck(FolURL2,"DensiAnnai.png",0.9,1)[0] == True:
+            pg.keyDown('alt')
+            pg.press('c')
+            pg.keyUp('alt')    
     ImgClick(FolURL2,"MsgBtn.png",conf,LoopVal)#電子申告・申請タブを押す
     #----------------------------------------------------------------------------------------------------------------------
     while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzokuBtn.png", confidence=0.9) is None:
