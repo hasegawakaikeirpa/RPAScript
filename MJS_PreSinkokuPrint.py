@@ -381,10 +381,15 @@ def DataDateSerch(FolURL2):
         pg.press(['return'])        
         pg.write('59',interval=0.01)        
         pg.press(['return'])
-        time.sleep(1)
-        ImgClick(FolURL2, "MsgFindOK.png", 0.9, 1)
-        time.sleep(1)
-        return True
+        time.sleep(3)
+        ImList = ["MsgFindOK.png","MsgFindOK2.png"]
+        ImL = ImgCheckForList(FolURL2,ImList,0.9,1)
+        if ImL[0] == True:
+            ImgClick(FolURL2, ImL[1], 0.9, 1)
+            time.sleep(1)
+            return True
+        else:
+            return False
     except:
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
@@ -435,6 +440,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                         if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
                             pg.press('y')
                             time.sleep(1)
+                        time.sleep(3)
                         if ImgCheck(FolURL2,"DownOk.png",0.9,1)[0] == True:
                             ImgClick(FolURL2,"DownOk.png",0.9,1)
                             pg.press('return')
