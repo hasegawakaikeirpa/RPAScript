@@ -436,6 +436,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                             pg.press('y')
                             time.sleep(1)
                         if ImgCheck(FolURL2,"DownOk.png",0.9,1)[0] == True:
+                            ImgClick(FolURL2,"DownOk.png",0.9,1)
                             pg.press('return')
                             time.sleep(1)
                     time.sleep(1)
