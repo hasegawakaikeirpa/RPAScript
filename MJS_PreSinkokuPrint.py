@@ -443,11 +443,13 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                         if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
                             pg.press('y')
                             time.sleep(1)
-                        time.sleep(3)
-                        if ImgCheck(FolURL2,"DownOk.png",0.9,1)[0] == True:
-                            ImgClick(FolURL2,"DownOk.png",0.9,1)
-                            pg.press('return')
-                            time.sleep(1)
+                        time.sleep(1)
+                    OkList = ["DownOk.png","DownOk2.png"]
+                    Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
+                    if Dok[0] == True:
+                        ImgClick(FolURL2,Dok[1],0.9,1)
+                        pg.press('return')
+                        time.sleep(1)
                     time.sleep(1)
                     pg.keyDown('alt')
                     pg.press('x')
