@@ -243,6 +243,10 @@ def MainStarter(FolURL2):
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
     while pg.locateOnScreen(FolURL2 + "/" + "SyomeiBtn.png", confidence=0.9) is None:
         time.sleep(1)
+        if ImgCheck(FolURL2,"FMSG.png",0.9,1)[0] == True:
+            pg.keyDown('alt')
+            pg.press('c')
+            pg.keyUp('alt')
     ImgClick(FolURL2,"SyomeiBtn.png",conf,LoopVal)#電子申告・申請タブを押す
     #----------------------------------------------------------------------------------------------------------------------
     while pg.locateOnScreen(FolURL2 + "/" + "TyouhyouList.png", confidence=0.9) is None:
@@ -318,16 +322,16 @@ def MainFlow(FolURL2,PreList):
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
     for PreListItem in PreList:
-        #if 9982 == No_dfItem: ################################################################################################
-        #CSV要素取得-------------------------------------------------------------------------------------------------------------
-        TyouList = ["TyouhyouList.png","TyouhyouList2.png"]
-        Imc = ImgCheckForList(FolURL2,TyouList,0.9,2)
-        if Imc[0] == True:
-            ImgClick(FolURL2,Imc[1],0.9,1)
-        while pg.locateOnScreen(FolURL2 + "/" + "FOTitle.png", confidence=0.9) is None:
-            time.sleep(1)
+        if os.path.isfile(PreListItem[2]) == False: ################################################################################################
+            #CSV要素取得-------------------------------------------------------------------------------------------------------------
+            TyouList = ["TyouhyouList.png","TyouhyouList2.png"]
+            Imc = ImgCheckForList(FolURL2,TyouList,0.9,2)
+            if Imc[0] == True:
+                ImgClick(FolURL2,Imc[1],0.9,1)
+            while pg.locateOnScreen(FolURL2 + "/" + "FOTitle.png", confidence=0.9) is None:
+                time.sleep(1)
             DOList = DataOpen(FolURL2,PreListItem)
-        time.sleep(1)    
+            time.sleep(1)    
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
