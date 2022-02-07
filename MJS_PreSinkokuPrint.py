@@ -408,54 +408,54 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
     for No_dfItem in No_df:
-        #if 9982 == No_dfItem: ################################################################################################
-        #CSV要素取得-------------------------------------------------------------------------------------------------------------
-        S_List = SortPreList(PreList,No_dfItem)
-        SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
-        DOList = DataOpen(FolURL2,SFlag, No_dfItem)
-        time.sleep(1)
-        if DOList[0] == True:
-            DDS = DataDateSerch(FolURL2)
-            if DDS == True:
-                for S_ListItem in S_List[1]:
-                    FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
-                    FPosx = FPos[1]
-                    FPosy = FPos[2]
-                    FPosy = FPosy + (25*S_ListItem[1])
-                    pg.click(FPosx, FPosy)
-                    time.sleep(1)
-                    pg.press('return')
-                    time.sleep(1)
-                    ImgClick(FolURL2,"TenpDown.png",0.9,1)
-                    time.sleep(1)
-                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
+        if 560 == No_dfItem: ################################################################################################
+            #CSV要素取得-------------------------------------------------------------------------------------------------------------
+            S_List = SortPreList(PreList,No_dfItem)
+            SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
+            DOList = DataOpen(FolURL2,SFlag, No_dfItem)
+            time.sleep(1)
+            if DOList[0] == True:
+                DDS = DataDateSerch(FolURL2)
+                if DDS == True:
+                    for S_ListItem in S_List[1]:
+                        FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
+                        FPosx = FPos[1]
+                        FPosy = FPos[2]
+                        FPosy = FPosy + (25*S_ListItem[1])
+                        pg.click(FPosx, FPosy)
                         time.sleep(1)
-                    time.sleep(1)                        
-                    pyperclip.copy(S_ListItem[0])
-                    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-                    pg.press(['return'])
-                    time.sleep(1)
-                    pg.keyDown('alt')
-                    pg.press('s')
-                    pg.keyUp('alt')
-                    time.sleep(1)
-                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
-                        time.sleep(1)
-                        if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
-                            pg.press('y')
-                            time.sleep(1)
-                        time.sleep(1)
-                    OkList = ["DownOk.png","DownOk2.png"]
-                    Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
-                    if Dok[0] == True:
-                        ImgClick(FolURL2,Dok[1],0.9,1)
                         pg.press('return')
                         time.sleep(1)
-                    time.sleep(1)
-                    pg.keyDown('alt')
-                    pg.press('x')
-                    pg.keyUp('alt')
-                    time.sleep(1)        
+                        ImgClick(FolURL2,"TenpDown.png",0.9,1)
+                        time.sleep(1)
+                        while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
+                            time.sleep(1)
+                        time.sleep(1)                        
+                        pyperclip.copy(S_ListItem[0])
+                        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                        pg.press(['return'])
+                        time.sleep(1)
+                        pg.keyDown('alt')
+                        pg.press('s')
+                        pg.keyUp('alt')
+                        time.sleep(1)
+                        while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
+                            time.sleep(1)
+                            if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
+                                pg.press('y')
+                                time.sleep(1)
+                            time.sleep(1)
+                        OkList = ["DownOk.png","DownOk2.png"]
+                        Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
+                        if Dok[0] == True:
+                            ImgClick(FolURL2,Dok[1],0.9,1)
+                            pg.press('return')
+                            time.sleep(1)
+                        time.sleep(1)
+                        pg.keyDown('alt')
+                        pg.press('x')
+                        pg.keyUp('alt')
+                        time.sleep(1)        
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
@@ -524,10 +524,10 @@ NgCol = np.array(NgLog).shape[1]#配列列数取得
 for current_dir, sub_dirs, files_list  in PDFFileList:
     Count_dir = 0
     for file_name in files_list: 
-        if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
+        if ("プレ申告のお知らせ" in file_name and not ".xml" in file_name) or ("プレ申告データに関するお知らせ" in file_name and not ".xml" in file_name):
             Count_dir = Count_dir + 1
     for file_name in files_list: 
-        if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
+        if ("プレ申告のお知らせ" in file_name and not ".xml" in file_name) or ("プレ申告データに関するお知らせ" in file_name and not ".xml" in file_name):
             Nos = file_name.split("_")
             FolName = current_dir.split("_")
             FolName = FolName[1]
