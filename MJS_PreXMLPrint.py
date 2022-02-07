@@ -1,4 +1,5 @@
 #----------------------------------------------------------------------------------------------------------------------
+from ast import For
 from queue import Empty
 from pyparsing import And
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
@@ -220,10 +221,10 @@ def SortPreList(PreList,Key):#CSVと列名を4つ与えて4つの複合と引数
         PL_List = []
         for PreListItem in PreList:
             if Key == PreListItem[1]:
-                PL_List.append([PreListItem[3].replace(".pdf",""),PreListItem[2]])
-        return True,PL_List
+                PL_List.append([PreListItem[0],PreListItem[3],PreListItem[2]])
+        return True,PreListItem[0],PreListItem[3],PreListItem[2]
     except:
-        return False,""
+        return False,"","",""
 #----------------------------------------------------------------------------------------------------------------------
 def MainStarter(FolURL2):
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
@@ -240,11 +241,11 @@ def MainStarter(FolURL2):
     time.sleep(1)
     #----------------------------------------------------------------------------------------------------------------------
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-    while pg.locateOnScreen(FolURL2 + "/" + "MsgBtn.png", confidence=0.9) is None:
+    while pg.locateOnScreen(FolURL2 + "/" + "SyomeiBtn.png", confidence=0.9) is None:
         time.sleep(1)
-    ImgClick(FolURL2,"MsgBtn.png",conf,LoopVal)#電子申告・申請タブを押す
+    ImgClick(FolURL2,"SyomeiBtn.png",conf,LoopVal)#電子申告・申請タブを押す
     #----------------------------------------------------------------------------------------------------------------------
-    while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzokuBtn.png", confidence=0.9) is None:
+    while pg.locateOnScreen(FolURL2 + "/" + "TyouhyouList.png", confidence=0.9) is None:
         time.sleep(1)
 #----------------------------------------------------------------------------------------------------------------------
 def MasterCSVGet(FolURL2): 
@@ -260,186 +261,73 @@ def MasterCSVGet(FolURL2):
     print(C_df)
     return(C_df)
 #------------------------------------------------------------------------------------------------------------------------------- 
-def DataOpen(FolURL2,SFlag,No_dfItem):
+def DataOpen(FolURL2,PreListItem):
     try:
-        if SFlag[0] == True:
-            pg.keyDown('alt')
-            pg.press('z')
-            pg.keyUp('alt')
-            # ImgClick(FolURL2,"PreSetuzokuBtn.png",0.9,1)#電子申告・申請タブを押す
-            #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-            while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzoku.png", confidence=0.9) is None:
-                time.sleep(1)
-            conf = 0.9
-            LoopVal = 1
-            if ImgCheck(FolURL2, "KomonsakiOpenTab.png", 0.9, 1)[0] == False:
-                ImgClick(FolURL2,"KomonsakiTab.png",0.9,1)#電子申告・申請タブを押す
-            while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzoku.png", confidence=0.9) is None:
-                time.sleep(1)
-            time.sleep(1)
-            SortData = SFlag[1]
-            SyaCD = str(No_dfItem)
-            TKCName = SortData['TKCName']
-            MirokuName = SortData['MirokuName']
-            MKUC = str(int(SortData['MirokuKokuzeiUserCode']))
-            MTUID = SortData['MirokuTihouzeiUserID']
-            TKUC = str(int(SortData['TKCKokuzeiUserCode']))
-            TTUID = SortData['TKCTihouzeiUserID']
-            etaxPass = SortData['etaxPass']
-            eltaxPass = SortData['eltaxPass']
-            pg.write(SyaCD,interval=0.01)
-            pg.press('return')
-            time.sleep(1)
-            while pg.locateOnScreen(FolURL2 + "/Nodata.png", confidence=0.9) is None:
-                time.sleep(1)
-            NC = ImgCheck(FolURL2,"NodataFlag.png",0.99999,1)
-            if NC[0] == False:
-                KC = ImgCheck(FolURL2,"KokuCheckBox.png",0.99999,1)
-                if KC[0] == True:
-                    ImgClick(FolURL2,"KokuCheckBox.png",0.99999,1)
-                FileName = "KokuPass.png"
-                ImgClick(FolURL2, FileName, 0.9, 10)
-                time.sleep(1)
-                if not etaxPass == True:
-                    pg.write(eltaxPass,interval=0.01)
-                else:
-                    pg.write(etaxPass,interval=0.01)
-                KC = ImgCheck(FolURL2,"TihoCheckBox.png",0.99999,1)
-                if KC[0] == True:
-                    ImgClick(FolURL2,"TihoCheckBox.png",0.99999,1)
-                FileName = "TihoPass.png"
-                ImgClick(FolURL2, FileName, 0.9, 10)
-                time.sleep(1)
-                if not eltaxPass == True:
-                    pg.write(etaxPass,interval=0.01)
-                else:
-                    pg.write(eltaxPass,interval=0.01)
-                time.sleep(1)
-                FileName = "MSGSetuzokuOK.png"
-                ImgClick(FolURL2, FileName, 0.9, 10)
-                time.sleep
-                Dic = {'SyaCD':SyaCD,'TKCName':TKCName,'MirokuName':MirokuName,'MKUC':MKUC\
-                    ,'MTUID':MTUID,'TKUC':TKUC,'TTUID':TTUID,'etaxPass':etaxPass,'eltaxPass':eltaxPass}
-                return True,Dic
-            else:
-                ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
-                print(str(SyaCD) + "_" + TKCName + "_利用登録なし" )
-                Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
-                    ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-                return False,Dic 
-        else:
-            ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
-            print('マスターデータなし')
-            Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
-                ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-            return False,Dic
-    except:
-        ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
-        print('データオープンエラー')
-        Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
-            ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-        return False,Dic
-#------------------------------------------------------------------------------------------------------------------------------- 
-def DataDateSerch(FolURL2):
-    try:
-        TCC = ImgCheck(FolURL2, "TihouCheck.png", 0.99999, 1)
-        if TCC[0] == False:
-            ImgClick(FolURL2, "TihouNoCheck.png", 0.9, 1)
+        pyperclip.copy(str(PreListItem[0]))
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press(['return'])
+        time.sleep(2)
+        WY = WarekiHenkan.Wareki.from_ad(int(TaisyouNen))
+        WY = str(WY).replace("令和","").replace("年","")
+        pg.write(WY,interval=0.01)
+        pg.press('return')
+        pg.press('return')
         time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/" + "PreCheckBar.png", confidence=0.9) is None:
+            time.sleep(1)
+        time.sleep(2)
         pg.keyDown('alt')
-        pg.press('h')
-        pg.keyUp('alt')
+        pg.press('p')
         time.sleep(1)
-        while pg.locateOnScreen(FolURL2 + "/MsgOpenFlag.png", confidence=0.99999) == None:
-            if ImgCheck(FolURL2, "DensiSyoumeiMsg.png", 0.9, 1):
+        pg.press('k')
+        pg.keyUp('alt')        
+        while pg.locateOnScreen(FolURL2 + "/" + "FileOut.png", confidence=0.9) is None:
+            time.sleep(1)
+        ImgClick(FolURL2,"FileOut.png",0.9,1)
+        time.sleep(1)
+        ImgClick(FolURL2,"FTypeSelect.png",0.9,1)
+        pg.press('return')
+        pyperclip.copy(str(PreListItem[3]))
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press(['return'])
+        time.sleep(2)
+        ImgClick(FolURL2,"FileOutPutBtn.png",0.9,1)
+        time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/" + "PreCheck.png", confidence=0.9) is not None:
+            time.sleep(1)
+            FO = ImgCheck(FolURL2,"FileOverCheck.png",0.9,1)
+            if FO[0] == True:
+                ImgClick(FolURL2,"FileOverCheck.png",0.9,1)
                 pg.press('y')
-            time.sleep(1)
         time.sleep(1)
         pg.keyDown('alt')
-        pg.press('j')
-        pg.keyUp('alt')
-        time.sleep(1)
-        while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
-            time.sleep(1)
-        time.sleep(1)
-        Wa = str(WarekiHenkan.Wareki.from_ad(int(TaisyouNen)))
-        Wa = Wa.replace("令和","").replace("年","")
-        Tuki = str('{0:02}'.format(int(TaisyouTuki)))
-        FDate = Wa + Tuki + "01"
-        Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
-        LDate = Wa + Tuki + str(Lday[1])
-        ImgClick(FolURL2, "MsgDateBox.png", 0.9, 1)
-        pg.write(FDate,interval=0.01)
-        pg.press(['return','return','return'])
-        pg.write(LDate,interval=0.01)
-        pg.press(['return'])
-        pg.write('23',interval=0.01)
-        pg.press(['return'])        
-        pg.write('59',interval=0.01)        
-        pg.press(['return'])
-        time.sleep(1)
-        ImgClick(FolURL2, "MsgFindOK.png", 0.9, 1)
-        time.sleep(1)
+        pg.press('x')
+        pg.keyUp('alt')            
         return True
     except:
+        print("フォルダ名取得失敗")
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
-def MainFlow(FolURL2,PreList,NoList,MasterCSV):
+def MainFlow(FolURL2,PreList):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
     #----------------------------------------------------------------------------------------------------------------------
     MainStarter(FolURL2)#データ送信画面までの関数
-    No_df = NoList
-    No_dfRow = np.array(No_df).shape[0]#配列行数取得
     ItemList = []
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
-    for No_dfItem in No_df:
+    for PreListItem in PreList:
         #if 9982 == No_dfItem: ################################################################################################
         #CSV要素取得-------------------------------------------------------------------------------------------------------------
-        S_List = SortPreList(PreList,No_dfItem)
-        SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
-        DOList = DataOpen(FolURL2,SFlag, No_dfItem)
-        time.sleep(1)
-        if DOList[0] == True:
-            DDS = DataDateSerch(FolURL2)
-            if DDS == True:
-                for S_ListItem in S_List[1]:
-                    FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
-                    FPosx = FPos[1]
-                    FPosy = FPos[2]
-                    FPosy = FPosy + (25*S_ListItem[1])
-                    pg.click(FPosx, FPosy)
-                    time.sleep(1)
-                    pg.press('return')
-                    time.sleep(1)
-                    ImgClick(FolURL2,"TenpDown.png",0.9,1)
-                    time.sleep(1)
-                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
-                        time.sleep(1)
-                    time.sleep(1)                        
-                    pyperclip.copy(S_ListItem[0])
-                    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-                    pg.press(['return'])
-                    time.sleep(1)
-                    pg.keyDown('alt')
-                    pg.press('s')
-                    pg.keyUp('alt')
-                    time.sleep(1)
-                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
-                        time.sleep(1)
-                        if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
-                            pg.press('y')
-                            time.sleep(1)
-                        if ImgCheck(FolURL2,"DownOk.png",0.9,1)[0] == True:
-                            pg.press('return')
-                            time.sleep(1)
-                    time.sleep(1)
-                    pg.keyDown('alt')
-                    pg.press('x')
-                    pg.keyUp('alt')
-                    time.sleep(1)        
+        TyouList = ["TyouhyouList.png","TyouhyouList2.png"]
+        Imc = ImgCheckForList(FolURL2,TyouList,0.9,2)
+        if Imc[0] == True:
+            ImgClick(FolURL2,Imc[1],0.9,1)
+        while pg.locateOnScreen(FolURL2 + "/" + "FOTitle.png", confidence=0.9) is None:
+            time.sleep(1)
+            DOList = DataOpen(FolURL2,PreListItem)
+        time.sleep(1)    
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
@@ -508,16 +396,16 @@ NgCol = np.array(NgLog).shape[1]#配列列数取得
 for current_dir, sub_dirs, files_list  in PDFFileList:
     Count_dir = 0
     for file_name in files_list: 
-        if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
+        if ".xml" in file_name:
             Count_dir = Count_dir + 1
     for file_name in files_list: 
-        if "プレ申告のお知らせ" in file_name or "プレ申告データに関するお知らせ" in file_name:
+        if ".xml" in file_name:
             Nos = file_name.split("_")
             FolName = current_dir.split("_")
             FolName = FolName[1]
             NewTitle = os.path.join(current_dir,file_name)
             NewTitle = NewTitle.split("プレ申告データ")
-            NewTitle = NewTitle[0] + "プレ申告データ.xml"
+            NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
             #NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","221",\
             #    "223","240","249","251","268","282","285","305","306","309","317"]
             NoF = True
@@ -533,16 +421,8 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
                 PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle,FolName])
 print(NgLog)
 print(PreList)
-myList = []
-for PreListItem in PreList: 
-    myList.append(PreListItem[1])
-NoList = list(OrderedDict.fromkeys(myList))
-print(NoList)
-SerchEnc = format(getFileEncoding(FolURL2 + "/RPAPhoto/MJS_DensiSinkoku/" + "MasterDB.csv"))
-MasterCSV = pd.read_csv(FolURL2 + "/RPAPhoto/MJS_DensiSinkoku/" + "MasterDB.csv",\
-    dtype={"TKCKokuzeiUserCode": str,"TKCTihouzeiUserID": str,"MirokuKokuzeiUserCode": str,"MirokuTihouzeiUserID": str,"etaxPass": str,"eltaxPass": str},encoding=SerchEnc)
-print(MasterCSV)
+
 try:
-    MainFlow(FolURL2,PreList,NoList,MasterCSV)
+    MainFlow(FolURL2,PreList)
 except:
     traceback.print_exc()
