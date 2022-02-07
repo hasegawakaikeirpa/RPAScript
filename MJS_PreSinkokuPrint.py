@@ -271,7 +271,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
             pg.press('z')
             pg.keyUp('alt')
             # ImgClick(FolURL2,"PreSetuzokuBtn.png",0.9,1)#電子申告・申請タブを押す
-            #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+            #画像が出現するまで待34機してクリック------------------------------------------------------------------------------------
             while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzoku.png", confidence=0.9) is None:
                 time.sleep(1)
             conf = 0.9
@@ -283,14 +283,38 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
             time.sleep(1)
             SortData = SFlag[1]
             SyaCD = str(No_dfItem)
-            TKCName = SortData['TKCName']
-            MirokuName = SortData['MirokuName']
-            MKUC = str(int(SortData['MirokuKokuzeiUserCode']))
-            MTUID = SortData['MirokuTihouzeiUserID']
-            TKUC = str(int(SortData['TKCKokuzeiUserCode']))
-            TTUID = SortData['TKCTihouzeiUserID']
-            etaxPass = SortData['etaxPass']
-            eltaxPass = SortData['eltaxPass']
+            try:
+                TKCName = SortData['TKCName']
+            except:
+                TKCName = ""
+            try:
+                MirokuName = SortData['MirokuName']
+            except:
+                MirokuName = ""
+            try:
+                MKUC = str(int(SortData['MirokuKokuzeiUserCode']))
+            except:
+                MKUC = ""
+            try:
+                MTUID = SortData['MirokuTihouzeiUserID']
+            except:
+                MTUID = ""
+            try:
+                TKUC = str(int(SortData['TKCKokuzeiUserCode']))
+            except:
+                TKUC = ""
+            try:
+                TTUID = SortData['TKCTihouzeiUserID']
+            except:
+                TTUID = ""
+            try:
+                etaxPass = SortData['etaxPass']            
+            except:
+                etaxPass = ""
+            try:
+                eltaxPass = SortData['eltaxPass']
+            except:
+                eltaxPass = ""
             pg.write(SyaCD,interval=0.01)
             pg.press('return')
             time.sleep(1)
@@ -302,7 +326,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
                 if KC[0] == True:
                     ImgClick(FolURL2,"KokuCheckBox.png",0.99999,1)
                 FileName = "KokuPass.png"
-                ImgClick(FolURL2, FileName, 0.9, 10)
+                ImgClick(FolURL2, FileName, 0.9, 1)
                 time.sleep(1)
                 if not etaxPass == True:
                     pg.write(eltaxPass,interval=0.01)
@@ -390,9 +414,11 @@ def DataDateSerch(FolURL2):
         if ImL[0] == True:
             ImgClick(FolURL2, ImL[1], 0.9, 1)
             time.sleep(1)
-            return True
-        else:
-            return False
+            AFN = ImgCheck(FolURL2,"AfterFindNodata.png",0.9,1)
+            if AFN[0] == True:
+                return True
+            else:
+                return False
     except:
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
@@ -408,54 +434,55 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
     for No_dfItem in No_df:
-        #if 560 == No_dfItem: ################################################################################################
         #CSV要素取得-------------------------------------------------------------------------------------------------------------
         S_List = SortPreList(PreList,No_dfItem)
-        SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
-        DOList = DataOpen(FolURL2,SFlag, No_dfItem)
-        time.sleep(1)
-        if DOList[0] == True:
-            DDS = DataDateSerch(FolURL2)
-            if DDS == True:
-                for S_ListItem in S_List[1]:
-                    FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
-                    FPosx = FPos[1]
-                    FPosy = FPos[2]
-                    FPosy = FPosy + (25*S_ListItem[1])
-                    pg.click(FPosx, FPosy)
-                    time.sleep(1)
-                    pg.press('return')
-                    time.sleep(1)
-                    ImgClick(FolURL2,"TenpDown.png",0.9,1)
-                    time.sleep(1)
-                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
+        S_LN = S_List[1][0]
+        if os.path.isfile(S_LN[0]) == False: ################################################################################################
+            SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
+            DOList = DataOpen(FolURL2,SFlag, No_dfItem)
+            time.sleep(1)
+            if DOList[0] == True:
+                DDS = DataDateSerch(FolURL2)
+                if DDS == True:
+                    for S_ListItem in S_List[1]:
+                        FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
+                        FPosx = FPos[1]
+                        FPosy = FPos[2]
+                        FPosy = FPosy + (25*S_ListItem[1])
+                        pg.click(FPosx, FPosy)
                         time.sleep(1)
-                    time.sleep(1)                        
-                    pyperclip.copy(S_ListItem[0])
-                    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-                    pg.press(['return'])
-                    time.sleep(1)
-                    pg.keyDown('alt')
-                    pg.press('s')
-                    pg.keyUp('alt')
-                    time.sleep(1)
-                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
-                        time.sleep(1)
-                        if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
-                            pg.press('y')
-                            time.sleep(1)
-                        time.sleep(1)
-                    OkList = ["DownOk.png","DownOk2.png"]
-                    Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
-                    if Dok[0] == True:
-                        ImgClick(FolURL2,Dok[1],0.9,1)
                         pg.press('return')
                         time.sleep(1)
-                    time.sleep(1)
-                    pg.keyDown('alt')
-                    pg.press('x')
-                    pg.keyUp('alt')
-                    time.sleep(1)        
+                        ImgClick(FolURL2,"TenpDown.png",0.9,1)
+                        time.sleep(1)
+                        while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
+                            time.sleep(1)
+                        time.sleep(1)                        
+                        pyperclip.copy(S_ListItem[0])
+                        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                        pg.press(['return'])
+                        time.sleep(1)
+                        pg.keyDown('alt')
+                        pg.press('s')
+                        pg.keyUp('alt')
+                        time.sleep(1)
+                        while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
+                            time.sleep(1)
+                            if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
+                                pg.press('y')
+                                time.sleep(1)
+                            time.sleep(1)
+                        OkList = ["DownOk.png","DownOk2.png"]
+                        Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
+                        if Dok[0] == True:
+                            ImgClick(FolURL2,Dok[1],0.9,1)
+                            pg.press('return')
+                            time.sleep(1)
+                        time.sleep(1)
+                        pg.keyDown('alt')
+                        pg.press('x')
+                        pg.keyUp('alt')
+                        time.sleep(1)        
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
