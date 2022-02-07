@@ -225,7 +225,7 @@ def SortPreList(PreList,Key):#CSVと列名を4つ与えて4つの複合と引数
     except:
         return False,""
 #----------------------------------------------------------------------------------------------------------------------
-def MainStarter(FolURL2):
+def MainStarter(FolURL2):    
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
     List = ["DensiSinkokuIcon.png","DensiSinkokuIcon2.png"]
     conf = 0.9#画像認識感度
@@ -242,6 +242,10 @@ def MainStarter(FolURL2):
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
     while pg.locateOnScreen(FolURL2 + "/" + "MsgBtn.png", confidence=0.9) is None:
         time.sleep(1)
+        if ImgCheck(FolURL2,"DensiAnnai.png",0.9,1)[0] == True:
+            pg.keyDown('alt')
+            pg.press('c')
+            pg.keyUp('alt')    
     ImgClick(FolURL2,"MsgBtn.png",conf,LoopVal)#電子申告・申請タブを押す
     #----------------------------------------------------------------------------------------------------------------------
     while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzokuBtn.png", confidence=0.9) is None:
@@ -361,6 +365,9 @@ def DataDateSerch(FolURL2):
         time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
             time.sleep(1)
+            pg.keyDown('alt')
+            pg.press('r')
+            pg.keyUp('alt')
         time.sleep(1)
         Wa = str(WarekiHenkan.Wareki.from_ad(int(TaisyouNen)))
         Wa = Wa.replace("令和","").replace("年","")
@@ -377,10 +384,15 @@ def DataDateSerch(FolURL2):
         pg.press(['return'])        
         pg.write('59',interval=0.01)        
         pg.press(['return'])
-        time.sleep(1)
-        ImgClick(FolURL2, "MsgFindOK.png", 0.9, 1)
-        time.sleep(1)
-        return True
+        time.sleep(3)
+        ImList = ["MsgFindOK.png","MsgFindOK2.png"]
+        ImL = ImgCheckForList(FolURL2,ImList,0.9,1)
+        if ImL[0] == True:
+            ImgClick(FolURL2, ImL[1], 0.9, 1)
+            time.sleep(1)
+            return True
+        else:
+            return False
     except:
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
@@ -432,9 +444,13 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                         if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
                             pg.press('y')
                             time.sleep(1)
-                        if ImgCheck(FolURL2,"DownOk.png",0.9,1)[0] == True:
-                            pg.press('return')
-                            time.sleep(1)
+                        time.sleep(1)
+                    OkList = ["DownOk.png","DownOk2.png"]
+                    Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
+                    if Dok[0] == True:
+                        ImgClick(FolURL2,Dok[1],0.9,1)
+                        pg.press('return')
+                        time.sleep(1)
                     time.sleep(1)
                     pg.keyDown('alt')
                     pg.press('x')
