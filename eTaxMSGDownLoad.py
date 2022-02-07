@@ -300,7 +300,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                 time.sleep(1)
                 if H_MSG_rowItem == H_L_Row - 1:
                     H_LogAnsOBJ.quit()
-                    time.sleep(1)
+                    time.sleep(2)
                 else:
                     H_LogAnsOBJ.switch_to.window(H_LogAnsOBJ.window_handles[0])#タブ移動する
                     WebDriverWait(H_LogAnsOBJ, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
@@ -396,7 +396,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x > 0:
+        if x >= 0:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
