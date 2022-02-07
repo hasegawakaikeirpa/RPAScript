@@ -267,14 +267,18 @@ def MasterCSVGet(FolURL2):
 #------------------------------------------------------------------------------------------------------------------------------- 
 def DataOpen(FolURL2,PreListItem):
     try:
+        time.sleep(1)
         pyperclip.copy(str(PreListItem[0]))
         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        time.sleep(1)
         pg.press(['return'])
         time.sleep(2)
         WY = WarekiHenkan.Wareki.from_ad(int(TaisyouNen))
         WY = str(WY).replace("令和","").replace("年","")
         pg.write(WY,interval=0.01)
+        time.sleep(1)
         pg.press('return')
+        time.sleep(1)
         pg.press('return')
         time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/" + "PreCheckBar.png", confidence=0.9) is None:
@@ -291,6 +295,7 @@ def DataOpen(FolURL2,PreListItem):
         time.sleep(1)
         ImgClick(FolURL2,"FTypeSelect.png",0.9,1)
         pg.press('return')
+        time.sleep(1)
         pyperclip.copy(str(PreListItem[3]))
         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
         pg.press(['return'])
@@ -306,7 +311,8 @@ def DataOpen(FolURL2,PreListItem):
         time.sleep(1)
         pg.keyDown('alt')
         pg.press('x')
-        pg.keyUp('alt')            
+        pg.keyUp('alt')
+        time.sleep(1)           
         return True
     except:
         print("フォルダ名取得失敗")
