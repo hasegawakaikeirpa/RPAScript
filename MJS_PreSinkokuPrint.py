@@ -396,6 +396,8 @@ def DataDateSerch(FolURL2):
         ImgClick(FolURL2, "JoinBtn.png", 0.9, 5)
         time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/MsgOpenFlag.png", confidence=0.99999) == None:
+            if ImgCheck(FolURL2, "NoWindow.png", 0.9, 1)[0] == True:
+                pg.press('return')
             if ImgCheck(FolURL2, "DensiSyoumeiMsg.png", 0.9, 1)[0] == True:
                 pg.press('y')
             if ImgCheck(FolURL2, "PreSetuzoku.png", 0.9, 1)[0] == True:
