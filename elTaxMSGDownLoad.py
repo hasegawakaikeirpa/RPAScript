@@ -308,6 +308,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                 else:
                     H_BackBtn = H_LogAnsOBJ.find_element_by_xpath("/html/body/div[2]/form/footer/div[1]/div/div[1]/a")
                     H_BackBtn.click()
+                    time.sleep(1)
     elif H_LogMSGAns == "ログインできませんでした。":
         NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "ログインエラー1回目"
         NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
@@ -384,7 +385,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 320:
+        if x >= 400:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
