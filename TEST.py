@@ -255,17 +255,11 @@ from datetime import datetime, timedelta
 import WarekiHenkan
 import PDFMarge
 from chardet.universaldetector import UniversalDetector
+import CSVOut
 
 FolURL2 = os.getcwd().replace('\\','/')#先
 FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
 SerchEnc = format(getFileEncoding(FolURL2 + "/ActionLog/Log.csv"))
 LogList = pd.read_csv(FolURL2 + "/ActionLog/Log.csv",header=0,encoding=SerchEnc)
-LogMSG = ["No_dfItem","","","_データオープンエラー"]
-df_shape = LogList.shape
-#最終行に追加
-LogList.loc[df_shape[0]] = LogMSG
-pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)
-# LogList.loc[df_shape[0],[1]] = LogMSG[0]
-# LogList.loc[df_shape[0],[2]] = LogMSG[1]
-# LogList.loc[df_shape[0],[3]] = LogMSG[2]
-# LogList.loc[df_shape[0],[4]] = LogMSG[3]#追加したいデータを〇〇に格納
+LogMSG = ["No_dfItem","","","_データオープンエラー",dt.today()]
+CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)

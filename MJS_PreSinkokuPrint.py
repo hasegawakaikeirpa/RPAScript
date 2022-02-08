@@ -349,44 +349,32 @@ def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
                     time.sleep
                     Dic = {'SyaCD':SyaCD,'TKCName':TKCName,'MirokuName':MirokuName,'MKUC':MKUC\
                         ,'MTUID':MTUID,'TKUC':TKUC,'TTUID':TTUID,'etaxPass':etaxPass,'eltaxPass':eltaxPass}
-                    LogMSG = [SyaCD , TKCName , MirokuName , "_データオープン成功"]
-                    df_shape = LogList.shape
-                    #最終行に追加
-                    LogList.loc[df_shape[0]] = LogMSG
-                    pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+                    LogMSG = [SyaCD , TKCName , MirokuName , "_データオープン成功",dt.today()]
+                    CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)   
                     return True,Dic,LogMSG
                 else:
                     ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
                     print('ミロク機能登録なし')
                     Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                         ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-                    LogMSG = [SyaCD , TKCName , MirokuName , "_ミロク機能登録なし"]
-                    df_shape = LogList.shape
-                    #最終行に追加
-                    LogList.loc[df_shape[0]] = LogMSG
-                    pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+                    LogMSG = [SyaCD , TKCName , MirokuName , "_ミロク機能登録なし",dt.today()]
+                    CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)  
                     return False,Dic,LogMSG                    
             else:
                 ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
                 print(str(SyaCD) , "_" , TKCName , "_利用登録なし" )
                 Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                     ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-                LogMSG = [SyaCD,TKCName,MirokuName,"_利用登録なし"]
-                df_shape = LogList.shape
-                #最終行に追加
-                LogList.loc[df_shape[0]] = LogMSG
-                pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+                LogMSG = [SyaCD,TKCName,MirokuName,"_利用登録なし",dt.today()]
+                CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)  
                 return False,Dic,LogMSG 
         else:
             ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
             print('マスターデータなし')
             Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                 ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-            LogMSG = [No_dfItem ,"","", "_マスターデータなし"]
-            df_shape = LogList.shape
-            #最終行に追加
-            LogList.loc[df_shape[0]] = LogMSG
-            pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+            LogMSG = [No_dfItem ,"","", "_マスターデータなし",dt.today()]
+            CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
             return False,Dic,LogMSG
     except:
         IMS = ImgCheck(FolURL2,"SetuzokuCancel.png",0.9,1)
@@ -395,11 +383,8 @@ def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
         print('データオープンエラー')
         Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
             ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-        LogMSG = [No_dfItem ,"","","_データオープンエラー"]
-        df_shape = LogList.shape
-        #最終行に追加
-        LogList.loc[df_shape[0]] = LogMSG
-        pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+        LogMSG = [No_dfItem ,"","","_データオープンエラー",dt.today()]
+        CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
         return False,Dic,LogMSG
 #------------------------------------------------------------------------------------------------------------------------------- 
 def DataDateSerch(FolURL2):
@@ -528,18 +513,16 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                                 time.sleep(1)
                                 df_shape = LogList.shape
                                 #最終行に追加
-                                LogList.loc[df_shape[0]] = [No_dfItem,"","","_成功"]
-                                pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc) 
-                    else:
-                        df_shape = LogList.shape
-                        #最終行に追加
-                        LogList.loc[df_shape[0]] = DOList[2]
-                        pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)                        
+                                LogMSG = [No_dfItem,"","","_成功",dt.today()]
+                                CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
+                    # else:
+                    #     df_shape = LogList.shape
+                    #     #最終行に追加
+                    #     LogList.loc[df_shape[0]] = DOList[2]
+                    #     pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc, index = False)  
         except:
-            df_shape = LogList.shape
-            #最終行に追加
-            LogList.loc[df_shape[0]] = DOList[2]
-            pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)
+            LogMSG = [No_dfItem,"","","_エラーで失敗",dt.today()]
+            CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)
         # else:
         # Errrrr = Errrrr + 1        
 #------------------------------------------------------------------------------------------------------------------------------- 
@@ -588,6 +571,7 @@ import jaconv
 import WarekiHenkan
 from chardet.universaldetector import UniversalDetector
 import calendar
+import CSVOut
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
