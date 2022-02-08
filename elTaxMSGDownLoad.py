@@ -117,10 +117,10 @@ def LogReturn(LogAns,H_driver):
             H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a")
             H_MSG_OpenMyNo.click()
             WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
-            # H_Today = dt.today() + relativedelta(months=-1)
-            # H_dtToday = dt.today()
-            H_Today = dt.today() + relativedelta(months=-2)
-            H_dtToday = dt.today() + relativedelta(months=-1)
+            H_Today = dt.today() + relativedelta(months=-1)
+            H_dtToday = dt.today()
+            # H_Today = dt.today() + relativedelta(months=-2)
+            # H_dtToday = dt.today() + relativedelta(months=-1)
             Hj = str(H_dtToday.year)
             Hjj = str('{0:02}'.format(H_dtToday.month))
             H_Str = Hj + "/" + Hjj + "/01 01:01:01" 
