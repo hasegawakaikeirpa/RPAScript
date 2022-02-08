@@ -217,6 +217,8 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou,H_row):
         PDFSerch = "メッセージ照会_お知らせ" in PDFfolderItem
         if PDFSerch == False:
             PDFSerch = "メッセージ照会_受付通知（申告）" in PDFfolderItem
+        if PDFSerch == False:
+            PDFSerch = "メッセージ照会_受付通知（利用届出、申請・届出）" in PDFfolderItem
         if MTitle == 'プレ申告データに関するお知らせ':
             PDFName = KanyoFolName + "_" + Hakkoumoto + "_" + Hakkou + "_" + MTitle + "[" + H_row + "]" + ".pdf"
         else:
@@ -292,7 +294,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                 RenamePDF(H_P3,H_P4,H_SCode,H_TKCName,H_P1,H_P2,H_row)#PDF保存先フォルダー作成後リネーム&移動 DownTime,MTitle,KanyoNo,KanyoName
                 if H_MSG_rowItem == H_L_Row - 1:
                     H_LogAnsOBJ.quit()
-                    time.sleep(1)
+                    time.sleep(2)
                 else:
                     H_LogAnsOBJ.switch_to.window(H_LogAnsOBJ.window_handles[0])#タブ移動する
                     WebDriverWait(H_LogAnsOBJ, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
@@ -300,7 +302,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                 print("ファイルが存在します。")
                 if H_MSG_rowItem == H_L_Row - 1:
                     H_LogAnsOBJ.quit()
-                    time.sleep(1)
+                    time.sleep(2)
                 else:
                     H_BackBtn = H_LogAnsOBJ.find_element_by_xpath("/html/body/div[2]/form/footer/div[1]/div/div[1]/a")
                     H_BackBtn.click()
@@ -309,7 +311,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
         NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
         NGLog.append(NGstr)
         H_LogAnsOBJ.quit()
-        time.sleep(1)
+        time.sleep(2)
         LogAns = eTaxWebCrawler(H_First,H_SecondP,os.getcwd().replace('\\','/'),H_SCode,H_TKCName)#Nanではない場合
         LogArray = LogAns[0].split("\n",1)
         H_LogAns = LogArray[0]#ログオン後のH1テキストを代入
@@ -320,10 +322,10 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
             NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
             NGLog.append(NGstr)
             H_LogAnsOBJ.quit()
-            time.sleep(1)
+            time.sleep(2)
         elif H_LogMSGAns == "認証エラー":
             H_LogAnsOBJ.quit()
-            time.sleep(1)
+            time.sleep(2)
     elif H_LogMSGAns == "認証エラー":
         print(H_SCode + "_" + H_TKCName + "_" + "暗証番号の変更")
     elif H_LogMSGAns == '該当するデータはありませんでした。':
@@ -331,10 +333,10 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
         NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
         NGLog.append(NGstr)
         H_LogAnsOBJ.quit()
-        time.sleep(1)
+        time.sleep(2)
     else:
         H_LogAnsOBJ.quit()
-        time.sleep(1)
+        time.sleep(2)
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 #lxmlインポート
 import lxml.html
@@ -380,7 +382,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 7:
+        if x >= 210:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
