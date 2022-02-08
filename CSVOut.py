@@ -23,6 +23,28 @@ def CsvPlus(URL,LogList,LogMSG):
     except:
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
+def CsvSortArray(URL,KeyCol,Key,Arg):#dtype={"TKCKokuzeiUserCode": str,"TKCKokuzeiUserCode": str}.........
+    try:
+        Sort_url = URL
+        SerchEnc = format(getFileEncoding(Sort_url))
+        C_Child = pd.read_csv(Sort_url,encoding = SerchEnc)
+        C_CforCount = 0
+        C_dfRow = np.array(C_Child).shape[0]#配列行数取得
+        for x in range(C_dfRow):
+            C_ChildDataRow = C_Child.iloc[x,:]
+            C_Val = C_ChildDataRow[KeyCol]
+            if Arg == "str":
+                C_Val = str(C_Val)
+            if Arg == "int":
+                C_Val = int(C_Val)
+            if Key == C_Val:
+                return True,C_ChildDataRow
+            else:
+                C_CforCount = C_CforCount + 1
+        return False,""
+    except:
+        return False,""
+#------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
 import subprocess

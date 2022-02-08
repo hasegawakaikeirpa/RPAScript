@@ -404,11 +404,11 @@ def DataDateSerch(FolURL2):
                 ImgClick(FolURL2, "SetuzokuCancel.png", 0.9, 1)
                 break
             time.sleep(1)
-        time.sleep(1)
+        time.sleep(3)
         pg.keyDown('alt')
         pg.press('j')
         pg.keyUp('alt')
-        time.sleep(1)
+        time.sleep(3)
         while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
             time.sleep(1)
             pg.keyDown('alt')
@@ -460,14 +460,18 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
         try:
             SerchEnc = format(getFileEncoding(FolURL2 + "/ActionLog/Log.csv"))
             LogList = pd.read_csv(FolURL2 + "/ActionLog/Log.csv",header=0,encoding=SerchEnc)
-            if No_dfItem == 919:
+            # if No_dfItem == 919:
+#----------------------------------------------------------------------------------------------------------------------
+            SortAns = CSVOut.CsvSortArray(FolURL2 + "/ActionLog/Log.csv","No",No_dfItem,"int")
+            if SortAns[0] == False:
+#----------------------------------------------------------------------------------------------------------------------
                 #CSV要素取得-------------------------------------------------------------------------------------------------------------
                 S_List = SortPreList(PreList,No_dfItem)
                 S_LN = S_List[1][0]
                 if os.path.isfile(S_LN[0]) == False: ################################################################################################
                     SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
                     DOList = DataOpen(FolURL2,SFlag, No_dfItem,LogList)
-                    time.sleep(2)
+                    time.sleep(1)
                     if DOList[0] == True:
                         DDS = DataDateSerch(FolURL2)
                         time.sleep(2)
