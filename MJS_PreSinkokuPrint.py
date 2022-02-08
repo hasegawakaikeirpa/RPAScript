@@ -321,7 +321,8 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
             time.sleep(1)
             while pg.locateOnScreen(FolURL2 + "/Nodata.png", confidence=0.9) is None:
                 time.sleep(1)
-            NC = ImgCheck(FolURL2,"NodataFlag.png",0.99999,1)
+            NCList = ["NodataFlag.png","NodataFlag2.png"]
+            NC = ImgCheckForList(FolURL2,NCList,0.99999,1)
             if NC[0] == False:
                 Siki = ImgCheck(FolURL2,"SikibetuInput.png",0.9,1)
                 if Siki[0] == False:
@@ -375,7 +376,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
 #------------------------------------------------------------------------------------------------------------------------------- 
 def DataDateSerch(FolURL2):
     try:
-        TCC = ImgCheck(FolURL2, "TihouCheck.png", 0.99999, 1)
+        TCC = ImgCheck(FolURL2, "TihouCheck.png", 0.99999, 3)
         if TCC[0] == False:
             ImgClick(FolURL2, "TihouNoCheck.png", 0.9, 1)
         time.sleep(1)
@@ -386,6 +387,9 @@ def DataDateSerch(FolURL2):
         while pg.locateOnScreen(FolURL2 + "/MsgOpenFlag.png", confidence=0.99999) == None:
             if ImgCheck(FolURL2, "DensiSyoumeiMsg.png", 0.9, 1)[0] == True:
                 pg.press('y')
+            if ImgCheck(FolURL2, "PreSetuzoku.png", 0.9, 1)[0] == True:
+                ImgClick(FolURL2, "SetuzokuCancel.png", 0.9, 1)
+                break
             time.sleep(1)
         time.sleep(1)
         pg.keyDown('alt')
@@ -440,7 +444,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
     Errrrr = 0
     for No_dfItem in No_df:
-        if Errrrr >= 17:
+        if Errrrr >= 40:
             #CSV要素取得-------------------------------------------------------------------------------------------------------------
             S_List = SortPreList(PreList,No_dfItem)
             S_LN = S_List[1][0]
