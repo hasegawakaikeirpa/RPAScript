@@ -219,6 +219,8 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou,H_row):
             PDFSerch = "メッセージ照会_受付通知（申告）" in PDFfolderItem
         if PDFSerch == False:
             PDFSerch = "メッセージ照会_受付通知（利用届出、申請・届出）" in PDFfolderItem
+        if PDFSerch == False:
+            PDFSerch = "メッセージ照会_申告書不受理通知" in PDFfolderItem
         if MTitle == 'プレ申告データに関するお知らせ':
             PDFName = KanyoFolName + "_" + Hakkoumoto + "_" + Hakkou + "_" + MTitle + "[" + H_row + "]" + ".pdf"
         else:
@@ -382,7 +384,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 210:
+        if x >= 320:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
