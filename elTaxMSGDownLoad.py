@@ -219,6 +219,8 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou,H_row):
             PDFSerch = "メッセージ照会_受付通知（申告）" in PDFfolderItem
         if PDFSerch == False:
             PDFSerch = "メッセージ照会_受付通知（利用届出、申請・届出）" in PDFfolderItem
+        if PDFSerch == False:
+            PDFSerch = "メッセージ照会_申告書不受理通知" in PDFfolderItem
         if MTitle == 'プレ申告データに関するお知らせ':
             PDFName = KanyoFolName + "_" + Hakkoumoto + "_" + Hakkou + "_" + MTitle + "[" + H_row + "]" + ".pdf"
         else:
@@ -306,6 +308,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                 else:
                     H_BackBtn = H_LogAnsOBJ.find_element_by_xpath("/html/body/div[2]/form/footer/div[1]/div/div[1]/a")
                     H_BackBtn.click()
+                    time.sleep(1)
     elif H_LogMSGAns == "ログインできませんでした。":
         NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "ログインエラー1回目"
         NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
@@ -382,7 +385,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 210:
+        if x >= 400:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
