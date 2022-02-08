@@ -94,12 +94,19 @@ def ParGet(H_driver,H_MSG_rowItem,H_MSG_row):
                 H_driver.execute_script("hyouziAction()")#Javaで表示
                 WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ       
             finally:
+                try:
                 #要素取得
-                H_MSG_TableItem1 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/section/table/tbody/tr[1]/td").text.replace('\u3000', ' ')#発行元
-                H_MSG_TableItem2 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/section/table/tbody/tr[2]/td[1]").text.replace('\u3000', ' ')#発行元2
-                H_MSG_TableItem3 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/section/table/tbody/tr[3]/td[1]").text.replace('\u3000', ' ')#発行日時            
-                H_MSG_TableItem4 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/section/table/tbody/tr[4]/td").text.replace('\u3000', ' ')#件名
-                return H_MSG_TableItem1,H_MSG_TableItem2,H_MSG_TableItem3,H_MSG_TableItem4
+                    H_MSG_TableItem1 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/section/table/tbody/tr[1]/td").text.replace('\u3000', ' ')#発行元
+                    H_MSG_TableItem2 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/section/table/tbody/tr[2]/td[1]").text.replace('\u3000', ' ')#発行元2
+                    H_MSG_TableItem3 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/section/table/tbody/tr[3]/td[1]").text.replace('\u3000', ' ')#発行日時            
+                    H_MSG_TableItem4 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/section/table/tbody/tr[4]/td").text.replace('\u3000', ' ')#件名
+                    return H_MSG_TableItem1,H_MSG_TableItem2,H_MSG_TableItem3,H_MSG_TableItem4
+                except:
+                    H_MSG_TableItem1 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/table/tbody/tr[1]/td").text.replace('\u3000', ' ')#発行元
+                    H_MSG_TableItem2 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/table/tbody/tr[2]/td[1]").text.replace('\u3000', ' ')#発行元2
+                    H_MSG_TableItem3 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/table/tbody/tr[3]/td[1]").text.replace('\u3000', ' ')#発行日時            
+                    H_MSG_TableItem4 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/table/tbody/tr[4]/td").text.replace('\u3000', ' ')#件名
+                    return H_MSG_TableItem1,H_MSG_TableItem2,H_MSG_TableItem3,H_MSG_TableItem4
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 def PrintIFS(H_Title,H_driver):
     H_driver.execute_script('window.print();')#開いたタブを印刷
@@ -208,6 +215,8 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou,H_row):
     PDFfolder = glob.glob(os.getcwd().replace('\\','/') + "/" + "*.pdf") #フォルダーがあった場合
     for PDFfolderItem in PDFfolder:
         PDFSerch = "メッセージ照会_お知らせ" in PDFfolderItem
+        if PDFSerch == False:
+            PDFSerch = "メッセージ照会_受付通知（申告）" in PDFfolderItem
         if MTitle == 'プレ申告データに関するお知らせ':
             PDFName = KanyoFolName + "_" + Hakkoumoto + "_" + Hakkou + "_" + MTitle + "[" + H_row + "]" + ".pdf"
         else:
@@ -371,7 +380,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 0:
+        if x >= 7:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
