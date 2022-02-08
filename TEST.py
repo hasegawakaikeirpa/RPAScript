@@ -197,9 +197,19 @@ def SortPDF(PDFName):
             Cou = Cou + 1
     return str(Cou),pt
 #----------------------------------------------------------------------------------------------------------------------
+def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
+    detector = UniversalDetector()
+    with open(file_path, mode= "rb" ) as f:
+        for binary in f:
+            detector.feed( binary )
+            if detector.done:
+                break
+    detector.close()
+    return detector.result[ "encoding" ]
 #----------------------------------------------------------------------------------------------------------------------
 
     #モジュールインポート
+from encodings import utf_8
 from tracemalloc import stop
 from appium import webdriver
 import subprocess
@@ -244,7 +254,18 @@ import pyperclip #クリップボードへのコピーで使用
 from datetime import datetime, timedelta
 import WarekiHenkan
 import PDFMarge
+from chardet.universaldetector import UniversalDetector
 
 FolURL2 = os.getcwd().replace('\\','/')#先
-FolURL2 = FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku"
-SortPDF("40" + "_" + "株式会社　Ｒｅｇｉｓｔａ" + ".pdf")
+FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
+SerchEnc = format(getFileEncoding(FolURL2 + "/ActionLog/Log.csv"))
+LogList = pd.read_csv(FolURL2 + "/ActionLog/Log.csv",header=0,encoding=SerchEnc)
+LogMSG = ["No_dfItem","","","_データオープンエラー"]
+df_shape = LogList.shape
+#最終行に追加
+LogList.loc[df_shape[0]] = LogMSG
+pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)
+# LogList.loc[df_shape[0],[1]] = LogMSG[0]
+# LogList.loc[df_shape[0],[2]] = LogMSG[1]
+# LogList.loc[df_shape[0],[3]] = LogMSG[2]
+# LogList.loc[df_shape[0],[4]] = LogMSG[3]#追加したいデータを〇〇に格納

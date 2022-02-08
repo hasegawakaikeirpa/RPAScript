@@ -317,10 +317,11 @@ def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
             except:
                 eltaxPass = ""
             pg.write(SyaCD,interval=0.01)
-            pg.press('return')            
+            pg.press('return')                   
             time.sleep(1)
             while pg.locateOnScreen(FolURL2 + "/Nodata.png", confidence=0.9) is not None:
                 time.sleep(1)
+            time.sleep(2)
             NCList = ["NodataFlag.png","NodataFlag2.png"]
             NC = ImgCheckForList(FolURL2,NCList,0.99999,1)
             if NC[0] == False:
@@ -348,36 +349,58 @@ def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
                     time.sleep
                     Dic = {'SyaCD':SyaCD,'TKCName':TKCName,'MirokuName':MirokuName,'MKUC':MKUC\
                         ,'MTUID':MTUID,'TKUC':TKUC,'TTUID':TTUID,'etaxPass':etaxPass,'eltaxPass':eltaxPass}
-                    LogList.append(SyaCD + TKCName + MirokuName + "_データオープン成功")
-                    return True,Dic
+                    LogMSG = [SyaCD , TKCName , MirokuName , "_データオープン成功"]
+                    df_shape = LogList.shape
+                    #最終行に追加
+                    LogList.loc[df_shape[0]] = LogMSG
+                    pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+                    return True,Dic,LogMSG
                 else:
                     ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
                     print('ミロク機能登録なし')
                     Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                         ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-                    LogList.append(SyaCD + TKCName + MirokuName + "_ミロク機能登録なし")
-                    return False,Dic                    
+                    LogMSG = [SyaCD , TKCName , MirokuName , "_ミロク機能登録なし"]
+                    df_shape = LogList.shape
+                    #最終行に追加
+                    LogList.loc[df_shape[0]] = LogMSG
+                    pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+                    return False,Dic,LogMSG                    
             else:
                 ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
-                print(str(SyaCD) + "_" + TKCName + "_利用登録なし" )
+                print(str(SyaCD) , "_" , TKCName , "_利用登録なし" )
                 Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                     ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-                LogList.append(SyaCD + TKCName + MirokuName + "_利用登録なし")
-                return False,Dic 
+                LogMSG = [SyaCD,TKCName,MirokuName,"_利用登録なし"]
+                df_shape = LogList.shape
+                #最終行に追加
+                LogList.loc[df_shape[0]] = LogMSG
+                pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+                return False,Dic,LogMSG 
         else:
             ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
             print('マスターデータなし')
             Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                 ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-            LogList.append(No_dfItem + "_マスターデータなし")
-            return False,Dic
+            LogMSG = [No_dfItem ,"","", "_マスターデータなし"]
+            df_shape = LogList.shape
+            #最終行に追加
+            LogList.loc[df_shape[0]] = LogMSG
+            pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+            return False,Dic,LogMSG
     except:
-        ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
+        IMS = ImgCheck(FolURL2,"SetuzokuCancel.png",0.9,1)
+        if IMS[0] == True:
+            ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
         print('データオープンエラー')
         Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
             ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
-        LogList.append(No_dfItem + "_データオープンエラー")
-        return False,Dic
+        LogMSG = [No_dfItem ,"","","_データオープンエラー"]
+        df_shape = LogList.shape
+        #最終行に追加
+        LogList.loc[df_shape[0]] = LogMSG
+        pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)  
+        return False,Dic,LogMSG
 #------------------------------------------------------------------------------------------------------------------------------- 
 def DataDateSerch(FolURL2):
     try:
@@ -440,8 +463,6 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
-    SerchEnc = format(getFileEncoding(FolURL2 + "/ActionLog/Log.csv"))
-    LogList = pd.read_csv(FolURL2 + "/ActionLog/Log.csv",encoding=SerchEnc)
     #----------------------------------------------------------------------------------------------------------------------
     MainStarter(FolURL2)#データ送信画面までの関数
     No_df = NoList
@@ -452,6 +473,8 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
     # Errrrr = 0
     for No_dfItem in No_df:
         try:
+            SerchEnc = format(getFileEncoding(FolURL2 + "/ActionLog/Log.csv"))
+            LogList = pd.read_csv(FolURL2 + "/ActionLog/Log.csv",header=0,encoding=SerchEnc)
             if No_dfItem == 919:
                 #CSV要素取得-------------------------------------------------------------------------------------------------------------
                 S_List = SortPreList(PreList,No_dfItem)
@@ -503,7 +526,19 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                                 pg.press('x')
                                 pg.keyUp('alt')
                                 time.sleep(1)
+                                df_shape = LogList.shape
+                                #最終行に追加
+                                LogList.loc[df_shape[0]] = [No_dfItem,"","","_成功"]
+                                pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc) 
+                    else:
+                        df_shape = LogList.shape
+                        #最終行に追加
+                        LogList.loc[df_shape[0]] = DOList[2]
+                        pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)                        
         except:
+            df_shape = LogList.shape
+            #最終行に追加
+            LogList.loc[df_shape[0]] = DOList[2]
             pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)
         # else:
         # Errrrr = Errrrr + 1        
@@ -599,7 +634,7 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
             #         NoF = False
             #         break
             # if NoF == True:
-
+            PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle,FolName])
 # print(NgLog)
 print(PreList)
 myList = []
