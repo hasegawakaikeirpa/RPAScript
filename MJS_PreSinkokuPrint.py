@@ -432,7 +432,7 @@ def DataDateSerch(FolURL2):
         if ImL[0] == True:
             ImgClick(FolURL2, ImL[1], 0.9, 1)
             time.sleep(1)
-            AFN = ImgCheck(FolURL2,"AfterFindNodata.png",0.9,5)
+            AFN = ImgCheck(FolURL2,"AfterFindNodata.png",0.99999,5)
             if AFN[0] == True:
                 return False
             else:
