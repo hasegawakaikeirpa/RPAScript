@@ -393,9 +393,7 @@ def DataDateSerch(FolURL2):
         if TCC[0] == False:
             ImgClick(FolURL2, "TihouNoCheck.png", 0.9, 1)
         time.sleep(1)
-        pg.keyDown('alt')
-        pg.press('h')
-        pg.keyUp('alt')
+        ImgClick(FolURL2, "JoinBtn.png", 0.9, 5)
         time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/MsgOpenFlag.png", confidence=0.99999) == None:
             if ImgCheck(FolURL2, "DensiSyoumeiMsg.png", 0.9, 1)[0] == True:
@@ -405,15 +403,11 @@ def DataDateSerch(FolURL2):
                 break
             time.sleep(1)
         time.sleep(3)
-        pg.keyDown('alt')
-        pg.press('j')
-        pg.keyUp('alt')
+        ImgClick(FolURL2, "FindIcon.png", 0.9, 5)
         time.sleep(3)
         while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
-            time.sleep(1)
-            pg.keyDown('alt')
-            pg.press('r')
-            pg.keyUp('alt')
+            time.sleep(1)            
+            ImgClick(FolURL2, "ClearIcon.png", 0.9, 5)
         time.sleep(1)
         Wa = str(WarekiHenkan.Wareki.from_ad(int(TaisyouNen)))
         Wa = Wa.replace("令和","").replace("年","")
@@ -432,15 +426,15 @@ def DataDateSerch(FolURL2):
         pg.press(['return'])
         time.sleep(3)
         ImList = ["MsgFindOK.png","MsgFindOK2.png"]
-        ImL = ImgCheckForList(FolURL2,ImList,0.9,1)
+        ImL = ImgCheckForList(FolURL2,ImList,0.9,10)
         if ImL[0] == True:
             ImgClick(FolURL2, ImL[1], 0.9, 1)
             time.sleep(1)
-            AFN = ImgCheck(FolURL2,"AfterFindNodata.png",0.9,1)
+            AFN = ImgCheck(FolURL2,"AfterFindNodata.png",0.9,5)
             if AFN[0] == True:
-                return True
-            else:
                 return False
+            else:
+                return True
     except:
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
@@ -474,7 +468,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                     time.sleep(1)
                     if DOList[0] == True:
                         DDS = DataDateSerch(FolURL2)
-                        time.sleep(2)
+                        time.sleep(1)
                         if DDS == True:
                             for S_ListItem in S_List[1]:
                                 FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
