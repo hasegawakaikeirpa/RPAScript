@@ -264,7 +264,7 @@ def MasterCSVGet(FolURL2):
     print(C_df)
     return(C_df)
 #------------------------------------------------------------------------------------------------------------------------------- 
-def DataOpen(FolURL2,SFlag,No_dfItem):
+def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
     try:
         if SFlag[0] == True:
             pg.keyDown('alt')
@@ -274,7 +274,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
             #画像が出現するまで待34機してクリック------------------------------------------------------------------------------------
             while pg.locateOnScreen(FolURL2 + "/" + "PreSetuzoku.png", confidence=0.9) is None:
                 time.sleep(1)
-            time.sleep(2)
+            time.sleep(1)
             conf = 0.9
             LoopVal = 1
             if ImgCheck(FolURL2, "KomonsakiOpenTab.png", 0.9, 1)[0] == False:
@@ -319,7 +319,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
             pg.write(SyaCD,interval=0.01)
             pg.press('return')            
             time.sleep(1)
-            while pg.locateOnScreen(FolURL2 + "/Nodata.png", confidence=0.9) is None:
+            while pg.locateOnScreen(FolURL2 + "/Nodata.png", confidence=0.9) is not None:
                 time.sleep(1)
             NCList = ["NodataFlag.png","NodataFlag2.png"]
             NC = ImgCheckForList(FolURL2,NCList,0.99999,1)
@@ -348,30 +348,35 @@ def DataOpen(FolURL2,SFlag,No_dfItem):
                     time.sleep
                     Dic = {'SyaCD':SyaCD,'TKCName':TKCName,'MirokuName':MirokuName,'MKUC':MKUC\
                         ,'MTUID':MTUID,'TKUC':TKUC,'TTUID':TTUID,'etaxPass':etaxPass,'eltaxPass':eltaxPass}
+                    LogList.append(SyaCD + TKCName + MirokuName + "_データオープン成功")
                     return True,Dic
                 else:
                     ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
                     print('ミロク機能登録なし')
                     Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                         ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
+                    LogList.append(SyaCD + TKCName + MirokuName + "_ミロク機能登録なし")
                     return False,Dic                    
             else:
                 ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
                 print(str(SyaCD) + "_" + TKCName + "_利用登録なし" )
                 Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                     ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
+                LogList.append(SyaCD + TKCName + MirokuName + "_利用登録なし")
                 return False,Dic 
         else:
             ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
             print('マスターデータなし')
             Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                 ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
+            LogList.append(No_dfItem + "_マスターデータなし")
             return False,Dic
     except:
         ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
         print('データオープンエラー')
         Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
             ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
+        LogList.append(No_dfItem + "_データオープンエラー")
         return False,Dic
 #------------------------------------------------------------------------------------------------------------------------------- 
 def DataDateSerch(FolURL2):
@@ -435,6 +440,8 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/MJS_DensiSinkoku"
+    SerchEnc = format(getFileEncoding(FolURL2 + "/ActionLog/Log.csv"))
+    LogList = pd.read_csv(FolURL2 + "/ActionLog/Log.csv",encoding=SerchEnc)
     #----------------------------------------------------------------------------------------------------------------------
     MainStarter(FolURL2)#データ送信画面までの関数
     No_df = NoList
@@ -442,60 +449,64 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
     ItemList = []
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
-    Errrrr = 0
+    # Errrrr = 0
     for No_dfItem in No_df:
-        if Errrrr >= 40:
-            #CSV要素取得-------------------------------------------------------------------------------------------------------------
-            S_List = SortPreList(PreList,No_dfItem)
-            S_LN = S_List[1][0]
-            if os.path.isfile(S_LN[0]) == False: ################################################################################################
-                SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
-                DOList = DataOpen(FolURL2,SFlag, No_dfItem)
-                time.sleep(1)
-                if DOList[0] == True:
-                    DDS = DataDateSerch(FolURL2)
-                    if DDS == True:
-                        for S_ListItem in S_List[1]:
-                            FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
-                            FPosx = FPos[1]
-                            FPosy = FPos[2]
-                            FPosy = FPosy + (25*S_ListItem[1])
-                            pg.click(FPosx, FPosy)
-                            time.sleep(1)
-                            pg.press('return')
-                            time.sleep(1)
-                            ImgClick(FolURL2,"TenpDown.png",0.9,1)
-                            time.sleep(1)
-                            while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
+        try:
+            if No_dfItem == 919:
+                #CSV要素取得-------------------------------------------------------------------------------------------------------------
+                S_List = SortPreList(PreList,No_dfItem)
+                S_LN = S_List[1][0]
+                if os.path.isfile(S_LN[0]) == False: ################################################################################################
+                    SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
+                    DOList = DataOpen(FolURL2,SFlag, No_dfItem,LogList)
+                    time.sleep(2)
+                    if DOList[0] == True:
+                        DDS = DataDateSerch(FolURL2)
+                        time.sleep(2)
+                        if DDS == True:
+                            for S_ListItem in S_List[1]:
+                                FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
+                                FPosx = FPos[1]
+                                FPosy = FPos[2]
+                                FPosy = FPosy + (25*S_ListItem[1])
+                                pg.click(FPosx, FPosy)
                                 time.sleep(1)
-                            time.sleep(1)                        
-                            pyperclip.copy(S_ListItem[0])
-                            pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-                            pg.press(['return'])
-                            time.sleep(1)
-                            pg.keyDown('alt')
-                            pg.press('s')
-                            pg.keyUp('alt')
-                            time.sleep(1)
-                            while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
-                                time.sleep(1)
-                                if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
-                                    pg.press('y')
-                                    time.sleep(1)
-                                time.sleep(1)
-                            OkList = ["DownOk.png","DownOk2.png"]
-                            Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
-                            if Dok[0] == True:
-                                ImgClick(FolURL2,Dok[1],0.9,1)
                                 pg.press('return')
                                 time.sleep(1)
-                            time.sleep(1)
-                            pg.keyDown('alt')
-                            pg.press('x')
-                            pg.keyUp('alt')
-                            time.sleep(1)
-        else:
-            Errrrr = Errrrr + 1        
+                                ImgClick(FolURL2,"TenpDown.png",0.9,1)
+                                time.sleep(1)
+                                while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
+                                    time.sleep(1)
+                                time.sleep(1)           
+                                pyperclip.copy(S_ListItem[0])
+                                pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                                pg.press(['return'])
+                                time.sleep(1)
+                                pg.keyDown('alt')
+                                pg.press('s')
+                                pg.keyUp('alt')
+                                time.sleep(1)
+                                while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
+                                    time.sleep(1)
+                                    if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
+                                        pg.press('y')
+                                        time.sleep(1)
+                                    time.sleep(1)
+                                OkList = ["DownOk.png","DownOk2.png"]
+                                Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
+                                if Dok[0] == True:
+                                    ImgClick(FolURL2,Dok[1],0.9,1)
+                                    pg.press('return')
+                                    time.sleep(1)
+                                time.sleep(1)
+                                pg.keyDown('alt')
+                                pg.press('x')
+                                pg.keyUp('alt')
+                                time.sleep(1)
+        except:
+            pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc)
+        # else:
+        # Errrrr = Errrrr + 1        
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
@@ -556,10 +567,9 @@ pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol 
 PDFFileList = os.walk(pt)
 Cou = 1
 PreList=[]
-SerchEnc = format(getFileEncoding(FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku/Log/Log.csv"))
-NgLog = pd.read_csv(FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku/Log/Log.csv",encoding=SerchEnc)
-NgRow = np.array(NgLog).shape[0]#配列行数取得
-NgCol = np.array(NgLog).shape[1]#配列列数取得
+
+# NgRow = np.array(NgLog).shape[0]#配列行数取得
+# NgCol = np.array(NgLog).shape[1]#配列列数取得
 
 for current_dir, sub_dirs, files_list  in PDFFileList:
     #Count_dir = 0
@@ -579,18 +589,18 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
             Count_dir = int(Count_dir[0])
             #NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","221",\
             #    "223","240","249","251","268","282","285","305","306","309","317"]
-            NoF = True
-            for x in range(NgRow):
-                NgDataRow = NgLog.iloc[x,:]
-                NgCodeCode = str(NgDataRow[1])
-                if not Nos[0] == NgCodeCode:
-                    NoF = True
-                else:
-                    NoF = False
-                    break
-            if NoF == True:
-                PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle,FolName])
-print(NgLog)
+            # NoF = True
+            # for x in range(NgRow):
+            #     NgDataRow = NgLog.iloc[x,:]
+            #     NgCodeCode = str(NgDataRow[1])
+            #     if not Nos[0] == NgCodeCode:
+            #         NoF = True
+            #     else:
+            #         NoF = False
+            #         break
+            # if NoF == True:
+
+# print(NgLog)
 print(PreList)
 myList = []
 for PreListItem in PreList: 
