@@ -393,21 +393,32 @@ def DataDateSerch(FolURL2):
         if TCC[0] == False:
             ImgClick(FolURL2, "TihouNoCheck.png", 0.9, 1)
         time.sleep(1)
-        ImgClick(FolURL2, "JoinBtn.png", 0.9, 5)
-        time.sleep(1)
-        NoFlag = False
-        while pg.locateOnScreen(FolURL2 + "/MsgOpenFlag.png", confidence=0.99999) == None:
-            if ImgCheck(FolURL2, "NoWindow.png", 0.9, 1)[0] == True:
-                pg.press('return')
-                NoFlag = True
-            if ImgCheck(FolURL2, "DensiSyoumeiMsg.png", 0.9, 1)[0] == True:
-                pg.press('y')
-                NoFlag = False
-            if ImgCheck(FolURL2, "PreSetuzoku.png", 0.9, 1)[0] == True:
-                ImgClick(FolURL2, "SetuzokuCancel.png", 0.9, 1)
-                NoFlag = True
-                break
+        JList = ["JoinBtn.png","JoinBtn2.png"]
+        JCheck = ImgCheckForList(FolURL2, JList, 0.9, 3)
+        if JCheck[0] == True:
+            ImgClick(FolURL2, JCheck[1], 0.9, 5)
+            NoFlag = False
             time.sleep(1)
+            while pg.locateOnScreen(FolURL2 + "/MsgOpenFlag.png", confidence=0.99999) == None:
+                if ImgCheck(FolURL2, "NoWindow.png", 0.9, 1)[0] == True:
+                    pg.press('return')
+                    NoFlag = True
+                if ImgCheck(FolURL2, "DensiSyoumeiMsg.png", 0.9, 1)[0] == True:
+                    pg.press('y')
+                    NoFlag = False
+                if ImgCheck(FolURL2, "NoAnsyou.png", 0.9, 1)[0] == True:
+                    pg.press('return')
+                    NoFlag = False
+                if ImgCheck(FolURL2, "/elNoAnsyou.png", 0.9, 1)[0] == True:
+                    ImgClick(FolURL2, "elNoCancel.png", 0.9, 1)
+                    NoFlag = False
+                if ImgCheck(FolURL2, "PreSetuzoku.png", 0.9, 1)[0] == True:
+                    ImgClick(FolURL2, "SetuzokuCancel.png", 0.9, 1)
+                    NoFlag = True
+                    break
+                time.sleep(1)
+        else:
+            NoFlag = True
         if NoFlag == False:
             time.sleep(1)
             ImgClick(FolURL2, "FindIcon.png", 0.9, 5)
@@ -490,7 +501,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                                 time.sleep(1)
                                 while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
                                     time.sleep(1)
-                                time.sleep(1)           
+                                time.sleep(3)           
                                 pyperclip.copy(S_ListItem[0])
                                 pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
                                 pg.press(['return'])
@@ -505,6 +516,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                                         pg.press('y')
                                         time.sleep(1)
                                     time.sleep(1)
+                                time.sleep(2)
                                 OkList = ["DownOk.png","DownOk2.png"]
                                 Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
                                 if Dok[0] == True:
