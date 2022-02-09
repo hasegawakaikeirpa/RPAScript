@@ -624,7 +624,8 @@ for current_dir, sub_dirs, files_list  in PDFFileList:
                     NoF = False
                     break
             if NoF == True:
-                PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
+                if os.path.exists(NewTitle) == False:
+                    PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle])
 print(NgLog)
 print(PreList)
 
