@@ -395,48 +395,53 @@ def DataDateSerch(FolURL2):
         time.sleep(1)
         ImgClick(FolURL2, "JoinBtn.png", 0.9, 5)
         time.sleep(1)
+        NoFlag = False
         while pg.locateOnScreen(FolURL2 + "/MsgOpenFlag.png", confidence=0.99999) == None:
             if ImgCheck(FolURL2, "NoWindow.png", 0.9, 1)[0] == True:
                 pg.press('return')
+                NoFlag = True
             if ImgCheck(FolURL2, "DensiSyoumeiMsg.png", 0.9, 1)[0] == True:
                 pg.press('y')
+                NoFlag = False
             if ImgCheck(FolURL2, "PreSetuzoku.png", 0.9, 1)[0] == True:
                 ImgClick(FolURL2, "SetuzokuCancel.png", 0.9, 1)
+                NoFlag = True
                 break
             time.sleep(1)
-        time.sleep(3)
-        ImgClick(FolURL2, "FindIcon.png", 0.9, 5)
-        time.sleep(3)
-        while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
-            time.sleep(1)            
-            ImgClick(FolURL2, "ClearIcon.png", 0.9, 5)
-        time.sleep(1)
-        Wa = str(WarekiHenkan.Wareki.from_ad(int(TaisyouNen)))
-        Wa = Wa.replace("令和","").replace("年","")
-        Tuki = str('{0:02}'.format(int(TaisyouTuki)))
-        FDate = Wa + Tuki + "01"
-        Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
-        LDate = Wa + Tuki + str(Lday[1])
-        ImgClick(FolURL2, "MsgDateBox.png", 0.9, 1)
-        pg.write(FDate,interval=0.01)
-        pg.press(['return','return','return'])
-        pg.write(LDate,interval=0.01)
-        pg.press(['return'])
-        pg.write('23',interval=0.01)
-        pg.press(['return'])        
-        pg.write('59',interval=0.01)        
-        pg.press(['return'])
-        time.sleep(3)
-        ImList = ["MsgFindOK.png","MsgFindOK2.png"]
-        ImL = ImgCheckForList(FolURL2,ImList,0.9,10)
-        if ImL[0] == True:
-            ImgClick(FolURL2, ImL[1], 0.9, 1)
+        if NoFlag == False:
             time.sleep(1)
-            AFN = ImgCheck(FolURL2,"AfterFindNodata.png",0.99999,5)
-            if AFN[0] == True:
-                return False
-            else:
-                return True
+            ImgClick(FolURL2, "FindIcon.png", 0.9, 5)
+            time.sleep(1)
+            while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
+                time.sleep(1)            
+                ImgClick(FolURL2, "ClearIcon.png", 0.9, 5)
+            time.sleep(1)
+            Wa = str(WarekiHenkan.Wareki.from_ad(int(TaisyouNen)))
+            Wa = Wa.replace("令和","").replace("年","")
+            Tuki = str('{0:02}'.format(int(TaisyouTuki)))
+            FDate = Wa + Tuki + "01"
+            Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
+            LDate = Wa + Tuki + str(Lday[1])
+            ImgClick(FolURL2, "MsgDateBox.png", 0.9, 1)
+            pg.write(FDate,interval=0.01)
+            pg.press(['return','return','return'])
+            pg.write(LDate,interval=0.01)
+            pg.press(['return'])
+            pg.write('23',interval=0.01)
+            pg.press(['return'])        
+            pg.write('59',interval=0.01)        
+            pg.press(['return'])
+            time.sleep(3)
+            ImList = ["MsgFindOK.png","MsgFindOK2.png"]
+            ImL = ImgCheckForList(FolURL2,ImList,0.9,10)
+            if ImL[0] == True:
+                ImgClick(FolURL2, ImL[1], 0.9, 1)
+                time.sleep(1)
+                AFN = ImgCheck(FolURL2,"AfterFindNodata.png",0.99999,5)
+                if AFN[0] == True:
+                    return False
+                else:
+                    return True
     except:
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
