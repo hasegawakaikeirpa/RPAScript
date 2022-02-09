@@ -357,7 +357,7 @@ def OpenAction(LoopList,FolURL2,LogList):
         if ImgCheck(FolURL2, "PDFReplace.png", conf, LoopVal)[0] == True:
             pg.press('y')
         time.sleep(1)
-        NgLog.append(LoopListItem[1])
+        # NgLog.append(str(LoopListItem[1]))
         pd.DataFrame(NgLog).to_csv(FolURL2 + '/Log/Log.csv', encoding = "utf-8")
         ImgClick(FolURL2,"PrintCancelBtn.png",conf,LoopVal) 
         FileName = "Insatu.png"
