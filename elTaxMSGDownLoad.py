@@ -124,10 +124,10 @@ def LogReturn(LogAns,H_driver):
             H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a")
             H_MSG_OpenMyNo.click()
             WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
-            H_Today = dt.today() + relativedelta(months=-1)
-            H_dtToday = dt.today()
-            # H_Today = dt.today() + relativedelta(months=-2)
-            # H_dtToday = dt.today() + relativedelta(months=-1)
+            # H_Today = dt.today() + relativedelta(months=-1)
+            # H_dtToday = dt.today()
+            H_Today = dt.today() + relativedelta(months=-3)
+            H_dtToday = dt.today() + relativedelta(months=-2)
             Hj = str(H_dtToday.year)
             Hjj = str('{0:02}'.format(H_dtToday.month))
             H_Str = Hj + "/" + Hjj + "/01 01:01:01" 
@@ -329,6 +329,36 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
         elif H_LogMSGAns == "認証エラー":
             H_LogAnsOBJ.quit()
             time.sleep(2)
+        elif H_LogMSGAns == "データ有":
+            H_Lo = LogOnOuter(H_LogAnsOBJ)#WEBテーブル取得
+            H_L_D = H_Lo[0]#WEBテーブルページ
+            H_L_Row = H_Lo[1]#WEBテーブル行数
+            for H_MSG_rowItem in range(H_L_Row):#WEBテーブル行数分ループ
+                H_Parameters = ParGet(H_L_D,H_MSG_rowItem,H_L_Row)#WEBテーブルから要素取得
+                H_P1 = H_Parameters[0]
+                H_P2 = H_Parameters[1]
+                H_P3 = H_Parameters[2]
+                H_P4 = H_Parameters[3]
+                H_row = str(H_MSG_rowItem + 1)
+                SPDF = SortPDF(H_P3,H_P4,H_SCode,H_TKCName,H_P1,H_P2,H_row)
+                if SPDF == False or SPDF == None:
+                    PrintIFS(H_P4,H_LogAnsOBJ)#メッセージボックスの内容に応じて処理分け
+                    RenamePDF(H_P3,H_P4,H_SCode,H_TKCName,H_P1,H_P2,H_row)#PDF保存先フォルダー作成後リネーム&移動 DownTime,MTitle,KanyoNo,KanyoName
+                    if H_MSG_rowItem == H_L_Row - 1:
+                        H_LogAnsOBJ.quit()
+                        time.sleep(2)
+                    else:
+                        H_LogAnsOBJ.switch_to.window(H_LogAnsOBJ.window_handles[0])#タブ移動する
+                        WebDriverWait(H_LogAnsOBJ, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
+                else:
+                    print("ファイルが存在します。")
+                    if H_MSG_rowItem == H_L_Row - 1:
+                        H_LogAnsOBJ.quit()
+                        time.sleep(2)
+                    else:
+                        H_BackBtn = H_LogAnsOBJ.find_element_by_xpath("/html/body/div[2]/form/footer/div[1]/div/div[1]/a")
+                        H_BackBtn.click()
+                        time.sleep(1)
     elif H_LogMSGAns == "認証エラー":
         print(H_SCode + "_" + H_TKCName + "_" + "暗証番号の変更")
     elif H_LogMSGAns == '該当するデータはありませんでした。':
