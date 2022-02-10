@@ -12,7 +12,7 @@ def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
     detector.close()
     return detector.result[ "encoding" ]
 #------------------------------------------------------------------------------------------------------------------------------
-def CsvPlus(URL,LogList,LogMSG):
+def CsvPlus(URL,LogList,LogMSG):#引数指定のCSV最終行に行データ追加
     try:
         SerchEnc = format(getFileEncoding(URL))
         df_shape = LogList.shape
@@ -23,7 +23,15 @@ def CsvPlus(URL,LogList,LogMSG):
     except:
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
-def CsvSortArray(URL,KeyCol,Key,Arg):#dtype={"TKCKokuzeiUserCode": str,"TKCKokuzeiUserCode": str}.........
+def CsvRead(URL):#引数指定のCSVを読みとる
+    try:
+        SerchEnc = format(getFileEncoding(URL))
+        C_csv = pd.read_csv(URL,encoding = SerchEnc)
+        return True,C_csv
+    except:
+        return False,""
+#------------------------------------------------------------------------------------------------------------------------------- 
+def CsvSortArray(URL,KeyCol,Key,Arg):#dtype={"TKCKokuzeiUserCode": str,"TKCKokuzeiUserCode": str}.........　#引数指定の条件一致行を対象から抽出
     try:
         Sort_url = URL
         SerchEnc = format(getFileEncoding(Sort_url))
