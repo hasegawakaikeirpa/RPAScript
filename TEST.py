@@ -207,7 +207,18 @@ def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
     detector.close()
     return detector.result[ "encoding" ]
 #----------------------------------------------------------------------------------------------------------------------
-
+def SyanaiCDChange(intNo):
+    if intNo<1000:
+        return '{0:03d}'.format(intNo) 
+    elif intNo >= 1000 and intNo < 2000:
+        Te = str(intNo)[-3:]
+        return int(Te)  
+    elif intNo >= 4000 and intNo < 5000:
+        Te = str(intNo)[-3:]
+        return int(Te)  
+    else:
+        Te = str(intNo)[-3:]
+        return int(Te)  
     #モジュールインポート
 from encodings import utf_8
 from tracemalloc import stop
@@ -257,50 +268,4 @@ import PDFMarge
 from chardet.universaldetector import UniversalDetector
 import CSVOut
 
-#RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"#元
-FolURL2 = os.getcwd().replace('\\','/')#先
-#--------------------------------------------------------------------------------
-TaisyouNen = input("対象[年]を西暦で入力してください。\n")
-TaisyouTuki = input("対象[月]を西暦で入力してください。\n")
-TaisyouFol = str(TaisyouNen) + "-" + str(TaisyouTuki)
-#プレ申告のお知らせ保管フォルダチェック---------------------------------------------------------
-Fol = TaisyouFol
-pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\eLTAX"
-#path = path.replace('\\','/')#先
-PDFFileList = os.walk(pt)
-Cou = 1
-PreList=[]
-SerchEnc = format(getFileEncoding(FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku/Log/Log.csv"))
-NgLog = pd.read_csv(FolURL2 + "/RPAPhoto/eLTaxDLPresinkoku/Log/Log.csv",encoding=SerchEnc)
-NgRow = np.array(NgLog).shape[0]#配列行数取得
-NgCol = np.array(NgLog).shape[1]#配列列数取得
-
-for current_dir, sub_dirs, files_list  in PDFFileList:
-    Count_dir = 0
-    for file_name in files_list: 
-        if ".xml" in file_name:
-            Count_dir = Count_dir + 1
-    for file_name in files_list: 
-        if ".xml" in file_name:
-            Nos = file_name.split("_")
-            FolName = current_dir.split("_")
-            FolName = FolName[1]
-            NewTitle = os.path.join(current_dir,file_name)
-            NewTitle = NewTitle.split("プレ申告データ")
-            NewTitle = NewTitle[0] + "プレ申告データ印刷結果.pdf"
-            #NGList = ["100","105","106","107","108","121","12","148","183","200","201","204","207","209","221",\
-            #    "223","240","249","251","268","282","285","305","306","309","317"]
-            NoF = True
-            for x in range(NgRow):
-                NgDataRow = NgLog.iloc[x,:]
-                NgCodeCode = str(NgDataRow[1])
-                if not Nos[0] == NgCodeCode:
-                    NoF = True
-                else:
-                    NoF = False
-                    break
-            if NoF == True:
-                PreList.append([os.path.join(current_dir,file_name),int(Nos[0]),Count_dir,NewTitle,FolName])
-print(NgLog)
-print(PreList)
+x = SyanaiCDChange(9482)

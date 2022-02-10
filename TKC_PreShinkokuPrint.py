@@ -301,14 +301,14 @@ def SyanaiCDChange(intNo):
     if intNo<1000:
         return '{0:03d}'.format(intNo) 
     elif intNo >= 1000 and intNo < 2000:
-        Te = intNo[-3:]
-        return Te
+        Te = str(intNo)[-3:]
+        return int(Te)  
     elif intNo >= 4000 and intNo < 5000:
-        Te = intNo[-3:]
-        return Te
+        Te = str(intNo)[-3:]
+        return int(Te)  
     else:
-        Te = intNo[-3:]
-        return Te       
+        Te = str(intNo)[-3:]
+        return int(Te)       
 #----------------------------------------------------------------------------------------------------------------------
 def OpenAction(LoopList,FolURL2,LogList):
     conf = 0.9
@@ -472,7 +472,8 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
         Hub = "AutomationID"
         ObjName = "codeTextBox"
         DriverClick(Hub,ObjName,driver)#事務所コードコンボクリック
-        pg.write(SyanaiCDChange(NoListItem), interval=0.01)#直接SENDできないのでpyautoguiで入力
+        Tes = SyanaiCDChange(NoListItem)
+        pg.write(str(Tes), interval=0.01)#直接SENDできないのでpyautoguiで入力
         pg.press(['return'])
         IDS = MaserFindSikibetu(MasterCSV,NoListItem,"SyanaiCode","TKCKokuzeiUserCode","TKCTihouzeiUserID","MirokuKokuzeiUserCode","MirokuTihouzeiUserID","etaxPass","eltaxPass")#マスターから社内コードで国・地方税識別番号とIDを取得
         Hub = "AutomationID"
