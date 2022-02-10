@@ -360,6 +360,7 @@ from selenium.webdriver.common.keys import Keys#センドキーコマンドを�
 from selenium.webdriver.common.action_chains import ActionChains#JavaScript実行の為にActionChainsコマンドを与える
 from selenium.webdriver.support.ui import WebDriverWait#読込待機コマンドを与える
 from selenium.webdriver.support import expected_conditions as EC#読込待機コマンドに条件式を与える
+
 #jsonインポート
 import json
 #osインポート
@@ -385,7 +386,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 400:
+        if x >= 507:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
