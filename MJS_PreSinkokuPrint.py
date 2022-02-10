@@ -409,14 +409,19 @@ def DataDateSerch(FolURL2):
                 if ImgCheck(FolURL2, "NoAnsyou.png", 0.9, 1)[0] == True:
                     pg.press('return')
                     NoFlag = False
-                if ImgCheck(FolURL2, "/elNoAnsyou.png", 0.9, 1)[0] == True:
-                    ImgClick(FolURL2, "elNoCancel.png", 0.9, 1)
-                    NoFlag = False
                 if ImgCheck(FolURL2, "PreSetuzoku.png", 0.9, 1)[0] == True:
                     ImgClick(FolURL2, "SetuzokuCancel.png", 0.9, 1)
                     NoFlag = True
                     break
+                if ImgCheck(FolURL2, "elNoAnsyou.png", 0.9, 1)[0] == True:
+                    ImgClick(FolURL2, "elNoCancel.png", 0.9, 1)
+                    NoFlag = False
+                    break
                 time.sleep(1)
+            if ImgCheck(FolURL2, "elNoAnsyou.png", 0.9, 3)[0] == True:
+                ImgClick(FolURL2, "elNoCancel.png", 0.9, 1)
+                NoFlag = False
+            time.sleep(1)
         else:
             NoFlag = True
         if NoFlag == False:
