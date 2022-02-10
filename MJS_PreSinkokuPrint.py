@@ -430,7 +430,7 @@ def DataDateSerch(FolURL2):
             time.sleep(1)
             while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
                 time.sleep(1)            
-                ImgClick(FolURL2, "ClearIcon.png", 0.9, 5)
+            ImgClick(FolURL2, "ClearIcon.png", 0.9, 5)
             time.sleep(1)
             Wa = str(WarekiHenkan.Wareki.from_ad(int(TaisyouNen)))
             Wa = Wa.replace("令和","").replace("年","")
@@ -477,7 +477,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
         try:
             SerchEnc = format(getFileEncoding(FolURL2 + "/ActionLog/Log.csv"))
             LogList = pd.read_csv(FolURL2 + "/ActionLog/Log.csv",header=0,encoding=SerchEnc)
-            # if No_dfItem == 919:
+            # if No_dfItem == 586:
 #----------------------------------------------------------------------------------------------------------------------
             SortAns = CSVOut.CsvSortArray(FolURL2 + "/ActionLog/Log.csv","No",No_dfItem,"int")
             if SortAns[0] == False:
