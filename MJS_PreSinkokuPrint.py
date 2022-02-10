@@ -430,7 +430,7 @@ def DataDateSerch(FolURL2):
             time.sleep(1)
             while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
                 time.sleep(1)            
-                ImgClick(FolURL2, "ClearIcon.png", 0.9, 5)
+            ImgClick(FolURL2, "ClearIcon.png", 0.9, 5)
             time.sleep(1)
             Wa = str(WarekiHenkan.Wareki.from_ad(int(TaisyouNen)))
             Wa = Wa.replace("令和","").replace("年","")
@@ -477,71 +477,71 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
         try:
             SerchEnc = format(getFileEncoding(FolURL2 + "/ActionLog/Log.csv"))
             LogList = pd.read_csv(FolURL2 + "/ActionLog/Log.csv",header=0,encoding=SerchEnc)
-            # if No_dfItem == 919:
+            if No_dfItem == 586:
 #----------------------------------------------------------------------------------------------------------------------
-            SortAns = CSVOut.CsvSortArray(FolURL2 + "/ActionLog/Log.csv","No",No_dfItem,"int")
-            if SortAns[0] == False:
-#----------------------------------------------------------------------------------------------------------------------
-                #CSV要素取得-------------------------------------------------------------------------------------------------------------
-                S_List = SortPreList(PreList,No_dfItem)
-                S_LN = S_List[1][0]
-                if os.path.isfile(S_LN[0]) == False: ################################################################################################
-                    SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
-                    DOList = DataOpen(FolURL2,SFlag, No_dfItem,LogList)
-                    time.sleep(1)
-                    if DOList[0] == True:
-                        DDS = DataDateSerch(FolURL2)
+                SortAns = CSVOut.CsvSortArray(FolURL2 + "/ActionLog/Log.csv","No",No_dfItem,"int")
+                if SortAns[0] == False:
+    #----------------------------------------------------------------------------------------------------------------------
+                    #CSV要素取得-------------------------------------------------------------------------------------------------------------
+                    S_List = SortPreList(PreList,No_dfItem)
+                    S_LN = S_List[1][0]
+                    if os.path.isfile(S_LN[0]) == False: ################################################################################################
+                        SFlag = SortCSVItem(FolURL2,"MasterDB",No_dfItem)
+                        DOList = DataOpen(FolURL2,SFlag, No_dfItem,LogList)
                         time.sleep(1)
-                        if DDS == True:
-                            for S_ListItem in S_List[1]:
-                                FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
-                                FPosx = FPos[1]
-                                FPosy = FPos[2]
-                                FPosy = FPosy + (25*S_ListItem[1])
-                                pg.click(FPosx, FPosy)
-                                time.sleep(1)
-                                pg.press('return')
-                                time.sleep(1)
-                                ImgClick(FolURL2,"TenpDown.png",0.9,1)
-                                time.sleep(1)
-                                while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
+                        if DOList[0] == True:
+                            DDS = DataDateSerch(FolURL2)
+                            time.sleep(1)
+                            if DDS == True:
+                                for S_ListItem in S_List[1]:
+                                    FPos = ImgCheck(FolURL2, "MidokuKidoku.png", 0.9, 10)
+                                    FPosx = FPos[1]
+                                    FPosy = FPos[2]
+                                    FPosy = FPosy + (25*S_ListItem[1])
+                                    pg.click(FPosx, FPosy)
                                     time.sleep(1)
-                                time.sleep(3)           
-                                pyperclip.copy(S_ListItem[0])
-                                pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-                                pg.press(['return'])
-                                time.sleep(1)
-                                pg.keyDown('alt')
-                                pg.press('s')
-                                pg.keyUp('alt')
-                                time.sleep(1)
-                                while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
-                                    time.sleep(1)
-                                    if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
-                                        pg.press('y')
-                                        time.sleep(1)
-                                    time.sleep(1)
-                                time.sleep(2)
-                                OkList = ["DownOk.png","DownOk2.png"]
-                                Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
-                                if Dok[0] == True:
-                                    ImgClick(FolURL2,Dok[1],0.9,1)
                                     pg.press('return')
                                     time.sleep(1)
-                                time.sleep(1)
-                                pg.keyDown('alt')
-                                pg.press('x')
-                                pg.keyUp('alt')
-                                time.sleep(1)
-                                df_shape = LogList.shape
-                                #最終行に追加
-                                LogMSG = [No_dfItem,"","","_成功",dt.today()]
-                                CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
-                    # else:
-                    #     df_shape = LogList.shape
-                    #     #最終行に追加
-                    #     LogList.loc[df_shape[0]] = DOList[2]
-                    #     pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc, index = False)  
+                                    ImgClick(FolURL2,"TenpDown.png",0.9,1)
+                                    time.sleep(1)
+                                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is None:
+                                        time.sleep(1)
+                                    time.sleep(3)           
+                                    pyperclip.copy(S_ListItem[0])
+                                    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                                    pg.press(['return'])
+                                    time.sleep(1)
+                                    pg.keyDown('alt')
+                                    pg.press('s')
+                                    pg.keyUp('alt')
+                                    time.sleep(1)
+                                    while pg.locateOnScreen(FolURL2 + "/TenpDownWait.png", confidence=0.9) is not None:
+                                        time.sleep(1)
+                                        if ImgCheck(FolURL2,"RenameWin.png",0.9,1)[0] == True:
+                                            pg.press('y')
+                                            time.sleep(1)
+                                        time.sleep(1)
+                                    time.sleep(2)
+                                    OkList = ["DownOk.png","DownOk2.png"]
+                                    Dok = ImgCheckForList(FolURL2,OkList,0.9,2)
+                                    if Dok[0] == True:
+                                        ImgClick(FolURL2,Dok[1],0.9,1)
+                                        pg.press('return')
+                                        time.sleep(1)
+                                    time.sleep(1)
+                                    pg.keyDown('alt')
+                                    pg.press('x')
+                                    pg.keyUp('alt')
+                                    time.sleep(1)
+                                    df_shape = LogList.shape
+                                    #最終行に追加
+                                    LogMSG = [No_dfItem,"","","_成功",dt.today()]
+                                    CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
+                        # else:
+                        #     df_shape = LogList.shape
+                        #     #最終行に追加
+                        #     LogList.loc[df_shape[0]] = DOList[2]
+                        #     pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc, index = False)  
         except:
             LogMSG = [No_dfItem,"","","_エラーで失敗",dt.today()]
             CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)
