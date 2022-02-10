@@ -267,5 +267,13 @@ import WarekiHenkan
 import PDFMarge
 from chardet.universaldetector import UniversalDetector
 import CSVOut
-
-x = SyanaiCDChange(9482)
+import ExcelFileAction as EF
+URL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"
+URL = URL.replace("\\","/")
+URL = "/" + URL
+x = EF.XlsmRead(URL)
+print(x[1])
+wb = x[1]
+sheet = wb["アドレス登録"]
+print(sheet.cell(row=1, column=2).value)
+time.sleep(1)

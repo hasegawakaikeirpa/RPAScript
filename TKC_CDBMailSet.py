@@ -181,197 +181,17 @@ def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"
+    XlsmURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"
+    XlsmURL = XlsmURL.replace("\\","/")
+    XlsmURL = "/" + XlsmURL
+    XlsmList = EF.XlsmRead(XlsmURL)
+    #-----------------------------------------------------------------------------------------------------------------------
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"
     ObjName = "um12PictureButton"
     DriverClick(Hub,ObjName,driver)#一括電子申告ボタンを押す
     #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    FileName = "DensiSinkokuHub.png"
-    conf = 0.9#画像認識感度
-    LoopVal = 10#検索回数
-    ImgClick(FolURL2,FileName,conf,LoopVal)#電子申告・申請タブを押す
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "ao212Button"
-    DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
-    #----------------------------------------------------------------------------------------------------------------------
-    time.sleep(5)
-    for x in range(10):#MSGが出てくるので、消えるまでエンターを押す
-        if not DriverCheck(Hub,ObjName,driver) == True:
-            pg.press('return')
-        else:
-            pg.press('return')
-            break
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"    
-    ObjName = "taxAccountantComboBox"#税理士選択コンボボックスをクリック
-    DriverClick(Hub,ObjName,driver)
-    time.sleep(1)
-    pg.press('down')
-    pg.press('return')#小林常務を選択
-    #FileName = "KanyoHasegawa.png"#担当税理士所長判定
-    #法人税消費税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'HoujinSyouhizeiMaster'
-    # CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
-    # List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     print(C_Master)
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2) 
-    ##----------------------------------------------------------------------------------------------------------------------
-    ##所得税消費税処理------------------------------------------------------------------------------------------------------
-    #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    #conf = 0.9#画像認識感度
-    #LoopVal = 500
-    #CSVName = 'SyotokuSyouhizeiMaster'
-    #CSVChildName = 'SyotokuSyouhizeiChild'#チャイルドのCSVファイル名を指定
-    #List = ["SyotokuSyouhizei.png","SyotokuSyouhizei2.png"]
-    #TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    #C_Master = TaxAns[0]
-    #C_MasterFlag = TaxAns[1]
-    #if C_MasterFlag == False:
-    #    print("C_Masterは空です")
-    #else:
-    #    C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-    #    C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #    C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #    C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #    MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
-    #    
-    ##-----------------------------------------------------------------------------------------------------------------------
-    #法定調書給報処理------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    conf = 0.9#画像認識感度
-    LoopVal = 500
-    CSVName = 'HouteiKyuuhouMaster'
-    CSVChildName = 'HouteiKyuuhouChild'#チャイルドのCSVファイル名を指定
-    List = ["HouteiKyuuhou.png","HouteiKyuuhou2.png"]
-    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag == False:
-        print("C_Masterは空です")
-    else:
-        C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-        print(C_Master)
-        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
-    # #-----------------------------------------------------------------------------------------------------------------------
-    # #償却資産処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'SyoukyakuMaster'
-    # CSVChildName = 'SyoukyakuChild'#チャイルドのCSVファイル名を指定
-    # List = ["Syoukyaku.png","Syoukyaku2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
-        
-    # #-----------------------------------------------------------------------------------------------------------------------
-    # #贈与税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'ZouyoMaster'
-    # CSVChildName = 'ZouyoChild'#チャイルドのCSVファイル名を指定
-    # List = ["Zouyo.png","Zouyo2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
-        
-    # #-----------------------------------------------------------------------------------------------------------------------
-    # #相続税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'SouzokuMaster'
-    # CSVChildName = 'SouzokuChild'#チャイルドのCSVファイル名を指定
-    # List = ["Souzoku.png","Souzoku2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
-        
-    # #-----------------------------------------------------------------------------------------------------------------------
-    # #配当調書処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'HaitouMaster'
-    # CSVChildName = 'HaitouChild'#チャイルドのCSVファイル名を指定
-    # List = ["Haitou.png","Haitou2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
-        
-    # #-----------------------------------------------------------------------------------------------------------------------
-    #申請処理---------------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    conf = 0.9#画像認識感度
-    LoopVal = 500
-    CSVName = 'SinseiMaster'#マスターのCSVファイル名を指定
-    CSVChildName = 'SinseiChild'#チャイルドのCSVファイル名を指定
-    List = ["Sinsei.png","Sinsei2.png"]#税種目のタブアイコン画像名を2つ指定
-    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag == False:
-        print("C_Masterは空です")
-    else:
-        C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)     
-    #-----------------------------------------------------------------------------------------------------------------------
 
 #モジュールインポート
 from appium import webdriver
@@ -412,7 +232,8 @@ import traceback
 import pyautogui
 import time
 import shutil
-
+import CSVOut
+import ExcelFileAction as EF
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
 #FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
