@@ -512,33 +512,40 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
                 List = ["TihouzeiTab.png","TihouzeiTab2.png"]
                 IA = ImgCheckForList(FolURL2,List,conf)
                 if IA[0] == True:
+                    IAOK = True
                     ImgClick(FolURL2,IA[1],conf,LoopVal)
                     time.sleep(1)
-                    ImgClick(FolURL2,"DayStart.png",conf,LoopVal)
-                    pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
-                    pg.press('return')
-                    pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
-                    pg.press('return')
-                    time.sleep(1)
-                    pg.press('1')
-                    time.sleep(1)
-                    pg.press(['return','return','return'])
-                    pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
-                    pg.press('return')
-                    pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
-                    pg.press('return')
-                    Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
-                    pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
-                    pg.press('return')
-                    time.sleep(1)
-                    ImgClick(FolURL2,"FindBtn.png",conf,LoopVal)
-                    time.sleep(1)
-                    #同月同関与先のプレ申告のお知らせ数分ループ
-                    OpenAction(LoopList,FolURL2,LogList)
-                    DeleteOMSData(driver,FolURL2)
-                    time.sleep(1)
-            #tax1PictureButton#法人決算ボタン
-            #tax3PictureButton#個人決算ボタン
+                    while pg.locateOnScreen(FolURL2 + "/TihouzeiTab2.png", confidence=0.9) is None:
+                        time.sleep(1)
+                        if ImgCheck(FolURL2,"TihouzeiTab",0.9,3):
+                            IAOK = False
+                            break
+                    if IAOK == True:
+                        ImgClick(FolURL2,"DayStart.png",conf,LoopVal)
+                        pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                        pg.press('return')
+                        pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                        pg.press('return')
+                        time.sleep(1)
+                        pg.press('1')
+                        time.sleep(1)
+                        pg.press(['return','return','return'])
+                        pg.write(TaisyouNen, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                        pg.press('return')
+                        pg.write(TaisyouTuki, interval=0.01)#直接SENDできないのでpyautoguiで入力
+                        pg.press('return')
+                        Lday = calendar.monthrange(int(TaisyouNen),int(TaisyouTuki))
+                        pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
+                        pg.press('return')
+                        time.sleep(1)
+                        ImgClick(FolURL2,"FindBtn.png",conf,LoopVal)
+                        time.sleep(1)
+                        #同月同関与先のプレ申告のお知らせ数分ループ
+                        OpenAction(LoopList,FolURL2,LogList)
+                        DeleteOMSData(driver,FolURL2)
+                        time.sleep(1)
+                #tax1PictureButton#法人決算ボタン
+                #tax3PictureButton#個人決算ボタン
         else:
             print("未登録")
 
