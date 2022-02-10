@@ -515,9 +515,9 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
                     IAOK = True
                     ImgClick(FolURL2,IA[1],conf,LoopVal)
                     time.sleep(1)
-                    while pg.locateOnScreen(FolURL2 + "/TihouzeiTab2.png", confidence=0.9) is None:
+                    while pg.locateOnScreen(FolURL2 + "/TihouzeiTab2.png", confidence=0.99999) is None:
                         time.sleep(1)
-                        if ImgCheck(FolURL2,"TihouzeiTab",0.9,3):
+                        if ImgCheck(FolURL2,"KokuzeiTab.png",0.9,3)[0] == True:
                             IAOK = False
                             break
                     if IAOK == True:
@@ -543,6 +543,17 @@ def MainFlow(FolURL2,PreList,MasterCSV,NoList):
                         #同月同関与先のプレ申告のお知らせ数分ループ
                         OpenAction(LoopList,FolURL2,LogList)
                         DeleteOMSData(driver,FolURL2)
+                        time.sleep(1)
+                    else:
+                        time.sleep(1) 
+                        ImgClick(FolURL2,"Gyousuu.png",conf,LoopVal)
+                        pg.press('f10')
+                        time.sleep(1)
+                        FileName = "DataMoveCheck.png"
+                        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+                            time.sleep(1)
+                        FileName = "DataPCMMove.png"
+                        ImgClick(FolURL2, FileName, conf, LoopVal)
                         time.sleep(1)
                 #tax1PictureButton#法人決算ボタン
                 #tax3PictureButton#個人決算ボタン
