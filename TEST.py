@@ -43,7 +43,6 @@ def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
     if Flag == 0:
         return False
 #----------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------
 def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
         try:
@@ -183,7 +182,6 @@ def EraceIMGWait(FolURL2,FileName):
     except:
         print("待機終了")
 #----------------------------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------------------------
 def SortPDF(PDFName):
     Fol = str(dt.today().year) + "-" + str(dt.today().month)
     pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
@@ -268,12 +266,47 @@ import PDFMarge
 from chardet.universaldetector import UniversalDetector
 import CSVOut
 import ExcelFileAction as EF
-URL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"
+#エクセルファイルをDF化-----------------------------------------------------------------
+URL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集"
 URL = URL.replace("\\","/")
 URL = "/" + URL
-x = EF.XlsmRead(URL)
-print(x[1])
-wb = x[1]
-sheet = wb["アドレス登録"]
-print(sheet.cell(row=1, column=2).value)
+Exc = EF.XlsmRead(URL + "/アドレス新規登録シート.xlsm")
+print(Exc[1])
+wb = Exc[1]
+Wbs = EF.to_Df(wb,"アドレス登録")
+#登録履歴CSVをDF化-----------------------------------------------------------------
+print(Wbs)
+Csd = CSVOut.CsvSortDatetime(URL + "/BACKUP/アドレス登録履歴/Log.csv","入力日時",False)
+if Csd[0] == True:
+    CsdDf = Csd[1]
+    CsdDf.duplicated("コード")
+    sindf = CsdDf.drop_duplicates("コード")  
+    print(sindf)
 time.sleep(1)
+#未登録リスト作成-----------------------------------------------------------------
+Mitouroku = []
+FWB = Wbs[1]
+FWBRow = np.array(FWB).shape[0]#配列行数取得
+sindfRow = np.array(sindf).shape[0]#配列行数取得
+for x in range(FWBRow):
+    Flag = True
+    FWBRowData = FWB.iloc[x,:]
+    FWBCode = FWBRowData['コード']
+    FWBTime = FWBRowData['入力日時']
+    for y in range(sindfRow):
+        sindfRowData = sindf.iloc[y,:]
+        sindfCode = sindfRowData['コード']
+        sindfTime = sindfRowData['入力日時']
+        if FWBCode == sindfCode and FWBCode > sindfCode:
+            Flag == True
+            break
+        elif FWBCode == sindfCode and FWBCode < sindfCode:
+            Flag == False
+            break            
+        else:
+            Flag == True
+    if Flag == True:
+        Mitouroku.append(FWBRowData)
+print(Mitouroku)
+for MiItem in Mitouroku:
+    print(MiItem["コード"])

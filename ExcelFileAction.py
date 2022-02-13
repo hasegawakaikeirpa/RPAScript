@@ -26,8 +26,27 @@ def CsvPlus(URL,LogList,LogMSG):#引数指定のCSV最終行に行データ追�
 def XlsmRead(URL):#引数指定のCSVを読みとる
     try:
         URL = URL.replace("\\","/")
-        C_xlsm = openpyxl.reader.excel.load_workbook(URL, read_only=False, keep_vba=True, data_only=False, keep_links=True)
+        #C_xlsm = openpyxl.reader.excel.load_workbook(URL, read_only=False, keep_vba=True, data_only=False, keep_links=True)
+        C_xlsm = pd.ExcelFile(URL)
         return True,C_xlsm
+    except:
+        return False,""
+#------------------------------------------------------------------------------------------------------------------------------- 
+def to_Df(Exf,SName):#エクセルシートをデータフレームへ
+    try:
+        #DataFrameとしてsheet1枚のデータ(2019)を読込み
+        C_xlsm = Exf.parse(sheet_name=SName,index_col=None)
+        return True,C_xlsm
+    except:
+        return False,""
+#------------------------------------------------------------------------------------------------------------------------------- 
+def to_DfList(URL):
+    try:
+        df_list = []
+        file = pd.ExcelFile(URL) # bookを読む
+        for sheet in file.sheet_names:
+            df_list.append(file.parse(sheet)) # シートを順々にデータフレーム化
+        return True,df_list
     except:
         return False,""
 #------------------------------------------------------------------------------------------------------------------------------- 

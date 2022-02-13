@@ -31,6 +31,16 @@ def CsvRead(URL):#引数指定のCSVを読みとる
     except:
         return False,""
 #------------------------------------------------------------------------------------------------------------------------------- 
+def CsvSortDatetime(URL,ColName,asc):#asc=False降順
+    try:
+        SerchEnc = format(getFileEncoding(URL))
+        data = pd.read_csv(URL,encoding = SerchEnc)
+        data[ColName] = pd.to_datetime(data[ColName], infer_datetime_format= True)
+        data.sort_values(by = ColName, ascending = False, inplace = True)
+        return True,data
+    except:
+        return False,""
+#------------------------------------------------------------------------------------------------------------------------------- 
 def CsvSortArray(URL,KeyCol,Key,Arg):#dtype={"TKCKokuzeiUserCode": str,"TKCKokuzeiUserCode": str}.........　#引数指定の条件一致行を対象から抽出
     try:
         Sort_url = URL
