@@ -428,7 +428,7 @@ def DataDateSerch(FolURL2):
             time.sleep(1)
             ImgClick(FolURL2, "FindIcon.png", 0.9, 5)
             time.sleep(1)
-            while pg.locateOnScreen(FolURL2 + "/MsgDateBox.png", confidence=0.99999) == None:
+            while pg.locateOnScreen(FolURL2 + "/ClearIcon.png", confidence=0.99999) == None:
                 time.sleep(1)            
             ImgClick(FolURL2, "ClearIcon.png", 0.9, 5)
             time.sleep(1)
