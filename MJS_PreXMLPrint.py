@@ -284,41 +284,36 @@ def DataOpen(FolURL2,PreListItem):
         while pg.locateOnScreen(FolURL2 + "/" + "PreCheckBar.png", confidence=0.9) is None:
             time.sleep(1)
         time.sleep(2)
-        ICheck = ImgCheck(FolURL2,"NoPMSG.png",0.9,3)
-        if ICheck[0] == False:
-            pg.keyDown('alt')
-            pg.press('p')
+        pg.keyDown('alt')
+        pg.press('p')
+        time.sleep(1)
+        pg.press('k')
+        pg.keyUp('alt')        
+        while pg.locateOnScreen(FolURL2 + "/" + "FileOut.png", confidence=0.9) is None:
             time.sleep(1)
-            pg.press('k')
-            pg.keyUp('alt')        
-            while pg.locateOnScreen(FolURL2 + "/" + "FileOut.png", confidence=0.9) is None:
-                time.sleep(1)
-            ImgClick(FolURL2,"FileOut.png",0.9,1)
+        ImgClick(FolURL2,"FileOut.png",0.9,1)
+        time.sleep(1)
+        ImgClick(FolURL2,"FTypeSelect.png",0.9,1)
+        pg.press('return')
+        time.sleep(1)
+        pyperclip.copy(str(PreListItem[3]))
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press(['return'])
+        time.sleep(2)
+        ImgClick(FolURL2,"FileOutPutBtn.png",0.9,1)
+        time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/" + "PreCheck.png", confidence=0.9) is not None:
             time.sleep(1)
-            ImgClick(FolURL2,"FTypeSelect.png",0.9,1)
-            pg.press('return')
-            time.sleep(1)
-            pyperclip.copy(str(PreListItem[3]))
-            pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-            pg.press(['return'])
-            time.sleep(2)
-            ImgClick(FolURL2,"FileOutPutBtn.png",0.9,1)
-            time.sleep(1)
-            while pg.locateOnScreen(FolURL2 + "/" + "PreCheck.png", confidence=0.9) is not None:
-                time.sleep(1)
-                FO = ImgCheck(FolURL2,"FileOverCheck.png",0.9,1)
-                if FO[0] == True:
-                    ImgClick(FolURL2,"FileOverCheck.png",0.9,1)
-                    pg.press('y')
-            time.sleep(1)
-            pg.keyDown('alt')
-            pg.press('x')
-            pg.keyUp('alt')
-            time.sleep(1)           
-            return True
-        else:
-            print("閲覧不可")
-            return False            
+            FO = ImgCheck(FolURL2,"FileOverCheck.png",0.9,1)
+            if FO[0] == True:
+                ImgClick(FolURL2,"FileOverCheck.png",0.9,1)
+                pg.press('y')
+        time.sleep(1)
+        pg.keyDown('alt')
+        pg.press('x')
+        pg.keyUp('alt')
+        time.sleep(1)           
+        return True         
     except:
         print("フォルダ名取得失敗")
         return False
