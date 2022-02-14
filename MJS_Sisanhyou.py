@@ -1,6 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 from ast import For
 from queue import Empty
+from numpy import true_divide
 from pyparsing import And
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
@@ -403,6 +404,16 @@ def MainStarter(FolURL2):
         time.sleep(1)
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
+def MJSFlow(FolURL2,driver):
+    try:
+        MJSF = driver.find_element_by_class_name("Edit")
+        MJSF.click()
+        return True
+    except:
+        MJSF = driver.find_element_by_class_name("Edit")
+        MJSF.click()
+        return False
+#------------------------------------------------------------------------------------------------------------------------------- 
 def MainFlow(FolURL2,MasterCSV,NgLog):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
@@ -434,11 +445,26 @@ def MainFlow(FolURL2,MasterCSV,NgLog):
             if OF[0] == True:
                 print("データオープン失敗")
                 break
-        time.sleep(1)
-        pg.write(str(Nen))
-        pg.press("return")
-        pg.write(str(Tuki))
-        time.sleep(1)
+        OF = ImgCheck(FolURL2,"OpenFlag.png",0.9,5)
+        if OF[0] == False:
+            time.sleep(1)
+            pg.write(str(Nen))
+            pg.press("return")
+            pg.write(str(Tuki))
+            pg.press("return")
+            time.sleep(1)
+            AnsDC = DC[1].text
+            AnsNen = DC[0].text
+            AnsTuki = DC[2].text
+            if AnsDC == str(MaChar[0]) and AnsNen == str(Nen) and AnsTuki == str(Tuki):
+                pg.keyDown('alt')
+                pg.press('o')
+                pg.keyUp('alt')
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/" + "FamilyOpenFlag.png", confidence=0.99999) is None:
+                    MJSFlow(FolURL2,driver)
+            else:
+                print("入力社内コードと一致しません")
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
