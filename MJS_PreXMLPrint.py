@@ -273,7 +273,7 @@ def DataOpen(FolURL2,PreListItem):
         time.sleep(1)
         pg.press(['return'])
         time.sleep(2)
-        WY = WarekiHenkan.Wareki.from_ad(int(TaisyouNen))
+        WY = WarekiHenkan.Wareki.from_ad(int(TaisyouNen) - 1)
         WY = str(WY).replace("令和","").replace("年","")
         pg.write(WY,interval=0.01)
         time.sleep(1)
