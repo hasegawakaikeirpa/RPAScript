@@ -408,12 +408,128 @@ def MJSFlow(FolURL2,driver):
     try:
         MJSF = driver.find_element_by_class_name("Edit")
         MJSF.click()
+        time.sleep(1)
+        pyperclip.copy("一括印刷")
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press("return")        
+        time.sleep(1)
+        ImgClick(FolURL2,"KeieiBunsekiBar.png",0.9,1)
+        time.sleep(1)
+        ImgClick(FolURL2,"SyoriKidou.png",0.9,1)
+        while pg.locateOnScreen(FolURL2 + "/AllPrintFlag.png",confidence=0.9) is None:
+            time.sleep(1)                
         return True
     except:
         MJSF = driver.find_element_by_class_name("Edit")
         MJSF.click()
+        time.sleep(1)
+        pyperclip.copy("一括印刷")
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press("return")
+        time.sleep(1)
+        ImgClick(FolURL2,"KeieiBunsekiBar.png",0.9,1)
+        time.sleep(1)
+        ImgClick(FolURL2,"SyoriKidou.png",0.9,1)
+        while pg.locateOnScreen(FolURL2 + "/AllPrintFlag.png",confidence=0.9) is None:
+            time.sleep(1)
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
+def AllPrint(FolURL2,driver,MaChar,Tuki):
+    try:
+        time.sleep(1)
+        Zen = ImgCheck(FolURL2,"ZengetuIcon.png",0.99999,1)
+        if Zen[0] == True:
+            while pg.locateOnScreen(FolURL2 + "/CheckingBox.png",confidence=0.9) is not None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"ZengetuIcon.png",0.99999,1)
+            time.sleep(1)
+            if Tuki == "1":
+                ImgClick(FolURL2,"1mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "2":
+                ImgClick(FolURL2,"2mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "3":
+                ImgClick(FolURL2,"3mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "4":
+                ImgClick(FolURL2,"4mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "5":
+                ImgClick(FolURL2,"5mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "6":
+                ImgClick(FolURL2,"6mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "7":
+                ImgClick(FolURL2,"7mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "8":
+                ImgClick(FolURL2,"8mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "9":
+                ImgClick(FolURL2,"9mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "10":
+                ImgClick(FolURL2,"10mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "11":
+                ImgClick(FolURL2,"11mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+            elif Tuki == "12":
+                ImgClick(FolURL2,"12mon.png",0.99999,1)
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press('j')
+                pg.keyUp('alt')
+                return True
+    except:
+        time.sleep(1)
+        return False
 def MainFlow(FolURL2,MasterCSV,NgLog):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
@@ -424,47 +540,52 @@ def MainFlow(FolURL2,MasterCSV,NgLog):
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
     for x in range(MasRow):
-    #マスターから値を取得--------------------------------------------------------------------------------------------------------
-        MasterRow = MasterCSV[1].iloc[x,:]
-        MaChar = CharPar(MasterRow)#MSyanaiCode,MName,Mkessan,MAdd,MSAdd,MS2Add
-        Nen = 3#和暦年---------------------------------------------------------------------------------------------------------
-        Tuki = 1#和暦月--------------------------------------------------------------------------------------------------------
-    #--------------------------------------------------------------------------------------------------------------------------
-        DC = driver.find_elements_by_class_name("TMNumEdit")
-        DC[1].click()
-        time.sleep(1)
-        pg.press(["delete","delete","delete","delete","delete","delete","delete","delete","delete"])
-        time.sleep(1)
-        pg.write(str(MaChar[0]))
-        time.sleep(1)
-        pg.press("return")
-        time.sleep(1)
-        while pg.locateOnScreen(FolURL2 + "/" + "OpenFlag.png", confidence=0.99999) is not None:
-            time.sleep(3)
+        if x == 12:
+        #マスターから値を取得--------------------------------------------------------------------------------------------------------
+            MasterRow = MasterCSV[1].iloc[x,:]
+            MaChar = CharPar(MasterRow)#MSyanaiCode,MName,Mkessan,MAdd,MSAdd,MS2Add
+            Nen = 3#和暦年---------------------------------------------------------------------------------------------------------
+            Tuki = 10#和暦月--------------------------------------------------------------------------------------------------------
+        #--------------------------------------------------------------------------------------------------------------------------
+            DC = driver.find_elements_by_class_name("TMNumEdit")
+            DC[1].click()
+            time.sleep(1)
+            pg.press(["delete","delete","delete","delete","delete","delete","delete","delete","delete"])
+            time.sleep(1)
+            pg.write(str(MaChar[0]))
+            time.sleep(1)
+            pg.press("return")
+            time.sleep(1)
+            while pg.locateOnScreen(FolURL2 + "/" + "OpenFlag.png", confidence=0.99999) is not None:
+                time.sleep(3)
+                OF = ImgCheck(FolURL2,"OpenFlag.png",0.9,5)
+                if OF[0] == True:
+                    print("データオープン失敗")
+                    break
             OF = ImgCheck(FolURL2,"OpenFlag.png",0.9,5)
-            if OF[0] == True:
-                print("データオープン失敗")
-                break
-        OF = ImgCheck(FolURL2,"OpenFlag.png",0.9,5)
-        if OF[0] == False:
-            time.sleep(1)
-            pg.write(str(Nen))
-            pg.press("return")
-            pg.write(str(Tuki))
-            pg.press("return")
-            time.sleep(1)
-            AnsDC = DC[1].text
-            AnsNen = DC[0].text
-            AnsTuki = DC[2].text
-            if AnsDC == str(MaChar[0]) and AnsNen == str(Nen) and AnsTuki == str(Tuki):
-                pg.keyDown('alt')
-                pg.press('o')
-                pg.keyUp('alt')
+            if OF[0] == False:
                 time.sleep(1)
-                while pg.locateOnScreen(FolURL2 + "/" + "FamilyOpenFlag.png", confidence=0.99999) is None:
-                    MJSFlow(FolURL2,driver)
-            else:
-                print("入力社内コードと一致しません")
+                pg.write(str(Nen))
+                pg.press("return")
+                pg.write(str(Tuki))
+                pg.press("return")
+                time.sleep(1)
+                AnsDC = DC[1].text
+                AnsNen = DC[0].text
+                AnsTuki = DC[2].text
+                if AnsDC == str(MaChar[0]) and AnsNen == str(Nen) and AnsTuki == str(Tuki):
+                    pg.keyDown('alt')
+                    pg.press('o')
+                    pg.keyUp('alt')
+                    time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/" + "FamilyOpenFlag.png", confidence=0.99999) is None:
+                        MJF = MJSFlow(FolURL2,driver)
+                        if MJF == True:
+                            AllPrint(FolURL2,driver,MaChar,str(Tuki))
+                        else:
+                            print("一括印刷起動失敗")
+                else:
+                    print("入力社内コードと一致しません")
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
