@@ -413,7 +413,9 @@ def MJSFlow(FolURL2,driver):
         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
         pg.press("return")        
         time.sleep(1)
-        ImgClick(FolURL2,"KeieiBunsekiBar.png",0.9,1)
+        KBB = ImgCheck(FolURL2,"KeieiBunsekiBar2.png",0.9,1)
+        if KBB[0] == False:
+            ImgClick(FolURL2,"KeieiBunsekiBar.png",0.9,1)
         time.sleep(1)
         ImgClick(FolURL2,"SyoriKidou.png",0.9,1)
         while pg.locateOnScreen(FolURL2 + "/AllPrintFlag.png",confidence=0.9) is None:
@@ -427,7 +429,9 @@ def MJSFlow(FolURL2,driver):
         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
         pg.press("return")
         time.sleep(1)
-        ImgClick(FolURL2,"KeieiBunsekiBar.png",0.9,1)
+        KBB = ImgCheck(FolURL2,"KeieiBunsekiBar2.png",0.9,1)
+        if KBB[0] == False:
+            ImgClick(FolURL2,"KeieiBunsekiBar.png",0.9,1)
         time.sleep(1)
         ImgClick(FolURL2,"SyoriKidou.png",0.9,1)
         while pg.locateOnScreen(FolURL2 + "/AllPrintFlag.png",confidence=0.9) is None:
@@ -437,95 +441,109 @@ def MJSFlow(FolURL2,driver):
 def AllPrint(FolURL2,driver,MaChar,Tuki):
     try:
         time.sleep(1)
-        Zen = ImgCheck(FolURL2,"ZengetuIcon.png",0.99999,1)
+        Zen = ImgCheck(FolURL2,"ZengetuIcon.png",0.9,1)
         if Zen[0] == True:
             while pg.locateOnScreen(FolURL2 + "/CheckingBox.png",confidence=0.9) is not None:
-                    time.sleep(1)
-                    ImgClick(FolURL2,"ZengetuIcon.png",0.99999,1)
+                time.sleep(1)
+                ImgClick(FolURL2,"ZengetuIcon.png",0.99999,1)
             time.sleep(1)
             if Tuki == "1":
                 ImgClick(FolURL2,"1mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"1n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "2":
                 ImgClick(FolURL2,"2mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"2n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "3":
                 ImgClick(FolURL2,"3mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"3n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "4":
                 ImgClick(FolURL2,"4mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"4n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "5":
                 ImgClick(FolURL2,"5mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"5n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "6":
                 ImgClick(FolURL2,"6mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"6n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "7":
                 ImgClick(FolURL2,"7mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"7n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "8":
                 ImgClick(FolURL2,"8mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"8n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "9":
                 ImgClick(FolURL2,"9mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"9n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "10":
                 ImgClick(FolURL2,"10mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"10n.png",0.99999,1)
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "11":
                 ImgClick(FolURL2,"11mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"11n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
             elif Tuki == "12":
                 ImgClick(FolURL2,"12mon.png",0.99999,1)
                 time.sleep(1)
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"12n.png",0.99999,1)
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
+                    time.sleep(1)
                 return True
     except:
         time.sleep(1)
