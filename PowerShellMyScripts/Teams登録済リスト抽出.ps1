@@ -12,4 +12,4 @@ $data = @()#空配列作成
 $data =(Get-PnPListItem -List $ListID).FieldValues#リストデータを全て配列代入
 #$data#リスト見たいならここ 
 
-#$data | Export-Csv -Path \\Sv05121a\e\C 作業台\RPA\ALLDataBase\関与先DB.csv -Encoding ASCII -NoTypeInformation -Delimiter `t　#登録済みのTeamsサイト一覧
+$data | Export-Csv -Path D:\TeamsList.csv -Encoding ASCII -NoTypeInformation -Delimiter `t　#登録済みのTeamsサイト一覧

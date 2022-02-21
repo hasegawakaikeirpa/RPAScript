@@ -548,6 +548,9 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
     except:
         time.sleep(1)
         return False
+def S_Printout():
+    Out_Dir = "\\Sv05121a\e\C 作業台\RPA\試算表\承認待ち"
+
 def MainFlow(FolURL2,MasterCSV,NgLog):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
