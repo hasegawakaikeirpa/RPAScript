@@ -548,9 +548,57 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
     except:
         time.sleep(1)
         return False
-def S_Printout():
-    Out_Dir = "\\Sv05121a\e\C 作業台\RPA\試算表\承認待ち"
-
+#--------------------------------------------------------------------------------------------------------------------------
+def FolCre(FolURL2,driver,MaChar,Nen,Tuki):
+    try:
+        SyanaiCode = MaChar[0]
+        Par = CsvSortArray(URL,'SyanaiCode',Key,Arg)
+    except:
+#--------------------------------------------------------------------------------------------------------------------------
+def S_Printout(FolURL2,driver,MaChar,Nen,Tuki):#MaChar = CharPar(MasterRow)
+    try:
+        Out_Dir = "\\\\Sv05121a\e\C 作業台\RPA\試算表\承認待ち"
+        #MSyanaiCode,MName,Mkessan,MAdd,MSAdd,MS2Add
+        FileName = Out_Dir + "\\" + str(MaChar[0]) + "-R" + Nen + "." + Tuki + " " + MaChar[1] + "様試算表.pdf"
+        ImgClick(FolURL2,"FileOut.png",0.9,3)
+        time.sleep(1)
+        ImgClick(FolURL2,"PDFBar.png",0.9,3)
+        time.sleep(1)
+        pg.press('return')
+        time.sleep(1)
+        pyperclip.copy(FileName)
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press("return")
+        ImgClick(FolURL2,"LastFileOut.png",0.9,3)
+        time.sleep(2)
+        if ImgCheck(FolURL2,"/FileOver.png" ,0.9,3)[0] == True:
+            pg.press('y')
+            time.sleep(2)
+        while pg.locateOnScreen(FolURL2 + "/Insatutyu.png" , confidence=0.9) is not None:
+            time.sleep(1)
+        time.sleep(1)
+        pg.keyDown('ait')
+        pg.press('x')
+        pg.keyUp('alt')
+        while pg.locateOnScreen(FolURL2 + "/SyoriKidou.png" , confidence=0.9) is None:
+            time.sleep(1)
+        time.sleep(3)
+        pg.keyDown('ait')
+        pg.press('f4')
+        pg.keyUp('alt')
+        time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/FrontKaikeiIcon.png" , confidence=0.9) is not None:
+            time.sleep(1)
+        time.sleep(1)
+        return True,FileName
+    except:
+        return False,""
+#--------------------------------------------------------------------------------------------------------------------------    
+def LogWrite(FolURL2,Ends):
+    LogList = CSVOut.CsvRead(FolURL2 + "/Log/Log.csv")[1]
+    CSVOut.CsvPlus(FolURL2 + "/Log/Log.csv",LogList,Ends)
+    time.sleep(1)
+#--------------------------------------------------------------------------------------------------------------------------
 def MainFlow(FolURL2,MasterCSV,NgLog):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
@@ -567,16 +615,17 @@ def MainFlow(FolURL2,MasterCSV,NgLog):
             MaChar = CharPar(MasterRow)#MSyanaiCode,MName,Mkessan,MAdd,MSAdd,MS2Add
             Nen = 3#和暦年---------------------------------------------------------------------------------------------------------
             Tuki = 10#和暦月--------------------------------------------------------------------------------------------------------
-        #--------------------------------------------------------------------------------------------------------------------------
+        #関与先コード指定でデータを開く-----------------------------------------------------------------------------------------------
             DC = driver.find_elements_by_class_name("TMNumEdit")
             DC[1].click()
             time.sleep(1)
             pg.press(["delete","delete","delete","delete","delete","delete","delete","delete","delete"])
             time.sleep(1)
-            pg.write(str(MaChar[0]))
+            pg.write(str(MaChar[0]))#CSVデータIndex0
             time.sleep(1)
             pg.press("return")
             time.sleep(1)
+         #指定画像標示まで待機-----------------------------------------------------------------------------------------------
             while pg.locateOnScreen(FolURL2 + "/" + "OpenFlag.png", confidence=0.99999) is not None:
                 time.sleep(3)
                 OF = ImgCheck(FolURL2,"OpenFlag.png",0.9,5)
@@ -599,14 +648,26 @@ def MainFlow(FolURL2,MasterCSV,NgLog):
                     pg.press('o')
                     pg.keyUp('alt')
                     time.sleep(1)
+                    #指定画像標示まで待機-----------------------------------------------------------------------------------------------
                     while pg.locateOnScreen(FolURL2 + "/" + "FamilyOpenFlag.png", confidence=0.99999) is None:
                         MJF = MJSFlow(FolURL2,driver)
+                        time.sleep(1)
                         if MJF == True:
-                            AllPrint(FolURL2,driver,MaChar,str(Tuki))
-                        else:
-                            print("一括印刷起動失敗")
-                else:
+                            break
+                    if MJF == True:
+                        AllPrint(FolURL2,driver,MaChar,str(Tuki))
+                        SP = S_Printout(FolURL2,driver,MaChar,str(Nen),str(Tuki))
+                        if SP[0] == True:
+                            Ends = ["成功",SP[1],str(dt.today()),"",""]
+                            LogWrite(FolURL2,Ends)
+                    else:
+                        print("一括印刷起動失敗")
+                        Ends = ["一括印刷起動失敗",MaChar[0],str(dt.today()),"",""]
+                        LogWrite(FolURL2,Ends)
+            else:
                     print("入力社内コードと一致しません")
+                    Ends = ["入力社内コードと一致しません",MaChar[0],str(dt.today()),"",""]
+                    LogWrite(FolURL2,Ends)                    
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
