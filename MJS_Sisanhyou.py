@@ -255,36 +255,36 @@ def MainStarter(FolURL2):
 #----------------------------------------------------------------------------------------------------------------------
 def CharPar(MasterRow):
     try:
-        MSyanaiCode = MasterRow["SyanaiCode"]
+        MSyanaiCode = MasterRow["vc_KnrCd"]
     except:
         MSyanaiCode = ""
     try:
-        MName = MasterRow["MirokuName"]
+        MName = MasterRow["vc_Name"]
     except:
         try:
-            MName = MasterRow["TKCName"]
+            MName = MasterRow["vc_NameW"]
         except:
             MName = ""
     try:
-        Mkessan = MasterRow["KessanDuki"]
+        Mkessan = MasterRow["in_KsnMon"]
     except:
         Mkessan = ""
     try:
-        MAdd = MasterRow["MailAddress"]
+        MAdd = MasterRow["vc_DaihyouMail"]
     except:
         MAdd = ""
     try:
-        MAdd = MasterRow["MailAddress"]
+        MAdd = MasterRow["vc_SeikyuMail"]
     except:
         MAdd = ""
     try:
-        MSAdd = MasterRow["SubMailAddress"]
+        MSAdd = MasterRow["vc_SisanhyouMail"]
     except:
         MSAdd = ""
     try:
-        MS2Add = MasterRow["SubMailAddress"]
+        MS2Add = MasterRow["vc_TantouMail"]
     except:
-        MS2Add = "Sub2MailAddress"
+        MS2Add = ""
     return MSyanaiCode,MName,Mkessan,MAdd,MSAdd,MS2Add
     # [
     # "Title",
@@ -549,17 +549,41 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
         time.sleep(1)
         return False
 #--------------------------------------------------------------------------------------------------------------------------
-def FolCre(FolURL2,driver,MaChar,Nen,Tuki):
+def FolCre(FolURL2,MaChar,Nen,Tuki):
+    Out_Dir = "//Sv05121a/e/C 作業台/RPA/試算表/承認待ち"
     try:
-        SyanaiCode = MaChar[0]
-        Par = CsvSortArray(URL,'SyanaiCode',Key,Arg)
+        SyanaiCode = MaChar#'{0:04}'.format(MaChar)#MaChar[0])
+        sqlstr = 'SELECT * FROM m_kkanyo WHERE vc_KnrCd=' + SyanaiCode
+        SqlData = sq.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sqlstr)
+        if SqlData[0] == True:
+            SqlRow = SqlData[1]
+            TanNo = str(int(SqlRow['vc_KansaTantouNo'][0]))
+            TanName = SqlRow['vc_KansaTantou'][0].replace('\u3000',' ')
+            MNo = str(int(SqlRow['vc_KnrCd'][0]))
+            MName = SqlRow['vc_Name'][0].replace('\u3000',' ')
+            if len(TanName) == 0:
+                Dir_Name = Out_Dir + "/" + '担当未登録' #MaChar[0])
+            else:
+                Dir_Name = Out_Dir + "/" + TanNo + "_" + TanName #MaChar[0])
+            if os.path.isdir(str(Dir_Name)) == False:
+                os.mkdir(str(Dir_Name))
+                Dir_Name = Dir_Name + "/" + MNo + "-" + MName
+                os.mkdir(str(Dir_Name))
+                return True,Dir_Name
+            else:
+                Dir_Name = Dir_Name + "/" + MNo + "-" + MName
+                if os.path.isdir(str(Dir_Name)) == False:
+                    os.mkdir(str(Dir_Name))
+                return True,Dir_Name
+        else:
+            return False,"FolCreでSql失敗"
     except:
+        return False,"FolCreでTryエラー"
 #--------------------------------------------------------------------------------------------------------------------------
-def S_Printout(FolURL2,driver,MaChar,Nen,Tuki):#MaChar = CharPar(MasterRow)
+def S_Printout(FolURL2,driver,MaChar,Nen,Tuki,Out_Dir):#MaChar = CharPar(MasterRow)
     try:
-        Out_Dir = "\\\\Sv05121a\e\C 作業台\RPA\試算表\承認待ち"
         #MSyanaiCode,MName,Mkessan,MAdd,MSAdd,MS2Add
-        FileName = Out_Dir + "\\" + str(MaChar[0]) + "-R" + Nen + "." + Tuki + " " + MaChar[1] + "様試算表.pdf"
+        FileName = Out_Dir + "\\" + str(int(MaChar[0])) + "-R" + Nen + "." + Tuki + " " + MaChar[1] + "様試算表.pdf"
         ImgClick(FolURL2,"FileOut.png",0.9,3)
         time.sleep(1)
         ImgClick(FolURL2,"PDFBar.png",0.9,3)
@@ -583,9 +607,7 @@ def S_Printout(FolURL2,driver,MaChar,Nen,Tuki):#MaChar = CharPar(MasterRow)
         while pg.locateOnScreen(FolURL2 + "/SyoriKidou.png" , confidence=0.9) is None:
             time.sleep(1)
         time.sleep(3)
-        pg.keyDown('ait')
-        pg.press('f4')
-        pg.keyUp('alt')
+        ImgClick(FolURL2,"EndTaisyou.png",0.99999,3)
         time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/FrontKaikeiIcon.png" , confidence=0.9) is not None:
             time.sleep(1)
@@ -599,7 +621,7 @@ def LogWrite(FolURL2,Ends):
     CSVOut.CsvPlus(FolURL2 + "/Log/Log.csv",LogList,Ends)
     time.sleep(1)
 #--------------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2,MasterCSV,NgLog):
+def MainFlow(FolURL2,MasterCSV):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = MJSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto/MJS_DensiSinkoku")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/MJS_Sisanhyou"
@@ -609,7 +631,7 @@ def MainFlow(FolURL2,MasterCSV,NgLog):
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
     for x in range(MasRow):
-        if x == 12:
+        if x > 12:
         #マスターから値を取得--------------------------------------------------------------------------------------------------------
             MasterRow = MasterCSV[1].iloc[x,:]
             MaChar = CharPar(MasterRow)#MSyanaiCode,MName,Mkessan,MAdd,MSAdd,MS2Add
@@ -621,7 +643,7 @@ def MainFlow(FolURL2,MasterCSV,NgLog):
             time.sleep(1)
             pg.press(["delete","delete","delete","delete","delete","delete","delete","delete","delete"])
             time.sleep(1)
-            pg.write(str(MaChar[0]))#CSVデータIndex0
+            pg.write(str(int(MaChar[0])))#CSVデータIndex0
             time.sleep(1)
             pg.press("return")
             time.sleep(1)
@@ -643,7 +665,7 @@ def MainFlow(FolURL2,MasterCSV,NgLog):
                 AnsDC = DC[1].text
                 AnsNen = DC[0].text
                 AnsTuki = DC[2].text
-                if AnsDC == str(MaChar[0]) and AnsNen == str(Nen) and AnsTuki == str(Tuki):
+                if AnsDC == str(int(MaChar[0])) and AnsNen == str(Nen) and AnsTuki == str(Tuki):
                     pg.keyDown('alt')
                     pg.press('o')
                     pg.keyUp('alt')
@@ -656,7 +678,8 @@ def MainFlow(FolURL2,MasterCSV,NgLog):
                             break
                     if MJF == True:
                         AllPrint(FolURL2,driver,MaChar,str(Tuki))
-                        SP = S_Printout(FolURL2,driver,MaChar,str(Nen),str(Tuki))
+                        FLC = FolCre(FolURL2, MaChar[0],Nen,Tuki)
+                        SP = S_Printout(FolURL2,driver,MaChar,str(Nen),str(Tuki),FLC[1])
                         if SP[0] == True:
                             Ends = ["成功",SP[1],str(dt.today()),"",""]
                             LogWrite(FolURL2,Ends)
@@ -715,20 +738,17 @@ import WarekiHenkan
 from chardet.universaldetector import UniversalDetector
 import calendar
 import CSVOut
+import SQLConnect as sq
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
 #--------------------------------------------------------------------------------
-#プレ申告のお知らせ保管フォルダチェック---------------------------------------------------------
-SerchEnc = format(getFileEncoding(FolURL2 + "/RPAPhoto/MJS_Sisanhyou/Log/Log.csv"))
-NgLog = pd.read_csv(FolURL2 + "/RPAPhoto/MJS_Sisanhyou/Log/Log.csv",encoding=SerchEnc)
-NgRow = np.array(NgLog).shape[0]#配列行数取得
-NgCol = np.array(NgLog).shape[1]#配列列数取得
 #マスター読込----------------------------------------------------------------------------------
-Murl = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/Heidi関与先DB.csv"
-MasterCSV = CSVOut.CsvRead(Murl)
+sqlstr = 'SELECT * FROM m_kkanyo'
+MasSql = sq.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sqlstr)
+MasterCSV = MasSql
 #---------------------------------------------------------------------------------------------
 try:
-    MainFlow(FolURL2,MasterCSV,NgLog)
+    MainFlow(FolURL2,MasterCSV)
 except:
     traceback.print_exc()
