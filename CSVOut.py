@@ -14,13 +14,14 @@ def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
 #------------------------------------------------------------------------------------------------------------------------------
 def CsvPlus(URL,LogList,LogMSG):#引数指定のCSV最終行に行データ追加
     try:
-        SerchEnc = format(getFileEncoding(URL))
         df_shape = LogList.shape
         #最終行に追加
         LogList.loc[df_shape[0]] = LogMSG
-        pd.DataFrame(LogList).to_csv(URL, encoding = SerchEnc, index = False) 
+        SerchEnc = format(getFileEncoding(URL))
+        print(LogList)
+        LogList.to_csv(URL, encoding = SerchEnc,index = False) 
         return True
-    except:
+    except:   
         return False
 #------------------------------------------------------------------------------------------------------------------------------- 
 def CsvRead(URL):#引数指定のCSVを読みとる
@@ -62,6 +63,41 @@ def CsvSortArray(URL,KeyCol,Key,Arg):#dtype={"TKCKokuzeiUserCode": str,"TKCKokuz
         return False,""
     except:
         return False,""
+#------------------------------------------------------------------------------------------------------------------------------- 
+def chkprint(*args):# 変数名をそのままprint関数内で表示させる関数
+    for obj in args:
+        for k, v in globals().items():
+            if id(v) == id(obj):
+                target = k
+                break          
+    return target
+#------------------------------------------------------------------------------------------------------------------------------- 
+def typeInfo(targetData):# データがどのデータ型か、列数、行数を表示する関数
+    if (type(targetData) is pd.core.frame.DataFrame):
+        print("{} は DataFrame型".format(chkprint(targetData)))
+        print("{} の行数, 列数・・・{}\n".format(chkprint(targetData), targetData.shape))     # shapeの表示内容は、(行数, 列数)となる
+        return "DataFrame"
+    if (type(targetData) is list):
+        print("{} は list型".format(chkprint(targetData)))
+        print("{} の行数, 列数・・・{}\n".format(chkprint(targetData), pd.DataFrame(targetData).shape))    # shapeの表示内容は、(行数, 列数)となる
+        return "list"
+    if (type(targetData) is np.ndarray):
+        print("{} は ndarray型".format(chkprint(targetData)))
+        print("{} の行数, 列数・・・{}\n".format(chkprint(targetData), targetData.shape))     # shapeの表示内容は、(行数, 列数)となる
+        return "ndarray"
+    if (type(targetData) is pd.core.series.Series):
+        print("{} は Series型".format(chkprint(targetData)))
+        print("{} の行数, 列数・・・{}\n".format(chkprint(targetData), targetData.shape))     # shapeの表示内容は、(行数, 列数)となる
+        return "Series"
+        #使用例↓
+        # data_list = [[1.0, 2.0, 3.0], [11.0, 12.0, 13.0]]
+        # data_ndarray = np.array(data_list)      #listをndarrayに変換する
+        # data_Series = pd.Series(data_list)      #listをSeriesに変換する
+        # data_df = pd.DataFrame(data_list)       #listをDataFrameに変換する
+        # typeInfo(data_list)
+        # typeInfo(data_ndarray) 
+        # typeInfo(data_Series)
+        # typeInfo(data_df)
 #------------------------------------------------------------------------------------------------------------------------------- 
 #モジュールインポート
 from appium import webdriver
