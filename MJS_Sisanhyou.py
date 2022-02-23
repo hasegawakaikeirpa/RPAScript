@@ -4,7 +4,7 @@ from queue import Empty
 from numpy import true_divide
 from pyparsing import And
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
-    for x in range(10000):
+    for x in range(10):
         try:
             driver.find_element_by_xpath(UIPATH)
             Flag = 1
@@ -15,7 +15,7 @@ def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
         return False
 #----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitAutomationId(UIPATH,driver):#XPATH要素を取得するまで待機
-    for x in range(10000):
+    for x in range(10):
         try:
             driver.find_element_by_accessibility_id(UIPATH)
             Flag = 1
@@ -26,7 +26,7 @@ def DriverUIWaitAutomationId(UIPATH,driver):#XPATH要素を取得するまで待
         return False
 #----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitName(UIPATH,driver):#XPATH要素を取得するまで待機
-    for x in range(10000):
+    for x in range(10):
         try:
             driver.find_element_by_Name(UIPATH)
             Flag = 1
@@ -37,7 +37,7 @@ def DriverUIWaitName(UIPATH,driver):#XPATH要素を取得するまで待機
         return False
 #------------------------------------------------------------r----------------------------------------------------------
 def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
-    for x in range(10000):
+    for x in range(10):
         try:
             driver.find_element_by_class_name(UIPATH)
             Flag = 1
@@ -48,7 +48,7 @@ def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
         return False
 #----------------------------------------------------------------------------------------------------------------------
 def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
-    for x in range(10000):
+    for x in range(10):
         try:
             elList = driver.find_elements_by_class_name(UIPATH)
             Flag = 1
@@ -59,7 +59,7 @@ def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
         return False
 #----------------------------------------------------------------------------------------------------------------------
 def DriverCheck(Hub,ObjName,driver):#XPATH要素を取得するまで待機
-    for x in range(10000):
+    for x in range(10):
         if Hub == "AutomationID":
             if DriverUIWaitAutomationId(ObjName,driver) == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
                 #正常待機後処理
@@ -163,10 +163,10 @@ def ImgCheckForList(FolURL2,List,conf,LoopVal):#リスト内の画像があれ�
 #----------------------------------------------------------------------------------------------------------------------
 def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックしてx,y軸を返す
     ImgURL = FolURL2 + "/" + FileName
-    for x in range(10000):
+    for x in range(10):
         if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:#OMSメニューの年調起動ボタンを判定して初期処理分け
             #正常待機後処理
-            for y in range(10000):
+            for y in range(10):
                 try:
                     p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
                     x, y = pyautogui.center(p)
@@ -231,7 +231,7 @@ def MainStarter(FolURL2):
     #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
     List = ["DensiSinkokuIcon.png","DensiSinkokuIcon2.png"]
     conf = 0.9#画像認識感度
-    LoopVal = 10000#検索回数
+    LoopVal = 10#検索回数
     ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
     if ListCheck[0] == True:
         ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
@@ -448,6 +448,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"1mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"1n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"1n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -456,6 +463,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"2mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"2n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"2n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -464,6 +478,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"3mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"3n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"3n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -472,6 +493,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"4mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"4n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"4n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -480,6 +508,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"5mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"5n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"5n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -488,6 +523,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"6mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"6n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"6n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -496,6 +538,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"7mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"7n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"7n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -504,6 +553,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"8mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"8n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"8n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -512,6 +568,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"9mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"9n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"9n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -520,8 +583,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"10mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"10n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"10n.png",conf,1)
+                    conf = conf - 0.1
                 time.sleep(1)
-                ImgClick(FolURL2,"PrintStart.png",0.85,1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -530,6 +598,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"11mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"11n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"11n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
@@ -538,6 +613,13 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"12mon.png",0.85,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"12n.png",0.85,1)
+                conf=0.85
+                while pg.locateOnScreen(FolURL2 + "/PrintStart.png",confidence=0.99999) is None:
+                    time.sleep(1)
+                    ImgClick(FolURL2,"12n.png",conf,1)
+                    conf = conf - 0.1
+                time.sleep(1)
+                ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
