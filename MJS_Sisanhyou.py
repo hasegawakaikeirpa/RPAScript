@@ -445,84 +445,84 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
         if Zen[0] == True:
             while pg.locateOnScreen(FolURL2 + "/CheckingBox.png",confidence=0.9) is not None:
                 time.sleep(1)
-                ImgClick(FolURL2,"ZengetuIcon.png",0.99999,1)
+                ImgClick(FolURL2,"ZengetuIcon.png",0.9,1)
             time.sleep(1)
             if Tuki == "1":
-                ImgClick(FolURL2,"1mon.png",0.99999,1)
+                ImgClick(FolURL2,"1mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"1n.png",0.99999,1)
+                ImgClick(FolURL2,"1n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "2":
-                ImgClick(FolURL2,"2mon.png",0.99999,1)
+                ImgClick(FolURL2,"2mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"2n.png",0.99999,1)
+                ImgClick(FolURL2,"2n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "3":
-                ImgClick(FolURL2,"3mon.png",0.99999,1)
+                ImgClick(FolURL2,"3mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"3n.png",0.99999,1)
+                ImgClick(FolURL2,"3n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "4":
-                ImgClick(FolURL2,"4mon.png",0.99999,1)
+                ImgClick(FolURL2,"4mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"4n.png",0.99999,1)
+                ImgClick(FolURL2,"4n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "5":
-                ImgClick(FolURL2,"5mon.png",0.99999,1)
+                ImgClick(FolURL2,"5mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"5n.png",0.99999,1)
+                ImgClick(FolURL2,"5n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "6":
-                ImgClick(FolURL2,"6mon.png",0.99999,1)
+                ImgClick(FolURL2,"6mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"6n.png",0.99999,1)
+                ImgClick(FolURL2,"6n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "7":
-                ImgClick(FolURL2,"7mon.png",0.99999,1)
+                ImgClick(FolURL2,"7mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"7n.png",0.99999,1)
+                ImgClick(FolURL2,"7n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "8":
-                ImgClick(FolURL2,"8mon.png",0.99999,1)
+                ImgClick(FolURL2,"8mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"8n.png",0.99999,1)
+                ImgClick(FolURL2,"8n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "9":
-                ImgClick(FolURL2,"9mon.png",0.99999,1)
+                ImgClick(FolURL2,"9mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"9n.png",0.99999,1)
+                ImgClick(FolURL2,"9n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "10":
-                ImgClick(FolURL2,"10mon.png",0.99999,1)
+                ImgClick(FolURL2,"10mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"10n.png",0.99999,1)
+                ImgClick(FolURL2,"10n.png",0.9,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"PrintStart.png",0.9,1)
                 time.sleep(1)
@@ -530,17 +530,17 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "11":
-                ImgClick(FolURL2,"11mon.png",0.99999,1)
+                ImgClick(FolURL2,"11mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"11n.png",0.99999,1)
+                ImgClick(FolURL2,"11n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
                 return True
             elif Tuki == "12":
-                ImgClick(FolURL2,"12mon.png",0.99999,1)
+                ImgClick(FolURL2,"12mon.png",0.9,1)
                 time.sleep(1)
-                ImgClick(FolURL2,"12n.png",0.99999,1)
+                ImgClick(FolURL2,"12n.png",0.9,1)
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.9) is None:
                     time.sleep(1)
@@ -607,9 +607,9 @@ def S_Printout(FolURL2,driver,MaChar,Nen,Tuki,Out_Dir):#MaChar = CharPar(MasterR
         while pg.locateOnScreen(FolURL2 + "/SyoriKidou.png" , confidence=0.9) is None:
             time.sleep(1)
         time.sleep(3)
-        ImgClick(FolURL2,"EndTaisyou.png",0.99999,3)
+        ImgClick(FolURL2,"EndTaisyou.png",0.9,3)
         time.sleep(1)
-        while pg.locateOnScreen(FolURL2 + "/FrontKaikeiIcon.png" , confidence=0.9) is not None:
+        while pg.locateOnScreen(FolURL2 + "/FrontKaikeiIcon.png" , confidence=0.9) is None:
             time.sleep(1)
         time.sleep(1)
         return True,FileName
@@ -631,7 +631,7 @@ def MainFlow(FolURL2,MasterCSV):
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
     for x in range(MasRow):
-        if x > 12:
+        if x >= 12:
         #マスターから値を取得--------------------------------------------------------------------------------------------------------
             MasterRow = MasterCSV[1].iloc[x,:]
             MaChar = CharPar(MasterRow)#MSyanaiCode,MName,Mkessan,MAdd,MSAdd,MS2Add
@@ -665,7 +665,7 @@ def MainFlow(FolURL2,MasterCSV):
                 AnsDC = DC[1].text
                 AnsNen = DC[0].text
                 AnsTuki = DC[2].text
-                if AnsDC == str(int(MaChar[0])) and AnsNen == str(Nen) and AnsTuki == str(Tuki):
+                if AnsDC == str(int(MaChar[0])) and AnsNen == str(Nen):# and AnsTuki == str(Tuki):
                     pg.keyDown('alt')
                     pg.press('o')
                     pg.keyUp('alt')
@@ -688,7 +688,7 @@ def MainFlow(FolURL2,MasterCSV):
                         Ends = ["一括印刷起動失敗",MaChar[0],str(dt.today()),"",""]
                         LogWrite(FolURL2,Ends)
             else:
-                    print("入力社内コードと一致しません")
+                    print("入力社内コ19")
                     Ends = ["入力社内コードと一致しません",MaChar[0],str(dt.today()),"",""]
                     LogWrite(FolURL2,Ends)                    
 #------------------------------------------------------------------------------------------------------------------------------- 
