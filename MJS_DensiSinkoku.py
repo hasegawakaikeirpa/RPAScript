@@ -318,7 +318,7 @@ def MasterCSVGet(FolURL2):
         C_df = C_df.drop_duplicates(subset=ColLister)
     print(C_df)
     return(C_df)
-def MainFirstAction(FolURL2,C_SCode,C_Name ):
+def MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
     conf = 0.9#画像認識感度
     LoopVal = 10
     IMGD = False
@@ -376,9 +376,9 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                 #----------------------------------------------------------------------------------------------------------------------
                 Tyouhuku = SortPDF(C_SCode + "_" + C_Name)
                 if Tyouhuku[0] == str(1):
-                    FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + ".pdf"
+                    FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  ".pdf"
                 else:
-                    FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Tyouhuku[0] + ".pdf"
+                    FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Tyouhuku[0] + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + ".pdf"
                 pyperclip.copy(FileURL)
                 pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
                 pg.press(['return'])
@@ -475,9 +475,9 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
             #----------------------------------------------------------------------------------------------------------------------
             Tyouhuku = SortPDF(C_SCode + "_" + C_Name)
             if Tyouhuku[0] == str(1):
-                FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + ".pdf"
+                FileURL = Tyouhuku[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  ".pdf"
             else:
-                FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Tyouhuku[0] + ".pdf"
+                FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Tyouhuku[0] + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + ".pdf"
             pyperclip.copy(FileURL)
             pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
             pg.press(['return'])
@@ -501,7 +501,7 @@ def MainFirstAction(FolURL2,C_SCode,C_Name ):
                     pg.press(['down','down','down','down','down'])
                     pg.press(['return'])
                     Sums = str(int(Tyouhuku[0]) + 1)
-                    FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Sums + ".pdf"
+                    FileURL = Tyouhuku[1] + "\\" +  C_SCode + "_" + C_Name + Sums + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + ".pdf"
                 pyperclip.copy(FileURL)
                 pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
                 pg.press(['return'])
@@ -727,7 +727,7 @@ def MainFlow(FolURL2):
                     ClassObjList = ClassList[1]
                     ClassObjList[1].click()
                     #----------------------------------------------------------------------------------------------------------------------
-                    MainFirstAction(FolURL2,C_SCode,C_Name )
+                    MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)
                     time.sleep(1)
                 else:
                     time.sleep(1)
@@ -757,7 +757,7 @@ def MainFlow(FolURL2):
                     ClassObjList = ClassList[1]
                     ClassObjList[1].click()
                     #----------------------------------------------------------------------------------------------------------------------
-                    MainFirstAction(FolURL2,C_SCode,C_Name )
+                    MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)
             else:
                 time.sleep(1)
                 conf = 0.9#画像認識感度
@@ -786,7 +786,7 @@ def MainFlow(FolURL2):
                 ClassObjList = ClassList[1]
                 ClassObjList[1].click()
                 #----------------------------------------------------------------------------------------------------------------------
-                MainFirstAction(FolURL2,C_SCode,C_Name )               
+                MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)               
         else:
                 print("検索結果なし")
                 time.sleep(1)
