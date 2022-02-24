@@ -794,7 +794,7 @@ def MainFlow(FolURL2):
                 #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
                 List = ["DensiSyomeiOpenXXX.png","DensiSyomeiOpenXXX2.png"]
                 conf = 0.9#画像認識感度
-                LoopVal = 10#検索回数
+                LoopVal = 10#検索回数   
                 ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
                 time.sleep(1) 
                 ImgClick(FolURL2,"DensiSyomei.png",conf,LoopVal)#電子申告・申請タブを押す

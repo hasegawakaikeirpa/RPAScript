@@ -713,6 +713,31 @@ def LogWrite(FolURL2,Ends):
     LogList = CSVOut.CsvRead(FolURL2 + "/Log/Log.csv")[1]
     CSVOut.CsvPlus(FolURL2 + "/Log/Log.csv",LogList,Ends)
     time.sleep(1)
+#-------------------------------------------------------------------------------------------------------------------------- 
+def SerchSyain(FolURL2,MaChar):
+    try:
+        SyainCode = MaChar
+        sqlstr = 'SELECT * FROM m_syain WHERE vc_SyainCd_pk =' + SyainCode
+        MasSql = sq.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sqlstr)
+        return True,MasSql
+    except:
+        return False,""
+#--------------------------------------------------------------------------------------------------------------------------
+def MailOut():
+    outlook = win32com.client.Dispatch("Outlook.Application")
+
+    mail = outlook.CreateItem(0)
+
+    mail.to = 'solookimototakashi@gmail.com' #; aiko@mahodo.com'
+    #mail.cc = 'onpu@mahodo.com'
+    #mail.bcc = 'momoko@mahodo.com'
+    mail.subject = '試算表出力のお知らせ'
+    mail.bodyFormat = 1
+    mail.body = '''お疲れ様です。試算表出力が完了しました。
+
+    '''
+    mail.Send()#送信
+    #mail.display(True)#確認
 #--------------------------------------------------------------------------------------------------------------------------
 def MainFlow(FolURL2,MasterCSV):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
@@ -784,6 +809,7 @@ def MainFlow(FolURL2,MasterCSV):
                             SP = S_Printout(FolURL2,driver,MaChar,str(Nen),str(Tuki),FLC[1])
                             if SP[0] == True:
                                 Ends = ["成功",SP[1],str(dt.today()),"",""]
+                                MailOut()#OutLookで送信
                                 LogWrite(FolURL2,Ends)
                         else:
                             time.sleep(1)
@@ -805,7 +831,7 @@ def MainFlow(FolURL2,MasterCSV):
                         Ends = ["一括印刷起動失敗",MaChar[0],str(dt.today()),"",""]
                         LogWrite(FolURL2,Ends)
             else:
-                    print("入力社内コ19")
+                    print("入力社内コードと一致しません")
                     Ends = ["入力社内コードと一致しません",MaChar[0],str(dt.today()),"",""]
                     LogWrite(FolURL2,Ends)                    
 #------------------------------------------------------------------------------------------------------------------------------- 
@@ -856,10 +882,14 @@ from chardet.universaldetector import UniversalDetector
 import calendar
 import CSVOut
 import SQLConnect as sq
+import win32com.client
+
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
 #--------------------------------------------------------------------------------
+MaChar = "0561"
+SerchSyain(FolURL2,MaChar)
 #マスター読込----------------------------------------------------------------------------------
 sqlstr = 'SELECT * FROM m_kkanyo'
 MasSql = sq.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sqlstr)
