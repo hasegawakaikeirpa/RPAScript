@@ -641,24 +641,29 @@ def FolCre(FolURL2,MaChar,Nen,Tuki):
         SqlData = sq.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sqlstr)
         if SqlData[0] == True:
             SqlRow = SqlData[1]
-            TanNo = str(int(SqlRow['vc_KansaTantouNo'][0]))
-            TanName = SqlRow['vc_KansaTantou'][0].replace('\u3000',' ')
-            MNo = str(int(SqlRow['vc_KnrCd'][0]))
-            MName = SqlRow['vc_Name'][0].replace('\u3000',' ')
-            if len(TanName) == 0:
-                Dir_Name = Out_Dir + "/" + '担当未登録' #MaChar[0])
+            if len(SqlRow['vc_KansaTantouNo'][0]) == 0\
+            or len(SqlRow['vc_KansaTantou'][0]) == 0\
+            or len(SqlRow['vc_Name'][0]) == 0:
+                return False,"担当情報もしくは関与先名不足"
             else:
-                Dir_Name = Out_Dir + "/" + TanNo + "_" + TanName #MaChar[0])
-            if os.path.isdir(str(Dir_Name)) == False:
-                os.mkdir(str(Dir_Name))
-                Dir_Name = Dir_Name + "/" + MNo + "-" + MName
-                os.mkdir(str(Dir_Name))
-                return True,Dir_Name
-            else:
-                Dir_Name = Dir_Name + "/" + MNo + "-" + MName
+                TanNo = str(int(SqlRow['vc_KansaTantouNo'][0]))
+                TanName = SqlRow['vc_KansaTantou'][0].replace('\u3000',' ')
+                MNo = str(int(SqlRow['vc_KnrCd'][0]))
+                MName = SqlRow['vc_Name'][0].replace('\u3000',' ')
+                if len(TanName) == 0:
+                    Dir_Name = Out_Dir + "/" + '担当未登録' #MaChar[0])
+                else:
+                    Dir_Name = Out_Dir + "/" + TanNo + "_" + TanName #MaChar[0])
                 if os.path.isdir(str(Dir_Name)) == False:
                     os.mkdir(str(Dir_Name))
-                return True,Dir_Name
+                    Dir_Name = Dir_Name + "/" + MNo + "-" + MName
+                    os.mkdir(str(Dir_Name))
+                    return True,Dir_Name
+                else:
+                    Dir_Name = Dir_Name + "/" + MNo + "-" + MName
+                    if os.path.isdir(str(Dir_Name)) == False:
+                        os.mkdir(str(Dir_Name))
+                    return True,Dir_Name
         else:
             return False,"FolCreでSql失敗"
     except:
@@ -775,10 +780,26 @@ def MainFlow(FolURL2,MasterCSV):
                     if MJF == True:
                         AllPrint(FolURL2,driver,MaChar,str(Tuki))
                         FLC = FolCre(FolURL2, MaChar[0],Nen,Tuki)
-                        SP = S_Printout(FolURL2,driver,MaChar,str(Nen),str(Tuki),FLC[1])
-                        if SP[0] == True:
-                            Ends = ["成功",SP[1],str(dt.today()),"",""]
-                            LogWrite(FolURL2,Ends)
+                        if FLC[0] == True: #格納先が作成されていれば 
+                            SP = S_Printout(FolURL2,driver,MaChar,str(Nen),str(Tuki),FLC[1])
+                            if SP[0] == True:
+                                Ends = ["成功",SP[1],str(dt.today()),"",""]
+                                LogWrite(FolURL2,Ends)
+                        else:
+                            time.sleep(1)
+                            ImgClick(FolURL2,"POCancel.png",0.9,3)
+                            time.sleep(1)
+                            ImgClick(FolURL2,"EndTaisyou.png",0.9,3)
+                            time.sleep(1)
+                            while pg.locateOnScreen(FolURL2 + "/FrontKaikeiIcon.png" , confidence=0.9) is None:
+                                time.sleep(1)
+                                TE = ImgCheck(FolURL2,"TaisyouEnd.png",0.9,3)
+                                if TE[0] == True:
+                                    pg.press('y')
+                                    time.sleep(1)
+                            time.sleep(1)
+                            Ends = ["失敗",x,str(dt.today()),"DB項目不足",""]
+                            LogWrite(FolURL2,Ends)                          
                     else:
                         print("一括印刷起動失敗")
                         Ends = ["一括印刷起動失敗",MaChar[0],str(dt.today()),"",""]

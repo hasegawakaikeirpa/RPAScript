@@ -25,7 +25,12 @@ import MySQLdb
 import pandas as pd
 import CSVOut as co
 import numpy as np
+import os
 from tqdm import tqdm
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.schema import Column
+from sqlalchemy.types import Integer, String
 # sqlstr = 'SELECT * FROM m_kkanyo'
 # Sqldf = MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sqlstr)[1]
 # Sqldf.to_csv("//Sv05121a/e/C 作業台/RPA/ALLDataBase/TBCopyCopy.csv",index=None)
