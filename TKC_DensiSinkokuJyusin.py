@@ -368,56 +368,92 @@ def TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver):#選択済と�
             print("ChildCSV無")
             return [],False
         #------------------------------------------------------------------------------------------------------------------
-def Jyusin(driver,FolURL2,C_SCode,C_Name):
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "printerComboBox"
-    DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
-    conf = 0.9
-    LoopVal = 10
-    List = ["MSPdfIcon.png","MSPdfIcon2.png"]
-    MSPdfIcon = ImgCheckForList(FolURL2,List,conf)
-    if MSPdfIcon[0] == True:
-        ImgClick(FolURL2,MSPdfIcon[1],conf,LoopVal)
-    #----------------------------------------------------------------------------------------------------------------------
-    #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "printButton"
-    DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
-    #----------------------------------------------------------------------------------------------------------------------           
-    time.sleep(1)
-    conf = 0.9
-    LoopVal = 500
-    FileName = "PrintKekka.png"
-    if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
-        #----------------------------------------------------------------------------------------------------------------------
-        Tyouhuku = SortPDF(str(C_SCode) + "_" + C_Name + ".pdf")
-        if Tyouhuku[0] == str(1):
-            FileURL = Tyouhuku[1] + "\\" + str(C_SCode) + "_" + C_Name + ".pdf"
+def Jyusin(driver,FolURL2,C_SCode,C_Name,C_Zeimoku,C_Teisyutu,CSVName):
+    if CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild":
+        time.sleep(1)
+        # while pg.locateOnScreen(FolURL2 + "/TaikiBar.png" ,confidence = 0.9) is not None:
+        #     Cyou = 0
+        while pg.locateOnScreen(FolURL2 + "/DensiSinseiUnderArrow.png" ,confidence = 0.9) is None:
+            time.sleep(1)
+        MPC = ImgCheck(FolURL2,"MPSET.png",0.9,3)
+        if MPC[0] == True:
+            time.sleep(1)
+            IList = ["MPOut.png","MPOutOn.png"]
+            IListC = ImgCheckForList(FolURL2,IList,0.9,3)
+            if IListC[0] == True:
+                ImgClick(FolURL2,IListC[1],0.9,1)
         else:
-            FileURL = Tyouhuku[1] + "\\" +  str(C_SCode) + "_" + C_Name + Tyouhuku[0] + ".pdf"
-        pyperclip.copy(FileURL)
-        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-        pg.press(['return'])
-        time.sleep(1)
-        pg.keyDown('alt')
-        pg.press(['s'])
-        pg.keyUp('alt')
-        time.sleep(1)
-        FileName = "DensiSousintyu.png"
-        EraceIMGWait(FolURL2,FileName)
+            ImgClick(FolURL2,"DensiSinseiUnderArrow.png",0.9,3)
+            time.sleep(1)
+            ImgClick(FolURL2,"MPPDF.png",0.9,3)
+            time.sleep(1)
+            IList = ["MPOut.png","MPOutOn.png"]
+            IListC = ImgCheckForList(FolURL2,IList,0.9,3)
+            if IListC[0] == True:
+                ImgClick(FolURL2,IListC[1],0.9,1)                   
+                while pg.locateOnScreen(FolURL2 + "/PrintKekka.png" ,confidence = 0.9) is None:
+                #----------------------------------------------------------------------------------------------------------------------
+                    FileURL = Tyouhuku[1] + "\\" + str(C_SCode) + "_" + C_Name + "_" + C_Zeimoku + "_" + C_Teisyutu +  ".pdf"
+
+                pyperclip.copy(FileURL)
+                pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                pg.press(['return'])
+                time.sleep(1)
+                pg.keyDown('alt')
+                pg.press(['s'])
+                pg.keyUp('alt')
+                time.sleep(1)
+    else:
         #要素クリック----------------------------------------------------------------------------------------------------------
         Hub = "AutomationID"
-        ObjName = "cancelButton"
+        ObjName = "printerComboBox"
         DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
-        time.sleep(1)
-        FileName = "IkkatuEndMsg.png"
-        EraceIMGWait(FolURL2,FileName)
-        Syoridumi = 1
+        conf = 0.9
+        LoopVal = 10
+        List = ["MSPdfIcon.png","MSPdfIcon2.png"]
+        MSPdfIcon = ImgCheckForList(FolURL2,List,conf)
+        if MSPdfIcon[0] == True:
+            ImgClick(FolURL2,MSPdfIcon[1],conf,LoopVal)
         #----------------------------------------------------------------------------------------------------------------------
-    else:
-        Syoridumi = 0   
-def MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin,driver,FolURL2,DayCount,C_All,C_Child,C_SCode,C_Name):
+        #要素クリック----------------------------------------------------------------------------------------------------------
+        Hub = "AutomationID"
+        ObjName = "printButton"
+        DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
+        #----------------------------------------------------------------------------------------------------------------------           
+        time.sleep(1)
+        conf = 0.9
+        LoopVal = 500
+        FileName = "PrintKekka.png"
+        if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
+            #----------------------------------------------------------------------------------------------------------------------
+            Tyouhuku = SortPDF(str(C_SCode) + "_" + C_Name + ".pdf")
+            if Tyouhuku[0] == str(1):
+                FileURL = Tyouhuku[1] + "\\" + str(C_SCode) + "_" + C_Name + "_" + C_Zeimoku + "_" + C_Teisyutu +  ".pdf"
+            else:
+                FileURL = Tyouhuku[1] + "\\" +  str(C_SCode) + "_" + C_Name + Tyouhuku[0] + "_" + C_Zeimoku + "_" + C_Teisyutu + ".pdf"
+
+            pyperclip.copy(FileURL)
+            pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+            pg.press(['return'])
+            time.sleep(1)
+            pg.keyDown('alt')
+            pg.press(['s'])
+            pg.keyUp('alt')
+            time.sleep(1)
+            FileName = "DensiSousintyu.png"
+            EraceIMGWait(FolURL2,FileName)
+            #要素クリック----------------------------------------------------------------------------------------------------------
+            Hub = "AutomationID"
+            ObjName = "cancelButton"
+            DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
+            time.sleep(1)
+            FileName = "IkkatuEndMsg.png"
+            EraceIMGWait(FolURL2,FileName)
+            Syoridumi = 1
+            #----------------------------------------------------------------------------------------------------------------------
+        else:
+            Syoridumi = 0   
+def MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin,driver,FolURL2,DayCount,C_All,C_Child,C_SCode,C_Name,C_Zeimoku,C_Teisyutu):
     if C_Sousin == "済" and DayCount.days <= DayC and DayCount.days >= -DayC: #and not C_Houkoku == "○":
         if CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild":
             ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","申請・届出書類名","送信",C_All)
@@ -463,7 +499,7 @@ def MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin
             LoopVal = 10#検索回数
         else:
             print("送信エラー無")
-            Jyusin(driver,FolURL2,C_SCode,C_Name)
+            Jyusin(driver,FolURL2,C_SCode,C_Name,C_Zeimoku,C_Teisyutu,CSVName)
             for x in range(int(Pc)):
                 NitijiBunki(FolURL2,conf,LoopVal)
                 pg.press('pageup')
@@ -482,21 +518,25 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
             C_dfDataRow = C_Master.iloc[x,:]
             C_SCode = C_dfDataRow["関与先コード"]
             C_Name = C_dfDataRow["納税者(関与先)"]
+            C_All =  str(C_SCode) + str(C_Name) 
+            C_Name = C_Name.replace("\u3000"," ")
             C_Zeimoku = C_dfDataRow["申請・届出書類名"]
             C_Sousin = C_dfDataRow["送信"]
             C_UketukeDay = C_dfDataRow["申請受付日時"]
             C_Houkoku = C_dfDataRow["報告書"]
-            C_All =  str(C_SCode) + str(C_Name) 
+            C_Teisyutu = C_dfDataRow["提出先"]
 #元ネタ列名"→"行","事務所コード","関与先コード","納税者(関与先)","決算月","申請・届出書類名","提出先","電子申請データ作成","電子署名(納税者)","電子署名(税理士)","送信","申請受付日時","即時通知","受信通知","送付書","提出期限","報告書","実践報告","監査担当者"
         else:
             C_dfDataRow = C_Master.iloc[x,:]
             C_SCode = C_dfDataRow["関与先コード"]
             C_Name = C_dfDataRow["納税者(関与先)"]
+            C_All =  str(C_SCode) + str(C_Name) 
+            C_Name = C_Name.replace("\u3000"," ")
             C_Zeimoku = C_dfDataRow["税目"]
             C_Sousin = C_dfDataRow["送信"]
             C_UketukeDay = C_dfDataRow["申告受付日時"]
             C_Houkoku = C_dfDataRow["報告書"]
-            C_All =  str(C_SCode) + str(C_Name) 
+            C_Teisyutu = C_dfDataRow["事業年度／課税期間"]
 #元ネタ列名"→行","事務所コード","関与先コード","納税者(関与先)","決算月","税目","申告区分","電子申告データ作成","事業年度／課税期間","電子署名(添付書面)","電子署名(納税者)","電子署名(税理士)","送信","申告受付日時","即時通知","受信通知","送付書","申告期限","完了目標(3日前まで)","期限内","TISC","報告書","実践報告","監査担当者"
         #申請処理----------------------------------------------------------------------------------------------------------
         conf = 0.9#画像認識感度
@@ -516,10 +556,10 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
         DayCount = Todays - C_UketukeDay
         DayCount.days
         if CSVName == 'SinseiJyusinMaster':
-            MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin,driver,FolURL2,DayCount,C_All,C_Child,C_SCode,C_Name)
+            MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin,driver,FolURL2,DayCount,C_All,C_Child,C_SCode,C_Name,C_Zeimoku,C_Teisyutu)
             time.sleep(1)
         else:
-            MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin,driver,FolURL2,DayCount,C_All,C_Child,C_SCode,C_Name)
+            MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin,driver,FolURL2,DayCount,C_All,C_Child,C_SCode,C_Name,C_Zeimoku,C_Teisyutu)
             time.sleep(1)
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
