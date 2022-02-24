@@ -1,4 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
+from logging import exception
+
+
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -42,6 +45,7 @@ def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
             Flag = 0
     if Flag == 0:
         return False
+#----------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
 def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
@@ -175,58 +179,14 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #異常待機後処理
             print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
-def EraceIMGWait(FolURL2,FileName):
-    try:
-        while all(pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9)) == True:
-            time.sleep(1)
-    except:
-        print("待機終了")
-#----------------------------------------------------------------------------------------------------------------------
-def SortPDF(PDFName):
-    Fol = str(dt.today().year) + "-" + str(dt.today().month)
-    pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
-    #path = path.replace('\\','/')#先
-    PDFFileList = os.listdir(pt)
-    Cou = 1
-    for PDFItem in PDFFileList:
-        PDFName = PDFName.replace("\u3000","").replace(".PDF","") .replace(".pdf","")  
-        PDFItem = PDFItem.replace("\u3000","").replace(".PDF","") .replace(".pdf","")  
-        if PDFName in PDFItem:
-            Cou = Cou + 1
-    return str(Cou),pt
-#----------------------------------------------------------------------------------------------------------------------
-def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
-    detector = UniversalDetector()
-    with open(file_path, mode= "rb" ) as f:
-        for binary in f:
-            detector.feed( binary )
-            if detector.done:
-                break
-    detector.close()
-    return detector.result[ "encoding" ]
-#----------------------------------------------------------------------------------------------------------------------
-def SyanaiCDChange(intNo):
-    if intNo<1000:
-        return '{0:03d}'.format(intNo) 
-    elif intNo >= 1000 and intNo < 2000:
-        Te = str(intNo)[-3:]
-        return int(Te)  
-    elif intNo >= 4000 and intNo < 5000:
-        Te = str(intNo)[-3:]
-        return int(Te)  
-    else:
-        Te = str(intNo)[-3:]
-        return int(Te)  
-    #モジュールインポート
-from encodings import utf_8
-from tracemalloc import stop
+#モジュールインポート
 from appium import webdriver
 import subprocess
 from subprocess import run
 from subprocess import PIPE
 import pyautogui as pg
 import time
-import MJSOpen
+import OMSOpen
 from selenium.webdriver.common.keys import Keys
 #lxmlインポート
 import lxml.html
@@ -258,16 +218,16 @@ import traceback
 import pyautogui
 import time
 import shutil
-import codecs
-import pyperclip #クリップボードへのコピーで使用
-from datetime import datetime, timedelta
-import WarekiHenkan
-import PDFMarge
-from chardet.universaldetector import UniversalDetector
-import CSVOut
-import ExcelFileAction as EF
-#エクセルファイルをDF化-----------------------------------------------------------------
-import subprocess
-import shutil
-shutil.copy("D:\874-R3.10（同）JoySupportSevice様試算表.pdf","D:\税理士法人　長谷川会計\試算表テスト - ドキュメント")
-time.sleep(1)
+
+try:
+    FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
+    FolURL2 = "C:/Users/soumu/Desktop/RPAScript/RPAPhoto/TKC_DensiSinkoku"
+    for x in range(5):
+        while pg.locateOnScreen(FolURL2 + "/Ka.png", confidence=0.9) is not None:
+            ImgClick(FolURL2,"Ka.png",0.9,1)
+            time.sleep(1)
+        pg.press('pagedown')
+    for x in range(5):
+        pg.press('pageup')
+except:
+    print("Err")
