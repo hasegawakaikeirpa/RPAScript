@@ -1,4 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
+from logging import exception
+
+
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -416,6 +419,18 @@ def NonImgClickKeep(FolURL2,FileName):
     except:
         return True
 #----------------------------------------------------------------------------------------------------------------------
+def NoBlue(FolURL2):
+    try:
+        for x in range(5):
+            while pg.locateOnScreen(FolURL2 + "/Ka.png", confidence=0.9) is not None:
+                ImgClick(FolURL2,"Ka.png",0.9,1)
+                time.sleep(1)
+            pg.press('pagedown')
+        for x in range(5):
+            pg.press('pageup')
+    except:
+        exception
+#----------------------------------------------------------------------------------------------------------------------
 def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2):
     C_forCount = 0
     NoAction = False
@@ -439,91 +454,96 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
             C_Sousin = C_dfDataRow["送信"]
             C_All =  str(C_SCode) + str(C_Name) 
 #元ネタ列名"→行","事務所コード","関与先コード","納税者(関与先)","決算月","税目","申告区分","電子申告データ作成","事業年度／課税期間","電子署名(添付書面)","電子署名(納税者)","電子署名(税理士)","送信","申告受付日時","即時通知","受信通知","送付書","申告期限","完了目標(3日前まで)","期限内","TISC","報告書","実践報告","監査担当者"
-        #申請処理----------------------------------------------------------------------------------------------------------
-        conf = 0.9#画像認識感度
-        LoopVal = 10
-        if NoAction == False:#前周で操作した場合ChildCSVを再切出し
-            C_Child = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVChildName,driver)
-        C_CdfRow = np.array(C_Child[0]).shape[0]#配列行数取得
-        C_CdfCol = np.array(C_Child[0]).shape[1]#配列列数取得
-        C_CforCount = 0
-        #-------------------------------------------------------------------------------------------------------------------
-        if CSVName == 'SinseiMaster':
-            if C_Sousin == "可":
-                ItemRowArray = SortCSVItem(C_Child[0],"関与先コード","納税者(関与先)","申請・届出書類名","送信",C_All)
-                for ItemRow in ItemRowArray:
-                    FileName = "SinseiTrigger.png"
-                    conf = 0.9#画像認識感度
-                    LoopVal = 10
-                    xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
-                    ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 60
-                    ypos = ypos + (ItemRow*30)
-                    pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
-                    time.sleep(1)
-                #要素クリック------------------------------------------------------------------------------------------------
-                Hub = "AutomationID"
-                ObjName = "soshinButton"
-                DriverClick(Hub,ObjName,driver)#電子申告送信ボタンを押す
-                #------------------------------------------------------------------------------------------------------------
-                #送信エラー画像判定------------------------------------------------------------------------------------------
-                List = ["SousinErr.png","SousinErr2.png"]#送信エラーウィンドウ画像を2つ指定
-                ErrMsg = ""
-                if ImgCheckForList(FolURL2,List,conf)[0] == True:#リスト内の画像があればTrueと画像名を返す
-                    pg.press('return')
-                    ErrMsg = "送信エラー"
-                    time.sleep(1)
-                #------------------------------------------------------------------------------------------------------------
-                if ErrMsg == "送信エラー":
-                    FileName = "jimusyoCD.png"#画面左上の事務所コード画像を元に読込判定
-                    conf = 0.9#画像認識感度
-                    LoopVal = 10#検索回数
-                    if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
-                        print("送信エラーをスキップしました。")
-                    LoopVal = 10#検索回数
+        
+        
+        if not C_SCode == 82:
+        
+        
+            #申請処理----------------------------------------------------------------------------------------------------------
+            conf = 0.9#画像認識感度
+            LoopVal = 10
+            if NoAction == False:#前周で操作した場合ChildCSVを再切出し
+                C_Child = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVChildName,driver)
+            C_CdfRow = np.array(C_Child[0]).shape[0]#配列行数取得
+            C_CdfCol = np.array(C_Child[0]).shape[1]#配列列数取得
+            C_CforCount = 0
+            #-------------------------------------------------------------------------------------------------------------------
+            if CSVName == 'SinseiMaster':
+                if C_Sousin == "可":
+                    ItemRowArray = SortCSVItem(C_Child[0],"関与先コード","納税者(関与先)","申請・届出書類名","送信",C_All)
+                    for ItemRow in ItemRowArray:
+                        FileName = "SinseiTrigger.png"
+                        conf = 0.9#画像認識感度
+                        LoopVal = 10
+                        xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
+                        ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 60
+                        ypos = ypos + (ItemRow*30)
+                        pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
+                        time.sleep(1)
+                    #要素クリック------------------------------------------------------------------------------------------------
+                    Hub = "AutomationID"
+                    ObjName = "soshinButton"
+                    DriverClick(Hub,ObjName,driver)#電子申告送信ボタンを押す
+                    #------------------------------------------------------------------------------------------------------------
+                    #送信エラー画像判定------------------------------------------------------------------------------------------
+                    List = ["SousinErr.png","SousinErr2.png"]#送信エラーウィンドウ画像を2つ指定
+                    ErrMsg = ""
+                    if ImgCheckForList(FolURL2,List,conf)[0] == True:#リスト内の画像があればTrueと画像名を返す
+                        pg.press('return')
+                        ErrMsg = "送信エラー"
+                        time.sleep(1)
+                    #------------------------------------------------------------------------------------------------------------
+                    if ErrMsg == "送信エラー":
+                        FileName = "jimusyoCD.png"#画面左上の事務所コード画像を元に読込判定
+                        conf = 0.9#画像認識感度
+                        LoopVal = 10#検索回数
+                        if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
+                            print("送信エラーをスキップしました。")
+                        LoopVal = 10#検索回数
+                    else:
+                        print("送信エラー無")
+                        Sousin(driver,FolURL2,ItemRowArray)
                 else:
-                    print("送信エラー無")
-                    Sousin(driver,FolURL2,ItemRowArray)
+                    NoAction = True
+                    print("送信不可")
             else:
-                NoAction = True
-                print("送信不可")
-        else:
-            if C_Sousin == "可":
-                ItemRowArray = SortCSVItem(C_Child[0],"関与先コード","納税者(関与先)","税目","送信",C_All)
-                for ItemRow in ItemRowArray:
-                    FileName = "AnotherTrigger.png"
-                    conf = 0.9#画像認識感度
-                    LoopVal = 10
-                    xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
-                    ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 60
-                    ypos = ypos + (ItemRow*30)
-                    pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
-                    time.sleep(1)
-                #要素クリック------------------------------------------------------------------------------------------------
-                Hub = "AutomationID"
-                ObjName = "soshinButton"
-                DriverClick(Hub,ObjName,driver)#電子申告送信ボタンを押す
-                #------------------------------------------------------------------------------------------------------------
-                #送信エラー画像判定------------------------------------------------------------------------------------------
-                List = ["SousinErr.png","SousinErr2.png"]#送信エラーウィンドウ画像を2つ指定
-                ErrMsg = ""
-                if ImgCheckForList(FolURL2,List,conf)[0] == True:#リスト内の画像があればTrueと画像名を返す
-                    pg.press('return')
-                    ErrMsg = "送信エラー"
-                    time.sleep(1)
-                #------------------------------------------------------------------------------------------------------------
-                if ErrMsg == "送信エラー":
-                    FileName = "jimusyoCD.png"#画面左上の事務所コード画像を元に読込判定
-                    conf = 0.9#画像認識感度
-                    LoopVal = 10#検索回数
-                    if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
-                        print("送信エラーをスキップしました。")
-                    LoopVal = 10#検索回数
+                if C_Sousin == "可":
+                    ItemRowArray = SortCSVItem(C_Child[0],"関与先コード","納税者(関与先)","税目","送信",C_All)
+                    for ItemRow in ItemRowArray:
+                        FileName = "AnotherTrigger.png"
+                        conf = 0.9#画像認識感度
+                        LoopVal = 10
+                        xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
+                        ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 60
+                        ypos = ypos + (ItemRow*30)
+                        pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
+                        time.sleep(1)
+                    #要素クリック------------------------------------------------------------------------------------------------
+                    Hub = "AutomationID"
+                    ObjName = "soshinButton"
+                    DriverClick(Hub,ObjName,driver)#電子申告送信ボタンを押す
+                    #------------------------------------------------------------------------------------------------------------
+                    #送信エラー画像判定------------------------------------------------------------------------------------------
+                    List = ["SousinErr.png","SousinErr2.png"]#送信エラーウィンドウ画像を2つ指定
+                    ErrMsg = ""
+                    if ImgCheckForList(FolURL2,List,conf)[0] == True:#リスト内の画像があればTrueと画像名を返す
+                        pg.press('return')
+                        ErrMsg = "送信エラー"
+                        time.sleep(1)
+                    #------------------------------------------------------------------------------------------------------------
+                    if ErrMsg == "送信エラー":
+                        FileName = "jimusyoCD.png"#画面左上の事務所コード画像を元に読込判定
+                        conf = 0.9#画像認識感度
+                        LoopVal = 10#検索回数
+                        if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
+                            print("送信エラーをスキップしました。")
+                        LoopVal = 10#検索回数
+                    else:
+                        print("送信エラー無")
+                        Sousin(driver,FolURL2,ItemRowArray)
                 else:
-                    print("送信エラー無")
-                    Sousin(driver,FolURL2,ItemRowArray)
-            else:
-                NoAction = True
-                print("送信不可")
+                    NoAction = True
+                    print("送信不可")
 
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
@@ -562,25 +582,26 @@ def MainFlow(FolURL2):
     pg.press('return')#小林常務を選択
     #FileName = "KanyoHasegawa.png"#担当税理士所長判定
     #法人税消費税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'HoujinSyouhizeiMaster'
-    # CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
-    # List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     print(C_Master)
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2) 
-    ##----------------------------------------------------------------------------------------------------------------------
+    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
+    conf = 0.9#画像認識感度
+    LoopVal = 500
+    CSVName = 'HoujinSyouhizeiMaster'
+    CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
+    List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
+    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
+    C_Master = TaxAns[0]
+    C_MasterFlag = TaxAns[1]
+    if C_MasterFlag == False:
+        print("C_Masterは空です")
+    else:
+        NoBlue(FolURL2)
+        C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
+        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
+        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+        print(C_Master)
+        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2) 
+    #----------------------------------------------------------------------------------------------------------------------
     ##所得税消費税処理------------------------------------------------------------------------------------------------------
     #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
     #conf = 0.9#画像認識感度
@@ -601,25 +622,25 @@ def MainFlow(FolURL2):
     #    MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
     #    
     ##-----------------------------------------------------------------------------------------------------------------------
-    #法定調書給報処理------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    conf = 0.9#画像認識感度
-    LoopVal = 500
-    CSVName = 'HouteiKyuuhouMaster'
-    CSVChildName = 'HouteiKyuuhouChild'#チャイルドのCSVファイル名を指定
-    List = ["HouteiKyuuhou.png","HouteiKyuuhou2.png"]
-    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag == False:
-        print("C_Masterは空です")
-    else:
-        C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-        print(C_Master)
-        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
+    # #法定調書給報処理------------------------------------------------------------------------------------------------------
+    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
+    # conf = 0.9#画像認識感度
+    # LoopVal = 500
+    # CSVName = 'HouteiKyuuhouMaster'
+    # CSVChildName = 'HouteiKyuuhouChild'#チャイルドのCSVファイル名を指定
+    # List = ["HouteiKyuuhou.png","HouteiKyuuhou2.png"]
+    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
+    # C_Master = TaxAns[0]
+    # C_MasterFlag = TaxAns[1]
+    # if C_MasterFlag == False:
+    #     print("C_Masterは空です")
+    # else:
+    #     C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
+    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
+    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+    #     print(C_Master)
+    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
     # #-----------------------------------------------------------------------------------------------------------------------
     # #償却資産処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
