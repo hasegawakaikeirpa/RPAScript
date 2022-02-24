@@ -292,9 +292,11 @@ def TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver):#選択済と�
         conf = 0.9#画像認識感度
         time.sleep(1)
         if ImgNothingCheck(FolURL2,FileName,conf,10) == True:
-            if ImgCheck(FolURL2,"BlueBar.png",0.99999,10)[0] == True:#選択済があった場合
-                while ImgCheck(FolURL2,"BlueBar.png",0.99999,1)[0] == True:
-                    ImgClick(FolURL2, "BlueBar.png", 0.99999, 10)        
+            #if ImgCheck(FolURL2,"BlueBar.png",0.99999,10)[0] == True:#選択済があった場合
+            if ImgCheck(FolURL2,"Ka.png",0.9,10)[0] == True:#選択済があった場合
+                # while ImgCheck(FolURL2,"BlueBar.png",0.99999,1)[0] == True:
+                #     ImgClick(FolURL2, "BlueBar.png", 0.99999, 10) 
+                NoBlue(FolURL2)       
                 FileName = "CsvOutPut.png"
                 conf = 0.9#画像認識感度
                 if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == True:
@@ -740,6 +742,7 @@ def MainFlow(FolURL2):
     C_MasterFlag = TaxAns[1]
     if C_MasterFlag == False:
         print("C_Masterは空です")
+        
     else:
         NoBlue(FolURL2)
         C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
