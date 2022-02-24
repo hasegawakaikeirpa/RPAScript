@@ -445,7 +445,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 ImgClick(FolURL2,"ZengetuIcon.png",0.9,1)
             time.sleep(1)
             if Tuki == "1":
-                ImgClick(FolURL2,"1mon.png",0.85,1)
+                ImgClick(FolURL2,"1mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"1n.png",0.85,1)
                 conf=0.85
@@ -460,7 +460,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "2":
-                ImgClick(FolURL2,"2mon.png",0.85,1)
+                ImgClick(FolURL2,"2mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"2n.png",0.85,1)
                 conf=0.85
@@ -475,7 +475,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "3":
-                ImgClick(FolURL2,"3mon.png",0.85,1)
+                ImgClick(FolURL2,"3mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"3n.png",0.85,1)
                 conf=0.85
@@ -490,7 +490,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "4":
-                ImgClick(FolURL2,"4mon.png",0.85,1)
+                ImgClick(FolURL2,"4mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"4n.png",0.85,1)
                 conf=0.85
@@ -505,7 +505,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "5":
-                ImgClick(FolURL2,"5mon.png",0.85,1)
+                ImgClick(FolURL2,"5mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"5n.png",0.85,1)
                 conf=0.85
@@ -520,7 +520,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "6":
-                ImgClick(FolURL2,"6mon.png",0.85,1)
+                ImgClick(FolURL2,"6mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"6n.png",0.85,1)
                 conf=0.85
@@ -535,7 +535,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "7":
-                ImgClick(FolURL2,"7mon.png",0.85,1)
+                ImgClick(FolURL2,"7mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"7n.png",0.85,1)
                 conf=0.85
@@ -550,7 +550,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "8":
-                ImgClick(FolURL2,"8mon.png",0.85,1)
+                ImgClick(FolURL2,"8mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"8n.png",0.85,1)
                 conf=0.85
@@ -565,7 +565,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "9":
-                ImgClick(FolURL2,"9mon.png",0.85,1)
+                ImgClick(FolURL2,"9mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"9n.png",0.85,1)
                 conf=0.85
@@ -580,7 +580,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "10":
-                ImgClick(FolURL2,"10mon.png",0.85,1)
+                ImgClick(FolURL2,"10mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"10n.png",0.85,1)
                 conf=0.85
@@ -593,9 +593,14 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/FileOut.png",confidence=0.85) is None:
                     time.sleep(1)
+                    Berr = ImgCheck(FolURL2,"BalanceErr.png",0.9,3)
+                    if Berr[0] == True:
+                        pg.press('n')
+                        time.sleep(1)
+                        return False
                 return True
             elif Tuki == "11":
-                ImgClick(FolURL2,"11mon.png",0.85,1)
+                ImgClick(FolURL2,"11mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"11n.png",0.85,1)
                 conf=0.85
@@ -610,7 +615,7 @@ def AllPrint(FolURL2,driver,MaChar,Tuki):
                     time.sleep(1)
                 return True
             elif Tuki == "12":
-                ImgClick(FolURL2,"12mon.png",0.85,1)
+                ImgClick(FolURL2,"12mon.png",0.99999,1)
                 time.sleep(1)
                 ImgClick(FolURL2,"12n.png",0.85,1)
                 conf=0.85
@@ -714,7 +719,7 @@ def MainFlow(FolURL2,MasterCSV):
     time.sleep(1)
     #クラス要素クリック----------------------------------------------------------------------------------------------------------
     for x in range(MasRow):
-        if x >= 12:
+        if x >= 62:
         #マスターから値を取得--------------------------------------------------------------------------------------------------------
             MasterRow = MasterCSV[1].iloc[x,:]
             MaChar = CharPar(MasterRow)#MSyanaiCode,MName,Mkessan,MAdd,MSAdd,MS2Add
@@ -752,12 +757,16 @@ def MainFlow(FolURL2,MasterCSV):
                     pg.keyDown('alt')
                     pg.press('o')
                     pg.keyUp('alt')
-                    time.sleep(1)
+                    time.sleep(3)
+                    Dq = ImgCheck(FolURL2,"DataUpQ.png",0.9,2)
+                    if Dq[0] == True:
+                        pg.press('n')
+                        time.sleep(1)
                     #指定画像標示まで待機-----------------------------------------------------------------------------------------------
-                    while pg.locateOnScreen(FolURL2 + "/" + "FamilyOpenFlag.png", confidence=0.99999) is None:
-                        Dq = ImgCheck(FolURL2,"DataUpQ.png",0.9,2)
+                    while pg.locateOnScreen(FolURL2 + "/" + "FamilyOpenFlag.png", confidence=0.9) is None:
+                        Dq = ImgCheck(FolURL2,"DataUpQ.png",0.9,10)
                         if Dq[0] == True:
-                            pg.press('a')
+                            pg.press('n')
                             time.sleep(1)
                         MJF = MJSFlow(FolURL2,driver)
                         time.sleep(1)
