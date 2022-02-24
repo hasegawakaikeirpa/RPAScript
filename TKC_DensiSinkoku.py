@@ -615,6 +615,7 @@ def MainFlow(FolURL2):
     #if C_MasterFlag == False:
     #    print("C_Masterは空です")
     #else:
+    #    NoBlue(FolURL2)
     #    C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
     #    C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #    C_dfRow = np.array(C_Master).shape[0]#配列行数取得
@@ -635,6 +636,7 @@ def MainFlow(FolURL2):
     # if C_MasterFlag == False:
     #     print("C_Masterは空です")
     # else:
+    #     NoBlue(FolURL2)
     #     C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
     #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
@@ -655,6 +657,7 @@ def MainFlow(FolURL2):
     # if C_MasterFlag == False:
     #     print("C_Masterは空です")
     # else:
+    #     NoBlue(FolURL2)  
     #     C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
     #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
@@ -675,6 +678,7 @@ def MainFlow(FolURL2):
     # if C_MasterFlag == False:
     #     print("C_Masterは空です")
     # else:
+    #     NoBlue(FolURL2)  
     #     C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
     #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
@@ -695,6 +699,7 @@ def MainFlow(FolURL2):
     # if C_MasterFlag == False:
     #     print("C_Masterは空です")
     # else:
+    #     NoBlue(FolURL2)  
     #     C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
     #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
@@ -715,6 +720,7 @@ def MainFlow(FolURL2):
     # if C_MasterFlag == False:
     #     print("C_Masterは空です")
     # else:
+    #     NoBlue(FolURL2)  
     #     C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
     #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
@@ -735,6 +741,7 @@ def MainFlow(FolURL2):
     if C_MasterFlag == False:
         print("C_Masterは空です")
     else:
+        NoBlue(FolURL2)
         C_Master = C_Master[C_Master['送信']=='可']#送信列「可」のみ抽出
         C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
         C_dfRow = np.array(C_Master).shape[0]#配列行数取得
