@@ -181,7 +181,7 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
 #----------------------------------------------------------------------------------------------------------------------
 def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書出し操作
     #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
+    Hub = "AutomationID"#取得要素種類を指定
     ObjName = "outputDirTextBox"
     DriverClick(Hub,ObjName,driver)
     pg.press(['right','right','right','right','right','right','right','right','right'\
@@ -205,7 +205,7 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
     pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
+    Hub = "AutomationID"#取得要素種類を指定
     ObjName = "fileNameTextBox"
     DriverClick(Hub,ObjName,driver)
     pg.press(['right','right','right','right','right','right','right','right','right'\
@@ -229,7 +229,7 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
     pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
+    Hub = "AutomationID"#取得要素種類を指定
     ObjName = "fileTypeComboBox"
     DriverClick(Hub,ObjName,driver)
     pg.press('down')
@@ -238,7 +238,7 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
     pg.press('return')
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
+    Hub = "AutomationID"#取得要素種類を指定
     ObjName = "saveButton"
     CsvPath = CSVURL + "/" + CSVName + ".CSV"
     if os.path.isfile(CsvPath) == True:
@@ -341,7 +341,7 @@ def Sousin(driver,FolURL2,ItemRowArray,CSVName):
             NonImgClickKeep(FolURL2,FileName)
     else:
     #要素クリック----------------------------------------------------------------------------------------------------------
-        Hub = "AutomationID"
+        Hub = "AutomationID"#取得要素種類を指定
         ObjName = "etaxPasswordTextBox"
         DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
         conf = 0.9
@@ -365,7 +365,7 @@ def Sousin(driver,FolURL2,ItemRowArray,CSVName):
             pg.press('return')
         #----------------------------------------------------------------------------------------------------------------------
         #要素クリック----------------------------------------------------------------------------------------------------------
-        Hub = "AutomationID"
+        Hub = "AutomationID"#取得要素種類を指定
         ObjName = "ltaxPasswordTextBox"
         DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
         conf = 0.9
@@ -376,7 +376,7 @@ def Sousin(driver,FolURL2,ItemRowArray,CSVName):
             pg.press('return')
         #----------------------------------------------------------------------------------------------------------------------
         #要素クリック----------------------------------------------------------------------------------------------------------
-        Hub = "AutomationID"
+        Hub = "AutomationID"#取得要素種類を指定
         ObjName = "okButton"
         DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
         #----------------------------------------------------------------------------------------------------------------------            
@@ -493,7 +493,7 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
                         pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
                         time.sleep(1)
                     #要素クリック------------------------------------------------------------------------------------------------
-                    Hub = "AutomationID"
+                    Hub = "AutomationID"#取得要素種類を指定
                     ObjName = "soshinButton"
                     DriverClick(Hub,ObjName,driver)#電子申告送信ボタンを押す
                     #------------------------------------------------------------------------------------------------------------
@@ -531,7 +531,7 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
                         pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
                         time.sleep(1)
                     #要素クリック------------------------------------------------------------------------------------------------
-                    Hub = "AutomationID"
+                    Hub = "AutomationID"#取得要素種類を指定
                     ObjName = "soshinButton"
                     DriverClick(Hub,ObjName,driver)#電子申告送信ボタンを押す
                     #------------------------------------------------------------------------------------------------------------
@@ -556,15 +556,15 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
                 else:
                     NoAction = True
                     print("送信不可")
-
+#メイン処理----------------------------------------------------------------------------------------------------------------------
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
-    FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"
+    FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"#画像格納フォルダ
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
-    ObjName = "um12PictureButton"
+    Hub = "AutomationID"#取得要素種類を指定
+    ObjName = "um12PictureButton"#取得要素Nameを指定
     DriverClick(Hub,ObjName,driver)#一括電子申告ボタンを押す
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
@@ -574,7 +574,7 @@ def MainFlow(FolURL2):
     ImgClick(FolURL2,FileName,conf,LoopVal)#電子申告・申請タブを押す
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"
+    Hub = "AutomationID"#取得要素種類を指定
     ObjName = "ao212Button"
     DriverClick(Hub,ObjName,driver)#一括電子申告起動ボタン2を押す
     #----------------------------------------------------------------------------------------------------------------------
@@ -586,7 +586,7 @@ def MainFlow(FolURL2):
             pg.press('return')
             break
     #要素クリック----------------------------------------------------------------------------------------------------------
-    Hub = "AutomationID"    
+    Hub = "AutomationID"#取得要素種類を指定    
     ObjName = "taxAccountantComboBox"#税理士選択コンボボックスをクリック
     DriverClick(Hub,ObjName,driver)
     time.sleep(1)
@@ -804,12 +804,7 @@ import shutil
 
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-#FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
 FolURL2 = os.getcwd().replace('\\','/')#先
-#try:
-#    shutil.copytree(FolURL,FolURL2)
-#except:
-#    print(FolURL2 + "あります。")
 #--------------------------------------------------------------------------------
 try:
     MainFlow(FolURL2)
