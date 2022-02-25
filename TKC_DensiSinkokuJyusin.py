@@ -275,7 +275,7 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
         DriverClick(Hub,ObjName,driver)
         time.sleep(1)
 #----------------------------------------------------------------------------------------------------------------------
-def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
+def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Col5,Key):#CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
         #切出CSVをループ処理-------------------------------------------------------------------------------------------------------
     C_CforCount = 0
     C_CdfRow = np.array(C_Child).shape[0]#配列行数取得
@@ -288,7 +288,8 @@ def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Key):#CSVと列名を4つ与えて4�
         C_CName = C_CdfDataRow[Col2]
         C_CZeimoku = C_CdfDataRow[Col3]
         C_CSousin = C_CdfDataRow[Col4]
-        C_CAll = str(C_CSCode) + str(C_CName) 
+        C_CTeisyutu = C_CdfDataRow[Col5]
+        C_CAll = str(C_CSCode) + str(C_CName) + C_CZeimoku + C_CTeisyutu
         if Key == C_CAll and C_CSousin == "済":
             ItemList.append(C_CforCount)
             C_CforCount = C_CforCount + 1
@@ -491,9 +492,9 @@ def Jyusin(driver,FolURL2,C_SCode,C_Name,C_Zeimoku,C_Teisyutu,CSVName):
 def MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin,driver,FolURL2,DayCount,C_All,C_Child,C_SCode,C_Name,C_Zeimoku,C_Teisyutu):
     if C_Sousin == "済" and DayCount.days <= DayC and DayCount.days >= -DayC: #送信パラメータが済かつターミナル指定の日数内のデータか判定
         if CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild": #対象税目が申請か判定
-            ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","申請・届出書類名","送信",C_All) #CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
+            ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","申請・届出書類名","送信","提出先",C_All) #CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
         else:
-            ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","税目","送信",C_All) #CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
+            ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","税目","送信","事業年度／課税期間",C_All) #CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
         Pc = ItemRowArray[0] #取得した行数を格納
         #Target選択の為にページダウンが必要か行数から割り出す-------------------------------------------------------------------------------------------
         if ItemRowArray[0] >= 14: #取得した行数が14以上なら
@@ -563,6 +564,7 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
             C_UketukeDay = C_dfDataRow["申請受付日時"]
             C_Houkoku = C_dfDataRow["報告書"]
             C_Teisyutu = C_dfDataRow["提出先"]
+            C_All = C_All + C_Zeimoku + C_Teisyutu
         else:#処理が申請以外の場合
             C_dfDataRow = C_Master.iloc[x,:]#行データ取得
             C_SCode = C_dfDataRow["関与先コード"]
@@ -574,6 +576,7 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
             C_UketukeDay = C_dfDataRow["申告受付日時"]
             C_Houkoku = C_dfDataRow["報告書"]
             C_Teisyutu = C_dfDataRow["事業年度／課税期間"]
+            C_All = C_All + C_Zeimoku + C_Teisyutu
         #申請処理----------------------------------------------------------------------------------------------------------
         conf = 0.9#画像認識感度
         LoopVal = 10
