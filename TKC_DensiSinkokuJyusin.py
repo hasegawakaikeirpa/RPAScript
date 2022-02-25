@@ -286,6 +286,7 @@ def SortCSVItem(C_Child,Col1,Col2,Col3,Col4,Col5,Key):#CSVと列名を4つ与え
         C_CdfDataRow = C_Child.loc[y]
         C_CSCode = C_CdfDataRow[Col1]
         C_CName = C_CdfDataRow[Col2]
+        C_CName = C_CName.replace("\u3000"," ")
         C_CZeimoku = C_CdfDataRow[Col3]
         C_CSousin = C_CdfDataRow[Col4]
         C_CTeisyutu = C_CdfDataRow[Col5]
@@ -518,15 +519,15 @@ def MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin
             ItemRowArray = SortCSVItem(C_Child,"関与先コード","納税者(関与先)","税目","送信","事業年度／課税期間",C_All) #CSVと列名を4つ与えて4つの複合と引数Keyが一致する行数を返す
         Pc = ItemRowArray[0] #取得した行数を格納
         #Target選択の為にページダウンが必要か行数から割り出す-------------------------------------------------------------------------------------------
-        if ItemRowArray[0] >= 14: #取得した行数が14以上なら
-            Pc = ItemRowArray[0]/14 #取得した行数を14で除する
-            for p in range(int(Pc)):#14で除した整数分処理
+        if ItemRowArray[0] >= 13: #取得した行数が13以上なら
+            Pc = ItemRowArray[0]/13 #取得した行数を13で除する
+            for p in range(int(Pc)):#13で除した整数分処理
                 FileName = "densiIcon.png"#画面テキスト「電子申告完了報告書の一括印刷」の画像データ
                 conf = 0.9#画像認識感度
                 LoopVal = 10
                 ImgClick(FolURL2,FileName,conf,LoopVal)#フォーカス移動の為に画像選択
                 pg.press('pagedown') 
-                ItemRowArray[0] = (ItemRowArray[0] - (14*int(Pc)))#ページダウン後のTargetの行数を計算
+                ItemRowArray[0] = (ItemRowArray[0] - (13*int(Pc)))#ページダウン後のTargetの行数を計算
         FileName = "AnotherTrigger.png"#データ指定画面のヘッダー「送信」の画像データ
         conf = 0.9#画像認識感度
         LoopVal = 10
@@ -578,26 +579,24 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
             C_dfDataRow = C_Master.iloc[x,:]#行データ取得
             C_SCode = C_dfDataRow["関与先コード"]
             C_Name = C_dfDataRow["納税者(関与先)"]
-            C_All =  str(C_SCode) + str(C_Name) 
             C_Name = C_Name.replace("\u3000"," ")
             C_Zeimoku = C_dfDataRow["申請・届出書類名"]
             C_Sousin = C_dfDataRow["送信"]
             C_UketukeDay = C_dfDataRow["申請受付日時"]
             C_Houkoku = C_dfDataRow["報告書"]
             C_Teisyutu = C_dfDataRow["提出先"]
-            C_All = C_All + C_Zeimoku + C_Teisyutu
+            C_All = str(C_SCode) + str(C_Name) + C_Zeimoku + C_Teisyutu
         else:#処理が申請以外の場合
             C_dfDataRow = C_Master.iloc[x,:]#行データ取得
             C_SCode = C_dfDataRow["関与先コード"]
             C_Name = C_dfDataRow["納税者(関与先)"]
-            C_All =  str(C_SCode) + str(C_Name) 
             C_Name = C_Name.replace("\u3000"," ")
             C_Zeimoku = C_dfDataRow["税目"]
             C_Sousin = C_dfDataRow["送信"]
             C_UketukeDay = C_dfDataRow["申告受付日時"]
             C_Houkoku = C_dfDataRow["報告書"]
             C_Teisyutu = C_dfDataRow["事業年度／課税期間"]
-            C_All = C_All + C_Zeimoku + C_Teisyutu
+            C_All = str(C_SCode) + str(C_Name) + C_Zeimoku + C_Teisyutu
         #申請処理----------------------------------------------------------------------------------------------------------
         conf = 0.9#画像認識感度
         LoopVal = 10
@@ -662,25 +661,26 @@ def MainFlow(FolURL2):#メインの処理
     pg.press('return')#小林常務を選択
     #FileName = "KanyoHasegawa.png"#担当税理士所長判定
     #法人税消費税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'HoujinSyouhizeiJyusinMaster'
-    # CSVChildName = 'HoujinSyouhizeiJyusinChild'#チャイルドのCSVファイル名を指定
-    # List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]
-    # C_Master = C_Master[C_Master.duplicated(subset='関与先コード')]
-    # C_MasterFlag = TaxAns[1]
-    # C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    # C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    # CsvKey = "法人税"
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_LoopRow = np.array(C_Master).shape[0]#配列行数取得
-    #     for x in range(C_LoopRow):
-    #         MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2,CsvKey) 
+    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
+    conf = 0.9#画像認識感度
+    LoopVal = 500
+    CSVName = 'HoujinSyouhizeiJyusinMaster'
+    CSVChildName = 'HoujinSyouhizeiJyusinChild'#チャイルドのCSVファイル名を指定
+    List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
+    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    C_Master = TaxAns[0]
+    C_Master = C_Master.drop_duplicates(subset='関与先コード')
+    print(C_Master)
+    C_MasterFlag = TaxAns[1]
+    C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+    C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+    CsvKey = "法人税"
+    if C_MasterFlag == False:
+        print("C_Masterは空です")
+    else:
+        C_LoopRow = np.array(C_Master).shape[0]#配列行数取得
+        for x in range(C_LoopRow):
+            MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2,CsvKey) 
     #-----------------------------------------------------------------------------------------------------------------------
     ##所得税消費税処理------------------------------------------------------------------------------------------------------
     #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
@@ -732,7 +732,6 @@ def MainFlow(FolURL2):#メインの処理
     List = ["Sinsei.png","Sinsei2.png"] #タブアイコン2色のNameをリスト化
     TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
     C_Master = TaxAns[0]#マスターCSVを格納
-    #C_Master = C_Master[C_Master.duplicated(subset='関与先コード')]#マスターCSVから関与先コードの重複削除##############################################################
     C_MasterFlag = TaxAns[1]#マスターCSV読込結果を格納
     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
