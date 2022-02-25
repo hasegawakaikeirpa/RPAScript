@@ -509,7 +509,7 @@ def MLChild(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,C_Sousin
         conf = 0.9#画像認識感度
         LoopVal = 10
         xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]       #データ指定画面のヘッダー「送信」の画像データ横軸
-        ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 70  #データ指定画面のヘッダー「送信」の画像データ縦軸に値をプラスして1行目の縦軸に
+        ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 75  #データ指定画面のヘッダー「送信」の画像データ縦軸に値をプラスして1行目の縦軸に
         ypos = ypos + (ItemRowArray[0]*30)                      #ページダウンがあればその分縦軸に追加
         pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
         time.sleep(3) #指定時間待機
