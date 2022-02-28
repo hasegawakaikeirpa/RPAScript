@@ -413,7 +413,7 @@ def MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
                     time.sleep(3)
                     ImgClick(FolURL2,"FallEnd.png",0.9,10)
                     time.sleep(1)
-                    while pg.locateOnScreen(FolURL2 + "/" + "DensiSyomei.png", confidence=0.9) is None:
+                    while pg.locateOnScreen(FolURL2 + "/" + "DensiSyomei.png", confidence=0.9) is not None:
                         time.sleep(1)
                         C_List = ["OnCheckBl.png","OnCheckWh.png"]
                         if ImgCheckForList(FolURL2,C_List,0.9,3)[0] == True:
@@ -513,7 +513,7 @@ def MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
                 time.sleep(3)              
                 ImgClick(FolURL2,"FallEnd.png",0.9,10)
                 time.sleep(1)
-                while pg.locateOnScreen(FolURL2 + "/" + "DensiSyomei.png", confidence=0.9) is None:
+                while pg.locateOnScreen(FolURL2 + "/" + "DensiSyomei.png", confidence=0.9) is not None:
                     time.sleep(1)
                     C_List = ["OnCheckBl.png","OnCheckWh.png"]
                     if ImgCheckForList(FolURL2,C_List,0.9,3)[0] == True:
@@ -702,6 +702,7 @@ def MainFlow(FolURL2):
                     ClassObjList = ClassList[1]
                     ClassObjList[1].click()
                     #----------------------------------------------------------------------------------------------------------------------
+                    time.sleep(3)
                     MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)
                     time.sleep(1)
                 else:
