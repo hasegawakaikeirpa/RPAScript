@@ -412,17 +412,18 @@ def MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
                         time.sleep(1)
                     time.sleep(3)
                     ImgClick(FolURL2,"FallEnd.png",0.9,10)
-                    time.sleep(1)
+                    time.sleep(3)
+                    # while pg.locateOnScreen(FolURL2 + "/" + "DensiSyomei.png", confidence=0.9) is not None:
+                    #     time.sleep(1)
+                    #     C_List = ["OnCheckBl.png","OnCheckWh.png"]
+                    #     if ImgCheckForList(FolURL2,C_List,0.9,3)[0] == True:
+                    #         break
+                    # conf = 0.9#画像認識感度
+                    # LoopVal = 20#検索回数
                     while pg.locateOnScreen(FolURL2 + "/" + "DensiSyomei.png", confidence=0.9) is not None:
-                        time.sleep(1)
-                        C_List = ["OnCheckBl.png","OnCheckWh.png"]
-                        if ImgCheckForList(FolURL2,C_List,0.9,3)[0] == True:
-                            break
-                    conf = 0.9#画像認識感度
-                    LoopVal = 20#検索回数
-                    while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is not None:
-                            time.sleep(1)
-                            ImgClick(FolURL2,"DensiSyomei.png",0.9,1)#電子申告・申請タブを押す
+                        while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is not None:
+                                time.sleep(1)
+                                ImgClick(FolURL2,"DensiSyomei.png",0.9,1)#電子申告・申請タブを押す
                     time.sleep(1) 
                     pg.keyDown('alt')
                     pg.press('j')
@@ -512,21 +513,21 @@ def MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
                     time.sleep(1)
                 time.sleep(3)              
                 ImgClick(FolURL2,"FallEnd.png",0.9,10)
-                time.sleep(1)
+                time.sleep(3)
+                # while pg.locateOnScreen(FolURL2 + "/" + "DensiSyomei.png", confidence=0.9) is not None:
+                #     time.sleep(1)
+                #     C_List = ["OnCheckBl.png","OnCheckWh.png"]
+                #     if ImgCheckForList(FolURL2,C_List,0.9,3)[0] == True:
+                #         break
+                # conf = 0.9#画像認識感度
+                # LoopVal = 20#検索回数
                 while pg.locateOnScreen(FolURL2 + "/" + "DensiSyomei.png", confidence=0.9) is not None:
-                    time.sleep(1)
-                    C_List = ["OnCheckBl.png","OnCheckWh.png"]
-                    if ImgCheckForList(FolURL2,C_List,0.9,3)[0] == True:
-                        break
-                conf = 0.9#画像認識感度
-                LoopVal = 20#検索回数
-                while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is not None:
-                        time.sleep(1)
-                        ImgClick(FolURL2,"DensiSyomei.png",0.9,1)#電子申告・申請タブを押す
+                    while pg.locateOnScreen(FolURL2 + "/" + "Kanryou.png", confidence=0.9) is not None:
+                            time.sleep(1)
+                            ImgClick(FolURL2,"DensiSyomei.png",0.9,1)#電子申告・申請タブを押す
                 time.sleep(1) 
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                ImgClick(FolURL2,"FindIcon.png",0.9,1)
+                time.sleep(1) 
                 while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
                     time.sleep(1)  
                 time.sleep(1) 
@@ -539,9 +540,8 @@ def MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
                 ImgClick(FolURL2,"DensiSyomei.png",0.9,1)#電子申告・申請タブを押す
             #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
             time.sleep(1) 
-            pg.keyDown('alt')
-            pg.press('j')
-            pg.keyUp('alt')
+            ImgClick(FolURL2,"FindIcon.png",0.9,1)
+            time.sleep(1) 
             while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
                 time.sleep(1)  
             time.sleep(1) 
@@ -554,9 +554,9 @@ def MainFlow(FolURL2):
     #----------------------------------------------------------------------------------------------------------------------
     MainStarter(FolURL2)#データ送信画面までの関数
     C_df = MasterCSVGet(FolURL2)
-    pg.keyDown('alt')
-    pg.press('j')
-    pg.keyUp('alt')
+    time.sleep(1) 
+    ImgClick(FolURL2,"FindIcon.png",0.9,1)
+    time.sleep(1) 
     while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
         time.sleep(1) 
     CSVURL = FolURL2
@@ -598,9 +598,9 @@ def MainFlow(FolURL2):
             LoopVal = 10#検索回数
             while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
                 time.sleep(1) 
-            pg.keyDown('alt')
-            pg.press('j')
-            pg.keyUp('alt')
+            time.sleep(1) 
+            ImgClick(FolURL2,"FindIcon.png",0.9,1)
+            time.sleep(1) 
             while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
                 time.sleep(1)  
             time.sleep(1) 
@@ -681,9 +681,7 @@ def MainFlow(FolURL2):
             time.sleep(1)
             pg.press('left')
             time.sleep(1)
-            pg.keyDown('alt')
-            pg.press('s')
-            pg.keyUp('alt')
+            ImgClick(FolURL2,"SousinBtn.png",0.9,3)
             time.sleep(3)
             if ImgCheck(FolURL2,"Tetuduki.png",conf,LoopVal)[0] == False:
                 time.sleep(1)
@@ -780,9 +778,9 @@ def MainFlow(FolURL2):
                 LoopVal = 10#検索回数
                 while ImgCheckForList(FolURL2,List,conf,LoopVal) == True:
                     time.sleep(1)                  
-                pg.keyDown('alt')
-                pg.press('j')
-                pg.keyUp('alt')
+                time.sleep(1) 
+                ImgClick(FolURL2,"FindIcon.png",0.9,1)
+                time.sleep(1) 
                 while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
                     time.sleep(1) 
                 time.sleep(1)
