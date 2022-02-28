@@ -484,14 +484,26 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
                 if C_Sousin == "可":
                     ItemRowArray = SortCSVItem(C_Child[0],"関与先コード","納税者(関与先)","申請・届出書類名","送信",C_All)
                     for ItemRow in ItemRowArray:
-                        FileName = "SinseiTrigger.png"
+                        #Target選択の為にページダウンが必要か行数から割り出す-------------------------------------------------------------------------------------------
+                        if ItemRow >= 13: #取得した行数が13以上なら
+                            Pc = ItemRow/13 #取得した行数を13で除する
+                            for p in range(int(Pc)):#13で除した整数分処理
+                                pg.press('pagedown')
+                                ItemNextRow = (ItemRow - (13*int(Pc)))#ページダウン後のTargetの行数を計算
+                        FileName = "AnotherTrigger.png"
                         conf = 0.9#画像認識感度
                         LoopVal = 10
                         xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
                         ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 60
-                        ypos = ypos + (ItemRow*30)
+                        if ItemRow >= 13: #取得した行数が13以上なら
+                            ypos = ypos + (ItemNextRow*30)
+                        else:
+                            ypos = ypos + (ItemRow*30)
                         pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
                         time.sleep(1)
+                        if ItemRow >= 13: #取得した行数が13以上なら                        
+                            for p in range(int(Pc)):#13で除した整数分処理
+                                pg.press('pageup')
                     #要素クリック------------------------------------------------------------------------------------------------
                     Hub = "AutomationID"#取得要素種類を指定
                     ObjName = "soshinButton"
@@ -522,14 +534,26 @@ def MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,drive
                 if C_Sousin == "可":
                     ItemRowArray = SortCSVItem(C_Child[0],"関与先コード","納税者(関与先)","税目","送信",C_All)
                     for ItemRow in ItemRowArray:
+                        #Target選択の為にページダウンが必要か行数から割り出す-------------------------------------------------------------------------------------------
+                        if ItemRow >= 13: #取得した行数が13以上なら
+                            Pc = ItemRow/13 #取得した行数を13で除する
+                            for p in range(int(Pc)):#13で除した整数分処理
+                                pg.press('pagedown')
+                                ItemNextRow = (ItemRow - (13*int(Pc)))#ページダウン後のTargetの行数を計算
                         FileName = "AnotherTrigger.png"
                         conf = 0.9#画像認識感度
                         LoopVal = 10
                         xpos = ImgCheck(FolURL2,FileName,conf,LoopVal)[1]
                         ypos = ImgCheck(FolURL2,FileName,conf,LoopVal)[2] + 60
-                        ypos = ypos + (ItemRow*30)
+                        if ItemRow >= 13: #取得した行数が13以上なら
+                            ypos = ypos + (ItemNextRow*30)
+                        else:
+                            ypos = ypos + (ItemRow*30)
                         pg.click(xpos, ypos,1, 0,'left') #送信「可」を選択
                         time.sleep(1)
+                        if ItemRow >= 13: #取得した行数が13以上なら                        
+                            for p in range(int(Pc)):#13で除した整数分処理
+                                pg.press('pageup')
                     #要素クリック------------------------------------------------------------------------------------------------
                     Hub = "AutomationID"#取得要素種類を指定
                     ObjName = "soshinButton"
@@ -592,28 +616,28 @@ def MainFlow(FolURL2):
     time.sleep(1)
     pg.press('down')
     pg.press('return')#小林常務を選択
-    #FileName = "KanyoHasegawa.png"#担当税理士所長判定
-    # #法人税消費税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'HoujinSyouhizeiMaster'
-    # CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
-    # List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     NoBlue(FolURL2)
-    #     C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     print(C_Master)
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2) 
-    # #----------------------------------------------------------------------------------------------------------------------
+    # FileName = "KanyoHasegawa.png"#担当税理士所長判定
+    #法人税消費税処理------------------------------------------------------------------------------------------------------
+    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
+    conf = 0.9#画像認識感度
+    LoopVal = 500
+    CSVName = 'HoujinSyouhizeiMaster'
+    CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
+    List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
+    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
+    C_Master = TaxAns[0]
+    C_MasterFlag = TaxAns[1]
+    if C_MasterFlag == False:
+        print("C_Masterは空です")
+    else:
+        NoBlue(FolURL2)
+        C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
+        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
+        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+        print(C_Master)
+        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2) 
+    #----------------------------------------------------------------------------------------------------------------------
     ##所得税消費税処理------------------------------------------------------------------------------------------------------
     #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
     #conf = 0.9#画像認識感度
