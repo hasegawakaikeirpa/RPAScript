@@ -303,8 +303,6 @@ def MainFlow(FolURL2):
     ws = ws.sort_values('入力日時', ascending=False)
     ws = ws.drop_duplicates(subset='コード')
     print(ws)
-    FirstAction(FolURL2 + "/MAILLIST.CSV",ws)
-    time.sleep(1)
     if FMSOpen(FolURL2,Lday)[0] == True:
         FirstAction(FolURL2 + "/MAILLIST.CSV",ws)
     else:
