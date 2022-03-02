@@ -3,6 +3,8 @@ import PyPDF2
 import time
 from time import time
 
+from pyparsing import And
+
 def SerchdirFolders(URL):
     List = []
     for fd_path, sb_folder, sb_file in os.walk(URL):
@@ -90,7 +92,7 @@ def SerchNonPDF(URL):
         Serchd = dir_ListItem[0] + '\\' + dir_ListItem[1]
         dir_Files = SerchdirFiles(Serchd)
         for dir_FilesItem  in dir_Files:
-            if  not ".pdf" in dir_FilesItem[1]:
+            if  not ".pdf" in dir_FilesItem[1] and not ".xdw" in dir_FilesItem[1]:
                 #print(dir_FilesItem)
                 KeyURLL = dir_FilesItem[0] + '\\' + dir_FilesItem[1]
                 TURL = KeyURLL + ".pdf"
@@ -101,41 +103,47 @@ def MergeFilsT(URL):
     for dir_ListItem  in dir_List:
         Serchd = dir_ListItem[0] + '\\' + dir_ListItem[1]
         dir_Files = SerchdirFiles(Serchd)
-        if len(dir_Files) == 1:
-            NewName = dir_Files[0]
-            KeyURL = NewName[0]
-            NewName = NewName[1].split("_")
-            NewName = NewName[0] + "_" + NewName[1]
-            KeyURLL = KeyURL + '\\' + NewName
-            ReFiles(dir_Files[0],KeyURLL)
-        else:
-            NewName = dir_Files[0]
-            KeyURL = NewName[0]
-            NewName = NewName[1].split("_")
-            OfName = NewName[0] + "_M-" + NewName[1]
-            NewName = NewName[0] + "_" + NewName[1]
-            KeyURLL = KeyURL + '\\' + NewName.replace("M-","")
-            if os.path.isfile(KeyURLL) == True:
-                os.rename(KeyURLL,KeyURL + '\\' + OfName)
-                Sdir_List = SerchdirFolders(Serchd)
-                for Sdir_ListItem  in Sdir_List:
-                    SSerchd = Sdir_ListItem[0] + '\\' + Sdir_ListItem[1]
-                    Sdir_Files = SerchdirFiles(SSerchd)
-                    dir_Files = Sdir_Files
-                    try:
-                        ListMerge(dir_Files,NewName.replace("M-",""))
-                    except:
-                        print('失敗')
-            else:   
-                try:
-                    ListMerge(dir_Files,NewName.replace("M-",""))
-                except:
-                    print('失敗')
+        try:
+            if not ".xdw" in dir_Files[0][1]:
+                if len(dir_Files) == 1:
+                    NewName = dir_Files[0]
+                    KeyURL = NewName[0]
+                    NewName = NewName[1].split("_")
+                    NewName = NewName[0] + "_" + NewName[1]
+                    KeyURLL = KeyURL + '\\' + NewName
+                    ReFiles(dir_Files[0],KeyURLL)
+                else:
+                    NewName = dir_Files[0]
+                    KeyURL = NewName[0]
+                    NewName = NewName[1].split("_")
+                    OfName = NewName[0] + "_M-" + NewName[1]
+                    NewName = NewName[0] + "_" + NewName[1]
+                    KeyURLL = KeyURL + '\\' + NewName.replace("M-","")
+                    if os.path.isfile(KeyURLL) == True:
+                        os.rename(KeyURLL,KeyURL + '\\' + OfName)
+                        Sdir_List = SerchdirFolders(Serchd)
+                        for Sdir_ListItem  in Sdir_List:
+                            SSerchd = Sdir_ListItem[0] + '\\' + Sdir_ListItem[1]
+                            Sdir_Files = SerchdirFiles(SSerchd)
+                            dir_Files = Sdir_Files
+                            try:
+                                ListMerge(dir_Files,NewName.replace("M-",""))
+                            except:
+                                print('失敗')
+                    else:   
+                        try:
+                            ListMerge(dir_Files,NewName.replace("M-",""))
+                        except:
+                            print('失敗')
+            else:
+                print('xdw')
+        except:
+            print('多分誰かがいじってる')
     SerchNonPDF(URL)
 
 URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\送信分受信通知"
 # URL = "//Sv05121a/e/電子ファイル/メッセージボックス/2022-2/eLTAX"
 # URL = "\\\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\eLTAX"
 
-#MergeFilsT(URL)
-SerchNonPDF(URL)
+MergeFilsT(URL)
+#SerchNonPDF(URL)

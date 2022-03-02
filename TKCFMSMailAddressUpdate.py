@@ -1,5 +1,7 @@
-#----------------------------------------------------------------------------------------------------------------------
-from logging import exception
+﻿#----------------------------------------------------------------------------------------------------------------------
+from turtle import down
+
+from sqlalchemy import false
 
 
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
@@ -179,6 +181,135 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #異常待機後処理
             print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
+def FMSOpen(FolURL2,Lday):
+    try:
+        #要素クリック----------------------------------------------------------------------------------------------------------
+        Hub = "AutomationID"
+        ObjName = "um10PictureButton"
+        DriverClick(Hub,ObjName,driver)
+        #----------------------------------------------------------------------------------------------------------------------
+        FileName = "TodayTitle.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(2)
+        pg.press('return')
+        pg.press('return')
+        pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press('return')
+        conf = 0.9
+        LoopVal = 10
+        FileName = "TTOK.png"
+        ImgClick(FolURL2, FileName, conf, LoopVal)
+        time.sleep(3)
+        conf = 0.8
+        FileName = "BoxMenu.png"
+        ImgClick(FolURL2, FileName, conf, LoopVal)
+        pg.write('671', interval=0.01)#直接SENDできないのでpyautoguiで入力
+        pg.press('return')
+        FileName = "KanyoItiWin.png"
+        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/KanyoTAB.png" , confidence=0.99999) is None:
+            time.sleep(1)    
+            ImgClick(FolURL2, "KanyoSyatyouTAB.png", 0.9, 10)
+        time.sleep(2)
+        ImgClick(FolURL2, "FileOut.png", 0.9, 10)
+        time.sleep(2)
+        ImgClick(FolURL2, "Kiridasi.png", 0.9, 10)
+        time.sleep(1)
+        #テキストボックスを削除-------------------------------------------------------------------
+        time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/KiridasiBox.png",confidence=0.99999) is None:
+            pg.press('backspace')
+        time.sleep(1)
+        #--------------------------------------------------------------------------------------
+        KFol = FolURL2.replace("/","\\")
+        pyperclip.copy(KFol)
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press(['return'])
+        time.sleep(1)
+        pg.press(['delete'])
+        pg.write("MailList.CSV")
+        pg.press(['return'])
+        time.sleep(1)
+        pg.press(['return'])
+        time.sleep(1)
+        pg.keyDown('alt')
+        pg.press('down')
+        pg.keyUp('alt')
+        time.sleep(1)
+        pg.press(['down','down','down','down','down'])
+        pg.press(['return'])
+        time.sleep(1)
+        ImgClick(FolURL2,"Hozon.png",0.9,5)
+        while pg.locateOnScreen(FolURL2 + "/FileOverSTR.png", confidence=0.9) is not None:
+            time.sleep(1)
+            FOS = ImgCheck(FolURL2,"FileOverSTR.png",0.9,3)
+            if FOS[0] == True:
+                pg.press('y')
+                break
+        time.sleep(1)
+        ImgClick(FolURL2,"KanyoTAB.png",0.9,3)
+        while pg.locateOnScreen(FolURL2 + "/KanyoTAB.png", confidence=0.9) is not None:
+            time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/SelectTab.png", confidence=0.99999) is None:
+            time.sleep(1)
+            ImgClick(FolURL2,"KanyoSyatyouTAB.png",0.9,5) 
+            time.sleep(1)
+            ImgClick(FolURL2,"TargetSelectTab.png",0.9,5) 
+            time.sleep(1)
+        time.sleep(1)
+        pg.press('tab')
+        return True
+    except:
+        return False
+#----------------------------------------------------------------------------------------------------------------------
+def FirstAction(CSVURL,ws):
+    time.sleep(2)
+    wsRow = np.array(ws).shape[0]#配列行数取得
+    for x in range(wsRow):
+        wsRow = ws.iloc[x]
+        wsNo = wsRow['コード']
+        time.sleep(1)
+        print(wsNo)
+        TRow = CSVOut.CsvSortRow(CSVURL,"関与先コード",wsNo,'int')
+        if TRow[0] == True:
+            for y in range(TRow[1]):
+                pg.press('down')
+            time.sleep(1)
+#----------------------------------------------------------------------------------------------------------------------     
+def MainFlow(FolURL2):
+    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
+    FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"
+    XlsmURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"
+    XlsmURL = XlsmURL.replace("\\","/")
+    XlsmURL = "/" + XlsmURL
+    XlsmList = EF.XlsmRead(XlsmURL)
+    input_book = XlsmList[1]
+    #sheet_namesメソッドでExcelブック内の各シートの名前をリストで取得できる
+    input_sheet_name = input_book.sheet_names
+    #lenでシートの総数を確認
+    num_sheet = len(input_sheet_name)
+    #シートの数とシートの名前のリストの表示
+    print ("Sheet の数:", num_sheet)
+    print (input_sheet_name)
+    x = 0
+    for isnItem in input_sheet_name:
+        if isnItem == 'アドレス登録':
+            ws = input_book.parse(input_sheet_name[x])
+            print(ws)
+            break
+        x = x + 1
+    ws = ws.sort_values('入力日時', ascending=False)
+    ws = ws.drop_duplicates(subset='コード')
+    print(ws)
+    FirstAction(FolURL2 + "/MAILLIST.CSV",ws)
+    time.sleep(1)
+    if FMSOpen(FolURL2,Lday)[0] == True:
+        FirstAction(FolURL2 + "/MAILLIST.CSV",ws)
+    else:
+        print('FMSログイン失敗')
+
 #モジュールインポート
 from appium import webdriver
 import subprocess
@@ -218,11 +349,16 @@ import traceback
 import pyautogui
 import time
 import shutil
-
+import CSVOut
+import ExcelFileAction as EF
+import calendar
+import pyperclip #クリップボードへのコピーで使用
+#RPA用画像フォルダの作成-----------------------------------------------------------
+Lday = calendar.monthrange(dt.today().year,dt.today().month)
+FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
+FolURL2 = os.getcwd().replace('\\','/')#先
+#--------------------------------------------------------------------------------
 try:
-    FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-    FolURL2 = "D:/PythonScript/RPAScript/RPAPhoto/TKCFMSMailAddressUpdate"
-    ImgClick(FolURL2, "Kiridasi.png", 0.9, 10)
-    time.sleep(1)
+    MainFlow(FolURL2)
 except:
-    print("Err")
+    traceback.print_exc()
