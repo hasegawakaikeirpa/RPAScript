@@ -181,7 +181,7 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #異常待機後処理
             print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
-def FMSOpen(FolURL2,Lday):
+def FMSOpen(FolURL2,Lday,driver):
     try:
         #要素クリック----------------------------------------------------------------------------------------------------------
         Hub = "AutomationID"
@@ -263,7 +263,7 @@ def FMSOpen(FolURL2,Lday):
     except:
         return False
 #----------------------------------------------------------------------------------------------------------------------
-def FirstAction(CSVURL,ws):
+def FirstAction(CSVURL,ws,driver):
     time.sleep(2)
     wsRow = np.array(ws).shape[0]#配列行数取得
     for x in range(wsRow):
@@ -273,6 +273,7 @@ def FirstAction(CSVURL,ws):
         print(wsNo)
         TRow = CSVOut.CsvSortRow(CSVURL,"関与先コード",wsNo,'int')
         if TRow[0] == True:
+            TRow[1] = TRow[1] + 2
             for y in range(TRow[1]):
                 pg.press('down')
             time.sleep(1)
@@ -303,8 +304,9 @@ def MainFlow(FolURL2):
     ws = ws.sort_values('入力日時', ascending=False)
     ws = ws.drop_duplicates(subset='コード')
     print(ws)
-    if FMSOpen(FolURL2,Lday)[0] == True:
-        FirstAction(FolURL2 + "/MAILLIST.CSV",ws)
+    FMSO = FMSOpen(FolURL2,Lday,driver)
+    if FMSO == True:
+        FirstAction(FolURL2 + "/MAILLIST.CSV",ws,driver)
     else:
         print('FMSログイン失敗')
 
