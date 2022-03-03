@@ -1,7 +1,4 @@
 #----------------------------------------------------------------------------------------------------------------------
-from logging import exception
-
-
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -179,6 +176,9 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #異常待機後処理
             print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
+def get_file_ownership(filename):
+    return (getpwuid(os.stat(filename).st_uid).pw_name,getgrgid(os.stat(filename).st_gid).gr_name)
+#----------------------------------------------------------------------------------------------------------------------
 #モジュールインポート
 from appium import webdriver
 import subprocess
@@ -204,6 +204,8 @@ import re
 import json
 #osインポート
 import os
+from pwd import getpwuid
+from grp import getgrgid
 #datetimeインポート
 from datetime import datetime as dt
 #日付加減算インポート
@@ -218,11 +220,25 @@ import traceback
 import pyautogui
 import time
 import shutil
+import CSVOut
+from os import stat
 
-try:
-    FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-    FolURL2 = "D:/PythonScript/RPAScript/RPAPhoto/TKCFMSMailAddressUpdate"
-    ImgClick(FolURL2, "Kiridasi.png", 0.9, 10)
-    time.sleep(1)
-except:
-    print("Err")
+# try:
+FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
+FolURL2 = "//Sv05121a/e/C 作業台/RPA/ウィルス対策/KasperskyLog"
+#path = path.replace('\\','/')#先
+PDFFileList = os.listdir(FolURL2)
+Cou = 1
+Data = []
+for PDFItem in PDFFileList:
+    # uid = stat(FolURL2 + "/" + PDFItem).st_uid
+    UName = get_file_ownership(PDFItem)
+    Data.append(UName)
+#     f = open(FolURL2 + "/" + PDFItem, 'r', encoding='UTF-8')        
+#     Data.append(f.read())
+#     f.close()
+print(Data)
+# CSVOut.CsvSave("//Sv05121a/e/C 作業台/RPA/ウィルス対策/KasperskyLog/結果.csv",['Log'],Data)
+time.sleep(1)
+# except:
+#     print("Err")
