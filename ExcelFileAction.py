@@ -27,7 +27,7 @@ def XlsmRead(URL):#引数指定のCSVを読みとる
     try:
         URL = URL.replace("\\","/")
         #C_xlsm = openpyxl.reader.excel.load_workbook(URL, read_only=False, keep_vba=True, data_only=False, keep_links=True)
-        C_xlsm = pd.ExcelFile(URL)
+        C_xlsm = pd.ExcelFile(URL,engine='openpyxl')
         return True,C_xlsm
     except:
         return False,""
