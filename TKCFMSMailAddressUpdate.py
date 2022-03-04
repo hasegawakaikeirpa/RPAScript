@@ -214,12 +214,16 @@ def FMSOpen(FolURL2,Lday,driver):
         time.sleep(2)
         ImgClick(FolURL2, "FileOut.png", 0.9, 10)
         time.sleep(2)
-        ImgClick(FolURL2, "Kiridasi.png", 0.9, 10)
+        Kiri = ImgCheck(FolURL2, "Kiridasi.png", 0.9, 10)
+        pg.click(Kiri[1] -200,Kiri[2])
         time.sleep(1)
+        pg.keyDown('ctrl')
+        pg.press(['right','right','right','right','right','right','right','right','right','right'])
+        pg.keyUp('ctrl')
         #テキストボックスを削除-------------------------------------------------------------------
         time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/KiridasiBox.png",confidence=0.99999) is None:
-            pg.press('backspace')
+            pg.press(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
         time.sleep(1)
         #--------------------------------------------------------------------------------------
         KFol = FolURL2.replace("/","\\")
@@ -263,26 +267,88 @@ def FMSOpen(FolURL2,Lday,driver):
     except:
         return False
 #----------------------------------------------------------------------------------------------------------------------
-def FirstAction(CSVURL,ws,driver):
+def FirstAction(FolURL2,CSVURL,ws,driver):
     time.sleep(2)
-    wsRow = np.array(ws).shape[0]#配列行数取得
-    for x in range(wsRow):
+    LenRow = np.array(ws).shape[0]#配列行数取得
+    for x in range(LenRow):
         wsRow = ws.iloc[x]
         wsNo = wsRow['コード']
         time.sleep(1)
         print(wsNo)
         TRow = CSVOut.CsvSortRow(CSVURL,"関与先コード",wsNo,'int')
         if TRow[0] == True:
-            TRow[1] = TRow[1] + 2
-            if TRow[1] >= 20:
-                PDV = int(TRow[1]/20)
-                for y in range(TRow[1]):
+            TRowPer = TRow[1]
+            if TRowPer >= 19:
+                PDV = int(TRowPer/19)
+                for y in range(PDV):
+                    pg.press('pagedown')
+                time.sleep(1)
+                PDA = int(TRowPer - (PDV*19))
+                for y in range(PDA):
                     pg.press('down')
                 time.sleep(1)
+                FMSAction(FolURL2,wsRow,PDV)                
             else:
-                for y in range(TRow[1]):
+                for y in range(TRowPer):
                     pg.press('down')
                 time.sleep(1)
+                FMSAction(FolURL2,wsRow,0)
+#---------------------------------------------------------------------------------------------------------------------- 
+def FMSAction(FolURL2,wsRow,PDV):
+    wsAd = wsRow['アドレス']
+    wsHassou = wsRow['発送方法']
+    ImgClick(FolURL2,"Syuusei.png",0.9,1)
+    while pg.locateOnScreen(FolURL2 + "/Syuusei.png",0.9) is not None:
+        time.sleep(1)
+    if wsHassou == "メール":
+        ICF = ImgCheck(FolURL2,"MailCheckBox.png",0.9,1)
+        if ICF[0] == True:
+            ImgClick(FolURL2,"MailCheckBox.png",0.9,1)
+        IPF = ImgCheck(FolURL2,"KanyoSeikyuCheck.png",0.9,1)
+        if IPF[0] == True:
+            ImgClick(FolURL2,"KanyoSeikyuCheck.png",0.9,1)
+        ImgClick(FolURL2,"ToKubun.png",0.9,1)
+        time.sleep(1)
+        pg.press('t')
+        time.sleep(1)
+        pg.press('return')
+        time.sleep(1)
+        ImgClick(FolURL2,"EmailCopy.png",0.9,1)
+        time.sleep(1)
+        ImgClick(FolURL2,"NyuuryokuEnd.png",0.9,1)
+        time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/Kakunin.png",0.9) is None:
+            time.sleep(1)
+        time.sleep(1)
+        pg.press('y')
+        while pg.locateOnScreen(FolURL2 + "/EndFlag.png",0.9) is not None:
+            time.sleep(1)
+        for x in range(PDV + 1):
+            pg.press('pageup')
+        time.sleep(1)
+    else:
+        ICF = ImgCheck(FolURL2,"InsatuCheckBox.png",0.9,1)
+        if ICF[0] == True:
+            ImgClick(FolURL2,"InsatuCheckBox.png",0.9,1)
+        ImgClick(FolURL2,"ToKubun.png",0.9,1)
+        time.sleep(1)
+        pg.press('t')
+        time.sleep(1)
+        pg.press('return')
+        time.sleep(1)
+        ImgClick(FolURL2,"EmailCopy.png",0.9,1)
+        time.sleep(1)
+        ImgClick(FolURL2,"NyuuryokuEnd.png",0.9,1)
+        time.sleep(1)
+        while pg.locateOnScreen(FolURL2 + "/Kakunin.png",0.9) is None:
+            time.sleep(1)
+        time.sleep(1)
+        pg.press('y')
+        while pg.locateOnScreen(FolURL2 + "/EndFlag.png",0.9) is not None:
+            time.sleep(1)
+        for x in range(PDV + 1):
+            pg.press('pageup')
+        time.sleep(1)      
 #----------------------------------------------------------------------------------------------------------------------     
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
@@ -312,7 +378,7 @@ def MainFlow(FolURL2):
     print(ws)
     FMSO = FMSOpen(FolURL2,Lday,driver)
     if FMSO == True:
-        FirstAction(FolURL2 + "/MAILLIST.CSV",ws,driver)
+        FirstAction(FolURL2,FolURL2 + "/MAILLIST.CSV",ws,driver)
     else:
         print('FMSログイン失敗')
 
