@@ -268,63 +268,82 @@ def PrintAct(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
                 while pg.locateOnScreen(FolURL2 + "/" + "PrintSyousai.png", confidence=0.9) is None:
                     time.sleep(1)
                 PList = ["PrintSyousai.png","PrintSyousaiWhite.png"]
-                ImgCheckForList(FolURL2,PList,0.9,1)
-                ImgClick(FolURL2,"PrintSyousai.png",0.9,1)
+                ICFL = ImgCheckForList(FolURL2,PList,0.9,1)
+                ImgClick(FolURL2,ICFL[1],0.9,1)
+                ICFLCount = 0
                 while pg.locateOnScreen(FolURL2 + "/" + "SouRireList.png", confidence=0.9) is None:
                     time.sleep(1)
-                time.sleep(1)
-                pg.press('x')
-                time.sleep(1)
-# ------------------------------------------------------------------------------------------------------------------------------------------
-                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-                List = ["FileOut.png","FileOut2.png"]
-                conf = 0.9#画像認識感度
-                LoopVal = 10#検索回数
-                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-                if ListCheck[0] == True:
-                    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-                    time.sleep(1)
-                #----------------------------------------------------------------------------------------------------------------------
-                #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-                List = ["PDFIcon.png","CSVIcon.png"]
-                conf = 0.9#画像認識感度
-                LoopVal = 10#検索回数
-                ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
-                if ListCheck[0] == True:
-                    ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
-                    time.sleep(1)
-                    pg.press(['down','down','down','down','down'])
-                    pg.press(['return'])
-                #----------------------------------------------------------------------------------------------------------------------
-                FC = FolCre(C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)
-                Tyouhuku = SortPDF(C_SCode + "_" + C_Name)
-                if FC[0] == True:
-                    if Tyouhuku[0] == str(1):
-                        FileURL = FC[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + "申告等送信票(兼送付書).pdf"
+                    ICFL = ImgCheckForList(FolURL2,PList,0.9,1)
+                    ImgClick(FolURL2,ICFL[1],0.9,1)
+                    if ICFLCount == 5:
+                        break
                     else:
-                        FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + "申告等送信票(兼送付書).pdf"
-                    pyperclip.copy(FileURL)
-                    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-                    pg.press(['return'])
-                    # ---------------------------------------------------------------------------------------------------------------------- 
-                    # ---------------------------------------------------------------------------------------------------------------------- 
-                    ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
+                        ICFLCount = ICFLCount + 1
+                if ICFLCount == 5:
+                    ImgClick(FolURL2,"DensiSyomei.png",0.9,1)#電子申告・申請タブを押す
+                    time.sleep(3)
                     time.sleep(1)
+                    ImgClick(FolURL2,"FindIcon.png",0.9,1)
+                    time.sleep(1) 
+                    while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+                        time.sleep(1)  
+                    time.sleep(1) 
+                    pg.press('r') 
                 else:
-                    if Tyouhuku[0] == str(1):
-                        FileURL = FC[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + "申告等送信票(兼送付書).pdf"
-                    else:
-                        FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + "申告等送信票(兼送付書).pdf"
-                    pyperclip.copy(FileURL)
-                    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-                    pg.press(['return'])
-                    # ---------------------------------------------------------------------------------------------------------------------- 
-                    # ---------------------------------------------------------------------------------------------------------------------- 
-                    ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
                     time.sleep(1)
-# ------------------------------------------------------------------------------------------------------------------------------------------
-                ImgClick(FolURL2,"DensiSyomei.png",0.9,1)#電子申告・申請タブを押す
-                time.sleep(3)
+                    pg.press('x')
+                    time.sleep(1)
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+                    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                    List = ["FileOut.png","FileOut2.png"]
+                    conf = 0.9#画像認識感度
+                    LoopVal = 10#検索回数
+                    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+                    if ListCheck[0] == True:
+                        ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+                        time.sleep(1)
+                    #----------------------------------------------------------------------------------------------------------------------
+                    #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                    List = ["PDFIcon.png","CSVIcon.png"]
+                    conf = 0.9#画像認識感度
+                    LoopVal = 10#検索回数
+                    ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+                    if ListCheck[0] == True:
+                        ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+                        time.sleep(1)
+                        pg.press(['down','down','down','down','down'])
+                        pg.press(['return'])
+                    #----------------------------------------------------------------------------------------------------------------------
+                    time.sleep(2)
+                    FC = FolCre(C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)
+                    Tyouhuku = SortPDF(C_SCode + "_" + C_Name)
+                    if FC[0] == True:
+                        if Tyouhuku[0] == str(1):
+                            FileURL = FC[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + "申告等送信票(兼送付書).pdf"
+                        else:
+                            FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + "申告等送信票(兼送付書).pdf"
+                        pyperclip.copy(FileURL)
+                        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                        pg.press(['return'])
+                        # ---------------------------------------------------------------------------------------------------------------------- 
+                        # ---------------------------------------------------------------------------------------------------------------------- 
+                        ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
+                        time.sleep(1)
+                    else:
+                        if Tyouhuku[0] == str(1):
+                            FileURL = FC[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + "申告等送信票(兼送付書).pdf"
+                        else:
+                            FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + "申告等送信票(兼送付書).pdf"
+                        pyperclip.copy(FileURL)
+                        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                        pg.press(['return'])
+                        # ---------------------------------------------------------------------------------------------------------------------- 
+                        # ---------------------------------------------------------------------------------------------------------------------- 
+                        ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
+                        time.sleep(1)
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+                    ImgClick(FolURL2,"DensiSyomei.png",0.9,1)#電子申告・申請タブを押す
+                    time.sleep(3)
         time.sleep(1)
         ImgClick(FolURL2,"FindIcon.png",0.9,1)
         time.sleep(1) 
