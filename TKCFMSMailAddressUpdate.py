@@ -295,8 +295,13 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
                 FMSAction(FolURL2,wsRow,0)
 #---------------------------------------------------------------------------------------------------------------------- 
 def FMSAction(FolURL2,wsRow,PDV):
+    wscd = wsRow['コード']
+    wsName = wsRow['関与先名']
     wsAd = wsRow['アドレス']
     wsHassou = wsRow['発送方法']
+    wsNyuu = wsRow['入力日時']
+    wsUser = wsRow['入力ユーザー']
+    wsDno = wsRow['データNo']
     ImgClick(FolURL2,"Syuusei.png",0.9,1)
     while pg.locateOnScreen(FolURL2 + "/Syuusei.png",0.9) is not None:
         time.sleep(1)
@@ -381,7 +386,7 @@ def MainFlow(FolURL2):
         FirstAction(FolURL2,FolURL2 + "/MAILLIST.CSV",ws,driver)
     else:
         print('FMSログイン失敗')
-
+#----------------------------------------------------------------------------------------------------------------------     
 #モジュールインポート
 from appium import webdriver
 import subprocess
