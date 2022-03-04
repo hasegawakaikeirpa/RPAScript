@@ -267,6 +267,8 @@ def PrintAct(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
                 ImgClick(FolURL2,"SyousaiIcon.png",0.9,1)
                 while pg.locateOnScreen(FolURL2 + "/" + "PrintSyousai.png", confidence=0.9) is None:
                     time.sleep(1)
+                PList = ["PrintSyousai.png","PrintSyousaiWhite.png"]
+                ImgCheckForList(FolURL2,PList,0.9,1)
                 ImgClick(FolURL2,"PrintSyousai.png",0.9,1)
                 while pg.locateOnScreen(FolURL2 + "/" + "SouRireList.png", confidence=0.9) is None:
                     time.sleep(1)
