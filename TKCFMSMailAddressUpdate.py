@@ -274,13 +274,19 @@ def FirstAction(CSVURL,ws,driver):
         TRow = CSVOut.CsvSortRow(CSVURL,"関与先コード",wsNo,'int')
         if TRow[0] == True:
             TRow[1] = TRow[1] + 2
-            for y in range(TRow[1]):
-                pg.press('down')
-            time.sleep(1)
+            if TRow[1] >= 20:
+                PDV = int(TRow[1]/20)
+                for y in range(TRow[1]):
+                    pg.press('down')
+                time.sleep(1)
+            else:
+                for y in range(TRow[1]):
+                    pg.press('down')
+                time.sleep(1)
 #----------------------------------------------------------------------------------------------------------------------     
 def MainFlow(FolURL2):
-    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
+    # BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    # driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"
     XlsmURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"
     XlsmURL = XlsmURL.replace("\\","/")
