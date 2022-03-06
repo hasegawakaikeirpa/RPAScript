@@ -302,6 +302,7 @@ def FMSAction(FolURL2,wsRow,PDV):
     wsNyuu = wsRow['入力日時']
     wsUser = wsRow['入力ユーザー']
     wsDno = wsRow['データNo']
+    LogList = [wscd,wsName,wsAd,wsHassou,wsNyuu,wsUser,wsDno]
     ImgClick(FolURL2,"Syuusei.png",0.9,1)
     while pg.locateOnScreen(FolURL2 + "/Syuusei.png",0.9) is not None:
         time.sleep(1)
@@ -321,6 +322,8 @@ def FMSAction(FolURL2,wsRow,PDV):
         ImgClick(FolURL2,"EmailCopy.png",0.9,1)
         time.sleep(1)
         ImgClick(FolURL2,"NyuuryokuEnd.png",0.9,1)
+        CsvL = CSVOut.CsvRead(FolURL2 + "/LogList.CSV")
+        CSVOut.CsvPlus(FolURL2 + "/LogList.CSV",CsvL[1],LogList)
         time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/Kakunin.png",0.9) is None:
             time.sleep(1)

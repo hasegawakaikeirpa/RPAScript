@@ -194,6 +194,14 @@ def CSVGet(FileUrl):
     except:
         return False,""
 #----------------------------------------------------------------------------------------------------------------------
+def ShiftJisCSVGet(FileUrl): 
+    #出力したCSVを読込み----------------------------------------------------------------------------------------------------------
+    try:
+        MasterCSV = pd.read_csv(FileUrl,encoding='SHIFT_JIS')
+        return True,MasterCSV
+    except:
+        return False,""
+#----------------------------------------------------------------------------------------------------------------------
 def CSVCheck(Key,CSVArr,ColName):
     CSVArrRow = np.array(CSVArr).shape[0]#配列行数取得
     try:
@@ -229,22 +237,30 @@ def FirstOpen(FolURL2):
         ImgClick(FolURL2, "TimeBox.png", 0.9, 2)
         time.sleep(1)
         pg.press('return')
+        time.sleep(1)
         yPar = str(WarekiHenkan.Wareki.from_ad(dt.today().year).year)
         mPar = str(dt.today().month - 1)
         pg.write(yPar,interval=0.01)
         pg.press('return')
+        time.sleep(1)
         pg.write(mPar,interval=0.01)
         pg.press('return')
+        time.sleep(1)
         pg.press('return')
+        time.sleep(1)
         pg.write(yPar,interval=0.01)
         pg.press('return')
+        time.sleep(1)
         pg.write(mPar,interval=0.01)
         pg.press('return')
+        time.sleep(1)
         pg.press('return')
         time.sleep(3)
         ImgClick(FolURL2,"GyoumubetuTab.png",0.9,2)
+        time.sleep(1)
         while pg.locateOnScreen(FolURL2 + "/TyokusetuOpenFlag.png" , confidence=0.9) is None:
             time.sleep(1)
+        time.sleep(1)
         ImgClick(FolURL2,"KansetuTab.png",0.9,2)
         Kansetu = TKCCSVOut(FolURL2,'KANSETU')
         if Kansetu == True:
@@ -261,6 +277,7 @@ def FirstOpen(FolURL2):
                     time.sleep(1)
                     while pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png" , confidence=0.9) is not None:
                         time.sleep(1)
+                    time.sleep(1)
                     while pg.locateOnScreen(FolURL2 + "/TantoubetuFlag.png" , confidence=0.9) is None:
                         time.sleep(1)
                     time.sleep(1)
@@ -270,6 +287,7 @@ def FirstOpen(FolURL2):
                     time.sleep(1)
                     while pg.locateOnScreen(FolURL2 + "/TyokuKanTab.png" , confidence=0.9) is None:
                         time.sleep(1)
+                    time.sleep(1)
                     ImgClick(FolURL2,"TyokusetuTab.png",0.9,1)                    
         return True
     except:
@@ -286,16 +304,21 @@ def TKCCSVOut(FolURL2,Title):
         time.sleep(1)
         pg.press(['down','down','down'])
         pg.press(['return'])
-        pg.press(['tab','tab','tab'])           
+        time.sleep(1)
+        pg.press(['tab','tab','tab'])    
         pg.press('delete')
         FolURL2 = FolURL2.replace("/","\\")
         pyperclip.copy(FolURL2)
         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
         pg.press(['return'])
+        time.sleep(1)
         pg.press('delete')
         pg.write(Title,interval=0.01)
+        time.sleep(1)
         pg.press(['return'])
+        time.sleep(1)
         pg.press(['return'])
+        time.sleep(1)
         ImgClick(FolURL2,"KiridasiSave.png",0.9,2)
         time.sleep(1)
         if ImgCheck(FolURL2,"OverFileList.png",0.9,1)[0] == True:
@@ -316,17 +339,21 @@ def TKCTimeCSVOut(FolURL2,Title,FileURL):
         time.sleep(1)
         pg.press(['down','down','down'])
         pg.press(['return'])
-        pg.press(['tab','tab','tab'])           
+        time.sleep(1)
+        pg.press(['tab','tab','tab'])         
         pg.press('delete')
         FileURL = FileURL.replace("/","\\")
         pyperclip.copy(FileURL)
         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
         pg.press(['return'])
+        time.sleep(1)
         pg.press('delete')
         pyperclip.copy(Title)
         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
         pg.press(['return'])
+        time.sleep(1)
         pg.press(['return'])
+        time.sleep(1)
         ImgClick(FolURL2,"KiridasiSave.png",0.9,2)
         time.sleep(1)
         if ImgCheck(FolURL2,"OverFileList.png",0.9,1)[0] == True:
@@ -352,7 +379,7 @@ def MainFlow(FolURL2):
                     # GL = ImgCheckForList(FolURL2,GList,0.99999)
                     # ImgClick(FolURL2,GL[1],0.99999,1)
                     time.sleep(1)
-                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
                     for x in range(TgyoumuListRow[1]):
                         pg.press('down')
                     time.sleep(1)
@@ -362,11 +389,11 @@ def MainFlow(FolURL2):
                         time.sleep(1)
                     while pg.locateOnScreen(FolURL2 + "/KanyoTab.png" , confidence=0.9) is None:
                         time.sleep(1)
-                    ImgClick(FolURL2,"KanyoTab.png",0.9,1)
+                    ImgClick(FolURL2,"KanyoTab.png",0.9,5)
                     time.sleep(1)
                     KCSVO = TKCCSVOut(FolURL2,'KANYOSAKIBETU')
                     if KCSVO == True:
-                        KanyosakibetuList = CSVGet(FolURL2 + "/KANYOSAKIBETU.CSV")
+                        KanyosakibetuList = ShiftJisCSVGet(FolURL2 + "/KANYOSAKIBETU.CSV")
                         if KanyosakibetuList[0] == True:
                             KArr = KanyosakibetuList[1]
                             KArrRow = np.array(KArr).shape[0]#配列行数取得
@@ -379,7 +406,7 @@ def MainFlow(FolURL2):
                                     # GL = ImgCheckForList(FolURL2,GList,0.99999)
                                     # ImgClick(FolURL2,GL[1],0.99999,1)
                                     time.sleep(1)
-                                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
                                     for z in range(KArrListRow[1]):
                                         pg.press('down')
                                     time.sleep(1)
@@ -403,7 +430,7 @@ def MainFlow(FolURL2):
                                                         TanArrRowListRow = CSVCheck(TanArrName,TanArr,"担当者")
                                                         if TanArrRowListRow[0] == True:
                                                             time.sleep(1)
-                                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
                                                             for z in range(TanArrRowListRow[1]):
                                                                 pg.press('down')
                                                             time.sleep(1)
@@ -416,7 +443,7 @@ def MainFlow(FolURL2):
                                                             time.sleep(1)
                                                             pg.press('f10')
                                                             time.sleep(1)
-                                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
                                                             for z in range(TanArrRowListRow[1]):
                                                                 pg.press('up')
                                             time.sleep(1)
@@ -428,7 +455,7 @@ def MainFlow(FolURL2):
                                             while pg.locateOnScreen(FolURL2 + "/KousagyouOpen.png" , confidence=0.9) is None:
                                                 time.sleep(1)
                                             time.sleep(1)
-                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,1)
+                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
                                             time.sleep(1)
                                             for z in range(KArrListRow[1]):
                                                 pg.press('up')
