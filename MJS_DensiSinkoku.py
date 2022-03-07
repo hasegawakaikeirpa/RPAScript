@@ -249,9 +249,12 @@ def PrintAct(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
             FileURL = FC[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + ".pdf"
         else:
             FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + ".pdf"
+        time.sleep(1)
         pyperclip.copy(FileURL)
         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        time.sleep(1)
         pg.press(['return'])
+        time.sleep(1)
         # ---------------------------------------------------------------------------------------------------------------------- 
         # ---------------------------------------------------------------------------------------------------------------------- 
         ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
@@ -322,9 +325,13 @@ def PrintAct(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
                             FileURL = FC[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + "申告等送信票(兼送付書).pdf"
                         else:
                             FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + "申告等送信票(兼送付書).pdf"
+                        
                         pyperclip.copy(FileURL)
+                        time.sleep(1)
                         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                        time.sleep(1)
                         pg.press(['return'])
+                        time.sleep(1)
                         # ---------------------------------------------------------------------------------------------------------------------- 
                         # ---------------------------------------------------------------------------------------------------------------------- 
                         ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
@@ -335,8 +342,11 @@ def PrintAct(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
                         else:
                             FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + "申告等送信票(兼送付書).pdf"
                         pyperclip.copy(FileURL)
+                        time.sleep(1)
                         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                        time.sleep(1)
                         pg.press(['return'])
+                        time.sleep(1)
                         # ---------------------------------------------------------------------------------------------------------------------- 
                         # ---------------------------------------------------------------------------------------------------------------------- 
                         ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
