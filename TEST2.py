@@ -218,17 +218,21 @@ import time
 import shutil
 import CSVOut
 from os import stat
+import ExcelFileAction as EF
+import openpyxl
 
 # try:
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
-FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"
-for x in range(5):
-    # pg.keyDown('ctrl')
-    # pg.hotkey ('shift', 'right')
-    # pg.keyUp('ctrl')
-    # pg.keyDown('shift')
-    with pg.hold('shift'):
-        pg.hotkey ('ctrl','right')
-    # pg.keyUp('shift')
+FolURL2 = FolURL2 + "/RPAPhoto/TKCCDBMailAddressUpdate"
+XlsmURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"#アドレス登録シートを指定
+XlsmURL = XlsmURL.replace("\\","/")#URLリネーム
+XlsmURL = "/" + XlsmURL#URLリネーム
+#CSVログに追加------------------------------------------------------------------------------------------------
+CSVURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\BACKUP\アドレス登録履歴\Log.csv"
+CSVURL = CSVURL.replace("\\","/")#URLリネーム
+CSVURL = "/" + CSVURL#URLリネーム
+LogList = CSVOut.CsvRead(CSVURL)										
+LogMSG = ['○','○','○','○','○','○','○','○','○','○','○','○','○','○']
+CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
 time.sleep(1)
