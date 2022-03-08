@@ -5,12 +5,12 @@
 [string]$mySQLPort             = '3306'
 [string]$mySQLUserName         = 'SYSTEM'
 [string]$mySQLPassword         = 'SYSTEM'
-[string]$mySQLDB               = 'kanyodb'
+[string]$mySQLDB               = 'test_db'
 [string]$mySQLConnectionString = "server='$mySQLHost';port='$mySQLPort';uid='$mySQLUserName';pwd=$mySQLPassword;database=$mySQLDB"
  
 $connection = New-Object MySql.Data.MySqlClient.MySqlConnection($mySQLConnectionString)
 $connection.ConnectionString = $mySQLConnectionString
-$outputFilePath="\\Sv05121a\e\C 作業台\RPA\ALLDataBase\Heidi関与先DB.csv"
+$outputFilePath="\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kkanyo.csv"
  
 # 接続
 try
@@ -27,7 +27,7 @@ catch
  
 # SQL実行
 $command = $connection.CreateCommand()
-$command.CommandText = 'SELECT * FROM kanyodb'
+$command.CommandText = 'SELECT * FROM m_kkanyo'
 Write-Verbose 'SQL実行します'
  
 try
