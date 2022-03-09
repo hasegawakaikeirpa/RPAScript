@@ -51,6 +51,33 @@ from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String
 import datetime
 
+def ChangeData(ColN,ParList,UDRowItem):#列名,列名リスト,行データ
+    #データ型に合わせて値を変更----------------------------------------------------------------
+    if 'dt_' in ColN:
+        if UDRowItem == None:#Timestamp('2022-03-09 00:00:00')
+            FDATE = datetime.datetime.now()
+            FDATE = str(FDATE.strftime('%Y-%m-%d %H:%M:%S'))
+            # FDATE = "Timestamp('" + FDATE + "')"
+            ParList.append(FDATE)
+        else:
+            ParList.append(UDRowItem)
+    else:
+        if UDRowItem == " ":
+            ParList.append("")
+        elif UDRowItem == "　":
+            ParList.append("")
+        elif UDRowItem == "  ":
+            ParList.append("")
+        elif ColN == 'vc_KnrCd':
+            ParList.append(UDRowItem.replace("  ","").replace(" ",""))
+        elif ColN == 'in_RrkNo_pk':
+            ParList.append(UDRowItem + 1)
+        elif ColN == 'cr_RecKbn':
+            ParList.append('1')
+        else:
+            ParList.append(UDRowItem)
+    ColRow = ColRow + 1
+    #---------------------------------------------------------------------------------------
 def MysqlDiffUp(MTB,CTB,UDRow):#元TB名,履歴TB名,更新行データ
     try:
         sql = 'SELECT * FROM ' + MTB #SELECT分を代入
@@ -63,35 +90,10 @@ def MysqlDiffUp(MTB,CTB,UDRow):#元TB名,履歴TB名,更新行データ
         ColRow = 0
         for UDRowItem in UDRow:
             ColN = ColList[ColRow]
-            #データ型に合わせて値を変更----------------------------------------------------------------
-            if 'dt_' in ColN:
-                if UDRowItem == None:#Timestamp('2022-03-09 00:00:00')
-                    FDATE = datetime.datetime.now()
-                    FDATE = str(FDATE.strftime('%Y-%m-%d %H:%M:%S'))
-                    # FDATE = "Timestamp('" + FDATE + "')"
-                    ParList.append(FDATE)
-                else:
-                    ParList.append(UDRowItem)
-            else:
-                if UDRowItem == " ":
-                    ParList.append("")
-                elif UDRowItem == "　":
-                    ParList.append("")
-                elif UDRowItem == "  ":
-                    ParList.append("")
-                elif ColN == 'vc_KnrCd':
-                    ParList.append(UDRowItem.replace("  ","").replace(" ",""))
-                elif ColN == 'in_RrkNo_pk':
-                    ParList.append(UDRowItem + 1)
-                elif ColN == 'cr_RecKbn':
-                    ParList.append('1')
-                else:
-                    ParList.append(UDRowItem)
-            ColRow = ColRow + 1
-            #---------------------------------------------------------------------------------------
+            ChangeData(ColN,ParList,UDRowItem)#列名,列名リスト,行データ
         FColList = str(ColList)#SQL文用列名リストの作成
         FColList = FColList.replace("'","")#不要なのでシングルコーテーション削除
-        sql = 'INSERT INTO ' + ITB + 'SELECT * FROM ' + MTB + ' WHERE vc_KnrCd=' + KFMData['vc_KnrCd'].replace("  ","").replace(" ","")#変更対象を履歴DBにコピー
+        sql = 'INSERT INTO ' + ITB + ' SELECT * FROM ' + MTB + ' WHERE vc_KnrCd=' + KFMData['vc_KnrCd'].replace("  ","").replace(" ","")#変更対象を履歴DBにコピー
         MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)#引数8=親TB名,引数9=履歴数列名   
         sql = 'insert into ' + ITB + ' (' + str(FColList) + ') values (' + str(ParList) + ')'
         sql = sql.replace("[","").replace("]","")
