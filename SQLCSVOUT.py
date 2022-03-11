@@ -26,13 +26,6 @@ URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
-#部門コードをCSVアウト------------------------------------------------------------
-sql = 'SELECT * FROM m_bmn'
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_bmn.csv"
-URL = URL.replace("\\","/")
-URL = "/" + URL
-SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
-SQDF.to_csv(URL, index = False)
 #人事異動をCSVアウト--------------------------------------------------------------
 sql = 'SELECT * FROM d_jnjido'
 URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\d_jnjido.csv"
@@ -42,7 +35,7 @@ SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1
 SQDF.to_csv(URL, index = False)
 #人事異動を考慮した社員情報一覧をCSVアウト------------------------------------------
 WithA = "WITH SubMax AS (SELECT vc_SyainCd_pk ,MAX(in_IdoNo_pk) As MaxIdoNo,Max(d_jnjido.in_RrkNo_pk) As MaxRrkNo \
-        FROM d_jnjido WHERE cr_RecKbn = '0' AND (dy_TkyEndD >= CURDATE() OR dy_TkyEndD = '0000-00-00' OR dy_TkyEndD = NULL) GROUP BY vc_SyainCd_pk),"
+        FROM d_jnjido WHERE cr_RecKbn = '0' AND (dy_TkyEndD >= CURDATE() OR dy_TkyEndD = '0000-00-00' OR dy_TkyEndD IS NULL) GROUP BY vc_SyainCd_pk),"
 WithB = "Submn AS (SELECT * FROM m_bmn),"
 WithC = "SubIdo AS (SELECT Ido.vc_SyainCd_pk,Ido.in_IdoNo_pk,Ido.cr_IdoKbn,DATE_FORMAT(Ido.dy_JComD,'%Y/%m/%d') AS dy_JComYmd,DATE_FORMAT(Ido.dy_LComD,'%Y/%m/%d') AS dy_LComYmd \
         ,DATE_FORMAT(Ido.dy_TkyStrD,'%Y/%m/%d') AS dy_TkyStrYmd,DATE_FORMAT(Ido.dy_TkyEndD,'%Y/%m/%d') AS dy_TkyEndYmd\
