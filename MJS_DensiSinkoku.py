@@ -250,6 +250,7 @@ def PrintAct(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
         else:
             FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + ".pdf"
         time.sleep(1)
+        FileURL
         pyperclip.copy(FileURL)
         pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
         time.sleep(1)
@@ -488,6 +489,10 @@ def MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
             ImgClick(FolURL2, "DoujiSousinPrint.png", conf, LoopVal)
             IMGD = True
             break
+        if ImgCheck(FolURL2, "ErrJyouhou.png", conf, LoopVal)[0] == True:
+            time.sleep(1)
+            pg.press('return')
+            break
     conf = 0.9#画像認識感度
     LoopVal = 10#検索回数
     time.sleep(1)
@@ -606,7 +611,7 @@ def MainFlow(FolURL2):
         C_SCode = str(C_dfDataRow["顧問先コード"])
         C_Name = str(C_dfDataRow["顧問先名称"])
         C_Name = C_Name.replace("\u3000"," ")
-        C_Nendo = str(C_dfDataRow["年度"])
+        C_Nendo = str(C_dfDataRow["年度"]).replace("\\","-")
         C_Zeimoku = str(C_dfDataRow["税目"])
         C_Syurui = str(C_dfDataRow["申告種類"])
         
