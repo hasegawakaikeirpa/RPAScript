@@ -640,9 +640,7 @@ def MainFlow(FolURL2):
             pg.press('return')
         time.sleep(1)
         #----------------------------------------------------------------------------------------------------------------------        
-        Hub = "class_name"
-        ObjName = "TMNumEdit"#関与先コードボックス
-        DriverClick(Hub,ObjName,driver)
+        ImgClick(FolURL2,"KCodeBox.png",0.9,5)#関与先コードボックス
         pg.write(C_SCode, interval=0.01)#直接SENDできないのでpyautoguiで入力
         pg.press(['return'])
         #クラス要素クリック----------------------------------------------------------------------------------------------------------
@@ -678,11 +676,7 @@ def MainFlow(FolURL2):
         pg.press(['space'])
         time.sleep(1)
         #クラス要素クリック----------------------------------------------------------------------------------------------------------
-        Hub = "class_name"
-        ObjName = "TMBitBtn"#関与先コードボックス
-        ClassList = DriverFindClass(ObjName,driver)
-        ClassObjList = ClassList[1]
-        ClassObjList[1].click()
+        ImgClick(FolURL2,"FindOK.png",conf,LoopVal)#電子申告・申請タブを押す
         #----------------------------------------------------------------------------------------------------------------------
         time.sleep(3)
         #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
@@ -719,11 +713,7 @@ def MainFlow(FolURL2):
                     pg.press(['up','up','up'])
                     pg.press('return')
                     #クラス要素クリック----------------------------------------------------------------------------------------------------------
-                    Hub = "class_name"
-                    ObjName = "TMBitBtn"#関与先コードボックス
-                    ClassList = DriverFindClass(ObjName,driver)
-                    ClassObjList = ClassList[1]
-                    ClassObjList[1].click()
+                    ImgClick(FolURL2,"SetuzokuOK.png",0.9,5)
                     #----------------------------------------------------------------------------------------------------------------------
                     time.sleep(3)
                     MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)
@@ -750,11 +740,7 @@ def MainFlow(FolURL2):
                     pg.press(['up','up','up'])
                     pg.press('return')
                     #クラス要素クリック----------------------------------------------------------------------------------------------------------
-                    Hub = "class_name"
-                    ObjName = "TMBitBtn"#関与先コードボックス
-                    ClassList = DriverFindClass(ObjName,driver)
-                    ClassObjList = ClassList[1]
-                    ClassObjList[1].click()
+                    ImgClick(FolURL2,"SetuzokuOK.png",0.9,5)
                     #----------------------------------------------------------------------------------------------------------------------
                     MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)
             else:
@@ -779,11 +765,7 @@ def MainFlow(FolURL2):
                 pg.press(['up','up','up'])
                 pg.press('return')
                 #クラス要素クリック----------------------------------------------------------------------------------------------------------
-                Hub = "class_name"
-                ObjName = "TMBitBtn"#関与先コードボックス
-                ClassList = DriverFindClass(ObjName,driver)
-                ClassObjList = ClassList[1]
-                ClassObjList[1].click()
+                ImgClick(FolURL2,"SetuzokuOK.png",0.9,5)
                 #----------------------------------------------------------------------------------------------------------------------
                 MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)               
         else:
