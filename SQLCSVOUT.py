@@ -52,3 +52,10 @@ URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
+#Heidi旧DBをCSVアウト----------------------------------------------------------------
+sql = 'SELECT * FROM m_syain'
+URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\Heidi関与先DB.csv'"
+URL = URL.replace("\\","/")
+URL = "/" + URL
+SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'kanyodb','utf8',sql)[1]
+SQDF.to_csv(URL, index = False)
