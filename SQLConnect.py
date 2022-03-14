@@ -211,7 +211,7 @@ def MysqlDiffUp(MTB,CTB,UDRow):#元TB名,履歴TB名,更新行データ
         return False
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #MysqlDiffUp(MTB,CTB,UDRow):の使い方↓
-
+print("123456")
 # sql = 'SELECT * FROM m_kfmsmail'#SELECT分を代入
 # KFM = MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]#関数でクエリ結果をDF化
 # KFMRow = np.array(KFM).shape[0]#DF行数取得
