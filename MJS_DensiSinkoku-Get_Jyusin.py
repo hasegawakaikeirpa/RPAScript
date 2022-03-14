@@ -4,7 +4,6 @@ from ast import For
 from pyparsing import And
 from sqlalchemy import false
 
-
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10):
         try:
