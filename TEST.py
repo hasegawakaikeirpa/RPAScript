@@ -225,7 +225,7 @@ from os import stat
 
 # try:
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-FolURL2 = "//Sv05121a/e/C 作業台/RPA/ウィルス対策/KasperskyLog"
+FolURL2 = "//Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知"
 #path = path.replace('\\','/')#先
 PDFFileList = os.listdir(FolURL2)
 Cou = 1
