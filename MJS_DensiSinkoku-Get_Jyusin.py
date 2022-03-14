@@ -477,6 +477,17 @@ def MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
         IMGD = True
     if IMGD == True:
         PrintAct(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)
+        DSEL = ImgCheck(FolURL2, "KanryouGray.png", conf, LoopVal)
+        if DSEL[0] == True:  
+            ImgClick(FolURL2,"KanryouGray.png",0.9,1)#電子申告・申請タブを押す
+        #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+        time.sleep(1) 
+        ImgClick(FolURL2,"FindIcon.png",0.9,1)
+        time.sleep(1) 
+        while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+            time.sleep(1)  
+        time.sleep(1) 
+        pg.press('r')
     else:
         DSEL = ImgCheck(FolURL2, "KanryouGray.png", conf, LoopVal)
         if DSEL[0] == True:  
