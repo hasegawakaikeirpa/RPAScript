@@ -14,20 +14,30 @@ URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'kanyodb','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
-#社員情報をCSVアウト----------------------------------------------------------------
-sql = 'SELECT * FROM m_syain'
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_syain.csv"
+#部門情報をCSVアウト----------------------------------------------------------------
+sql = 'SELECT * FROM m_bmn'
+URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_bmn.csv"
 URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
+# #社員情報をCSVアウト----------------------------------------------------------------
+# sql = 'SELECT * FROM m_syain'
+# URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_syain.csv"
+# URL = URL.replace("\\","/")
+# URL = "/" + URL
+# SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
+# SQDF.to_csv(URL, index = False)
 #FMSMAILLISTをCSVアウト------------------------------------------------------------
 WithA = "WITH SubFMS AS (SELECT * FROM m_kfmsmail WHERE cr_RecKbn = '0' GROUP BY vc_FMSKnrCd),"
-WithB = "SubKan AS (SELECT * FROM m_kkanyo WHERE cr_RecKbn = '0' GROUP BY vc_KnrCd)"
-SelectStr = "SELECT F.vc_KnrCd,F.vc_KanKojinNo_pk,F.vc_FMSKnrCd,F.vc_Name,K.vc_Name AS 'Yago',K.vc_HaizokuNo,K.vc_Haizoku,K.vc_KansaTantouNo,K.vc_KansaTantou,\
+WithB = "SubKan AS (SELECT * FROM m_kkanyo WHERE cr_RecKbn = '0' GROUP BY vc_KnrCd),"
+WithC = "Subido AS (SELECT * FROM d_jnjido WHERE cr_RecKbn = '0' GROUP BY vc_SyainCd_pk),"
+WithD = "Subbmn AS (SELECT * FROM m_bmn WHERE cr_RecKbn = '0' GROUP BY vc_BmnCd_pk)"
+SelectStr = "SELECT F.vc_KnrCd,F.vc_KanKojinNo_pk,F.vc_FMSKnrCd,F.vc_Name,K.vc_Name AS 'Yago',I.vc_BmnCd,M.vc_BmnNm,K.vc_KansaTantouNo,K.vc_KansaTantou,\
             K.vc_SubTantouNo,K.vc_SubTantou,K.vc_Sub_SubTantouNo,K.vc_Sub_SubTantou,F.vc_Hakkou,F.vc_PDFName,F.vc_SousinK,F.vc_Mail,F.vc_SousinK2,F.vc_Mail2,\
-            F.vc_SousinK3,F.vc_Mail3,F.vc_SousinK4,F.vc_Mail4,F.vc_SousinK5,F.vc_Mail5 FROM SubFMS F INNER JOIN SubKan K ON F.vc_KnrCd = K.vc_KnrCd"
-sql = WithA + WithB + SelectStr
+            F.vc_SousinK3,F.vc_Mail3,F.vc_SousinK4,F.vc_Mail4,F.vc_SousinK5,F.vc_Mail5 FROM SubFMS F INNER JOIN SubKan K ON F.vc_KnrCd = K.vc_KnrCd\
+                LEFT JOIN Subido I ON K.vc_KansaTantouNo = I.vc_SyainCd_pk LEFT JOIN Subbmn M ON I.vc_BmnCd = M.vc_BmnCd_pk"
+sql = WithA + WithB + WithC + WithD + SelectStr
 URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsmail.csv"
 URL = URL.replace("\\","/")
 URL = "/" + URL
@@ -54,15 +64,8 @@ SelectStr = "SubTotal AS (SELECT Mst.vc_SyainCd_pk,Mst.in_RrkNo_pk,Mst.vc_UsrID,
             ,Ido.cr_SyainKbn,Ido.vc_BmnCd,Ido.cr_YakuCd,Ido.vc_GrpCd,Ido.vc_Biko As vc_IdoBiko FROM m_Syain Mst LEFT JOIN SubIdo Ido ON Mst.vc_SyainCd_pk = Ido.vc_SyainCd_pk WHERE Mst.cr_RecKbn = '0' ORDER BY Mst.vc_SyainCd_pk)"
 LastSelect = "SELECT sbt.vc_SyainCd_pk,sbt.in_RrkNo_pk,sbt.vc_Name,sbt.vc_ComMail,sbt.vc_BmnCd,sbm.vc_BmnNm FROM SubTotal sbt INNER JOIN Submn sbm ON sbt.vc_BmnCd = sbm.vc_BmnCd_pk"
 sql = WithA + WithB + WithC + SelectStr + LastSelect
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_bmn.csv"
+URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\Joinm_bmn.csv"
 URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
-SQDF.to_csv(URL, index = False)
-#Heidi旧DBをCSVアウト----------------------------------------------------------------
-sql = 'SELECT * FROM m_syain'
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\Heidi関与先DB.csv'"
-URL = URL.replace("\\","/")
-URL = "/" + URL
-SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'kanyodb','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
