@@ -32,12 +32,33 @@ SQDF.to_csv(URL, index = False)
 WithA = "WITH SubFMS AS (SELECT * FROM m_kfmsmail WHERE cr_RecKbn = '0' GROUP BY vc_FMSKnrCd),"
 WithB = "SubKan AS (SELECT * FROM m_kkanyo WHERE cr_RecKbn = '0' GROUP BY vc_KnrCd),"
 WithC = "Subido AS (SELECT * FROM d_jnjido WHERE cr_RecKbn = '0' GROUP BY vc_SyainCd_pk),"
-WithD = "Subbmn AS (SELECT * FROM m_bmn WHERE cr_RecKbn = '0' GROUP BY vc_BmnCd_pk)"
+WithD = "Subbmn AS (SELECT * FROM m_bmn WHERE cr_RecKbn = '0' GROUP BY vc_BmnCd_pk),"
+WithE = "SubKrireki AS (SELECT t1.vc_gyou,MAX(t1.in_RrkNo_pk) AS in_RrkNo_pk,t1.vc_FMSKnrCd,t1.vc_Name,t1.vc_KName,\
+        t1.vc_Hakkou,t1.vc_SousinK,t1.vc_Mail,t1.vc_BmnCd_pk,t1.vc_BmnNm,t1.vc_KansaTantouNo,\
+        t1.vc_KansaTantou,t1.vc_SubTantouNo,t1.vc_SubTantou,t1.vc_Sub_SubTantouNo,t1.vc_Sub_SubTantou,\
+        t1.vc_SousinK2,t1.vc_Mail2,t1.vc_SousinK3,t1.vc_Mail3,t1.vc_SousinK4,t1.vc_Mail4,t1.vc_SousinK5,\
+        t1.vc_Mail5,t1.cr_RecKbn,t1.dt_InstDT,t1.dt_UpdtDT,t1.vc_inputuser,t1.vc_beforeadd FROM m_kfmsrireki AS t1 \
+        JOIN (SELECT vc_gyou,MAX(in_RrkNo_pk) AS in_RrkNo_pk,vc_FMSKnrCd,vc_Name,vc_KName,vc_Hakkou,vc_SousinK,vc_Mail,vc_BmnCd_pk,vc_BmnNm,vc_KansaTantouNo,\
+        vc_KansaTantou,vc_SubTantouNo,vc_SubTantou,vc_Sub_SubTantouNo,vc_Sub_SubTantou,vc_SousinK2,vc_Mail2,vc_SousinK3,vc_Mail3,vc_SousinK4,vc_Mail4,vc_SousinK5,\
+        vc_Mail5,cr_RecKbn,dt_InstDT,dt_UpdtDT,vc_inputuser,vc_beforeadd FROM m_kfmsrireki GROUP BY vc_FMSKnrCd) AS t2 ON t1.vc_FMSKnrCd = t2.vc_FMSKnrCd \
+        AND t1.in_RrkNo_pk = t2.in_RrkNo_pk GROUP BY vc_FMSKnrCd ORDER BY vc_FMSKnrCd)"
 SelectStr = "SELECT F.vc_KnrCd,F.vc_KanKojinNo_pk,F.vc_FMSKnrCd,F.vc_Name,K.vc_Name AS 'Yago',I.vc_BmnCd,M.vc_BmnNm,K.vc_KansaTantouNo,K.vc_KansaTantou,\
-            K.vc_SubTantouNo,K.vc_SubTantou,K.vc_Sub_SubTantouNo,K.vc_Sub_SubTantou,F.vc_Hakkou,F.vc_PDFName,F.vc_SousinK,F.vc_Mail,F.vc_SousinK2,F.vc_Mail2,\
-            F.vc_SousinK3,F.vc_Mail3,F.vc_SousinK4,F.vc_Mail4,F.vc_SousinK5,F.vc_Mail5 FROM SubFMS F INNER JOIN SubKan K ON F.vc_KnrCd = K.vc_KnrCd\
-                LEFT JOIN Subido I ON K.vc_KansaTantouNo = I.vc_SyainCd_pk LEFT JOIN Subbmn M ON I.vc_BmnCd = M.vc_BmnCd_pk"
-sql = WithA + WithB + WithC + WithD + SelectStr
+        K.vc_SubTantouNo,K.vc_SubTantou,K.vc_Sub_SubTantouNo,K.vc_Sub_SubTantou,F.vc_Hakkou,\
+        CASE WHEN R.vc_SousinK IS NOT NULL THEN R.vc_SousinK ELSE F.vc_SousinK END AS vc_SousinK,\
+        CASE WHEN R.vc_Mail IS NOT NULL THEN R.vc_Mail ELSE F.vc_Mail END AS vc_Mail,\
+        CASE WHEN R.vc_SousinK2 IS NOT NULL THEN R.vc_SousinK2 ELSE F.vc_SousinK2 END AS vc_SousinK2,\
+        CASE WHEN R.vc_Mail2 IS NOT NULL THEN R.vc_Mail2 ELSE F.vc_Mail2 END AS vc_Mail2,\
+        CASE WHEN R.vc_SousinK3 IS NOT NULL THEN R.vc_SousinK3 ELSE F.vc_SousinK3 END AS vc_SousinK3,\
+        CASE WHEN R.vc_Mail3 IS NOT NULL THEN R.vc_Mail3 ELSE F.vc_Mail3 END AS vc_Mail3,\
+        CASE WHEN R.vc_SousinK4 IS NOT NULL THEN R.vc_SousinK4 ELSE F.vc_SousinK4 END AS vc_SousinK4,\
+        CASE WHEN R.vc_Mail4 IS NOT NULL THEN R.vc_Mail4 ELSE F.vc_Mail4 END AS vc_Mail4,\
+        CASE WHEN R.vc_SousinK5 IS NOT NULL THEN R.vc_SousinK5 ELSE F.vc_SousinK5 END AS vc_SousinK5,\
+        CASE WHEN R.vc_Mail5 IS NOT NULL THEN R.vc_Mail5 ELSE F.vc_Mail5 END AS vc_Mail5 \
+        FROM SubFMS F INNER JOIN SubKan K ON F.vc_KnrCd = K.vc_KnrCd \
+        LEFT JOIN Subido I ON K.vc_KansaTantouNo = I.vc_SyainCd_pk \
+        LEFT JOIN Subbmn M ON I.vc_BmnCd = M.vc_BmnCd_pk \
+        LEFT JOIN SubKrireki R ON F.vc_FMSKnrCd = R.vc_FMSKnrCd GROUP BY F.vc_FMSKnrCd ORDER BY F.vc_KnrCd"
+sql = WithA + WithB + WithC + WithD + WithE + SelectStr
 URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsmail.csv"
 URL = URL.replace("\\","/")
 URL = "/" + URL

@@ -1,3 +1,6 @@
+class Datas: #データクラス作成
+    def __init__(self, param): 
+        self.param = param
 #----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
@@ -42,7 +45,6 @@ def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
             Flag = 0
     if Flag == 0:
         return False
-#----------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
 def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
@@ -176,9 +178,6 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             #異常待機後処理
             print("要素取得に失敗しました。")
 #----------------------------------------------------------------------------------------------------------------------
-def get_file_ownership(filename):
-    return (getpwuid(os.stat(filename).st_uid).pw_name,getgrgid(os.stat(filename).st_gid).gr_name)
-#----------------------------------------------------------------------------------------------------------------------
 #モジュールインポート
 from appium import webdriver
 import subprocess
@@ -204,8 +203,6 @@ import re
 import json
 #osインポート
 import os
-from pwd import getpwuid
-from grp import getgrgid
 #datetimeインポート
 from datetime import datetime as dt
 #日付加減算インポート
@@ -221,24 +218,25 @@ import pyautogui
 import time
 import shutil
 import CSVOut
-from os import stat
-
-# try:
+import ExcelFileAction as EF
+import calendar
+import pyperclip #クリップボードへのコピーで使用
+from turtle import down
+from sqlalchemy import false
+#RPA用画像フォルダの作成-----------------------------------------------------------
+Lday = calendar.monthrange(dt.today().year,dt.today().month)
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-FolURL2 = "//Sv05121a/e/C 作業台/RPA/ウィルス対策/KasperskyLog"
-#path = path.replace('\\','/')#先
-PDFFileList = os.listdir(FolURL2)
-Cou = 1
-Data = []
-for PDFItem in PDFFileList:
-    # uid = stat(FolURL2 + "/" + PDFItem).st_uid
-    UName = get_file_ownership(PDFItem)
-    Data.append(UName)
-#     f = open(FolURL2 + "/" + PDFItem, 'r', encoding='UTF-8')        
-#     Data.append(f.read())
-#     f.close()
-print(Data)
-# CSVOut.CsvSave("//Sv05121a/e/C 作業台/RPA/ウィルス対策/KasperskyLog/結果.csv",['Log'],Data)
-time.sleep(1)
-# except:
-#     print("Err")
+FolURL2 = os.getcwd().replace('\\','/')#先
+#--------------------------------------------------------------------------------
+try:
+    CSVURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\BACKUP\アドレス登録履歴\Log.csv"
+    CSVURL = CSVURL.replace("\\","/")#URLリネーム
+    CSVURL = "/" + CSVURL#URLリネーム
+    LogList = CSVOut.CsvRead(CSVURL)
+    LostAdd = "TEST"						
+    LogMSG = ['CDB',18,'株式会社\u3000岡崎プロダクション','株式会社\u3000岡崎プロダクション','メール','To','okazaki_pro@email.plala.or.jp',113,113,\
+            499,'藤本\u3000光丞','nan','nan','nan','nan','nan','nan','nan','nan','nan','nan','nan','nan','nan','nan',LostAdd]
+    CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
+    time.sleep(1)
+except:
+    traceback.print_exc()
