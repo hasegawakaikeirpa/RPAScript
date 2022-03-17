@@ -42,8 +42,16 @@ WithE = "SubKrireki AS (SELECT t1.vc_gyou,MAX(t1.in_RrkNo_pk) AS in_RrkNo_pk,t1.
         vc_KansaTantou,vc_SubTantouNo,vc_SubTantou,vc_Sub_SubTantouNo,vc_Sub_SubTantou,vc_SousinK2,vc_Mail2,vc_SousinK3,vc_Mail3,vc_SousinK4,vc_Mail4,vc_SousinK5,\
         vc_Mail5,cr_RecKbn,dt_InstDT,dt_UpdtDT,vc_inputuser,vc_beforeadd FROM m_kfmsrireki GROUP BY vc_FMSKnrCd) AS t2 ON t1.vc_FMSKnrCd = t2.vc_FMSKnrCd \
         AND t1.in_RrkNo_pk = t2.in_RrkNo_pk GROUP BY vc_FMSKnrCd ORDER BY vc_FMSKnrCd)"
-SelectStr = "SELECT F.vc_KnrCd,F.vc_KanKojinNo_pk,F.vc_FMSKnrCd,F.vc_Name,K.vc_Name AS 'Yago',I.vc_BmnCd,M.vc_BmnNm,K.vc_KansaTantouNo,K.vc_KansaTantou,\
-        K.vc_SubTantouNo,K.vc_SubTantou,K.vc_Sub_SubTantouNo,K.vc_Sub_SubTantou,F.vc_Hakkou,\
+SelectStr = "SELECT F.vc_KnrCd,F.vc_KanKojinNo_pk,F.vc_FMSKnrCd,F.vc_Name,K.vc_Name AS 'Yago',\
+        CASE WHEN R.vc_BmnCd_pk IS NOT NULL THEN R.vc_BmnCd_pk ELSE I.vc_BmnCd END AS vc_BmnCd,\
+        CASE WHEN R.vc_BmnNm IS NOT NULL THEN R.vc_BmnNm ELSE M.vc_BmnNm END AS vc_BmnNm,\
+        CASE WHEN R.vc_KansaTantouNo IS NOT NULL THEN R.vc_KansaTantouNo ELSE K.vc_KansaTantouNo END AS vc_KansaTantouNo,\
+        CASE WHEN R.vc_KansaTantou IS NOT NULL THEN R.vc_KansaTantou ELSE K.vc_KansaTantou END AS vc_KansaTantou,\
+        CASE WHEN R.vc_SubTantouNo IS NOT NULL THEN R.vc_SubTantouNo ELSE K.vc_SubTantouNo END AS vc_SubTantouNo,\
+        CASE WHEN R.vc_SubTantou IS NOT NULL THEN R.vc_SubTantou ELSE K.vc_SubTantou END AS vc_SubTantou,\
+        CASE WHEN R.vc_Sub_SubTantouNo IS NOT NULL THEN R.vc_Sub_SubTantouNo ELSE K.vc_Sub_SubTantouNo END AS vc_Sub_SubTantouNo,\
+        CASE WHEN R.vc_Sub_SubTantou IS NOT NULL THEN R.vc_Sub_SubTantou ELSE K.vc_Sub_SubTantou END AS vc_Sub_SubTantou,\
+        F.vc_Hakkou,\
         CASE WHEN R.vc_SousinK IS NOT NULL THEN R.vc_SousinK ELSE F.vc_SousinK END AS vc_SousinK,\
         CASE WHEN R.vc_Mail IS NOT NULL THEN R.vc_Mail ELSE F.vc_Mail END AS vc_Mail,\
         CASE WHEN R.vc_SousinK2 IS NOT NULL THEN R.vc_SousinK2 ELSE F.vc_SousinK2 END AS vc_SousinK2,\
