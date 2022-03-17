@@ -1,4 +1,51 @@
-﻿class Datas: #データクラス作成
+﻿#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import OMSOpen
+from selenium.webdriver.common.keys import Keys
+#lxmlインポート
+import lxml.html
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#小数点切り捨ての為にmathをインポート
+import math
+#timeインポート
+import time
+#reインポート
+import re
+#jsonインポート
+import json
+#osインポート
+import os
+#datetimeインポート
+from datetime import datetime as dt
+#日付加減算インポート
+from dateutil.relativedelta import relativedelta
+#glob(フォルダファイルチェックコマンド)インポート
+import glob
+#shutil(フォルダファイル編集コマンド)インポート
+import shutil
+#例外処理判定の為のtracebackインポート
+import traceback
+#pandas(pd)で関与先データCSVを取得
+import pyautogui
+import time
+import shutil
+import CSVOut
+import ExcelFileAction as EF
+import calendar
+import SQLConnect as SQ
+import pyperclip #クリップボードへのコピーで使用
+from turtle import down
+from sqlalchemy import false
+#----------------------------------------------------------------------------------------------------------------------
+class Datas: #データクラス作成
     def __init__(self, param): 
         self.param = param
 #----------------------------------------------------------------------------------------------------------------------
@@ -233,6 +280,7 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
             CSVURL = "/" + CSVURL#URLリネーム
             LogList = CSVOut.CsvRead(CSVURL)
             wsData = Datas(ws.iloc[x])#dfインスタンスの行データインスタンス化
+            wsRow = ws.iloc[x]
             #インスタンスから変数格納----------------------------------------------------------------------------------------
             wscd = wsData.param['コード']
             wsAd = wsData.param['アドレス']
@@ -327,6 +375,8 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                                 wsData.param['送信方法2'],wsData.param['アドレス2'],wsData.param['送信方法3'],wsData.param['アドレス3'],wsData.param['送信方法4'],\
                                 wsData.param['アドレス4'],wsData.param['送信方法5'],wsData.param['アドレス5'],wsData.param['入力日時'],wsData.param['入力ユーザー'],LostAdd]
                     CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
+                    wsRowCode = wsRow['コード']
+                    SQ.MysqlInsert("m_kfmsrireki",wsRow,wsRowCode)
                     time.sleep(1)
     except:
         print(x + "エラー") 
@@ -361,56 +411,11 @@ def MainFlow(FolURL2):
     print(ws)
     #---------------------------------------------------------------------------------------------------------------------- 
     CDBO = CDBOpen(FolURL2,Lday,driver,ws,XlsmURL)#CDBアクション開始
-    if CDBO == True:
-        print('CDBログインOK')
+    if CDBO == None:
+        print('処理完了')
     else:
-        print('CDBログイン失敗')
+        print('処理失敗')
 #----------------------------------------------------------------------------------------------------------------------     
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import OMSOpen
-from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#日付加減算インポート
-from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-import shutil
-#例外処理判定の為のtracebackインポート
-import traceback
-#pandas(pd)で関与先データCSVを取得
-import pyautogui
-import time
-import shutil
-import CSVOut
-import ExcelFileAction as EF
-import calendar
-import pyperclip #クリップボードへのコピーで使用
-from turtle import down
-from sqlalchemy import false
 #RPA用画像フォルダの作成-----------------------------------------------------------
 Lday = calendar.monthrange(dt.today().year,dt.today().month)
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元

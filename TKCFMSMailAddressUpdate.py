@@ -1,9 +1,54 @@
-﻿#----------------------------------------------------------------------------------------------------------------------
+﻿#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import OMSOpen
+from selenium.webdriver.common.keys import Keys
+#lxmlインポート
+import lxml.html
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#小数点切り捨ての為にmathをインポート
+import math
+#timeインポート
+import time
+#reインポート
+import re
+#jsonインポート
+import json
+#osインポート
+import os
+#datetimeインポート
+from datetime import datetime as dt
+#日付加減算インポート
+from dateutil.relativedelta import relativedelta
+#glob(フォルダファイルチェックコマンド)インポート
+import glob
+#shutil(フォルダファイル編集コマンド)インポート
+import shutil
+#例外処理判定の為のtracebackインポート
+import traceback
+#pandas(pd)で関与先データCSVを取得
+import pyautogui
+import time
+import shutil
+import CSVOut
+import SQLConnect as SQ
+import ExcelFileAction as EF
+import calendar
+import pyperclip #クリップボードへのコピーで使用
 from turtle import down
-
 from sqlalchemy import false
-
-
+#----------------------------------------------------------------------------------------------------------------------
+class Datas: #データクラス作成
+    def __init__(self, param): 
+        self.param = param
+#----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -47,7 +92,6 @@ def DriverUIWaitclassname(UIPATH,driver):#XPATH要素を取得するまで待機
             Flag = 0
     if Flag == 0:
         return False
-#----------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
 def DriverFindClass(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
@@ -272,10 +316,10 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
     LenRow = np.array(ws).shape[0]#配列行数取得
     for x in range(LenRow):
         wsRow = ws.iloc[x]
-        wsNo = wsRow['コード']
+        wsNo = wsRow['vc_FMSKnrCd']
         time.sleep(1)
         print(wsNo)
-        TRow = CSVOut.CsvSortRow(CSVURL,"関与先コード",wsNo,'int')
+        TRow = CSVOut.CsvSortRow(CSVURL,"関与先コード",wsNo,'str')
         if TRow[0] == True:
             TRowPer = TRow[1]
             if TRowPer >= 19:
@@ -295,18 +339,16 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
                 FMSAction(FolURL2,wsRow,0)
 #---------------------------------------------------------------------------------------------------------------------- 
 def FMSAction(FolURL2,wsRow,PDV):
-    wscd = wsRow['コード']
-    wsName = wsRow['関与先名']
-    wsAd = wsRow['アドレス']
-    wsHassou = wsRow['発送方法']
-    wsNyuu = wsRow['入力日時']
-    wsUser = wsRow['入力ユーザー']
-    wsDno = wsRow['データNo']
-    LogList = [wscd,wsName,wsAd,wsHassou,wsNyuu,wsUser,wsDno]
+    wsData = Datas(wsRow)#dfインスタンスの行データインスタンス化
+    wsgyou = wsData.param['vc_gyou']
+    wsin_RrkNo_pk = wsData.param['in_RrkNo_pk']
+    wsHakkou = wsData.param['vc_Hakkou']
+
+    LogList = [wsgyou,wsin_RrkNo_pk,wsHakkou]
     ImgClick(FolURL2,"Syuusei.png",0.9,1)
     while pg.locateOnScreen(FolURL2 + "/Syuusei.png",0.9) is not None:
         time.sleep(1)
-    if wsHassou == "メール":
+    if wsHakkou == "メール":
         ICF = ImgCheck(FolURL2,"MailCheckBox.png",0.9,1)
         if ICF[0] == True:
             ImgClick(FolURL2,"MailCheckBox.png",0.9,1)
@@ -362,77 +404,19 @@ def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"
-    XlsmURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"
-    XlsmURL = XlsmURL.replace("\\","/")
-    XlsmURL = "/" + XlsmURL
-    XlsmList = EF.XlsmRead(XlsmURL)
-    input_book = XlsmList[1]
-    #sheet_namesメソッドでExcelブック内の各シートの名前をリストで取得できる
-    input_sheet_name = input_book.sheet_names
-    #lenでシートの総数を確認
-    num_sheet = len(input_sheet_name)
-    #シートの数とシートの名前のリストの表示
-    print ("Sheet の数:", num_sheet)
-    print (input_sheet_name)
-    x = 0
-    for isnItem in input_sheet_name:
-        if isnItem == 'アドレス登録':
-            ws = input_book.parse(input_sheet_name[x])
-            print(ws)
-            break
-        x = x + 1
-    ws = ws.sort_values('入力日時', ascending=False)
-    ws = ws.drop_duplicates(subset='コード')
-    print(ws)
-    FMSO = FMSOpen(FolURL2,Lday,driver)
-    if FMSO == True:
-        FirstAction(FolURL2,FolURL2 + "/MAILLIST.CSV",ws,driver)
+
+    ReSQL = "SELECT * FROM m_kfmsrireki WHERE vc_gyou = 'CDB';"
+    df_Rereki = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',ReSQL)
+    if df_Rereki[0] == True:
+        FMSO = FMSOpen(FolURL2,Lday,driver)
+        if FMSO == True:
+            FirstAction(FolURL2,FolURL2 + "/MAILLIST.CSV",df_Rereki[1],driver)
+        else:
+            print('FMSログイン失敗')
     else:
-        print('FMSログイン失敗')
+        print('履歴にCDB状態データがありません')
 #----------------------------------------------------------------------------------------------------------------------     
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import OMSOpen
-from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#日付加減算インポート
-from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-import shutil
-#例外処理判定の為のtracebackインポート
-import traceback
-#pandas(pd)で関与先データCSVを取得
-import pyautogui
-import time
-import shutil
-import CSVOut
-import ExcelFileAction as EF
-import calendar
-import pyperclip #クリップボードへのコピーで使用
+
 #RPA用画像フォルダの作成-----------------------------------------------------------
 Lday = calendar.monthrange(dt.today().year,dt.today().month)
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
