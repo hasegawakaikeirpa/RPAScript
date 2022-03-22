@@ -1,54 +1,9 @@
-﻿#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import OMSOpen
-from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#日付加減算インポート
-from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-import shutil
-#例外処理判定の為のtracebackインポート
-import traceback
-#pandas(pd)で関与先データCSVを取得
-import pyautogui
-import time
-import shutil
-import CSVOut
-import ExcelFileAction as EF
-import calendar
-import SQLConnect as SQ
-import pyperclip #クリップボードへのコピーで使用
+﻿#----------------------------------------------------------------------------------------------------------------------
 from turtle import down
+
 from sqlalchemy import false
-#----------------------------------------------------------------------------------------------------------------------
-class Datas: #データクラス作成
-    def __init__(self, param): 
-        self.param = param
-#----------------------------------------------------------------------------------------------------------------------
+
+
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -228,18 +183,35 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
 def CSVOutFind(wsRow,LogList):#登録ログに同一データがないかチェック
     try:
         #行データから変数格納----------------------------------------------------------------------------------------
-        wsData = Datas(wsRow)#dfインスタンスの行データインスタンス化
-        wscd = wsData.param['コード']
-        wsAd = wsData.param['アドレス']
-        wsNyuu = wsData.param['入力日時']
+        wsgyo = wsRow['行']
+        wscd = wsRow['コード']
+        wsName = wsRow['関与先名']
+        wsKa = wsRow['課']
+        wsTno = wsRow['No.']
+        wsTname = wsRow['監査担当']
+        wsSubTno = wsRow['サブNo.']
+        wsSubTname = wsRow['会計サブ']
+        wsAd = wsRow['アドレス']
+        wsHassou = wsRow['発送方法']
+        wsNyuu = wsRow['入力日時']
+        wsUser = wsRow['入力ユーザー']
+        wsDno = wsRow['データNo']
         #----------------------------------------------------------------------------------------------------------
         CSVLenRow = np.array(LogList).shape[0]#dfインスタンスの行数取得
         for x in range(CSVLenRow):
-            CSVRow = Datas(LogList.iloc[x])#dfインスタンスの行データインスタンス化
+            CSVRow = LogList.iloc[x]#dfインスタンスの行データ
             #行データから変数格納----------------------------------------------------------------------------------------
-            CSVcd = CSVRow.param['コード']
-            CSVAd = CSVRow.param['アドレス']
-            CSVNyuu = CSVRow.param['入力日時']
+            CSVgyo = CSVRow['行']
+            CSVcd = CSVRow['コード']
+            CSVName = CSVRow['関与先名']
+            CSVKa = CSVRow['課']
+            CSVTno = CSVRow['No.']
+            CSVTname = CSVRow['監査担当']
+            CSVSubTno = CSVRow['サブNo.']
+            CSVSubTname = CSVRow['会計サブ']
+            CSVAd = CSVRow['アドレス']
+            CSVHassou = CSVRow['発送方法']
+            CSVNyuu = CSVRow['入力日時']
             #文字列日付をDate格納----------------------------------------------------------------------------------------
             try:
                 CSVNyuu = dt.strptime(CSVNyuu, '%Y/%m/%d %H:%M')
@@ -251,6 +223,9 @@ def CSVOutFind(wsRow,LogList):#登録ログに同一データがないかチェ�
                         CSVNyuu = dt.strptime(CSVNyuu, '%Y-%m-%d %H:%M:%S')
                     except:
                         CSVNyuu = dt.strptime(CSVNyuu, '%Y-%m-%d %H:%M')
+            #----------------------------------------------------------------------------------------------------------
+            CSVUser = CSVRow['入力ユーザー']
+            CSVDno = CSVRow['データNo']
             #----------------------------------------------------------------------------------------------------------
             if wscd == CSVcd:#登録済みリストに同一コードがあったら
                 if wsAd == CSVAd:#登録済みリストに同一アドレスがあったら
@@ -279,13 +254,23 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
             CSVURL = CSVURL.replace("\\","/")#URLリネーム
             CSVURL = "/" + CSVURL#URLリネーム
             LogList = CSVOut.CsvRead(CSVURL)
-            wsData = Datas(ws.iloc[x])#dfインスタンスの行データインスタンス化
-            wsRow = ws.iloc[x]
-            #インスタンスから変数格納----------------------------------------------------------------------------------------
-            wscd = wsData.param['コード']
-            wsAd = wsData.param['アドレス']
+            wsRow = ws.iloc[x]#dfインスタンスの行データ
+            #行データから変数格納----------------------------------------------------------------------------------------
+            wsgyo = wsRow['行']
+            wscd = wsRow['コード']
+            wsName = wsRow['関与先名']
+            wsKa = wsRow['課']
+            wsTno = wsRow['No.']
+            wsTname = wsRow['監査担当']
+            wsSubTno = wsRow['サブNo.']
+            wsSubTname = wsRow['会計サブ']
+            wsAd = wsRow['アドレス']
+            wsHassou = wsRow['発送方法']
+            wsNyuu = wsRow['入力日時']
+            wsUser = wsRow['入力ユーザー']
+            wsDno = wsRow['データNo']
             #----------------------------------------------------------------------------------------------------------
-            COF = CSVOutFind(ws.iloc[x],LogList[1])#登録ログに同一データがないかチェック
+            COF = CSVOutFind(wsRow,LogList[1])#登録ログに同一データがないかチェック
             if COF == False:#登録ログに同一データがければCDB登録
                 ImgClick(FolURL2,"JimusyoCD.png",0.9,5)#事務所コードボックスをクリック
                 time.sleep(1)
@@ -369,14 +354,8 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                         time.sleep(1)
                     time.sleep(1)
                     #CSVログに追加------------------------------------------------------------------------------------------------								
-                    LogMSG = ['CDB',wsData.param['コード'],wsData.param['個人名'],wsData.param['関与先名'],wsData.param['発送方法'],\
-                                wsData.param['送信方法'],wsData.param['アドレス'],wsData.param['課No'],wsData.param['課'],wsData.param['監査担当No'],\
-                                wsData.param['監査担当'],wsData.param['サブNo'],wsData.param['サブ'],wsData.param['サブ2No'],wsData.param['サブ2'],\
-                                wsData.param['送信方法2'],wsData.param['アドレス2'],wsData.param['送信方法3'],wsData.param['アドレス3'],wsData.param['送信方法4'],\
-                                wsData.param['アドレス4'],wsData.param['送信方法5'],wsData.param['アドレス5'],wsData.param['入力日時'],wsData.param['入力ユーザー'],LostAdd]
+                    LogMSG = ['CDB',wscd,wsName,wsKa,wsTno,wsTname,wsSubTno,wsSubTname,wsAd,wsHassou,wsNyuu,wsUser,wsDno,LostAdd]
                     CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
-                    wsRowCode = wsRow['コード']
-                    SQ.MysqlInsert("m_kfmsrireki",wsRow,wsRowCode)
                     time.sleep(1)
     except:
         print(x + "エラー") 
@@ -411,11 +390,54 @@ def MainFlow(FolURL2):
     print(ws)
     #---------------------------------------------------------------------------------------------------------------------- 
     CDBO = CDBOpen(FolURL2,Lday,driver,ws,XlsmURL)#CDBアクション開始
-    if CDBO == None:
-        print('処理完了')
+    if CDBO == True:
+        print('CDBログインOK')
     else:
-        print('処理失敗')
+        print('CDBログイン失敗')
 #----------------------------------------------------------------------------------------------------------------------     
+#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import OMSOpen
+from selenium.webdriver.common.keys import Keys
+#lxmlインポート
+import lxml.html
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#小数点切り捨ての為にmathをインポート
+import math
+#timeインポート
+import time
+#reインポート
+import re
+#jsonインポート
+import json
+#osインポート
+import os
+#datetimeインポート
+from datetime import datetime as dt
+#日付加減算インポート
+from dateutil.relativedelta import relativedelta
+#glob(フォルダファイルチェックコマンド)インポート
+import glob
+#shutil(フォルダファイル編集コマンド)インポート
+import shutil
+#例外処理判定の為のtracebackインポート
+import traceback
+#pandas(pd)で関与先データCSVを取得
+import pyautogui
+import time
+import shutil
+import CSVOut
+import ExcelFileAction as EF
+import calendar
+import pyperclip #クリップボードへのコピーで使用
 #RPA用画像フォルダの作成-----------------------------------------------------------
 Lday = calendar.monthrange(dt.today().year,dt.today().month)
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元

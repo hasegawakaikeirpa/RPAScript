@@ -429,9 +429,9 @@ def MainStarter(FolURL2):
     ImgClick(FolURL2,"KyouDays.png",0.9,5)
     time.sleep(1)
     WaY = WH.Wareki.from_ad(dt.today().year)
-    TDS = str(WaY.year) + str('{0:02d}'.format(dt.today().month)) + str('{0:02d}'.format(dt.today().day))
+    TDS = str(WaY.year) + str('{0:02d}'.format(dt.today().month)) + str('{0:02d}'.format(dt.today().day-1))
     #############################################################################################################
-    pg.write("40114")#TEST環境本番時はTDSで実行
+    pg.write(TDS)#TEST環境本番時はTDSで実行
     #############################################################################################################
     time.sleep(1)
     pg.press(['return'])
@@ -489,9 +489,107 @@ def MainFirstAction(FolURL2,C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui):
         time.sleep(1) 
         pg.press('r')
     else:
-        DSEL = ImgCheck(FolURL2, "KanryouGray.png", conf, LoopVal)
-        if DSEL[0] == True:  
+        while pg.locateOnScreen(FolURL2 + "/" + "MSEndGetJyusin.png", confidence=0.9) is None:
+            time.sleep(1)
+        time.sleep(3)
+        ImgClick(FolURL2,"MSEndGetJyusin.png",0.9,10)
+        time.sleep(3)
+
+        ImgClick(FolURL2,"SyousaiIcon.png",0.9,1)
+        while pg.locateOnScreen(FolURL2 + "/" + "PrintSyousai.png", confidence=0.9) is None:
+            time.sleep(1)
+        PList = ["PrintSyousai.png","PrintSyousaiWhite.png"]
+        ICFL = ImgCheckForList(FolURL2,PList,0.9,1)
+        ImgClick(FolURL2,ICFL[1],0.9,1)
+        ICFLCount = 0
+        while pg.locateOnScreen(FolURL2 + "/" + "SouRireList.png", confidence=0.9) is None:
+            time.sleep(1)
+            ICFL = ImgCheckForList(FolURL2,PList,0.9,1)
+            ImgClick(FolURL2,ICFL[1],0.9,1)
+            if ICFLCount == 5:
+                break
+            else:
+                ICFLCount = ICFLCount + 1
+        if ICFLCount == 5:
             ImgClick(FolURL2,"KanryouGray.png",0.9,1)#電子申告・申請タブを押す
+            time.sleep(3)
+            time.sleep(1)
+            ImgClick(FolURL2,"FindIcon.png",0.9,1)
+            time.sleep(1) 
+            while pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9) is None:
+                time.sleep(1)  
+            time.sleep(1) 
+            pg.press('r') 
+        else:
+            time.sleep(1)
+            pg.press('x')
+            time.sleep(1)
+# ------------------------------------------------------------------------------------------------------------------------------------------
+            #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+            List = ["FileOut.png","FileOut2.png"]
+            conf = 0.9#画像認識感度
+            LoopVal = 10#検索回数
+            ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+            if ListCheck[0] == True:
+                ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+                time.sleep(1)
+            #----------------------------------------------------------------------------------------------------------------------
+            #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+            List = ["PDFIcon.png","CSVIcon.png"]
+            conf = 0.9#画像認識感度
+            LoopVal = 10#検索回数
+            ListCheck = ImgCheckForList(FolURL2,List,conf,LoopVal)#画像検索関数
+            if ListCheck[0] == True:
+                ImgClick(FolURL2,ListCheck[1],conf,LoopVal)
+                time.sleep(1)
+                pg.press(['down','down','down','down','down'])
+                pg.press(['return'])
+            #----------------------------------------------------------------------------------------------------------------------
+            time.sleep(2)
+            FC = FolCre(C_SCode,C_Name,C_Nendo,C_Zeimoku,C_Syurui)
+            Tyouhuku = SortPDF(C_SCode + "_" + C_Name)
+            if FC[0] == True:
+                if Tyouhuku[0] == str(1):
+                    FileURL = FC[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + "申告等送信票(兼送付書).pdf"
+                else:
+                    FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + "申告等送信票(兼送付書).pdf"
+                
+                pyperclip.copy(FileURL)
+                time.sleep(1)
+                pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                time.sleep(1)
+                pg.press(['return'])
+                time.sleep(1)
+                # ---------------------------------------------------------------------------------------------------------------------- 
+                # ---------------------------------------------------------------------------------------------------------------------- 
+                ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
+                time.sleep(1)
+            else:
+                if Tyouhuku[0] == str(1):
+                    FileURL = FC[1] + "\\" + C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui + "申告等送信票(兼送付書).pdf"
+                else:
+                    FileURL = FC[1] + "\\" +  C_SCode + "_" + C_Name + "_" + C_Nendo + "_" + C_Zeimoku + "_" + C_Syurui +  Tyouhuku[0] + "申告等送信票(兼送付書).pdf"
+                pyperclip.copy(FileURL)
+                time.sleep(1)
+                pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+                time.sleep(1)
+                pg.press(['return'])
+                time.sleep(1)
+                # ---------------------------------------------------------------------------------------------------------------------- 
+                # ---------------------------------------------------------------------------------------------------------------------- 
+                ImgClick(FolURL2,"FileOutPutBtn.png",conf,LoopVal) 
+                time.sleep(1)
+# ------------------------------------------------------------------------------------------------------------------------------------------
+
+            time.sleep(3)
+            ImgClick(FolURL2,"DensiSyomei.png",0.9,1)#電子申告・申請タブを押す
+            time.sleep(1)
+
+            DSEL = ImgCheck(FolURL2, "KanryouGray.png", conf, LoopVal)
+            if DSEL[0] == True:  
+                ImgClick(FolURL2,"KanryouGray.png",0.9,1)#電子申告・申請タブを押す
+
+
         #画像が出現するまで待機してクリック------------------------------------------------------------------------------------
         time.sleep(1) 
         ImgClick(FolURL2,"FindIcon.png",0.9,1)
@@ -575,9 +673,9 @@ def MainFlow(FolURL2):
         ImgClick(FolURL2,"KyouDays.png",0.9,5)
         time.sleep(1)
         WaY = WH.Wareki.from_ad(dt.today().year)
-        TDS = str(WaY.year) + str('{0:02d}'.format(dt.today().month)) + str('{0:02d}'.format(dt.today().day))
+        TDS = str(WaY.year) + str('{0:02d}'.format(dt.today().month)) + str('{0:02d}'.format(dt.today().day-1))
         #############################################################################################################
-        pg.write("40114")#TEST環境本番時はTDSで実行
+        pg.write(TDS)#TEST環境本番時はTDSで実行
         #############################################################################################################
         time.sleep(1)
         pg.press(['return'])
@@ -600,7 +698,7 @@ def MainFlow(FolURL2):
         #----------------------------------------------------------------------------------------------------------------------
         conf = 0.9#画像認識感度
         LoopVal = 10#検索回数
-        FileName40114 = "ZeimokuRadio.png"
+        FileName = "ZeimokuRadio.png"
         if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
             pg.press(['tab'])
         else:

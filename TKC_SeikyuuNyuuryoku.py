@@ -211,7 +211,8 @@ def FMSOpen(driver,FolURL2,xls_data,KamokuCD,Lday):
         time.sleep(2)
     pg.press('return')
     pg.press('return')
-    pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pg.write('20')
+    # pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
     pg.press('return')
     conf = 0.9
     LoopVal = 10
@@ -246,8 +247,9 @@ def FindMenu(driver,FolURL2,xls_cd):
     pg.press('f4')
     time.sleep(4)
     conf = 0.99999
-    LoopVal = 1
+    LoopVal = 11
     FileName = "NoData.png"
+
     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] == True:
         return False
     else:
@@ -270,48 +272,73 @@ def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         FileName = "HousyuSaimoku.png"
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(2)
-        conf = 0.8
-        LoopVal = 10
-        FileName = "BoxMenu.png"
-        ImgClick(FolURL2, FileName, conf, LoopVal)
-        pg.write(KamokuCD, interval=0.01)#直接SENDできないのでpyautoguiで入力
-        pg.press('return')
-        pg.press('return')
-        time.sleep(4)
-        if KamokuCD == "222":
-            pg.keyDown('alt')
-            pg.press('down')
-            pg.keyUp('alt')
-            pg.press('2')
+            NoD = ImgCheck(FolURL2,"NoDataBar.png",0.9,5)
+            if NoD[0] == True:
+                break
+        if NoD[0] == True:
+            ImgClick(FolURL2,"FullMenu.png",0.9,5)
+            time.sleep(3)
+            conf = 0.8
+            FileName = "BoxMenu.png"
+            ImgClick(FolURL2, FileName, conf, LoopVal)
+            pg.write('202', interval=0.01)#直接SENDできないのでpyautoguiで入力
             pg.press('return')
+            FileName = "KanyoItiWin.png"
+            while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+                time.sleep(2)
+            conf = 0.9
+            LoopVal = 10
+            FileName = "KanyoSyatyouTAB.png"
+            ImgClick(FolURL2, FileName, conf, LoopVal)
+            FileName = "SyatyouOpen.png"
+            while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+                time.sleep(2)
+            UpList.append([KamokuCD,xls_cd,xls_name,"データ無"])
+            with open(FolURL2 + "/Log/請求入力フロー結果.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
+                pd.DataFrame(UpList).to_csv(f)            
         else:
-            pg.keyDown('alt')
-            pg.press('down')
-            pg.keyUp('alt')
-            pg.press('4')
+            conf = 0.8
+            LoopVal = 10
+            FileName = "BoxMenu.png"
+            ImgClick(FolURL2, FileName, conf, LoopVal)
+            pg.write(KamokuCD, interval=0.01)#直接SENDできないのでpyautoguiで入力
             pg.press('return')
-        time.sleep(2)
-        pg.press(['return','return','return','return','return','return','return','return'])#一巡目
-        time.sleep(2)
-        pg.press(['return','return'])#一巡目
-        pg.write(xls_mn, interval=0.01)#直接SENDできないのでpyautoguiで入力
-        pg.press('return')
-        time.sleep(2)
-        pg.press('f4')
-        time.sleep(2)
-        pg.press('f4')
-        time.sleep(2)
-        FileName = "InputOK.png"
-        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+            pg.press('return')
+            time.sleep(4)
+            if KamokuCD == "222":
+                pg.keyDown('alt')
+                pg.press('down')
+                pg.keyUp('alt')
+                pg.press('2')
+                pg.press('return')
+            else:
+                pg.keyDown('alt')
+                pg.press('down')
+                pg.keyUp('alt')
+                pg.press('4')
+                pg.press('return')
             time.sleep(2)
-        pg.press('return')
-        FileName = "KanyoItiWin.png"
-        while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
-            time.sleep(2) 
-        UpList.append([KamokuCD,xls_cd,xls_name,xls_mn])
-        with open(FolURL2 + "/Log/請求入力フロー結果.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
-            pd.DataFrame(UpList).to_csv(f)
-        #pd.DataFrame(UpList).to_csv(FolURL2 + "/Log/請求入力フロー結果.csv", encoding = "shift-jis")
+            pg.press(['return','return','return','return','return','return','return','return'])#一巡目
+            time.sleep(2)
+            pg.press(['return','return'])#一巡目
+            pg.write(xls_mn, interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pg.press('return')
+            time.sleep(2)
+            pg.press('f4')
+            time.sleep(2)
+            pg.press('f4')
+            time.sleep(2)
+            FileName = "InputOK.png"
+            while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+                time.sleep(2)
+            pg.press('return')
+            FileName = "KanyoItiWin.png"
+            while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
+                time.sleep(2) 
+            UpList.append([KamokuCD,xls_cd,xls_name,xls_mn])
+            with open(FolURL2 + "/Log/請求入力フロー結果.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
+                pd.DataFrame(UpList).to_csv(f)
+            #pd.DataFrame(UpList).to_csv(FolURL2 + "/Log/請求入力フロー結果.csv", encoding = "shift-jis")
     else:
         UpList.append([KamokuCD,xls_cd,xls_name,"失敗"])
         with open(FolURL2 + "/Log/請求入力フロー結果.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
@@ -384,6 +411,7 @@ def OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
 def MainFlow(FolURL2,xls_data,KamokuCD,Lday):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
+    # driver = []
     FolURL2 = FolURL2 + "/RPAPhoto/TKC_SeikyuuNyuuryoku"
     FMSOpen(driver,FolURL2,xls_data,KamokuCD,Lday)
     UpList = []   
