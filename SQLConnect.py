@@ -3,7 +3,6 @@ import pandas as pd
 import CSVOut as co
 import numpy as np
 import os
-import time
 from datetime import datetime as dt
 from tqdm import tqdm
 from sqlalchemy import create_engine
@@ -11,7 +10,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String
 import datetime
-import ExcelFileAction as EF
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def MySQLGet(str_host,str_user,str_passwd,int_port,str_database,str_charset,sql):#host='ws77',user='SYSTEM',passwd='SYSTEM',port='3306',database='test_db',charset='utf8'
 #SQL文を送信し、結果を返す
@@ -94,13 +92,6 @@ def MysqlColumnPic(str_host,str_user,str_passwd,int_port,str_database,str_charse
         conn.close()
         return False,""
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def is_int(s):
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,テーブル名
 #データ型に合わせて値を変更する。
     try:
@@ -120,11 +111,6 @@ def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,�
                         FDATE = str(FDATE.strftime('%Y-%m-%d %H:%M:%S'))
                         # FDATE = "Timestamp('" + FDATE + "')"
                         ParList.append(FDATE)
-                    elif ColN == 'dt_InstDT':
-                        FDATE = datetime.datetime.now()
-                        FDATE = str(FDATE.strftime('%Y-%m-%d %H:%M:%S'))
-                        # FDATE = "Timestamp('" + FDATE + "')"
-                        ParList.append(FDATE)                    
                     else:
                         ParList.append(UDRowItem)
             elif 'char' in SQLColP:
@@ -225,6 +211,7 @@ def MysqlDiffUp(MTB,CTB,UDRow):#元TB名,履歴TB名,更新行データ
         return False
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #MysqlDiffUp(MTB,CTB,UDRow):の使い方↓
+
 # sql = 'SELECT * FROM m_kfmsmail'#SELECT分を代入
 # KFM = MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]#関数でクエリ結果をDF化
 # KFMRow = np.array(KFM).shape[0]#DF行数取得
@@ -233,58 +220,3 @@ def MysqlDiffUp(MTB,CTB,UDRow):#元TB名,履歴TB名,更新行データ
 #     ITB = 'm_kfmsmailrireki'#テーブル名を代入
 #     ColRow = 0
 #     MysqlDiffUp('m_kfmsmail',ITB,KFMData) #元TB名,履歴TB名,更新行データ
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def MysqlInsert(MTB,UDRow,wsRowCode):#元TB名,履歴TB名,更新行データ
-    try:
-        #-------------------------------------------------------------------------------------------------------------------------------------
-        sql = 'SELECT * FROM ' + MTB #SELECT分を代入
-        DFCol = MysqlColumnPic('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',MTB)[1]#関数でTB列情報取得
-        ColList = []#データ型変帝の為のカラムリストを作成
-        ParList = []#SQL結合用に行データ格納用のリスト作成
-        for DFColItem in DFCol:#Rowデータのデータ型に併せて値を変更
-            ColList.append(DFColItem[0])#DFから列名のみ抽出
-        FColList = str(ColList)#SQL文用列名リストの作成
-        ColRow = 0#カラムリストのRowIndex初期化
-        del ColList[0:2]#履歴リストインサート用に要素数の調整
-        ParList.append('CDB')#CDB登録済みフラグを追加
-        SA = "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = " + str(wsRowCode) + ";"
-        SA = SA.replace("'","")
-        MxRrk = MySQLGet('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',SA)#host='ws77',user='SYSTEM',passwd='SYSTEM',port='3306',database='test_db',charset='utf8' 
-        #履歴Noの最大値を取得---------------------------------------------------------------------------------------------
-        if MxRrk[0] == True:
-            MxRrkCode = str(MxRrk[1])
-            MxRrkCode = MxRrkCode.replace("(","").replace(")","").replace(",","")
-            if is_int(MxRrkCode) == True: 
-                ParList.append(int(MxRrkCode) + 1)
-            else:
-                ParList.append(1)
-        #---------------------------------------------------------------------------------------------------------------
-        UDR = 0
-        for UDRowItem in UDRow:#行データひとつずつループ
-            ColN = ColList[ColRow]#カラムリストから列名取得
-#--------------------------------------履歴テーブルとカラムが一致しないので調整---------------------------------------------
-            if ColN == 'cr_RecKbn':
-                ParList.append('0')
-                ChangeData('dt_InstDT',ParList,UDRowItem,MTB)#列名,行データ格納用のリスト,行データ要素,TB名
-                ChangeData('dt_UpdtDT',ParList,UDRowItem,MTB)#列名,行データ格納用のリスト,行データ要素,TB名
-            elif ColN == 'dt_InstDT':
-                ChangeData('vc_inputuser',ParList,UDRowItem,MTB)#列名,行データ格納用のリスト,行データ要素,TB名            
-            elif ColN == 'dt_UpdtDT':
-                ChangeData('vc_beforeadd',ParList,UDRowItem,MTB)#列名,行データ格納用のリスト,行データ要素,TB名
-            else:
-                ChangeData(ColN,ParList,UDRowItem,MTB)#列名,行データ格納用のリスト,行データ要素,TB名
-#-----------------------------------------------------------------------------------------------------------------------
-            ColRow = ColRow + 1#カラムリストのRowIndex加算
-            UDR = UDR + 1
-        FColList = FColList.replace("[","").replace("]","")#不要なのでシングルコーテーション削除
-        FColList = FColList.replace("'","")#不要なのでシングルコーテーション削除
-        FParList = str(ParList)#SQL文用列名リストの作成
-        FParList = FParList.replace("[","").replace("]","")#不要なのでシングルコーテーション削除
-        FParList = FParList.replace("\\u3000"," ").replace("\\u200b"," ")#不要なのでシングルコーテーション削除
-        sql = " INSERT INTO m_kfmsrireki (" + FColList + ") VALUES (" + FParList + ");"
-        sql = sql.replace("'nan'","''")
-        MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)#引数8=親TB名,引数9=履歴数列名
-        return True
-    except:
-        return False
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
