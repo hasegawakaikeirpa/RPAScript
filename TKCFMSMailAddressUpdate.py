@@ -318,7 +318,7 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
         wsRow = ws.iloc[x]
         wsNo = wsRow['vc_FMSKnrCd']
         time.sleep(1)
-        wsNo = str(wsNo)
+        wsNo = int(wsNo)
         #社内コードからコードと枝番に分離--------------------------------
         if wsNo < 1000:
             wsNo = str(wsNo)
