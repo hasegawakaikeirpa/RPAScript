@@ -1,4 +1,4 @@
-﻿﻿#モジュールインポート
+﻿#モジュールインポート
 from appium import webdriver
 import subprocess
 from subprocess import run
