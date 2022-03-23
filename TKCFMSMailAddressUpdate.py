@@ -319,7 +319,7 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
         wsNo = wsRow['vc_FMSKnrCd']
         time.sleep(1)
         print(wsNo)
-        TRow = CSVOut.CsvSortRow(CSVURL,"関与先コード",wsNo,'str')
+        TRow = CSVOut.CsvSortRowDouble(CSVURL,"関与先コード","個人コード",wsNo,'str')
         if TRow[0] == True:
             TRowPer = TRow[1]
             if TRowPer >= 19:
