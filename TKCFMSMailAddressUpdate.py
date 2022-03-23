@@ -294,7 +294,47 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
                 time.sleep(1)
                 FMSAction(FolURL2,wsRow,0)
 #---------------------------------------------------------------------------------------------------------------------- 
+def MailAddAction(FolURL2,wsSousin,wsMail):
+    if not wsSousin == '' or not wsMail == '':
+        pg.press('return')
+        while pg.locateOnScreen(FolURL2 + '/CheckingTo.png',0.9) is None:
+            time.sleep(1)
+        pg.press('down')
+        if wsSousin == 'To':
+            pg.press('t')
+            pg.press('return')
+        elif wsSousin == 'CC':
+            pg.press('c')
+            pg.press('return')
+        elif wsSousin == 'BCC':
+            pg.press('b')
+            pg.press('return')
+        elif wsSousin == '':
+            pg.press('b')
+            pg.press('return')
+        pyperclip.copy(wsMail)
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+#---------------------------------------------------------------------------------------------------------------------- 
 def FMSAction(FolURL2,wsRow,PDV):
+<<<<<<< HEAD
+    wsData = Datas(wsRow)#dfインスタンスの行データインスタンス化
+    wsgyou = wsData.param['vc_gyou']
+    wsKno = wsData.param['vc_FMSKnrCd']
+    wsin_RrkNo_pk = wsData.param['in_RrkNo_pk']
+    wsHakkou = wsData.param['vc_Hakkou']
+    wsSousinK = wsData.param['vc_SousinK']
+    wsMail = wsData.param['vc_Mail']
+    wsSousinK2 = wsData.param['vc_SousinK2']
+    wsMail2 = wsData.param['vc_Mail2']
+    wsSousinK3 = wsData.param['vc_SousinK3']
+    wsMail3 = wsData.param['vc_Mail3']
+    wsSousinK4 = wsData.param['vc_SousinK4']
+    wsMail4 = wsData.param['vc_Mail4']
+    wsSousinK5 = wsData.param['vc_SousinK5']
+    wsMail5 = wsData.param['vc_Mail5']
+
+    LogList = [wsgyou,wsin_RrkNo_pk,wsHakkou]
+=======
     wscd = wsRow['コード']
     wsName = wsRow['関与先名']
     wsAd = wsRow['アドレス']
@@ -303,6 +343,7 @@ def FMSAction(FolURL2,wsRow,PDV):
     wsUser = wsRow['入力ユーザー']
     wsDno = wsRow['データNo']
     LogList = [wscd,wsName,wsAd,wsHassou,wsNyuu,wsUser,wsDno]
+>>>>>>> fe5c9241a86d80637473a3bb2b374516f110de62
     ImgClick(FolURL2,"Syuusei.png",0.9,1)
     while pg.locateOnScreen(FolURL2 + "/Syuusei.png",0.9) is not None:
         time.sleep(1)
@@ -321,6 +362,17 @@ def FMSAction(FolURL2,wsRow,PDV):
         time.sleep(1)
         ImgClick(FolURL2,"EmailCopy.png",0.9,1)
         time.sleep(1)
+#CC等あれば処理----------------------------------------------------------------------------
+        if not wsSousinK2 == '' or not wsMail2 == '':
+            MailAddAction(FolURL2,wsSousinK2,wsMail2)
+        if not wsSousinK3 == '' or not wsMail3 == '':
+            MailAddAction(FolURL2,wsSousinK3,wsMail3)
+        if not wsSousinK4 == '' or not wsMail4 == '':
+            MailAddAction(FolURL2,wsSousinK4,wsMail4)
+        if not wsSousinK5 == '' or not wsMail5 == '':
+            MailAddAction(FolURL2,wsSousinK5,wsMail5)
+#----------------------------------------------------------------------------------------- 
+        time.sleep(1)       
         ImgClick(FolURL2,"NyuuryokuEnd.png",0.9,1)
         CsvL = CSVOut.CsvRead(FolURL2 + "/LogList.CSV")
         CSVOut.CsvPlus(FolURL2 + "/LogList.CSV",CsvL[1],LogList)
@@ -334,6 +386,10 @@ def FMSAction(FolURL2,wsRow,PDV):
         for x in range(PDV + 1):
             pg.press('pageup')
         time.sleep(1)
+        #履歴データベースを更新---------------------------------------------------------------------
+        USQL = "UPDATE m_kfmsrireki SET vc_gyou = '○' WHERE vc_FMSKnrCd = '" + wsKno + "' AND in_RrkNo_pk = " + str(wsin_RrkNo_pk).replace("'","") + ";"
+        SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
+        #-----------------------------------------------------------------------------------------
     else:
         ICF = ImgCheck(FolURL2,"InsatuCheckBox.png",0.9,1)
         if ICF[0] == True:
@@ -356,7 +412,11 @@ def FMSAction(FolURL2,wsRow,PDV):
             time.sleep(1)
         for x in range(PDV + 1):
             pg.press('pageup')
-        time.sleep(1)      
+        time.sleep(1)
+        #履歴データベースを更新---------------------------------------------------------------------
+        USQL = "UPDATE m_kfmsrireki SET vc_gyou = '○' WHERE vc_FMSKnrCd = '" + wsKno + "' AND in_RrkNo_pk = " + str(wsin_RrkNo_pk).replace("'","") + ";"
+        SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
+        #----------------------------------------------------------------------------------------- 
 #----------------------------------------------------------------------------------------------------------------------     
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
