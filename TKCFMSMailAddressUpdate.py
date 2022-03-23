@@ -318,8 +318,31 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
         wsRow = ws.iloc[x]
         wsNo = wsRow['vc_FMSKnrCd']
         time.sleep(1)
+        wsNo = str(wsNo)
+        #社内コードからコードと枝番に分離--------------------------------
+        if wsNo < 1000:
+            wsNo = str(wsNo)
+            wsNoSub = ''
+        elif wsNo >= 1000 and wsNo < 2000 :
+            wsNoSub = str(wsNo)[2] + str(wsNo)[3]
+            wsNo = str(wsNo)[0] + str(wsNo)[1]
+            wsNo = f'{int(wsNo):03}'
+        elif wsNo >= 4000 and wsNo < 5000 :
+            wsNoSub = str(wsNo)[2] + str(wsNo)[3]
+            wsNo = str(wsNo)[0] + str(wsNo)[1]
+            wsNo = f'{int(wsNo):03}'
+        elif wsNo >= 9000 and wsNo < 10000 :
+            wsNoSub = str(wsNo)[2] + str(wsNo)[3]
+            wsNo = str(wsNo)[0] + str(wsNo)[1]
+            wsNo = f'{int(wsNo):03}'
+        elif wsNo >= 10000 :
+            wsNoSub = str(wsNo)[3] + str(wsNo)[4]
+            wsNo = str(wsNo)[0] + str(wsNo)[1] + str(wsNo)[2]
+            wsNo = f'{int(wsNo):03}'
+        #------------------------------------------------------------
         print(wsNo)
-        TRow = CSVOut.CsvSortRowDouble(CSVURL,"関与先コード","個人コード",wsNo,'str')
+        print(wsNoSub)
+        TRow = CSVOut.CsvSortRowDouble(CSVURL,"関与先コード","個人コード",wsNo,wsNoSub)
         if TRow[0] == True:
             TRowPer = TRow[1]
             if TRowPer >= 19:
