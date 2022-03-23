@@ -1,6 +1,6 @@
 import CSVOut
 
-wsNo = int('12302')
+wsNo = int('10000')
 
 if wsNo < 1000:
     wsNo = str(wsNo)
