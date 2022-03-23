@@ -44,6 +44,7 @@ import calendar
 import pyperclip #クリップボードへのコピーで使用
 from turtle import down
 from sqlalchemy import false
+import FMSMailHighSpeedFor as CFM
 #----------------------------------------------------------------------------------------------------------------------
 class Datas: #データクラス作成
     def __init__(self, param): 
@@ -342,24 +343,30 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
         #------------------------------------------------------------
         print(wsNo)
         print(wsNoSub)
-        TRow = CSVOut.CsvSortRowDouble(CSVURL,"関与先コード","個人コード",wsNo,wsNoSub)
-        if TRow[0] == True:
-            TRowPer = TRow[1]
-            if TRowPer >= 19:
-                PDV = int(TRowPer/19)
-                for y in range(PDV):
-                    pg.press('pagedown')
-                time.sleep(1)
-                PDA = int(TRowPer - (PDV*19))
-                for y in range(PDA):
-                    pg.press('down')
-                time.sleep(1)
-                FMSAction(FolURL2,wsRow,PDV)                
-            else:
-                for y in range(TRowPer):
-                    pg.press('down')
-                time.sleep(1)
-                FMSAction(FolURL2,wsRow,0)
+        # TRow = CSVOut.CsvSortRowDouble(CSVURL,"関与先コード","個人コード",wsNo,wsNoSub)
+        TRow = CFM.CsvSortRowDouble(CSVURL,"関与先コード","個人コード",wsNo,wsNoSub)#CythonでC##実行
+        CFMA = CFM.PageDownLoop(TRow)#CythonでC##実行
+        if CFMA[0] == True:
+            FMSAction(FolURL2,wsRow,CFMA[1])
+        else:
+            FMSAction(FolURL2,wsRow,CFMA[1])
+        # if TRow[0] == True:
+        #     TRowPer = TRow[1]
+        #     if TRowPer >= 19:
+        #         PDV = int(TRowPer/19)
+        #         for y in range(PDV):
+        #             pg.press('pagedown')
+        #         time.sleep(1)
+        #         PDA = int(TRowPer - (PDV*19))
+        #         for y in range(PDA):
+        #             pg.press('down')
+        #         time.sleep(1)
+        #         FMSAction(FolURL2,wsRow,PDV)                
+        #     else:
+        #         for y in range(TRowPer):
+        #             pg.press('down')
+        #         time.sleep(1)
+        #         FMSAction(FolURL2,wsRow,0)
 #---------------------------------------------------------------------------------------------------------------------- 
 def MailAddAction(FolURL2,wsSousin,wsMail):
     if not wsSousin == '' or not wsMail == '':

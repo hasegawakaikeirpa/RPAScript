@@ -26,6 +26,15 @@ URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
+#メアド変更履歴をCSVアウト---------------------------------------------------------
+sql = 'SELECT * FROM m_kfmsrireki AS m WHERE NOT EXISTS (SELECT * FROM m_kfmsrireki AS s WHERE m.vc_FMSKnrCd = s.vc_FMSKnrCd AND m.in_RrkNo_pk < s.in_RrkNo_pk);'
+URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
+URL = URL.replace("\\","/")
+URL = "/" + URL
+SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
+SQDF.columns = ['行','in_RrkNo_pk','コード','個人名','関与先名','発送方法','送信方法','アドレス','課No','課','監査担当No','監査担当','サブNo','サブ','サブ2No','サブ2',\
+'送信方法2','アドレス2','送信方法3','アドレス3','送信方法4','アドレス4','送信方法5','アドレス5','cr_RecKbn','dt_InstDT','入力日時','入力ユーザー','変更前アドレス']
+SQDF.to_csv(URL, index = False)
 #人事異動をCSVアウト--------------------------------------------------------------
 sql = 'SELECT * FROM d_jnjido'
 URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\d_jnjido.csv"
