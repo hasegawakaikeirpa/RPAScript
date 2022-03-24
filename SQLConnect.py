@@ -122,10 +122,10 @@ def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,�
                     ParList.append("")
                 elif ColN == 'vc_KnrCd':
                     ParList.append(UDRowItem.replace("  ","").replace(" ",""))
-                elif ColN == 'in_RrkNo_pk':
+                elif ColN == 'in_RrkNo_pk' or ColN == 'cr_RecKbn':
                     ParList.append(UDRowItem + 1)
                 else:
-                    ParList.append(str(UDRowItem))
+                    ParList.append(str(UDRowItem).replace("\u3000"," ").replace("\u200b"," "))
             elif 'int' in SQLColP:
                 if UDRowItem == " ":
                     ParList.append("")
@@ -135,7 +135,7 @@ def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,�
                     ParList.append("")
                 elif ColN == 'vc_KnrCd':
                     ParList.append(UDRowItem.replace("  ","").replace(" ",""))
-                elif ColN == 'in_RrkNo_pk':
+                elif ColN == 'in_RrkNo_pk' or ColN == 'cr_RecKbn':
                     ParList.append(UDRowItem + 1)
                 else:
                     ParList.append(int(UDRowItem))
@@ -148,7 +148,7 @@ def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,�
                     ParList.append("")
                 elif ColN == 'vc_KnrCd':
                     ParList.append(UDRowItem.replace("  ","").replace(" ",""))
-                elif ColN == 'in_RrkNo_pk':
+                elif ColN == 'in_RrkNo_pk' or ColN == 'cr_RecKbn':
                     ParList.append(UDRowItem + 1)
                 else:
                     ParList.append(UDRowItem)

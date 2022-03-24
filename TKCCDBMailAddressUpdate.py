@@ -359,11 +359,94 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                     time.sleep(1)
     except:
         print(x + "エラー") 
-#----------------------------------------------------------------------------------------------------------------------     
+#---------------------------------------------------------------------------------------------------------------------- 
+def SQLIn(ws):
+    LenRow = np.array(ws).shape[0]#dfインスタンスの行数取得
+    ColNS = SQ.MysqlColumnPic('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8','m_kfmsrireki')
+    LenColNRow = np.array(ColNS).shape[0]#dfインスタンスの行数取得
+    ColN = []
+    for ColNSItem in ColNS[1]:
+        ColN.append(ColNSItem[0])
+    ParList = []
+    for x in range(LenRow):
+        wsRow = ws.iloc[x]#dfインスタンスの行データ
+        #WHERE社内コードでDBよりMAX(履歴No)を抽出-------------------------------------------------------------------------
+        Maxsql = "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = '" + str(wsRow['コード']) + "';" 
+        MaxRrkNo = SQ.MySQLGet('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',Maxsql)
+        if MaxRrkNo[0] == True:
+            print(MaxRrkNo[1])
+            if MaxRrkNo[1] == ((None,),):
+                MaxRrkNo = 1
+            else:
+                MaxRrkNo = int(MaxRrkNo[1]) + 1
+        else:
+            MaxRrkNo = 1
+        #-------------------------------------------------------------------------------------------------------------
+    #     #行データから変数格納-----------------------------------------------------------------------------------------
+        SQ.ChangeData('vc_gyou',ParList,"",'m_kfmsrireki')
+        SQ.ChangeData('in_RrkNo_pk',ParList,MaxRrkNo,'m_kfmsrireki')
+    #     wscd = wsRow['コード']
+        SQ.ChangeData('vc_FMSKnrCd',ParList,wsRow['コード'],'m_kfmsrireki')
+    #     wsName = wsRow['個人名']
+        SQ.ChangeData('vc_Name',ParList,wsRow['個人名'],'m_kfmsrireki')
+    #     wsKName = wsRow['関与先名']
+        SQ.ChangeData('vc_KName',ParList,wsRow['関与先名'],'m_kfmsrireki')
+    #     wsHassou = wsRow['発送方法']
+        SQ.ChangeData('vc_Hakkou',ParList,wsRow['発送方法'],'m_kfmsrireki')
+    #     wsSousin = wsRow['送信方法']
+        SQ.ChangeData('vc_SousinK',ParList,wsRow['送信方法'],'m_kfmsrireki')
+    #     wsAd = wsRow['アドレス']
+        SQ.ChangeData('vc_Mail',ParList,wsRow['アドレス'],'m_kfmsrireki')
+    #     wsKano = wsRow['課No']        
+        SQ.ChangeData('vc_BmnCd_pk',ParList,wsRow['課No'] ,'m_kfmsrireki')
+    #     wsKa = wsRow['課']
+        SQ.ChangeData('vc_BmnNm',ParList,wsRow['課'],'m_kfmsrireki')
+    #     wsTno = wsRow['監査担当No']
+        SQ.ChangeData('vc_KansaTantouNo',ParList,wsRow['監査担当No'],'m_kfmsrireki')
+    #     wsTname = wsRow['監査担当']
+        SQ.ChangeData('vc_KansaTantou',ParList,wsRow['監査担当'],'m_kfmsrireki')
+    #     wsSubTno = wsRow['サブNo']
+        SQ.ChangeData('vc_SubTantouNo',ParList,wsRow['サブNo'],'m_kfmsrireki')
+    #     wsSubTname = wsRow['サブ']
+        SQ.ChangeData('vc_SubTantou',ParList,wsRow['サブ'],'m_kfmsrireki')
+    #     wsSubTno = wsRow['サブ2No']
+        SQ.ChangeData('vc_Sub_SubTantouNo',ParList,wsRow['サブ2No'],'m_kfmsrireki')
+    #     wsSubTname = wsRow['サブ2']
+        SQ.ChangeData('vc_Sub_SubTantou',ParList,wsRow['サブ2'],'m_kfmsrireki')
+    #     wsSousin2 = wsRow['送信方法2']
+        SQ.ChangeData('vc_SousinK2',ParList,wsRow['送信方法2'],'m_kfmsrireki')
+    #     wsAd2 = wsRow['アドレス2']
+        SQ.ChangeData('vc_Mail2',ParList,wsRow['アドレス2'],'m_kfmsrireki')
+    #     wsSousin3 = wsRow['送信方法3']
+        SQ.ChangeData('vc_SousinK3',ParList,wsRow['送信方法3'],'m_kfmsrireki')
+    #     wsAd3 = wsRow['アドレス3']
+        SQ.ChangeData('vc_Mail3',ParList,wsRow['アドレス3'],'m_kfmsrireki')
+    #     wsSousin4 = wsRow['送信方法4']
+        SQ.ChangeData('vc_SousinK4',ParList,wsRow['送信方法4'],'m_kfmsrireki')
+    #     wsAd4 = wsRow['アドレス4']
+        SQ.ChangeData('vc_Mail4',ParList,wsRow['アドレス4'],'m_kfmsrireki')
+    #     wsSousin5 = wsRow['送信方法5']
+        SQ.ChangeData('vc_SousinK5',ParList,wsRow['送信方法5'],'m_kfmsrireki')
+    #     wsAd5 = wsRow['アドレス5']
+        SQ.ChangeData('vc_Mail5',ParList,wsRow['アドレス5'],'m_kfmsrireki')
+        SQ.ChangeData('cr_RecKbn',ParList,1,'m_kfmsrireki')
+    #     wsNyuu = wsRow['入力日時']
+        SQ.ChangeData('dt_InstDT',ParList,wsRow['入力日時'],'m_kfmsrireki')
+        SQ.ChangeData('dt_UpdtDT',ParList,"",'m_kfmsrireki')
+    #     wsUser = wsRow['入力ユーザー']
+        SQ.ChangeData('vc_inputuser',ParList,wsRow['入力ユーザー'],'m_kfmsrireki')
+    #     wsBeforeAdd = wsRow['変更前アドレス']
+        SQ.ChangeData('vc_beforeadd',ParList,wsRow['変更前アドレス'],'m_kfmsrireki')
+        #----------------------------------------------------------------------------------------------------------
+        ParList = str(ParList).replace('[','').replace(']','').replace('nan','')
+        ColN = str(ColN).replace('[','').replace(']','').replace("'",'')
+        sql = "INSERT INTO m_kfmsrireki (" + ColN + ") VALUES(" + ParList + ");"
+        SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)
+#     
 def MainFlow(FolURL2):
-    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
-    # driver = ""
+    # BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    # driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
+    driver = ""
     FolURL2 = FolURL2 + "/RPAPhoto/TKCCDBMailAddressUpdate"#RPA用画像保管フォルダを指定
     XlsmURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"#アドレス登録シートを指定
     XlsmURL = XlsmURL.replace("\\","/")#URLリネーム
@@ -388,6 +471,7 @@ def MainFlow(FolURL2):
     ws = ws.sort_values('入力日時', ascending=False)#入力日時順に並び替え
     ws = ws.drop_duplicates(subset='コード')#コードで重複削除
     print(ws)
+    SQLIn(ws)
     #---------------------------------------------------------------------------------------------------------------------- 
     CDBO = CDBOpen(FolURL2,Lday,driver,ws,XlsmURL)#CDBアクション開始
     if CDBO == True:
@@ -438,6 +522,7 @@ import CSVOut
 import ExcelFileAction as EF
 import calendar
 import pyperclip #クリップボードへのコピーで使用
+import SQLConnect as SQ
 #RPA用画像フォルダの作成-----------------------------------------------------------
 Lday = calendar.monthrange(dt.today().year,dt.today().month)
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
