@@ -379,7 +379,6 @@ def FMSAction(FolURL2,wsRow,PDV):
     wsMail4 = wsData.param['vc_Mail4']
     wsSousinK5 = wsData.param['vc_SousinK5']
     wsMail5 = wsData.param['vc_Mail5']
-
     LogList = [wsgyou,wsin_RrkNo_pk,wsHakkou]
     ImgClick(FolURL2,"Syuusei.png",0.9,1)
     while pg.locateOnScreen(FolURL2 + "/Syuusei.png",0.9) is not None:
@@ -480,7 +479,6 @@ def MainFlow(FolURL2):
     else:
         print('履歴にCDB状態データがありません')
 #----------------------------------------------------------------------------------------------------------------------     
-
 #RPA用画像フォルダの作成-----------------------------------------------------------
 Lday = calendar.monthrange(dt.today().year,dt.today().month)
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
