@@ -1,9 +1,6 @@
 ﻿#----------------------------------------------------------------------------------------------------------------------
 from turtle import down
-
 from sqlalchemy import false
-
-
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
