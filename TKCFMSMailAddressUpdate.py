@@ -325,18 +325,6 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
         if wsNo < 1000:
             wsNo = str(wsNo)
             wsNoSub = ''
-        # elif wsNo >= 1000 and wsNo < 2000 :
-        #     wsNoSub = str(wsNo)[2] + str(wsNo)[3]
-        #     wsNo = str(wsNo)[0] + str(wsNo)[1]
-        #     wsNo = f'{int(wsNo):03}'
-        # elif wsNo >= 4000 and wsNo < 5000 :
-        #     wsNoSub = str(wsNo)[2] + str(wsNo)[3]
-        #     wsNo = str(wsNo)[0] + str(wsNo)[1]
-        #     wsNo = f'{int(wsNo):03}'
-        # elif wsNo >= 9000 and wsNo < 10000 :
-        #     wsNoSub = str(wsNo)[2] + str(wsNo)[3]
-        #     wsNo = str(wsNo)[0] + str(wsNo)[1]
-        #     wsNo = f'{int(wsNo):03}'
         elif wsNo >= 10000 :
             wsNoSub = str(wsNo)[3] + str(wsNo)[4]
             wsNo = str(wsNo)[0] + str(wsNo)[1] + str(wsNo)[2]
@@ -354,23 +342,6 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
             FMSAction(FolURL2,wsRow,CFMA[1])
         else:
             FMSAction(FolURL2,wsRow,CFMA[1])
-        # if TRow[0] == True:
-        #     TRowPer = TRow[1]
-        #     if TRowPer >= 19:
-        #         PDV = int(TRowPer/19)
-        #         for y in range(PDV):
-        #             pg.press('pagedown')
-        #         time.sleep(1)
-        #         PDA = int(TRowPer - (PDV*19))
-        #         for y in range(PDA):
-        #             pg.press('down')
-        #         time.sleep(1)
-        #         FMSAction(FolURL2,wsRow,PDV)                
-        #     else:
-        #         for y in range(TRowPer):
-        #             pg.press('down')
-        #         time.sleep(1)
-        #         FMSAction(FolURL2,wsRow,0)
 #---------------------------------------------------------------------------------------------------------------------- 
 def MailAddAction(FolURL2,wsSousin,wsMail):
     if not wsSousin == '' or not wsMail == '':
