@@ -1,5 +1,6 @@
 ﻿import SQLConnect as SQ
 import pandas as pd
+
 #関与先データベースをCSVアウト-------------------------------------------------------
 sql = 'SELECT * FROM m_kkanyo'
 URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kkanyo.csv"

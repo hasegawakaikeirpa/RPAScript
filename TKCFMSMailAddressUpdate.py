@@ -45,6 +45,7 @@ import pyperclip #クリップボードへのコピーで使用
 from turtle import down
 from sqlalchemy import false
 import FMSMailHighSpeedFor as CFM
+import SQLCSVOUTFunction as SQLF
 #----------------------------------------------------------------------------------------------------------------------
 class Datas: #データクラス作成
     def __init__(self, param): 
@@ -324,22 +325,25 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
         if wsNo < 1000:
             wsNo = str(wsNo)
             wsNoSub = ''
-        elif wsNo >= 1000 and wsNo < 2000 :
-            wsNoSub = str(wsNo)[2] + str(wsNo)[3]
-            wsNo = str(wsNo)[0] + str(wsNo)[1]
-            wsNo = f'{int(wsNo):03}'
-        elif wsNo >= 4000 and wsNo < 5000 :
-            wsNoSub = str(wsNo)[2] + str(wsNo)[3]
-            wsNo = str(wsNo)[0] + str(wsNo)[1]
-            wsNo = f'{int(wsNo):03}'
-        elif wsNo >= 9000 and wsNo < 10000 :
-            wsNoSub = str(wsNo)[2] + str(wsNo)[3]
-            wsNo = str(wsNo)[0] + str(wsNo)[1]
-            wsNo = f'{int(wsNo):03}'
+        # elif wsNo >= 1000 and wsNo < 2000 :
+        #     wsNoSub = str(wsNo)[2] + str(wsNo)[3]
+        #     wsNo = str(wsNo)[0] + str(wsNo)[1]
+        #     wsNo = f'{int(wsNo):03}'
+        # elif wsNo >= 4000 and wsNo < 5000 :
+        #     wsNoSub = str(wsNo)[2] + str(wsNo)[3]
+        #     wsNo = str(wsNo)[0] + str(wsNo)[1]
+        #     wsNo = f'{int(wsNo):03}'
+        # elif wsNo >= 9000 and wsNo < 10000 :
+        #     wsNoSub = str(wsNo)[2] + str(wsNo)[3]
+        #     wsNo = str(wsNo)[0] + str(wsNo)[1]
+        #     wsNo = f'{int(wsNo):03}'
         elif wsNo >= 10000 :
             wsNoSub = str(wsNo)[3] + str(wsNo)[4]
             wsNo = str(wsNo)[0] + str(wsNo)[1] + str(wsNo)[2]
             wsNo = f'{int(wsNo):03}'
+        else:
+            wsNo = str(wsNo)
+            wsNoSub = ''
         #------------------------------------------------------------
         print(wsNo)
         print(wsNoSub)
@@ -453,6 +457,8 @@ def FMSAction(FolURL2,wsRow,PDV):
         USQL = "UPDATE m_kfmsrireki SET vc_gyou = '○' WHERE vc_FMSKnrCd = '" + wsKno + "' AND in_RrkNo_pk = " + str(wsin_RrkNo_pk).replace("'","") + ";"
         SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
         #-----------------------------------------------------------------------------------------
+        SQLF.MailListUp
+        SQLF.MailRirekiUp
     else:
         ICF = ImgCheck(FolURL2,"InsatuCheckBox.png",0.9,1)
         if ICF[0] == True:
@@ -480,6 +486,8 @@ def FMSAction(FolURL2,wsRow,PDV):
         USQL = "UPDATE m_kfmsrireki SET vc_gyou = '○' WHERE vc_FMSKnrCd = '" + wsKno + "' AND in_RrkNo_pk = " + str(wsin_RrkNo_pk).replace("'","") + ";"
         SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
         #----------------------------------------------------------------------------------------- 
+        SQLF.MailListUp
+        SQLF.MailRirekiUp
 #----------------------------------------------------------------------------------------------------------------------     
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
