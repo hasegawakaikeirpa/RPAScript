@@ -356,10 +356,13 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                 pg.press('delete')#CDBのアドレスを削除
                 #--------------------------------------------
                 time.sleep(1)
-                pyperclip.copy(wsAd)#クリップに変更後アドレスをコピー
-                pg.hotkey('ctrl','v')#CDBにペースト
-                pg.press('return')#確定
-                time.sleep(1)
+                if np.isnan(wsAd) == True:
+                    print('nan')
+                else:
+                    pyperclip.copy(wsAd)#クリップに変更後アドレスをコピー
+                    pg.hotkey('ctrl','v')#CDBにペースト
+                    pg.press('return')#確定
+                    time.sleep(1)
                 ImgClick(FolURL2,"InputEnd.png",0.9,5)#入力終了ボタンをクリック
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/CDBAddBtn.png",0.9) is None:
@@ -368,7 +371,8 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                 #CSVログに追加------------------------------------------------------------------------------------------------
                 USQL = "UPDATE m_kfmsrireki SET vc_gyou = 'CDB' WHERE vc_FMSKnrCd = '" + wscd + "';"
                 SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
-                SQC.MailRirekiUp()								
+                SQC.MailRirekiUp()
+                SQC.MailListUp()							
                 # LogMSG = ['CDB',wscd,wsName,wsKa,wsTno,wsTname,wsSubTno,wsSubTname,wsAd,wsHassou,wsNyuu,wsUser,wsDno,LostAdd]
                 # CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
                 time.sleep(1)
@@ -388,8 +392,11 @@ def SQLIn(ws):#Excelデータを履歴テーブルにインサート
         #-----------------------------------------------------------------------------------------------------------
         for x in range(LenRow):
             wsRow = ws.iloc[x]#dfインスタンスの行データ
+            wscd = wsRow['コード']
+            if int(wscd) < 100:
+                wscd = f'{wscd:03}'  
             #WHERE社内コードでDBよりMAX(履歴No)を抽出-------------------------------------------------------------------------
-            Maxsql = "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = '" + str(wsRow['コード']) + "';" 
+            Maxsql = "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = '" + wscd + "';" 
             MaxRrkNo = SQ.MySQLGet('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',Maxsql)
             if MaxRrkNo[0] == True:
                 print(MaxRrkNo[1])
@@ -403,9 +410,6 @@ def SQLIn(ws):#Excelデータを履歴テーブルにインサート
             #テーブルのデータ型に合わせて値を格納したリストを作成---------------------------------------------------------------
             SQ.ChangeData('vc_gyou',ParList,"",'m_kfmsrireki')
             ParList.append(MaxRrkNo)
-            wscd = wsRow['コード']
-            if int(wscd) < 100:
-                wscd = f'{wscd:03}'             
             SQ.ChangeData('vc_FMSKnrCd',ParList,wscd,'m_kfmsrireki')
             SQ.ChangeData('vc_Name',ParList,wsRow['個人名'],'m_kfmsrireki')
             SQ.ChangeData('vc_KName',ParList,wsRow['関与先名'],'m_kfmsrireki')
@@ -439,6 +443,8 @@ def SQLIn(ws):#Excelデータを履歴テーブルにインサート
             sql = "INSERT INTO m_kfmsrireki (" + ColN + ") VALUES(" + ParList + ");"
             SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)
             SQC.MailRirekiUp()
+            SQC.MailListUp()
+            ParList = []
         return True
     except:
         return False
