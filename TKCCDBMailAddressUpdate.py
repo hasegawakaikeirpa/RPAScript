@@ -250,9 +250,8 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
         #--------------------------------------------------------------------------------------------------------------
         LenRow = np.array(ws).shape[0]#dfインスタンスの行数取得
         for x in range(LenRow):
-            CSVURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\BACKUP\アドレス登録履歴\Log.csv"
+            CSVURL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
             CSVURL = CSVURL.replace("\\","/")#URLリネーム
-            CSVURL = "/" + CSVURL#URLリネーム
             LogList = CSVOut.CsvRead(CSVURL)
             wsRow = ws.iloc[x]#dfインスタンスの行データ
             #行データから変数格納----------------------------------------------------------------------------------------
@@ -420,14 +419,15 @@ def SQLIn(ws):#Excelデータを履歴テーブルにインサート
             ColN = str(ColN).replace('[','').replace(']','').replace("'",'')
             sql = "INSERT INTO m_kfmsrireki (" + ColN + ") VALUES(" + ParList + ");"
             SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)
+            SQC.MailRirekiUp()
         return True
     except:
         return False
 #----------------------------------------------------------------------------------------------------------------------     
 def MainFlow(FolURL2):
-    # BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    # driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
-    driver = ""
+    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
+    # driver = ""
     FolURL2 = FolURL2 + "/RPAPhoto/TKCCDBMailAddressUpdate"#RPA用画像保管フォルダを指定
     XlsmURL = "\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"#アドレス登録シートを指定
     XlsmURL = XlsmURL.replace("\\","/")#URLリネーム
@@ -507,6 +507,7 @@ import ExcelFileAction as EF
 import calendar
 import pyperclip #クリップボードへのコピーで使用
 import SQLConnect as SQ
+import SQLCSVOUTFunction as SQC
 #RPA用画像フォルダの作成-----------------------------------------------------------
 Lday = calendar.monthrange(dt.today().year,dt.today().month)
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
