@@ -384,8 +384,13 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                 # LogMSG = ['CDB',wscd,wsName,wsKa,wsTno,wsTname,wsSubTno,wsSubTname,wsAd,wsHassou,wsNyuu,wsUser,wsDno,LostAdd]
                 # CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
                 time.sleep(1)
+                return True
+            else:
+                print(wscd + "エラー") 
+                return True
     except:
         print(x + "エラー") 
+        return False
 #---------------------------------------------------------------------------------------------------------------------- 
 def SQLIn(ws):#Excelデータを履歴テーブルにインサート
     try:

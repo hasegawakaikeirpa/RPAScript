@@ -375,8 +375,7 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
 def MailAddAction(FolURL2,wsSousin,wsMail):
     if not wsSousin == '' or not wsMail == '':
         pg.press('return')
-        while pg.locateOnScreen(FolURL2 + '/CheckingTo.png',0.9) is None:
-            time.sleep(1)
+        time.sleep(2)
         pg.press('down')
         if wsSousin == 'To':
             pg.press('t')
@@ -441,24 +440,29 @@ def FMSAction(FolURL2,wsRow,PDV):
 #----------------------------------------------------------------------------------------- 
         time.sleep(1)       
         ImgClick(FolURL2,"NyuuryokuEnd.png",0.9,1)
-        CsvL = CSVOut.CsvRead(FolURL2 + "/LogList.CSV")
-        CSVOut.CsvPlus(FolURL2 + "/LogList.CSV",CsvL[1],LogList)
         time.sleep(1)
-        while pg.locateOnScreen(FolURL2 + "/Kakunin.png",0.9) is None:
+        MAE = ImgCheck(FolURL2,'MAddErr.png',0.9,5)
+        if MAE[0] == True:
+            CsvL = CSVOut.CsvRead(FolURL2 + "/LogList.CSV")
+            CSVOut.CsvPlus(FolURL2 + "/LogList.CSV",CsvL[1],LogList)
             time.sleep(1)
-        time.sleep(1)
-        pg.press('y')
-        while pg.locateOnScreen(FolURL2 + "/EndFlag.png",0.9) is not None:
+            while pg.locateOnScreen(FolURL2 + "/Kakunin.png",0.9) is None:
+                time.sleep(1)
             time.sleep(1)
-        for x in range(PDV + 1):
-            pg.press('pageup')
-        time.sleep(1)
-        #履歴データベースを更新---------------------------------------------------------------------
-        USQL = "UPDATE m_kfmsrireki SET vc_gyou = '○' WHERE vc_FMSKnrCd = '" + wsKno + "' AND in_RrkNo_pk = " + str(wsin_RrkNo_pk).replace("'","") + ";"
-        SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
-        #-----------------------------------------------------------------------------------------
-        SQLF.MailListUp
-        SQLF.MailRirekiUp
+            pg.press('y')
+            while pg.locateOnScreen(FolURL2 + "/EndFlag.png",0.9) is not None:
+                time.sleep(1)
+            for x in range(PDV + 1):
+                pg.press('pageup')
+            time.sleep(1)
+            #履歴データベースを更新---------------------------------------------------------------------
+            USQL = "UPDATE m_kfmsrireki SET vc_gyou = '○' WHERE vc_FMSKnrCd = '" + wsKno + "' AND in_RrkNo_pk = " + str(wsin_RrkNo_pk).replace("'","") + ";"
+            SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
+            #-----------------------------------------------------------------------------------------
+            SQLF.MailListUp
+            SQLF.MailRirekiUp
+        else:
+            print("メールアドレスが不正です。")
     else:
         ICF = ImgCheck(FolURL2,"InsatuCheckBox.png",0.9,1)
         if ICF[0] == True:
