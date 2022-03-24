@@ -58,7 +58,7 @@
             H_H1 = H_driver.find_element_by_xpath("/html/body/div[1]/div[2]/form/h1")#H1要素を取得
             return H_H1.text,H_driver
         except Exception:
-            H_H1 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a/p")#H1要素を取得
+            H_H1 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#H1要素を取得
             return H_H1.text,H_driver
     else:
         pass
@@ -118,10 +118,10 @@ def PrintIFS(H_Title,H_driver):
     return "印刷完了"
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 def LogReturn(LogAns,H_driver):
-    if LogAns == 'ログインしている利用者あてのメッセージを照会します。':#ログイン成功の場合
+    if LogAns == 'ログインしている利用者あてのメッセージを照会します。' or LogAns == 'メッセージ照会':#ログイン成功の場合
         #WEB画面要素指定------------------------------------------------------------------------------------------------------
         try:
-            H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a")
+            H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#"/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a"
             H_MSG_OpenMyNo.click()
             WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
             # H_Today = dt.today() + relativedelta(months=-1)
