@@ -252,110 +252,126 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
         for x in range(LenRow):
             CSVURL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
             CSVURL = CSVURL.replace("\\","/")#URLリネーム
+            CSVURL = "/" + CSVURL
             LogList = CSVOut.CsvRead(CSVURL)
             wsRow = ws.iloc[x]#dfインスタンスの行データ
             #行データから変数格納----------------------------------------------------------------------------------------
-            wsgyo = wsRow['行']
             wscd = wsRow['コード']
-            wsName = wsRow['関与先名']
-            wsKa = wsRow['課']
-            wsTno = wsRow['No.']
-            wsTname = wsRow['監査担当']
-            wsSubTno = wsRow['サブNo.']
-            wsSubTname = wsRow['会計サブ']
-            wsAd = wsRow['アドレス']
+            wsName = wsRow['個人名']
+            wsKName = wsRow['関与先名']
             wsHassou = wsRow['発送方法']
+            wsSousin = wsRow['送信方法']
+            wsAd = wsRow['アドレス']
+            wsKano = wsRow['課No']
+            wsKa = wsRow['課']
+            wsTno = wsRow['監査担当No']
+            wsTname = wsRow['監査担当']
+            wsSubTno = wsRow['サブNo']
+            wsSubTname = wsRow['サブ']
+            wsSubTno2 = wsRow['サブ2No']
+            wsSubTname2 = wsRow['サブ2']            
+            wsSousin2 = wsRow['送信方法2']
+            wsAd2 = wsRow['アドレス2']
+            wsSousin3 = wsRow['送信方法3']
+            wsAd3 = wsRow['アドレス3']
+            wsSousin4 = wsRow['送信方法4']
+            wsAd4 = wsRow['アドレス4']
+            wsSousin5 = wsRow['送信方法5']
+            wsAd5 = wsRow['アドレス5']
+            #,ParList,0
+            #,ParList,"",'m_kfmsrireki')
             wsNyuu = wsRow['入力日時']
             wsUser = wsRow['入力ユーザー']
-            wsDno = wsRow['データNo']
+            wsDno = wsRow['変更前アドレス']
             #----------------------------------------------------------------------------------------------------------
-            COF = CSVOutFind(wsRow,LogList[1])#登録ログに同一データがないかチェック
-            if COF == False:#登録ログに同一データがければCDB登録
-                ImgClick(FolURL2,"JimusyoCD.png",0.9,5)#事務所コードボックスをクリック
+            ImgClick(FolURL2,"JimusyoCD.png",0.9,5)#事務所コードボックスをクリック
+            time.sleep(1)
+            #所内コードに応じて処理分け-----------------------------------------------------------------------------------
+            if int(wscd) >= 0 and int(wscd) < 1000:
+                #----------------------------------------------------------------------------------------------------------
+                NList = ["05121.png","05121b.png"]
+                ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                if ICFL[0] == True:
+                    ImgClick(FolURL2,ICFL[1],0.9,1)
+                    if int(wscd) < 100:
+                        wscd = f'{wscd:03}' 
+                #----------------------------------------------------------------------------------------------------------
+            elif int(wscd) >= 4000 and int(wscd) < 5000:
+                NList = ["05371.png","05371b.png"]
+                ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                if ICFL[0] == True:
+                    ImgClick(FolURL2,ICFL[1],0.9,1)
+                    wscd = int(wscd)-4000
+                    if int(wscd) < 100:
+                        wscd = f'{wscd:03}' 
+                #----------------------------------------------------------------------------------------------------------
+            elif int(wscd) >= 1000 and int(wscd) < 4000:
+                NList = ["15180.png","15180b.png"]
+                ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                if ICFL[0] == True:
+                    ImgClick(FolURL2,ICFL[1],0.9,1)
+                    wscd = int(wscd)-1000
+                    if int(wscd) < 100:
+                        wscd = f'{wscd:03}' 
+                #----------------------------------------------------------------------------------------------------------
+            elif int(wscd) >= 9000 and int(wscd) < 9999:
+                NList = ["99999.png","99999b.png"]
+                ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                if ICFL[0] == True:
+                    ImgClick(FolURL2,ICFL[1],0.9,1)
+                    wscd = int(wscd)-9000
+                    if int(wscd) < 100:
+                        wscd = f'{wscd:03}' 
+                #----------------------------------------------------------------------------------------------------------
+            elif int(wscd) >= 10000:
+                NList = ["05121.png","05121b.png"]
+                ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                if ICFL[0] == True:
+                    ImgClick(FolURL2,ICFL[1],0.9,1)
+            #--------------------------------------------------------------------------------------------------------------
+            time.sleep(2)
+            pg.write(str(wscd))#TKC用に変換した関与先コードを入力
+            pg.press('return')#確定
+            time.sleep(1)
+            while pg.locateOnScreen(FolURL2 + "/CDBAddBtn.png",0.9) is None:#追加・修正ボタン表示まで待機
                 time.sleep(1)
-                #所内コードに応じて処理分け-----------------------------------------------------------------------------------
-                if int(wscd) >= 0 and int(wscd) < 1000:
-                    #----------------------------------------------------------------------------------------------------------
-                    NList = ["05121.png","05121b.png"]
-                    ICFL = ImgCheckForList(FolURL2,NList,0.9)
-                    if ICFL[0] == True:
-                        ImgClick(FolURL2,ICFL[1],0.9,1)
-                        if int(wscd) < 100:
-                            wscd = f'{wscd:03}' 
-                    #----------------------------------------------------------------------------------------------------------
-                elif int(wscd) >= 4000 and int(wscd) < 5000:
-                    NList = ["05371.png","05371b.png"]
-                    ICFL = ImgCheckForList(FolURL2,NList,0.9)
-                    if ICFL[0] == True:
-                        ImgClick(FolURL2,ICFL[1],0.9,1)
-                        wscd = int(wscd)-4000
-                        if int(wscd) < 100:
-                            wscd = f'{wscd:03}' 
-                    #----------------------------------------------------------------------------------------------------------
-                elif int(wscd) >= 1000 and int(wscd) < 4000:
-                    NList = ["15180.png","15180b.png"]
-                    ICFL = ImgCheckForList(FolURL2,NList,0.9)
-                    if ICFL[0] == True:
-                        ImgClick(FolURL2,ICFL[1],0.9,1)
-                        wscd = int(wscd)-1000
-                        if int(wscd) < 100:
-                            wscd = f'{wscd:03}' 
-                    #----------------------------------------------------------------------------------------------------------
-                elif int(wscd) >= 9000 and int(wscd) < 9999:
-                    NList = ["99999.png","99999b.png"]
-                    ICFL = ImgCheckForList(FolURL2,NList,0.9)
-                    if ICFL[0] == True:
-                        ImgClick(FolURL2,ICFL[1],0.9,1)
-                        wscd = int(wscd)-9000
-                        if int(wscd) < 100:
-                            wscd = f'{wscd:03}' 
-                    #----------------------------------------------------------------------------------------------------------
-                elif int(wscd) >= 10000:
-                    NList = ["05121.png","05121b.png"]
-                    ICFL = ImgCheckForList(FolURL2,NList,0.9)
-                    if ICFL[0] == True:
-                        ImgClick(FolURL2,ICFL[1],0.9,1)
-                #--------------------------------------------------------------------------------------------------------------
-                time.sleep(2)
-                pg.write(str(wscd))#TKC用に変換した関与先コードを入力
+            time.sleep(1)
+            ImgClick(FolURL2,"CDBAddBtn.png",0.9,5)#追加・修正ボタンクリック
+            time.sleep(1)
+            while pg.locateOnScreen(FolURL2 + "/InputEnd.png",0.9) is None:#入力終了ボタン表示まで待機
+                time.sleep(1)
+            time.sleep(1)
+            if int(wscd) >= 10000:
+                EMI = ImgCheck(FolURL2,"EMailIconK.png",0.9,5)#EMAILテキストボックス画像を判定
+            else:
+                EMI = ImgCheck(FolURL2,"EMailIcon.png",0.9,5)#EMAILテキストボックス画像を判定
+            if EMI[0] == True:
+                pg.click(EMI[1] + 100,EMI[2])#EMAILテキストボックス画像中央より右+100座標をクリック
+                time.sleep(1)
+                #変更前アドレスを保存して削除--------------------
+                pyperclip.copy("")#クリップクリア
+                pg.hotkey('ctrl','a')#テキスト全選択
+                pg.hotkey('ctrl','c')#クリップにコピー
+                LostAdd = pyperclip.paste()#変更前アドレスを保管
+                pg.press('delete')#CDBのアドレスを削除
+                #--------------------------------------------
+                time.sleep(1)
+                pyperclip.copy(wsAd)#クリップに変更後アドレスをコピー
+                pg.hotkey('ctrl','v')#CDBにペースト
                 pg.press('return')#確定
                 time.sleep(1)
-                while pg.locateOnScreen(FolURL2 + "/CDBAddBtn.png",0.9) is None:#追加・修正ボタン表示まで待機
+                ImgClick(FolURL2,"InputEnd.png",0.9,5)#入力終了ボタンをクリック
+                time.sleep(1)
+                while pg.locateOnScreen(FolURL2 + "/CDBAddBtn.png",0.9) is None:
                     time.sleep(1)
                 time.sleep(1)
-                ImgClick(FolURL2,"CDBAddBtn.png",0.9,5)#追加・修正ボタンクリック
+                #CSVログに追加------------------------------------------------------------------------------------------------
+                USQL = "UPDATE m_kfmsrireki SET vc_gyou = 'CDB' WHERE vc_FMSKnrCd = '" + wscd + "';"
+                SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
+                SQC.MailRirekiUp()								
+                # LogMSG = ['CDB',wscd,wsName,wsKa,wsTno,wsTname,wsSubTno,wsSubTname,wsAd,wsHassou,wsNyuu,wsUser,wsDno,LostAdd]
+                # CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
                 time.sleep(1)
-                while pg.locateOnScreen(FolURL2 + "/InputEnd.png",0.9) is None:#入力終了ボタン表示まで待機
-                    time.sleep(1)
-                time.sleep(1)
-                if int(wscd) >= 10000:
-                    EMI = ImgCheck(FolURL2,"EMailIconK.png",0.9,5)#EMAILテキストボックス画像を判定
-                else:
-                    EMI = ImgCheck(FolURL2,"EMailIcon.png",0.9,5)#EMAILテキストボックス画像を判定
-                if EMI[0] == True:
-                    pg.click(EMI[1] + 100,EMI[2])#EMAILテキストボックス画像中央より右+100座標をクリック
-                    time.sleep(1)
-                    #変更前アドレスを保存して削除--------------------
-                    pyperclip.copy("")#クリップクリア
-                    pg.hotkey('ctrl','a')#テキスト全選択
-                    pg.hotkey('ctrl','c')#クリップにコピー
-                    LostAdd = pyperclip.paste()#変更前アドレスを保管
-                    pg.press('delete')#CDBのアドレスを削除
-                    #--------------------------------------------
-                    time.sleep(1)
-                    pyperclip.copy(wsAd)#クリップに変更後アドレスをコピー
-                    pg.hotkey('ctrl','v')#CDBにペースト
-                    pg.press('return')#確定
-                    time.sleep(1)
-                    ImgClick(FolURL2,"InputEnd.png",0.9,5)#入力終了ボタンをクリック
-                    time.sleep(1)
-                    while pg.locateOnScreen(FolURL2 + "/CDBAddBtn.png",0.9) is None:
-                        time.sleep(1)
-                    time.sleep(1)
-                    #CSVログに追加------------------------------------------------------------------------------------------------								
-                    LogMSG = ['CDB',wscd,wsName,wsKa,wsTno,wsTname,wsSubTno,wsSubTname,wsAd,wsHassou,wsNyuu,wsUser,wsDno,LostAdd]
-                    CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
-                    time.sleep(1)
     except:
         print(x + "エラー") 
 #---------------------------------------------------------------------------------------------------------------------- 
@@ -387,7 +403,10 @@ def SQLIn(ws):#Excelデータを履歴テーブルにインサート
             #テーブルのデータ型に合わせて値を格納したリストを作成---------------------------------------------------------------
             SQ.ChangeData('vc_gyou',ParList,"",'m_kfmsrireki')
             ParList.append(MaxRrkNo)
-            SQ.ChangeData('vc_FMSKnrCd',ParList,wsRow['コード'],'m_kfmsrireki')
+            wscd = wsRow['コード']
+            if int(wscd) < 100:
+                wscd = f'{wscd:03}'             
+            SQ.ChangeData('vc_FMSKnrCd',ParList,wscd,'m_kfmsrireki')
             SQ.ChangeData('vc_Name',ParList,wsRow['個人名'],'m_kfmsrireki')
             SQ.ChangeData('vc_KName',ParList,wsRow['関与先名'],'m_kfmsrireki')
             SQ.ChangeData('vc_Hakkou',ParList,wsRow['発送方法'],'m_kfmsrireki')
