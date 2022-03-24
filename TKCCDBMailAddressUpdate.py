@@ -356,13 +356,21 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                 pg.press('delete')#CDBのアドレスを削除
                 #--------------------------------------------
                 time.sleep(1)
-                if np.isnan(wsAd) == True:
-                    print('nan')
-                else:
+                #アドレスがnanか判定して処理分け--------------------------------------------
+                try:
+                    if np.isnan(wsAd) == True:
+                        print('nan')
+                    else:
+                        pyperclip.copy(wsAd)#クリップに変更後アドレスをコピー
+                        pg.hotkey('ctrl','v')#CDBにペースト
+                        pg.press('return')#確定
+                        time.sleep(1)
+                except:
                     pyperclip.copy(wsAd)#クリップに変更後アドレスをコピー
                     pg.hotkey('ctrl','v')#CDBにペースト
                     pg.press('return')#確定
                     time.sleep(1)
+                #------------------------------------------------------------------------                    
                 ImgClick(FolURL2,"InputEnd.png",0.9,5)#入力終了ボタンをクリック
                 time.sleep(1)
                 while pg.locateOnScreen(FolURL2 + "/CDBAddBtn.png",0.9) is None:
