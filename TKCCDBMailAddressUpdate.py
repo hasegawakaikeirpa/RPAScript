@@ -552,9 +552,6 @@ def MainFlow(FolURL2):
         print('履歴テーブル登録失敗')
 #----------------------------------------------------------------------------------------------------------------------     
 #RPA用画像フォルダの作成-----------------------------------------------------------
-
-logger.debug("CDBログインOK")
-
 Lday = calendar.monthrange(dt.today().year,dt.today().month)
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先
