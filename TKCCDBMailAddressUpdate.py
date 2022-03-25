@@ -515,6 +515,7 @@ def MainFlow(FolURL2):
     XlsmURL = XlsmURL.replace("\\","/")#URLリネーム
     XlsmURL = "/" + XlsmURL#URLリネーム
     #エクセルブックを読込------------------------------------------------------------------------------------------------
+    logger.debug("エクセルブックを読込")
     XlsmList = EF.XlsmRead(XlsmURL)
     input_book = XlsmList[1]
     #sheet_namesメソッドでExcelブック内の各シートの名前をリストで取得できる
@@ -534,15 +535,20 @@ def MainFlow(FolURL2):
     ws = ws.sort_values('入力日時', ascending=False)#入力日時順に並び替え
     ws = ws.drop_duplicates(subset='コード')#コードで重複削除
     print(ws)
+    logger.debug("Excelデータを履歴テーブルにインサート")
     SQI = SQLIn(ws)
     #---------------------------------------------------------------------------------------------------------------------- 
     if SQI == True:
+        logger.debug("CDBアクション開始")
         CDBO = CDBOpen(FolURL2,Lday,driver,ws,XlsmURL)#CDBアクション開始
         if CDBO == True:
+            logger.debug("CDBログインOK")
             print('CDBログインOK')
         else:
+            logger.debug("CDBログイン失敗")
             print('CDBログイン失敗')
     else:
+        logger.debug("履歴テーブル登録失敗")
         print('履歴テーブル登録失敗')
 #----------------------------------------------------------------------------------------------------------------------     
 #RPA用画像フォルダの作成-----------------------------------------------------------
