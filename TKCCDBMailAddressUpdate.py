@@ -377,7 +377,7 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                 USQL = "UPDATE m_kfmsrireki SET vc_gyou = 'CDB' WHERE vc_FMSKnrCd = '" + wscd + "';"
                 SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
                 SQC.MailRirekiUp()
-                SQC.MailListUp()							
+                SQC.MailListUp()					
                 # LogMSG = ['CDB',wscd,wsName,wsKa,wsTno,wsTname,wsSubTno,wsSubTname,wsAd,wsHassou,wsNyuu,wsUser,wsDno,LostAdd]
                 # CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
                 time.sleep(1)

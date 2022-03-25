@@ -1,3 +1,15 @@
+#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+from selenium.webdriver.common.keys import Keys
+#loggerインポート
+from logging import getLogger
+logger = getLogger(__name__)
+
 def ExeOpen(AppURL):#URL指定でアプリ起動関数
     subprocess.Popen(AppURL)
 #----------------------------------------------------------------------------------------------------------------------
@@ -88,11 +100,14 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
     desired_caps = {}
     desired_caps["app"] = "Root"#Rootを指定してDriverTargetをデスクトップに
     driver = webdriver.Remote('http://127.0.0.1:4724',desired_caps,direct_connection=True)#ポート指定してDriverインスタンス化
-
+    logger.info("Appiumサーバー起動: info level log")
+    logger.debug("Appiumサーバー起動: debug level log")
     #----------------------------------------------------------------------------------------------------------------------
-    #OMSを起動-------------------------------------------------------------------------------------------------------------
+    #MJSを起動-------------------------------------------------------------------------------------------------------------
     MJSURL = "C:\Program Files (x86)\MJS\MJSNXSVA\MJSDesktopNX.exe"
     ExeOpen(MJSURL)
+    logger.info("MJS起動: info level log")
+    logger.debug("MJS起動: debug level log")
     FolURL2 = FolURL2 + "/" + ImgFolName
     #time.sleep(10)
     #画像が出現するまで待機-------------------------------------------------------------------------------------------
@@ -110,17 +125,8 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
             ImgClick(FolURL2,"MJSOsiraseClose.png",conf,LoopVal)#お知らせ画面があれば閉じるボタンをクリック
             return driver
         else:
-            print("起動しました。")
+            logger.info("MJSログイン完了: info level log")
+            logger.debug("MJSログイン完了: debug level log")
             return driver
     time.sleep(1)
     #----------------------------------------------------------------------------------------------------------------------
-
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-
-from selenium.webdriver.common.keys import Keys
