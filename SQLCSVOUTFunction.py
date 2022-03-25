@@ -1,5 +1,9 @@
 ﻿import SQLConnect as SQ
 import pandas as pd
+#loggerインポート
+from logging import getLogger
+logger = getLogger()
+
 def KanyoUp():
         #関与先データベースをCSVアウト-------------------------------------------------------
         sql = 'SELECT * FROM m_kkanyo'
@@ -8,6 +12,7 @@ def KanyoUp():
         URL = "/" + URL
         SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
         SQDF.to_csv(URL, index = False)
+        logger.debug("関与先データベースをCSVアウト: debug level log")
 def SyainUp():
         #社員情報をCSVアウト----------------------------------------------------------------
         sql = 'SELECT * FROM m_syain'
@@ -16,6 +21,7 @@ def SyainUp():
         URL = "/" + URL
         SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
         SQDF.to_csv(URL, index = False)
+        logger.debug("社員情報をCSVアウト: debug level log")
 def MailListUp():
         #FMSMAILLISTをCSVアウト------------------------------------------------------------
         WithA = "WITH SubFMS AS (SELECT * FROM m_kfmsmail WHERE cr_RecKbn = '0' GROUP BY vc_FMSKnrCd),"
@@ -29,6 +35,7 @@ def MailListUp():
         URL = "/" + URL
         SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
         SQDF.to_csv(URL, index = False)
+        logger.debug("FMSMAILLISTをCSVアウト: debug level log")
 def MailRirekiUp():
         #メアド変更履歴をCSVアウト---------------------------------------------------------
         sql = 'SELECT * FROM m_kfmsrireki AS m WHERE NOT EXISTS (SELECT * FROM m_kfmsrireki AS s WHERE m.vc_FMSKnrCd = s.vc_FMSKnrCd AND m.in_RrkNo_pk < s.in_RrkNo_pk);'
@@ -39,6 +46,7 @@ def MailRirekiUp():
         SQDF.columns = ['行','in_RrkNo_pk','コード','個人名','関与先名','発送方法','送信方法','アドレス','課No','課','監査担当No','監査担当','サブNo','サブ','サブ2No','サブ2',\
         '送信方法2','アドレス2','送信方法3','アドレス3','送信方法4','アドレス4','送信方法5','アドレス5','cr_RecKbn','dt_InstDT','入力日時','入力ユーザー','変更前アドレス']
         SQDF.to_csv(URL, index = False)
+        logger.debug("メアド変更履歴をCSVアウト: debug level log")
 def JinjiIdo():
         #人事異動をCSVアウト--------------------------------------------------------------
         sql = 'SELECT * FROM d_jnjido'
@@ -47,6 +55,7 @@ def JinjiIdo():
         URL = "/" + URL
         SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
         SQDF.to_csv(URL, index = False)
+        logger.debug("人事異動をCSVアウト: debug level log")
 def JinjiIdoSyain():
         #人事異動を考慮した社員情報一覧をCSVアウト------------------------------------------
         WithA = "WITH SubMax AS (SELECT vc_SyainCd_pk ,MAX(in_IdoNo_pk) As MaxIdoNo,Max(d_jnjido.in_RrkNo_pk) As MaxRrkNo \
@@ -67,3 +76,4 @@ def JinjiIdoSyain():
         URL = "/" + URL
         SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
         SQDF.to_csv(URL, index = False)
+        logger.debug("人事異動を考慮した社員情報一覧をCSVアウト: debug level log")

@@ -2,8 +2,12 @@
 import PyPDF2
 import time
 from time import time
-
 from pyparsing import And
+#logger設定------------------------------------------------------------------------------------------------------------
+import logging.config
+logging.config.fileConfig("logging_debug.conf")
+logger = logging.getLogger(__name__)
+#----------------------------------------------------------------------------------------------------------------------
 
 def SerchdirFolders(URL):
     List = []
@@ -140,10 +144,13 @@ def MergeFilsT(URL):
         except:
             print('多分誰かがいじってる')
     SerchNonPDF(URL)
-
 URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-3\\送信分受信通知"
 # URL = "//Sv05121a/e/電子ファイル/メッセージボックス/2022-2/eLTAX"
 # URL = "\\\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\eLTAX"
-
-MergeFilsT(URL)
+try:
+    logger.debug(URL + "内のPDF結合開始")
+    MergeFilsT(URL)
+    logger.debug(URL + "内のPDF結合完了")
+except Exception as e:
+    logger.debug("エラー終了" + e)
 #SerchNonPDF(URL)

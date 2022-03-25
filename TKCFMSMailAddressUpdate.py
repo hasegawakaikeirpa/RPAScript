@@ -46,6 +46,9 @@ from turtle import down
 from sqlalchemy import false
 import FMSMailHighSpeedFor as CFM
 import SQLCSVOUTFunction as SQLF
+import logging.config
+logging.config.fileConfig("logging_debug.conf")
+logger = logging.getLogger(__name__)
 #----------------------------------------------------------------------------------------------------------------------
 class Datas: #データクラス作成
     def __init__(self, param): 
@@ -467,16 +470,20 @@ def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"
-
+    logger.debug("履歴DBより登録状況がCDBの物のみ抽出")
     ReSQL = "SELECT * FROM m_kfmsrireki WHERE vc_gyou = 'CDB';"
     df_Rereki = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',ReSQL)
     if df_Rereki[0] == True:
+        logger.debug("FMSの処理開始")
         FMSO = FMSOpen(FolURL2,Lday,driver)
         if FMSO == True:
             FirstAction(FolURL2,FolURL2 + "/MAILLIST.CSV",df_Rereki[1],driver)
+            logger.debug("FMSの処理完了")
         else:
             print('FMSログイン失敗')
+            logger.debug("FMSログイン失敗")
     else:
+        logger.debug("履歴にCDB状態データがありません")
         print('履歴にCDB状態データがありません')
 #----------------------------------------------------------------------------------------------------------------------     
 #RPA用画像フォルダの作成-----------------------------------------------------------
