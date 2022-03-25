@@ -434,6 +434,7 @@ def FMSAction(FolURL2,wsRow,PDV):
             #-----------------------------------------------------------------------------------------
             SQLF.MailListUp
             SQLF.MailRirekiUp
+            time.sleep(1)       
         else:
             print("メールアドレスが不正です。")
     else:
@@ -478,6 +479,13 @@ def MainFlow(FolURL2,Lday,driver):
         FMSO = FMSOpen(FolURL2,Lday,driver)
         if FMSO == True:
             FirstAction(FolURL2,FolURL2 + "/MAILLIST.CSV",df_Rereki[1],driver)
+            time.sleep(1)
+            ImgClick(FolURL2,"FullMenu.png",0.9,10)
+            time.sleep(2)
+            ImgClick(FolURL2,"F10End.png",0.9,10)  
+            time.sleep(2)
+            while pg.locateOnScreen(FolURL2 + "/OMSTitle.png",0.9) is None:
+                time.sleep(1) 
             logger.debug("FMSの処理完了")
         else:
             print('FMSログイン失敗')
