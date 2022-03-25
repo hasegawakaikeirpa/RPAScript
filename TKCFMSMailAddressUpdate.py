@@ -466,7 +466,7 @@ def FMSAction(FolURL2,wsRow,PDV):
         SQLF.MailListUp
         SQLF.MailRirekiUp
 #----------------------------------------------------------------------------------------------------------------------     
-def MainFlow(FolURL2):
+def MainFlow(FolURL2,Lday):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"
@@ -485,13 +485,14 @@ def MainFlow(FolURL2):
     else:
         logger.debug("履歴にCDB状態データがありません")
         print('履歴にCDB状態データがありません')
-#----------------------------------------------------------------------------------------------------------------------     
-#RPA用画像フォルダの作成-----------------------------------------------------------
-Lday = calendar.monthrange(dt.today().year,dt.today().month)
-FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-FolURL2 = os.getcwd().replace('\\','/')#先
-#--------------------------------------------------------------------------------
-try:
-    MainFlow(FolURL2)
-except:
-    traceback.print_exc()
+#----------------------------------------------------------------------------------------------------------------------
+def AllMain():
+    #RPA用画像フォルダの作成-----------------------------------------------------------
+    Lday = calendar.monthrange(dt.today().year,dt.today().month)
+    FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
+    FolURL2 = os.getcwd().replace('\\','/')#先
+    #--------------------------------------------------------------------------------
+    try:
+        MainFlow(FolURL2,Lday)
+    except:
+        traceback.print_exc()
