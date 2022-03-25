@@ -1,2 +1,17 @@
-[2022/03/25 14:18:54][INFO](sample copy.py:7) info level log
-[2022/03/25 14:18:54][DEBUG](sample copy.py:8) debug level log
+[2022/03/25 15:44:13][DEBUG](MJSOpen.py:99) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/03/25 15:44:13][DEBUG](MJSOpen.py:103) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/03/25 15:44:13][DEBUG](MJSOpen.py:107) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/03/25 15:44:47][INFO](MJS_DensiSinkoku.py:847) 'bool' object is not subscriptable MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/03/25 15:44:47][DEBUG](MJS_DensiSinkoku.py:848) 'bool' object is not subscriptable MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/03/25 16:07:33][DEBUG](SQLConnect.py:43) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\SQLConnect.py
+[2022/03/25 16:07:33][DEBUG](SQLCSVOUT.py:15) 関与先データベースをCSVアウト完了: debug level log <module> d:\PythonScript\RPAScript\SQLCSVOUT.py
+[2022/03/25 16:07:33][DEBUG](SQLConnect.py:43) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\SQLConnect.py
+[2022/03/25 16:07:33][DEBUG](SQLCSVOUT.py:23) 社員情報をCSVアウト完了: debug level log <module> d:\PythonScript\RPAScript\SQLCSVOUT.py
+[2022/03/25 16:07:34][DEBUG](SQLConnect.py:43) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\SQLConnect.py
+[2022/03/25 16:07:34][DEBUG](SQLCSVOUT.py:36) FMSMAILLISTをCSVアウト完了: debug level log <module> d:\PythonScript\RPAScript\SQLCSVOUT.py
+[2022/03/25 16:07:34][DEBUG](SQLConnect.py:43) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\SQLConnect.py
+[2022/03/25 16:07:34][DEBUG](SQLCSVOUT.py:46) メアド変更履歴をCSVアウト完了: debug level log <module> d:\PythonScript\RPAScript\SQLCSVOUT.py
+[2022/03/25 16:07:34][DEBUG](SQLConnect.py:43) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\SQLConnect.py
+[2022/03/25 16:07:34][DEBUG](SQLCSVOUT.py:54) 人事異動をCSVアウト完了: debug level log <module> d:\PythonScript\RPAScript\SQLCSVOUT.py
+[2022/03/25 16:07:34][DEBUG](SQLConnect.py:43) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\SQLConnect.py
+[2022/03/25 16:07:34][DEBUG](SQLCSVOUT.py:74) 人事異動を考慮した社員情報一覧をCSVアウト完了: debug level log <module> d:\PythonScript\RPAScript\SQLCSVOUT.py

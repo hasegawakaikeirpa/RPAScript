@@ -1,6 +1,53 @@
-﻿#----------------------------------------------------------------------------------------------------------------------
-from turtle import down
-from sqlalchemy import false
+﻿#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import OMSOpen
+from selenium.webdriver.common.keys import Keys
+#lxmlインポート
+import lxml.html
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#小数点切り捨ての為にmathをインポート
+import math
+#timeインポート
+import time
+#reインポート
+import re
+#jsonインポート
+import json
+#osインポート
+import os
+#datetimeインポート
+from datetime import datetime as dt
+#日付加減算インポート
+from dateutil.relativedelta import relativedelta
+#glob(フォルダファイルチェックコマンド)インポート
+import glob
+#shutil(フォルダファイル編集コマンド)インポート
+import shutil
+#例外処理判定の為のtracebackインポート
+import traceback
+#pandas(pd)で関与先データCSVを取得
+import pyautogui
+import time
+import shutil
+import CSVOut
+import ExcelFileAction as EF
+import calendar
+import pyperclip #クリップボードへのコピーで使用
+import SQLConnect as SQ
+import SQLCSVOUTFunction as SQC
+#logger設定------------------------------------------------------------------------------------------------------------
+import logging.config
+logging.config.fileConfig("logging_debug.conf")
+logger = logging.getLogger(__name__)
+#----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -498,51 +545,6 @@ def MainFlow(FolURL2):
     else:
         print('履歴テーブル登録失敗')
 #----------------------------------------------------------------------------------------------------------------------     
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import OMSOpen
-from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#日付加減算インポート
-from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-import shutil
-#例外処理判定の為のtracebackインポート
-import traceback
-#pandas(pd)で関与先データCSVを取得
-import pyautogui
-import time
-import shutil
-import CSVOut
-import ExcelFileAction as EF
-import calendar
-import pyperclip #クリップボードへのコピーで使用
-import SQLConnect as SQ
-import SQLCSVOUTFunction as SQC
 #RPA用画像フォルダの作成-----------------------------------------------------------
 Lday = calendar.monthrange(dt.today().year,dt.today().month)
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元

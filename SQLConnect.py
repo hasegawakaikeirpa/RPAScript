@@ -10,6 +10,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String
 import datetime
+#loggerインポート
+from logging import getLogger
+logger = getLogger()
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def MySQLGet(str_host,str_user,str_passwd,int_port,str_database,str_charset,sql):#host='ws77',user='SYSTEM',passwd='SYSTEM',port='3306',database='test_db',charset='utf8'
 #SQL文を送信し、結果を返す
@@ -21,10 +24,12 @@ def MySQLGet(str_host,str_user,str_passwd,int_port,str_database,str_charset,sql)
         SqlData = cursor.fetchall() 
         cursor.close()
         conn.close()
+        logger.debug("MySQLGet(SQL文を送信し、結果を返す)完了: debug level log")
         return True,SqlData
     except:
         cursor.close()
         conn.close()
+        logger.debug("MySQLGet(SQL文を送信し、結果を返す)失敗: debug level log")
         return False,"取得失敗"
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def MySQLHeaderTo_df(str_host,str_user,str_passwd,int_port,str_database,str_charset,sql):#host='ws77',user='SYSTEM',passwd='SYSTEM',port='3306',database='test_db',charset='utf8'
@@ -35,10 +40,12 @@ def MySQLHeaderTo_df(str_host,str_user,str_passwd,int_port,str_database,str_char
         SqlData = pd.read_sql(sql, conn)
         cursor.close()
         conn.close()
+        logger.debug("MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log")
         return True,SqlData
     except:
         cursor.close()
         conn.close()
+        logger.debug("MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)失敗: debug level log")
         return False,"取得失敗"
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def MySQLAct(str_host,str_user,str_passwd,int_port,str_database,str_charset,sql):#host='ws77',user='SYSTEM',passwd='SYSTEM',port='3306',database='test_db',charset='utf8'
@@ -50,10 +57,12 @@ def MySQLAct(str_host,str_user,str_passwd,int_port,str_database,str_charset,sql)
         conn.commit()
         cursor.close()
         conn.close()
+        logger.debug("MySQLAct(SQL文を送信、結果をBooleanで返す)完了: debug level log")
         return True
     except:
         cursor.close()
         conn.close()
+        logger.debug("MySQLAct(SQL文を送信、結果をBooleanで返す)失敗: debug level log")
         return False
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def MysqlColumnCheck(str_host,str_user,str_passwd,int_port,str_database,str_charset,TB,ColN):#host='ws77',user='SYSTEM',passwd='SYSTEM',port='3306',database='test_db',charset='utf8',テーブル名,列名
@@ -69,10 +78,12 @@ def MysqlColumnCheck(str_host,str_user,str_passwd,int_port,str_database,str_char
         conn.close()
         for SqlColumnItem in SqlColumn:
             if SqlColumnItem[0] == ColN:
+                logger.debug("MysqlColumnCheck(引数のカラム名(ColN)と一致する引数テーブル(TB)のカラムのデータ型を返す)完了: debug level log")
                 return True,SqlColumnItem[1]
     except:
         cursor.close()
         conn.close()
+        logger.debug("MysqlColumnCheck(引数のカラム名(ColN)と一致する引数テーブル(TB)のカラムのデータ型を返す)失敗: debug level log")
         return False,""
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def MysqlColumnPic(str_host,str_user,str_passwd,int_port,str_database,str_charset,TB):#host='ws77',user='SYSTEM',passwd='SYSTEM',port='3306',database='test_db',charset='utf8',テーブル名,列名
@@ -86,10 +97,12 @@ def MysqlColumnPic(str_host,str_user,str_passwd,int_port,str_database,str_charse
         SqlColumn = cursor.fetchall() 
         cursor.close()
         conn.close()
+        logger.debug("MysqlColumnPic(テーブルのカラム情報をタプルで返す)完了: debug level log")
         return True,SqlColumn
     except:
         cursor.close()
         conn.close()
+        logger.debug("MysqlColumnPic(テーブルのカラム情報をタプルで返す)失敗: debug level log")
         return False,""
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,テーブル名
@@ -152,11 +165,14 @@ def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,�
                     ParList.append(UDRowItem + 1)
                 else:
                     ParList.append(UDRowItem)
+            logger.debug("ChangeData(引数で渡したTBのカラムに応じたデータ型に合わせて値を変更する。)完了: debug level log")
             return ParList
         else:
+            logger.debug("ChangeData(引数で渡したTBのカラムに応じたデータ型に合わせて値を変更する。)テーブルカラム取得失敗: debug level log")
             print("テーブルカラム取得失敗")
             return False
     except:
+        logger.debug("ChangeData(引数で渡したTBのカラムに応じたデータ型に合わせて値を変更する。)exceptエラー: debug level log")
         print("exceptエラー")
         return False
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
