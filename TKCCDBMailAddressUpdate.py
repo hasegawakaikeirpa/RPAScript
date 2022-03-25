@@ -506,7 +506,7 @@ def SQLIn(ws):#Excelデータを履歴テーブルにインサート
     except:
         return False
 #----------------------------------------------------------------------------------------------------------------------     
-def MainFlow(FolURL2):
+def MainFlow(FolURL2,Lday):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     # driver = ""
@@ -544,6 +544,9 @@ def MainFlow(FolURL2):
         if CDBO == True:
             logger.debug("CDBログインOK")
             print('CDBログインOK')
+            ImgClick(FolURL2,"F10End.png",0.9,10)
+            while pg.locateOnScreen(FolURL2 + "/OMSTitle.png",0.9) is None:
+                time.sleep(1)     
         else:
             logger.debug("CDBログイン失敗")
             print('CDBログイン失敗')
@@ -551,12 +554,15 @@ def MainFlow(FolURL2):
         logger.debug("履歴テーブル登録失敗")
         print('履歴テーブル登録失敗')
 #----------------------------------------------------------------------------------------------------------------------     
-#RPA用画像フォルダの作成-----------------------------------------------------------
-Lday = calendar.monthrange(dt.today().year,dt.today().month)
-FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
-FolURL2 = os.getcwd().replace('\\','/')#先
-#--------------------------------------------------------------------------------
-try:
-    MainFlow(FolURL2)
-except:
-    traceback.print_exc()
+def AllMain():
+    #RPA用画像フォルダの作成-----------------------------------------------------------
+    Lday = calendar.monthrange(dt.today().year,dt.today().month)
+    FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
+    FolURL2 = os.getcwd().replace('\\','/')#先
+    #--------------------------------------------------------------------------------
+    try:
+        MainFlow(FolURL2,Lday)
+        return True
+    except:
+        traceback.print_exc()
+        return False
