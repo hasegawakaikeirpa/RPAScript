@@ -415,7 +415,7 @@ def FMSAction(FolURL2,wsRow,PDV):
         ImgClick(FolURL2,"NyuuryokuEnd.png",0.9,1)
         time.sleep(1)
         MAE = ImgCheck(FolURL2,'MAddErr.png',0.9,5)
-        if MAE[0] == True:
+        if not MAE[0] == True:
             CsvL = CSVOut.CsvRead(FolURL2 + "/LogList.CSV")
             CSVOut.CsvPlus(FolURL2 + "/LogList.CSV",CsvL[1],LogList)
             time.sleep(1)
@@ -466,9 +466,9 @@ def FMSAction(FolURL2,wsRow,PDV):
         SQLF.MailListUp
         SQLF.MailRirekiUp
 #----------------------------------------------------------------------------------------------------------------------     
-def MainFlow(FolURL2,Lday):
-    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
+def MainFlow(FolURL2,Lday,driver):
+    # BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
+    # driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"
     logger.debug("履歴DBより登録状況がCDBの物のみ抽出")
     ReSQL = "SELECT * FROM m_kfmsrireki WHERE vc_gyou = 'CDB';"
@@ -486,13 +486,13 @@ def MainFlow(FolURL2,Lday):
         logger.debug("履歴にCDB状態データがありません")
         print('履歴にCDB状態データがありません')
 #----------------------------------------------------------------------------------------------------------------------
-def AllMain():
+def AllMain(driver):
     #RPA用画像フォルダの作成-----------------------------------------------------------
     Lday = calendar.monthrange(dt.today().year,dt.today().month)
     FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
     FolURL2 = os.getcwd().replace('\\','/')#先
     #--------------------------------------------------------------------------------
     try:
-        MainFlow(FolURL2,Lday)
+        MainFlow(FolURL2,Lday,driver)
     except:
         traceback.print_exc()

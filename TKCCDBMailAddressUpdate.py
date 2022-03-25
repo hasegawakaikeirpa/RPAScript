@@ -546,7 +546,8 @@ def MainFlow(FolURL2,Lday):
             print('CDBログインOK')
             ImgClick(FolURL2,"F10End.png",0.9,10)
             while pg.locateOnScreen(FolURL2 + "/OMSTitle.png",0.9) is None:
-                time.sleep(1)     
+                time.sleep(1)
+            return driver    
         else:
             logger.debug("CDBログイン失敗")
             print('CDBログイン失敗')
@@ -561,8 +562,8 @@ def AllMain():
     FolURL2 = os.getcwd().replace('\\','/')#先
     #--------------------------------------------------------------------------------
     try:
-        MainFlow(FolURL2,Lday)
-        return True
+        MF = MainFlow(FolURL2,Lday)
+        return True,MF
     except:
         traceback.print_exc()
-        return False
+        return False,""
