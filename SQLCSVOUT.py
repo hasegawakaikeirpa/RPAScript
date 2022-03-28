@@ -2,7 +2,7 @@
 import pandas as pd
 #logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
-logging.config.fileConfig("logging_debug.conf")
+logging.config.fileConfig("logging_debugDBOut.conf")
 logger = logging.getLogger(__name__)
 #----------------------------------------------------------------------------------------------------------------------
 #関与先データベースをCSVアウト-------------------------------------------------------

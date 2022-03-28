@@ -58,8 +58,17 @@
             H_H1 = H_driver.find_element_by_xpath("/html/body/div[1]/div[2]/form/h1")#H1要素を取得
             return H_H1.text,H_driver
         except Exception:
-            H_H1 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#H1要素を取得
-            return H_H1.text,H_driver
+            try:
+                H_H1 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#H1要素を取得
+                return H_H1.text,H_driver
+            except Exception:
+                H_H1 = H_driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/form/div/p")#H1要素を取得
+                if "現在登録されている電子証明書は、有効期限を過ぎています。" in H_H1.text:#有効期限切れの場合は更新[いいえ]を選択
+                    H_KousinBtn = H_driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/form/div/div/div[2]/a")
+                    H_KousinBtn.click()
+                    WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
+                    H_H1 = H_driver.find_element_by_xpath("/html/body/div[1]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#H1要素を取得
+                return H_H1.text,H_driver                
     else:
         pass
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -118,7 +127,7 @@ def PrintIFS(H_Title,H_driver):
     return "印刷完了"
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 def LogReturn(LogAns,H_driver):
-    if LogAns == 'ログインしている利用者あてのメッセージを照会します。' or LogAns == 'メッセージ照会':#ログイン成功の場合
+    if LogAns == 'ログインしている利用者あてのメッセージを照会します。':#ログイン成功の場合
         #WEB画面要素指定------------------------------------------------------------------------------------------------------
         try:
             H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#"/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a"
@@ -150,7 +159,30 @@ def LogReturn(LogAns,H_driver):
         WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
         return "認証エラー"
     elif LogAns == "ログインできませんでした。":#ログイン失敗の場合
-        return "ログインできませんでした。"
+        return "ログインできませんでした。" 
+    elif LogAns == 'メッセージ照会':
+            H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[1]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#"/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a"
+            H_MSG_OpenMyNo.click()
+            WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
+            # H_Today = dt.today() + relativedelta(months=-1)
+            # H_dtToday = dt.today()
+            H_Today = dt.today() + relativedelta(months=-3)
+            H_dtToday = dt.today() + relativedelta(months=-2)
+            Hj = str(H_dtToday.year)
+            Hjj = str('{0:02}'.format(H_dtToday.month))
+            H_Str = Hj + "/" + Hjj + "/01 01:01:01" 
+            H_LT = dt.strptime(H_Str, '%Y/%m/%d %H:%M:%S')
+            H_LastToday = H_LT + relativedelta(days=-1)
+            H_FirstMonth = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/div[1]/div/div[2]/input[1]")
+            H_EndMonth = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/div[1]/div/div[2]/input[4]") 
+            H_FMon = '{0:04}'.format(H_Today.year) + '{0:02}'.format(H_Today.month) + '{0:02}'.format(1)
+            H_EMon = '{0:04}'.format(H_LastToday.year) + '{0:02}'.format(H_LastToday.month) + '{0:02}'.format(H_LastToday.day)
+            H_FirstMonth.send_keys(H_FMon)
+            H_EndMonth.send_keys(H_EMon)
+            H_KensakuBtn = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/div[1]/div/input")
+            H_KensakuBtn.click()
+            WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
+            return H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/p[2]/span").text        
     else:                        #その他の場合
         WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -425,7 +457,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 14:
+        if x >= 17:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
