@@ -33,11 +33,11 @@ import shutil
 import traceback
 #logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
-logging.config.fileConfig("logging_debug.conf")
+logging.config.fileConfig("logging_debugelTaxLog.conf")
 logger = logging.getLogger(__name__)
 #----------------------------------------------------------------------------------------------------------------------
-
 def eTaxWebCrawler(H_id,H_pass,H_fold,H_SC,H_TN):
+    logger.debug("WebDriver起動")
     #作成した変数は頭にH_をつける事
     #ブラウザ閲覧時のオプションを指定するオブジェクト"options"を作成
     H_options= Options()
@@ -91,6 +91,7 @@ def eTaxWebCrawler(H_id,H_pass,H_fold,H_SC,H_TN):
         WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
         time.sleep(2)
         H_H1 = H_driver.find_element_by_xpath("/html/body/div[3]/form/div/div/div[1]/div/p")#H1要素を取得
+        logger.debug("ログイン完了")
         return H_H1.text,H_driver
     except Exception:
         try:
