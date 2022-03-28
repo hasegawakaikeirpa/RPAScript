@@ -91,15 +91,17 @@ def eTaxWebCrawler(H_id,H_pass,H_fold,H_SC,H_TN):
         WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
         time.sleep(2)
         H_H1 = H_driver.find_element_by_xpath("/html/body/div[3]/form/div/div/div[1]/div/p")#H1要素を取得
-        logger.debug("ログイン完了")
+        logger.debug(H_H1.text)
         return H_H1.text,H_driver
     except Exception:
         try:
             H_H1 = H_driver.find_element_by_xpath("/html/body/div[1]/div[2]/form/h1")#H1要素を取得
+            logger.debug(H_H1.text)
             return H_H1.text,H_driver
         except Exception:
             try:
                 H_H1 = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#H1要素を取得
+                logger.debug(H_H1.text)
                 return H_H1.text,H_driver
             except Exception:
                 H_H1 = H_driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/form/div/p")#H1要素を取得
@@ -108,6 +110,7 @@ def eTaxWebCrawler(H_id,H_pass,H_fold,H_SC,H_TN):
                     H_KousinBtn.click()
                     WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
                     H_H1 = H_driver.find_element_by_xpath("/html/body/div[1]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#H1要素を取得
+                    logger.debug(H_H1.text)
                 return H_H1.text,H_driver                
     else:
         pass
@@ -164,19 +167,23 @@ def PrintIFS(H_Title,H_driver):
     H_BackBtn = H_driver.find_element_by_xpath("/html/body/div[2]/form/footer/div[1]/div/div[1]/a")
     H_BackBtn.click()
     WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
+    logger.debug("印刷完了")
     return "印刷完了"
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 def LogReturn(LogAns,H_driver):
     if LogAns == 'ログインしている利用者あてのメッセージを照会します。':#ログイン成功の場合
         #WEB画面要素指定------------------------------------------------------------------------------------------------------
         try:
-            H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#"/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a"
+            try:    
+                H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[1]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#"/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a"
+            except:
+                H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")
             H_MSG_OpenMyNo.click()
             WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
-            # H_Today = dt.today() + relativedelta(months=-1)
-            # H_dtToday = dt.today()
-            H_Today = dt.today() + relativedelta(months=-3)
-            H_dtToday = dt.today() + relativedelta(months=-2)
+            H_Today = dt.today() + relativedelta(months=-1)
+            H_dtToday = dt.today()
+            # H_Today = dt.today() + relativedelta(months=-0)
+            # H_dtToday = dt.today() + relativedelta(months=-1)
             Hj = str(H_dtToday.year)
             Hjj = str('{0:02}'.format(H_dtToday.month))
             H_Str = Hj + "/" + Hjj + "/01 01:01:01" 
@@ -201,28 +208,35 @@ def LogReturn(LogAns,H_driver):
     elif LogAns == "ログインできませんでした。":#ログイン失敗の場合
         return "ログインできませんでした。" 
     elif LogAns == 'メッセージ照会':
+        try:    
             H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[1]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")#"/html/body/div[2]/form/div/div/div/div/div[1]/div[1]/ul/li[7]/a"
-            H_MSG_OpenMyNo.click()
-            WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
-            # H_Today = dt.today() + relativedelta(months=-1)
-            # H_dtToday = dt.today()
-            H_Today = dt.today() + relativedelta(months=-3)
-            H_dtToday = dt.today() + relativedelta(months=-2)
-            Hj = str(H_dtToday.year)
-            Hjj = str('{0:02}'.format(H_dtToday.month))
-            H_Str = Hj + "/" + Hjj + "/01 01:01:01" 
-            H_LT = dt.strptime(H_Str, '%Y/%m/%d %H:%M:%S')
-            H_LastToday = H_LT + relativedelta(days=-1)
-            H_FirstMonth = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/div[1]/div/div[2]/input[1]")
-            H_EndMonth = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/div[1]/div/div[2]/input[4]") 
-            H_FMon = '{0:04}'.format(H_Today.year) + '{0:02}'.format(H_Today.month) + '{0:02}'.format(1)
-            H_EMon = '{0:04}'.format(H_LastToday.year) + '{0:02}'.format(H_LastToday.month) + '{0:02}'.format(H_LastToday.day)
-            H_FirstMonth.send_keys(H_FMon)
-            H_EndMonth.send_keys(H_EMon)
-            H_KensakuBtn = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/div[1]/div/input")
-            H_KensakuBtn.click()
-            WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
-            return H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/p[2]/span").text        
+        except:
+            H_MSG_OpenMyNo = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div/div/div[1]/div[3]/ul/li[1]/a")
+        H_MSG_OpenMyNo.click()
+        WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
+        H_Today = dt.today() + relativedelta(months=-1)
+        H_dtToday = dt.today()
+        # H_Today = dt.today() + relativedelta(months=-0)
+        # H_dtToday = dt.today() + relativedelta(months=-1)
+        Hj = str(H_dtToday.year)
+        Hjj = str('{0:02}'.format(H_dtToday.month))
+        H_Str = Hj + "/" + Hjj + "/01 01:01:01" 
+        H_LT = dt.strptime(H_Str, '%Y/%m/%d %H:%M:%S')
+        H_LastToday = H_LT + relativedelta(days=-1)
+        H_FirstMonth = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/div[1]/div/div[2]/input[1]")
+        H_EndMonth = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/div[1]/div/div[2]/input[4]") 
+        H_FMon = '{0:04}'.format(H_Today.year) + '{0:02}'.format(H_Today.month) + '{0:02}'.format(1)
+        H_EMon = '{0:04}'.format(H_LastToday.year) + '{0:02}'.format(H_LastToday.month) + '{0:02}'.format(H_LastToday.day)
+        H_FirstMonth.send_keys(H_FMon)
+        H_EndMonth.send_keys(H_EMon)
+        H_KensakuBtn = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/div[1]/div/input")
+        H_KensakuBtn.click()
+        WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
+        try:
+            H1SText = H_driver.find_element_by_xpath("/html/body/div[2]/form/div/div/div[2]/p[2]/span").text
+        except:
+            H1SText = ""
+        return H1SText       
     else:                        #その他の場合
         WebDriverWait(H_driver, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -245,6 +259,7 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou,H_row):
                         SubFFlag = 0
                 if SubFFlag == 0:
                     os.mkdir(foldersItem + "/eLTAX")
+                    logger.debug(str(MotherFol) + "_作成")
                     print(MotherFol + "作りました。")
                     break
                 Tfolders = glob.glob(foldersItem + "\\eLTAX" + "/*") #フォルダーがあった場合
@@ -262,6 +277,7 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou,H_row):
                 if TFFlag == 0:
                     os.mkdir(foldersItem + "/eLTAX" + "/" + KanyoFolName)
                     CreFolURL = ChildFol
+                    logger.debug(str(ChildFol) + "_作成")
                     print(ChildFol + "作りました。")
                     break
                 break
@@ -277,6 +293,7 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou,H_row):
                         SubFFlag = 0
                 if SubFFlag == 0:
                     os.mkdir(foldersItem + "/eLTAX受信通知")
+                    logger.debug(str(MotherFol) + "_作成")
                     print(MotherFol + "作りました。")
                     ChildFol = MotherFol
                     break
@@ -306,16 +323,19 @@ def RenamePDF(DownTime,MTitle,KanyoNo,KanyoName,Hakkoumoto,Hakkou,H_row):
                 MovePDFPath = ChildFol + "/" + PDFName
                 MovePDFPath = MovePDFPath.replace("/","\\")
                 shutil.move(PDFPath,MovePDFPath)
+                logger.debug(str(MovePDFPath) + "_PDF作成成功")
                 OKstr = MovePDFPath + "成功"
                 OKstr = OKstr.replace('\uff0d', '-').replace('\xa0', '')
                 OKLog.append(OKstr)
             #'D:\\PythonScript\\国税電子申告・納税システム－SU00S100 メール詳細 (1).pdf'
             else:
+                logger.debug(str(MovePDFPath) + "_リネーム失敗-メッセージ照会_お知らせが含まれないファイル名-")
                 NGstr = MovePDFPath + "_リネーム失敗-メッセージ照会_お知らせが含まれないファイル名-"
                 NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '')
                 NGLog.append(NGstr)
         except:
             traceback.print_exc()
+            logger.debug(str(MovePDFPath) + "_リネーム失敗-トレースバックエラー-")
             NGstr = MovePDFPath + "_リネーム失敗-トレースバックエラー-"
             NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '')
             NGLog.append(NGstr)
@@ -352,6 +372,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
     H_LogAnsOBJ = LogAns[1]#ログオン後のWEBドライバーを代入
     H_LogMSGAns = LogReturn(H_LogAns,H_LogAnsOBJ)#ログオン後のH1テキストをで処理分けしWEBテーブルページへ
     if not H_LogMSGAns == "ログインできませんでした。" and not H_LogMSGAns == "認証エラー" and not H_LogMSGAns == '該当するデータはありませんでした。':
+        logger.debug(str(H_SCode) + "_" + str(H_TKCName) + "ログイン成功")
         H_Lo = LogOnOuter(H_LogAnsOBJ)#WEBテーブル取得
         H_L_D = H_Lo[0]#WEBテーブルページ
         H_L_Row = H_Lo[1]#WEBテーブル行数
@@ -364,6 +385,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
             H_row = str(H_MSG_rowItem + 1)
             SPDF = SortPDF(H_P3,H_P4,H_SCode,H_TKCName,H_P1,H_P2,H_row)
             if SPDF == False or SPDF == None:
+                logger.debug(str(H_P3) + "_" + str(H_P4) + "_" + str(H_SCode) + "_" + str(H_TKCName) + "_" + str(H_P1) + "_" + str(H_P2) + "_" + str(H_row) + "_" + "未ダウンロード")
                 PrintIFS(H_P4,H_LogAnsOBJ)#メッセージボックスの内容に応じて処理分け
                 RenamePDF(H_P3,H_P4,H_SCode,H_TKCName,H_P1,H_P2,H_row)#PDF保存先フォルダー作成後リネーム&移動 DownTime,MTitle,KanyoNo,KanyoName
                 if H_MSG_rowItem == H_L_Row - 1:
@@ -373,6 +395,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                     H_LogAnsOBJ.switch_to.window(H_LogAnsOBJ.window_handles[0])#タブ移動する
                     WebDriverWait(H_LogAnsOBJ, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
             else:
+                logger.debug(str(H_P3) + "_" + str(H_P4) + "_" + str(H_SCode) + "_" + str(H_TKCName) + "_" + str(H_P1) + "_" + str(H_P2) + "_" + str(H_row) + "_" + "ファイルが存在します。")
                 print("ファイルが存在します。")
                 if H_MSG_rowItem == H_L_Row - 1:
                     H_LogAnsOBJ.quit()
@@ -382,6 +405,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                     H_BackBtn.click()
                     time.sleep(1)
     elif H_LogMSGAns == "ログインできませんでした。":
+        logger.debug(str(H_SCode) + "_" + str(H_TKCName) + "ログイン失敗1回目" + str(H_First) + "_" + str(H_FirstP))
         NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "ログインエラー1回目"
         NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
         NGLog.append(NGstr)
@@ -393,15 +417,18 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
         H_LogAnsOBJ = LogAns[1]#ログオン後のWEBドライバーを代入
         H_LogMSGAns = LogReturn(H_LogAns,H_LogAnsOBJ)#ログオン後のH1テキストをで処理分けしWEBテーブルページへ
         if H_LogMSGAns == "ログインできませんでした。":
+            logger.debug(str(H_SCode) + "_" + str(H_TKCName) + "ログイン失敗2回目" + str(H_First) + "_" + str(H_FirstP))
             NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "ログインエラー2回目"
             NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
             NGLog.append(NGstr)
             H_LogAnsOBJ.quit()
             time.sleep(2)
         elif H_LogMSGAns == "認証エラー":
+            logger.debug(str(H_SCode) + "_" + str(H_TKCName) + "認証エラー" + str(H_First) + "_" + str(H_FirstP))
             H_LogAnsOBJ.quit()
             time.sleep(2)
         elif H_LogMSGAns == "データ有":
+            logger.debug(str(H_SCode) + "_" + str(H_TKCName) + "ログイン2回目成功データ有" + str(H_First) + "_" + str(H_FirstP))
             H_Lo = LogOnOuter(H_LogAnsOBJ)#WEBテーブル取得
             H_L_D = H_Lo[0]#WEBテーブルページ
             H_L_Row = H_Lo[1]#WEBテーブル行数
@@ -414,6 +441,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                 H_row = str(H_MSG_rowItem + 1)
                 SPDF = SortPDF(H_P3,H_P4,H_SCode,H_TKCName,H_P1,H_P2,H_row)
                 if SPDF == False or SPDF == None:
+                    logger.debug(str(H_P3) + "_" + str(H_P4) + "_" + str(H_SCode) + "_" + str(H_TKCName) + "_" + str(H_P1) + "_" + str(H_P2) + "_" + str(H_row) + "_" + "未ダウンロード")
                     PrintIFS(H_P4,H_LogAnsOBJ)#メッセージボックスの内容に応じて処理分け
                     RenamePDF(H_P3,H_P4,H_SCode,H_TKCName,H_P1,H_P2,H_row)#PDF保存先フォルダー作成後リネーム&移動 DownTime,MTitle,KanyoNo,KanyoName
                     if H_MSG_rowItem == H_L_Row - 1:
@@ -423,6 +451,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                         H_LogAnsOBJ.switch_to.window(H_LogAnsOBJ.window_handles[0])#タブ移動する
                         WebDriverWait(H_LogAnsOBJ, 30).until(EC.presence_of_all_elements_located)#要素が読み込まれるまで最大30秒待つ
                 else:
+                    logger.debug(str(H_P3) + "_" + str(H_P4) + "_" + str(H_SCode) + "_" + str(H_TKCName) + "_" + str(H_P1) + "_" + str(H_P2) + "_" + str(H_row) + "_" + "ファイルが存在します。")
                     print("ファイルが存在します。")
                     if H_MSG_rowItem == H_L_Row - 1:
                         H_LogAnsOBJ.quit()
@@ -432,6 +461,7 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
                         H_BackBtn.click()
                         time.sleep(1)
         elif H_LogMSGAns == '該当するデータはありませんでした。':
+            logger.debug(str(H_SCode) + "_" + str(H_TKCName) + "該当するデータはありませんでした。" )
             NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "データ無"
             NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
             NGLog.append(NGstr)
@@ -441,8 +471,10 @@ def LoginLoop(H_SCode,H_TKCName,H_First,H_FirstP,H_SecondP):
             H_LogAnsOBJ.quit()
             time.sleep(2)
     elif H_LogMSGAns == "認証エラー":
+        logger.debug(str(H_SCode) + "_" + str(H_TKCName) + "暗証番号の変更" )
         print(H_SCode + "_" + H_TKCName + "_" + "暗証番号の変更")
     elif H_LogMSGAns == '該当するデータはありませんでした。':
+        logger.debug(str(H_SCode) + "_" + str(H_TKCName) + "該当するデータはありませんでした。" )
         NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "データ無"
         NGstr = NGstr.replace('\uff0d', '-').replace('\xa0', '').replace('\u71c1','').replace('\u9348','').replace('\u9ad9','')
         NGLog.append(NGstr)
@@ -463,7 +495,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 17:
+        if x >= 18:
         #関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]

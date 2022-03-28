@@ -1,0 +1,15 @@
+[2022/03/28 11:37:10][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:37:17][DEBUG](elTaxMSGDownLoad.py:113) メッセージ照会
+ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:37:18][DEBUG](elTaxMSGDownLoad.py:369) 23_有限会社 ウタニログイン成功 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:37:19][DEBUG](elTaxMSGDownLoad.py:382) 2022/02/26 00:18:59_プレ申告データに関するお知らせ_23_有限会社 ウタニ_広島県 西 部 県税事務所長_法人課税課_1_未ダウンロード LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:39:05][DEBUG](elTaxMSGDownLoad.py:170) 印刷完了 PrintIFS d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:39:52][DEBUG](elTaxMSGDownLoad.py:274) //Sv05121a/e/電子ファイル/メッセージボックス\2022-2\eLTAX\23_有限会社 ウタニ_作成 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:40:31][DEBUG](elTaxMSGDownLoad.py:320) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-2\eLTAX\23_有限会社 ウタニ\23_有限会社 ウタニ_広島県 西 部 県税事務所長_法人課税課_プレ申告データに関するお知らせ[1].pdf_PDF作成成功 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:41:04][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:41:13][DEBUG](elTaxMSGDownLoad.py:104) メッセージ照会
+ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:41:13][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:41:21][DEBUG](elTaxMSGDownLoad.py:104) メッセージ照会
+ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:41:21][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
