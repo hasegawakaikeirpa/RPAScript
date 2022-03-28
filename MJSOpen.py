@@ -1,3 +1,15 @@
+#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+from selenium.webdriver.common.keys import Keys
+#loggerインポート
+from logging import getLogger
+logger = getLogger()
+
 def ExeOpen(AppURL):#URL指定でアプリ起動関数
     subprocess.Popen(AppURL)
 #----------------------------------------------------------------------------------------------------------------------
@@ -84,13 +96,15 @@ def ImgClick(FolURL2,FileName,conf,LoopVal):#画像があればクリックし�
             print("要素取得に失敗しました。")
 def MainFlow(BatUrl,FolURL2,ImgFolName):
     #WebDriver起動バッチを管理者権限で起動---------------------------------------------------------------------------------
+    logger.debug("Bat起動: debug level log")
     WDO = ExeOpen(BatUrl)
     desired_caps = {}
     desired_caps["app"] = "Root"#Rootを指定してDriverTargetをデスクトップに
+    logger.debug("Appiumサーバー起動: debug level log")
     driver = webdriver.Remote('http://127.0.0.1:4724',desired_caps,direct_connection=True)#ポート指定してDriverインスタンス化
-
     #----------------------------------------------------------------------------------------------------------------------
-    #OMSを起動-------------------------------------------------------------------------------------------------------------
+    #MJSを起動-------------------------------------------------------------------------------------------------------------
+    logger.debug("MJS起動: debug level log")
     MJSURL = "C:\Program Files (x86)\MJS\MJSNXSVA\MJSDesktopNX.exe"
     ExeOpen(MJSURL)
     FolURL2 = FolURL2 + "/" + ImgFolName
@@ -101,6 +115,7 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
     LoopVal = 10000#検索回数
     ListCheck = ImgCheckForList(FolURL2,List,conf)
     if ListCheck[0] == True:
+        logger.debug("Pass入力開始: debug level log")
         ImgClick(FolURL2,ListCheck[1],conf,LoopVal)#電子申告・申請タブを押す
         pg.write("051210561111111", interval=0.01)#直接SENDできないのでpyautoguiで入力
         ImgClick(FolURL2,"LoginOKBtn.png",conf,LoopVal)#電子申告・申請タブを押す
@@ -110,17 +125,7 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
             ImgClick(FolURL2,"MJSOsiraseClose.png",conf,LoopVal)#お知らせ画面があれば閉じるボタンをクリック
             return driver
         else:
-            print("起動しました。")
+            logger.debug("MJSログイン完了: debug level log")
             return driver
     time.sleep(1)
     #----------------------------------------------------------------------------------------------------------------------
-
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-
-from selenium.webdriver.common.keys import Keys

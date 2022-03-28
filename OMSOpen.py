@@ -1,3 +1,16 @@
+#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import os
+from selenium.webdriver.common.keys import Keys
+#loggerインポート
+from logging import getLogger
+logger = getLogger()
+
 def ExeOpen(AppURL):#URL指定でアプリ起動関数
     subprocess.Popen(AppURL)
 #----------------------------------------------------------------------------------------------------------------------
@@ -28,6 +41,7 @@ def DriverUIWaitAutomationId(UIPATH,driver):#XPATH要素を取得するまで待
 #----------------------------------------------------------------------------------------------------------------------
 def MainFlow(BatUrl,FolURL2,ImgFolName):
     #WebDriver起動バッチを管理者権限で起動---------------------------------------------------------------------------------
+    logger.debug("Bat起動: debug level log")
     WDO = ExeOpen(BatUrl)
     desired_caps = {}
     desired_caps["app"] = "Root"#Rootを指定してDriverTargetをデスクトップに
@@ -35,6 +49,7 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
 
     #----------------------------------------------------------------------------------------------------------------------
     #OMSを起動-------------------------------------------------------------------------------------------------------------
+    logger.debug("OMS起動: debug level log")
     OMSURL = "C:\Program Files (x86)\TKC\OMS\OMS.exe"
     ExeOpen(OMSURL)
     #time.sleep(10)
@@ -44,6 +59,7 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
         time.sleep(1)
     #tAutomationId要素が出現するまで待機-------------------------------------------------------------------------------------------
     if DriverUIWaitAutomationId("passwordTextBox",driver) == True:
+        logger.debug("Pass入力開始: debug level log")
         #正常待機後処理
         OMSPassWindowClc = driver.find_element_by_accessibility_id("passwordTextBox")
         OMSPassWindowClc.click()
@@ -53,22 +69,16 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
         pg.press(['return','return'])
     else:
         #異常待機後処理
+        logger.debug("Pass要素取得に失敗: debug level log")
         print("要素取得に失敗しました。")
     #----------------------------------------------------------------------------------------------------------------------
     #tAutomationId要素が出現するまで待機-------------------------------------------------------------------------------------------
     if DriverUIWaitAutomationId("codeTextBox",driver) == True:
+        logger.debug("OMSログイン完了: debug level log")
         print("起動しました。")
         return driver
     else:
         #異常待機後処理
-        print("要素取得に失敗しました。")
+        logger.debug("OMScodeTextBox要素取得に失敗: debug level log")
+        print("codeTextBox要素取得に失敗しました。")
     #----------------------------------------------------------------------------------------------------------------------
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import os
-from selenium.webdriver.common.keys import Keys

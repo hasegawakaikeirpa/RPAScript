@@ -1,5 +1,10 @@
 ﻿import SQLConnect as SQ
 import pandas as pd
+#logger設定------------------------------------------------------------------------------------------------------------
+import logging.config
+logging.config.fileConfig("logging_debugDBOut.conf")
+logger = logging.getLogger(__name__)
+#----------------------------------------------------------------------------------------------------------------------
 #関与先データベースをCSVアウト-------------------------------------------------------
 sql = 'SELECT * FROM m_kkanyo'
 URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kkanyo.csv"
@@ -7,6 +12,7 @@ URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
+logger.debug("関与先データベースをCSVアウト完了: debug level log")
 #社員情報をCSVアウト----------------------------------------------------------------
 sql = 'SELECT * FROM m_syain'
 URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_syain.csv"
@@ -14,6 +20,7 @@ URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
+logger.debug("社員情報をCSVアウト完了: debug level log")
 #FMSMAILLISTをCSVアウト------------------------------------------------------------
 WithA = "WITH SubFMS AS (SELECT * FROM m_kfmsmail WHERE cr_RecKbn = '0' GROUP BY vc_FMSKnrCd),"
 WithB = "SubKan AS (SELECT * FROM m_kkanyo WHERE cr_RecKbn = '0' GROUP BY vc_KnrCd)"
@@ -26,6 +33,17 @@ URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
+logger.debug("FMSMAILLISTをCSVアウト完了: debug level log")
+#メアド変更履歴をCSVアウト---------------------------------------------------------
+sql = 'SELECT * FROM m_kfmsrireki AS m WHERE NOT EXISTS (SELECT * FROM m_kfmsrireki AS s WHERE m.vc_FMSKnrCd = s.vc_FMSKnrCd AND m.in_RrkNo_pk < s.in_RrkNo_pk);'
+URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
+URL = URL.replace("\\","/")
+URL = "/" + URL
+SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
+SQDF.columns = ['行','in_RrkNo_pk','コード','個人名','関与先名','発送方法','送信方法','アドレス','課No','課','監査担当No','監査担当','サブNo','サブ','サブ2No','サブ2',\
+'送信方法2','アドレス2','送信方法3','アドレス3','送信方法4','アドレス4','送信方法5','アドレス5','cr_RecKbn','dt_InstDT','入力日時','入力ユーザー','変更前アドレス']
+SQDF.to_csv(URL, index = False)
+logger.debug("メアド変更履歴をCSVアウト完了: debug level log")
 #人事異動をCSVアウト--------------------------------------------------------------
 sql = 'SELECT * FROM d_jnjido'
 URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\d_jnjido.csv"
@@ -33,6 +51,7 @@ URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
+logger.debug("人事異動をCSVアウト完了: debug level log")
 #人事異動を考慮した社員情報一覧をCSVアウト------------------------------------------
 WithA = "WITH SubMax AS (SELECT vc_SyainCd_pk ,MAX(in_IdoNo_pk) As MaxIdoNo,Max(d_jnjido.in_RrkNo_pk) As MaxRrkNo \
         FROM d_jnjido WHERE cr_RecKbn = '0' AND (dy_TkyEndD >= CURDATE() OR dy_TkyEndD = '0000-00-00' OR dy_TkyEndD IS NULL) GROUP BY vc_SyainCd_pk),"
@@ -52,3 +71,4 @@ URL = URL.replace("\\","/")
 URL = "/" + URL
 SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
 SQDF.to_csv(URL, index = False)
+logger.debug("人事異動を考慮した社員情報一覧をCSVアウト完了: debug level log")

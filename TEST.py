@@ -231,14 +231,14 @@ PDFFileList = os.listdir(FolURL2)
 Cou = 1
 Data = []
 for PDFItem in PDFFileList:
-    # uid = stat(FolURL2 + "/" + PDFItem).st_uid
+    uid = stat(FolURL2 + "/" + PDFItem).st_uid
     UName = get_file_ownership(PDFItem)
-    Data.append(UName)
-#     f = open(FolURL2 + "/" + PDFItem, 'r', encoding='UTF-8')        
-#     Data.append(f.read())
-#     f.close()
+    # Data.append(UName)
+    f = open(FolURL2 + "/" + PDFItem, 'r', encoding='UTF-8')        
+    Data.append(f.read())
+    f.close()
 print(Data)
-# CSVOut.CsvSave("//Sv05121a/e/C 作業台/RPA/ウィルス対策/KasperskyLog/結果.csv",['Log'],Data)
+CSVOut.CsvSave("//Sv05121a/e/C 作業台/RPA/ウィルス対策/KasperskyLog/結果.csv",['Log'],Data)
 time.sleep(1)
 # except:
 #     print("Err")

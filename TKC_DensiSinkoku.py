@@ -1,6 +1,45 @@
 #----------------------------------------------------------------------------------------------------------------------
+#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import OMSOpen
+from selenium.webdriver.common.keys import Keys
+#lxmlインポート
+import lxml.html
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#小数点切り捨ての為にmathをインポート
+import math
+#timeインポート
+import time
+#reインポート
+import re
+#jsonインポート
+import json
+#osインポート
+import os
+#datetimeインポート
+from datetime import datetime as dt
+#日付加減算インポート
+from dateutil.relativedelta import relativedelta
+#glob(フォルダファイルチェックコマンド)インポート
+import glob
+#shutil(フォルダファイル編集コマンド)インポート
+import shutil
+#例外処理判定の為のtracebackインポート
+import traceback
+#pandas(pd)で関与先データCSVを取得
+import pyautogui
+import time
+import shutil
+import pyperclip #クリップボードへのコピーで使用
 from logging import exception
-
 
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
@@ -202,7 +241,10 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    # pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pyperclip.copy(CSVURL)
+    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+    pg.press(['return'])
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"#取得要素種類を指定
@@ -226,7 +268,10 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    # pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pyperclip.copy(CSVName)
+    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+    pg.press(['return'])
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"#取得要素種類を指定
@@ -616,28 +661,28 @@ def MainFlow(FolURL2):
     time.sleep(1)
     pg.press('down')
     pg.press('return')#小林常務を選択
-    # FileName = "KanyoHasegawa.png"#担当税理士所長判定
-    #法人税消費税処理------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    conf = 0.9#画像認識感度
-    LoopVal = 500
-    CSVName = 'HoujinSyouhizeiMaster'
-    CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
-    List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
-    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag == False:
-        print("C_Masterは空です")
-    else:
-        NoBlue(FolURL2)
-        C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-        print(C_Master)
-        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2) 
-    #----------------------------------------------------------------------------------------------------------------------
+    # # FileName = "KanyoHasegawa.png"#担当税理士所長判定
+    # #法人税消費税処理------------------------------------------------------------------------------------------------------
+    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
+    # conf = 0.9#画像認識感度
+    # LoopVal = 500
+    # CSVName = 'HoujinSyouhizeiMaster'
+    # CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
+    # List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
+    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
+    # C_Master = TaxAns[0]
+    # C_MasterFlag = TaxAns[1]
+    # if C_MasterFlag == False:
+    #     print("C_Masterは空です")
+    # else:
+    #     NoBlue(FolURL2)
+    #     C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
+    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
+    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+    #     print(C_Master)
+    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2) 
+    # #----------------------------------------------------------------------------------------------------------------------
     ##所得税消費税処理------------------------------------------------------------------------------------------------------
     #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
     #conf = 0.9#画像認識感度
@@ -785,46 +830,6 @@ def MainFlow(FolURL2):
         C_dfCol = np.array(C_Master).shape[1]#配列列数取得
         MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)     
     #-----------------------------------------------------------------------------------------------------------------------
-
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import OMSOpen
-from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#日付加減算インポート
-from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-import shutil
-#例外処理判定の為のtracebackインポート
-import traceback
-#pandas(pd)で関与先データCSVを取得
-import pyautogui
-import time
-import shutil
 
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"#元
