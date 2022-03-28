@@ -111,6 +111,7 @@ def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,�
         ColP = MysqlColumnCheck('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',TB,ColN)
         if ColP[0] == True:
             SQLColP = ColP[1]
+            TypeItem = str(type(UDRowItem))
             #データ型に合わせて値を変更----------------------------------------------------------------
             if 'datetime' in SQLColP:
                 if UDRowItem == None:#Timestamp('2022-03-09 00:00:00')
@@ -133,12 +134,24 @@ def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,�
                     ParList.append("")
                 elif UDRowItem == "  ":
                     ParList.append("")
+                elif UDRowItem == "":
+                    ParList.append("")
+                elif UDRowItem == "":
+                    ParList.append("")
                 elif ColN == 'vc_KnrCd':
                     ParList.append(UDRowItem.replace("  ","").replace(" ",""))
                 elif ColN == 'in_RrkNo_pk':
-                    ParList.append(UDRowItem + 1)
+                    ParList.append(UDRowItem + 1)              
+                elif 'int' in TypeItem:#int判定で処理分け
+                    ParList.append(str(int(UDRowItem)).replace("\u3000","  ").replace("\u200b"," "))
+                elif 'float' in TypeItem:#float判定で処理分け
+                    if np.isnan(UDRowItem):#nan判定で処理分け
+                        ParList.append("")
+                    else:
+                        ParList.append(str(int(UDRowItem)).replace("\u3000","  ").replace("\u200b"," ").replace(".0",""))
                 else:
                     ParList.append(str(UDRowItem).replace("\u3000","  ").replace("\u200b"," "))
+                        
             elif 'int' in SQLColP:
                 if UDRowItem == " ":
                     ParList.append("")
@@ -150,6 +163,13 @@ def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,�
                     ParList.append(UDRowItem.replace("  ","").replace(" ",""))
                 elif ColN == 'in_RrkNo_pk':
                     ParList.append(UDRowItem + 1)
+                elif 'int' in TypeItem:#int判定で処理分け
+                    ParList.append(str(int(UDRowItem)).replace("\u3000","  ").replace("\u200b"," "))
+                elif 'float' in TypeItem:#float判定で処理分け
+                    if np.isnan(UDRowItem):#nan判定で処理分け
+                        ParList.append("")
+                    else:
+                        ParList.append(str(int(UDRowItem)).replace("\u3000","  ").replace("\u200b"," ").replace(".0",""))
                 else:
                     ParList.append(int(UDRowItem))
             else:
@@ -163,6 +183,13 @@ def ChangeData(ColN,ParList,UDRowItem,TB):#列名,列名リスト,行データ,�
                     ParList.append(UDRowItem.replace("  ","").replace(" ",""))
                 elif ColN == 'in_RrkNo_pk':
                     ParList.append(UDRowItem + 1)
+                elif 'int' in TypeItem:#int判定で処理分け
+                    ParList.append(str(int(UDRowItem)).replace("\u3000","  ").replace("\u200b"," "))
+                elif 'float' in TypeItem:#float判定で処理分け
+                    if np.isnan(UDRowItem):#nan判定で処理分け
+                        ParList.append("")
+                    else:
+                        ParList.append(str(int(UDRowItem)).replace("\u3000","  ").replace("\u200b"," ").replace(".0",""))
                 else:
                     ParList.append(UDRowItem)
             logger.debug("ChangeData(引数で渡したTBのカラムに応じたデータ型に合わせて値を変更する。)完了: debug level log")
