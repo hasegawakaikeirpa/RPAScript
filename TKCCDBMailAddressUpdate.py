@@ -301,6 +301,7 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
             wsRow = ws.iloc[x]#dfインスタンスの行データ
             #行データから変数格納----------------------------------------------------------------------------------------
             wscd = wsRow['コード']
+            wsUpcd = wsRow['コード']
             wsName = wsRow['個人名']
             wsKName = wsRow['関与先名']
             wsHassou = wsRow['発送方法']
@@ -331,6 +332,7 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
             ImgClick(FolURL2,"JimusyoCD.png",0.9,5)#事務所コードボックスをクリック
             time.sleep(1)
             #所内コードに応じて処理分け-----------------------------------------------------------------------------------
+            KFlag = False #個人判定フラグ
             if int(wscd) >= 0 and int(wscd) < 1000:
                 #----------------------------------------------------------------------------------------------------------
                 NList = ["05121.png","05121b.png"]
@@ -349,14 +351,22 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                     if int(wscd) < 100:
                         wscd = f'{wscd:03}' 
                 #----------------------------------------------------------------------------------------------------------
-            elif int(wscd) >= 1000 and int(wscd) < 4000:
-                NList = ["15180.png","15180b.png"]
-                ICFL = ImgCheckForList(FolURL2,NList,0.9)
-                if ICFL[0] == True:
-                    ImgClick(FolURL2,ICFL[1],0.9,1)
-                    wscd = int(wscd)-1000
-                    if int(wscd) < 100:
-                        wscd = f'{wscd:03}' 
+            elif int(wscd) >= 1000 and int(wscd) < 2000:
+                if len(wscd) == 5:
+                    KFlag = True
+                    NList = ["05121.png","05121b.png"]
+                    ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                    if ICFL[0] == True:
+                        ImgClick(FolURL2,ICFL[1],0.9,1)
+                    time.sleep(1)
+                else:
+                    NList = ["15180.png","15180b.png"]
+                    ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                    if ICFL[0] == True:
+                        ImgClick(FolURL2,ICFL[1],0.9,1)
+                        wscd = int(wscd)-1000
+                        if int(wscd) < 100:
+                            wscd = f'{wscd:03}' 
                 #----------------------------------------------------------------------------------------------------------
             elif int(wscd) >= 9000 and int(wscd) < 9999:
                 NList = ["99999.png","99999b.png"]
@@ -368,10 +378,30 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                         wscd = f'{wscd:03}' 
                 #----------------------------------------------------------------------------------------------------------
             elif int(wscd) >= 10000:
-                NList = ["05121.png","05121b.png"]
-                ICFL = ImgCheckForList(FolURL2,NList,0.9)
-                if ICFL[0] == True:
-                    ImgClick(FolURL2,ICFL[1],0.9,1)
+                KFlag = True
+                if len(wscd) == 5:
+                    NList = ["05121.png","05121b.png"]
+                    ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                    if ICFL[0] == True:
+                        ImgClick(FolURL2,ICFL[1],0.9,1)
+                        wscd = str(wscd)
+                        wscdL = wscd[3] + wscd[4]
+                        wscd = wscd[0] + wscd[1] + wscd[2]             
+                        wscd = wscd + wscdL
+                else:
+                    wscd = str(wscd)
+                    wscdL = wscd[4] + wscd[5]
+                    wscd = wscd[1] + wscd[2] + wscd[3] 
+                    if int(wscd) >= 4000 and int(wscd) < 5000:
+                        NList = ["05371.png","05371b.png"]
+                        ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                    elif int(wscd) >= 1000 and int(wscd) < 2000:
+                        NList = ["15180.png","15180b.png"]
+                        ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                    elif int(wscd) >= 9000 and int(wscd) < 9999:
+                        NList = ["99999.png","99999b.png"]
+                        ICFL = ImgCheckForList(FolURL2,NList,0.9)
+                    wscd = wscd + wscdL
             #--------------------------------------------------------------------------------------------------------------
             time.sleep(2)
             pg.write(str(wscd))#TKC用に変換した関与先コードを入力
@@ -385,7 +415,7 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
             while pg.locateOnScreen(FolURL2 + "/InputEnd.png",0.9) is None:#入力終了ボタン表示まで待機
                 time.sleep(1)
             time.sleep(1)
-            if int(wscd) >= 10000:
+            if KFlag == True:
                 EMI = ImgCheck(FolURL2,"EMailIconK.png",0.9,5)#EMAILテキストボックス画像を判定
             else:
                 EMI = ImgCheck(FolURL2,"EMailIcon.png",0.9,5)#EMAILテキストボックス画像を判定
@@ -421,19 +451,30 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                     time.sleep(1)
                 time.sleep(1)
                 #CSVログに追加------------------------------------------------------------------------------------------------
-                USQL = "UPDATE m_kfmsrireki SET vc_gyou = 'CDB' WHERE vc_FMSKnrCd = '" + wscd + "';"
+                Maxsql = "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = " + str(wsUpcd) + ";"                 
+                MaxRrkNo = SQ.MySQLGet('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',Maxsql)
+                if MaxRrkNo[0] == True:
+                    print(MaxRrkNo[1])
+                    if MaxRrkNo[1] == ((None,),):
+                        MaxRrkNo = 1
+                    else:
+                        Mstr = str(MaxRrkNo[1]).replace('((','').replace(',),)','')
+                        MaxRrkNo = int(Mstr)
+                else:
+                    MaxRrkNo = 1
+
+                USQL = "UPDATE m_kfmsrireki SET vc_gyou = 'CDB' WHERE vc_FMSKnrCd = " + str(wsUpcd) + " AND in_RrkNo_pk = " + str(MaxRrkNo).replace("'","") + ";"                
                 SQ.MySQLAct('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',USQL)
                 SQC.MailRirekiUp()
                 SQC.MailListUp()					
                 # LogMSG = ['CDB',wscd,wsName,wsKa,wsTno,wsTname,wsSubTno,wsSubTname,wsAd,wsHassou,wsNyuu,wsUser,wsDno,LostAdd]
                 # CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
                 time.sleep(1)
-                return True
             else:
-                print(wscd + "エラー") 
-                return True
+                print(str(wscd) + "エラー") 
+        return True
     except:
-        print(x + "エラー") 
+        print(str(x) + "エラー") 
         return False
 #---------------------------------------------------------------------------------------------------------------------- 
 def SQLIn(ws):#Excelデータを履歴テーブルにインサート
@@ -449,11 +490,16 @@ def SQLIn(ws):#Excelデータを履歴テーブルにインサート
         #-----------------------------------------------------------------------------------------------------------
         for x in range(LenRow):
             wsRow = ws.iloc[x]#dfインスタンスの行データ
-            wscd = wsRow['コード']
+            wscd = str(wsRow['コード'])
+            wscdFlag = False
             if int(wscd) < 100:
+                wscdFlag = True
                 wscd = f'{wscd:03}'  
             #WHERE社内コードでDBよりMAX(履歴No)を抽出-------------------------------------------------------------------------
-            Maxsql = "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = '" + wscd + "';" 
+            if wscdFlag == False:
+                Maxsql = "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = " + str(wscd) + ";" 
+            else:
+                Maxsql = "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = " + wscd + ";"                 
             MaxRrkNo = SQ.MySQLGet('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',Maxsql)
             if MaxRrkNo[0] == True:
                 print(MaxRrkNo[1])
@@ -528,7 +574,7 @@ def MainFlow(FolURL2,Lday):
     x = 0
     for isnItem in input_sheet_name:
         if isnItem == 'アドレス登録':
-            ws = input_book.parse(input_sheet_name[x])
+            ws = input_book.parse(input_sheet_name[x],dtype=str)
             print(ws)
             break
         x = x + 1
