@@ -355,9 +355,11 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                 ICFL = ImgCheckForList(FolURL2,NList,0.9)
                 if ICFL[0] == True:
                     ImgClick(FolURL2,ICFL[1],0.9,1)
-                    wscd = int(wscd)-1000
-                    if int(wscd) < 100:
-                        wscd = f'{wscd:03}' 
+                    wscd = str(wscd)
+                    wscdL = wscd[2] + wscd[3]
+                    wscd = wscd[0] + wscd[1]             
+                    wscd = f'{int(wscd):03}' 
+                    wscd = wscd + wscdL
                 #----------------------------------------------------------------------------------------------------------
             elif int(wscd) >= 9000 and int(wscd) < 9999:
                 NList = ["99999.png","99999b.png"]
@@ -373,6 +375,11 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                 ICFL = ImgCheckForList(FolURL2,NList,0.9)
                 if ICFL[0] == True:
                     ImgClick(FolURL2,ICFL[1],0.9,1)
+                    wscd = str(wscd)
+                    wscdL = wscd[3] + wscd[4]
+                    wscd = wscd[0] + wscd[1] + wscd[2]             
+                    wscd = f'{int(wscd):03}' 
+                    wscd = wscd + wscdL
             #--------------------------------------------------------------------------------------------------------------
             time.sleep(2)
             pg.write(str(wscd))#TKC用に変換した関与先コードを入力
