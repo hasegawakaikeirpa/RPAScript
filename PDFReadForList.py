@@ -65,9 +65,10 @@ def PDFOCRRead():
     text = tool.image_to_string(img2, lang="jpn", builder=builder)
     return text
 #----------------------------------------------------------------------------------------
-def CSVIndexSort(path_pdf,SinkokuCSVList,SyotokuCSVList,SyouhiCSVList,HoujinCSVList,YoteiCSVList,SyoukyakuCSVList,CSVBadList,SinkokuCSV,SyotokuCSV,SyouhiCSV,HoujinCSV,YoteiCSV,SyoukyakuCSV):
+def CSVIndexSort(path_pdf,SinkokuCSVList,SinkokuCSV2List,SyotokuCSVList,SyouhiCSVList,HoujinCSVList,YoteiCSVList,SyoukyakuCSVList,CSVBadList,SinkokuCSV,SinkokuCSV2,SyotokuCSV,SyouhiCSV,HoujinCSV,YoteiCSV,SyoukyakuCSV):
     #PDFから抽出したリストと形式があわないので、税目リストを行列入替---------------------------
     SinkokuCSV = SinkokuCSV.transpose()#行列入替
+    SinkokuCSV2 = SinkokuCSV2.transpose()#行列入替
     SyotokuCSV = SyotokuCSV.transpose()#行列入替
     SyouhiCSV = SyouhiCSV.transpose()#行列入替
     HoujinCSV = HoujinCSV.transpose()#行列入替
@@ -99,6 +100,12 @@ def CSVIndexSort(path_pdf,SinkokuCSVList,SyotokuCSVList,SyouhiCSVList,HoujinCSVL
                 FolseC = IndexFlags.sum(axis=1)-np.array(dfIndexdata).shape[0]
                 if FolseC[0] >= -2:
                     PDFFlag = '確定申告'
+                #------------------------------------------------------------------------
+                #確定申告リスト2と突合------------------------------------------------------
+                IndexFlags = SinkokuCSV2 == dfIndexdata
+                FolseC = IndexFlags.sum(axis=1)-np.array(dfIndexdata).shape[0]
+                if FolseC[0] >= -2:
+                    PDFFlag = '確定申告2'
                 #------------------------------------------------------------------------
                 #所得税リストと突合--------------------------------------------------------
                 IndexFlags = SyotokuCSV == dfIndexdata
@@ -177,6 +184,47 @@ def CSVIndexSort(path_pdf,SinkokuCSVList,SyotokuCSVList,SyouhiCSVList,HoujinCSVL
                             PDFSasihiki = str(dfdatarow[1])  
                     OutputList = [path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PDFTitle,PDFName,PDFDate,PDFSyumoku,PDFJigyouNendo,PDFZeimoku,PDFSinkokuSyu,PDFSyotokuAndKesson,PDFKakuteiHoujingaku,PDFKessonAndSaigai,PDFKuriketusai,PDFZeimoku2,PDFSinkokuSyu2,PDFKazeiHyoujyun,PDFSasihiki]
                     SinkokuCSVList.append(OutputList)
+                #------------------------------------------------------------------------ 
+                elif PDFFlag == '確定申告2':
+                    for z in range(PDFdfRow):#PDFのテーブル行数分ループ
+                        dfdatarow = PDFdf.iloc[z]#PDFのテーブル行データ1
+                        if dfdatarow[0] == '手続名':
+                            PDFTitle = str(dfdatarow[1])                        
+                        elif dfdatarow[0] == '氏名又は名称':
+                            PDFName = str(dfdatarow[1])                        
+                        elif dfdatarow[0] == '受付日時':
+                            PDFDate = str(dfdatarow[1])
+                        elif dfdatarow[0] == '種目':
+                            PDFSyumoku = str(dfdatarow[1]) 
+                        elif dfdatarow[0] == '事業年度　自':
+                            PDFJigyouNendo = str(dfdatarow[1]) 
+                        elif dfdatarow[0] == '事業年度　至':
+                            PDFJigyouNendo = PDFJigyouNendo + "-" + str(dfdatarow[1])                         
+                        elif dfdatarow[0] == '税目':
+                            if z == 10:
+                                PDFZeimoku = str(dfdatarow[1])
+                            elif z == 16:
+                                PDFZeimoku2 = str(dfdatarow[1])
+                        elif dfdatarow[0] == '申告の種類':
+                            if z == 11:
+                                PDFSinkokuSyu = str(dfdatarow[1])
+                            elif z == 17:
+                                PDFSinkokuSyu2 = str(dfdatarow[1])              
+                        elif dfdatarow[0] == '所得金額又は欠損金額':
+                            PDFSyotokuAndKesson = str(dfdatarow[1])                        
+                        elif dfdatarow[0] == 'この申告による還付金額':
+                            if z == 13:
+                                PDFSinkokuKanpu = str(dfdatarow[1])
+                            elif z == 19:
+                                PDFSinkokuKanpu2 = str(dfdatarow[1])  
+                        elif '欠損金又は災害損失金等の当期' in dfdatarow[0]:
+                            PDFKessonAndSaigai = str(dfdatarow[1]) 
+                        elif '翌期へ繰り越す欠損金又は災害' in dfdatarow[0]:
+                            PDFKuriketusai = str(dfdatarow[1])
+                        elif dfdatarow[0] == '課税標準法人税額':
+                            PDFKazeiHyoujyun = str(dfdatarow[1])
+                    OutputList = [path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PDFTitle,PDFName,PDFDate,PDFSyumoku,PDFJigyouNendo,PDFZeimoku,PDFSinkokuSyu,PDFSyotokuAndKesson,PDFSinkokuKanpu,PDFKessonAndSaigai,PDFKuriketusai,PDFZeimoku2,PDFSinkokuSyu2,PDFKazeiHyoujyun,PDFSinkokuKanpu2]
+                    SinkokuCSV2List.append(OutputList)
                 #------------------------------------------------------------------------ 
                 elif PDFFlag == '所得税':
                     for z in range(PDFdfRow):#PDFのテーブル行数分ループ
@@ -308,6 +356,7 @@ def PDFRead(URL):
     MeUrl = os.getcwd().replace('\\','/')#自分のパス
     #各税目のインデックスリストを加工して格納------------------------------------------------
     SinkokuCSV = CSVOut.CsvReadHeaderless(MeUrl + "/RPAPhoto/PDFReadForList/確定申告.CSV")#内国法人確定申告のインデックスリスト
+    SinkokuCSV2 = CSVOut.CsvReadHeaderless(MeUrl + "/RPAPhoto/PDFReadForList/確定申告2.CSV")#内国法人確定申告のインデックスリスト
     SyotokuCSV = CSVOut.CsvReadHeaderless(MeUrl + "/RPAPhoto/PDFReadForList/所得税.CSV")#所得税のインデックスリスト
     SyouhiCSV = CSVOut.CsvReadHeaderless(MeUrl + "/RPAPhoto/PDFReadForList/消費税.CSV")#消費税のインデックスリスト
     HoujinCSV = CSVOut.CsvReadHeaderless(MeUrl + "/RPAPhoto/PDFReadForList/法人税.CSV")#法人税のインデックスリスト
@@ -315,6 +364,7 @@ def PDFRead(URL):
     SyoukyakuCSV = CSVOut.CsvReadHeaderless(MeUrl + "/RPAPhoto/PDFReadForList/償却資産.CSV")#償却資産のインデックスリスト
     #------------------------------------------------------------------------------------
     SinkokuCSVList = []#成功リスト初期化
+    SinkokuCSV2List = []#成功リスト初期化
     SyotokuCSVList = []#成功リスト初期化
     SyouhiCSVList = []#成功リスト初期化
     HoujinCSVList = []#成功リスト初期化
@@ -334,13 +384,15 @@ def PDFRead(URL):
                 try:
                     if not ".xdw" in dif:#Docuファイルじゃなければ
                         path_pdf = dif.replace('\\','/')#PDFパスを代入
-                        CSVIndexSort(path_pdf,SinkokuCSVList,SyotokuCSVList,SyouhiCSVList,HoujinCSVList,YoteiCSVList,SyoukyakuCSVList,CSVBadList,SinkokuCSV[1],SyotokuCSV[1],SyouhiCSV[1],HoujinCSV[1],YoteiCSV[1],SyoukyakuCSV[1])
+                        CSVIndexSort(path_pdf,SinkokuCSVList,SinkokuCSV2List,SyotokuCSVList,SyouhiCSVList,HoujinCSVList,YoteiCSVList,SyoukyakuCSVList,CSVBadList,SinkokuCSV[1],SinkokuCSV2[1],SyotokuCSV[1],SyouhiCSV[1],HoujinCSV[1],YoteiCSV[1],SyoukyakuCSV[1])
                     else:
                         print('xdw')
                 except Exception as e:
                     print(e)
     if not np.array(SinkokuCSVList).shape[0] == 0:
         CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/内国法人確定申告受信通知リスト.csv",SinkokuCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','事業年度','税目','申告の種類','所得金額又は欠損金額','差引確定法人税額','欠損金又は災害損失金等の当期控除額','翌期へ繰り越す欠損金又は災害損失金','税目2','申告の種類2','課税標準法人税額','差引確定地方法人税額'])
+    if not np.array(SinkokuCSV2List).shape[0] == 0:
+        CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/内国法人確定申告受信通知リスト2.csv",SinkokuCSV2List,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','事業年度','税目','申告の種類','所得金額又は欠損金額','この申告による還付金額','欠損金又は災害損失金等の当期控除額','翌期へ繰り越す欠損金又は災害損失金','税目2','申告の種類2','課税標準法人税額','この申告による還付金額2'])
     if not np.array(SyotokuCSVList).shape[0] == 0:
         CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/所得税受信通知リスト.csv",SyotokuCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','年分','種目','所得金額','納める税金','還付される税金'])
     if not np.array(SyouhiCSVList).shape[0] == 0:
