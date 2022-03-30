@@ -211,8 +211,8 @@ def FMSOpen(driver,FolURL2,xls_data,KamokuCD,Lday):
         time.sleep(2)
     pg.press('return')
     pg.press('return')
-    pg.write('20')
-    # pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
+    # pg.write('20')
+    pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
     pg.press('return')
     conf = 0.9
     LoopVal = 10
