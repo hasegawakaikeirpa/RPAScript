@@ -211,8 +211,8 @@ def FMSOpen(driver,FolURL2,xls_data,KamokuCD,Lday):
         time.sleep(2)
     pg.press('return')
     pg.press('return')
-    pg.write('20')
-    # pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
+    # pg.write('20')
+    pg.write(str(Lday[1]), interval=0.01)#直接SENDできないのでpyautoguiで入力
     pg.press('return')
     conf = 0.9
     LoopVal = 10
@@ -270,7 +270,7 @@ def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         pg.press('f4')
         time.sleep(2)
         FileName = "HousyuSaimoku.png"
-        NoD[0] == False
+        NoD = ImgCheck(FolURL2,"NoDataBar.png",0.9,5)
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(2)
             NoD = ImgCheck(FolURL2,"NoDataBar.png",0.9,5)
