@@ -46,7 +46,12 @@ def CsvSave(URL,data):
     df.to_csv(URL, index = False)
     return df
 #------------------------------------------------------------------------------------------------------------------------------- 
-
+def CsvSaveEnc(URL,data,enc):
+    # DataFrame作成
+    df = pd.DataFrame(data)
+    df.to_csv(URL, index = False,encoding=enc)
+    return df
+#------------------------------------------------------------------------------------------------------------------------------- 
 def CsvSortDatetime(URL,ColName,asc):#asc=False降順
     try:
         SerchEnc = format(getFileEncoding(URL))

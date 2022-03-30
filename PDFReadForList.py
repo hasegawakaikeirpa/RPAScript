@@ -268,8 +268,8 @@ def PDFRead(URL):
                     print('xdw')
             except Exception as e:
                 print(e)
-    CSVOut.CsvSave(URL.replace("\\","/") + "/PDFDataSuccess.csv",CSVList)
-    CSVOut.CsvSave(URL.replace("\\","/") + "/PDFFailData.csv",CSVBadList)
+    CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/PDFDataSuccess.csv",CSVList,"shift-jis")
+    CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/PDFFailData.csv",CSVBadList,"shift-jis")
 #URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\送信分受信通知"
 URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 try:
