@@ -32,13 +32,26 @@ def CsvRead(URL):#引数指定のCSVを読みとる
     except:
         return False,""
 #------------------------------------------------------------------------------------------------------------------------------- 
-def CsvSave(URL,Col,data):
+def CsvReadHeaderless(URL):#引数指定のCSVを読みとる
+    try:
+        SerchEnc = format(getFileEncoding(URL))
+        C_csv = pd.read_csv(URL,encoding = SerchEnc,header=None)
+        return True,C_csv
+    except:
+        return False,""
+#------------------------------------------------------------------------------------------------------------------------------- 
+def CsvSave(URL,data):
     # DataFrame作成
     df = pd.DataFrame(data)
     df.to_csv(URL, index = False)
     return df
 #------------------------------------------------------------------------------------------------------------------------------- 
-
+def CsvSaveEnc(URL,data,enc):
+    # DataFrame作成
+    df = pd.DataFrame(data)
+    df.to_csv(URL, index = False,encoding=enc)
+    return df
+#------------------------------------------------------------------------------------------------------------------------------- 
 def CsvSortDatetime(URL,ColName,asc):#asc=False降順
     try:
         SerchEnc = format(getFileEncoding(URL))
