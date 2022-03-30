@@ -128,120 +128,120 @@ def CSVIndexSort(path_pdf,CSVList,CSVBadList,SyotokuCSV,SyouhiCSV,HoujinCSV,Yote
                     for z in range(PDFdfRow):#PDFのテーブル行数分ループ
                         dfdatarow = PDFdf.iloc[z]#PDFのテーブル行データ1
                         if dfdatarow[0] == '手続名':
-                            PDFTitle = dfdatarow[1]                        
+                            PDFTitle = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '氏名又は名称':
-                            PDFName = dfdatarow[1]                        
+                            PDFName = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '受付日時':
-                            PDFDate = dfdatarow[1]                        
+                            PDFDate = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '年分':
-                            PDFNendo = dfdatarow[1]                        
+                            PDFNendo = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '種目':
-                            PDFSyumoku = dfdatarow[1]                        
+                            PDFSyumoku = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '所得金額':
-                            PDFSyotoku = dfdatarow[1]                        
+                            PDFSyotoku = str(dfdatarow[1])                        
                         elif '納める税金' in dfdatarow[0]:
-                            PDFNouzeigaku = dfdatarow[1]                        
+                            PDFNouzeigaku = str(dfdatarow[1])                        
                         elif '還付される税金' in dfdatarow[0]:
-                            PDFKanpugaku = dfdatarow[1]
+                            PDFKanpugaku = str(dfdatarow[1])
                     OutputList = [path_pdf,str(y+1) + 'ページ目',PDFTitle,PDFName,PDFDate,PDFNendo,PDFSyumoku,PDFSyotoku,PDFNouzeigaku,PDFKanpugaku]
                     CSVList.append(OutputList)
                 elif PDFFlag == '消費税':
                     for z in range(PDFdfRow):#PDFのテーブル行数分ループ
                         dfdatarow = PDFdf.iloc[z]#PDFのテーブル行データ1
                         if dfdatarow[0] == '手続名':
-                            PDFTitle = dfdatarow[1]                        
+                            PDFTitle = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '氏名又は名称':
-                            PDFName = dfdatarow[1]                        
+                            PDFName = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '受付日時':
-                            PDFDate = dfdatarow[1]
+                            PDFDate = str(dfdatarow[1])
                         elif dfdatarow[0] == '種目':
-                            PDFSyumoku = dfdatarow[1]                       
+                            PDFSyumoku = str(dfdatarow[1])                       
                         elif dfdatarow[0] == '申告の種類':
-                            PDFSyurui = dfdatarow[1]                                              
+                            PDFSyurui = str(dfdatarow[1])                                              
                         elif dfdatarow[0] == '課税標準額':
-                            PDFKazeigaku = dfdatarow[1]                        
+                            PDFKazeigaku = str(dfdatarow[1])                        
                         elif '消費税及び地方消費税の合計' in dfdatarow[0]:
-                            PDFGoukeigaku = dfdatarow[1]                        
+                            PDFGoukeigaku = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '課税期間　自':
-                            PDFKazeikikan = dfdatarow[1] 
+                            PDFKazeikikan = str(dfdatarow[1]) 
                         elif dfdatarow[0] == '課税期間　至':
-                            PDFKazeikikan = PDFKazeikikan + "-" + dfdatarow[1]
+                            PDFKazeikikan = PDFKazeikikan + "-" + str(dfdatarow[1])
                     OutputList = [path_pdf,str(y+1) + 'ページ目',PDFTitle,PDFName,PDFDate,PDFSyumoku,PDFSyurui,PDFKazeigaku,PDFGoukeigaku,PDFKazeikikan]
                     CSVList.append(OutputList)
                 elif PDFFlag == '予定申告':
                     for z in range(PDFdfRow):#PDFのテーブル行数分ループ
                         dfdatarow = PDFdf.iloc[z]#PDFのテーブル行データ1
                         if dfdatarow[0] == '手続名':
-                            PDFTitle = dfdatarow[1]                        
+                            PDFTitle = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '氏名又は名称':
-                            PDFName = dfdatarow[1]                        
+                            PDFName = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '受付日時':
-                            PDFDate = dfdatarow[1]
+                            PDFDate = str(dfdatarow[1])
                         elif dfdatarow[0] == '種目':
-                            PDFSyumoku = dfdatarow[1] 
+                            PDFSyumoku = str(dfdatarow[1]) 
                         elif dfdatarow[0] == '事業年度　自':
-                            PDFJigyouNendo = dfdatarow[1] 
+                            PDFJigyouNendo = str(dfdatarow[1]) 
                         elif dfdatarow[0] == '事業年度　至':
-                            PDFJigyouNendo = PDFJigyouNendo + "-" + dfdatarow[1]                         
+                            PDFJigyouNendo = PDFJigyouNendo + "-" + str(dfdatarow[1])                         
                         elif dfdatarow[0] == '税目':
                             if z == 10:
-                                PDFZeimoku = dfdatarow[1]
+                                PDFZeimoku = str(dfdatarow[1])
                             elif z == 12:
-                                PDFZeimoku2 = dfdatarow[1]                                            
+                                PDFZeimoku2 = str(dfdatarow[1])                                            
                         elif dfdatarow[0] == '納付すべき法人税額':
-                            PDFNouhuHoujin = dfdatarow[1]                        
+                            PDFNouhuHoujin = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '納付すべき地方法人税額':
-                            PDFNouhuTihou = dfdatarow[1]
+                            PDFNouhuTihou = str(dfdatarow[1])
                     OutputList = [path_pdf,str(y+1) + 'ページ目',PDFTitle,PDFName,PDFDate,PDFSyumoku,PDFJigyouNendo,PDFZeimoku,PDFNouhuHoujin,PDFNouhuTihou]
                     CSVList.append(OutputList)                                          
                 elif PDFFlag == '償却資産':
                     for z in range(PDFdfRow):#PDFのテーブル行数分ループ
                         dfdatarow = PDFdf.iloc[z]#PDFのテーブル行データ1
                         if dfdatarow[0] == '手続名':
-                            PDFTitle = dfdatarow[1]                        
+                            PDFTitle = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '氏名又は名称':
-                            PDFName = dfdatarow[1]                        
+                            PDFName = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '発行元名':
-                            PDFHakkou = dfdatarow[1]                        
+                            PDFHakkou = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '発行元所属名':
-                            PDFHakkouSyozoku = dfdatarow[1]                        
+                            PDFHakkouSyozoku = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '受付日時':
-                            PDFDate = dfdatarow[1]                        
+                            PDFDate = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '提出先':
-                            PDFTeisyutu = dfdatarow[1]                        
+                            PDFTeisyutu = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '年度・期別':
-                            PDFNendo = dfdatarow[1]                        
+                            PDFNendo = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '課税所在地':
-                            PDFSyozaiti = dfdatarow[1]
+                            PDFSyozaiti = str(dfdatarow[1])
                     OutputList = [path_pdf,str(y+1) + 'ページ目',PDFTitle,PDFName,PDFHakkou,PDFHakkouSyozoku,PDFDate,PDFTeisyutu,PDFNendo,PDFSyozaiti]
                     CSVList.append(OutputList) 
                 elif PDFFlag == '法人税':
                     for z in range(PDFdfRow):#PDFのテーブル行数分ループ
                         dfdatarow = PDFdf.iloc[z]#PDFのテーブル行データ1
                         if dfdatarow[0] == '手続名':
-                            PDFTitle = dfdatarow[1]                        
+                            PDFTitle = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '氏名又は名称':
-                            PDFName = dfdatarow[1]                        
+                            PDFName = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '発行元名':
-                            PDFHakkou = dfdatarow[1]                        
+                            PDFHakkou = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '発行元所属名':
-                            PDFHakkouSyozoku = dfdatarow[1]                        
+                            PDFHakkouSyozoku = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '受付日時':
-                            PDFDate = dfdatarow[1]                        
+                            PDFDate = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '提出先':
-                            PDFTeisyutu = dfdatarow[1]                        
+                            PDFTeisyutu = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '年度・期別':
-                            PDFNendo = dfdatarow[1]                        
+                            PDFNendo = str(dfdatarow[1])                        
                         elif dfdatarow[0] == '納税者氏名':
-                            PDFNouzeiName = dfdatarow[1]
+                            PDFNouzeiName = str(dfdatarow[1])
                     OutputList = [path_pdf,str(y+1) + 'ページ目',PDFTitle,PDFName,PDFHakkou,PDFHakkouSyozoku,PDFDate,PDFTeisyutu,PDFNendo,PDFNouzeiName]
                     CSVList.append(OutputList)
-        return True                      
+        return True,CSVList,CSVBadList                      
     except Exception as e:
         logger.debug(path_pdf + '_' + str(y+1) + 'ページ目取得失敗')
         OutputList = [path_pdf,str(y+1) + 'ページ目取得失敗','','','','','','','','']
         CSVBadList.append(OutputList)
-        return False
+        return False,CSVList,CSVBadList
 #----------------------------------------------------------------------------------------
 def PDFRead(URL):
     MeUrl = os.getcwd().replace('\\','/')#自分のパス
@@ -268,8 +268,8 @@ def PDFRead(URL):
                     print('xdw')
             except Exception as e:
                 print(e)
-    CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/PDFDataSuccess.csv",CSVList,"shift-jis")
-    CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/PDFFailData.csv",CSVBadList,"shift-jis")
+    CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/PDFDataSuccess.csv",CSVList,"shiftjis")
+    CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/PDFFailData.csv",CSVBadList,"shiftjis")
 #URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\送信分受信通知"
 URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 try:
