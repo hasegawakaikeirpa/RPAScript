@@ -254,6 +254,7 @@ def PDFRead(URL):
     #------------------------------------------------------------------------------------
     CSVList = []#成功リスト初期化
     CSVBadList = []#失敗リスト初期化
+    # CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/PDFDataSuccess.csv",CSVList,"shiftjis")
     dir_List = SerchdirFolders(URL)#指定URL配下のサブフォルダを取得
     for dir_ListItem  in dir_List:
         Serchd = dir_ListItem[0] + '\\' + dir_ListItem[1]#サブフォルダ名
