@@ -270,7 +270,7 @@ def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         pg.press('f4')
         time.sleep(2)
         FileName = "HousyuSaimoku.png"
-        NoD[0] == False
+        NoD = ImgCheck(FolURL2,"NoDataBar.png",0.9,5)
         while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
             time.sleep(2)
             NoD = ImgCheck(FolURL2,"NoDataBar.png",0.9,5)
