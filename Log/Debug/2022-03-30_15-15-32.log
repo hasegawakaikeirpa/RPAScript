@@ -1,0 +1,19 @@
+[2022/03/30 15:15:32][DEBUG](PDFReadForList.py:291) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF結合開始 <module> d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/30 15:15:32][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 9 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 2 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 9 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 2 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 9 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 2 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/03/30 15:15:32][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py

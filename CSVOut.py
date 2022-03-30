@@ -46,10 +46,13 @@ def CsvSave(URL,data):
     df.to_csv(URL, index = False)
     return df
 #------------------------------------------------------------------------------------------------------------------------------- 
-def CsvSaveEnc(URL,data,enc):
+def CsvSaveEnc(URL,data,enc,HLIST):
     # DataFrame作成
     df = pd.DataFrame(data)
-    df.to_csv(URL, index = False,encoding=enc)
+    df.columns = HLIST
+    with open(URL, mode="w", encoding=enc, errors="ignore", newline="") as f:
+        # pandasでファイルオブジェクトに書き込む
+        df.to_csv(f,index = False)
     return df
 #------------------------------------------------------------------------------------------------------------------------------- 
 def CsvSortDatetime(URL,ColName,asc):#asc=False降順
