@@ -15,11 +15,12 @@ from PIL import Image
 import pyocr
 import PyPDF2
 import CSVOut
-#logger設定------------------------------------------------------------------------------------------------------------
+import FolderCreate as FC
+#logger設定------------------------------------------------------------------------------
 import logging.config
 logging.config.fileConfig("logging_debug.conf")
 logger = logging.getLogger(__name__)
-#----------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------
 def SerchdirFolders(URL):#指定URL配下のサブフォルダを取得
     List = []
     for fd_path, sb_folder, sb_file in os.walk(URL):
@@ -82,6 +83,7 @@ def CSVIndexSort(path_pdf,SinkokuCSVList,SinkokuCSV2List,SyotokuCSVList,SyouhiCS
     for page in PDFPage.create_pages(document): #ページオブジェ分ループ
         num_pages += 1 #ページ数カウント
     print(num_pages) #ページ数確認
+    #------------------------------------------------------------------------------------
     try:
         for y in range(num_pages): 
             # TX = extract_text(path_pdf,page_numbers=y,codec='utf-8') テキストのみ取得できる
@@ -371,6 +373,7 @@ def PDFRead(URL):
     YoteiCSVList = []#成功リスト初期化
     SyoukyakuCSVList = []#成功リスト初期化
     CSVBadList = []#失敗リスト初期化
+    #------------------------------------------------------------------------------------
     # CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/PDFDataSuccess.csv",CSVList,"shiftjis")
     dir_List = SerchdirFolders(URL)#指定URL配下のサブフォルダを取得
     print(dir_List)
@@ -389,22 +392,25 @@ def PDFRead(URL):
                         print('xdw')
                 except Exception as e:
                     print(e)
+    #------------------------------------------------------------------------------------
+    ListURL = FC.CreFol("//Sv05121a/e/電子ファイル/メッセージボックス/TEST","受信通知CSV")
     if not np.array(SinkokuCSVList).shape[0] == 0:
-        CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/内国法人確定申告受信通知リスト.csv",SinkokuCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','事業年度','税目','申告の種類','所得金額又は欠損金額','差引確定法人税額','欠損金又は災害損失金等の当期控除額','翌期へ繰り越す欠損金又は災害損失金','税目2','申告の種類2','課税標準法人税額','差引確定地方法人税額'])
+        CSVOut.CsvSaveEnc(ListURL + "/内国法人確定申告受信通知リスト.csv",SinkokuCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','事業年度','税目','申告の種類','所得金額又は欠損金額','差引確定法人税額','欠損金又は災害損失金等の当期控除額','翌期へ繰り越す欠損金又は災害損失金','税目2','申告の種類2','課税標準法人税額','差引確定地方法人税額'])
     if not np.array(SinkokuCSV2List).shape[0] == 0:
-        CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/内国法人確定申告受信通知リスト2.csv",SinkokuCSV2List,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','事業年度','税目','申告の種類','所得金額又は欠損金額','この申告による還付金額','欠損金又は災害損失金等の当期控除額','翌期へ繰り越す欠損金又は災害損失金','税目2','申告の種類2','課税標準法人税額','この申告による還付金額2'])
+        CSVOut.CsvSaveEnc(ListURL + "/内国法人確定申告受信通知リスト2.csv",SinkokuCSV2List,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','事業年度','税目','申告の種類','所得金額又は欠損金額','この申告による還付金額','欠損金又は災害損失金等の当期控除額','翌期へ繰り越す欠損金又は災害損失金','税目2','申告の種類2','課税標準法人税額','この申告による還付金額2'])
     if not np.array(SyotokuCSVList).shape[0] == 0:
-        CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/所得税受信通知リスト.csv",SyotokuCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','年分','種目','所得金額','納める税金','還付される税金'])
+        CSVOut.CsvSaveEnc(ListURL + "/所得税受信通知リスト.csv",SyotokuCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','年分','種目','所得金額','納める税金','還付される税金'])
     if not np.array(SyouhiCSVList).shape[0] == 0:
-        CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/消費税受信通知リスト.csv",SyouhiCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','申告の種類','課税標準額','消費税及び地方消費税の合計','課税期間'])
+        CSVOut.CsvSaveEnc(ListURL + "/消費税受信通知リスト.csv",SyouhiCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','申告の種類','課税標準額','消費税及び地方消費税の合計','課税期間'])
     if not np.array(HoujinCSVList).shape[0] == 0:
-        CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/法人税受信通知リスト.csv",HoujinCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','発行元名','発行元所属名','受付日時','提出先','年度・期別','納税者氏名'])
+        CSVOut.CsvSaveEnc(ListURL + "/法人税受信通知リスト.csv",HoujinCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','発行元名','発行元所属名','受付日時','提出先','年度・期別','納税者氏名'])
     if not np.array(YoteiCSVList).shape[0] == 0:
-        CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/予定納税受信通知リスト.csv",YoteiCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','事業年度','税目','納付すべき法人税額','税目2','納付すべき地方法人税額'])
+        CSVOut.CsvSaveEnc(ListURL + "/予定納税受信通知リスト.csv",YoteiCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','受付日時','種目','事業年度','税目','納付すべき法人税額','税目2','納付すべき地方法人税額'])
     if not np.array(SyoukyakuCSVList).shape[0] == 0:
-        CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/償却資産受信通知リスト.csv",SyoukyakuCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','発行元名','発行元所属名','受付日時','提出先','年度・期別','課税所在地'])
+        CSVOut.CsvSaveEnc(ListURL + "/償却資産受信通知リスト.csv",SyoukyakuCSVList,"cp932",['URL','ページ','手続名','氏名又は名称','発行元名','発行元所属名','受付日時','提出先','年度・期別','課税所在地'])
     if not np.array(CSVBadList).shape[0] == 0:
-        CSVOut.CsvSaveEnc(URL.replace("\\","/") + "/受信通知取得失敗リスト.csv",CSVBadList,"cp932",['URL','ページ','手続名','氏名又は名称','発行元名','発行元所属名','受付日時','提出先','年度・期別','納税者氏名'])
+        CSVOut.CsvSaveEnc(ListURL + "/受信通知取得失敗リスト.csv",CSVBadList,"cp932",['URL','ページ','手続名','氏名又は名称','発行元名','発行元所属名','受付日時','提出先','年度・期別','納税者氏名'])
+    #------------------------------------------------------------------------------------
 #URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\送信分受信通知"
 URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 try:
