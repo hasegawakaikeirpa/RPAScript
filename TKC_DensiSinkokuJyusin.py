@@ -224,7 +224,10 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    # pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pyperclip.copy(CSVURL)
+    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+ 
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID" #取得要素のタイプ指定
@@ -248,7 +251,10 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'\
         'backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace'])
-    pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    # pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pyperclip.copy(CSVName)
+    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID" #取得要素のタイプ指定
@@ -660,28 +666,28 @@ def MainFlow(FolURL2):#メインの処理
     pg.press('down')
     pg.press('return')#小林常務を選択
     #FileName = "KanyoHasegawa.png"#担当税理士所長判定
-    # #法人税消費税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'HoujinSyouhizeiJyusinMaster'
-    # CSVChildName = 'HoujinSyouhizeiJyusinChild'#チャイルドのCSVファイル名を指定
-    # List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]
-    # C_Master = C_Master.drop_duplicates(subset='関与先コード')
-    # print(C_Master)
-    # C_MasterFlag = TaxAns[1]
-    # C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    # C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    # CsvKey = "法人税"
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_LoopRow = np.array(C_Master).shape[0]#配列行数取得
-    #     for x in range(C_LoopRow):
-    #         MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2,CsvKey) 
-    # #-----------------------------------------------------------------------------------------------------------------------
+    #法人税消費税処理------------------------------------------------------------------------------------------------------
+    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
+    conf = 0.9#画像認識感度
+    LoopVal = 500
+    CSVName = 'HoujinSyouhizeiJyusinMaster'
+    CSVChildName = 'HoujinSyouhizeiJyusinChild'#チャイルドのCSVファイル名を指定
+    List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
+    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    C_Master = TaxAns[0]
+    C_Master = C_Master.drop_duplicates(subset='関与先コード')
+    print(C_Master)
+    C_MasterFlag = TaxAns[1]
+    C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+    C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+    CsvKey = "法人税"
+    if C_MasterFlag == False:
+        print("C_Masterは空です")
+    else:
+        C_LoopRow = np.array(C_Master).shape[0]#配列行数取得
+        for x in range(C_LoopRow):
+            MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2,CsvKey) 
+    #-----------------------------------------------------------------------------------------------------------------------
     ##所得税消費税処理------------------------------------------------------------------------------------------------------
     #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
     #conf = 0.9#画像認識感度

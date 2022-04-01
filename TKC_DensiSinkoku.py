@@ -244,7 +244,7 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
     # pg.write(CSVURL, interval=0.01)#直接SENDできないのでpyautoguiで入力
     pyperclip.copy(CSVURL)
     pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-    pg.press(['return'])
+
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"#取得要素種類を指定
@@ -271,7 +271,7 @@ def CSVOutPut(CSVURL,CSVName,driver,FolURL2):#TKCのCSVダイアログでの書�
     # pg.write(CSVName, interval=0.01)#直接SENDできないのでpyautoguiで入力
     pyperclip.copy(CSVName)
     pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
-    pg.press(['return'])
+
     #----------------------------------------------------------------------------------------------------------------------
     #要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"#取得要素種類を指定
@@ -364,7 +364,8 @@ def Sousin(driver,FolURL2,ItemRowArray,CSVName):
                 time.sleep(1)
                 ImgClick(FolURL2,"TihouAnsyou.png",0.9,3)
                 time.sleep(1)
-                pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pyperclip.copy("Ha47K05121")
+                pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
                 pg.press('return')
                 time.sleep(1)
                 pg.press('return')
@@ -373,7 +374,8 @@ def Sousin(driver,FolURL2,ItemRowArray,CSVName):
                 time.sleep(1)
                 ImgClick(FolURL2,"KokuzeiAnsyou.png",0.9,3)
                 time.sleep(1)
-                pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+                pyperclip.copy("Ha47K05121")
+                pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
                 pg.press('return')
                 time.sleep(1)
                 pg.press('return')
@@ -396,7 +398,8 @@ def Sousin(driver,FolURL2,ItemRowArray,CSVName):
         if ZeiresiAnsyou == True:
             FileName = "ZeirisiAnsyou.png"
             ImgClick(FolURL2,FileName,conf,LoopVal)
-            pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pyperclip.copy("Ha47K05121")
+            pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
             pg.press('return')
         time.sleep(5)
         conf = 0.9
@@ -406,7 +409,8 @@ def Sousin(driver,FolURL2,ItemRowArray,CSVName):
         if ZeiresiAnsyouT == True:
             FileName = "ZeirisiAnsyouT.png"
             ImgClick(FolURL2,FileName,conf,LoopVal)
-            pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pyperclip.copy("Ha47K05121")
+            pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
             pg.press('return')
         #----------------------------------------------------------------------------------------------------------------------
         #要素クリック----------------------------------------------------------------------------------------------------------
@@ -417,7 +421,8 @@ def Sousin(driver,FolURL2,ItemRowArray,CSVName):
         LoopVal = 10
         FileName = "TihouzeiOK.png"
         if ImgCheck(FolURL2,FileName,conf,LoopVal)[0] == False:
-            pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+            pyperclip.copy("Ha47K05121")
+            pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
             pg.press('return')
         #----------------------------------------------------------------------------------------------------------------------
         #要素クリック----------------------------------------------------------------------------------------------------------
@@ -444,7 +449,8 @@ def SinSousin(driver,FolURL2,ItemRowArray):
     #要素クリック----------------------------------------------------------------------------------------------------------
     while pg.locateOnScreen(FolURL2 + "/" + "SinseiLogin.png", confidence=0.9) is None:
         time.sleep(1)
-    pg.write("Ha47K05121", interval=0.01)#直接SENDできないのでpyautoguiで入力
+    pyperclip.copy("Ha47K05121")
+    pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
     pg.press('return')
     pg.press('return')
     #----------------------------------------------------------------------------------------------------------------------          
@@ -662,27 +668,27 @@ def MainFlow(FolURL2):
     pg.press('down')
     pg.press('return')#小林常務を選択
     # # FileName = "KanyoHasegawa.png"#担当税理士所長判定
-    # #法人税消費税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'HoujinSyouhizeiMaster'
-    # CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
-    # List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     NoBlue(FolURL2)
-    #     C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     print(C_Master)
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2) 
-    # #----------------------------------------------------------------------------------------------------------------------
+    #法人税消費税処理------------------------------------------------------------------------------------------------------
+    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
+    conf = 0.9#画像認識感度
+    LoopVal = 500
+    CSVName = 'HoujinSyouhizeiMaster'
+    CSVChildName = 'HoujinSyouhizeiChild'#チャイルドのCSVファイル名を指定
+    List = ["HoujinSyouhizei.png","HoujinSyouhizei2.png"]
+    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
+    C_Master = TaxAns[0]
+    C_MasterFlag = TaxAns[1]
+    if C_MasterFlag == False:
+        print("C_Masterは空です")
+    else:
+        NoBlue(FolURL2)
+        C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
+        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
+        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+        print(C_Master)
+        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2) 
+    #----------------------------------------------------------------------------------------------------------------------
     ##所得税消費税処理------------------------------------------------------------------------------------------------------
     #FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
     #conf = 0.9#画像認識感度
@@ -703,28 +709,28 @@ def MainFlow(FolURL2):
     #    C_dfCol = np.array(C_Master).shape[1]#配列列数取得
     #    MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
     #    
-    ##-----------------------------------------------------------------------------------------------------------------------
-    # #法定調書給報処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
-    # conf = 0.9#画像認識感度
-    # LoopVal = 500
-    # CSVName = 'HouteiKyuuhouMaster'
-    # CSVChildName = 'HouteiKyuuhouChild'#チャイルドのCSVファイル名を指定
-    # List = ["HouteiKyuuhou.png","HouteiKyuuhou2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag == False:
-    #     print("C_Masterは空です")
-    # else:
-    #     NoBlue(FolURL2)
-    #     C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     print(C_Master)
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
-    # #-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #法定調書給報処理------------------------------------------------------------------------------------------------------
+    FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
+    conf = 0.9#画像認識感度
+    LoopVal = 500
+    CSVName = 'HouteiKyuuhouMaster'
+    CSVChildName = 'HouteiKyuuhouChild'#チャイルドのCSVファイル名を指定
+    List = ["HouteiKyuuhou.png","HouteiKyuuhou2.png"]
+    TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ
+    C_Master = TaxAns[0]
+    C_MasterFlag = TaxAns[1]
+    if C_MasterFlag == False:
+        print("C_Masterは空です")
+    else:
+        NoBlue(FolURL2)
+        C_Master = C_Master [C_Master['送信']=='可']#送信列「可」のみ抽出
+        C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
+        C_dfRow = np.array(C_Master).shape[0]#配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+        print(C_Master)
+        MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
+    #-----------------------------------------------------------------------------------------------------------------------
     # #償却資産処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
     # conf = 0.9#画像認識感度
