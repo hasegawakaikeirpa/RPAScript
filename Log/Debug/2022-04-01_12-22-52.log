@@ -1,0 +1,128 @@
+[2022/04/01 12:22:52][DEBUG](PDFReadForList.py:475) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF結合開始 <module> d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:22:52][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 9 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 2 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 9 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 2 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 9 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 2 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 9 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 2 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 9 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 2 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 9 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 2 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:22:52][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 1 feed d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/04/01 12:23:07][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/118/ミロク送信分/118_有限会社　龍野畳商会2.pdf_4ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:15][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/122/申告/122_株式会社 ニッソク広島.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:22][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/122/申告/122_株式会社 ニッソク広島.pdf_6ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:27][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/127/ミロク送信分/127_株式会社 広島ハウジング.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:30][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/127/ミロク送信分/127_株式会社 広島ハウジング.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:43][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/157/ミロク送信分/157_有限会社 殿林.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:45][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/162/申請/162_合同会社 天龍姫.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:45][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/162/申請/162_合同会社 天龍姫.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:47][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/181/申請/181_Ｂａｓｅ ｏｆ ｃａｎｄｌｅｓ.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:47][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/181/申請/181_Ｂａｓｅ ｏｆ ｃａｎｄｌｅｓ.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:49][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/181/申請/181_Ｂａｓｅ ｏｆ ｃａｎｄｌｅｓ.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:49][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/181/申請/181_Ｂａｓｅ ｏｆ ｃａｎｄｌｅｓ.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:56][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/207/申請/207_有限会社 成和工業.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:23:57][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/207/申請/207_有限会社 成和工業.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:24:05][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/212/申告/212_株式会社 サンエスシステム.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:24:15][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/212/申告/212_株式会社 サンエスシステム.pdf_7ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:24:23][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/215/申告/215_有限会社 ＡＰＣ企画.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:24:30][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/215/申告/215_有限会社 ＡＰＣ企画.pdf_6ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:24:35][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/226/ミロク送信分/226_有限会社 広島四恩社.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:24:41][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/230/ミロク送信分/230_株式会社 ＦＩＯＲＥ.pdf_4ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:24:43][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/252/ミロク送信分/252_株式会社 wishAI.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:01][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/312/申告/312_有限会社 パル動物病院.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:08][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/312/申告/312_有限会社 パル動物病院.pdf_6ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:14][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/327/ミロク送信分/327_株式会社 クリーンスタッフ.pdf_4ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:19][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/329/ミロク送信分/329_矢神興産　株式会社.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:27][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/343/ミロク送信分/343_株式会社　クローバー.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:46][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/399/ミロク送信分/399_株式会社 SWINGING BIRD.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:54][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/404/ミロク送信分/404_株式会社 大畠工作所.pdf_4ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:56][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:57][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:59][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:25:59][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:01][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:01][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:03][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_7ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:03][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_7ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:06][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_9ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:06][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/407/申請/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_9ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:12][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/412/ミロク送信分/412_有限会社 ＯＵＴ ＨＩＧＨ.pdf_4ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:26][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/433/申請/433_株式会社 ＡＫ.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:26][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/433/申請/433_株式会社 ＡＫ.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:29][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/433/申請/433_株式会社 ＡＫ.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:29][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/433/申請/433_株式会社 ＡＫ.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:31][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/433/申請/433_株式会社 ＡＫ.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:31][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/433/申請/433_株式会社 ＡＫ.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:33][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/463/申請/463_お好み焼き もり.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:33][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/463/申請/463_お好み焼き もり.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:40][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/464/申告/464_医療法人社団 松成会.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:47][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/464/申告/464_医療法人社団 松成会.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:26:52][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/474/ミロク送信分/474_株式会社 ワンダーウォール.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:27:04][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/524/申告/524_株式会社 久本商店.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:27:11][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/524/申告/524_株式会社 久本商店.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:27:19][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/55201/ミロク送信分/55201_（医）Ｍ．コラソン.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:27:24][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/560/ミロク送信分/560_株式会社 ＮＥＷＳ.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:27:27][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/566/ミロク送信分/566_株式会社 Ｒｏｃｋ.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:27:36][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/576/申告/576_有限会社 エム・サプライ.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:27:43][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/576/申告/576_有限会社 エム・サプライ.pdf_6ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:27:50][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/576/申告/576_有限会社 エム・サプライ.pdf_9ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:27:57][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/576/申告/576_有限会社 エム・サプライ.pdf_12ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:28:08][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/629/申告/629_株式会社 イーコム.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:28:16][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/629/申告/629_株式会社 イーコム.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:28:17][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/631/ミロク送信分/631_株式会社 片山工業.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:28:26][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/675/ミロク送信分/675_有限会社　江坂2.pdf_4ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:28:31][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/714/ミロク送信分/714_宗教法人 円応教 高陽教会.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:29:13][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/738/ミロク送信分/738_株式会社 久保アグリファーム.pdf_4ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:29:14][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/738/ミロク送信分/738_株式会社 久保アグリファーム.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:29:20][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/749/申告/749_株式会社 コスモケア・エナジー.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:29:27][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/749/申告/749_株式会社 コスモケア・エナジー.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:29:38][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/787/申告/787_有限会社 中徳.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:29:47][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/787/申告/787_有限会社 中徳.pdf_6ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:29:54][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/787/申告/787_有限会社 中徳.pdf_9ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:30:01][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/787/申告/787_有限会社 中徳.pdf_12ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:30:06][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/787/申告/787_有限会社 中徳.pdf_14ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:30:16][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/787/申告/787_有限会社 中徳.pdf_18ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:30:26][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/822/ミロク送信分/822_医療法人　ゆかわ脳神経外科クリニック.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:30:34][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/835/ミロク送信分/835_株式会社 SEED総合技建.pdf_4ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:30:59][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/939/ミロク送信分/939_株式会社SHOEI2.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:02][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/942/ミロク送信分/942_株式会社 雅興業.pdf_2ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:18][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:18][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_1ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:20][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:20][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_3ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:23][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:23][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_5ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:25][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_7ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:25][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_7ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:27][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_9ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:27][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_9ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:30][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_11ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:31:30][DEBUG](PDFReadForList.py:397) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/96/申請/96_株式会社 ゆまな.pdf_11ページ目取得失敗書式登録なし CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/01 12:32:06][DEBUG](PDFReadForList.py:477) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF結合完了 <module> d:\PythonScript\RPAScript\PDFReadForList.py
