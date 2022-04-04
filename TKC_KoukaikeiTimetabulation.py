@@ -373,7 +373,7 @@ def MainFlow(FolURL2):
         if TCSVO == True:
             TgyoumuList = CSVGet(FolURL2 + "/TGYOUMULIST.CSV")
             if TgyoumuList[0] == True:
-                TgyoumuListRow = CSVCheck("A8公会計作業",TgyoumuList[1],"業務")
+                TgyoumuListRow = CSVCheck("A8公会計作業（固定資産台帳）",TgyoumuList[1],"業務")
                 if TgyoumuListRow[0] == True:
                     # GList = ["1gyou.png","1gyou2.png"]
                     # GL = ImgCheckForList(FolURL2,GList,0.99999)
