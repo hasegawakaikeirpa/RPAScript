@@ -363,6 +363,77 @@ def TKCTimeCSVOut(FolURL2,Title,FileURL):
     except:
         return False
 #----------------------------------------------------------------------------------------------------------------------
+def KanyoScroll(FolURL2):#関与先毎の時間集計操作
+    KCSVO = TKCCSVOut(FolURL2,'KANYOSAKIBETU')
+    if KCSVO == True:
+        KanyosakibetuList = ShiftJisCSVGet(FolURL2 + "/KANYOSAKIBETU.CSV")
+        if KanyosakibetuList[0] == True:
+            KArr = KanyosakibetuList[1]
+            KArrRow = np.array(KArr).shape[0]#配列行数取得
+            for y in range(KArrRow):
+                KArrRowData = KArr.iloc[y,:]
+                KArrName = KArrRowData['関与先']
+                KArrListRow = CSVCheck(KArrName,KArr,"関与先")
+                if KArrListRow[0] == True:
+                    # GList = ["1gyou.png","1gyou2.png"]
+                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
+                    # ImgClick(FolURL2,GL[1],0.99999,1)
+                    time.sleep(1)
+                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
+                    for z in range(KArrListRow[1]):
+                        pg.press('down')
+                    time.sleep(1)
+                    pg.press('return')
+                    time.sleep(1)                                
+                    while pg.locateOnScreen(FolURL2 + "/TantoubetuFlag.png" , confidence=0.9) is None:
+                        time.sleep(1)
+                    TantouCSVO = TKCCSVOut(FolURL2,'TANTOUBETU')
+                    if TantouCSVO == True:
+                        TantouList = CSVGet(FolURL2 + "/TANTOUBETU.CSV")
+                        if TantouList[0] == True:
+                            TanArr = TantouList[1]
+                            TanArrRow = np.array(TanArr).shape[0]#配列行数取得
+                            for z in range(TanArrRow):
+                                TanArrData = TanArr.iloc[z,:]
+                                TanName = TanArrData['担当者']
+                                TanArrName = TanArrData['担当者'].replace("\u3000","")
+                                TanArrTime = TanArrData['実\u3000績(A)']                                               
+                                if not TanArrName == "【合計】":
+                                    if not TanArrTime == False:
+                                        TanArrRowListRow = CSVCheck(TanArrName,TanArr,"担当者")
+                                        if TanArrRowListRow[0] == True:
+                                            time.sleep(1)
+                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
+                                            for z in range(TanArrRowListRow[1]):
+                                                pg.press('down')
+                                            time.sleep(1)
+                                            pg.press('return')
+                                            time.sleep(1)
+                                            while pg.locateOnScreen(FolURL2 + "/KatudouTab.png" , confidence=0.9) is None:
+                                                time.sleep(1)
+                                            FN = KArrName + "_" + TanName
+                                            TKCTimeCSVOut(FolURL2,FN,"//Sv05121a/e/C 作業台/RPA/公会計時間分析/担当者別")
+                                            time.sleep(1)
+                                            pg.press('f10')
+                                            time.sleep(1)
+                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
+                                            for z in range(TanArrRowListRow[1]):
+                                                pg.press('up')
+                            time.sleep(1)
+                            while pg.locateOnScreen(FolURL2 + "/TantoubetuFlag.png" , confidence=0.9) is None:
+                                time.sleep(1)
+                            time.sleep(1)
+                            pg.press('f10')
+                            time.sleep(1)
+                            while pg.locateOnScreen(FolURL2 + "/KousagyouOpen.png" , confidence=0.9) is None:
+                                time.sleep(1)
+                            time.sleep(1)
+                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
+                            time.sleep(1)
+                            for z in range(KArrListRow[1]):
+                                pg.press('up')
+                            time.sleep(1)  
+#----------------------------------------------------------------------------------------------------------------------
 def MainFlow(FolURL2):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
@@ -391,75 +462,48 @@ def MainFlow(FolURL2):
                         time.sleep(1)
                     ImgClick(FolURL2,"KanyoTab.png",0.9,5)
                     time.sleep(1)
-                    KCSVO = TKCCSVOut(FolURL2,'KANYOSAKIBETU')
-                    if KCSVO == True:
-                        KanyosakibetuList = ShiftJisCSVGet(FolURL2 + "/KANYOSAKIBETU.CSV")
-                        if KanyosakibetuList[0] == True:
-                            KArr = KanyosakibetuList[1]
-                            KArrRow = np.array(KArr).shape[0]#配列行数取得
-                            for y in range(KArrRow):
-                                KArrRowData = KArr.iloc[y,:]
-                                KArrName = KArrRowData['関与先']
-                                KArrListRow = CSVCheck(KArrName,KArr,"関与先")
-                                if KArrListRow[0] == True:
-                                    # GList = ["1gyou.png","1gyou2.png"]
-                                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                                    # ImgClick(FolURL2,GL[1],0.99999,1)
-                                    time.sleep(1)
-                                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
-                                    for z in range(KArrListRow[1]):
-                                        pg.press('down')
-                                    time.sleep(1)
-                                    pg.press('return')
-                                    time.sleep(1)                                
-                                    while pg.locateOnScreen(FolURL2 + "/TantoubetuFlag.png" , confidence=0.9) is None:
-                                        time.sleep(1)
-                                    TantouCSVO = TKCCSVOut(FolURL2,'TANTOUBETU')
-                                    if TantouCSVO == True:
-                                        TantouList = CSVGet(FolURL2 + "/TANTOUBETU.CSV")
-                                        if TantouList[0] == True:
-                                            TanArr = TantouList[1]
-                                            TanArrRow = np.array(TanArr).shape[0]#配列行数取得
-                                            for z in range(TanArrRow):
-                                                TanArrData = TanArr.iloc[z,:]
-                                                TanName = TanArrData['担当者']
-                                                TanArrName = TanArrData['担当者'].replace("\u3000","")
-                                                TanArrTime = TanArrData['実\u3000績(A)']                                               
-                                                if not TanArrName == "【合計】":
-                                                    if not TanArrTime == False:
-                                                        TanArrRowListRow = CSVCheck(TanArrName,TanArr,"担当者")
-                                                        if TanArrRowListRow[0] == True:
-                                                            time.sleep(1)
-                                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
-                                                            for z in range(TanArrRowListRow[1]):
-                                                                pg.press('down')
-                                                            time.sleep(1)
-                                                            pg.press('return')
-                                                            time.sleep(1)
-                                                            while pg.locateOnScreen(FolURL2 + "/KatudouTab.png" , confidence=0.9) is None:
-                                                                time.sleep(1)
-                                                            FN = KArrName + "_" + TanName
-                                                            TKCTimeCSVOut(FolURL2,FN,"//Sv05121a/e/C 作業台/RPA/公会計時間分析/担当者別")
-                                                            time.sleep(1)
-                                                            pg.press('f10')
-                                                            time.sleep(1)
-                                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
-                                                            for z in range(TanArrRowListRow[1]):
-                                                                pg.press('up')
-                                            time.sleep(1)
-                                            while pg.locateOnScreen(FolURL2 + "/TantoubetuFlag.png" , confidence=0.9) is None:
-                                                time.sleep(1)
-                                            time.sleep(1)
-                                            pg.press('f10')
-                                            time.sleep(1)
-                                            while pg.locateOnScreen(FolURL2 + "/KousagyouOpen.png" , confidence=0.9) is None:
-                                                time.sleep(1)
-                                            time.sleep(1)
-                                            ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
-                                            time.sleep(1)
-                                            for z in range(KArrListRow[1]):
-                                                pg.press('up')
-                                            time.sleep(1)                                                                                                
+                    KanyoScroll(FolURL2)#関与先毎の時間集計操作
+                #------------------------------------------------------------------------------
+                TgyoumuListRow = CSVCheck("A9公会計作業（財務書類）",TgyoumuList[1],"業務")
+                if TgyoumuListRow[0] == True:
+                    # GList = ["1gyou.png","1gyou2.png"]
+                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
+                    # ImgClick(FolURL2,GL[1],0.99999,1)
+                    time.sleep(1)
+                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press('down')
+                    time.sleep(1)
+                    pg.press('return')
+                    time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png" , confidence=0.9) is not None:
+                        time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/KanyoTab.png" , confidence=0.9) is None:
+                        time.sleep(1)
+                    ImgClick(FolURL2,"KanyoTab.png",0.9,5)
+                    time.sleep(1)
+                    KanyoScroll(FolURL2)#関与先毎の時間集計操作
+                #------------------------------------------------------------------------------
+                TgyoumuListRow = CSVCheck("A10公会計作業（その他）",TgyoumuList[1],"業務")
+                if TgyoumuListRow[0] == True:
+                    # GList = ["1gyou.png","1gyou2.png"]
+                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
+                    # ImgClick(FolURL2,GL[1],0.99999,1)
+                    time.sleep(1)
+                    ImgClick(FolURL2,"1gyouUnderArrow.png",0.9,5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press('down')
+                    time.sleep(1)
+                    pg.press('return')
+                    time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png" , confidence=0.9) is not None:
+                        time.sleep(1)
+                    while pg.locateOnScreen(FolURL2 + "/KanyoTab.png" , confidence=0.9) is None:
+                        time.sleep(1)
+                    ImgClick(FolURL2,"KanyoTab.png",0.9,5)
+                    time.sleep(1)
+                    KanyoScroll(FolURL2)#関与先毎の時間集計操作
+                #------------------------------------------------------------------------------
     else:
         time.sleep(1)
 #----------------------------------------------------------------------------------------------------------------------
