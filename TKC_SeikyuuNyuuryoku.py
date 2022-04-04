@@ -255,7 +255,7 @@ def FindMenu(driver,FolURL2,xls_cd):
     else:
         return True
 #----------------------------------------------------------------------------------------------------------------------
-def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
+def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,xls_tx,UpList):
     FM = FindMenu(driver,FolURL2,xls_cd)
     if FM == True:
         time.sleep(2)
@@ -321,7 +321,10 @@ def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
             time.sleep(2)
             pg.press(['return','return','return','return','return','return','return','return'])#一巡目
             time.sleep(2)
-            pg.press(['return','return'])#一巡目
+            pg.press('return')
+            pyperclip.copy(xls_tx)
+            pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+            pg.press('return')
             pg.write(xls_mn, interval=0.01)#直接SENDできないのでpyautoguiで入力
             pg.press('return')
             time.sleep(2)
@@ -345,7 +348,7 @@ def FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         with open(FolURL2 + "/Log/請求入力フロー結果.csv",mode="w",encoding="shift-jis",errors="ignore")as f:
             pd.DataFrame(UpList).to_csv(f)
 #----------------------------------------------------------------------------------------------------------------------        
-def OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
+def OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,xls_tx,UpList):
     FM = FindMenu(driver,FolURL2,xls_cd)
     if FM == True:
         time.sleep(2)
@@ -385,7 +388,10 @@ def OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList):
         time.sleep(2)
         pg.press(['return','return','return','return','return','return','return','return'])#一巡目
         time.sleep(2)
-        pg.press(['return','return'])#一巡目
+        pg.press('return')
+        pyperclip.copy(xls_tx)
+        pg.hotkey('ctrl', 'v')#pg日本語不可なのでコピペ
+        pg.press('return')
         pg.write(xls_mn, interval=0.01)#直接SENDできないのでpyautoguiで入力
         pg.press('return')
         time.sleep(2)
@@ -420,10 +426,11 @@ def MainFlow(FolURL2,xls_data,KamokuCD,Lday):
         xls_cd = str(int(xls_Item['ｺｰﾄﾞ']))
         xls_name = xls_Item['関与先名'].replace("\u3000","")
         xls_mn = str(int(xls_Item['先生値決め']))
+        xls_tx = str((xls_Item['摘要']))
         if index == 0:
-            FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList)
+            FirstAction(driver,FolURL2,xls_cd,xls_name,xls_mn,xls_tx,UpList)
         else:
-            OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,UpList)
+            OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,xls_tx,UpList)
         #---------------------------------------------------------------------------------------------------------------------
     print("処理終了")
         
@@ -472,7 +479,7 @@ from collections import OrderedDict
 import tkinter
 from tkinter import filedialog
 
-Lday = calendar.monthrange(dt.today().year,dt.today().month)
+Lday = calendar.monthrange(dt.today().year,dt.today().month-1)
 idir = r'\\Sv05121a\e\特２ 特別\Ⅲ総務\１　総務'
 file_path = tkinter.filedialog.askopenfilename(initialdir = idir)
 #file_path = file_path.replace("\u3000","\　")
