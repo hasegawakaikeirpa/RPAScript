@@ -1,79 +1,44 @@
-import time
-from Function.utils.logging import logput as _logput
-from Function.utils.logging import logging_function_decorator as _logging_function_decorator
-from Function.utils.logging import DEBUG, init_logging, LOPT_NO_RETUEN_VALUES
-from Function.utils.canceler import time_limit
+from threading import Thread
+import functools
 import camelot.io as camelot
-#------------------------------------------------------------------------------------------------------------------------
-MYLOGGER = 'sample.time_limit'
-def logput(msg, **kargs):
-    return _logput(msg, logger=MYLOGGER, wrapper_depth=1, **kargs)
-#------------------------------------------------------------------------------------------------------------------------
-def logging_function_decorator(**kargs):
-    # 返値は今回確認したい情報ではないので出力しない
-    return _logging_function_decorator(logger=MYLOGGER, logput_options=LOPT_NO_RETUEN_VALUES, **kargs)
-#------------------------------------------------------------------------------------------------------------------------
-@logging_function_decorator(level=DEBUG)
-def time_limit_example(timeout_secs=3, real_process_time_secs=0, post_process_time_secs=0, repeat_nums=1):
-    with time_limit(timeout_secs) as timeout_event:
-        i = 0
-        while not timeout_event.wait(0):
+
+def timeout(timeout):
+    def deco(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            res = [Exception('function [%s] timeout [%s seconds] exceeded!' % (func.__name__, timeout))]
+            def newFunc():
+                try:
+                    res[0] = func(*args, **kwargs)
+                except Exception as e:
+                    res[0] = e
+            t = Thread(target=newFunc)
+            t.daemon = True
             try:
-                # 以下が本処理の想定
-                time.sleep(real_process_time_secs)
-            finally:
-                # 以下が後処理の想定
-                if post_process_time_secs > 0:
-                    logput('post process start.')
-                    time.sleep(post_process_time_secs)
-                    logput('post process end.')
+                t.start()
+                t.join(timeout)
+            except Exception as je:
+                print ('error starting thread')
+                raise je
+            ret = res[0]
+            if isinstance(ret, BaseException):
+                raise ret
+            return ret
+        return wrapper
+    return deco
 
-            # 一定回数繰り返したら終了
-            i += 1
-            if i > repeat_nums:
-                break
+@timeout(10)
+def camelotTimeOut(URL,Page,flv):
+    if flv == 'stream':
+        CRP = camelot.read_pdf(URL, pages=Page,flavor=flv)
+        return CRP
+    else:
+        CRP = camelot.read_pdf(URL, pages=Page)
+        return CRP
 
-        else:
-            # ここにタイムアウト処理
-            logput('timeout.')
-#------------------------------------------------------------------------------------------------------------------------
-@logging_function_decorator(level=DEBUG)
-def PDFReadTimeOut(timeout_secs, real_process_time_secs, post_process_time_secs, repeat_nums,path_pdf,PageVol,flv):#タイムアウト時間,実行,ポストプロセス,ループ回数,ファイルパス,ページ番号,エンジン
-    with time_limit(timeout_secs) as timeout_event:
-        i = 0
-        while not timeout_event.wait(0):
-            try:
-                # 以下が本処理の想定
-                if flv == "stream":
-                    camelot.read_pdf(path_pdf, pages=PageVol,flavor=flv)
-                    time.sleep(real_process_time_secs)
-                else:
-                    camelot.read_pdf(path_pdf, pages=PageVol)
-                    time.sleep(real_process_time_secs)                    
-            finally:
-                # 以下が後処理の想定
-                if post_process_time_secs > 0:
-                    logput('post process start.')
-                    time.sleep(post_process_time_secs)
-                    logput('post process end.')
-
-            # 一定回数繰り返したら終了
-            i += 1
-            if i > repeat_nums:
-                break
-
-        else:
-            # ここにタイムアウト処理
-            logput('timeout.')
-#------------------------------------------------------------------------------------------------------------------------
-# if __name__ == '__main__':
-#     init_logging()
-
-#     # タイムアウトしない場合
-#     time_limit_example(timeout_secs=3, real_process_time_secs=1, post_process_time_secs=0, repeat_nums=1)
-
-#     # タイムアウトする場合
-#     time_limit_example(timeout_secs=3, real_process_time_secs=1, post_process_time_secs=0, repeat_nums=10)
-
-#     # 後処理実行中にタイムアウトが発生した場合
-#     time_limit_example(timeout_secs=3, real_process_time_secs=1, post_process_time_secs=5, repeat_nums=10)
+# try:
+#     pg = camelotTimeOut('//Sv05121a/e/電子ファイル/メッセージボックス/TEST/1011/ミロク送信分/1011_西村 英亨.pdf', '1','stream')
+#     PDFdf = pg[0].df# PDFテーブルをdf化
+#     print(PDFdf)
+# except:#TimeOut処理を記述
+#     pass
