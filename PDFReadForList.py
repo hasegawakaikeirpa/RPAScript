@@ -431,6 +431,40 @@ def ReadAction(SCode,path_pdf,PDFFlag,y,PDFdfRow,PDFdf,SinkokuCSVList,SinkokuCSV
             OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PDFTitle,PDFName,PDFHakkou,PDFHakkouSyozoku,PDFDate,PDFTeisyutu,PDFNendo,PDFNouzeiName,SPDstr]
             HoujinCSVList.append(OutputList)
         #------------------------------------------------------------------------
+#################################################################################################################################################################################
+#################################################################################################################################################################################
+        elif PDFFlag == 'TKC完了報告書':
+            for z in range(PDFdfRow):#PDFのテーブル行数分ループ
+                dfdatarow = PDFdf.iloc[z]#PDFのテーブル行データ1
+                if dfdatarow[0] == '手続名':
+                    PDFTitle = str(dfdatarow[1])                        
+                elif dfdatarow[0] == '氏名又は名称':
+                    PDFName = str(dfdatarow[1])                        
+                elif dfdatarow[0] == '発行元名':
+                    PDFHakkou = str(dfdatarow[1])                        
+                elif dfdatarow[0] == '発行元所属名':
+                    PDFHakkouSyozoku = str(dfdatarow[1])                        
+                elif dfdatarow[0] == '受付日時':
+                    PDFDate = str(dfdatarow[1])                        
+                elif dfdatarow[0] == '提出先':
+                    PDFTeisyutu = str(dfdatarow[1])                        
+                elif dfdatarow[0] == '年度・期別':
+                    PDFNendo = str(dfdatarow[1])                        
+                elif dfdatarow[0] == '納税者氏名':
+                    PDFNouzeiName = str(dfdatarow[1])
+            #表外データがあった場合の処理---------------------------------------------------------------------
+            SPDList = []
+            SPDRow = np.array(SubPDFdf).shape[0]
+            for zz in range(SPDRow):
+                Spdatarow = SubPDFdf.iloc[zz]#PDFのテーブル行データ1 
+                if '円' in Spdatarow[0]:
+                    SPDList.append(Spdatarow[0].replace('\u3000','').replace(' ',''))
+            SPDstr = '\n'.join(SPDList)
+            #----------------------------------------------------------------------------------------------
+            OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PDFTitle,PDFName,PDFHakkou,PDFHakkouSyozoku,PDFDate,PDFTeisyutu,PDFNendo,PDFNouzeiName,SPDstr]
+            HoujinCSVList.append(OutputList)
+#################################################################################################################################################################################
+#################################################################################################################################################################################
         else:
             logger.debug(path_pdf + '_' + str(y+1) + 'ページ目取得失敗書式登録なし')
             OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目取得失敗書式登録なし','','','','','','','','']
@@ -479,16 +513,25 @@ def CSVIndexSort(SCode,path_pdf,SinkokuCSVList,SinkokuCSV2List,SinkokuCSV3List,S
             #--------------------------------------------------------------------------------
             if not TO == False:
                 t_count = len(tables)# PDFのテーブル数を格納
+                TKCFlag = False #TKC出力PDF判定フラグ
                 if t_count >= 1:
                     Subtables = CTO.camelotTimeOut(path_pdf,PageVol,'stream')#第三引数に'stream'を渡すと表外の値を抽出できる
                     SubPDFdf = Subtables[0].df# PDFテーブルをdf化
+                    SubRow = np.array(SubPDFdf).shape[0]
                     print(SubPDFdf)
+                    for s in range(SubRow):
+                        SubPDFRow = SubPDFdf.iloc[s]
+                        if '税務届出書類等作成支援システム(e-DMS)による電子申請・届出が完了しましたので、ご報告いたします。' in SubPDFRow[0]:
+                            TKCFlag = True #TKC出力PDF判定フラグ
                     for x in range(t_count):# PDFテーブル数分ループ
                         PDFdf = tables[x].df# PDFテーブルをdf化
                         print(PDFdf)
                         dfIndexdata = PDFdf.iloc[:,0]#PDFのインデックス
                         #print(dfIndexdata)
-                        PDFFlag = PDFSetting(dfIndexdata,SinkokuCSV,SinkokuCSV2,SinkokuCSV3,SinkokuCSV4,SyotokuCSV,SyouhiCSV,YoteiCSV,HoujinCSV,SyoukyakuCSV)#PDFから抽出した表のインデックスを元に表のタイプを判別
+                        if TKCFlag == True:
+                            PDFFlag = 'TKC完了報告書'
+                        else:
+                            PDFFlag = PDFSetting(dfIndexdata,SinkokuCSV,SinkokuCSV2,SinkokuCSV3,SinkokuCSV4,SyotokuCSV,SyouhiCSV,YoteiCSV,HoujinCSV,SyoukyakuCSV)#PDFから抽出した表のインデックスを元に表のタイプを判別
                         PDFdfRow = np.array(PDFdf).shape[0]#配列行数取得
                         OutputList = []
                         #表のインデックスを元に値を格納-----------------------------------------------------------
