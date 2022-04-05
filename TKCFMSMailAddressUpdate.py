@@ -7,36 +7,23 @@ import pyautogui as pg
 import time
 import OMSOpen
 from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
 #pandasインポート
 import pandas as pd
 #配列計算関数numpyインポート
 import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
 #timeインポート
 import time
-#reインポート
-import re
-#jsonインポート
-import json
 #osインポート
 import os
 #datetimeインポート
 from datetime import datetime as dt
 #日付加減算インポート
 from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-import shutil
 #例外処理判定の為のtracebackインポート
 import traceback
 #pandas(pd)で関与先データCSVを取得
 import pyautogui
 import time
-import shutil
 import CSVOut
 import SQLConnect as SQ
 import ExcelFileAction as EF

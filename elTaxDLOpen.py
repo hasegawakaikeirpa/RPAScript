@@ -1,3 +1,13 @@
+#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import os
+from selenium.webdriver.common.keys import Keys
+#----------------------------------------------------------------------------------------------------------------------
 def ExeOpen(AppURL):#URL指定でアプリ起動関数
     subprocess.Popen(AppURL)
 #----------------------------------------------------------------------------------------------------------------------
@@ -91,12 +101,3 @@ def MainFlow(BatUrl,FolURL2,ImgFolName):
         print("起動しました。")
         return driver
     #----------------------------------------------------------------------------------------------------------------------
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import os
-from selenium.webdriver.common.keys import Keys

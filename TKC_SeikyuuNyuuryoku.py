@@ -1,7 +1,34 @@
+#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import OMSOpen
+from selenium.webdriver.common.keys import Keys
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#timeインポート
+import time
+#osインポート
+import os
+#datetimeインポート
+from datetime import datetime as dt
+#日付加減算インポート
+from dateutil.relativedelta import relativedelta
+#例外処理判定の為のtracebackインポート
+import traceback
+#pandas(pd)で関与先データCSVを取得
+import pyautogui
+import time
+import shutil
+import calendar
+import pyperclip
+import tkinter
 #----------------------------------------------------------------------------------------------------------------------
-from msilib.schema import File
-
-
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -433,51 +460,6 @@ def MainFlow(FolURL2,xls_data,KamokuCD,Lday):
             OuterAction(driver,FolURL2,xls_cd,xls_name,xls_mn,xls_tx,UpList)
         #---------------------------------------------------------------------------------------------------------------------
     print("処理終了")
-        
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import OMSOpen
-from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#日付加減算インポート
-from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-import shutil
-#例外処理判定の為のtracebackインポート
-import traceback
-#pandas(pd)で関与先データCSVを取得
-import pyautogui
-import time
-import shutil
-import calendar
-import pyperclip
-from collections import OrderedDict
-import tkinter
-from tkinter import filedialog
 
 Lday = calendar.monthrange(dt.today().year,dt.today().month-1)
 idir = r'\\Sv05121a\e\特２ 特別\Ⅲ総務\１　総務'

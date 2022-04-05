@@ -1,15 +1,9 @@
-﻿#lxmlインポート
-import lxml.html
-#pandasインポート
+﻿#pandasインポート
 import pandas as pd
 #配列計算関数numpyインポート
 import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
 #timeインポート
 import time
-#reインポート
-import re
 #seleniumインポート
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options#ブラウザオプションを与える

@@ -1,6 +1,28 @@
 #----------------------------------------------------------------------------------------------------------------------
-from queue import Empty
-from pyparsing import And
+#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import MJSOpen
+from selenium.webdriver.common.keys import Keys
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#timeインポート
+import time
+#datetimeインポート
+from datetime import datetime as dt
+#日付加減算インポート
+from dateutil.relativedelta import relativedelta
+import time
+from collections import OrderedDict
+import jaconv
+import WarekiHenkan
+from chardet.universaldetector import UniversalDetector
 #-------------------------------------------------------------------------------------------------------------------------------
 def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
     detector = UniversalDetector()
@@ -170,48 +192,3 @@ def typeInfo(targetData):# データがどのデータ型か、列数、行数�
         # typeInfo(data_Series)
         # typeInfo(data_df)
 #------------------------------------------------------------------------------------------------------------------------------- 
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import MJSOpen
-from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#日付加減算インポート
-from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-#例外処理判定の為のtracebackインポート
-import traceback
-#pandas(pd)で関与先データCSVを取得
-import pyautogui
-import time
-import shutil
-import codecs
-import pyperclip #クリップボードへのコピーで使用
-from collections import OrderedDict
-import jaconv
-import WarekiHenkan
-from chardet.universaldetector import UniversalDetector
-import calendar

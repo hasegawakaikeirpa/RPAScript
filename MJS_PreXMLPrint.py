@@ -1,7 +1,36 @@
+#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import MJSOpen
+from selenium.webdriver.common.keys import Keys
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#timeインポート
+import time
+#osインポート
+import os
+#datetimeインポート
+from datetime import datetime as dt
+#日付加減算インポート
+from dateutil.relativedelta import relativedelta
+#shutil(フォルダファイル編集コマンド)インポート
+#例外処理判定の為のtracebackインポート
+import traceback
+#pandas(pd)で関与先データCSVを取得
+import pyautogui
+import time
+import codecs
+import pyperclip #クリップボードへのコピーで使用
+from collections import OrderedDict
+import WarekiHenkan
+from chardet.universaldetector import UniversalDetector
 #----------------------------------------------------------------------------------------------------------------------
-from ast import For
-from queue import Empty
-from pyparsing import And
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
         try:
@@ -339,51 +368,6 @@ def MainFlow(FolURL2,PreList):
             DOList = DataOpen(FolURL2,PreListItem)
             time.sleep(1)    
 #------------------------------------------------------------------------------------------------------------------------------- 
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import MJSOpen
-from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#日付加減算インポート
-from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-#例外処理判定の為のtracebackインポート
-import traceback
-#pandas(pd)で関与先データCSVを取得
-import pyautogui
-import time
-import shutil
-import codecs
-import pyperclip #クリップボードへのコピーで使用
-from collections import OrderedDict
-import jaconv
-import WarekiHenkan
-from chardet.universaldetector import UniversalDetector
-import calendar
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"#元
 FolURL2 = os.getcwd().replace('\\','/')#先

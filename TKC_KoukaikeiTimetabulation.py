@@ -1,4 +1,34 @@
-﻿#----------------------------------------------------------------------------------------------------------------------
+﻿#モジュールインポート
+from appium import webdriver
+import subprocess
+from subprocess import run
+from subprocess import PIPE
+import pyautogui as pg
+import time
+import OMSOpen
+from selenium.webdriver.common.keys import Keys
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#timeインポート
+import time
+#osインポート
+import os
+#datetimeインポート
+from datetime import datetime as dt
+#日付加減算インポート
+from dateutil.relativedelta import relativedelta
+#例外処理判定の為のtracebackインポート
+import traceback
+#pandas(pd)で関与先データCSVを取得
+import pyautogui
+import time
+from datetime import datetime, timedelta
+import pyperclip #クリップボードへのコピーで使用
+import WarekiHenkan #WarekiHenkan.SeirekiDate("R",4,1,19) = 返り値2022/1/19(str)
+from chardet.universaldetector import UniversalDetector
+#----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(1000):
         try:
@@ -507,53 +537,6 @@ def MainFlow(FolURL2):
     else:
         time.sleep(1)
 #----------------------------------------------------------------------------------------------------------------------
-#モジュールインポート
-from appium import webdriver
-import subprocess
-from subprocess import run
-from subprocess import PIPE
-import pyautogui as pg
-import time
-import OMSOpen
-from selenium.webdriver.common.keys import Keys
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#日付加減算インポート
-from dateutil.relativedelta import relativedelta
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-import shutil
-#例外処理判定の為のtracebackインポート
-import traceback
-#pandas(pd)で関与先データCSVを取得
-import pyautogui
-import time
-import shutil
-from datetime import datetime, timedelta
-import pyperclip #クリップボードへのコピーで使用
-import WarekiHenkan #WarekiHenkan.SeirekiDate("R",4,1,19) = 返り値2022/1/19(str)
-import sys
-from tkinter import messagebox
-import chardet
-from chardet.universaldetector import UniversalDetector
-
 #RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_KoukaikeiTimetabulation"#元
 #FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先

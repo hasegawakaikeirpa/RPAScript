@@ -1,3 +1,13 @@
+#pandasインポート
+import pandas as pd
+#配列計算関数numpyインポート
+import numpy as np
+#osインポート
+import os
+#datetimeインポート
+from datetime import datetime as dt
+import codecs
+from chardet.universaldetector import UniversalDetector
 #----------------------------------------------------------------------------------------------------------------------
 def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
     detector = UniversalDetector()
@@ -9,41 +19,6 @@ def getFileEncoding( file_path ) :#.format( getFileEncoding( "sjis.csv" ) )
     detector.close()
     return detector.result[ "encoding" ]
 #----------------------------------------------------------------------------------------------------------------------
-#lxmlインポート
-import lxml.html
-#pandasインポート
-import pandas as pd
-#配列計算関数numpyインポート
-import numpy as np
-#小数点切り捨ての為にmathをインポート
-import math
-#timeインポート
-import time
-#reインポート
-import re
-#seleniumインポート
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options#ブラウザオプションを与える
-from selenium.webdriver.common.keys import Keys#センドキーコマンドを与える
-from selenium.webdriver.common.action_chains import ActionChains#JavaScript実行の為にActionChainsコマンドを与える
-from selenium.webdriver.support.ui import WebDriverWait#読込待機コマンドを与える
-from selenium.webdriver.support import expected_conditions as EC#読込待機コマンドに条件式を与える
-#jsonインポート
-import json
-#osインポート
-import os
-#datetimeインポート
-from datetime import datetime as dt
-#glob(フォルダファイルチェックコマンド)インポート
-import glob
-#shutil(フォルダファイル編集コマンド)インポート
-import shutil
-#例外処理判定の為のtracebackインポート
-import traceback
-import codecs
-from chardet.universaldetector import UniversalDetector
-#pandas(pd)で関与先データCSVを取得
-
 H_url = '//Sv05121a/e/C 作業台/RPA/ALLDataBase/Heidi関与先DB.csv'
 Enc = getFileEncoding(H_url)
 H_df = pd.read_csv(H_url,encoding=Enc)
