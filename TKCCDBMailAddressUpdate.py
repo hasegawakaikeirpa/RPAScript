@@ -25,15 +25,15 @@ import traceback
 import pyautogui
 import time
 import shutil
-import CSVOut
-import ExcelFileAction as EF
+import Function.CSVOut as FCSV
+import Function.ExcelFileAction as EF
 import calendar
 import pyperclip #クリップボードへのコピーで使用
-import SQLConnect as SQ
-import SQLCSVOUTFunction as SQC
+import Function.SQLConnect as SQ
+import Function.SQLCSVOUTFunction as SQC
 #logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
-logging.config.fileConfig("logging_debug.conf")
+logging.config.fileConfig("LogConf\logging_debug.conf")
 logger = logging.getLogger(__name__)
 #----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
@@ -285,7 +285,7 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
             CSVURL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
             CSVURL = CSVURL.replace("\\","/")#URLリネーム
             CSVURL = "/" + CSVURL
-            LogList = CSVOut.CsvRead(CSVURL)
+            LogList = FCSV.CsvRead(CSVURL)
             wsRow = ws.iloc[x]#dfインスタンスの行データ
             #行データから変数格納----------------------------------------------------------------------------------------
             wscd = wsRow['コード']
@@ -456,7 +456,7 @@ def CDBOpen(FolURL2,Lday,driver,ws,XlsmURL):
                 SQC.MailRirekiUp()
                 SQC.MailListUp()					
                 # LogMSG = ['CDB',wscd,wsName,wsKa,wsTno,wsTname,wsSubTno,wsSubTname,wsAd,wsHassou,wsNyuu,wsUser,wsDno,LostAdd]
-                # CSVOut.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
+                # FCSV.CsvPlus(CSVURL,LogList[1],LogMSG)#引数指定のCSV最終行に行データ追加
                 time.sleep(1)
             else:
                 print(str(wscd) + "エラー") 

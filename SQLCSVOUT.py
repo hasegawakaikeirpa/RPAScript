@@ -1,8 +1,8 @@
-﻿import SQLConnect as SQ
+﻿import Function.SQLConnect as SQ
 import pandas as pd
 #logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
-logging.config.fileConfig("logging_debugDBOut.conf")
+logging.config.fileConfig("LogConf\logging_debugDBOut.conf")
 logger = logging.getLogger(__name__)
 #----------------------------------------------------------------------------------------------------------------------
 #関与先データベースをCSVアウト-------------------------------------------------------

@@ -24,17 +24,17 @@ import traceback
 #pandas(pd)で関与先データCSVを取得
 import pyautogui
 import time
-import CSVOut
-import SQLConnect as SQ
-import ExcelFileAction as EF
+import Function.CSVOut as FCSV
+import Function.SQLConnect as SQ
+import Function.ExcelFileAction as EF
 import calendar
 import pyperclip #クリップボードへのコピーで使用
 from turtle import down
 from sqlalchemy import false
 import FMSMailHighSpeedFor as CFM
-import SQLCSVOUTFunction as SQLF
+import Function.SQLCSVOUTFunction as SQLF
 import logging.config
-logging.config.fileConfig("logging_debug.conf")
+logging.config.fileConfig("LogConf\logging_debug.conf")
 logger = logging.getLogger(__name__)
 #----------------------------------------------------------------------------------------------------------------------
 class Datas: #データクラス作成
@@ -325,7 +325,7 @@ def FirstAction(FolURL2,CSVURL,ws,driver):
         #------------------------------------------------------------
         print(wsNo)
         print(wsNoSub)
-        # TRow = CSVOut.CsvSortRowDouble(CSVURL,"関与先コード","個人コード",wsNo,wsNoSub)
+        # TRow = FCSV.CsvSortRowDouble(CSVURL,"関与先コード","個人コード",wsNo,wsNoSub)
         TRow = CFM.CsvSortRowDouble(CSVURL,"関与先コード","個人コード",wsNo,wsNoSub)#CythonでC##実行
         CFMA = CFM.PageDownLoop(TRow)#CythonでC##実行
         if CFMA[0] == True:
@@ -403,8 +403,8 @@ def FMSAction(FolURL2,wsRow,PDV):
         time.sleep(1)
         MAE = ImgCheck(FolURL2,'MAddErr.png',0.9,5)
         if not MAE[0] == True:
-            CsvL = CSVOut.CsvRead(FolURL2 + "/LogList.CSV")
-            CSVOut.CsvPlus(FolURL2 + "/LogList.CSV",CsvL[1],LogList)
+            CsvL = FCSV.CsvRead(FolURL2 + "/LogList.CSV")
+            FCSV.CsvPlus(FolURL2 + "/LogList.CSV",CsvL[1],LogList)
             time.sleep(1)
             while pg.locateOnScreen(FolURL2 + "/Kakunin.png",0.9) is None:
                 time.sleep(1)
