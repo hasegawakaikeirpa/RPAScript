@@ -220,7 +220,7 @@ import traceback
 import pyautogui
 import time
 import shutil
-import CSVOut
+import Function.CSVOut as FCSV
 from os import stat
 
 # try:
@@ -238,7 +238,7 @@ for PDFItem in PDFFileList:
     Data.append(f.read())
     f.close()
 print(Data)
-CSVOut.CsvSave("//Sv05121a/e/C 作業台/RPA/ウィルス対策/KasperskyLog/結果.csv",['Log'],Data)
+FCSV.CsvSave("//Sv05121a/e/C 作業台/RPA/ウィルス対策/KasperskyLog/結果.csv",['Log'],Data)
 time.sleep(1)
 # except:
 #     print("Err")

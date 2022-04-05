@@ -14,11 +14,12 @@ import os
 from PIL import Image
 import pyocr
 import PyPDF2
+import ContextTimeOut as CTO
 import Function.CSVOut as FCSV
 import Function.FolderCreate as FC
 #logger設定------------------------------------------------------------------------------
 import logging.config
-logging.config.fileConfig("logging_debug.conf")
+logging.config.fileConfig("LogConf\logging_debug.conf")
 logger = logging.getLogger(__name__)
 #----------------------------------------------------------------------------------------
 def SerchdirFolders(URL):#指定URL配下のサブフォルダを取得
@@ -89,6 +90,7 @@ def CSVIndexSort(SCode,path_pdf,SinkokuCSVList,SinkokuCSV2List,SyotokuCSVList,Sy
             # TX = extract_text(path_pdf,page_numbers=y,codec='utf-8') テキストのみ取得できる
             # print(TX)
             PageVol = str(y + 1)
+            CTO.PDFReadTimeOut(1,0,0,1,path_pdf,PageVol,'stream')#タイムアウト時間,実行,ポストプロセス,ループ回数,ファイルパス,ページ番号,エンジン
             tables = camelot.read_pdf(path_pdf, pages=PageVol)# PDFのテーブルを取得
             t_count = len(tables)# PDFのテーブル数を格納
             for x in range(t_count):# PDFテーブル数分ループ

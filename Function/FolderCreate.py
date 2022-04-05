@@ -9,10 +9,9 @@ from datetime import datetime as dt
 #日付加減算インポート
 from dateutil.relativedelta import relativedelta
 
-#logger設定------------------------------------------------------------------------------
-import logging.config
-logging.config.fileConfig("logging_debugelTaxLog.conf")
-logger = logging.getLogger(__name__)
+#loggerインポート
+from logging import getLogger
+logger = getLogger()
 #----------------------------------------------------------------------------------------
 def SerchdirFolders(URL):#指定URL配下のサブフォルダを取得
     List = []
