@@ -1,6 +1,6 @@
 ﻿import MySQLdb
 import pandas as pd
-import Function.CSVOut as co
+import CSVOut as co
 import numpy as np
 import os
 from datetime import datetime as dt

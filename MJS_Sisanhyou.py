@@ -28,8 +28,8 @@ import codecs
 import pyperclip #クリップボードへのコピーで使用
 from collections import OrderedDict
 from chardet.universaldetector import UniversalDetector
-import CSVOut
-import SQLConnect as sq
+import Function.CSVOut as FCSV
+import Function.SQLConnect as sq
 import win32com.client
 #----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
@@ -739,8 +739,8 @@ def S_Printout(FolURL2,driver,MaChar,Nen,Tuki,Out_Dir):#MaChar = CharPar(MasterR
         return False,""
 #--------------------------------------------------------------------------------------------------------------------------    
 def LogWrite(FolURL2,Ends):
-    LogList = CSVOut.CsvRead(FolURL2 + "/Log/Log.csv")[1]
-    CSVOut.CsvPlus(FolURL2 + "/Log/Log.csv",LogList,Ends)
+    LogList = FCSV.CsvRead(FolURL2 + "/Log/Log.csv")[1]
+    FCSV.CsvPlus(FolURL2 + "/Log/Log.csv",LogList,Ends)
     time.sleep(1)
 #-------------------------------------------------------------------------------------------------------------------------- 
 def SerchSyain(FolURL2,MaChar):

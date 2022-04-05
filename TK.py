@@ -1,6 +1,6 @@
 ﻿import tkinter as tk
 import numpy as np
-import SQLConnect as sc
+import Function.SQLConnect as sc
 import numpy as np
 from pandas import DataFrame
 class App(tk.Tk):

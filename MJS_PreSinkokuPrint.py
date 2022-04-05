@@ -31,7 +31,7 @@ from collections import OrderedDict
 import WarekiHenkan
 from chardet.universaldetector import UniversalDetector
 import calendar
-import CSVOut
+import Function.CSVOut as FCSV
 #----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH,driver):#XPATH要素を取得するまで待機
     for x in range(10000):
@@ -382,7 +382,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
                     Dic = {'SyaCD':SyaCD,'TKCName':TKCName,'MirokuName':MirokuName,'MKUC':MKUC\
                         ,'MTUID':MTUID,'TKUC':TKUC,'TTUID':TTUID,'etaxPass':etaxPass,'eltaxPass':eltaxPass}
                     LogMSG = [SyaCD , TKCName , MirokuName , "_データオープン成功",dt.today()]
-                    CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)   
+                    FCSV.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)   
                     return True,Dic,LogMSG
                 else:
                     ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
@@ -390,7 +390,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
                     Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                         ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
                     LogMSG = [SyaCD , TKCName , MirokuName , "_ミロク機能登録なし",dt.today()]
-                    CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)  
+                    FCSV.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)  
                     return False,Dic,LogMSG                    
             else:
                 ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
@@ -398,7 +398,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
                 Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                     ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
                 LogMSG = [SyaCD,TKCName,MirokuName,"_利用登録なし",dt.today()]
-                CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)  
+                FCSV.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)  
                 return False,Dic,LogMSG 
         else:
             ImgClick(FolURL2,"SetuzokuCancel.png",0.9,1)
@@ -406,7 +406,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
             Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
                 ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
             LogMSG = [No_dfItem ,"","", "_マスターデータなし",dt.today()]
-            CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
+            FCSV.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
             return False,Dic,LogMSG
     except:
         IMS = ImgCheck(FolURL2,"SetuzokuCancel.png",0.9,1)
@@ -416,7 +416,7 @@ def DataOpen(FolURL2,SFlag,No_dfItem,LogList):
         Dic = {'SyaCD':"",'TKCName':"",'MirokuName':"",'MKUC':""\
             ,'MTUID':"",'TKUC':"",'TTUID':"",'etaxPass':"",'eltaxPass':""}
         LogMSG = [No_dfItem ,"","","_データオープンエラー",dt.today()]
-        CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
+        FCSV.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
         return False,Dic,LogMSG
 #------------------------------------------------------------------------------------------------------------------------------- 
 def DataDateSerch(FolURL2):
@@ -511,7 +511,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
             LogList = pd.read_csv(FolURL2 + "/ActionLog/Log.csv",header=0,encoding=SerchEnc)
             # if No_dfItem == 586:
 #----------------------------------------------------------------------------------------------------------------------
-            SortAns = CSVOut.CsvSortArray(FolURL2 + "/ActionLog/Log.csv","No",No_dfItem,"int")
+            SortAns = FCSV.CsvSortArray(FolURL2 + "/ActionLog/Log.csv","No",No_dfItem,"int")
             if SortAns[0] == False:
 #----------------------------------------------------------------------------------------------------------------------
                 #CSV要素取得-------------------------------------------------------------------------------------------------------------
@@ -568,7 +568,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                                 df_shape = LogList.shape
                                 #最終行に追加
                                 LogMSG = [No_dfItem,"","","_成功",dt.today()]
-                                CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
+                                FCSV.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG) 
                     # else:
                     #     df_shape = LogList.shape
                     #     #最終行に追加
@@ -576,7 +576,7 @@ def MainFlow(FolURL2,PreList,NoList,MasterCSV):
                     #     pd.DataFrame(LogList).to_csv(FolURL2 + '/ActionLog/Log.csv', encoding = SerchEnc, index = False)  
         except:
             LogMSG = [No_dfItem,"","","_エラーで失敗",dt.today()]
-            CSVOut.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)
+            FCSV.CsvPlus(FolURL2 + '/ActionLog/Log.csv',LogList,LogMSG)
         # else:
         # Errrrr = Errrrr + 1        
 #------------------------------------------------------------------------------------------------------------------------------- 

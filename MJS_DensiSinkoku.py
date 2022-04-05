@@ -29,7 +29,7 @@ import codecs
 import pyperclip #クリップボードへのコピーで使用
 #logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
-logging.config.fileConfig("logging_debug.conf")
+logging.config.fileConfig("LogConf\logging_debug.conf")
 logger = logging.getLogger(__name__)
 #----------------------------------------------------------------------------------------------------------------------
 
