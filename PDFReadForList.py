@@ -269,8 +269,6 @@ def ReadAction(SCode,path_pdf,PDFFlag,y,PDFdfRow,PDFdf,SinkokuCSVList,SinkokuCSV
                 elif dfdatarow[0] == 'この申告による還付金額':
                     if z == 13:
                         PDFSinkokuKanpu = str(dfdatarow[1])
-                    elif z == 19:
-                        PDFSinkokuKanpu2 = str(dfdatarow[1])  
                 elif '欠損金又は災害損失金等の当期' in dfdatarow[0]:
                     PDFKessonAndSaigai = str(dfdatarow[1]) 
                 elif '翌期へ繰り越す欠損金又は災害' in dfdatarow[0]:
@@ -281,7 +279,7 @@ def ReadAction(SCode,path_pdf,PDFFlag,y,PDFdfRow,PDFdf,SinkokuCSVList,SinkokuCSV
                     PDFSasihiki = str(dfdatarow[1])  
             OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PDFTitle,PDFName,PDFDate,\
                         PDFSyumoku,PDFJigyouNendo,PDFZeimoku,PDFSinkokuSyu,PDFSyotokuAndKesson,PDFSinkokuKanpu,\
-                        PDFKessonAndSaigai,PDFKuriketusai,PDFZeimoku2,PDFSinkokuSyu2,PDFKazeiHyoujyun,PDFSinkokuKanpu2,PDFSasihiki]
+                        PDFKessonAndSaigai,PDFKuriketusai,PDFZeimoku2,PDFSinkokuSyu2,PDFKazeiHyoujyun,PDFSasihiki]
             SinkokuCSV3List.append(OutputList)
         #------------------------------------------------------------------------
         elif PDFFlag == '確定申告4':
@@ -922,7 +920,7 @@ def PDFRead(URL):
     if not np.array(SinkokuCSV3List).shape[0] == 0:
         FCSV.CsvSaveEnc(ListURL + "/内国法人確定申告受信通知リスト3.csv",SinkokuCSV3List,"cp932",['コード','URL','ページ','手続名',\
             '氏名又は名称','受付日時','種目','事業年度','税目','申告の種類','所得金額又は欠損金額','この申告による還付金額','欠損金又は災害損失金等の当期控除額',\
-                '翌期へ繰り越す欠損金又は災害損失金','税目2','申告の種類2','課税標準法人税額','この申告による還付金額2','差引確定地方法人税額'])
+                '翌期へ繰り越す欠損金又は災害損失金','税目2','申告の種類2','課税標準法人税額','差引確定地方法人税額'])
     if not np.array(SinkokuCSV4List).shape[0] == 0:
         FCSV.CsvSaveEnc(ListURL + "/内国法人確定申告受信通知リスト4.csv",SinkokuCSV4List,"cp932",['コード','URL','ページ','手続名',\
             '氏名又は名称','受付日時','種目','事業年度','税目','申告の種類','所得金額又は欠損金額','差引確定法人税額','欠損金又は災害損失金等の当期控除額',\
