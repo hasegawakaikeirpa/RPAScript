@@ -1,4 +1,5 @@
-﻿import os
+﻿from importlib.machinery import FrozenImporter
+import os
 import PyPDF2
 import time
 from time import time
@@ -431,40 +432,6 @@ def ReadAction(SCode,path_pdf,PDFFlag,y,PDFdfRow,PDFdf,SinkokuCSVList,SinkokuCSV
             OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PDFTitle,PDFName,PDFHakkou,PDFHakkouSyozoku,PDFDate,PDFTeisyutu,PDFNendo,PDFNouzeiName,SPDstr]
             HoujinCSVList.append(OutputList)
         #------------------------------------------------------------------------
-#################################################################################################################################################################################
-#################################################################################################################################################################################
-        elif PDFFlag == 'TKC完了報告書':
-            for z in range(PDFdfRow):#PDFのテーブル行数分ループ
-                dfdatarow = PDFdf.iloc[z]#PDFのテーブル行データ1
-                if dfdatarow[0] == '手続名':
-                    PDFTitle = str(dfdatarow[1])                        
-                elif dfdatarow[0] == '氏名又は名称':
-                    PDFName = str(dfdatarow[1])                        
-                elif dfdatarow[0] == '発行元名':
-                    PDFHakkou = str(dfdatarow[1])                        
-                elif dfdatarow[0] == '発行元所属名':
-                    PDFHakkouSyozoku = str(dfdatarow[1])                        
-                elif dfdatarow[0] == '受付日時':
-                    PDFDate = str(dfdatarow[1])                        
-                elif dfdatarow[0] == '提出先':
-                    PDFTeisyutu = str(dfdatarow[1])                        
-                elif dfdatarow[0] == '年度・期別':
-                    PDFNendo = str(dfdatarow[1])                        
-                elif dfdatarow[0] == '納税者氏名':
-                    PDFNouzeiName = str(dfdatarow[1])
-            #表外データがあった場合の処理---------------------------------------------------------------------
-            SPDList = []
-            SPDRow = np.array(SubPDFdf).shape[0]
-            for zz in range(SPDRow):
-                Spdatarow = SubPDFdf.iloc[zz]#PDFのテーブル行データ1 
-                if '円' in Spdatarow[0]:
-                    SPDList.append(Spdatarow[0].replace('\u3000','').replace(' ',''))
-            SPDstr = '\n'.join(SPDList)
-            #----------------------------------------------------------------------------------------------
-            OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PDFTitle,PDFName,PDFHakkou,PDFHakkouSyozoku,PDFDate,PDFTeisyutu,PDFNendo,PDFNouzeiName,SPDstr]
-            HoujinCSVList.append(OutputList)
-#################################################################################################################################################################################
-#################################################################################################################################################################################
         else:
             logger.debug(path_pdf + '_' + str(y+1) + 'ページ目取得失敗書式登録なし')
             OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目取得失敗書式登録なし','','','','','','','','']
@@ -475,9 +442,250 @@ def ReadAction(SCode,path_pdf,PDFFlag,y,PDFdfRow,PDFdf,SinkokuCSVList,SinkokuCSV
         OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目ReadActionエラー','','','','','','','','']
         CSVBadList.append(OutputList)
 #----------------------------------------------------------------------------------------
+def ReadActionTKC(SCode,path_pdf,PDFFlag,y,TKCListSinsei,TKCListHTS,TKCListHTPDF,TKCListSyouhi,TKCListSyouhiPDF,TKCListTodouhu,TKCListSityou,PDFtext):
+#################################################################################################################################################################################
+#################################################################################################################################################################################
+    SinseiJyusin = False
+    HoujinTIhouJyusin = False
+    HoujinTIhouTenpu = False
+    SyouhizeiJyusin = False
+    SyouhizeiJyusinPDF = False
+    TdouhuJyusin = False
+    SityouJyusin = False
+    Prow = 0 #テキストデータの行数カウント変数
+    FRow = 0 #メッセージ本文内の金額記載欄の先頭行数格納用
+    ERow = 0 #メッセージ本文内の金額記載欄の末尾行数格納用
+    #検索キー一致で値を変数格納----------------------------------
+    for PDFtextItem in PDFtext: 
+        print(PDFtextItem)
+        if PDFFlag == '国税の電子申請・届出完了報告書':
+            if PDFtextItem == '【申請・届出の受信通知】':
+                SinseiJyusin = True
+            if '提出先：' in PDFtextItem and SinseiJyusin == True:
+                PTKCTeisyutu = PDFtextItem.replace('提出先：','')    
+            elif '利用者識別番号：' in PDFtextItem and SinseiJyusin == True:
+                PTKCRiyouNo = PDFtextItem.replace('利用者識別番号：','')
+            elif '氏名又は名称：' in PDFtextItem and SinseiJyusin == True:
+                PTKCName = PDFtextItem.replace('氏名又は名称：','')   
+            elif '代表者等氏名：' in PDFtextItem and SinseiJyusin == True:
+                PTKCDaihyouName = PDFtextItem.replace('代表者等氏名：','')   
+            elif '受付番号：' in PDFtextItem and SinseiJyusin == True:
+                PTKCUketukeNo = PDFtextItem.replace('受付番号：','')   
+            elif '受付日時：' in PDFtextItem and SinseiJyusin == True:
+                PTKCDateTime = PDFtextItem.replace('受付日時：','') 
+            elif '種目：' in PDFtextItem and SinseiJyusin == True:
+                PTKCSyumoku = PDFtextItem.replace('種目：','') 
+                SinseiJyusin = False
+                OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PTKCTeisyutu,PTKCRiyouNo,PTKCName,PTKCDaihyouName,PTKCUketukeNo,PTKCDateTime,PTKCSyumoku]
+                TKCListSinsei.append(OutputList)
+            #----------------------------------------------------------------------
+        elif PDFFlag == '法人税・地方法人税・消費税の電子申告完了報告書':
+            if PDFtextItem == '【法人税・地方法人税の受信通知】':
+                HoujinTIhouJyusin = True
+            if '提出先：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCTeisyutu = PDFtextItem.replace('提出先：','')    
+            elif '利用者識別番号：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCRiyouNo = PDFtextItem.replace('利用者識別番号：','')
+            elif '氏名又は名称：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCName = PDFtextItem.replace('氏名又は名称：','')   
+            elif '代表者等氏名：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCDaihyouName = PDFtextItem.replace('代表者等氏名：','')   
+            elif '受付番号：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCUketukeNo = PDFtextItem.replace('受付番号：','')   
+            elif '受付日時：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCDateTime = PDFtextItem.replace('受付日時：','') 
+            elif '種目：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCSyumoku = PDFtextItem.replace('種目：','') 
+            elif '事業年度自：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCNendo = PDFtextItem.replace('事業年度自：','') 
+            elif '事業年度至：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCNendo = PTKCNendo + "-" + PDFtextItem.replace('事業年度至：','') 
+            elif '税目：' in PDFtextItem and HoujinTIhouJyusin == True:
+                try:
+                    PTKCZeimoku
+                    PTKCZeimoku2 = PDFtextItem.replace('税目：','')
+                except NameError:
+                    PTKCZeimoku = PDFtextItem.replace('税目：','')
+            elif '申告の種類：' in PDFtextItem and HoujinTIhouJyusin == True:
+                try:
+                    PTKCSyurui
+                    PTKCSyurui2 = PDFtextItem.replace('申告の種類：','')
+                except NameError:
+                    PTKCSyurui = PDFtextItem.replace('申告の種類：','')
+            elif '所得金額又は欠損金額：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCSyotokuKesson = PDFtextItem.replace('所得金額又は欠損金額：','') 
+            elif 'この申告による還付金額：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCSinKanpu = PDFtextItem.replace('この申告による還付金額：','')
+            elif '欠損金又は災害損失金等の当期控除額：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCKessonKoujyo = PDFtextItem.replace('欠損金又は災害損失金等の当期控除額：','')   
+            elif '翌期へ繰り越す欠損金又は災害損失金：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCKuriketu = PDFtextItem.replace('翌期へ繰り越す欠損金又は災害損失金：','')
+            elif '課税標準法人税額：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCKazei = PDFtextItem.replace('課税標準法人税額：','')  
+            elif '差引確定地方法人税額：' in PDFtextItem and HoujinTIhouJyusin == True:
+                PTKCSasihikiTihou = PDFtextItem.replace('差引確定地方法人税額：','')
+                HoujinTIhouJyusin = False
+                OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PTKCTeisyutu,PTKCRiyouNo,PTKCName,PTKCDaihyouName,PTKCUketukeNo,PTKCDateTime,PTKCSyumoku,\
+                    PTKCNendo,PTKCZeimoku,PTKCSyurui,PTKCSyotokuKesson,PTKCSinKanpu,PTKCKessonKoujyo,PTKCKuriketu,PTKCZeimoku2,PTKCSyurui2,PTKCKazei,PTKCSasihikiTihou]
+                TKCListHTS.append(OutputList)
+            #----------------------------------------------------------------------
+            if PDFtextItem == '【法人税・地方法人税の添付書類(PDF)の受信通知】':
+                HoujinTIhouTenpu = True
+            if '提出先：' in PDFtextItem and HoujinTIhouTenpu == True:
+                PTKCTeisyutu = PDFtextItem.replace('提出先：','')    
+            elif '利用者識別番号：' in PDFtextItem and HoujinTIhouTenpu == True:
+                PTKCRiyouNo = PDFtextItem.replace('利用者識別番号：','')
+            elif '元の申告・申請書の受付番号：' in PDFtextItem and HoujinTIhouTenpu == True:
+                PTKCMotoSin = PDFtextItem.replace('元の申告・申請書の受付番号：','')
+            elif '氏名又は名称：' in PDFtextItem and HoujinTIhouTenpu == True:
+                PTKCName = PDFtextItem.replace('氏名又は名称：','')   
+            elif '代表者等氏名：' in PDFtextItem and HoujinTIhouTenpu == True:
+                PTKCDaihyouName = PDFtextItem.replace('代表者等氏名：','')   
+            elif '受付番号：' in PDFtextItem and HoujinTIhouTenpu == True:
+                PTKCUketukeNo = PDFtextItem.replace('受付番号：','')   
+            elif '受付日時：' in PDFtextItem and HoujinTIhouTenpu == True:
+                PTKCDateTime = PDFtextItem.replace('受付日時：','') 
+                HoujinTIhouTenpu = False
+                OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PTKCTeisyutu,PTKCRiyouNo,PTKCMotoSin,PTKCName,PTKCDaihyouName,PTKCUketukeNo,PTKCDateTime]
+                TKCListHTPDF.append(OutputList)
+            #---------------------------------------------------------------------- 
+            if PDFtextItem == '【消費税の受信通知】':
+                SyouhizeiJyusin = True
+            if '提出先：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCTeisyutu = PDFtextItem.replace('提出先：','')    
+            elif '利用者識別番号：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCRiyouNo = PDFtextItem.replace('利用者識別番号：','')
+            elif '氏名又は名称：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCName = PDFtextItem.replace('氏名又は名称：','') 
+            elif '代表者等氏名：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCDaihyouName = PDFtextItem.replace('代表者等氏名：','')      
+            elif '受付番号：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCUketukeNo = PDFtextItem.replace('受付番号：','')
+            elif '受付日時：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCDateTime = PDFtextItem.replace('受付日時：','') 
+            elif '種目：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCSyumoku = PDFtextItem.replace('種目：','') 
+            elif '申告の種類：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCSyurui = PDFtextItem.replace('申告の種類：','')
+            elif '課税期間自：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCNendo = PDFtextItem.replace('課税期間自：','') 
+            elif '課税期間至：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCNendo = PTKCNendo + "-" + PDFtextItem.replace('課税期間至：','') 
+            elif '課税標準額：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCKazei = PDFtextItem.replace('課税標準額：','')  
+            elif '消費税及び地方消費税の合計（納付又は還付）税額：' in PDFtextItem and SyouhizeiJyusin == True:
+                PTKCGoukei = PDFtextItem.replace('消費税及び地方消費税の合計（納付又は還付）税額：','')  
+                SyouhizeiJyusin = False
+                OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PTKCTeisyutu,PTKCRiyouNo,PTKCName,PTKCDaihyouName,PTKCUketukeNo,PTKCDateTime,\
+                    PTKCSyumoku,PTKCSyurui,PTKCNendo,PTKCKazei,PTKCGoukei]
+                TKCListSyouhi.append(OutputList)
+            #----------------------------------------------------------------------
+            if PDFtextItem == '【消費税の添付書類(PDF)の受信通知】':
+                SyouhizeiJyusinPDF = True
+            if '提出先：' in PDFtextItem and SyouhizeiJyusinPDF == True:
+                PTKCTeisyutu = PDFtextItem.replace('提出先：','')    
+            elif '利用者識別番号：' in PDFtextItem and SyouhizeiJyusinPDF == True:
+                PTKCRiyouNo = PDFtextItem.replace('利用者識別番号：','')
+            elif '氏名又は名称：' in PDFtextItem and SyouhizeiJyusinPDF == True:
+                PTKCName = PDFtextItem.replace('氏名又は名称：','') 
+            elif '代表者等氏名：' in PDFtextItem and SyouhizeiJyusinPDF == True:
+                PTKCDaihyouName = PDFtextItem.replace('代表者等氏名：','')      
+            elif '受付番号：' in PDFtextItem and SyouhizeiJyusinPDF == True:
+                PTKCUketukeNo = PDFtextItem.replace('受付番号：','')
+            elif '受付日時：' in PDFtextItem and SyouhizeiJyusinPDF == True:
+                PTKCDateTime = PDFtextItem.replace('受付日時：','') 
+                SyouhizeiJyusinPDF = False
+                OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PTKCTeisyutu,PTKCRiyouNo,PTKCName,PTKCDaihyouName,PTKCUketukeNo,PTKCDateTime]
+                TKCListSyouhiPDF.append(OutputList)
+            #----------------------------------------------------------------------
+            if PDFtextItem == '【都道府県民税･事業税･特別法人事業税の受付通知】':
+                TdouhuJyusin = True
+            if '納税者の氏名又は名称：' in PDFtextItem and TdouhuJyusin == True:
+                PTKCDaihyouName = PDFtextItem.replace('納税者の氏名又は名称：','')      
+            elif '発行元：' in PDFtextItem and TdouhuJyusin == True:
+                PTKCHakkoumoto = PDFtextItem.replace('発行元：','') + PDFtext[Prow+1].replace('\u3000','')#2段なので1行下も結合
+            elif '電話番号：' in PDFtextItem and TdouhuJyusin == True:
+                PTKCTelNo = PDFtextItem.replace('電話番号：','') 
+            elif '発行日時：' in PDFtextItem and TdouhuJyusin == True:
+                PTKCHakkouDay = PDFtextItem.replace('発行日時：','') 
+            elif '件名：' in PDFtextItem and TdouhuJyusin == True:
+                PTKCTitle = PDFtextItem.replace('件名：','')
+            elif '(MUD002I)' in PDFtextItem and TdouhuJyusin == True:
+                FRow = Prow + 1
+            elif '受付日時：' in PDFtextItem and TdouhuJyusin == True:
+                ERow = Prow - 1
+                PTKCUketukeDay = PDFtextItem.replace('受付日時：','')
+            elif '受付番号：' in PDFtextItem and TdouhuJyusin == True:
+                PTKCUketukeNo = PDFtextItem.replace('受付番号：','') 
+            elif '手続名：' in PDFtextItem and TdouhuJyusin == True:
+                PTKCTetutuki = PTKCNendo + "-" + PDFtextItem.replace('手続名：','') 
+            elif '事業年度(期別)：' in PDFtextItem and TdouhuJyusin == True:
+                PTKCNendo = PDFtextItem.replace('事業年度(期別)：','') 
+            elif '提出先：' in PDFtextItem and TdouhuJyusin == True:
+                PTKCTeisyutu = PDFtextItem.replace('提出先：','')
+                #メッセージ本文内の金額一覧を取得し文字列に変換---------------------------------------
+                if not FRow == 0 and not ERow == 0:
+                    TKCSPDList = []
+                    for yy in range(FRow,ERow):
+                        if '円' in PDFtext[yy]:
+                            TKCSPDList.append(Spdatarow[0].replace('\u3000','').replace(' ',''))
+                    TKCSPDstr = '\n'.join(TKCSPDList)
+                else:
+                    TKCSPDstr = ''
+                TdouhuJyusin = False
+                OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PTKCDaihyouName,PTKCHakkoumoto,PTKCTelNo,PTKCHakkouDay,\
+                PTKCTitle,TKCSPDstr,PTKCUketukeDay,PTKCUketukeNo,PTKCTetutuki,PTKCNendo,PTKCTeisyutu]
+                TKCListTodouhu.append(OutputList)
+            #----------------------------------------------------------------------
+            if PDFtextItem == '【市町村民税の受付通知】':
+                SityouJyusin = True
+            if '納税者の氏名又は名称：' in PDFtextItem and SityouJyusin == True:
+                PTKCDaihyouName = PDFtextItem.replace('納税者の氏名又は名称：','')      
+            elif '発行元：' in PDFtextItem and SityouJyusin == True:
+                PTKCHakkoumoto = PDFtextItem.replace('発行元：','') + PDFtext[Prow+1].replace('\u3000','')#2段なので1行下も結合
+            elif '電話番号：' in PDFtextItem and SityouJyusin == True:
+                PTKCTelNo = PDFtextItem.replace('電話番号：','') 
+            elif '発行日時：' in PDFtextItem and SityouJyusin == True:
+                PTKCHakkouDay = PDFtextItem.replace('発行日時：','') 
+            elif '件名：' in PDFtextItem and SityouJyusin == True:
+                PTKCTitle = PDFtextItem.replace('件名：','')
+            elif '(MUD002I)' in PDFtextItem and SityouJyusin == True:
+                FRow = Prow + 1
+            elif '受付日時：' in PDFtextItem and SityouJyusin == True:
+                ERow = Prow - 1
+                PTKCUketukeDay = PDFtextItem.replace('受付日時：','')
+            elif '受付番号：' in PDFtextItem and SityouJyusin == True:
+                PTKCUketukeNo = PDFtextItem.replace('受付番号：','') 
+            elif '手続名：' in PDFtextItem and SityouJyusin == True:
+                PTKCTetutuki = PTKCNendo + "-" + PDFtextItem.replace('手続名：','') 
+            elif '事業年度(期別)：' in PDFtextItem and SityouJyusin == True:
+                PTKCNendo = PDFtextItem.replace('事業年度(期別)：','') 
+            elif '提出先：' in PDFtextItem and SityouJyusin == True:
+                PTKCTeisyutu = PDFtextItem.replace('提出先：','')
+                #メッセージ本文内の金額一覧を取得し文字列に変換---------------------------------------
+                if not FRow == 0 and not ERow == 0:
+                    TKCSPDList = []
+                    for yy in range(FRow,ERow):
+                        if '円' in PDFtext[yy]:
+                            TKCSPDList.append(Spdatarow[0].replace('\u3000','').replace(' ',''))
+                    TKCSPDstr = '\n'.join(TKCSPDList)
+                else:
+                    TKCSPDstr = ''
+                SityouJyusin = False
+                OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目',PTKCDaihyouName,PTKCHakkoumoto,PTKCTelNo,PTKCHakkouDay,\
+                PTKCTitle,TKCSPDstr,PTKCUketukeDay,PTKCUketukeNo,PTKCTetutuki,PTKCNendo,PTKCTeisyutu]
+                TKCListSityou.append(OutputList)
+            #----------------------------------------------------------------------
+        Prow += 1       
+    #----------------------------------------------------------------------------------------------
+
+#################################################################################################################################################################################
+#################################################################################################################################################################################
+
 def CSVIndexSort(SCode,path_pdf,SinkokuCSVList,SinkokuCSV2List,SinkokuCSV3List,SinkokuCSV4List,\
-    SyotokuCSVList,SyouhiCSVList,HoujinCSVList,YoteiCSVList,SyoukyakuCSVList,CSVBadList,\
-    SinkokuCSV,SinkokuCSV2,SinkokuCSV3,SinkokuCSV4,SyotokuCSV,SyouhiCSV,HoujinCSV,YoteiCSV,SyoukyakuCSV):
+    SyotokuCSVList,SyouhiCSVList,HoujinCSVList,YoteiCSVList,SyoukyakuCSVList,TKCListSinsei,TKCListHTS,\
+    TKCListHTPDF,TKCListSyouhi,TKCListSyouhiPDF,TKCListTodouhu,TKCListSityou,CSVBadList,SinkokuCSV,SinkokuCSV2,SinkokuCSV3,\
+    SinkokuCSV4,SyotokuCSV,SyouhiCSV,HoujinCSV,YoteiCSV,SyoukyakuCSV):
     #PDFから抽出したリストと形式があわないので、税目リストを行列入替---------------------------
     SinkokuCSV = SinkokuCSV.transpose()#行列入替
     SinkokuCSV2 = SinkokuCSV2.transpose()#行列入替
@@ -493,8 +701,10 @@ def CSVIndexSort(SCode,path_pdf,SinkokuCSVList,SinkokuCSV2List,SinkokuCSV3List,S
     parser = PDFParser(fp)#PDFperserを作成。
     document = PDFDocument(parser) #PDFperserを格納。
     num_pages = 0 #ページ数格納変数を初期化
+    num_pagesList = []
     for page in PDFPage.create_pages(document): #ページオブジェ分ループ
         num_pages += 1 #ページ数カウント
+        num_pagesList.append(num_pages-1)
     print(num_pages) #ページ数確認
     #------------------------------------------------------------------------------------
     try:
@@ -504,40 +714,58 @@ def CSVIndexSort(SCode,path_pdf,SinkokuCSVList,SinkokuCSV2List,SinkokuCSV3List,S
             PageVol = str(y + 1)
             TO = True #TimeOut判定変数
             #TimeOutを加味したPDFRead処理TimeOut設定時間はContextTimeOut.pyにコンテキストで設定する
+            TKCFlag = False #TKC出力PDF判定フラグ
             try:
                 tables = CTO.camelotTimeOut(path_pdf,PageVol,'')#第三引数に'stream'を渡すと表外の値を抽出できる
                 PDFdf = tables[0].df# PDFテーブルをdf化
             except:#TimeOut処理を記述
                 TO = False #TimeOut判定変数
                 pass
-            #--------------------------------------------------------------------------------
+            #検索キー一致で種目分岐--------------------------------------
+            Notext = False #テキスト判定フラグ
+            try:
+                #PDFtext = extract_text(path_pdf,page_numbers=y,maxpages=1)
+                PDFtext = extract_text(path_pdf,page_numbers=num_pagesList,maxpages=num_pages)
+                print(PDFtext)
+                PDFtext=PDFtext.replace('\u3000','').replace(' ','').split('\n')#改行コードでSplit
+                for PDFtextItem in PDFtext: 
+                    if '国税の電子申請・届出完了報告書' in PDFtextItem:
+                        PDFFlag = '国税の電子申請・届出完了報告書'
+                        TKCFlag = True
+                        break
+                    elif '法人税・地方法人税・消費税の電子申告完了報告書' in PDFtextItem:
+                        PDFFlag = '法人税・地方法人税・消費税の電子申告完了報告書'
+                        TKCFlag = True
+                        break
+            except:
+                Notext = True #テキスト判定フラグ
+            #---------------------------------------------------------
             if not TO == False:
                 t_count = len(tables)# PDFのテーブル数を格納
-                TKCFlag = False #TKC出力PDF判定フラグ
                 if t_count >= 1:
                     Subtables = CTO.camelotTimeOut(path_pdf,PageVol,'stream')#第三引数に'stream'を渡すと表外の値を抽出できる
                     SubPDFdf = Subtables[0].df# PDFテーブルをdf化
                     SubRow = np.array(SubPDFdf).shape[0]
                     print(SubPDFdf)
-                    for s in range(SubRow):
-                        SubPDFRow = SubPDFdf.iloc[s]
-                        if '税務届出書類等作成支援システム(e-DMS)による電子申請・届出が完了しましたので、ご報告いたします。' in SubPDFRow[0]:
-                            TKCFlag = True #TKC出力PDF判定フラグ
                     for x in range(t_count):# PDFテーブル数分ループ
                         PDFdf = tables[x].df# PDFテーブルをdf化
                         print(PDFdf)
                         dfIndexdata = PDFdf.iloc[:,0]#PDFのインデックス
                         #print(dfIndexdata)
                         if TKCFlag == True:
-                            PDFFlag = 'TKC完了報告書'
+                            OutputList = []
+                            #表のインデックスを元に値を格納-----------------------------------------------------------
+                            ReadActionTKC(SCode,path_pdf,PDFFlag,y,TKCListSinsei,TKCListHTS,TKCListHTPDF,TKCListSyouhi,TKCListSyouhiPDF,TKCListTodouhu,TKCListSityou,PDFtext) 
+                            break
+                            #--------------------------------------------------------------------------------------     
                         else:
                             PDFFlag = PDFSetting(dfIndexdata,SinkokuCSV,SinkokuCSV2,SinkokuCSV3,SinkokuCSV4,SyotokuCSV,SyouhiCSV,YoteiCSV,HoujinCSV,SyoukyakuCSV)#PDFから抽出した表のインデックスを元に表のタイプを判別
-                        PDFdfRow = np.array(PDFdf).shape[0]#配列行数取得
-                        OutputList = []
-                        #表のインデックスを元に値を格納-----------------------------------------------------------
-                        ReadAction(SCode,path_pdf,PDFFlag,y,PDFdfRow,PDFdf,SinkokuCSVList,SinkokuCSV2List,SinkokuCSV3List,SinkokuCSV4List,\
-                        SyouhiCSVList,SyotokuCSVList,YoteiCSVList,SyoukyakuCSVList,HoujinCSVList,CSVBadList,SubPDFdf) 
-                        #--------------------------------------------------------------------------------------               
+                            PDFdfRow = np.array(PDFdf).shape[0]#配列行数取得
+                            OutputList = []
+                            #表のインデックスを元に値を格納-----------------------------------------------------------
+                            ReadAction(SCode,path_pdf,PDFFlag,y,PDFdfRow,PDFdf,SinkokuCSVList,SinkokuCSV2List,SinkokuCSV3List,SinkokuCSV4List,\
+                            SyouhiCSVList,SyotokuCSVList,YoteiCSVList,SyoukyakuCSVList,HoujinCSVList,CSVBadList,SubPDFdf) 
+                            #--------------------------------------------------------------------------------------               
                 else:
                     for x in range(t_count):# PDFテーブル数分ループ
                         PDFdf = tables[x].df# PDFテーブルをdf化
@@ -552,10 +780,21 @@ def CSVIndexSort(SCode,path_pdf,SinkokuCSVList,SinkokuCSV2List,SinkokuCSV3List,S
                         SyouhiCSVList,SyotokuCSVList,YoteiCSVList,SyoukyakuCSVList,HoujinCSVList,CSVBadList,SubPDFdf) 
                         #--------------------------------------------------------------------------------------               
             else:
-                logger.debug(path_pdf + '_' + str(y+1) + 'ページ目タイムアウトエラー')
-                OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目タイムアウトエラー','','','','','','','','']
-                CSVBadList.append(OutputList)
-                print('タイムアウトエラー')
+                if TKCFlag == True:
+                    OutputList = []
+                    #表のインデックスを元に値を格納-----------------------------------------------------------
+                    ReadActionTKC(SCode,path_pdf,PDFFlag,y,TKCListSinsei,TKCListHTS,TKCListHTPDF,TKCListSyouhi,TKCListSyouhiPDF,TKCListTodouhu,TKCListSityou,PDFtext)  
+                    break
+                    #--------------------------------------------------------------------------------------
+                elif Notext == True:
+                    logger.debug(path_pdf + '_' + str(y+1) + 'ページ目PDFテキスト情報なし')
+                    OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目PDFテキスト情報なし','','','','','','','','']
+                    CSVBadList.append(OutputList)
+                else:
+                    logger.debug(path_pdf + '_' + str(y+1) + 'ページ目タイムアウトエラー')
+                    OutputList = [SCode,path_pdf.replace('/','\\'),str(y+1) + 'ページ目タイムアウトエラー','','','','','','','','']
+                    CSVBadList.append(OutputList)
+                    print('タイムアウトエラー')
     except Exception as e:
         if not TO == False:
             logger.debug(path_pdf + '_' + str(y+1) + 'ページ目取得失敗')
@@ -584,6 +823,13 @@ def PDFRead(URL):
     HoujinCSVList = []#成功リスト初期化
     YoteiCSVList = []#成功リスト初期化
     SyoukyakuCSVList = []#成功リスト初期化
+    TKCListSinsei = []#成功リスト初期化
+    TKCListHTS = []
+    TKCListHTPDF = []
+    TKCListSyouhi = []
+    TKCListSyouhiPDF = []
+    TKCListTodouhu = []
+    TKCListSityou = []
     CSVBadList = []#失敗リスト初期化
     #------------------------------------------------------------------------------------
     # FCSV.CsvSaveEnc(URL.replace("\\","/") + "/PDFDataSuccess.csv",CSVList,"shiftjis")
@@ -602,7 +848,11 @@ def PDFRead(URL):
                 try:
                     if not ".xdw" in dif:#Docuファイルじゃなければ
                         path_pdf = dif.replace('\\','/')#PDFパスを代入
-                        CSVIndexSort(SCode,path_pdf,SinkokuCSVList,SinkokuCSV2List,SinkokuCSV3List,SinkokuCSV4List,SyotokuCSVList,SyouhiCSVList,HoujinCSVList,YoteiCSVList,SyoukyakuCSVList,CSVBadList,SinkokuCSV[1],SinkokuCSV2[1],SinkokuCSV3[1],SinkokuCSV4[1],SyotokuCSV[1],SyouhiCSV[1],HoujinCSV[1],YoteiCSV[1],SyoukyakuCSV[1])
+                        CSVIndexSort(SCode,path_pdf,SinkokuCSVList,SinkokuCSV2List,SinkokuCSV3List,\
+                        SinkokuCSV4List,SyotokuCSVList,SyouhiCSVList,HoujinCSVList,YoteiCSVList,\
+                        SyoukyakuCSVList,TKCListSinsei,TKCListHTS,TKCListHTPDF,TKCListSyouhi,TKCListSyouhiPDF,\
+                        TKCListTodouhu,TKCListSityou,CSVBadList,SinkokuCSV[1],SinkokuCSV2[1],SinkokuCSV3[1],\
+                        SinkokuCSV4[1],SyotokuCSV[1],SyouhiCSV[1],HoujinCSV[1],YoteiCSV[1],SyoukyakuCSV[1])
                     else:
                         print('xdw')
                 except Exception as e:
@@ -640,6 +890,29 @@ def PDFRead(URL):
     if not np.array(SyoukyakuCSVList).shape[0] == 0:
         FCSV.CsvSaveEnc(ListURL + "/償却資産受信通知リスト.csv",SyoukyakuCSVList,"cp932",['コード','URL','ページ','手続名',\
             '氏名又は名称','発行元名','発行元所属名','受付日時','提出先','年度・期別','課税所在地'])
+    if not np.array(TKCListSinsei).shape[0] == 0:
+        FCSV.CsvSaveEnc(ListURL + "/TKC受信通知リスト.csv",TKCListSinsei,"cp932",['コード','URL','ページ','提出先',\
+            '利用者識別番号','氏名又は名称','代表者等氏名','受付番号','受付日時','種目'])
+    if not np.array(TKCListHTS).shape[0] == 0:
+        FCSV.CsvSaveEnc(ListURL + "/TKC法人税の受信通知リスト.csv",TKCListHTS,"cp932",['コード','URL','ページ','提出先',\
+            '利用者識別番号','氏名又は名称','代表者等氏名','受付番号','受付日時','種目','事業年度','税目','申告の種類',\
+            '所得金額又は欠損金額','この申告による還付金額','欠損金又は災害損失金等の当期控除額','翌期へ繰り越す欠損金又は災害損失金',\
+            '税目2','申告の種類2','課税標準法人税額','差引確定地方法人税額'])
+    if not np.array(TKCListHTPDF).shape[0] == 0:
+        FCSV.CsvSaveEnc(ListURL + "/TKC法人税の添付書類の受信通知.csv",TKCListHTPDF,"cp932",['コード','URL','ページ','提出先',\
+            '利用者識別番号','元の申告・申請書の受付番号','氏名又は名称','代表者等氏名','受付番号','受付日時'])
+    if not np.array(TKCListSyouhi).shape[0] == 0:
+        FCSV.CsvSaveEnc(ListURL + "/TKC消費税の受信通知.csv",TKCListSyouhi,"cp932",['コード','URL','ページ','提出先',\
+            '利用者識別番号','氏名又は名称','代表者等氏名','受付番号','受付日時','種目','申告の種類','課税期間','課税標準額','消費税合計税額'])
+    if not np.array(TKCListSyouhiPDF).shape[0] == 0:
+        FCSV.CsvSaveEnc(ListURL + "/TKC消費税の受信通知.csv",TKCListSyouhiPDF,"cp932",['コード','URL','ページ','提出先',\
+            '利用者識別番号','氏名又は名称','代表者等氏名','受付番号','受付日時'])
+    if not np.array(TKCListTodouhu).shape[0] == 0:
+        FCSV.CsvSaveEnc(ListURL + "/TKC都道府県民税の受信通知.csv",TKCListTodouhu,"cp932",['コード','URL','ページ','納税者の氏名又は名称',\
+            '発行元','電話番号','発行日時','件名','メッセージ本文金額','受付日時','受付番号','手続名','事業年度','提出先'])
+    if not np.array(TKCListSityou).shape[0] == 0:
+        FCSV.CsvSaveEnc(ListURL + "/TKC市町村民税の受信通知.csv",TKCListSityou,"cp932",['コード','URL','ページ','納税者の氏名又は名称',\
+            '発行元','電話番号','発行日時','件名','メッセージ本文金額','受付日時','受付番号','手続名','事業年度','提出先'])
     if not np.array(CSVBadList).shape[0] == 0:
         FCSV.CsvSaveEnc(ListURL + "/受信通知取得失敗リスト.csv",CSVBadList,"cp932",['コード','URL','ページ','手続名',\
             '氏名又は名称','発行元名','発行元所属名','受付日時','提出先','年度・期別','納税者氏名'])
