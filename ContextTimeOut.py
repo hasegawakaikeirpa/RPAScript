@@ -27,7 +27,7 @@ def timeout(timeout):
         return wrapper
     return deco
 
-@timeout(10)
+@timeout(30)
 def camelotTimeOut(URL,Page,flv):
     if flv == 'stream':
         CRP = camelot.read_pdf(URL, pages=Page,flavor=flv)
