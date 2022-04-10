@@ -1,58 +1,88 @@
 ﻿import Function.SQLConnect as SQ
-import pandas as pd
-#logger設定------------------------------------------------------------------------------------------------------------
+
+# logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
-logging.config.fileConfig("LogConf\logging_debugDBOut.conf")
+
+logging.config.fileConfig(r"LogConf\logging_debugDBOut.conf")
 logger = logging.getLogger(__name__)
-#----------------------------------------------------------------------------------------------------------------------
-#関与先データベースをCSVアウト-------------------------------------------------------
-sql = 'SELECT * FROM m_kkanyo'
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kkanyo.csv"
-URL = URL.replace("\\","/")
+# ----------------------------------------------------------------------------------------------------------------------
+# 関与先データベースをCSVアウト-------------------------------------------------------
+sql = "SELECT * FROM m_kkanyo"
+URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kkanyo.csv"
+URL = URL.replace("\\", "/")
 URL = "/" + URL
-SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
-SQDF.to_csv(URL, index = False)
+SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
+SQDF.to_csv(URL, index=False)
 logger.debug("関与先データベースをCSVアウト完了: debug level log")
-#社員情報をCSVアウト----------------------------------------------------------------
-sql = 'SELECT * FROM m_syain'
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_syain.csv"
-URL = URL.replace("\\","/")
+# 社員情報をCSVアウト----------------------------------------------------------------
+sql = "SELECT * FROM m_syain"
+URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_syain.csv"
+URL = URL.replace("\\", "/")
 URL = "/" + URL
-SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
-SQDF.to_csv(URL, index = False)
+SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
+SQDF.to_csv(URL, index=False)
 logger.debug("社員情報をCSVアウト完了: debug level log")
-#FMSMAILLISTをCSVアウト------------------------------------------------------------
+# FMSMAILLISTをCSVアウト------------------------------------------------------------
 WithA = "WITH SubFMS AS (SELECT * FROM m_kfmsmail WHERE cr_RecKbn = '0' GROUP BY vc_FMSKnrCd),"
 WithB = "SubKan AS (SELECT * FROM m_kkanyo WHERE cr_RecKbn = '0' GROUP BY vc_KnrCd)"
 SelectStr = "SELECT F.vc_KnrCd,F.vc_KanKojinNo_pk,F.vc_FMSKnrCd,F.vc_Name,K.vc_Name AS 'Yago',K.vc_HaizokuNo,K.vc_Haizoku,K.vc_KansaTantouNo,K.vc_KansaTantou,\
             K.vc_SubTantouNo,K.vc_SubTantou,K.vc_Sub_SubTantouNo,K.vc_Sub_SubTantou,F.vc_Hakkou,F.vc_PDFName,F.vc_SousinK,F.vc_Mail,F.vc_SousinK2,F.vc_Mail2,\
             F.vc_SousinK3,F.vc_Mail3,F.vc_SousinK4,F.vc_Mail4,F.vc_SousinK5,F.vc_Mail5 FROM SubFMS F INNER JOIN SubKan K ON F.vc_KnrCd = K.vc_KnrCd"
 sql = WithA + WithB + SelectStr
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsmail.csv"
-URL = URL.replace("\\","/")
+URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsmail.csv"
+URL = URL.replace("\\", "/")
 URL = "/" + URL
-SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
-SQDF.to_csv(URL, index = False)
+SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
+SQDF.to_csv(URL, index=False)
 logger.debug("FMSMAILLISTをCSVアウト完了: debug level log")
-#メアド変更履歴をCSVアウト---------------------------------------------------------
-sql = 'SELECT * FROM m_kfmsrireki AS m WHERE NOT EXISTS (SELECT * FROM m_kfmsrireki AS s WHERE m.vc_FMSKnrCd = s.vc_FMSKnrCd AND m.in_RrkNo_pk < s.in_RrkNo_pk);'
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
-URL = URL.replace("\\","/")
+# メアド変更履歴をCSVアウト---------------------------------------------------------
+sql = "SELECT * FROM m_kfmsrireki AS m WHERE NOT EXISTS (SELECT * FROM m_kfmsrireki AS s WHERE m.vc_FMSKnrCd = s.vc_FMSKnrCd AND m.in_RrkNo_pk < s.in_RrkNo_pk);"
+URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
+URL = URL.replace("\\", "/")
 URL = "/" + URL
-SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
-SQDF.columns = ['行','in_RrkNo_pk','コード','個人名','関与先名','発送方法','送信方法','アドレス','課No','課','監査担当No','監査担当','サブNo','サブ','サブ2No','サブ2',\
-'送信方法2','アドレス2','送信方法3','アドレス3','送信方法4','アドレス4','送信方法5','アドレス5','cr_RecKbn','dt_InstDT','入力日時','入力ユーザー','変更前アドレス']
-SQDF.to_csv(URL, index = False)
+SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
+SQDF.columns = [
+    "行",
+    "in_RrkNo_pk",
+    "コード",
+    "個人名",
+    "関与先名",
+    "発送方法",
+    "送信方法",
+    "アドレス",
+    "課No",
+    "課",
+    "監査担当No",
+    "監査担当",
+    "サブNo",
+    "サブ",
+    "サブ2No",
+    "サブ2",
+    "送信方法2",
+    "アドレス2",
+    "送信方法3",
+    "アドレス3",
+    "送信方法4",
+    "アドレス4",
+    "送信方法5",
+    "アドレス5",
+    "cr_RecKbn",
+    "dt_InstDT",
+    "入力日時",
+    "入力ユーザー",
+    "変更前アドレス",
+]
+SQDF.to_csv(URL, index=False)
 logger.debug("メアド変更履歴をCSVアウト完了: debug level log")
-#人事異動をCSVアウト--------------------------------------------------------------
-sql = 'SELECT * FROM d_jnjido'
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\d_jnjido.csv"
-URL = URL.replace("\\","/")
+# 人事異動をCSVアウト--------------------------------------------------------------
+sql = "SELECT * FROM d_jnjido"
+URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\d_jnjido.csv"
+URL = URL.replace("\\", "/")
 URL = "/" + URL
-SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
-SQDF.to_csv(URL, index = False)
+SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
+SQDF.to_csv(URL, index=False)
 logger.debug("人事異動をCSVアウト完了: debug level log")
-#人事異動を考慮した社員情報一覧をCSVアウト------------------------------------------
+# 人事異動を考慮した社員情報一覧をCSVアウト------------------------------------------
 WithA = "WITH SubMax AS (SELECT vc_SyainCd_pk ,MAX(in_IdoNo_pk) As MaxIdoNo,Max(d_jnjido.in_RrkNo_pk) As MaxRrkNo \
         FROM d_jnjido WHERE cr_RecKbn = '0' AND (dy_TkyEndD >= CURDATE() OR dy_TkyEndD = '0000-00-00' OR dy_TkyEndD IS NULL) GROUP BY vc_SyainCd_pk),"
 WithB = "Submn AS (SELECT * FROM m_bmn),"
@@ -66,9 +96,9 @@ SelectStr = "SubTotal AS (SELECT Mst.vc_SyainCd_pk,Mst.in_RrkNo_pk,Mst.vc_UsrID,
             ,Ido.cr_SyainKbn,Ido.vc_BmnCd,Ido.cr_YakuCd,Ido.vc_GrpCd,Ido.vc_Biko As vc_IdoBiko FROM m_Syain Mst LEFT JOIN SubIdo Ido ON Mst.vc_SyainCd_pk = Ido.vc_SyainCd_pk WHERE Mst.cr_RecKbn = '0' ORDER BY Mst.vc_SyainCd_pk)"
 LastSelect = "SELECT sbt.vc_SyainCd_pk,sbt.in_RrkNo_pk,sbt.vc_Name,sbt.vc_ComMail,sbt.vc_BmnCd,sbm.vc_BmnNm FROM SubTotal sbt INNER JOIN Submn sbm ON sbt.vc_BmnCd = sbm.vc_BmnCd_pk"
 sql = WithA + WithB + WithC + SelectStr + LastSelect
-URL = "\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_bmn.csv"
-URL = URL.replace("\\","/")
+URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_bmn.csv"
+URL = URL.replace("\\", "/")
 URL = "/" + URL
-SQDF = SQ.MySQLHeaderTo_df('ws77','SYSTEM','SYSTEM',3306,'test_db','utf8',sql)[1]
-SQDF.to_csv(URL, index = False)
+SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
+SQDF.to_csv(URL, index=False)
 logger.debug("人事異動を考慮した社員情報一覧をCSVアウト完了: debug level log")

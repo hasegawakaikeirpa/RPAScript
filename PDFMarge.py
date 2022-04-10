@@ -1,21 +1,23 @@
-from pathlib import Path
 import PyPDF2
 import os
 import pandas as pd
+
+
 def dirCheck(Url):
     List = []
     for fd_path, sb_folder, sb_file in os.walk(Url):
         for fil in sb_file:
-            List.append(fd_path + '\\' + fil)
+            List.append(fd_path + "\\" + fil)
     print(List)
     Ldf = pd.DataFrame(List)
-    Ldf.to_csv("\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-3\\送信分受信通知\\3-15受信不可リスト.csv")
+    Ldf.to_csv(r"\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-3\\送信分受信通知\\3-15受信不可リスト.csv")
+
 
 def dirMarge(Url):
     # フォルダ内のPDFファイル一覧
     pdf_files = []
     for filename in os.listdir(Url):
-        if filename.endswith('.pdf'):
+        if filename.endswith(".pdf"):
             pdf_files.append(filename)
     print(pdf_files)
     print(os.listdir(Url))
@@ -33,5 +35,6 @@ def dirMarge(Url):
     with open(merged_file, "wb") as f:
         pdf_writer.write(f)
 
-Url = "//Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知"    
+
+Url = "//Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知"
 dirCheck(Url)

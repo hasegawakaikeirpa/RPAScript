@@ -22,48 +22,44 @@
 # """
 
 import datetime as _datetime
-from tracemalloc import stop
 
 _gengo_table = [
     {
         "name": "明治",
         "started": _datetime.date(1868, 1, 1),
-        "ended": _datetime.date(1912, 7, 29)
+        "ended": _datetime.date(1912, 7, 29),
     },
     {
         "name": "大正",
         "started": _datetime.date(1912, 7, 30),
-        "ended": _datetime.date(1926, 12, 24)
+        "ended": _datetime.date(1926, 12, 24),
     },
     {
         "name": "昭和",
         "started": _datetime.date(1926, 12, 25),
-        "ended": _datetime.date(1989, 1, 7)
+        "ended": _datetime.date(1989, 1, 7),
     },
     {
         "name": "平成",
         "started": _datetime.date(1989, 1, 8),
-        "ended": _datetime.date(2019, 4, 30)
+        "ended": _datetime.date(2019, 4, 30),
     },
-    {
-        "name": "令和",
-        "started": _datetime.date(2019, 5, 1),
-        "ended": None
-    }
+    {"name": "令和", "started": _datetime.date(2019, 5, 1), "ended": None},
 ]
 
+
 class Gengo:
-    '''元号
+    """元号
     >>> Gengo('平成')(32)
     Wareki(Gengo('平成'), 32)
     TODO: 明治より前の元号をサポート。
-    '''
+    """
 
     def __init__(self, name):
         self._name = name
         for i in _gengo_table:
-            if i['name'] == name:
-                self._started = i['started']
+            if i["name"] == name:
+                self._started = i["started"]
                 self._ended = i["ended"]
                 break
         else:
@@ -94,7 +90,7 @@ class Gengo:
 
     @classmethod
     def get_current(cls):
-        return cls(_gengo_table[-1]['name'])
+        return cls(_gengo_table[-1]["name"])
 
     def __str__(self):
         return self.name
@@ -118,36 +114,36 @@ class Gengo:
         """和暦を返す"""
         return Wareki(self, year)
 
+
 # アルファベット
-M = Gengo('明治')
-T = Gengo('大正')
-S = Gengo('昭和')
-H = Gengo('平成')
-R = Gengo('令和')
+M = Gengo("明治")
+T = Gengo("大正")
+S = Gengo("昭和")
+H = Gengo("平成")
+R = Gengo("令和")
+
 
 def _ad2gengo(year):
     return Gengo.from_date(_datetime.date(year, 12, 31))
 
+
 class Wareki:
     """和暦を元号と年で表現するクラス"""
+
     def __init__(self, gengo, year):
-        """Constructor.
-        """
+        """Constructor."""
         self._gengo = gengo
         self._year = year
 
     @classmethod
     def from_ad(cls, year):
         gengo = _ad2gengo(year)
-        obj = cls(
-            gengo,
-            year - gengo.started.year + 1
-        )
+        obj = cls(gengo, year - gengo.started.year + 1)
         return obj
 
     @property
     def gengo(self):
-        '''元号'''
+        """元号"""
         return self._gengo
 
     @property
@@ -155,16 +151,14 @@ class Wareki:
         return self._year
 
     def __repr__(self):
-        s = '{}({}, {})'.format(
-            __class__.__name__, repr(self.gengo), self.year
-        )
+        s = "{}({}, {})".format(__class__.__name__, repr(self.gengo), self.year)
         return s
 
     def __str__(self):
         gengo = str(self.gengo)
-        #year = '元' if self.year == 1 else self.year
+        # year = '元' if self.year == 1 else self.year
         year = self.year
-        s = '{}{}年'.format(gengo, year)
+        s = "{}{}年".format(gengo, year)
         return s
 
     def to_ad(self):
@@ -172,15 +166,13 @@ class Wareki:
 
     __int__ = to_ad
 
+
 class WarekiDate(_datetime.date):
     """和暦を用いた日付表現"""
+
     @classmethod
     def from_ad(cls, date):
-        obj = cls(
-            Wareki.from_ad(date.year),
-            date.month,
-            date.day
-        )
+        obj = cls(Wareki.from_ad(date.year), date.month, date.day)
         return obj
 
     @property
@@ -188,20 +180,20 @@ class WarekiDate(_datetime.date):
         return Wareki.from_ad(self.year)
 
     def __str__(self):
-        return '{}{}月{}日'.format(self.wareki, self.month, self.day)
+        return "{}{}月{}日".format(self.wareki, self.month, self.day)
 
     def __repr__(self):
-        s = '{}({}, {}, {})'.format(
-            __class__.__name__,
-            repr(self.wareki), self.month, self.day
+        s = "{}({}, {}, {})".format(
+            __class__.__name__, repr(self.wareki), self.month, self.day
         )
         return s
 
     def to_date(self):
         return _datetime.date(self.wareki, self.month, self.day)
 
-def SeirekiDate(Nengou,Nen,Mon,Da):
-    omikuji = {"M":1868, "T":1912, "S":1926, "H":1989, "R":2019}
+
+def SeirekiDate(Nengou, Nen, Mon, Da):
+    omikuji = {"M": 1868, "T": 1912, "S": 1926, "H": 1989, "R": 2019}
 
     if Nengou in omikuji:
         PlusYear = omikuji[Nengou]
@@ -210,5 +202,6 @@ def SeirekiDate(Nengou,Nen,Mon,Da):
     else:
         print("エラー")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     pass
