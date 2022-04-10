@@ -6,7 +6,6 @@ from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfpage import PDFPage
 from PIL import Image
 import pyocr
-
 import ContextTimeOut as CTO
 import Function.CSVOut as FCSV
 import Function.FolderCreate as FC
@@ -17,8 +16,6 @@ import logging.config
 logging.config.fileConfig(r"LogConf\logging_debug.conf")
 logger = logging.getLogger(__name__)
 # ----------------------------------------------------------------------------------------
-
-
 def SerchdirFolders(URL):  # 指定URL配下のサブフォルダを取得
     List = []
     for fd_path, sb_folder, sb_file in os.walk(URL):
@@ -29,8 +26,6 @@ def SerchdirFolders(URL):  # 指定URL配下のサブフォルダを取得
 
 
 # ----------------------------------------------------------------------------------------
-
-
 def SerchdirFiles(URL):  # 指定URL配下のファイルを取得
     List = []
     for fd_path, sb_folder, sb_file in os.walk(URL):
@@ -41,8 +36,6 @@ def SerchdirFiles(URL):  # 指定URL配下のファイルを取得
 
 
 # ----------------------------------------------------------------------------------------
-
-
 def PDFOCRRead():
     # インストールしたTesseract-OCRのパスを環境変数「PATH」へ追記する。
     # OS自体に設定してあれば以下の2行は不要
@@ -74,8 +67,6 @@ def PDFOCRRead():
 
 
 # ----------------------------------------------------------------------------------------
-
-
 def PDFSetting(
     dfIndexdata,
     SinkokuCSV,
@@ -243,8 +234,6 @@ def PDFSetting(
 
 
 # ----------------------------------------------------------------------------------------
-
-
 def ReadAction(
     SCode,
     path_pdf,
@@ -1086,8 +1075,6 @@ def ReadAction(
 
 
 # ----------------------------------------------------------------------------------------
-
-
 def ReadActionTKC(
     SCode,
     path_pdf,
@@ -1447,13 +1434,9 @@ def ReadActionTKC(
                 TKCListSityou.append(OutputList)
             # ----------------------------------------------------------------------
         Prow += 1
-    # ----------------------------------------------------------------------------------------------
 
 
-#################################################################################################################################################################################
-#################################################################################################################################################################################
-
-
+# ----------------------------------------------------------------------------------------------
 def CSVIndexSort(
     SCode,
     path_pdf,
@@ -1804,8 +1787,6 @@ def CSVIndexSort(
 
 
 # ----------------------------------------------------------------------------------------
-
-
 def PDFRead(URL):
     MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
     # 各税目のインデックスリストを加工して格納------------------------------------------------
@@ -2342,7 +2323,6 @@ def PDFRead(URL):
             "cp932",
             ["コード", "URL", "ページ", "手続名", "氏名又は名称", "受付日時", "種目"],
         )
-
     if not np.array(SinkokuUkeCSVList).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/申告受付通知リスト.csv",
@@ -2363,7 +2343,6 @@ def PDFRead(URL):
                 "課税所在地",
             ],
         )
-
     if not np.array(TKCListSinsei).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/TKC受信通知リスト.csv",
@@ -2528,7 +2507,6 @@ def PDFRead(URL):
                 "納税者氏名",
             ],
         )
-
     # ------------------------------------------------------------------------------------
 
 
