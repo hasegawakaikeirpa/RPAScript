@@ -75,6 +75,12 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
         logger.debug("Pass要素取得に失敗: debug level log")
         print("要素取得に失敗しました。")
     # ----------------------------------------------------------------------------------------------------------------------
+    while (
+        pg.locateOnScreen(FolURL2 + "/RPAPhoto/OMSOpen/" + FileName, confidence=0.9)
+        is not None
+    ):
+        time.sleep(1)
+    # time.sleep(5)
     # tAutomationId要素が出現するまで待機-------------------------------------------------------------------------------------------
     if DriverUIWaitAutomationId("codeTextBox", driver) is True:
         logger.debug("OMSログイン完了: debug level log")

@@ -44,6 +44,16 @@ def CsvRead(URL):  # 引数指定のCSVを読みとる
 
 
 # -------------------------------------------------------------------------------------------------------------------------------
+def CsvReadDtypeDict(URL, dict):  # 引数指定のCSVを読みとる
+    try:
+        SerchEnc = format(getFileEncoding(URL))
+        C_csv = pd.read_csv(URL, encoding=SerchEnc, dtype=dict)
+        return True, C_csv
+    except:
+        return False, ""
+
+
+# -------------------------------------------------------------------------------------------------------------------------------
 def CsvReadHeaderless(URL):  # 引数指定のCSVを読みとる
     try:
         SerchEnc = format(getFileEncoding(URL))

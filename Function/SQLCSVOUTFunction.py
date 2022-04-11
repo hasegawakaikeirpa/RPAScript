@@ -11,7 +11,7 @@ def KanyoUp():
     sql = "SELECT * FROM m_kkanyo"
     URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kkanyo.csv"
     URL = URL.replace("\\", "/")
-    URL = "/" + URL
+
     SQDF = SQ.MySQLHeaderTo_df(
         "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql
     )[1]
@@ -24,7 +24,7 @@ def SyainUp():
     sql = "SELECT * FROM m_syain"
     URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_syain.csv"
     URL = URL.replace("\\", "/")
-    URL = "/" + URL
+
     SQDF = SQ.MySQLHeaderTo_df(
         "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql
     )[1]
@@ -42,7 +42,7 @@ def MailListUp():
     sql = WithA + WithB + SelectStr
     URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsmail.csv"
     URL = URL.replace("\\", "/")
-    URL = "/" + URL
+
     SQDF = SQ.MySQLHeaderTo_df(
         "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql
     )[1]
@@ -55,7 +55,7 @@ def MailRirekiUp():
     sql = "SELECT * FROM m_kfmsrireki AS m WHERE NOT EXISTS (SELECT * FROM m_kfmsrireki AS s WHERE m.vc_FMSKnrCd = s.vc_FMSKnrCd AND m.in_RrkNo_pk < s.in_RrkNo_pk);"
     URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
     URL = URL.replace("\\", "/")
-    URL = "/" + URL
+
     SQDF = SQ.MySQLHeaderTo_df(
         "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql
     )[1]
@@ -99,7 +99,7 @@ def JinjiIdo():
     sql = "SELECT * FROM d_jnjido"
     URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\d_jnjido.csv"
     URL = URL.replace("\\", "/")
-    URL = "/" + URL
+
     SQDF = SQ.MySQLHeaderTo_df(
         "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql
     )[1]
@@ -124,7 +124,7 @@ def JinjiIdoSyain():
     sql = WithA + WithB + WithC + SelectStr + LastSelect
     URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_bmn.csv"
     URL = URL.replace("\\", "/")
-    URL = "/" + URL
+
     SQDF = SQ.MySQLHeaderTo_df(
         "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql
     )[1]

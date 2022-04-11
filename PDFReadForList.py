@@ -9,6 +9,8 @@ import pyocr
 import ContextTimeOut as CTO
 import Function.CSVOut as FCSV
 import Function.FolderCreate as FC
+import toml
+import RPAPhoto.PDFReadForList.CSVSetting as CSVSet  # CSVの設定ファイルの読込
 
 # logger設定------------------------------------------------------------------------------
 import logging.config
@@ -67,173 +69,6 @@ def PDFOCRRead():
 
 
 # ----------------------------------------------------------------------------------------
-def PDFSetting(
-    dfIndexdata,
-    SinkokuCSV,
-    SinkokuCSV2,
-    SinkokuCSV3,
-    SinkokuCSV4,
-    SyotokuCSV,
-    SyotokuCSV2,
-    SyotokuCSV3,
-    SyotokuCSV4,
-    SyouhiCSV,
-    SyouhiCSV2,
-    SyouhiCSV3,
-    SyouhiCyukanCSV,
-    YoteiCSV,
-    HoujinCSV,
-    SyoukyakuCSV,
-    SyoukyakuCSV2,
-    ZouyoCSV,
-    ZaisanCSV,
-    SinkokuUkeCSV,
-    ImageCSV,
-):
-    # 確定申告リストと突合------------------------------------------------------
-    IndexFlags = SinkokuCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "確定申告"
-    # ------------------------------------------------------------------------
-    # 確定申告リスト2と突合------------------------------------------------------
-    IndexFlags = SinkokuCSV2 == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "確定申告2"
-    # ------------------------------------------------------------------------
-    # 確定申告リスト3と突合------------------------------------------------------
-    IndexFlags = SinkokuCSV3 == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "確定申告3"
-    # ------------------------------------------------------------------------
-    # 確定申告リスト4と突合------------------------------------------------------
-    IndexFlags = SinkokuCSV4 == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "確定申告4"
-    # ------------------------------------------------------------------------
-    # 所得税リストと突合--------------------------------------------------------
-    IndexFlags = SyotokuCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "所得税"
-    # ------------------------------------------------------------------------
-    # 所得税2リストと突合--------------------------------------------------------
-    IndexFlags = SyotokuCSV2 == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "所得税2"
-    # ------------------------------------------------------------------------
-    # 所得税3リストと突合--------------------------------------------------------
-    IndexFlags = SyotokuCSV3 == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "所得税3"
-    # ------------------------------------------------------------------------
-    # 所得税4リストと突合--------------------------------------------------------
-    IndexFlags = SyotokuCSV4 == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "所得税4"
-    # ------------------------------------------------------------------------
-    # 消費税リストと突合--------------------------------------------------------
-    IndexFlags = SyouhiCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "消費税"
-    # ------------------------------------------------------------------------
-    # 消費税リストと突合--------------------------------------------------------
-    IndexFlags = SyouhiCSV2 == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "消費税2"
-    # ------------------------------------------------------------------------
-    # 消費税リストと突合--------------------------------------------------------
-    IndexFlags = SyouhiCSV3 == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "消費税3"
-    # ------------------------------------------------------------------------
-    # 消費税中間リストと突合--------------------------------------------------------
-    IndexFlags = SyouhiCyukanCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "消費税中間申告"
-    # ------------------------------------------------------------------------
-    # 予定申告リストと突合------------------------------------------------------
-    IndexFlags = YoteiCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "予定申告"
-    # ------------------------------------------------------------------------
-    # 法人税リストと突合--------------------------------------------------------
-    IndexFlags = HoujinCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "法人税"
-    # ------------------------------------------------------------------------
-    # 贈与税リストと突合--------------------------------------------------------
-    IndexFlags = ZouyoCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "贈与税"
-    # ------------------------------------------------------------------------
-    # 財産債務リストと突合--------------------------------------------------------
-    IndexFlags = ZaisanCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "財産債務"
-    # ------------------------------------------------------------------------
-    # 申告受付リストと突合--------------------------------------------------------
-    IndexFlags = SinkokuUkeCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "申告受付通知"
-    # ------------------------------------------------------------------------
-    # イメージ添付書類リストと突合--------------------------------------------------------
-    IndexFlags = ImageCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        PDFFlag = "イメージ添付書類"
-    # ------------------------------------------------------------------------
-    # 償却資産リストと突合------------------------------------------------------
-    IndexFlags = SyoukyakuCSV == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        try:
-            PDFFlag
-            if PDFFlag == "法人税":
-                if "課税所在地" in dfIndexdata:
-                    PDFFlag = "償却資産"
-                else:
-                    PDFFlag = "法人税"
-            else:
-                PDFFlag = "償却資産"
-        except:
-            PDFFlag = "償却資産"
-    # ------------------------------------------------------------------------
-    # 償却資産2リストと突合------------------------------------------------------
-    IndexFlags = SyoukyakuCSV2 == dfIndexdata
-    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
-    if FolseC[0] >= -2:
-        try:
-            PDFFlag
-            if PDFFlag == "法人税":
-                if "課税所在地" in dfIndexdata:
-                    PDFFlag = "償却資産2"
-                else:
-                    PDFFlag = "法人税"
-            else:
-                PDFFlag = "償却資産2"
-        except:
-            PDFFlag = "償却資産2"
-    # ------------------------------------------------------------------------
-    return PDFFlag
-
-
-# ----------------------------------------------------------------------------------------
 def ReadAction(
     SCode,
     path_pdf,
@@ -241,6 +76,7 @@ def ReadAction(
     y,
     PDFdfRow,
     PDFdf,
+    SubPDFdf,
     SinkokuCSVList,
     SinkokuCSV2List,
     SinkokuCSV3List,
@@ -260,9 +96,9 @@ def ReadAction(
     ZaisanCSVList,
     SinkokuUkeCSVList,
     HoujinCSVList,
+    HoujinSiminCSVList,
     ImageCSVList,
     CSVBadList,
-    SubPDFdf,
 ):
     try:
         if PDFFlag == "確定申告":
@@ -1038,6 +874,47 @@ def ReadAction(
             ]
             HoujinCSVList.append(OutputList)
         # ------------------------------------------------------------------------
+        elif PDFFlag == "法人市民税":
+            for z in range(PDFdfRow):  # PDFのテーブル行数分ループ
+                dfdatarow = PDFdf.iloc[z]  # PDFのテーブル行データ1
+                if dfdatarow[0] == "手続名":
+                    PDFTitle = str(dfdatarow[1])
+                elif dfdatarow[0] == "氏名又は名称":
+                    PDFName = str(dfdatarow[1])
+                elif dfdatarow[0] == "発行元名":
+                    PDFHakkou = str(dfdatarow[1])
+                elif dfdatarow[0] == "受付日時":
+                    PDFDate = str(dfdatarow[1])
+                elif dfdatarow[0] == "提出先":
+                    PDFTeisyutu = str(dfdatarow[1])
+                elif dfdatarow[0] == "年度・期別":
+                    PDFNendo = str(dfdatarow[1])
+                elif dfdatarow[0] == "納税者氏名":
+                    PDFNouzeiName = str(dfdatarow[1])
+            # 表外データがあった場合の処理---------------------------------------------------------------------
+            SPDList = []
+            SPDRow = np.array(SubPDFdf).shape[0]
+            for zz in range(SPDRow):
+                Spdatarow = SubPDFdf.iloc[zz]  # PDFのテーブル行データ1
+                if "円" in Spdatarow[0]:
+                    SPDList.append(Spdatarow[0].replace("\u3000", "").replace(" ", ""))
+            SPDstr = "\n".join(SPDList)
+            # ----------------------------------------------------------------------------------------------
+            OutputList = [
+                SCode,
+                path_pdf.replace("/", "\\"),
+                str(y + 1) + "ページ目",
+                PDFTitle,
+                PDFName,
+                PDFHakkou,
+                PDFDate,
+                PDFTeisyutu,
+                PDFNendo,
+                PDFNouzeiName,
+                SPDstr,
+            ]
+            HoujinSiminCSVList.append(OutputList)
+        # ------------------------------------------------------------------------
         else:
             logger.debug(path_pdf + "_" + str(y + 1) + "ページ目取得失敗書式登録なし")
             OutputList = [
@@ -1080,6 +957,7 @@ def ReadActionTKC(
     path_pdf,
     PDFFlag,
     y,
+    PDFtext,
     TKCListSinsei,
     TKCListHTS,
     TKCListHTPDF,
@@ -1087,7 +965,6 @@ def ReadActionTKC(
     TKCListSyouhiPDF,
     TKCListTodouhu,
     TKCListSityou,
-    PDFtext,
 ):
     ########################################################################
     ########################################################################
@@ -1453,6 +1330,7 @@ def CSVIndexSort(
     SyouhiCSV3List,
     SyouhiCyukanCSVList,
     HoujinCSVList,
+    HoujinSiminCSVList,
     YoteiCSVList,
     SyoukyakuCSVList,
     SyoukyakuCSV2List,
@@ -1481,6 +1359,7 @@ def CSVIndexSort(
     SyouhiCSV3,
     SyouhiCyukanCSV,
     HoujinCSV,
+    HoujinSiminCSV,
     YoteiCSV,
     SyoukyakuCSV,
     SyoukyakuCSV2,
@@ -1489,28 +1368,7 @@ def CSVIndexSort(
     SinkokuUkeCSV,
     ImageCSV,
 ):
-    # PDFから抽出したリストと形式があわないので、税目リストを行列入替---------------------------
-    SinkokuCSV = SinkokuCSV.transpose()  # 行列入替
-    SinkokuCSV2 = SinkokuCSV2.transpose()  # 行列入替
-    SinkokuCSV3 = SinkokuCSV3.transpose()  # 行列入替
-    SinkokuCSV4 = SinkokuCSV4.transpose()  # 行列入替
-    SyotokuCSV = SyotokuCSV.transpose()  # 行列入替
-    SyotokuCSV2 = SyotokuCSV2.transpose()  # 行列入替
-    SyotokuCSV3 = SyotokuCSV3.transpose()
-    SyotokuCSV4 = SyotokuCSV4.transpose()  # 行列入替
-    SyouhiCSV = SyouhiCSV.transpose()  # 行列入替
-    SyouhiCSV2 = SyouhiCSV2.transpose()  # 行列入替
-    SyouhiCSV3 = SyouhiCSV3.transpose()  # 行列入替
-    SyouhiCyukanCSV = SyouhiCyukanCSV.transpose()  # 行列入替
-    HoujinCSV = HoujinCSV.transpose()  # 行列入替
-    YoteiCSV = YoteiCSV.transpose()  # 行列入替
-    SyoukyakuCSV = SyoukyakuCSV.transpose()  # 行列入替
-    SyoukyakuCSV2 = SyoukyakuCSV2.transpose()  # 行列入替
-    ZouyoCSV = ZouyoCSV.transpose()  # 行列入替
-    ZaisanCSV = ZaisanCSV.transpose()  # 行列入替
-    SinkokuUkeCSV = SinkokuUkeCSV.transpose()  # 行列入替
-    ImageCSV = ImageCSV.transpose()  # 行列入替
-    # ------------------------------------------------------------------------------------
+    # # ------------------------------------------------------------------------------------
     fp = open(path_pdf, "rb")  # PDFファイルを読み込み
     parser = PDFParser(fp)  # PDFperserを作成。
     document = PDFDocument(parser)  # PDFperserを格納。
@@ -1539,7 +1397,6 @@ def CSVIndexSort(
             # 検索キー一致で種目分岐--------------------------------------
             Notext = False  # テキスト判定フラグ
             try:
-                # PDFtext = extract_text(path_pdf,page_numbers=y,maxpages=1)
                 PDFtext = extract_text(
                     path_pdf, page_numbers=num_pagesList, maxpages=num_pages
                 )
@@ -1580,40 +1437,15 @@ def CSVIndexSort(
                                 path_pdf,
                                 PDFFlag,
                                 y,
-                                TKCListSinsei,
-                                TKCListHTS,
-                                TKCListHTPDF,
-                                TKCListSyouhi,
-                                TKCListSyouhiPDF,
-                                TKCListTodouhu,
-                                TKCListSityou,
                                 PDFtext,
+                                **CSVSet.ReadActionTKC_TKCFlagisTrue,
                             )
                             break
                             # --------------------------------------------------------------------------------------
                         else:
-                            PDFFlag = PDFSetting(
+                            PDFFlag = CSVSet.PDFSetting(
                                 dfIndexdata,
-                                SinkokuCSV,
-                                SinkokuCSV2,
-                                SinkokuCSV3,
-                                SinkokuCSV4,
-                                SyotokuCSV,
-                                SyotokuCSV2,
-                                SyotokuCSV3,
-                                SyotokuCSV4,
-                                SyouhiCSV,
-                                SyouhiCSV2,
-                                SyouhiCSV3,
-                                SyouhiCyukanCSV,
-                                YoteiCSV,
-                                HoujinCSV,
-                                SyoukyakuCSV,
-                                SyoukyakuCSV2,
-                                ZouyoCSV,
-                                ZaisanCSV,
-                                SinkokuUkeCSV,
-                                ImageCSV,
+                                **CSVSet.ReadActionTKC_TKCFlagisTrue_PDFSetting,
                             )  # PDFから抽出した表のインデックスを元に表のタイプを判別
                             PDFdfRow = np.array(PDFdf).shape[0]  # 配列行数取得
                             OutputList = []
@@ -1625,28 +1457,8 @@ def CSVIndexSort(
                                 y,
                                 PDFdfRow,
                                 PDFdf,
-                                SinkokuCSVList,
-                                SinkokuCSV2List,
-                                SinkokuCSV3List,
-                                SinkokuCSV4List,
-                                SyouhiCSVList,
-                                SyouhiCSV2List,
-                                SyouhiCSV3List,
-                                SyouhiCyukanCSVList,
-                                SyotokuCSVList,
-                                SyotokuCSV2List,
-                                SyotokuCSV3List,
-                                SyotokuCSV4List,
-                                YoteiCSVList,
-                                SyoukyakuCSVList,
-                                SyoukyakuCSV2List,
-                                ZouyoCSVList,
-                                ZaisanCSVList,
-                                SinkokuUkeCSVList,
-                                HoujinCSVList,
-                                ImageCSVList,
-                                CSVBadList,
                                 SubPDFdf,
+                                **CSVSet.ReadActionTKC_TKCFlagiselse_PDFSetting,
                             )
                             # --------------------------------------------------------------------------------------
                 else:
@@ -1655,28 +1467,8 @@ def CSVIndexSort(
                         print(PDFdf)
                         dfIndexdata = PDFdf.iloc[:, 0]  # PDFのインデックス
                         # print(dfIndexdata)
-                        PDFFlag = PDFSetting(
-                            dfIndexdata,
-                            SinkokuCSV,
-                            SinkokuCSV2,
-                            SinkokuCSV3,
-                            SinkokuCSV4,
-                            SyotokuCSV,
-                            SyotokuCSV2,
-                            SyotokuCSV3,
-                            SyotokuCSV4,
-                            SyouhiCSV,
-                            SyouhiCSV2,
-                            SyouhiCSV3,
-                            SyouhiCyukanCSV,
-                            YoteiCSV,
-                            HoujinCSV,
-                            SyoukyakuCSV,
-                            SyoukyakuCSV2,
-                            ZouyoCSV,
-                            ZaisanCSV,
-                            SinkokuUkeCSV,
-                            ImageCSV,
+                        PDFFlag = CSVSet.PDFSetting(
+                            dfIndexdata, **CSVSet.ReadActionTKC_TKCFlagisTrue_PDFSetting
                         )  # PDFから抽出した表のインデックスを元に表のタイプを判別
                         PDFdfRow = np.array(PDFdf).shape[0]  # 配列行数取得
                         OutputList = []
@@ -1689,28 +1481,8 @@ def CSVIndexSort(
                             y,
                             PDFdfRow,
                             PDFdf,
-                            SinkokuCSVList,
-                            SinkokuCSV2List,
-                            SinkokuCSV3List,
-                            SinkokuCSV4List,
-                            SyouhiCSVList,
-                            SyouhiCSV2List,
-                            SyouhiCSV3List,
-                            SyouhiCyukanCSVList,
-                            SyotokuCSVList,
-                            SyotokuCSV2List,
-                            SyotokuCSV3List,
-                            SyotokuCSV4List,
-                            YoteiCSVList,
-                            SyoukyakuCSVList,
-                            SyoukyakuCSV2List,
-                            ZouyoCSVList,
-                            ZaisanCSVList,
-                            SinkokuUkeCSVList,
-                            HoujinCSVList,
-                            ImageCSVList,
-                            CSVBadList,
                             SubPDFdf,
+                            **CSVSet.ReadActionTKC_TKCFlagiselse_PDFSetting,
                         )
                         # --------------------------------------------------------------------------------------
             else:
@@ -1718,18 +1490,7 @@ def CSVIndexSort(
                     OutputList = []
                     # 表のインデックスを元に値を格納-----------------------------------------------------------
                     ReadActionTKC(
-                        SCode,
-                        path_pdf,
-                        PDFFlag,
-                        y,
-                        TKCListSinsei,
-                        TKCListHTS,
-                        TKCListHTPDF,
-                        TKCListSyouhi,
-                        TKCListSyouhiPDF,
-                        TKCListTodouhu,
-                        TKCListSityou,
-                        PDFtext,
+                        SCode, path_pdf, PDFFlag, y, PDFtext, **CSVSet.TKC_PDFSetting
                     )
                     break
                     # --------------------------------------------------------------------------------------
@@ -1787,100 +1548,10 @@ def CSVIndexSort(
 
 
 # ----------------------------------------------------------------------------------------
-def PDFRead(URL):
-    MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
-    # 各税目のインデックスリストを加工して格納------------------------------------------------
-    SinkokuCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/確定申告.CSV"
-    )  # 内国法人確定申告のインデックスリスト
-    SinkokuCSV2 = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/確定申告2.CSV"
-    )  # 内国法人確定申告のインデックスリスト
-    SinkokuCSV3 = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/確定申告3.CSV"
-    )  # 内国法人確定申告のインデックスリスト
-    SinkokuCSV4 = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/確定申告4.CSV"
-    )  # 内国法人確定申告のインデックスリスト
-    SyotokuCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/所得税.CSV"
-    )  # 所得税のインデックスリスト
-    SyotokuCSV2 = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/所得税2.CSV"
-    )  # 所得税のインデックスリスト
-    SyotokuCSV3 = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/所得税3.CSV"
-    )  # 所得税のインデックスリスト
-    SyotokuCSV4 = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/所得税4.CSV"
-    )  # 所得税のインデックスリスト
-    SyouhiCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/消費税.CSV"
-    )  # 消費税のインデックスリスト
-    SyouhiCSV2 = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/消費税2.CSV"
-    )  # 消費税のインデックスリスト
-    SyouhiCSV3 = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/消費税3.CSV"
-    )  # 消費税のインデックスリスト
-    SyouhiCyukanCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/消費税中間申告.CSV"
-    )  # 消費税のインデックスリスト
-    HoujinCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/法人税.CSV"
-    )  # 法人税のインデックスリスト
-    YoteiCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/予定申告.CSV"
-    )  # 予定申告のインデックスリスト
-    SyoukyakuCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/償却資産.CSV"
-    )  # 償却資産のインデックスリスト
-    SyoukyakuCSV2 = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/償却資産2.CSV"
-    )  # 償却資産のインデックスリスト
-    ZouyoCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/贈与税.CSV"
-    )  # 償却資産のインデックスリスト
-    ZaisanCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/財産債務調書.CSV"
-    )  # 償却資産のインデックスリスト
-    SinkokuUkeCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/申告受付通知.CSV"
-    )  # 償却資産のインデックスリスト
-    ImageCSV = FCSV.CsvReadHeaderless(
-        MeUrl + "/RPAPhoto/PDFReadForList/イメージ添付書類.CSV"
-    )  # 償却資産のインデックスリスト
-    # ------------------------------------------------------------------------------------
-    SinkokuCSVList = []  # 成功リスト初期化
-    SinkokuCSV2List = []  # 成功リスト初期化
-    SinkokuCSV3List = []  # 成功リスト初期化
-    SinkokuCSV4List = []  # 成功リスト初期化
-    SyotokuCSVList = []  # 成功リスト初期化
-    SyotokuCSV2List = []  # 成功リスト初期化
-    SyotokuCSV3List = []  # 成功リスト初期化
-    SyotokuCSV4List = []  # 成功リスト初期化
-    SyouhiCSVList = []  # 成功リスト初期化
-    SyouhiCSV2List = []  # 成功リスト初期化
-    SyouhiCSV3List = []  # 成功リスト初期化
-    SyouhiCyukanCSVList = []
-    HoujinCSVList = []  # 成功リスト初期化
-    YoteiCSVList = []  # 成功リスト初期化
-    SyoukyakuCSVList = []  # 成功リスト初期化
-    SyoukyakuCSV2List = []  # 成功リスト初期化
-    ZouyoCSVList = []  # 成功リスト初期化
-    ZaisanCSVList = []  # 成功リスト初期化
-    SinkokuUkeCSVList = []
-    TKCListSinsei = []  # 成功リスト初期化
-    TKCListHTS = []
-    TKCListHTPDF = []
-    TKCListSyouhi = []
-    TKCListSyouhiPDF = []
-    TKCListTodouhu = []
-    TKCListSityou = []
-    ImageCSVList = []
-    CSVBadList = []  # 失敗リスト初期化
+def PDFRead(URL, Settingtoml):
     # ------------------------------------------------------------------------------------
     # FCSV.CsvSaveEnc(URL.replace("\\","/") + "/PDFDataSuccess.csv",CSVList,"shiftjis")
+    CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
     dir_List = SerchdirFolders(URL)  # 指定URL配下のサブフォルダを取得
     print(dir_List)
     for dir_ListItem in dir_List:
@@ -1896,58 +1567,7 @@ def PDFRead(URL):
                 try:
                     if ".xdw" not in dif:  # Docuファイルじゃなければ
                         path_pdf = dif.replace("\\", "/")  # PDFパスを代入
-                        CSVIndexSort(
-                            SCode,
-                            path_pdf,
-                            SinkokuCSVList,
-                            SinkokuCSV2List,
-                            SinkokuCSV3List,
-                            SinkokuCSV4List,
-                            SyotokuCSVList,
-                            SyotokuCSV2List,
-                            SyotokuCSV3List,
-                            SyotokuCSV4List,
-                            SyouhiCSVList,
-                            SyouhiCSV2List,
-                            SyouhiCSV3List,
-                            SyouhiCyukanCSVList,
-                            HoujinCSVList,
-                            YoteiCSVList,
-                            SyoukyakuCSVList,
-                            SyoukyakuCSV2List,
-                            ZouyoCSVList,
-                            ZaisanCSVList,
-                            SinkokuUkeCSVList,
-                            TKCListSinsei,
-                            TKCListHTS,
-                            TKCListHTPDF,
-                            TKCListSyouhi,
-                            TKCListSyouhiPDF,
-                            TKCListTodouhu,
-                            TKCListSityou,
-                            ImageCSVList,
-                            CSVBadList,
-                            SinkokuCSV[1],
-                            SinkokuCSV2[1],
-                            SinkokuCSV3[1],
-                            SinkokuCSV4[1],
-                            SyotokuCSV[1],
-                            SyotokuCSV2[1],
-                            SyotokuCSV3[1],
-                            SyotokuCSV4[1],
-                            SyouhiCSV[1],
-                            SyouhiCSV2[1],
-                            SyouhiCSV3[1],
-                            SyouhiCyukanCSV[1],
-                            HoujinCSV[1],
-                            YoteiCSV[1],
-                            SyoukyakuCSV[1],
-                            SyoukyakuCSV2[1],
-                            ZouyoCSV[1],
-                            ZaisanCSV[1],
-                            SinkokuUkeCSV[1],
-                            ImageCSV[1],
-                        )
+                        CSVIndexSort(SCode, path_pdf, **CDict)
                     else:
                         print("xdw")
                 except Exception as e:
@@ -1963,558 +1583,223 @@ def PDFRead(URL):
                     os.remove(osurl)
                 except:
                     print("OSREMOVEError")
-    if not np.array(SinkokuCSVList).shape[0] == 0:
+    if not np.array(CDict["SinkokuCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/内国法人確定申告受信通知リスト.csv",
-            SinkokuCSVList,
+            CDict["SinkokuCSVList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "種目",
-                "事業年度",
-                "税目",
-                "申告の種類",
-                "所得金額又は欠損金額",
-                "差引確定法人税額",
-                "欠損金又は災害損失金等の当期控除額",
-                "翌期へ繰り越す欠損金又は災害損失金",
-                "税目2",
-                "申告の種類2",
-                "課税標準法人税額",
-                "差引確定地方法人税額",
-            ],
+            Settingtoml["CsvSaveEnc"]["SinkokuCSVList"],
         )
-    if not np.array(SinkokuCSV2List).shape[0] == 0:
+    if not np.array(CDict["SinkokuCSV2List"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/内国法人確定申告受信通知リスト2.csv",
-            SinkokuCSV2List,
+            CDict["SinkokuCSV2List"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "種目",
-                "事業年度",
-                "税目",
-                "申告の種類",
-                "所得金額又は欠損金額",
-                "この申告による還付金額",
-                "欠損金又は災害損失金等の当期控除額",
-                "翌期へ繰り越す欠損金又は災害損失金",
-                "税目2",
-                "申告の種類2",
-                "課税標準法人税額",
-                "この申告による還付金額2",
-            ],
+            Settingtoml["CsvSaveEnc"]["SinkokuCSV2List"],
         )
-    if not np.array(SinkokuCSV3List).shape[0] == 0:
+    if not np.array(CDict["SinkokuCSV3List"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/内国法人確定申告受信通知リスト3.csv",
-            SinkokuCSV3List,
+            CDict["SinkokuCSV3List"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "種目",
-                "事業年度",
-                "税目",
-                "申告の種類",
-                "所得金額又は欠損金額",
-                "この申告による還付金額",
-                "欠損金又は災害損失金等の当期控除額",
-                "翌期へ繰り越す欠損金又は災害損失金",
-                "税目2",
-                "申告の種類2",
-                "課税標準法人税額",
-                "差引確定地方法人税額",
-            ],
+            Settingtoml["CsvSaveEnc"]["SinkokuCSV3List"],
         )
-    if not np.array(SinkokuCSV4List).shape[0] == 0:
+    if not np.array(CDict["SinkokuCSV4List"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/内国法人確定申告受信通知リスト4.csv",
-            SinkokuCSV4List,
+            CDict["SinkokuCSV4List"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "種目",
-                "事業年度",
-                "税目",
-                "申告の種類",
-                "所得金額又は欠損金額",
-                "差引確定法人税額",
-                "欠損金又は災害損失金等の当期控除額",
-                "翌期へ繰り越す欠損金又は災害損失金",
-                "税目2",
-                "申告の種類2",
-                "課税標準法人税額",
-                "差引確定地方法人税額",
-            ],
+            Settingtoml["CsvSaveEnc"]["SinkokuCSV4List"],
         )
-    if not np.array(SyotokuCSVList).shape[0] == 0:
+    if not np.array(CDict["SyotokuCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/所得税受信通知リスト.csv",
-            SyotokuCSVList,
+            CDict["SyotokuCSVList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "年分",
-                "種目",
-                "所得金額",
-                "納める税金",
-                "還付される税金",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyotokuCSVList"],
         )
-
-    if not np.array(SyotokuCSV2List).shape[0] == 0:
+    if not np.array(CDict["SyotokuCSV2List"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/所得税2受信通知リスト.csv",
-            SyotokuCSV2List,
+            CDict["SyotokuCSV2List"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "氏名又は名称",
-                "受付日時",
-                "年分",
-                "種目",
-                "所得金額",
-                "納める税金",
-                "還付される税金",
-                "「所得金額」欄について",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyotokuCSV2List"],
         )
-    if not np.array(SyotokuCSV3List).shape[0] == 0:
+    if not np.array(CDict["SyotokuCSV3List"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/所得税3受信通知リスト.csv",
-            SyotokuCSV3List,
+            CDict["SyotokuCSV3List"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "年分",
-                "種目",
-                "所得金額",
-                "納める税金",
-                "還付される税金",
-                "「所得金額」欄について",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyotokuCSV3List"],
         )
-    if not np.array(SyotokuCSV4List).shape[0] == 0:
+    if not np.array(CDict["SyotokuCSV4List"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/所得税4受信通知リスト.csv",
-            SyotokuCSV4List,
+            CDict["SyotokuCSV4List"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "年分",
-                "種目",
-                "所得金額",
-                "納める税金",
-                "還付される税金",
-                "「所得金額」欄について",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyotokuCSV4List"],
         )
-
-    if not np.array(SyouhiCSVList).shape[0] == 0:
+    if not np.array(CDict["SyouhiCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/消費税受信通知リスト.csv",
-            SyouhiCSVList,
+            CDict["SyouhiCSVList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "種目",
-                "申告の種類",
-                "課税標準額",
-                "消費税及び地方消費税の合計",
-                "課税期間",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyouhiCSVList"],
         )
-    if not np.array(SyouhiCSV2List).shape[0] == 0:
+    if not np.array(CDict["SyouhiCSV2List"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/消費税2受信通知リスト.csv",
-            SyouhiCSV2List,
+            CDict["SyouhiCSV2List"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "種目",
-                "課税標準額",
-                "消費税及び地方消費税の合計",
-                "課税期間",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyouhiCSV2List"],
         )
-
-    if not np.array(SyouhiCSV3List).shape[0] == 0:
+    if not np.array(CDict["SyouhiCSV3List"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/消費税2受信通知リスト.csv",
-            SyouhiCSV3List,
+            CDict["SyouhiCSV3List"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "氏名又は名称",
-                "受付日時",
-                "種目",
-                "課税標準額",
-                "消費税及び地方消費税の合計",
-                "課税期間",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyouhiCSV3List"],
         )
-
-    if not np.array(SyouhiCyukanCSVList).shape[0] == 0:
+    if not np.array(CDict["SyouhiCyukanCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/消費税中間申告受信通知リスト.csv",
-            SyouhiCyukanCSVList,
+            CDict["SyouhiCyukanCSVList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "種目",
-                "消費税及び地方消費税の合計",
-                "課税期間",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyouhiCyukanCSVList"],
         )
-
-    if not np.array(HoujinCSVList).shape[0] == 0:
+    if not np.array(CDict["HoujinCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/法人税受信通知リスト.csv",
-            HoujinCSVList,
+            CDict["HoujinCSVList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "発行元名",
-                "発行元所属名",
-                "受付日時",
-                "提出先",
-                "年度・期別",
-                "納税者氏名",
-                "表外表示金額",
-            ],
+            Settingtoml["CsvSaveEnc"]["HoujinCSVList"],
         )
-    if not np.array(YoteiCSVList).shape[0] == 0:
+    if not np.array(CDict["HoujinSiminCSVList"]).shape[0] == 0:
+        FCSV.CsvSaveEnc(
+            ListURL + "/法人市民税受信通知リスト.csv",
+            CDict["HoujinSiminCSVList"],
+            "cp932",
+            Settingtoml["CsvSaveEnc"]["HoujinSiminCSVList"],
+        )
+    if not np.array(CDict["YoteiCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/予定納税受信通知リスト.csv",
-            YoteiCSVList,
+            CDict["YoteiCSVList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "種目",
-                "事業年度",
-                "税目",
-                "納付すべき法人税額",
-                "税目2",
-                "納付すべき地方法人税額",
-            ],
+            Settingtoml["CsvSaveEnc"]["YoteiCSVList"],
         )
-    if not np.array(SyoukyakuCSVList).shape[0] == 0:
+    if not np.array(CDict["SyoukyakuCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/償却資産受信通知リスト.csv",
-            SyoukyakuCSVList,
+            CDict["SyoukyakuCSVList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "発行元名",
-                "発行元所属名",
-                "受付日時",
-                "提出先",
-                "年度・期別",
-                "課税所在地",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyoukyakuCSVList"],
         )
-    if not np.array(SyoukyakuCSV2List).shape[0] == 0:
+    if not np.array(CDict["SyoukyakuCSV2List"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/償却資産2受信通知リスト.csv",
-            SyoukyakuCSV2List,
+            CDict["SyoukyakuCSV2List"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "発行元名",
-                "受付日時",
-                "提出先",
-                "年度・期別",
-                "課税所在地",
-            ],
+            Settingtoml["CsvSaveEnc"]["SyoukyakuCSV2List"],
         )
-    if not np.array(ZouyoCSVList).shape[0] == 0:
+    if not np.array(CDict["ZouyoCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/贈与税受信通知リスト.csv",
-            ZouyoCSVList,
+            CDict["ZouyoCSVList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "受付日時",
-                "年分",
-                "種目",
-                "課税価格の合計額",
-                "申告期限までに納付すべき税額",
-            ],
+            Settingtoml["CsvSaveEnc"]["ZouyoCSVList"],
         )
-    if not np.array(ZaisanCSVList).shape[0] == 0:
+    if not np.array(CDict["ZaisanCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
-            ListURL + "/贈与税受信通知リスト.csv",
-            ZaisanCSVList,
+            ListURL + "/財産債務調書リスト.csv",
+            CDict["ZaisanCSVList"],
             "cp932",
-            ["コード", "URL", "ページ", "手続名", "氏名又は名称", "受付日時", "種目"],
+            Settingtoml["CsvSaveEnc"]["ZaisanCSVList"],
         )
-    if not np.array(SinkokuUkeCSVList).shape[0] == 0:
+    if not np.array(CDict["SinkokuUkeCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/申告受付通知リスト.csv",
-            SinkokuUkeCSVList,
+            CDict["SinkokuUkeCSVList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "発行元名",
-                "発行元所属名",
-                "発行元電話番号",
-                "受付日時",
-                "提出先",
-                "年度・期別",
-                "課税所在地",
-            ],
+            Settingtoml["CsvSaveEnc"]["SinkokuUkeCSVList"],
         )
-    if not np.array(TKCListSinsei).shape[0] == 0:
+    if not np.array(CDict["TKCListSinsei"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/TKC受信通知リスト.csv",
-            TKCListSinsei,
+            CDict["TKCListSinsei"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "提出先",
-                "利用者識別番号",
-                "氏名又は名称",
-                "代表者等氏名",
-                "受付番号",
-                "受付日時",
-                "種目",
-            ],
+            Settingtoml["CsvSaveEnc"]["TKCListSinsei"],
         )
-    if not np.array(TKCListHTS).shape[0] == 0:
+    if not np.array(CDict["TKCListHTS"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/TKC法人税の受信通知リスト.csv",
-            TKCListHTS,
+            CDict["TKCListHTS"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "提出先",
-                "利用者識別番号",
-                "氏名又は名称",
-                "代表者等氏名",
-                "受付番号",
-                "受付日時",
-                "種目",
-                "事業年度",
-                "税目",
-                "申告の種類",
-                "所得金額又は欠損金額",
-                "この申告による還付金額",
-                "欠損金又は災害損失金等の当期控除額",
-                "翌期へ繰り越す欠損金又は災害損失金",
-                "税目2",
-                "申告の種類2",
-                "課税標準法人税額",
-                "差引確定地方法人税額",
-            ],
+            Settingtoml["CsvSaveEnc"]["TKCListHTS"],
         )
-    if not np.array(TKCListHTPDF).shape[0] == 0:
+    if not np.array(CDict["TKCListHTPDF"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/TKC法人税の添付書類の受信通知.csv",
-            TKCListHTPDF,
+            CDict["TKCListHTPDF"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "提出先",
-                "利用者識別番号",
-                "元の申告・申請書の受付番号",
-                "氏名又は名称",
-                "代表者等氏名",
-                "受付番号",
-                "受付日時",
-            ],
+            Settingtoml["CsvSaveEnc"]["TKCListHTPDF"],
         )
-    if not np.array(TKCListSyouhi).shape[0] == 0:
+    if not np.array(CDict["TKCListSyouhi"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/TKC消費税の受信通知.csv",
-            TKCListSyouhi,
+            CDict["TKCListSyouhi"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "提出先",
-                "利用者識別番号",
-                "氏名又は名称",
-                "代表者等氏名",
-                "受付番号",
-                "受付日時",
-                "種目",
-                "申告の種類",
-                "課税期間",
-                "課税標準額",
-                "消費税合計税額",
-            ],
+            Settingtoml["CsvSaveEnc"]["TKCListSyouhi"],
         )
-    if not np.array(TKCListSyouhiPDF).shape[0] == 0:
+    if not np.array(CDict["TKCListSyouhiPDF"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/TKC消費税の受信通知.csv",
-            TKCListSyouhiPDF,
+            CDict["TKCListSyouhiPDF"],
             "cp932",
-            ["コード", "URL", "ページ", "提出先", "利用者識別番号", "氏名又は名称", "代表者等氏名", "受付番号", "受付日時"],
+            Settingtoml["CsvSaveEnc"]["TKCListSyouhiPDF"],
         )
-    if not np.array(TKCListTodouhu).shape[0] == 0:
+    if not np.array(CDict["TKCListTodouhu"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/TKC都道府県民税の受信通知.csv",
-            TKCListTodouhu,
+            CDict["TKCListTodouhu"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "納税者の氏名又は名称",
-                "発行元",
-                "電話番号",
-                "発行日時",
-                "件名",
-                "メッセージ本文金額",
-                "受付日時",
-                "受付番号",
-                "手続名",
-                "事業年度",
-                "提出先",
-            ],
+            Settingtoml["CsvSaveEnc"]["TKCListTodouhu"],
         )
-    if not np.array(TKCListSityou).shape[0] == 0:
+    if not np.array(CDict["TKCListSityou"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/TKC市町村民税の受信通知.csv",
-            TKCListSityou,
+            CDict["TKCListSityou"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "納税者の氏名又は名称",
-                "発行元",
-                "電話番号",
-                "発行日時",
-                "件名",
-                "メッセージ本文金額",
-                "受付日時",
-                "受付番号",
-                "手続名",
-                "事業年度",
-                "提出先",
-            ],
+            Settingtoml["CsvSaveEnc"]["TKCListSityou"],
         )
-    if not np.array(ImageCSVList).shape[0] == 0:
+    if not np.array(CDict["ImageCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/イメージ取得リスト.csv",
-            ImageCSVList,
+            CDict["ImageCSVList"],
             "cp932",
-            ["コード", "URL", "ページ", "手続名", "氏名又は名称", "受付番号", "受付日時", "元の申告・申請書の受付番号"],
+            Settingtoml["CsvSaveEnc"]["ImageCSVList"],
         )
-    if not np.array(CSVBadList).shape[0] == 0:
+    if not np.array(CDict["CSVBadList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(
             ListURL + "/受信通知取得失敗リスト.csv",
-            CSVBadList,
+            CDict["CSVBadList"],
             "cp932",
-            [
-                "コード",
-                "URL",
-                "ページ",
-                "手続名",
-                "氏名又は名称",
-                "発行元名",
-                "発行元所属名",
-                "受付日時",
-                "提出先",
-                "年度・期別",
-                "納税者氏名",
-            ],
+            Settingtoml["CsvSaveEnc"]["CSVBadList"],
         )
     # ------------------------------------------------------------------------------------
 
 
+MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
+# toml読込------------------------------------------------------------------------------
+with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as f:
+    Settingtoml = toml.load(f)
+    print(Settingtoml)
+# ----------------------------------------------------------------------------------------
 # URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\送信分受信通知"
 URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 try:
     logger.debug(URL + "内のPDF抽出開始")
-    PDFRead(URL)
+    PDFRead(URL, Settingtoml)
     logger.debug(URL + "内のPDF抽出完了")
 except Exception as e:
     logger.debug("エラー終了" + e)

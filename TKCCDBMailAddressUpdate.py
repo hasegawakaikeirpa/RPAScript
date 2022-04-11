@@ -290,7 +290,6 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
         for x in range(LenRow):
             CSVURL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
             CSVURL = CSVURL.replace("\\", "/")  # URLリネーム
-            CSVURL = "/" + CSVURL
             FCSV.CsvRead(CSVURL)
             wsRow = ws.iloc[x]  # dfインスタンスの行データ
             # 行データから変数格納----------------------------------------------------------------------------------------
@@ -559,7 +558,6 @@ def MainFlow(FolURL2, Lday):
     FolURL2 = FolURL2 + "/RPAPhoto/TKCCDBMailAddressUpdate"  # RPA用画像保管フォルダを指定
     XlsmURL = r"\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"  # アドレス登録シートを指定
     XlsmURL = XlsmURL.replace("\\", "/")  # URLリネーム
-    XlsmURL = "/" + XlsmURL  # URLリネーム
     # エクセルブックを読込------------------------------------------------------------------------------------------------
     logger.debug("エクセルブックを読込")
     XlsmList = EF.XlsmRead(XlsmURL)

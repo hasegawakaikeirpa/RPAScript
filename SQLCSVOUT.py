@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 sql = "SELECT * FROM m_kkanyo"
 URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kkanyo.csv"
 URL = URL.replace("\\", "/")
-URL = "/" + URL
+
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
 SQDF.to_csv(URL, index=False)
 logger.debug("関与先データベースをCSVアウト完了: debug level log")
@@ -18,20 +18,55 @@ logger.debug("関与先データベースをCSVアウト完了: debug level log"
 sql = "SELECT * FROM m_syain"
 URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_syain.csv"
 URL = URL.replace("\\", "/")
-URL = "/" + URL
+
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
 SQDF.to_csv(URL, index=False)
 logger.debug("社員情報をCSVアウト完了: debug level log")
 # FMSMAILLISTをCSVアウト------------------------------------------------------------
-WithA = "WITH SubFMS AS (SELECT * FROM m_kfmsmail WHERE cr_RecKbn = '0' GROUP BY vc_FMSKnrCd),"
-WithB = "SubKan AS (SELECT * FROM m_kkanyo WHERE cr_RecKbn = '0' GROUP BY vc_KnrCd)"
-SelectStr = "SELECT F.vc_KnrCd,F.vc_KanKojinNo_pk,F.vc_FMSKnrCd,F.vc_Name,K.vc_Name AS 'Yago',K.vc_HaizokuNo,K.vc_Haizoku,K.vc_KansaTantouNo,K.vc_KansaTantou,\
-            K.vc_SubTantouNo,K.vc_SubTantou,K.vc_Sub_SubTantouNo,K.vc_Sub_SubTantou,F.vc_Hakkou,F.vc_PDFName,F.vc_SousinK,F.vc_Mail,F.vc_SousinK2,F.vc_Mail2,\
-            F.vc_SousinK3,F.vc_Mail3,F.vc_SousinK4,F.vc_Mail4,F.vc_SousinK5,F.vc_Mail5 FROM SubFMS F INNER JOIN SubKan K ON F.vc_KnrCd = K.vc_KnrCd"
-sql = WithA + WithB + SelectStr
+# WithA = "WITH SubFMS AS (SELECT * FROM m_kfmsmail WHERE cr_RecKbn = '0' GROUP BY vc_FMSKnrCd),"
+# WithB = "SubKan AS (SELECT * FROM m_kkanyo WHERE cr_RecKbn = '0' GROUP BY vc_KnrCd)"
+# SelectStr = "SELECT F.vc_KnrCd,F.vc_KanKojinNo_pk,F.vc_FMSKnrCd,F.vc_Name,K.vc_Name AS 'Yago',K.vc_HaizokuNo,K.vc_Haizoku,K.vc_KansaTantouNo,K.vc_KansaTantou,\
+#             K.vc_SubTantouNo,K.vc_SubTantou,K.vc_Sub_SubTantouNo,K.vc_Sub_SubTantou,F.vc_Hakkou,F.vc_SousinK,F.vc_Mail,F.vc_SousinK2,F.vc_Mail2,\
+#             F.vc_SousinK3,F.vc_Mail3,F.vc_SousinK4,F.vc_Mail4,F.vc_SousinK5,F.vc_Mail5 FROM SubFMS F INNER JOIN SubKan K ON F.vc_KnrCd = K.vc_KnrCd"
+WithA = "WITH MAIN AS (SELECT * FROM m_kfmsmail),"
+WithB = "RIREKI AS (SELECT * FROM m_kfmsrireki AS m WHERE NOT EXISTS \
+(SELECT * FROM m_kfmsrireki AS s WHERE m.vc_FMSKnrCd = s.vc_FMSKnrCd AND m.in_RrkNo_pk < s.in_RrkNo_pk)),"
+WithC = (
+    "SubFMS AS (SELECT * FROM m_kfmsmail WHERE cr_RecKbn = '0' GROUP BY vc_FMSKnrCd),"
+)
+WithD = "SubKan AS (SELECT * FROM m_kkanyo WHERE cr_RecKbn = '0' GROUP BY vc_KnrCd),"
+WithE = "SubMix AS (SELECT F.vc_KnrCd,F.vc_KanKojinNo_pk,F.vc_FMSKnrCd,F.vc_Name,K.vc_Name AS 'Yago',\
+K.vc_HaizokuNo,K.vc_Haizoku,K.vc_KansaTantouNo,K.vc_KansaTantou,\
+K.vc_SubTantouNo,K.vc_SubTantou,K.vc_Sub_SubTantouNo,K.vc_Sub_SubTantou,\
+F.vc_Hakkou,F.vc_PDFName,F.vc_SousinK,F.vc_Mail,F.vc_SousinK2,F.vc_Mail2,\
+F.vc_SousinK3,F.vc_Mail3,F.vc_SousinK4,F.vc_Mail4,F.vc_SousinK5,F.vc_Mail5 FROM SubFMS F \
+INNER JOIN SubKan K ON F.vc_KnrCd = K.vc_KnrCd)"
+SelectStr = " SELECT SM.vc_KnrCd,SM.vc_KanKojinNo_pk,SM.vc_FMSKnrCd,\
+CASE WHEN R.vc_Name IS NOT NULL THEN R.vc_Name ELSE SM.vc_Name END AS vc_Name,\
+SM.Yago,SM.vc_HaizokuNo,SM.vc_Haizoku,\
+CASE WHEN R.vc_KansaTantouNo IS NOT NULL THEN R.vc_KansaTantouNo ELSE SM.vc_KansaTantouNo END AS vc_KansaTantouNo,\
+CASE WHEN R.vc_KansaTantou IS NOT NULL THEN R.vc_KansaTantou ELSE SM.vc_KansaTantou END AS vc_KansaTantou,\
+CASE WHEN R.vc_SubTantouNo IS NOT NULL THEN R.vc_SubTantouNo ELSE SM.vc_SubTantouNo END AS vc_SubTantouNo,\
+CASE WHEN R.vc_SubTantou IS NOT NULL THEN R.vc_SubTantou ELSE SM.vc_SubTantou END AS vc_SubTantou,\
+CASE WHEN R.vc_Sub_SubTantouNo IS NOT NULL THEN R.vc_Sub_SubTantouNo ELSE SM.vc_Sub_SubTantouNo END AS vc_Sub_SubTantouNo,\
+CASE WHEN R.vc_Sub_SubTantou IS NOT NULL THEN R.vc_Sub_SubTantou ELSE SM.vc_Sub_SubTantou END AS vc_Sub_SubTantou,\
+CASE WHEN R.vc_Hakkou IS NOT NULL THEN R.vc_Hakkou ELSE SM.vc_Hakkou END AS vc_Hakkou,\
+SM.vc_PDFName,\
+CASE WHEN R.vc_SousinK IS NOT NULL THEN R.vc_SousinK ELSE SM.vc_SousinK END AS vc_SousinK,\
+CASE WHEN R.vc_Mail IS NOT NULL THEN R.vc_Mail ELSE SM.vc_Mail END AS vc_Mail,\
+CASE WHEN R.vc_SousinK2 IS NOT NULL THEN R.vc_SousinK2 ELSE SM.vc_SousinK2 END AS vc_SousinK2,\
+CASE WHEN R.vc_Mail2 IS NOT NULL THEN R.vc_Mail2 ELSE SM.vc_Mail2 END AS vc_Mail2,\
+CASE WHEN R.vc_SousinK3 IS NOT NULL THEN R.vc_SousinK3 ELSE SM.vc_SousinK3 END AS vc_SousinK3,\
+CASE WHEN R.vc_Mail3 IS NOT NULL THEN R.vc_Mail3 ELSE SM.vc_Mail3 END AS vc_Mail3,\
+CASE WHEN R.vc_SousinK4 IS NOT NULL THEN R.vc_SousinK4 ELSE SM.vc_SousinK4 END AS vc_SousinK4,\
+CASE WHEN R.vc_Mail4 IS NOT NULL THEN R.vc_Mail4 ELSE SM.vc_Mail4 END AS vc_Mail4,\
+CASE WHEN R.vc_SousinK5 IS NOT NULL THEN R.vc_SousinK5 ELSE SM.vc_SousinK5 END AS vc_SousinK5,\
+CASE WHEN R.vc_Mail5 IS NOT NULL THEN R.vc_Mail5 ELSE SM.vc_Mail5 END AS vc_Mail5\
+ FROM SubMix SM LEFT JOIN RIREKI R ON SM.vc_FMSKnrCd = R.vc_FMSKnrCd;"
+sql = WithA + WithB + WithC + WithD + WithE + SelectStr
 URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsmail.csv"
 URL = URL.replace("\\", "/")
-URL = "/" + URL
+
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
 SQDF.to_csv(URL, index=False)
 logger.debug("FMSMAILLISTをCSVアウト完了: debug level log")
@@ -39,7 +74,7 @@ logger.debug("FMSMAILLISTをCSVアウト完了: debug level log")
 sql = "SELECT * FROM m_kfmsrireki AS m WHERE NOT EXISTS (SELECT * FROM m_kfmsrireki AS s WHERE m.vc_FMSKnrCd = s.vc_FMSKnrCd AND m.in_RrkNo_pk < s.in_RrkNo_pk);"
 URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
 URL = URL.replace("\\", "/")
-URL = "/" + URL
+
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
 SQDF.columns = [
     "行",
@@ -78,7 +113,7 @@ logger.debug("メアド変更履歴をCSVアウト完了: debug level log")
 sql = "SELECT * FROM d_jnjido"
 URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\d_jnjido.csv"
 URL = URL.replace("\\", "/")
-URL = "/" + URL
+
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
 SQDF.to_csv(URL, index=False)
 logger.debug("人事異動をCSVアウト完了: debug level log")
@@ -98,7 +133,7 @@ LastSelect = "SELECT sbt.vc_SyainCd_pk,sbt.in_RrkNo_pk,sbt.vc_Name,sbt.vc_ComMai
 sql = WithA + WithB + WithC + SelectStr + LastSelect
 URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_bmn.csv"
 URL = URL.replace("\\", "/")
-URL = "/" + URL
+
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
 SQDF.to_csv(URL, index=False)
 logger.debug("人事異動を考慮した社員情報一覧をCSVアウト完了: debug level log")
