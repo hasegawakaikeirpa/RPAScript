@@ -1,4 +1,5 @@
-﻿import os
+﻿from datetime import datetime
+import os
 import numpy as np
 from pdfminer.high_level import extract_text
 from pdfminer.pdfparser import PDFParser
@@ -1786,8 +1787,33 @@ def PDFRead(URL, Settingtoml):
             "cp932",
             Settingtoml["CsvSaveEnc"]["CSVBadList"],
         )
-    # ------------------------------------------------------------------------------------
 
+
+# ------------------------------------------------------------------------------------
+def CSVLog(URL, LogURL):
+    URL = URL + "\\受信通知CSV"
+    now = datetime.now()
+    DY = "{0:%Y-%m-%d %H:%M:%S}".format(now)
+    DY = DY.replace(":", "-")
+    List = []
+    ALLList = []
+    for fd_path, sb_folder, sb_file in os.walk(URL):
+        for fil in sb_file:
+            if fil.endswith(".csv") is True:
+                List.append([fd_path, fil])
+    for ListItem in List:
+        CURL = ListItem[0] + "\\" + ListItem[1]
+        DFCSV = FCSV.CsvReadDtypeDict(CURL, str)
+        DFCSVRow = np.array(DFCSV[1]).shape[0]
+        for DI in range(DFCSVRow):
+            AR = DFCSV[1].iloc[DI]
+            ALLList.append(AR)
+        # print(ALLList)
+    LogURL = LogURL.replace("\\", "/") + "/" + DY + "_Log.csv"
+    FCSV.CsvSaveNoHeader(LogURL, ALLList, "cp932")
+
+
+# ------------------------------------------------------------------------------------
 
 MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
 # toml読込------------------------------------------------------------------------------
@@ -1797,9 +1823,11 @@ with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as
 # ----------------------------------------------------------------------------------------
 # URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\送信分受信通知"
 URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
+LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFREADLog"
 try:
     logger.debug(URL + "内のPDF抽出開始")
-    PDFRead(URL, Settingtoml)
+    # PDFRead(URL, Settingtoml)
+    CSVLog(URL, LogURL)
     logger.debug(URL + "内のPDF抽出完了")
 except Exception as e:
     logger.debug("エラー終了" + e)

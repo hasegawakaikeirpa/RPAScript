@@ -37,7 +37,10 @@ def CsvPlus(URL, LogList, LogMSG):  # 引数指定のCSV最終行に行データ
 def CsvRead(URL):  # 引数指定のCSVを読みとる
     try:
         SerchEnc = format(getFileEncoding(URL))
-        C_csv = pd.read_csv(URL, encoding=SerchEnc)
+        if SerchEnc == "None":
+            C_csv = pd.read_csv(URL, encoding="cp932")
+        else:
+            C_csv = pd.read_csv(URL, encoding=SerchEnc)
         return True, C_csv
     except:
         return False, ""
@@ -47,7 +50,10 @@ def CsvRead(URL):  # 引数指定のCSVを読みとる
 def CsvReadDtypeDict(URL, dict):  # 引数指定のCSVを読みとる
     try:
         SerchEnc = format(getFileEncoding(URL))
-        C_csv = pd.read_csv(URL, encoding=SerchEnc, dtype=dict)
+        if SerchEnc == "None":
+            C_csv = pd.read_csv(URL, encoding="cp932", dtype=dict)
+        else:
+            C_csv = pd.read_csv(URL, encoding=SerchEnc, dtype=dict)
         return True, C_csv
     except:
         return False, ""
@@ -68,6 +74,14 @@ def CsvSave(URL, data):
     # DataFrame作成
     df = pd.DataFrame(data)
     df.to_csv(URL, index=False)
+    return df
+
+
+# -------------------------------------------------------------------------------------------------------------------------------
+def CsvSaveNoHeader(URL, data, enc):
+    # DataFrame作成
+    df = pd.DataFrame(data)
+    df.to_csv(URL, index=False, header=False, encoding=enc)
     return df
 
 
