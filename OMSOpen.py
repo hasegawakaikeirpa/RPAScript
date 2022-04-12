@@ -76,11 +76,13 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
         print("要素取得に失敗しました。")
     # ----------------------------------------------------------------------------------------------------------------------
     while (
-        pg.locateOnScreen(FolURL2 + "/RPAPhoto/OMSOpen/" + FileName, confidence=0.9)
-        is not None
+        pg.locateOnScreen(
+            FolURL2 + "/RPAPhoto/OMSOpen/OMSMainMenuBar.png", confidence=0.9
+        )
+        is None
     ):
         time.sleep(1)
-    # time.sleep(5)
+    # time.sleep(3)
     # tAutomationId要素が出現するまで待機-------------------------------------------------------------------------------------------
     if DriverUIWaitAutomationId("codeTextBox", driver) is True:
         logger.debug("OMSログイン完了: debug level log")

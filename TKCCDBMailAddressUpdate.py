@@ -308,7 +308,10 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                 if ICFL[0] is True:
                     ImgClick(FolURL2, ICFL[1], 0.9, 1)
                     if int(wscd) < 100:
-                        wscd = f"{wscd:03}"
+                        try:
+                            wscd = f"{wscd:03}"
+                        except:
+                            print("wscdエラー")
                 # ----------------------------------------------------------------------------------------------------------
             elif int(wscd) >= 4000 and int(wscd) < 5000:
                 NList = ["05371.png", "05371b.png"]
@@ -317,7 +320,10 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                     ImgClick(FolURL2, ICFL[1], 0.9, 1)
                     wscd = int(wscd) - 4000
                     if int(wscd) < 100:
-                        wscd = f"{wscd:03}"
+                        try:
+                            wscd = f"{wscd:03}"
+                        except:
+                            print("wscdエラー")
                 # ----------------------------------------------------------------------------------------------------------
             elif int(wscd) >= 1000 and int(wscd) < 2000:
                 if len(wscd) == 5:
@@ -334,7 +340,10 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                         ImgClick(FolURL2, ICFL[1], 0.9, 1)
                         wscd = int(wscd) - 1000
                         if int(wscd) < 100:
-                            wscd = f"{wscd:03}"
+                            try:
+                                wscd = f"{wscd:03}"
+                            except:
+                                print("wscdエラー")
                 # ----------------------------------------------------------------------------------------------------------
             elif int(wscd) >= 9000 and int(wscd) < 9999:
                 NList = ["99999.png", "99999b.png"]
@@ -343,7 +352,10 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                     ImgClick(FolURL2, ICFL[1], 0.9, 1)
                     wscd = int(wscd) - 9000
                     if int(wscd) < 100:
-                        wscd = f"{wscd:03}"
+                        try:
+                            wscd = f"{wscd:03}"
+                        except:
+                            print("wscdエラー")
                 # ----------------------------------------------------------------------------------------------------------
             elif int(wscd) >= 10000:
                 KFlag = True
@@ -481,7 +493,10 @@ def SQLIn(ws):  # Excelデータを履歴テーブルにインサート
             wscdFlag = False
             if int(wscd) < 100:
                 wscdFlag = True
-                wscd = f"{wscd:03}"
+                try:
+                    wscd = f"{wscd:03}"
+                except:
+                    print("wscdエラー")
             # WHERE社内コードでDBよりMAX(履歴No)を抽出-------------------------------------------------------------------------
             if wscdFlag is False:
                 Maxsql = (
