@@ -48,6 +48,7 @@ pdfkit==1.0.0
 pdfminer.six==20220319
 pdftopng==0.2.3
 Pillow==9.0.0
+pipdeptree==2.2.1
 platformdirs==2.5.1
 pluggy==1.0.0
 proto-plus==1.20.3
