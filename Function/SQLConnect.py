@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 import datetime
+import Function.SQLCSVOUTFunction as SQC
 
 # loggerインポート
 from logging import getLogger
@@ -396,6 +397,182 @@ def MysqlDiffUp(MTB, CTB, UDRow):  # 元TB名,履歴TB名,更新行データ
         else:
             print("マスターに重複があります。")
             return False
+    except:
+        return False
+
+
+# -------------------------------------------------------------------------------------------------------------------
+def SQLIn(ws):  # Excelデータを履歴テーブルにインサート
+    try:
+        LenRow = np.array(ws).shape[0]  # dfインスタンスの行数取得
+        ColNS = MysqlColumnPic(
+            "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", "m_kfmsrireki"
+        )
+        ColN = []
+        NewColNS = MysqlColumnPic(
+            "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", "m_kfmsmail"
+        )
+        NewColN = []
+        # テーブルのカラム情報より列名リスト作成-------------------------------------------------------------------------
+        for ColNSItem in ColNS[1]:
+            ColN.append(ColNSItem[0])
+        for NewColNSSItem in NewColNS[1]:
+            NewColN.append(NewColNSSItem[0])
+        # -----------------------------------------------------------------------------------------------------------
+        ParList = []
+        NewParList = []
+        for x in range(LenRow):
+            wsRow = ws.iloc[x]  # dfインスタンスの行データ
+            wscd = str(wsRow["コード"])
+            wscdType = type(wscd)
+            wscdFlag = False
+            if int(wscd) < 100:
+                wscdFlag = True
+                if wscdType is str:
+                    wscd = f"{int(wscd):03}"
+            # 元DBへの存在チェック-----------------------------------------------------------------------------------------
+            sql = "SELECT * FROM m_kfmsmail WHERE vc_FMSKnrCd = '" + wscd + "';"
+            DBSQL = MySQLGet("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)
+            if len(DBSQL[1]) == 0:
+                DBCHECK = False
+            else:
+                DBCHECK = True
+            # -----------------------------------------------------------------------------------------------------------
+            # WHERE社内コードでDBよりMAX(履歴No)を抽出-------------------------------------------------------------------------
+            if wscdFlag is False:
+                Maxsql = (
+                    "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = "
+                    + str(wscd)
+                    + ";"
+                )
+            else:
+                Maxsql = (
+                    "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = "
+                    + wscd
+                    + ";"
+                )
+            MaxRrkNo = MySQLGet(
+                "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", Maxsql
+            )
+            if MaxRrkNo[0] is True:
+                print(MaxRrkNo[1])
+                if MaxRrkNo[1] == ((None,),):
+                    MaxRrkNo = 1
+                else:
+                    Mstr = str(MaxRrkNo[1]).replace("((", "").replace(",),)", "")
+                    MaxRrkNo = int(Mstr) + 1
+            else:
+                MaxRrkNo = 1
+            wscdLen = len(wscd)
+            wscdType = type(wscd)
+            if wscdLen == 3:
+                if wscdType is str:
+                    Fwscd = f"{int(wscd):04}"
+                else:
+                    Fwscd = f"{wscd:04}"
+                Leftwscd = Fwscd[:4]
+            elif wscdLen == 5:
+                if wscdType is str:
+                    Fwscd = f"{int(wscd):06}"
+                else:
+                    Fwscd = f"{wscd:06}"
+                Leftwscd = Fwscd[:4]
+                Rightwscd = Fwscd[4:]
+            if DBCHECK is True:
+                # テーブルのデータ型に合わせて値を格納したリストを作成---------------------------------------------------------------
+                ChangeData("vc_gyou", ParList, "", "m_kfmsrireki")
+                ParList.append(MaxRrkNo)
+                ChangeData("vc_FMSKnrCd", ParList, wscd, "m_kfmsrireki")
+                ChangeData("vc_Name", ParList, wsRow["個人名"], "m_kfmsrireki")
+                ChangeData("vc_KName", ParList, wsRow["関与先名"], "m_kfmsrireki")
+                ChangeData("vc_Hakkou", ParList, wsRow["発送方法"], "m_kfmsrireki")
+                ChangeData("vc_SousinK", ParList, wsRow["送信方法"], "m_kfmsrireki")
+                ChangeData("vc_Mail", ParList, wsRow["アドレス"], "m_kfmsrireki")
+                ChangeData("vc_BmnCd_pk", ParList, wsRow["課No"], "m_kfmsrireki")
+                ChangeData("vc_BmnNm", ParList, wsRow["課"], "m_kfmsrireki")
+                ChangeData("vc_KansaTantouNo", ParList, wsRow["監査担当No"], "m_kfmsrireki")
+                ChangeData("vc_KansaTantou", ParList, wsRow["監査担当"], "m_kfmsrireki")
+                ChangeData("vc_SubTantouNo", ParList, wsRow["サブNo"], "m_kfmsrireki")
+                ChangeData("vc_SubTantou", ParList, wsRow["サブ"], "m_kfmsrireki")
+                ChangeData(
+                    "vc_Sub_SubTantouNo", ParList, wsRow["サブ2No"], "m_kfmsrireki"
+                )
+                ChangeData("vc_Sub_SubTantou", ParList, wsRow["サブ2"], "m_kfmsrireki")
+                ChangeData("vc_SousinK2", ParList, wsRow["送信方法2"], "m_kfmsrireki")
+                ChangeData("vc_Mail2", ParList, wsRow["アドレス2"], "m_kfmsrireki")
+                ChangeData("vc_SousinK3", ParList, wsRow["送信方法3"], "m_kfmsrireki")
+                ChangeData("vc_Mail3", ParList, wsRow["アドレス3"], "m_kfmsrireki")
+                ChangeData("vc_SousinK4", ParList, wsRow["送信方法4"], "m_kfmsrireki")
+                ChangeData("vc_Mail4", ParList, wsRow["アドレス4"], "m_kfmsrireki")
+                ChangeData("vc_SousinK5", ParList, wsRow["送信方法5"], "m_kfmsrireki")
+                ChangeData("vc_Mail5", ParList, wsRow["アドレス5"], "m_kfmsrireki")
+                ChangeData("cr_RecKbn", ParList, 0, "m_kfmsrireki")
+                ChangeData("dt_InstDT", ParList, wsRow["入力日時"], "m_kfmsrireki")
+                ChangeData("dt_UpdtDT", ParList, "", "m_kfmsrireki")
+                ChangeData("vc_inputuser", ParList, wsRow["入力ユーザー"], "m_kfmsrireki")
+                ChangeData("vc_beforeadd", ParList, wsRow["変更前アドレス"], "m_kfmsrireki")
+                # ----------------------------------------------------------------------------------------------------------
+            else:
+                # テーブルのデータ型に合わせて値を格納したリストを作成---------------------------------------------------------------
+                ChangeData("vc_KnrCd", NewParList, Leftwscd, "m_kfmsmail")
+                if len(Rightwscd) == 0:
+                    ChangeData("vc_KanKojinNo_pk", NewParList, "", "m_kfmsmail")
+                else:
+                    ChangeData("vc_KanKojinNo_pk", NewParList, Rightwscd, "m_kfmsmail")
+                NewParList.append(MaxRrkNo)
+                ChangeData("vc_FMSKnrCd", NewParList, wscd, "m_kfmsmail")
+                NewParList.append("")  # ｶﾅ不要なので空白
+                ChangeData("vc_Name", NewParList, wsRow["個人名"], "m_kfmsmail")
+                ChangeData("vc_KName", NewParList, wsRow["関与先名"], "m_kfmsmail")
+                ChangeData("vc_Hakkou", NewParList, wsRow["発送方法"], "m_kfmsmail")
+                if wsRow["発送方法"] == "メール":
+                    ChangeData("vc_PDFName", NewParList, "締日_請求元名_今回請求額", "m_kfmsmail")
+                else:
+                    ChangeData(
+                        "vc_PDFName", NewParList, "締日_関与先ｺｰﾄﾞ_請求元ｺｰﾄﾞ", "m_kfmsmail"
+                    )
+                ChangeData("vc_SousinK", NewParList, wsRow["送信方法"], "m_kfmsmail")
+                ChangeData("vc_Mail", NewParList, wsRow["アドレス"], "m_kfmsmail")
+                ChangeData("vc_SousinK2", NewParList, wsRow["送信方法2"], "m_kfmsmail")
+                ChangeData("vc_Mail2", NewParList, wsRow["アドレス2"], "m_kfmsmail")
+                ChangeData("vc_SousinK3", NewParList, wsRow["送信方法3"], "m_kfmsmail")
+                ChangeData("vc_Mail3", NewParList, wsRow["アドレス3"], "m_kfmsmail")
+                ChangeData("vc_SousinK4", NewParList, wsRow["送信方法4"], "m_kfmsmail")
+                ChangeData("vc_Mail4", NewParList, wsRow["アドレス4"], "m_kfmsmail")
+                ChangeData("vc_SousinK5", NewParList, wsRow["送信方法5"], "m_kfmsmail")
+                ChangeData("vc_Mail5", NewParList, wsRow["アドレス5"], "m_kfmsmail")
+                ChangeData("cr_RecKbn", NewParList, 0, "m_kfmsmail")
+                ChangeData("dt_InstDT", NewParList, wsRow["入力日時"], "m_kfmsmail")
+                ChangeData("dt_UpdtDT", NewParList, "", "m_kfmsmail")
+                # ----------------------------------------------------------------------------------------------------------
+            ParList = str(ParList).replace("[", "").replace("]", "").replace("nan", "")
+            NewParList = (
+                str(ParList).replace("[", "").replace("]", "").replace("nan", "")
+            )
+            ColN = str(ColN).replace("[", "").replace("]", "").replace("'", "")
+            NewColN = str(NewColN).replace("[", "").replace("]", "").replace("'", "")
+            if DBCHECK is True:
+                sql = "INSERT INTO m_kfmsrireki (" + ColN + ") VALUES(" + ParList + ");"
+            else:
+                sql = (
+                    "INSERT INTO m_kfmsmail ("
+                    + NewColN
+                    + ") VALUES("
+                    + NewParList
+                    + ");"
+                )
+                Newsql = (
+                    "INSERT INTO m_kfmsrireki (" + ColN + ") VALUES(" + ParList + ");"
+                )
+                MySQLAct("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", Newsql)
+                SQC.MailRirekiUp()
+                SQC.MailListUp()
+                NewParList = []
+            MySQLAct("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)
+            SQC.MailRirekiUp()
+            SQC.MailListUp()
+            ParList = []
+        return True
     except:
         return False
 
