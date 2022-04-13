@@ -1,6 +1,7 @@
 ﻿# モジュールインポート
 import pyautogui as pg
 import time
+import OMSOpen
 
 # 配列計算関数numpyインポート
 import numpy as np
@@ -20,7 +21,7 @@ import Function.CSVOut as FCSV
 import Function.SQLConnect as SQ
 import calendar
 import pyperclip  # クリップボードへのコピーで使用
-
+import Function.ExcelFileAction as EF
 import FMSMailHighSpeedFor as CFM
 import Function.SQLCSVOUTFunction as SQLF
 import logging.config
@@ -418,6 +419,7 @@ def FMSAction(FolURL2, wsRow, PDV):
     wsKno = wsData.param["vc_FMSKnrCd"]
     wsin_RrkNo_pk = wsData.param["in_RrkNo_pk"]
     wsHakkou = wsData.param["vc_Hakkou"]
+    MainMail = wsData.param["vc_Mail"]
     wsSousinK2 = wsData.param["vc_SousinK2"]
     wsMail2 = wsData.param["vc_Mail2"]
     wsSousinK3 = wsData.param["vc_SousinK3"]
@@ -443,7 +445,9 @@ def FMSAction(FolURL2, wsRow, PDV):
         time.sleep(1)
         pg.press("return")
         time.sleep(1)
-        ImgClick(FolURL2, "EmailCopy.png", 0.9, 1)
+        pyperclip.copy(MainMail)
+        pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
+        # ImgClick(FolURL2, "EmailCopy.png", 0.9, 1)
         time.sleep(1)
         # CC等あれば処理----------------------------------------------------------------------------
         if not wsSousinK2 == "" or not wsMail2 == "":
@@ -525,43 +529,108 @@ def FMSAction(FolURL2, wsRow, PDV):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2, Lday, driver):
-    # BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"#4724ポート指定でappiumサーバー起動バッチを開く
-    # driver = OMSOpen.MainFlow(BatUrl,FolURL2,"RPAPhoto")#OMSを起動しログイン後インスタンス化
-    FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"
-    logger.debug("履歴DBより登録状況がCDBの物のみ抽出")
-    ReSQL = "SELECT * FROM m_kfmsrireki WHERE vc_gyou = 'CDB';"
-    df_Rereki = SQ.MySQLHeaderTo_df(
-        "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", ReSQL
-    )
-    if df_Rereki[0] is True:
-        logger.debug("FMSの処理開始")
-        FMSO = FMSOpen(FolURL2, Lday, driver)
-        if FMSO is True:
-            FirstAction(FolURL2, FolURL2 + "/MAILLIST.CSV", df_Rereki[1], driver)
-            time.sleep(1)
-            ImgClick(FolURL2, "FullMenu.png", 0.9, 10)
-            time.sleep(2)
-            ImgClick(FolURL2, "F10End.png", 0.9, 10)
-            time.sleep(2)
-            while pg.locateOnScreen(FolURL2 + "/OMSTitle.png", 0.9) is None:
+def MainFlowEXCEL(FolURL2, Lday):
+    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
+    driver = OMSOpen.MainFlow(BatUrl, FolURL2, "RPAPhoto")  # OMSを起動しログイン後インスタンス化
+    # driver = ""
+    FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"  # RPA用画像保管フォルダを指定
+    # XlsmURL = r"\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"  # アドレス登録シートを指定
+    XlsmURL = r"D:\アドレス新規登録シート.xlsm"  # アドレス登録シートを指定
+    XlsmURL = XlsmURL.replace("\\", "/")  # URLリネーム
+    # エクセルブックを読込------------------------------------------------------------------------------------------------
+    logger.debug("エクセルブックを読込")
+    XlsmList = EF.XlsmRead(XlsmURL)
+    input_book = XlsmList[1]
+    # sheet_namesメソッドでExcelブック内の各シートの名前をリストで取得できる
+    input_sheet_name = input_book.sheet_names
+    # lenでシートの総数を確認
+    num_sheet = len(input_sheet_name)
+    # シートの数とシートの名前のリストの表示
+    print("Sheet の数:", num_sheet)
+    print(input_sheet_name)
+    x = 0
+    for isnItem in input_sheet_name:
+        if isnItem == "アドレス登録":
+            ws = input_book.parse(input_sheet_name[x], dtype=str)
+            print(ws)
+            break
+        x = x + 1
+    ws = ws.sort_values("入力日時", ascending=False)  # 入力日時順に並び替え
+    ws = ws.drop_duplicates(subset="コード")  # コードで重複削除
+    print(ws)
+    logger.debug("Excelデータを履歴テーブルにインサート")
+    SQI = SQ.SQLIn(ws)
+    # ----------------------------------------------------------------------------------------------------------------------
+    if SQI is True:
+        logger.debug("履歴DBより登録状況が空白の物のみ抽出")
+        ReSQL = "SELECT * FROM m_kfmsrireki WHERE vc_gyou = '';"
+        df_Rereki = SQ.MySQLHeaderTo_df(
+            "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", ReSQL
+        )
+        if df_Rereki[0] is True:
+            logger.debug("FMSの処理開始")
+            FMSO = FMSOpen(FolURL2, Lday, driver)
+            if FMSO is True:
+                FirstAction(FolURL2, FolURL2 + "/MAILLIST.CSV", df_Rereki[1], driver)
                 time.sleep(1)
-            logger.debug("FMSの処理完了")
+                ImgClick(FolURL2, "FullMenu.png", 0.9, 10)
+                time.sleep(2)
+                ImgClick(FolURL2, "F10End.png", 0.9, 10)
+                time.sleep(2)
+                while pg.locateOnScreen(FolURL2 + "/OMSTitle.png", 0.9) is None:
+                    time.sleep(1)
+                logger.debug("FMSの処理完了")
+            else:
+                print("FMSログイン失敗")
+                logger.debug("FMSログイン失敗")
         else:
-            print("FMSログイン失敗")
-            logger.debug("FMSログイン失敗")
-    else:
-        logger.debug("履歴にCDB状態データがありません")
-        print("履歴にCDB状態データがありません")
+            logger.debug("履歴にCDB状態データがありません")
+            print("履歴にCDB状態データがありません")
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def AllMain(driver):
+def AllMain():
     # RPA用画像フォルダの作成-----------------------------------------------------------
     Lday = calendar.monthrange(dt.today().year, dt.today().month)
     FolURL2 = os.getcwd().replace("\\", "/")  # 先
     # --------------------------------------------------------------------------------
     try:
-        MainFlow(FolURL2, Lday, driver)
+        MainFlowEXCEL(FolURL2, Lday)
     except:
         traceback.print_exc()
+
+
+AllMain()
+
+# def MainFlow(FolURL2, Lday):
+#     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
+#     driver = OMSOpen.MainFlow(BatUrl, FolURL2, "RPAPhoto")  # OMSを起動しログイン後インスタンス化
+#     FolURL2 = FolURL2 + "/RPAPhoto/TKCFMSMailAddressUpdate"
+#     # logger.debug("履歴DBより登録状況がCDBの物のみ抽出")
+#     logger.debug("履歴DBより登録状況が空白の物のみ抽出")
+#     ReSQL = "SELECT * FROM m_kfmsrireki WHERE vc_gyou = '';"
+#     df_Rereki = SQ.MySQLHeaderTo_df(
+#         "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", ReSQL
+#     )
+#     if df_Rereki[0] is True:
+#         logger.debug("FMSの処理開始")
+#         FMSO = FMSOpen(FolURL2, Lday, driver)
+#         if FMSO is True:
+#             FirstAction(FolURL2, FolURL2 + "/MAILLIST.CSV", df_Rereki[1], driver)
+#             time.sleep(1)
+#             ImgClick(FolURL2, "FullMenu.png", 0.9, 10)
+#             time.sleep(2)
+#             ImgClick(FolURL2, "F10End.png", 0.9, 10)
+#             time.sleep(2)
+#             while pg.locateOnScreen(FolURL2 + "/OMSTitle.png", 0.9) is None:
+#                 time.sleep(1)
+#             logger.debug("FMSの処理完了")
+#         else:
+#             print("FMSログイン失敗")
+#             logger.debug("FMSログイン失敗")
+#     else:
+#         logger.debug("履歴にCDB状態データがありません")
+#         print("履歴にCDB状態データがありません")
+
+
+# ----------------------------------------------------------------------------------------------------------------------

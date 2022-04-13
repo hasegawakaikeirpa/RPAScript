@@ -82,7 +82,7 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
         is None
     ):
         time.sleep(1)
-    # time.sleep(3)
+    time.sleep(3)
     # tAutomationId要素が出現するまで待機-------------------------------------------------------------------------------------------
     if DriverUIWaitAutomationId("codeTextBox", driver) is True:
         logger.debug("OMSログイン完了: debug level log")

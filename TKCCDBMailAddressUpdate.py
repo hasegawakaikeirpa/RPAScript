@@ -5,6 +5,7 @@ import OMSOpen
 
 # 配列計算関数numpyインポート
 import numpy as np
+import math
 
 # osインポート
 import os
@@ -298,7 +299,7 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
             wsAd = wsRow["アドレス"]
             # ----------------------------------------------------------------------------------------------------------
             ImgClick(FolURL2, "JimusyoCD.png", 0.9, 5)  # 事務所コードボックスをクリック
-            time.sleep(1)
+            time.sleep(3)
             # 所内コードに応じて処理分け-----------------------------------------------------------------------------------
             KFlag = False  # 個人判定フラグ
             if int(wscd) >= 0 and int(wscd) < 1000:
@@ -306,7 +307,7 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                 NList = ["05121.png", "05121b.png"]
                 ICFL = ImgCheckForList(FolURL2, NList, 0.9)
                 if ICFL[0] is True:
-                    ImgClick(FolURL2, ICFL[1], 0.9, 1)
+                    ImgClick(FolURL2, ICFL[1], 0.9, 5)
                     if int(wscd) < 100:
                         try:
                             wscd = f"{wscd:03}"
@@ -317,7 +318,7 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                 NList = ["05371.png", "05371b.png"]
                 ICFL = ImgCheckForList(FolURL2, NList, 0.9)
                 if ICFL[0] is True:
-                    ImgClick(FolURL2, ICFL[1], 0.9, 1)
+                    ImgClick(FolURL2, ICFL[1], 0.9, 5)
                     wscd = int(wscd) - 4000
                     if int(wscd) < 100:
                         try:
@@ -331,13 +332,13 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                     NList = ["05121.png", "05121b.png"]
                     ICFL = ImgCheckForList(FolURL2, NList, 0.9)
                     if ICFL[0] is True:
-                        ImgClick(FolURL2, ICFL[1], 0.9, 1)
+                        ImgClick(FolURL2, ICFL[1], 0.9, 5)
                     time.sleep(1)
                 else:
                     NList = ["15180.png", "15180b.png"]
                     ICFL = ImgCheckForList(FolURL2, NList, 0.9)
                     if ICFL[0] is True:
-                        ImgClick(FolURL2, ICFL[1], 0.9, 1)
+                        ImgClick(FolURL2, ICFL[1], 0.9, 5)
                         wscd = int(wscd) - 1000
                         if int(wscd) < 100:
                             try:
@@ -349,7 +350,7 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                 NList = ["99999.png", "99999b.png"]
                 ICFL = ImgCheckForList(FolURL2, NList, 0.9)
                 if ICFL[0] is True:
-                    ImgClick(FolURL2, ICFL[1], 0.9, 1)
+                    ImgClick(FolURL2, ICFL[1], 0.9, 5)
                     wscd = int(wscd) - 9000
                     if int(wscd) < 100:
                         try:
@@ -358,12 +359,13 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                             print("wscdエラー")
                 # ----------------------------------------------------------------------------------------------------------
             elif int(wscd) >= 10000:
+                wscdkey = wscd[0] + wscd[1] + wscd[2] + wscd[3]
                 KFlag = True
                 if len(wscd) == 5:
                     NList = ["05121.png", "05121b.png"]
                     ICFL = ImgCheckForList(FolURL2, NList, 0.9)
                     if ICFL[0] is True:
-                        ImgClick(FolURL2, ICFL[1], 0.9, 1)
+                        ImgClick(FolURL2, ICFL[1], 0.9, 5)
                         wscd = str(wscd)
                         wscdL = wscd[3] + wscd[4]
                         wscd = wscd[0] + wscd[1] + wscd[2]
@@ -372,19 +374,35 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                     wscd = str(wscd)
                     wscdL = wscd[4] + wscd[5]
                     wscd = wscd[1] + wscd[2] + wscd[3]
-                    if int(wscd) >= 4000 and int(wscd) < 5000:
+                    if int(wscdkey) >= 4000 and int(wscdkey) < 5000:
                         NList = ["05371.png", "05371b.png"]
                         ICFL = ImgCheckForList(FolURL2, NList, 0.9)
-                    elif int(wscd) >= 1000 and int(wscd) < 2000:
+                        if ICFL[0] is True:
+                            ImgClick(FolURL2, ICFL[1], 0.9, 5)
+                    elif int(wscdkey) >= 1000 and int(wscdkey) < 2000:
                         NList = ["15180.png", "15180b.png"]
                         ICFL = ImgCheckForList(FolURL2, NList, 0.9)
-                    elif int(wscd) >= 9000 and int(wscd) < 9999:
+                        if ICFL[0] is True:
+                            ImgClick(FolURL2, ICFL[1], 0.9, 5)
+                    elif int(wscdkey) >= 9000 and int(wscdkey) < 9999:
                         NList = ["99999.png", "99999b.png"]
                         ICFL = ImgCheckForList(FolURL2, NList, 0.9)
+                        if ICFL[0] is True:
+                            ImgClick(FolURL2, ICFL[1], 0.9, 5)
                     wscd = wscd + wscdL
+            # なぜか一回で入らない事があるので2階入力----------------------------------------------------------------------------
+            time.sleep(3)
+            if type(wscd) is str:
+                pg.write(wscd)  # TKC用に変換した関与先コードを入力
+                for d in range(len(wscd)):
+                    pg.press("backspace")
+                pg.write(wscd)  # TKC用に変換した関与先コードを入力
+            else:
+                pg.write(str(wscd))  # TKC用に変換した関与先コードを入力
+                for d in range(len(str(wscd))):
+                    pg.press("backspace")
+                pg.write(str(wscd))  # TKC用に変換した関与先コードを入力
             # --------------------------------------------------------------------------------------------------------------
-            time.sleep(2)
-            pg.write(str(wscd))  # TKC用に変換した関与先コードを入力
             pg.press("return")  # 確定
             time.sleep(1)
             while (
@@ -410,13 +428,13 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                 pyperclip.copy("")  # クリップクリア
                 pg.hotkey("ctrl", "a")  # テキスト全選択
                 pg.hotkey("ctrl", "c")  # クリップにコピー
-                pyperclip.paste()  # 変更前アドレスを保管
+                BeforeMail = pyperclip.paste()  # 変更前アドレスを保管
                 pg.press("delete")  # CDBのアドレスを削除
                 # --------------------------------------------
                 time.sleep(1)
-                # アドレスがnanか判定して処理分け--------------------------------------------
+                # アドレスがnaoomori-s@hasegawakaikei.comnか判定して処理分け--------------------------------------------
                 try:
-                    if np.isnan(wsAd) is True:
+                    if math.isnan(wsAd) is True or wsAd == "nan":
                         print("nan")
                     else:
                         pyperclip.copy(wsAd)  # クリップに変更後アドレスをコピー
@@ -452,14 +470,24 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
                         MaxRrkNo = int(Mstr)
                 else:
                     MaxRrkNo = 1
-
-                USQL = (
-                    "UPDATE m_kfmsrireki SET vc_gyou = 'CDB' WHERE vc_FMSKnrCd = "
-                    + str(wsUpcd)
-                    + " AND in_RrkNo_pk = "
-                    + str(MaxRrkNo).replace("'", "")
-                    + ";"
-                )
+                if len(BeforeMail) == 0:
+                    USQL = (
+                        "UPDATE m_kfmsrireki SET vc_gyou = 'CDB' WHERE vc_FMSKnrCd = "
+                        + str(wsUpcd)
+                        + " AND in_RrkNo_pk = "
+                        + str(MaxRrkNo).replace("'", "")
+                        + ";"
+                    )
+                else:
+                    USQL = (
+                        "UPDATE m_kfmsrireki SET (vc_gyou = 'CDB',vc_beforeadd = '"
+                        + BeforeMail
+                        + "') WHERE vc_FMSKnrCd = "
+                        + str(wsUpcd)
+                        + " AND in_RrkNo_pk = "
+                        + str(MaxRrkNo).replace("'", "")
+                        + "';"
+                    )
                 SQ.MySQLAct("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", USQL)
                 SQC.MailRirekiUp()
                 SQC.MailListUp()
@@ -475,103 +503,13 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def SQLIn(ws):  # Excelデータを履歴テーブルにインサート
-    try:
-        LenRow = np.array(ws).shape[0]  # dfインスタンスの行数取得
-        ColNS = SQ.MysqlColumnPic(
-            "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", "m_kfmsrireki"
-        )
-        ColN = []
-        # テーブルのカラム情報より列名リスト作成-------------------------------------------------------------------------
-        for ColNSItem in ColNS[1]:
-            ColN.append(ColNSItem[0])
-        ParList = []
-        # -----------------------------------------------------------------------------------------------------------
-        for x in range(LenRow):
-            wsRow = ws.iloc[x]  # dfインスタンスの行データ
-            wscd = str(wsRow["コード"])
-            wscdFlag = False
-            if int(wscd) < 100:
-                wscdFlag = True
-                try:
-                    wscd = f"{wscd:03}"
-                except:
-                    print("wscdエラー")
-            # WHERE社内コードでDBよりMAX(履歴No)を抽出-------------------------------------------------------------------------
-            if wscdFlag is False:
-                Maxsql = (
-                    "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = "
-                    + str(wscd)
-                    + ";"
-                )
-            else:
-                Maxsql = (
-                    "SELECT MAX(in_RrkNo_pk) FROM m_kfmsrireki WHERE vc_FMSKnrCd = "
-                    + wscd
-                    + ";"
-                )
-            MaxRrkNo = SQ.MySQLGet(
-                "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", Maxsql
-            )
-            if MaxRrkNo[0] is True:
-                print(MaxRrkNo[1])
-                if MaxRrkNo[1] == ((None,),):
-                    MaxRrkNo = 1
-                else:
-                    Mstr = str(MaxRrkNo[1]).replace("((", "").replace(",),)", "")
-                    MaxRrkNo = int(Mstr) + 1
-            else:
-                MaxRrkNo = 1
-            # テーブルのデータ型に合わせて値を格納したリストを作成---------------------------------------------------------------
-            SQ.ChangeData("vc_gyou", ParList, "", "m_kfmsrireki")
-            ParList.append(MaxRrkNo)
-            SQ.ChangeData("vc_FMSKnrCd", ParList, wscd, "m_kfmsrireki")
-            SQ.ChangeData("vc_Name", ParList, wsRow["個人名"], "m_kfmsrireki")
-            SQ.ChangeData("vc_KName", ParList, wsRow["関与先名"], "m_kfmsrireki")
-            SQ.ChangeData("vc_Hakkou", ParList, wsRow["発送方法"], "m_kfmsrireki")
-            SQ.ChangeData("vc_SousinK", ParList, wsRow["送信方法"], "m_kfmsrireki")
-            SQ.ChangeData("vc_Mail", ParList, wsRow["アドレス"], "m_kfmsrireki")
-            SQ.ChangeData("vc_BmnCd_pk", ParList, wsRow["課No"], "m_kfmsrireki")
-            SQ.ChangeData("vc_BmnNm", ParList, wsRow["課"], "m_kfmsrireki")
-            SQ.ChangeData("vc_KansaTantouNo", ParList, wsRow["監査担当No"], "m_kfmsrireki")
-            SQ.ChangeData("vc_KansaTantou", ParList, wsRow["監査担当"], "m_kfmsrireki")
-            SQ.ChangeData("vc_SubTantouNo", ParList, wsRow["サブNo"], "m_kfmsrireki")
-            SQ.ChangeData("vc_SubTantou", ParList, wsRow["サブ"], "m_kfmsrireki")
-            SQ.ChangeData("vc_Sub_SubTantouNo", ParList, wsRow["サブ2No"], "m_kfmsrireki")
-            SQ.ChangeData("vc_Sub_SubTantou", ParList, wsRow["サブ2"], "m_kfmsrireki")
-            SQ.ChangeData("vc_SousinK2", ParList, wsRow["送信方法2"], "m_kfmsrireki")
-            SQ.ChangeData("vc_Mail2", ParList, wsRow["アドレス2"], "m_kfmsrireki")
-            SQ.ChangeData("vc_SousinK3", ParList, wsRow["送信方法3"], "m_kfmsrireki")
-            SQ.ChangeData("vc_Mail3", ParList, wsRow["アドレス3"], "m_kfmsrireki")
-            SQ.ChangeData("vc_SousinK4", ParList, wsRow["送信方法4"], "m_kfmsrireki")
-            SQ.ChangeData("vc_Mail4", ParList, wsRow["アドレス4"], "m_kfmsrireki")
-            SQ.ChangeData("vc_SousinK5", ParList, wsRow["送信方法5"], "m_kfmsrireki")
-            SQ.ChangeData("vc_Mail5", ParList, wsRow["アドレス5"], "m_kfmsrireki")
-            SQ.ChangeData("cr_RecKbn", ParList, 0, "m_kfmsrireki")
-            SQ.ChangeData("dt_InstDT", ParList, wsRow["入力日時"], "m_kfmsrireki")
-            SQ.ChangeData("dt_UpdtDT", ParList, "", "m_kfmsrireki")
-            SQ.ChangeData("vc_inputuser", ParList, wsRow["入力ユーザー"], "m_kfmsrireki")
-            SQ.ChangeData("vc_beforeadd", ParList, wsRow["変更前アドレス"], "m_kfmsrireki")
-            # ----------------------------------------------------------------------------------------------------------
-            ParList = str(ParList).replace("[", "").replace("]", "").replace("nan", "")
-            ColN = str(ColN).replace("[", "").replace("]", "").replace("'", "")
-            sql = "INSERT INTO m_kfmsrireki (" + ColN + ") VALUES(" + ParList + ");"
-            SQ.MySQLAct("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)
-            SQC.MailRirekiUp()
-            SQC.MailListUp()
-            ParList = []
-        return True
-    except:
-        return False
-
-
-# ----------------------------------------------------------------------------------------------------------------------
 def MainFlow(FolURL2, Lday):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl, FolURL2, "RPAPhoto")  # OMSを起動しログイン後インスタンス化
     # driver = ""
     FolURL2 = FolURL2 + "/RPAPhoto/TKCCDBMailAddressUpdate"  # RPA用画像保管フォルダを指定
-    XlsmURL = r"\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"  # アドレス登録シートを指定
+    # XlsmURL = r"\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"  # アドレス登録シートを指定
+    XlsmURL = r"D:\アドレス新規登録シート.xlsm"  # アドレス登録シートを指定
     XlsmURL = XlsmURL.replace("\\", "/")  # URLリネーム
     # エクセルブックを読込------------------------------------------------------------------------------------------------
     logger.debug("エクセルブックを読込")
@@ -595,7 +533,7 @@ def MainFlow(FolURL2, Lday):
     ws = ws.drop_duplicates(subset="コード")  # コードで重複削除
     print(ws)
     logger.debug("Excelデータを履歴テーブルにインサート")
-    SQI = SQLIn(ws)
+    SQI = SQ.SQLIn(ws)
     # ----------------------------------------------------------------------------------------------------------------------
     if SQI is True:
         logger.debug("CDBアクション開始")
