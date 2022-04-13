@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿from PIL import Image
 import os
 import sys
@@ -31,11 +30,3 @@ lang = "jpn"
 for image in images:
     txt = tool.image_to_string(image, lang=lang, builder=pyocr.builders.TextBuilder())
     print(txt)
-=======
-﻿import numpy as np
-import math
-
-wsAd = np.nan
-if math.isnan(wsAd) is True:
-    print("nan")
->>>>>>> 8ef8bf93830227b51cbdcae8ed5541e63a829791

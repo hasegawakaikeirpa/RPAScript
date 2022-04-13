@@ -6,6 +6,23 @@ from google.cloud import vision
 from google.oauth2 import service_account
 import io
 
+# ﻿from PIL import Image
+import os
+import sys
+import pyocr
+import pyocr.builders
+import pdf2image
+
+
+def ChangePDF(purl, TESTURL, fmtt):
+    Mydir = os.getcwd()
+    pppath = Mydir + r"\poppler-22.01.0\Library\bin"
+
+    # pdfから画像オブジェクトに
+    images = pdf2image.convert_from_path(
+        purl, dpi=200, output_folder=TESTURL, fmt=fmtt, poppler_path=pppath
+    )
+
 
 def APIRead(
     FolURL, tar, ele
@@ -91,4 +108,6 @@ FolURL2 = os.getcwd().replace("\\", "/")  # 先
 # --------------------------------------------------------------------------------
 tar = "TEST.png"
 ele = "TEST2.png"
+PDFDir = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TESTe-Tax\eTAX\12_有限会社 広島シティサービス\12_有限会社 広島シティサービス_給与所得・退職所得等の所得税徴収高計算書(一般)_20220228 114427.pdf"
+ChangePDF(PDFDir, FolURL, "png")
 APIRead(FolURL, tar, ele)
