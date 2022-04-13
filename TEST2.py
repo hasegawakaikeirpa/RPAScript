@@ -1,54 +1,32 @@
-﻿import RPAPhoto.PDFReadForList.CSVSetting as CSVSet  # CSVの設定ファイルの読込
+﻿from PIL import Image
+import os
+import sys
+import pyocr
+import pyocr.builders
+import pdf2image
+
+purl = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TESTe-Tax\eTAX\12_有限会社 広島シティサービス\12_有限会社 広島シティサービス_消費税及び地方消費税の中間申告について_20220401 123212.pdf"
+TESTURL = r"C:\Users\soumu\Desktop\RPAScript\RPAPhoto\PDFeTaxReadForList"
+Mydir = os.getcwd()
+pppath = Mydir + r"\poppler-22.01.0\Library\bin"
+tools = pyocr.get_available_tools()
+if len(tools) == 0:
+    print("No OCR tool found")
+    sys.exit(1)
+
+# The tools are returned in the recommended order of usage
+tool = tools[0]
+print("Will use tool '%s'" % (tool.get_name()))
+# Ex: Will use tool 'libtesseract'
 
 
-def ReadAction(
-    SCode,
-    path_pdf,
-    PDFFlag,
-    y,
-    PDFdfRow,
-    PDFdf,
-    SubPDFdf,
-    SinkokuCSVList,
-    SinkokuCSV2List,
-    SinkokuCSV3List,
-    SinkokuCSV4List,
-    SyouhiCSVList,
-    SyouhiCSV2List,
-    SyouhiCSV3List,
-    SyouhiCyukanCSVList,
-    SyotokuCSVList,
-    SyotokuCSV2List,
-    SyotokuCSV3List,
-    SyotokuCSV4List,
-    YoteiCSVList,
-    SyoukyakuCSVList,
-    SyoukyakuCSV2List,
-    ZouyoCSVList,
-    ZaisanCSVList,
-    SinkokuUkeCSVList,
-    HoujinCSVList,
-    HoujinSiminCSVList,
-    ImageCSVList,
-    CSVBadList,
-):
-    print("起動")
-
-
-SCode = 0
-path_pdf = 0
-PDFFlag = ""
-y = 0
-PDFdfRow = 20
-PDFdf = []
-SubPDFdf = []
-ReadAction(
-    SCode,
-    path_pdf,
-    PDFFlag,
-    y,
-    PDFdfRow,
-    PDFdf,
-    SubPDFdf,
-    **CSVSet.ReadActionTKC_TKCFlagiselse_PDFSetting,
+# pdfから画像オブジェクトに
+images = pdf2image.convert_from_path(
+    purl, dpi=200, output_folder=TESTURL, fmt="png", poppler_path=pppath
 )
+lang = "jpn"
+# lang = 'jpn'
+# 画像オブジェクトからテキストに
+for image in images:
+    txt = tool.image_to_string(image, lang=lang, builder=pyocr.builders.TextBuilder())
+    print(txt)

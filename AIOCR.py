@@ -59,16 +59,36 @@ def APIRead(
             "{}\nFor more info on error messages, check: "
             "https://cloud.google.com/apis/design/errors".format(response.error.message)
         )
-
-    Final = OT.replace(ET, "")
+    OT = OT.split("\n")
+    ET = ET.split("\n")
+    print(OT)
+    print(ET)
+    Final = []
+    for OTItem in OT:
+        OTT = (
+            OTItem.replace(" ", "")
+            .replace("\u3000", "")
+            .replace("'", "")
+            .replace('"', "")
+        )
+        for ETItem in ET:
+            ETT = (
+                ETItem.replace(" ", "")
+                .replace("\u3000", "")
+                .replace("'", "")
+                .replace('"', "")
+            )
+            OTT = OTT.replace(ETT, "")
+        Final.append(OTT)
+    print(Final)
     return OT, ET, Final
 
 
 # RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = "\\\\Sv05121a\\e\\C 作業台\\Ⅰ 課別フォルダ\\和崎課\\01_改善作業資料\\0_情報収集\\医療費集計_202112"  # 元
+FolURL = r"C:\Users\soumu\Desktop\RPAScript\RPAPhoto\PDFeTaxReadForList"  # 元
 # FolURL = FolURL.replace('\\','/')#先
 FolURL2 = os.getcwd().replace("\\", "/")  # 先
 # --------------------------------------------------------------------------------
-tar = "医療費領収書①Split.png"
-ele = "医療費領収書①Split雛形.png"
+tar = "TEST.png"
+ele = "TEST2.png"
 APIRead(FolURL, tar, ele)
