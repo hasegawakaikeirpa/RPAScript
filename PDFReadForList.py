@@ -1826,7 +1826,7 @@ URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFREADLog"
 try:
     logger.debug(URL + "内のPDF抽出開始")
-    # PDFRead(URL, Settingtoml)
+    PDFRead(URL, Settingtoml)
     CSVLog(URL, LogURL)
     logger.debug(URL + "内のPDF抽出完了")
 except Exception as e:
