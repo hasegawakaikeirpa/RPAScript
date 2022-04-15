@@ -13,11 +13,13 @@ charset-normalizer==2.0.12
 click==8.1.0
 colorama==0.4.4
 cryptography==36.0.1
+cycler==0.11.0
 Cython==0.29.28
 decorator==5.1.0
 docutils==0.18.1
 et-xmlfile==1.1.0
 flake8==4.0.1
+fonttools==4.32.0
 ghostscript==0.7
 google-api-core==2.5.0
 google-auth==2.6.0
@@ -32,7 +34,9 @@ importlib-metadata==4.2.0
 iniconfig==1.1.1
 jaconv==0.3
 kitchen==1.2.6
+kiwisolver==1.4.2
 lxml==4.7.1
+matplotlib==3.5.1
 mccabe==0.6.1
 MouseInfo==0.1.3
 mypy-extensions==0.4.3
@@ -44,6 +48,7 @@ outcome==1.1.0
 packaging==21.3
 pandas==1.3.5
 pathspec==0.9.0
+pdf2image==1.16.0
 pdfkit==1.0.0
 pdfminer.six==20220319
 pdftopng==0.2.3
