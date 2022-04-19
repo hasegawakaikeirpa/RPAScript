@@ -194,6 +194,27 @@
     "納税者氏名",
     "表外表示金額"
     ]
+    HoujinCSV2List = [
+    "コード",
+    "URL",
+    "ページ",
+    "手続名",
+    "氏名又は名称",
+    "受付日時",
+    "種目",
+    "事業年度",
+    "税目",
+    "申告の種類",
+    "所得金額又は欠損金額",
+    "この申告による還付金額",
+    "欠損金又は災害損失金等の当期控除額",
+    " 翌期へ繰り越す欠損金又は災害損失金",
+    "税目2",
+    "申告の種類2",
+    "課税標準法人税額",
+    "差引確定地方法人税額",
+    "表外表示金額"
+    ]
     HoujinSiminCSVList = [
     "コード",
     "URL",
@@ -403,6 +424,7 @@
     "SyouhiCSV3List",
     "SyouhiCyukanCSVList",
     "HoujinCSVList",
+    "HoujinCSV2List",
     "HoujinSiminCSVList",
     "YoteiCSVList",
     "SyoukyakuCSVList",
@@ -432,6 +454,7 @@
     "SyouhiCSV3",
     "SyouhiCyukanCSV",
     "HoujinCSV",
+    "HoujinCSV2",
     "HoujinSiminCSV",
     "YoteiCSV",
     "SyoukyakuCSV",

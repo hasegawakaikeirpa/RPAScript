@@ -149,7 +149,7 @@ with open(
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
 MyURL = os.getcwd() + r"\RPAPhoto\PDFeTaxReadForList"  # このスクリプトの配下の設定フォルダ
 # CSVURL = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST2022-3\受信通知CSV\受信通知取得失敗リスト.csv"  # 取得対象のURLが記載されたCSV
-CSVURL = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\2月受信通知取得失敗リスト.csv"  # 取得対象のURLが記載されたCSV
+CSVURL = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\3月受信通知取得失敗リスト.csv"  # 取得対象のURLが記載されたCSV
 # --------------------------------------------------------------------------------
 try:
     CSVList = FCSV.CsvRead(CSVURL)  # 自作関数でCSVをDataFrameに変換
@@ -163,7 +163,7 @@ try:
             PDFPageTxt = CSVRowData["ページ"]
             PDFPage = str(int(re.findall(r"\d", CSVRowData["ページ"])[0]) - 1)  # 対象のページを取得
             ModelpngDelte(MyURL)  # PDF変換pngの削除
-            PI = pdf_image(PDFDir, MyURL, "png", 200, PDFPage)  # 対象のPDFをpng変換
+            PI = pdf_image(PDFDir, MyURL, "png", 300, PDFPage)  # 対象のPDFをpng変換
             if PI[0] is True:  # png変換に成功したら
                 OCRList = PI[1]  # PDFから変換したpngを全て取得
                 DLC = DiffListCreate(

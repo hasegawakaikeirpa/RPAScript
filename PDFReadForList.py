@@ -97,6 +97,7 @@ def ReadAction(
     ZaisanCSVList,
     SinkokuUkeCSVList,
     HoujinCSVList,
+    HoujinCSV2List,
     HoujinSiminCSVList,
     ImageCSVList,
     CSVBadList,
@@ -875,6 +876,79 @@ def ReadAction(
             ]
             HoujinCSVList.append(OutputList)
         # ------------------------------------------------------------------------
+        elif PDFFlag == "法人税2":
+            for z in range(PDFdfRow):  # PDFのテーブル行数分ループ
+                dfdatarow = PDFdf.iloc[z]  # PDFのテーブル行データ1
+                if dfdatarow[0] == "手続名":
+                    PDFTitle = str(dfdatarow[1])
+                elif dfdatarow[0] == "氏名又は名称":
+                    PDFName = str(dfdatarow[1])
+                elif dfdatarow[0] == "種目":
+                    PDFSyumoku = str(dfdatarow[1])
+                elif dfdatarow[0] == "所得金額又は欠損金額":
+                    PDFSyoKesson = str(dfdatarow[1])
+                elif dfdatarow[0] == "受付日時":
+                    PDFDate = str(dfdatarow[1])
+                elif dfdatarow[0] == "提出先":
+                    PDFTeisyutu = str(dfdatarow[1])
+                elif dfdatarow[0] == "事業年度　自":
+                    PDFJigyouNendo = str(dfdatarow[1])
+                elif dfdatarow[0] == "事業年度　至":
+                    PDFJigyouNendo = PDFJigyouNendo + "-" + str(dfdatarow[1])
+                elif dfdatarow[0] == "この申告による還付金額":
+                    PDFKanpu = str(dfdatarow[1])
+                elif dfdatarow[0] == "課税標準法人税額":
+                    PDFKazeihyoujyun = str(dfdatarow[1])
+                elif dfdatarow[0] == "差引確定地方法人税額":
+                    PDFSasihiki = str(dfdatarow[1])
+                elif "欠損金又は災害損失金等の当期控" in dfdatarow[0]:
+                    PDFToukiKesson = str(dfdatarow[1])
+                elif "翌期へ繰り越す欠損金又は災害損" in dfdatarow[0]:
+                    PDFYokkiKesson = str(dfdatarow[1])
+                elif "申告の種類" in dfdatarow[0]:
+                    try:
+                        PTKCSyurui
+                        PTKCSyurui2 = str(dfdatarow[1])
+                    except NameError:
+                        PTKCSyurui = str(dfdatarow[1])
+                elif "税目" in dfdatarow[0]:
+                    try:
+                        PTKCZeimoku
+                        PTKCZeimoku2 = str(dfdatarow[1])
+                    except NameError:
+                        PTKCZeimoku = str(dfdatarow[1])
+            # 表外データがあった場合の処理---------------------------------------------------------------------
+            SPDList = []
+            SPDRow = np.array(SubPDFdf).shape[0]
+            for zz in range(SPDRow):
+                Spdatarow = SubPDFdf.iloc[zz]  # PDFのテーブル行データ1
+                if "円" in Spdatarow[0]:
+                    SPDList.append(Spdatarow[0].replace("\u3000", "").replace(" ", ""))
+            SPDstr = "\n".join(SPDList)
+            # ----------------------------------------------------------------------------------------------
+            OutputList = [
+                SCode,
+                path_pdf.replace("/", "\\"),
+                str(y + 1) + "ページ目",
+                PDFTitle,
+                PDFName,
+                PDFDate,
+                PDFSyumoku,
+                PDFJigyouNendo,
+                PTKCZeimoku,
+                PTKCSyurui,
+                PDFSyoKesson,
+                PDFKanpu,
+                PDFToukiKesson,
+                PDFYokkiKesson,
+                PTKCZeimoku2,
+                PTKCSyurui2,
+                PDFKazeihyoujyun,
+                PDFSasihiki,
+                SPDstr
+            ]
+            HoujinCSV2List.append(OutputList)
+        # ------------------------------------------------------------------------
         elif PDFFlag == "法人市民税":
             for z in range(PDFdfRow):  # PDFのテーブル行数分ループ
                 dfdatarow = PDFdf.iloc[z]  # PDFのテーブル行データ1
@@ -1331,6 +1405,7 @@ def CSVIndexSort(
     SyouhiCSV3List,
     SyouhiCyukanCSVList,
     HoujinCSVList,
+    HoujinCSV2List,
     HoujinSiminCSVList,
     YoteiCSVList,
     SyoukyakuCSVList,
@@ -1360,6 +1435,7 @@ def CSVIndexSort(
     SyouhiCSV3,
     SyouhiCyukanCSV,
     HoujinCSV,
+    HoujinCSV2,
     HoujinSiminCSV,
     YoteiCSV,
     SyoukyakuCSV,
@@ -1674,6 +1750,13 @@ def PDFRead(URL, Settingtoml):
             CDict["HoujinCSVList"],
             "cp932",
             Settingtoml["CsvSaveEnc"]["HoujinCSVList"],
+        )
+    if not np.array(CDict["HoujinCSV2List"]).shape[0] == 0:
+        FCSV.CsvSaveEnc(
+            ListURL + "/法人税2受信通知リスト.csv",
+            CDict["HoujinCSV2List"],
+            "cp932",
+            Settingtoml["CsvSaveEnc"]["HoujinCSV2List"],
         )
     if not np.array(CDict["HoujinSiminCSVList"]).shape[0] == 0:
         FCSV.CsvSaveEnc(

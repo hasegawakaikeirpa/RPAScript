@@ -19,6 +19,7 @@ def PDFSetting(
     SyouhiCyukanCSV,
     YoteiCSV,
     HoujinCSV,
+    HoujinCSV2,
     HoujinSiminCSV,
     SyoukyakuCSV,
     SyoukyakuCSV2,
@@ -110,6 +111,12 @@ def PDFSetting(
     FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
     if FolseC[0] >= -2:
         PDFFlag = "法人税"
+    # ------------------------------------------------------------------------
+    # 法人税2リストと突合--------------------------------------------------------
+    IndexFlags = HoujinCSV2 == dfIndexdata
+    FolseC = IndexFlags.sum(axis=1) - np.array(dfIndexdata).shape[0]
+    if FolseC[0] >= -2:
+        PDFFlag = "法人税2"
     # ------------------------------------------------------------------------
     # 法人税市民税リストと突合--------------------------------------------------
     IndexFlags = HoujinSiminCSV == dfIndexdata
@@ -218,6 +225,9 @@ SyouhiCyukanCSV = FCSV.CsvReadHeaderless(
 HoujinCSV = FCSV.CsvReadHeaderless(
     MeUrl + "/RPAPhoto/PDFReadForList/法人税.CSV"
 )  # 法人税のインデックスリスト
+HoujinCSV2 = FCSV.CsvReadHeaderless(
+    MeUrl + "/RPAPhoto/PDFReadForList/法人税2.CSV"
+)  # 法人税2のインデックスリスト
 HoujinSiminCSV = FCSV.CsvReadHeaderless(
     MeUrl + "/RPAPhoto/PDFReadForList/法人市民税.CSV"
 )  # 法人市民税のインデックスリスト
@@ -256,6 +266,7 @@ SyouhiCSV2 = SyouhiCSV2[1].transpose()  # 行列入替
 SyouhiCSV3 = SyouhiCSV3[1].transpose()  # 行列入替
 SyouhiCyukanCSV = SyouhiCyukanCSV[1].transpose()  # 行列入替
 HoujinCSV = HoujinCSV[1].transpose()  # 行列入替
+HoujinCSV2 = HoujinCSV2[1].transpose()  # 行列入替
 HoujinSiminCSV = HoujinSiminCSV[1].transpose()  # 行列入替
 YoteiCSV = YoteiCSV[1].transpose()  # 行列入替
 SyoukyakuCSV = SyoukyakuCSV[1].transpose()  # 行列入替
@@ -278,6 +289,7 @@ SyouhiCSV2List = []  # 成功リスト初期化
 SyouhiCSV3List = []  # 成功リスト初期化
 SyouhiCyukanCSVList = []
 HoujinCSVList = []  # 成功リスト初期化
+HoujinCSV2List = []  # 成功リスト初期化
 HoujinSiminCSVList = []
 YoteiCSVList = []  # 成功リスト初期化
 SyoukyakuCSVList = []  # 成功リスト初期化
@@ -309,6 +321,7 @@ CSVIndexSortFuncArray = {
     "SyouhiCSV3List": SyouhiCSV3List,
     "SyouhiCyukanCSVList": SyouhiCyukanCSVList,
     "HoujinCSVList": HoujinCSVList,
+    "HoujinCSV2List": HoujinCSV2List,
     "HoujinSiminCSVList": HoujinSiminCSVList,
     "YoteiCSVList": YoteiCSVList,
     "SyoukyakuCSVList": SyoukyakuCSVList,
@@ -338,6 +351,7 @@ CSVIndexSortFuncArray = {
     "SyouhiCSV3": SyouhiCSV3,
     "SyouhiCyukanCSV": SyouhiCyukanCSV,
     "HoujinCSV": HoujinCSV,
+    "HoujinCSV2": HoujinCSV2,
     "HoujinSiminCSV": HoujinSiminCSV,
     "YoteiCSV": YoteiCSV,
     "SyoukyakuCSV": SyoukyakuCSV,
@@ -373,6 +387,7 @@ ReadActionTKC_TKCFlagisTrue_PDFSetting = {
     "SyouhiCyukanCSV": SyouhiCyukanCSV,
     "YoteiCSV": YoteiCSV,
     "HoujinCSV": HoujinCSV,
+    "HoujinCSV2": HoujinCSV2,
     "HoujinSiminCSV": HoujinSiminCSV,
     "SyoukyakuCSV": SyoukyakuCSV,
     "SyoukyakuCSV2": SyoukyakuCSV2,
@@ -404,6 +419,7 @@ ReadActionTKC_TKCFlagiselse_PDFSetting = {
     "ZaisanCSVList": ZaisanCSVList,
     "SinkokuUkeCSVList": SinkokuUkeCSVList,
     "HoujinCSVList": HoujinCSVList,
+    "HoujinCSV2List": HoujinCSV2List,
     "HoujinSiminCSVList": HoujinSiminCSVList,
     "ImageCSVList": ImageCSVList,
     "CSVBadList": CSVBadList,

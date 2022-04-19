@@ -6,6 +6,8 @@ from google.cloud import vision
 from google.oauth2 import service_account
 from PIL import Image, ImageDraw
 import pandas as pd
+import numpy as np
+from collections import OrderedDict
 
 # loggerインポート
 from logging import getLogger
@@ -99,6 +101,24 @@ def render_doc_text(filein, fileout):
         image.show()
 
 
+def getNearestValue(list, num):
+    """
+    概要: リストからある値に最も近い値を返却する関数
+    @param list: データ配列
+    @param num: 対象値
+    @return 対象値に最も近い値
+    """
+
+    # リスト要素と対象値の差分を計算し最小値のインデックスを取得
+    nlist = np.array(list)
+    nnlist = np.where(nlist == num, 0, nlist)
+    idx = np.abs(nnlist - num).argmin()
+    nearVol = list[idx]
+    if nearVol - num > -10 and nearVol - num < 10:
+        nlist = np.where(nlist == nearVol, num, nlist)
+    return nlist
+
+
 def rentxtver(filein, KeyX, KeyY, LabelX, Label):  # 自作関数一文字づつの軸間を指定値を元に切り分け文章作成
     try:
         bounds = get_document_bounds(filein, FeatureType.PARA)[
@@ -107,37 +127,68 @@ def rentxtver(filein, KeyX, KeyY, LabelX, Label):  # 自作関数一文字づつ
         lbound = len(bounds)
         strs = ""
         strList = []
+        XYList = []  # テキストの位置情報格納リスト
+        YList = []
         for lb in range(lbound):
-            # if lb == 460:
-            #     print(460)
             btxt = bounds[lb][0]
             bjson = bounds[lb][1].vertices
             bjsonX = bjson[0].x  # 現在の文字の横軸
             bjsonY = bjson[0].y  # 現在の文字の縦軸
-            if not lb == lbound - 1:
-                Nextbjson = bounds[lb + 1][1].vertices
-                NextbjsonX = Nextbjson[0].x  # 次の文字の横軸
-                NextbjsonY = Nextbjson[0].y  # 次の文字の縦軸
-                diffparX = NextbjsonX - bjsonX  # 次の文字との横軸間隔
-                diffparY = NextbjsonY - bjsonY  # 次の文字との縦軸間隔
-                if diffparX > KeyX:  # 次の文字との横軸間隔が指定値以上なら
-                    strs = strs + btxt
-                    strList.append(strs)
-                    strs = ""
-                elif diffparY > KeyY:  # 次の文字との縦軸間隔が指定値以上なら
-                    strs = strs + btxt
-                    strList.append(strs)
-                    strs = ""
-                else:
-                    if diffparX > LabelX:  # 次の文字との横軸間隔がラベル指定値以上なら
-                        strs = strs + btxt
-                        strs = strs + Label
-                    else:
-                        strs = strs + btxt
-            else:  # 最終行の処理
-                strs = strs + btxt
-                strList.append(strs)
-                strs = ""
+            XYList.append([lb, btxt, bjsonX, bjsonY])
+            YList.append(bjsonY)
+        YDicList = list(OrderedDict.fromkeys(YList))  # 抽出リストの重複削除
+        for YDicListItem in YDicList:
+            YList = getNearestValue(YList, YDicListItem)
+        print(YList)
+        Ys = 0
+        for YListItem in YList:
+            XYList[Ys][3] = YListItem
+            Ys += 1
+        dfXYList = pd.DataFrame(XYList)
+        dfXYList.columns = ["No", "テキスト", "X軸", "Y軸"]
+        dfXYList.sort_values("Y軸")
+        dfXYList.sort_values("X軸")
+        print(dfXYList)
+        dfXYList.to_csv(
+            r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\XYList.csv", encoding="cp932"
+        )
+        dfRow = len(dfXYList)
+        for d in range(dfRow):
+            dfRowData = dfXYList.iloc[d]
+            dtxt = dfRowData["テキスト"]
+            dtxt = dfRowData["X軸"]
+            dtxt = dfRowData["Y軸"]
+        # for lb in range(lbound):
+        #     # if lb == 460:
+        #     #     print(460)
+        #     btxt = bounds[lb][0]
+        #     bjson = bounds[lb][1].vertices
+        #     bjsonX = bjson[0].x  # 現在の文字の横軸
+        #     bjsonY = bjson[0].y  # 現在の文字の縦軸
+        #     if not lb == lbound - 1:
+        #         Nextbjson = bounds[lb + 1][1].vertices
+        #         NextbjsonX = Nextbjson[0].x  # 次の文字の横軸
+        #         NextbjsonY = Nextbjson[0].y  # 次の文字の縦軸
+        #         diffparX = NextbjsonX - bjsonX  # 次の文字との横軸間隔
+        #         diffparY = NextbjsonY - bjsonY  # 次の文字との縦軸間隔
+        #         if diffparX > KeyX:  # 次の文字との横軸間隔が指定値以上なら
+        #             strs = strs + btxt
+        #             strList.append(strs)
+        #             strs = ""
+        #         elif diffparY > KeyY:  # 次の文字との縦軸間隔が指定値以上なら
+        #             strs = strs + btxt
+        #             strList.append(strs)
+        #             strs = ""
+        #         else:
+        #             if diffparX > LabelX:  # 次の文字との横軸間隔がラベル指定値以上なら
+        #                 strs = strs + btxt
+        #                 strs = strs + Label
+        #             else:
+        #                 strs = strs + btxt
+        #     else:  # 最終行の処理
+        #         strs = strs + btxt
+        #         strList.append(strs)
+        #         strs = ""
         return True, strList
     except Exception as e:
         return False, e

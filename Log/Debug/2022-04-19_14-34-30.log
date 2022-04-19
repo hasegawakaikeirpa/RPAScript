@@ -1,0 +1,4 @@
+[2022/04/19 14:34:30][DEBUG](PDFReadForList.py:1882) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/19 14:34:57][DEBUG](PDFReadForList.py:1580) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/738/ミロク送信分/738_株式会社 久保アグリファーム.pdf_4ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/19 14:35:14][DEBUG](PDFReadForList.py:1580) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/942/ミロク送信分/942_株式会社 雅興業.pdf_2ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/04/19 14:36:15][DEBUG](PDFReadForList.py:1885) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出完了 <module> d:\PythonScript\RPAScript\PDFReadForList.py
