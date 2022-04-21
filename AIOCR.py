@@ -10,6 +10,7 @@ from pathlib import Path
 from pdf2image import convert_from_path
 import Function.CSVOut as FCSV
 import RPAPhoto.PDFeTaxReadForList.CSVSetting as CSVSet  # CSVの設定ファイルの読込
+import cv2
 
 # logger設定------------------------------------------------------------------------------
 import logging.config
@@ -47,6 +48,11 @@ def pdf_image(pdf_file, img_path, fmtt, dpi, PDFPage):
             file_name = "OCR" + str(i) + "." + fmtt
             image_path = image_dir / file_name
             page.save(image_path, fmtt)
+
+            # グレースケールに変換
+            src = cv2.imread(image_path._str, 0)
+            cv2.imwrite(image_path._str, src)
+
         for fd_path, sb_folder, sb_file in os.walk(image_dir):
             for fil in sb_file:
                 # if "OCR" in fil and fil.endswith(".png") is True:
@@ -65,8 +71,8 @@ def DiffListCreate(FolURL, OCRList, KCode, PDFDir, PDFPageTxt):
             try:
                 FileURL = OCRListItem[0] + "\\" + OCRListItem[1]
                 GF = GCV.rentxtver(
-                    FileURL, 500, 5, 100, "::"
-                )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,ラベル(str)
+                    FileURL, 2000, 15, 300, 1100, 5, 500, "::", 10
+                )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
                 if GF[0] is True:
                     GFTable = GF[1]
                     GFRow = len(GFTable)
@@ -89,10 +95,10 @@ def DiffListCreate(FolURL, OCRList, KCode, PDFDir, PDFPageTxt):
                         if "氏名又は名称" in strGF:
                             GFTColList.append("コード")
                             GFTParList.append(str(KCode))
-                            GFTColList.append(SGF[0])
+                            GFTColList.append(SGF[0].replace(",", ""))
                             GFTParList.append(SGF[1])
                         else:
-                            GFTColList.append(SGF[0])
+                            GFTColList.append(SGF[0].replace(",", ""))
                             GFTParList.append(SGF[1])
                         GFTCount += 1
                     print(GFTColList)
@@ -116,13 +122,16 @@ def DiffListPlus(ColList, ScrList):
         for LNListItem in LNList:
             NewColList = Settingtoml["AIOCR"][LNListItem]
             SColA = set(ColList) - set(NewColList)
-            if len(SColA) == 0:
+            SColB = set(NewColList) - set(ColList)
+            if len(SColA) == 0 and len(SColB) == 0:
                 CDict[LNListItem].append(ScrList)
                 return True, LNListItem
         print("指定列名での設定項目がありませんでした。")
-        return False, ""
+        CDict["エラーリスト"].append(ScrList)
+        return False, "エラーリスト"
     except:
-        return False, ""
+        CDict["エラーリスト"].append(ScrList)
+        return False, "エラーリスト"
 
 
 # -------------------------------------------------------------------------------------------------------
@@ -163,7 +172,7 @@ try:
             PDFPageTxt = CSVRowData["ページ"]
             PDFPage = str(int(re.findall(r"\d", CSVRowData["ページ"])[0]) - 1)  # 対象のページを取得
             ModelpngDelte(MyURL)  # PDF変換pngの削除
-            PI = pdf_image(PDFDir, MyURL, "png", 300, PDFPage)  # 対象のPDFをpng変換
+            PI = pdf_image(PDFDir, MyURL, "png", 500, PDFPage)  # 対象のPDFをpng変換
             if PI[0] is True:  # png変換に成功したら
                 OCRList = PI[1]  # PDFから変換したpngを全て取得
                 DLC = DiffListCreate(
