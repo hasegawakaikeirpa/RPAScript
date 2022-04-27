@@ -945,7 +945,7 @@ def ReadAction(
                 PTKCSyurui2,
                 PDFKazeihyoujyun,
                 PDFSasihiki,
-                SPDstr
+                SPDstr,
             ]
             HoujinCSV2List.append(OutputList)
         # ------------------------------------------------------------------------

@@ -45,50 +45,54 @@ def draw_boxes(image, bounds, color):
     return image
 
 
-def get_document_bounds(image_file, feature):
-    """Returns document bounds given an image."""
-    logger.debug("get_document_bounds(GoogleVisionAPI)開始: debug level log")
-    credentials = service_account.Credentials.from_service_account_file(
-        os.getcwd() + "/key.json"
-    )  # GAPIキーのURL
-    client = vision.ImageAnnotatorClient(credentials=credentials)
-    # client = vision.ImageAnnotatorClient()
-    verList = []
-    bounds = []
+def get_document_bounds(image_file, feature, Flag):
+    try:
+        """Returns document bounds given an image."""
+        logger.debug("get_document_bounds(GoogleVisionAPI)開始: debug level log")
+        credentials = service_account.Credentials.from_service_account_file(
+            os.getcwd() + "/key.json"
+        )  # GAPIキーのURL
+        client = vision.ImageAnnotatorClient(credentials=credentials)
+        # client = vision.ImageAnnotatorClient()
+        verList = []
+        bounds = []
 
-    with io.open(image_file, "rb") as image_file:
-        content = image_file.read()
+        with io.open(image_file, "rb") as image_file:
+            content = image_file.read()
 
-    image = vision.Image(content=content)
+        image = vision.Image(content=content)
 
-    response = client.document_text_detection(image=image)
-    document = response.full_text_annotation
-    if "国税電子申告・納税システム(e-Tax)" in document.text:
-        Flag = "etax"
-    else:
-        Flag = "MJS"
-    # Collect specified feature bounds by enumerating all document features
-    for page in document.pages:
-        for block in page.blocks:
-            for paragraph in block.paragraphs:
-                for word in paragraph.words:
-                    for symbol in word.symbols:
-                        verList.append([symbol.text, symbol.bounding_box])
-                        if feature == FeatureType.SYMBOL:
-                            bounds.append(symbol.bounding_box)
+        response = client.document_text_detection(image=image)
+        document = response.full_text_annotation
+        if "国税電子申告・納税システム(e-Tax)" in document.text:
+            Flag = "etax"
+        else:
+            if not Flag == "eltax":
+                Flag = "MJS"
+        # Collect specified feature bounds by enumerating all document features
+        for page in document.pages:
+            for block in page.blocks:
+                for paragraph in block.paragraphs:
+                    for word in paragraph.words:
+                        for symbol in word.symbols:
+                            verList.append([symbol.text, symbol.bounding_box])
+                            if feature == FeatureType.SYMBOL:
+                                bounds.append(symbol.bounding_box)
 
-                    if feature == FeatureType.WORD:
-                        bounds.append(word.bounding_box)
+                        if feature == FeatureType.WORD:
+                            bounds.append(word.bounding_box)
 
-                if feature == FeatureType.PARA:
-                    bounds.append(paragraph.bounding_box)
+                    if feature == FeatureType.PARA:
+                        bounds.append(paragraph.bounding_box)
 
-            if feature == FeatureType.BLOCK:
-                bounds.append(block.bounding_box)
+                if feature == FeatureType.BLOCK:
+                    bounds.append(block.bounding_box)
 
-    # The list `bounds` contains the coordinates of the bounding boxes.
-    logger.debug("get_document_bounds(GoogleVisionAPI)終了: debug level log")
-    return bounds, verList, Flag
+        # The list `bounds` contains the coordinates of the bounding boxes.
+        logger.debug("get_document_bounds(GoogleVisionAPI)終了: debug level log")
+        return bounds, verList, Flag
+    except:
+        return "boundsなし", "verListなし", "Flagなし"
 
 
 def render_doc_text(filein, fileout):
@@ -164,7 +168,7 @@ def ChangeList(dflist, Fname):
         return False, ""
 
 
-def Dfchange(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label):
+def Dfchange(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label, Flag):
     try:
         strs = ""
         for YDicListItem in YDicList:
@@ -179,7 +183,7 @@ def Dfchange(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label):
         npXYList = ChangeList(dfXYList, "Y軸")  # pram1:リスト,pram2:str"Y軸"
         if npXYList[0] is True:
             dfnp = list(npXYList[1])
-            # CSVDF = pd.DataFrame(npXYList[1])
+            # CSVDF = pd.DataFrame(dfnp)
             # CSVDF.to_csv(
             #     r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\XYList.csv", encoding="cp932"
             # )
@@ -201,12 +205,22 @@ def Dfchange(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label):
                     strs = ""
                 elif diffparY > KeyY:  # 次の文字との縦軸間隔が指定値以上なら
                     strs = strs + btxt
-                    strList.append(strs)
+                    if Flag == "eltax" and len(strList) == 0:
+                        strList.append("発行元::" + strs)
+                    else:
+                        strList.append(strs)
                     strs = ""
                 else:
                     if diffparX > LabelX:  # 次の文字との横軸間隔がラベル指定値以上なら
                         strs = strs + btxt
-                        strs = strs + Label
+                        if Flag == "eltax" and len(strList) == 2:
+                            strList.append("発行元部署::" + strs)
+                            strs = ""
+                        elif Flag == "eltax" and "発行日時::" in strs:
+                            strList.append(strs)
+                            strs = ""
+                        else:
+                            strs = strs + Label
                     else:
                         strs = strs + btxt
             else:  # 最終行の処理
@@ -219,11 +233,11 @@ def Dfchange(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label):
 
 
 def rentxtver(
-    filein, KeyX, KeyY, LabelX, etaxKeyX, etaxKeyY, etaxLabelX, Label, near
+    filein, KeyX, KeyY, LabelX, etaxKeyX, etaxKeyY, etaxLabelX, Label, near, Flag
 ):  # 自作関数一文字づつの軸間を指定値を元に切り分け文章作成
     try:
         bounds = get_document_bounds(
-            filein, FeatureType.PARA
+            filein, FeatureType.PARA, Flag
         )  # Vision結果を一文字とverticesに分けリスト格納
         Flag = bounds[2]
         bounds = bounds[1]
@@ -244,7 +258,7 @@ def rentxtver(
                 Xd = len(XYList) - 1  # XYList最終行インデックス
                 # XYListで600より上の情報を削除---------------------------------
                 for XYListItem in reversed(XYList):  # XYListで600より上の情報を削除
-                    if XYListItem[3] <= 600:
+                    if XYListItem[3] <= 600 or XYListItem[3] >= 5500:
                         XYList.pop(Xd)
                     Xd -= 1
                 # -------------------------------------------------------------
@@ -265,6 +279,7 @@ def rentxtver(
                     near,
                     etaxLabelX,
                     Label,
+                    Flag,
                 )
                 if DC[0] is True:
                     logger.debug("rentxtver(OCR結果を整形eTax)成功: debug level log")
@@ -272,9 +287,52 @@ def rentxtver(
                 else:
                     logger.debug("rentxtver(OCR結果を整形eTax)失敗: debug level log")
                     return False, "eTaxDfchangeエラー"
+            elif Flag == "eltax":  # OCRでelTaxと判定されたら
+                Xd = len(XYList) - 1  # XYList最終行インデックス
+                # XYListで600より上の情報を削除---------------------------------
+                for XYListItem in reversed(XYList):  # XYListで600より上の情報を削除
+                    if XYListItem[3] <= 600 or XYListItem[3] >= 5500:
+                        XYList.pop(Xd)
+                    Xd -= 1
+                # -------------------------------------------------------------
+                YList = []  # Y軸のリストを初期化
+                Xd = len(XYList)  # XYList要素数分
+                # 600より上の情報を削除したXYListからY軸のリストを作成-------------
+                for lb in range(Xd):
+                    bjsonY = XYList[lb][3]  # 現在の文字の縦軸
+                    YList.append(bjsonY)
+                # -------------------------------------------------------------
+                DC = Dfchange(
+                    YDicList,
+                    etaxKeyX,
+                    etaxKeyY,
+                    XYList,
+                    YList,
+                    strList,
+                    near,
+                    etaxLabelX,
+                    Label,
+                    Flag,
+                )
+                if DC[0] is True:
+                    logger.debug("rentxtver(OCR結果を整形eTax)成功: debug level log")
+                    return True, DC[1]
+                else:
+                    logger.debug("rentxtver(OCR結果を整形eTax)失敗: debug level log")
+                    return False, "eTaxDfchangeエラー"
+
             else:  # OCRでeTax以外なら
                 DC = Dfchange(
-                    YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label
+                    YDicList,
+                    KeyX,
+                    KeyY,
+                    XYList,
+                    YList,
+                    strList,
+                    near,
+                    LabelX,
+                    Label,
+                    Flag,
                 )
                 if DC[0] is True:
                     logger.debug("rentxtver(OCR結果を整形eTax以外)成功: debug level log")

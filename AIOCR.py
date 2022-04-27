@@ -70,22 +70,46 @@ def DiffListCreate(FolURL, OCRList, KCode, PDFDir, PDFPageTxt):
         for OCRListItem in OCRList:
             try:
                 FileURL = OCRListItem[0] + "\\" + OCRListItem[1]
+                if "eLTAX受信通知" in PDFDir:
+                    Flag = "eltax"
+                else:
+                    Flag = ""
                 GF = GCV.rentxtver(
-                    FileURL, 2000, 15, 300, 1100, 5, 500, "::", 10
+                    FileURL, 2000, 15, 300, 2000, 15, 500, "::", 10, Flag
                 )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
                 if GF[0] is True:
                     GFTable = GF[1]
                     GFRow = len(GFTable)
                     GFTColList = []
                     GFTParList = []
+                    # OCR結果を整形----------------------------------------------------------------
                     for g in reversed(range(GFRow)):
-                        if "::" not in GFTable[g]:
-                            GFTable.pop(g)
+                        if "::" not in GFTable[g]:  # OCR結果行に区切り文字がない場合
+                            if GFTable[g].endswith("円") is True:  # OCR結果行が円で終わる場合
+                                if Flag == "eltax":  # eltax処理の場合
+                                    Koumoku = GFTable[g]  # 項目を代入
+                                    Money = int(re.sub(r"\D", "", GFTable[g]))  # 数値のみ取得
+                                    Money = "{:,}".format(Money)  # 取り出した数値をカンマ区切りにする
+                                    Money = Money + "円"  # 末尾に円をつける
+                                    Koumoku = Koumoku.replace(
+                                        Money, ""
+                                    )  # 金額と項目名を置換で切り分け
+                                    if Koumoku.endswith("-") is True:
+                                        GFTable[g] = (
+                                            Koumoku.replace("-", "") + "::-" + Money
+                                        )  # 区切り文字を挿入
+                                    else:
+                                        GFTable[g] = Koumoku + "::" + Money  # 区切り文字を挿入
+                                    Money = ""
+                                    Koumoku = ""
+                                else:
+                                    GFTable.pop(g)
+                            else:
+                                GFTable.pop(g)
+                    # ----------------------------------------------------------------------------
                     GFTCount = 0
                     for GFTableItem in GFTable:
                         strGF = str(GFTableItem).replace("給額", "総額").replace("稅", "税")
-                        if strGF.endswith("円") is True:
-                            strGF = strGF.replace("円", "")
                         SGF = strGF.split("::")
                         if GFTCount == 0:
                             GFTColList.append("URL")

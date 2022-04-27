@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "deft-citizen-314305",
+  "private_key_id": "ae93bd5b00becbbad42ec3996a2c50116648a4e6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4irP/8LuJGg4h\nErNEth8YDW72ibBjGWl4/woFzwE4H36XaEFxXZDTgLiWCXei53ctukw9HbbEXHSW\nBLzu/pLwD64D9Wfkr3m5XNIPeslow/4mNU5a6s/Bg3Ug98JZ6npgbeU2xCUBgcrz\nq3YCx2eNZ+VTqzm08wMSf8DGcxf9RAzWFKCmOsY4ZRI+AuXs6QQBwT5+2ds13nYu\n1Ftirjrfx612mj900ozReCnUmi1q+MKvMgzGfeocQ2bCVbxK59jT63H/gZTpjjZf\nXYOimYXVbYaXzqiXNpf2ht0BdkVVXM3Who5pYLyk7W0gBrMXe2MbWy9O6IoFqsY/\nCWQHeWp3AgMBAAECggEABs9jjh3hpdEW1WSdxfrckeQpBKMXJckRydvLkGRPvLT4\n1HiN9bOIvS1iYnMN/a6CCOd3mcfHb16kFMcu+7jcTkyd1NqRD3DkUpFY1SZoWVvm\nPJ25+wPwT8lcoK9T9kJ/aqCTlV5OqUwTY8OfksGuEhtT7K8EbaeMJPoe8JPdvkRc\n7zyxfXygnmbm1yBEG8Mdd/og5rCLeQYnf0bdWPM5LyeNWDfCWJUrGFC3dz3fWc6D\nywnkp3vg2q1Zq8OwgIQEXseHgUB/Ee5O9Tf+rjtiuNr6zcK8vPjmKTTwDfBGc8Yt\n1nP+F0QXzr0ATo8em8lXOjZR3Y00RT8vDtfaML6HHQKBgQD4fqO+k09NItdmgpYZ\nVg9JFvAWEZCUiCNGcwQtpYUAN5y9wMBO4eZDKBWYzNYn/cYDYT9JETV8sIedNp6A\nt5Bsn+/FL/j8qm61EjAHAheXMwhk8F4sHEfkhoYJnPTYvugjaIdB8l2nlSBJ2leU\nCrqWD0EMPqUXQWU+d2wa4NK4EwKBgQC+HZR6UjTDcPQORraa8Tku3fIksD4XdkCA\n0pXyloSd9TO42eHsuiOg/YDc7gIXxc88rdRP3hW996WFk9P+9Ex6rFiU9ujwDrWP\nbf8U+aB5l0JlRGlk9YvE8dGWs0bLXzAQCErspIIl9nhmRPNuIVix/y7trOpJs6hq\nZz8uTr7YjQKBgFJ/yOE2ivdy/8xawnZ66ew8H01UW4nUgNGc0eBNuZBO5kzhN3d4\n7DeTkUf/iYIRcLIikR4zBmz1NrDtN0ZIqzxFBReUS7em5cZb2XIaMbbTDJBmdP10\nDjJCrzF12Jw1FWDcDTvJuWovyl56jOTrgvLa8Z+dFLZZ0cEhaNSrm4ndAoGBAK6n\nYBMr2FtANoWzAui++QiMT3rTCoflVAbE74pIKxct/1EvoTUoH7kziqHsabHLQMJ+\n81BYN2Mo0kAv+Y78ghIkqNBZMM/ww2074R404e8yPYXo3mYoijno6eHnWv9UuEPS\nSnqx+vrDPgK+D2C6c9A6HbOtqiMBUJRHu6xgHUW1AoGAEbSgQPfhiUCGxK3KoGJx\n7zlBQ1oTnF90WLTYNolyt6InTH5O82rhJq8rOqSXB7mKGZRbP5gcBKiedL93ecNz\nvEGKDjn0nR7WMScXjvrEYKSa9TELQFI4yvS771vFEAIdgEkzyXsqROOp+u9nike0\n7dw6Nku8qWB500lyhG2gDDo=\n-----END PRIVATE KEY-----\n",
+  "client_email": "hasegawakaikeicloudvisionapi@deft-citizen-314305.iam.gserviceaccount.com",
+  "client_id": "105829197014126302699",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/hasegawakaikeicloudvisionapi%40deft-citizen-314305.iam.gserviceaccount.com"
+}
