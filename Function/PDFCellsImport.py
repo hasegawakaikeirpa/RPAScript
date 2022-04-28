@@ -1,8 +1,50 @@
 ﻿import os
 import numpy as np
 import pandas as pd
+import re
 
 
+def DiffListPlus(CDict, Settingtoml, ColList, ScrList, Ers):
+    try:
+        LNList = Settingtoml["MASTER"]["ListNameList"]  # tomlから各種設定リスト名を抽出
+        NewColList = []
+        for LNListItem in LNList:
+            NewColList = Settingtoml["CsvSaveEnc"][LNListItem]
+            SColA = set(ColList) - set(NewColList)
+            SColB = set(NewColList) - set(ColList)
+            if len(SColA) == 0 and len(SColB) == 0:
+                CDict[LNListItem].append(ScrList)
+                return True, LNListItem
+        print(ColList)
+        print(
+            "========================================================================================"
+        )
+        print(ScrList)
+        if Ers == "Sub":
+            print("サブテーブル取得エラー")
+            CDict["SubErrList"].append(ScrList)
+            return False, "SubErrList"
+        else:
+            print("指定列名での設定項目がありませんでした。")
+            CDict["ErrList"].append(ScrList)
+            return False, "ErrList"
+    except:
+        print(ColList)
+        print(
+            "========================================================================================"
+        )
+        print(ScrList)
+        if Ers == "Sub":
+            print("サブテーブル取得エラー")
+            CDict["SubErrList"].append(ScrList)
+            return False, "SubErrList"
+        else:
+            print("指定列名での設定項目がありませんでした。")
+            CDict["ErrList"].append(ScrList)
+            return False, "ErrList"
+
+
+# -------------------------------------------------------------------------------------------------------
 def ChangeBusyu(strs):
     try:
         MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
@@ -37,6 +79,7 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
         ColumFlag = False  # カラム対象フラグ
         TFlag = False  # テキスト取得対象フラグ
         txts = []
+        Kint = 1
         for cellsListItem in cellsList:  # セルループ
             txt = repr(cellsListItem[1].text)  # 改行コードの数でセル分割の判定
             nc = txt.count(r"\n")  # テキスト内の改行コードの数
@@ -50,11 +93,12 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
                         txts[tx]
                         .replace("'", "")
                         .replace('"', "")
-                        .replace(r"\xa", "")
+                        .replace("\xa0", "")
                         .replace(r"\n", "")
                         .replace(r"\u2003", " ")
                         .replace(r"\u3000", " ")
                     )
+                    txts[tx] = txts[tx].replace(" ", "")
                     txts[tx] = ChangeBusyu(txts[tx])
                 and_list = set(txts) & set(stt)  # テキストリストとカラムリストで一致する要素を抽出
                 if len(and_list) > 0:  # テキストリストとカラムリストで一致する要素が一つ以上なら
@@ -73,7 +117,12 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
                             # ----------------------------------------------------------------
                             # テキスト内の改行コード総数が3で割り切れる場合------------------------
                             if nc % 3 == 0 and tc == 0:  # テキスト内初回の処理
-                                ColumList.append("項目")  # 項目リストに代入
+                                if Kint == 1:
+                                    ColumList.append("項目")  # 項目リストに代入
+                                    Kint += 1
+                                else:
+                                    ColumList.append("項目" + str(Kint))  # 項目リストに代入
+                                    Kint += 1
                             if ColumFlag is True:  # テキスト内2回目以降でカラム対象フラグが立っている処理
                                 ColumList.append(st)  # 項目リストに代入
                                 ColumFlag = False  # カラム対象フラグ解除
@@ -95,12 +144,14 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
                 txts = repr(cellsListItem[0].text.replace(r"\n", ""))  # 改行コード判定の為repr
                 txts = (
                     txts.replace("'", "")
+                    .replace("'", "")
                     .replace('"', "")
-                    .replace(r"\xa", "")
+                    .replace("\xa0", "")
                     .replace(r"\n", "")
                     .replace(r"\u2003", " ")
                     .replace(r"\u3000", " ")
                 )
+                txts = txts.replace(" ", "")
                 txts = ChangeBusyu(txts)
                 if txts.startswith(" ") is True:
                     txts.replace(" ", "")
@@ -108,12 +159,14 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
                 txts = repr(cellsListItem[1].text.replace(r"\n", ""))  # 改行コード判定の為repr
                 txts = (
                     txts.replace("'", "")
+                    .replace("'", "")
                     .replace('"', "")
-                    .replace(r"\xa", "")
+                    .replace("\xa0", "")
                     .replace(r"\n", "")
                     .replace(r"\u2003", " ")
                     .replace(r"\u3000", " ")
                 )
+                txts = txts.replace(" ", "")
                 txts = ChangeBusyu(txts)
                 if txts.startswith(" ") is True:
                     txts.replace(" ", "")
@@ -152,12 +205,14 @@ def CellsActionJigyounendo(stt, cellsList, ColumList, TxtList):  # 主にeltax�
                         for txtspItem in txtsp:
                             txtspItem = (
                                 txtspItem.replace("'", "")
+                                .replace("'", "")
                                 .replace('"', "")
-                                .replace(r"\xa", "")
+                                .replace("\xa0", "")
                                 .replace(r"\n", "")
                                 .replace(r"\u2003", " ")
                                 .replace(r"\u3000", " ")
                             )
+                            txtspItem = txtspItem.replace(" ", "")
                             txtspItem = ChangeBusyu(txtspItem)
                             # 処理中のテキストがカラムリストにあるか判定--------------------------
                             for sttItem in stt:
@@ -187,11 +242,12 @@ def CellsActionJigyounendo(stt, cellsList, ColumList, TxtList):  # 主にeltax�
                                     txts[tx]
                                     .replace("'", "")
                                     .replace('"', "")
-                                    .replace(r"\xa", "")
+                                    .replace("\xa0", "")
                                     .replace(r"\n", "")
                                     .replace(r"\u2003", " ")
                                     .replace(r"\u3000", " ")
                                 )
+                                txts[tx] = txts[tx].replace(" ", "")
                                 txts[tx] = ChangeBusyu(txts[tx])
                             and_list = set(txts) & set(stt)  # テキストリストとカラムリストで一致する要素を抽出
                             if len(and_list) > 0:  # テキストリストとカラムリストで一致する要素が一つ以上なら
@@ -259,11 +315,12 @@ def CellsActionJigyounendo(stt, cellsList, ColumList, TxtList):  # 主にeltax�
                                     txts[tx]
                                     .replace("'", "")
                                     .replace('"', "")
-                                    .replace(r"\xa", "")
+                                    .replace("\xa0", "")
                                     .replace(r"\n", "")
                                     .replace(r"\u2003", " ")
                                     .replace(r"\u3000", " ")
                                 )
+                                txts[tx] = txts[tx].replace(" ", "")
                                 txts[tx] = ChangeBusyu(txts[tx])
                             and_list = set(txts) & set(stt)  # テキストリストとカラムリストで一致する要素を抽出
                             if len(and_list) > 0:  # テキストリストとカラムリストで一致する要素が一つ以上なら
@@ -304,11 +361,12 @@ def CellsActionJigyounendo(stt, cellsList, ColumList, TxtList):  # 主にeltax�
                                                 st = (
                                                     st.replace("'", "")
                                                     .replace('"', "")
-                                                    .replace(r"\xa", "")
+                                                    .replace("\xa0", "")
                                                     .replace(r"\n", "")
                                                     .replace(r"\u2003", " ")
                                                     .replace(r"\u3000", " ")
                                                 )
+                                                st = st.replace(" ", "")
                                                 if (
                                                     not st == ""
                                                     and not st == " "
@@ -377,11 +435,12 @@ def CellsActionOsirase(stt, cellsList, ColumList, TxtList):  # 申告のお知�
                                 txts[tx]
                                 .replace("'", "")
                                 .replace('"', "")
-                                .replace(r"\xa", "")
+                                .replace("\xa0", "")
                                 .replace(r"\n", "")
                                 .replace(r"\u2003", " ")
                                 .replace(r"\u3000", " ")
                             )
+                            txts[tx] = txts[tx].replace(" ", "")
                             txts[tx] = ChangeBusyu(txts[tx])
                         and_list = set(txts) & set(stt)  # テキストリストとカラムリストで一致する要素を抽出
                         if len(and_list) > 0:  # テキストリストとカラムリストで一致する要素が一つ以上なら
@@ -429,11 +488,12 @@ def CellsActionOsirase(stt, cellsList, ColumList, TxtList):  # 申告のお知�
                             txts = (
                                 txts.replace("'", "")
                                 .replace('"', "")
-                                .replace(r"\xa", "")
+                                .replace("\xa0", "")
                                 .replace(r"\n", "")
                                 .replace(r"\u2003", " ")
                                 .replace(r"\u3000", " ")
                             )
+                            txts = txts.replace(" ", "")
                             txts = ChangeBusyu(txts)
                             if txts.startswith(" ") is True:
                                 txts.replace(" ", "")
@@ -448,7 +508,227 @@ def CellsActionOsirase(stt, cellsList, ColumList, TxtList):  # 申告のお知�
 
 
 # --------------------------------------------------------------------------------------------------
-def CellsImport(Settingtoml, SCode, path_pdf, tables, page, TaxType):
+def CellsActionTKC(stt, cellsList, ColumList, TxtList, Sbtext):  # 主にeltax処理
+    try:
+        Sbtext = Sbtext.split("\n")
+        print(Sbtext)
+        for SbtextItem in Sbtext:  # セルループ
+            # 処理中のテキストがカラムリストにあるか判定--------------------------
+            for sttItem in stt:
+                if (
+                    sttItem in SbtextItem
+                    and not SbtextItem == ""
+                    and "ＱＲコード" not in SbtextItem
+                ):
+                    SbtextItem = SbtextItem.replace(sttItem + ":", sttItem + "::")
+                    SbtextItem = SbtextItem.replace(sttItem + "：", sttItem + "::")
+                    SbtextItem = SbtextItem.replace("\u3000", "")
+                    SbtextItem = SbtextItem.replace(" ", "")
+                    SI = SbtextItem.split("::")
+                    ColumList.append(SI[0])
+                    TxtList.append(SI[1])
+                    break
+        return True, ColumList, TxtList
+    except:
+        return False, "", ""
+
+
+# --------------------------------------------------------------------------------------------------
+def CellsMoveAction(stt, cellsList, ColumList, TxtList, Sbtext):  # 主にeltax処理
+    try:
+        ColumFlag = False  # カラム対象フラグ
+        TFlag = False  # テキスト取得対象フラグ
+        Getu = False  # 月数換算項目フラグ
+        for cellsListItem in cellsList:  # セルループ
+            for CLIItem in cellsListItem:
+                CLIT = (
+                    CLIItem.text.replace(" ", "")
+                    .replace("'", "")
+                    .replace('"', "")
+                    .replace("\xa0", "")
+                    .replace(r"\n", "")
+                    .replace(r"\u2003", " ")
+                    .replace(r"\u3000", " ")
+                )
+                CLIT = CLIT.replace(" ", "")
+                if CLIT == "月数換算":
+                    Getu = True  # 月数換算項目フラグ
+                # 処理中のテキストがカラムリストにあるか判定--------------------------
+                for sttItem in stt:
+                    if sttItem == CLIT and not CLIT == "":
+                        ColumFlag = True
+                        TFlag = False
+                        break
+                    else:
+                        ColumFlag = False
+                        TFlag = True
+                if ColumFlag is True:
+                    ColumList.append(CLIT)
+                    ColumFlag = False
+                elif TFlag is True:
+                    if Getu is True:
+                        CLITs = ""
+                        CLITList = re.findall(r"\d+", CLIT)  # 数値のみ取り出すてリスト化
+                        CLIRow = 0
+                        for CLITListItem in CLITList:
+                            if len(CLITList) == 3:
+                                CLIsp = 1
+                            else:
+                                CLIsp = 2
+                            if CLIRow == CLIsp:
+                                CLITs = CLITs + "/" + CLITListItem
+                            else:
+                                CLITs += CLITListItem
+                            CLIRow += 1
+                        CLIT = CLITs
+                        TxtList.append(CLIT)
+                        Getu = False
+                    else:
+                        TxtList.append(CLIT)
+                    TFlag = False
+        return True, ColumList, TxtList
+    except:
+        return False, "", ""
+
+
+# --------------------------------------------------------------------------------------------------
+def CATKCList(stt, Kokuzei, Tihouzei, Mcells, ColumList, TxtList):
+    try:
+        if Kokuzei is True or Tihouzei is True:  # フラグが立っていれば
+            for cellsListItem in Mcells:  # セルループ
+                for CLIItem in cellsListItem:
+                    CLIT = (
+                        CLIItem.text.replace(" ", "")
+                        .replace("'", "")
+                        .replace('"', "")
+                        .replace("\xa0", "")
+                        .replace(r"\n", "")
+                        .replace(r"\u2003", " ")
+                        .replace(r"\u3000", " ")
+                    )
+                    CLIT = CLIT.replace(" ", "").replace("\n", "")
+                    CLIT = CLIT.replace("\u3000", "")
+                    # 処理中のテキストがカラムリストにあるか判定-----------
+                    for sttItem in stt:
+                        if sttItem in CLIT and not CLIT == "":
+                            ColumFlag = True
+                            TFlag = False
+                            break
+                        else:
+                            ColumFlag = False
+                            TFlag = True
+                    # -------------------------------------------------
+                    CLIT = CLIT.replace(":", "::").replace("：", "::")
+                    CLITList = CLIT.split("::")
+                    if ColumFlag is True:
+                        ColumList.append(CLITList[0])
+                        ColumFlag = False
+                        TxtList.append(CLITList[1])
+                        TFlag = False
+            return True, ColumList, TxtList
+    except:
+        return False, "", ""
+
+
+def CellsActionTKCList(
+    CDict,
+    Settingtoml,
+    stt,
+    cellsList,
+    ColumList,
+    TxtList,
+    Sbtext,
+    path_pdf,
+    page,
+    SCode,
+    DLCList,
+):  # 主にeltax処理
+    try:
+        CellPosition = []
+        Sbtext = Sbtext.split("\n")
+        SBR = len(Sbtext) - 1
+        for SbtextItem in reversed(Sbtext):
+            if SbtextItem == "":
+                Sbtext.pop(SBR)
+            SBR -= 1
+        print(Sbtext)
+        sKR = 0
+        for SbtextItem in Sbtext:  # セルループ
+            strKey = (
+                SbtextItem.replace(" ", "")
+                .replace("'", "")
+                .replace('"', "")
+                .replace("\xa0", "")
+                .replace(r"\n", "")
+                .replace(r"\u2003", " ")
+                .replace(r"\u3000", " ")
+            )
+            if "受信通知】" in strKey or "受付通知】" in strKey:
+                CellPosition.append(sKR)
+            sKR += 1
+        lcp = len(CellPosition)
+        MSbList = []
+        for lcpC in range(lcp):  # セルポジションリストループ
+            FP = CellPosition[lcpC]
+            try:
+                LP = CellPosition[lcpC + 1]
+            except:
+                LP = len(Sbtext)
+            for Sr in range(FP, LP):
+                SBT = (
+                    Sbtext[Sr]
+                    .replace(" ", "")
+                    .replace("'", "")
+                    .replace('"', "")
+                    .replace("\xa0", "")
+                    .replace(r"\n", "")
+                    .replace(r"\u2003", " ")
+                    .replace(r"\u3000", " ")
+                )
+                SBT = SBT.replace("\u3000", "").replace(" ", "")
+                MSbList.append(SBT)
+            # 固定パラメーターを挿入------------------------------------------------
+            ColumList.append("URL")
+            ColumList.append("ページ")
+            ColumList.append("コード")
+            TxtList.append(path_pdf.replace("/", "\\"))
+            TxtList.append(str(page + 1) + "ページ")
+            TxtList.append(str(SCode))
+            # --------------------------------------------------------------------
+            for SbtextItem in MSbList:  # セルループ
+                if SbtextItem == "申告の種類":
+                    print(SbtextItem)
+                # 処理中のテキストがカラムリストにあるか判定--------------------------
+                for sttItem in stt:
+                    if (
+                        sttItem in SbtextItem
+                        and not SbtextItem == ""
+                        and "ＱＲコード" not in SbtextItem
+                    ):
+                        SbtextItem = SbtextItem.replace(sttItem + ":", sttItem + "::")
+                        SbtextItem = SbtextItem.replace(sttItem + "：", sttItem + "::")
+                        SbtextItem = SbtextItem.replace("\u3000", "")
+                        SbtextItem = SbtextItem.replace(" ", "")
+                        if "::" in SbtextItem:
+                            SI = SbtextItem.split("::")
+                            ColumList.append(SI[0])
+                            TxtList.append(SI[1])
+                            break
+            DLP = DiffListPlus(CDict, Settingtoml, ColumList, TxtList, "", DLCList)
+            if DLP[0] is True:
+                DLCList.append(DLP[1])
+            ColumList = []
+            TxtList = []
+            MSbList = []
+        return True, DLCList, ""
+    except:
+        return False, "", ""
+
+
+# --------------------------------------------------------------------------------------------------
+def CellsImport(
+    CDict, Settingtoml, SCode, path_pdf, tables, page, TaxType, Sbtext, DLCList
+):
     try:
         # MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
         # # toml読込------------------------------------------------------------------------------
@@ -460,8 +740,10 @@ def CellsImport(Settingtoml, SCode, path_pdf, tables, page, TaxType):
         # # ----------------------------------------------------------------------------------------
         ColumList = []  # 項目リスト
         TxtList = []  # テキストリスト
-        cellsList = list(tables._tables[page].cells)  # セル情報のリスト
-
+        try:
+            cellsList = list(tables._tables[page].cells)  # セル情報のリスト
+        except:
+            cellsList = []
         # 固定パラメーターを挿入------------------------------------------------
         ColumList.append("URL")
         ColumList.append("ページ")
@@ -479,6 +761,33 @@ def CellsImport(Settingtoml, SCode, path_pdf, tables, page, TaxType):
         elif "etaxjigyounendo" == TaxType:
             stt = Settingtoml["CsvSaveEnc"][TaxType]
             CA = CellsActionJigyounendo(stt, cellsList, ColumList, TxtList)
+        elif "TKC" in TaxType:
+            if "TKC3" == TaxType:
+                stt = Settingtoml["CsvSaveEnc"][TaxType]
+                ColumList = []
+                TxtList = []
+                CA = CellsActionTKCList(
+                    CDict,
+                    Settingtoml,
+                    stt,
+                    cellsList,
+                    ColumList,
+                    TxtList,
+                    Sbtext,
+                    path_pdf,
+                    page,
+                    SCode,
+                    DLCList,
+                )
+            else:
+                stt = Settingtoml["CsvSaveEnc"][TaxType]
+                CA = CellsActionTKC(stt, cellsList, ColumList, TxtList, Sbtext)
+        elif "etaxsyouhicyuukan" in TaxType:
+            stt = Settingtoml["CsvSaveEnc"][TaxType]
+            CA = CellsMoveAction(stt, cellsList, ColumList, TxtList, Sbtext)
+        elif "MJS" in TaxType:
+            stt = Settingtoml["CsvSaveEnc"][TaxType]
+            CA = CellsAction(stt, cellsList, ColumList, TxtList)
         else:
             stt = Settingtoml["CsvSaveEnc"][TaxType]
             CA = CellsAction(stt, cellsList, ColumList, TxtList)

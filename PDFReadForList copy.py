@@ -41,7 +41,7 @@ def SerchdirFiles(URL):  # 指定URL配下のファイルを取得
 
 
 # -------------------------------------------------------------------------------------------------------
-def DiffListPlus(ColList, ScrList):
+def DiffListPlus(ColList, ScrList, Ers):
     try:
         LNList = Settingtoml["MASTER"]["ListNameList"]  # tomlから各種設定リスト名を抽出
         NewColList = []
@@ -57,17 +57,28 @@ def DiffListPlus(ColList, ScrList):
             "========================================================================================"
         )
         print(ScrList)
-        print("指定列名での設定項目がありませんでした。")
-        CDict["ErrList"].append(ScrList)
-        return False, "エラーリスト"
+        if Ers == "Sub":
+            print("サブテーブル取得エラー")
+            CDict["SubErrList"].append(ScrList)
+            return False, "SubErrList"
+        else:
+            print("指定列名での設定項目がありませんでした。")
+            CDict["ErrList"].append(ScrList)
+            return False, "ErrList"
     except:
         print(ColList)
         print(
             "========================================================================================"
         )
         print(ScrList)
-        CDict["ErrList"].append(ScrList)
-        return False, "エラーリスト"
+        if Ers == "Sub":
+            print("サブテーブル取得エラー")
+            CDict["SubErrList"].append(ScrList)
+            return False, "SubErrList"
+        else:
+            print("指定列名での設定項目がありませんでした。")
+            CDict["ErrList"].append(ScrList)
+            return False, "ErrList"
 
 
 # -------------------------------------------------------------------------------------------------------
@@ -82,14 +93,7 @@ def DiffListCSVOUT(ListURL, ColN):
 
 
 # ----------------------------------------------------------------------------------------------
-def CamelotSerch(
-    path_pdf,
-    PageVol,
-    Settingtoml,
-    SCode,
-    y,
-    engine,
-):
+def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCList):
     try:
         TO = True  # TimeOut判定変数
         # 第三引数に'stream'を渡すと表外の値を抽出できる
@@ -97,11 +101,17 @@ def CamelotSerch(
             tables = CTO.camelotTimeOut(path_pdf, PageVol, engine)
         else:
             tables = CTO.camelotTimeOut(path_pdf, PageVol, "")
-        t = tables._tables[0].data
-        Sbtext = "".join([str(_) for _ in t])
+        # t = tables._tables[0].data
+        # Sbtext = "".join([str(_) for _ in t])
+        Sbtext = extract_text(path_pdf, page_numbers=y, codec="utf-8")  # テキストのみ取得できる
         # =================================================================
         if "申告のお知らせ" in Sbtext:
-            TaxType = "etaxosirase"
+            if "課税期間分の中間申告について" in Sbtext:
+                TaxType = "etaxsyouhicyuukan"
+            elif "事業年度等分中間（予定）申告について" in Sbtext:
+                TaxType = "etaxjigyounendo"
+            else:
+                TaxType = "etaxosirase"
         elif "「消費税の納税義務者でなくなった旨の届出書」を提出していない場合には" in Sbtext:
             TaxType = "etaxsyouhi"
         elif "消費税簡易課税制度選択不適⽤届出" in Sbtext:
@@ -113,17 +123,31 @@ def CamelotSerch(
                 TaxType = "etaxsyotoku"
         elif "前事業年度等" in Sbtext:
             TaxType = "etaxjigyounendo"
+        elif "Copyright(C) TKC" in Sbtext:
+            if "税務届出書類等作成支援システム(e-DMS)による電子申請・届出が完了しましたので、ご報告いたします。" in Sbtext:
+                if "地 方 税 の 電 子 申 請・届 出 完 了 報 告 書" in Sbtext:
+                    TaxType = "TKC2"
+                else:
+                    TaxType = "TKC"
+            elif "ＴＫＣ電子申告システム" in Sbtext:
+                TaxType = "TKC3"
+                tables = CTO.camelotTimeOut(path_pdf, PageVol, "stream")
         else:
-            TaxType = "eltaxList"
+            if "送信された申告データを受付けました。" in Sbtext:
+                TaxType = "MJS"
+            else:
+                TaxType = "eltaxList"
         # =================================================================
-        tCells = FPDF.CellsImport(Settingtoml, SCode, path_pdf, tables, y, TaxType)
+        tCells = FPDF.CellsImport(
+            CDict, Settingtoml, SCode, path_pdf, tables, y, TaxType, Sbtext, DLCList
+        )
         if tCells[0] is False:
             TO = False
-        return True, TO, tables, tCells
+        return True, TO, tables, tCells, TaxType
         # tCells = FPDF.CellsImport(Settingtoml,SCode, path_pdf, tables, y)
     except:  # TimeOut処理を記述
         TO = False  # TimeOut判定変数
-        return False, TO, tables, tCells
+        return False, TO, tables, tCells, TaxType
 
 
 # ----------------------------------------------------------------------------------------------
@@ -150,73 +174,89 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
             # 一回目の処理-----------------------------------------------
             # PDFテキスト内容で税目処理分け
             TO = CamelotSerch(
-                path_pdf, PageVol, Settingtoml, SCode, y, ""
+                CDict, path_pdf, PageVol, Settingtoml, SCode, y, "", DLCList
             )  # return True, TO,tables, tCells
             # ---------------------------------------------------------
-            if TO[1] is not False:  # 一回目処理がTimeOutしなかったら
-                tables = TO[2]
-                tCells = TO[3]
-                t_count = len(tables)  # PDFのテーブル数を格納
-                # PDFのテーブル数をが二つ以上なら----------------------------------
-                if t_count >= 2:
-                    # 既に取得済みの初めのページを格納
-                    DLP = DiffListPlus(tCells[1], tCells[2])  # 抽出リストに格納
-                    DLCList.append(DLP[1])  # できあがった抽出リストを保管
+            if "TKC" not in TO[4]:  # 一回目処理結果がTKCじゃなければ
+                if TO[1] is not False:  # 一回目処理がTimeOutしなかったら
+                    tables = TO[2]
+                    tCells = TO[3]
+                    t_count = len(tables)  # PDFのテーブル数を格納
+                    # PDFのテーブル数をが二つ以上なら----------------------------------
+                    if t_count >= 2:
+                        # 既に取得済みの初めのページを格納
+                        DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
+                        DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                        # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
+                        # PDFテキスト内容で税目処理分け
+                        SB = CamelotSerch(
+                            CDict, path_pdf, PageVol, Settingtoml, SCode, y, "stream"
+                        )  # return True, TO,tables, tCells
+                        # ---------------------------------------------------------
+                        Subtables = SB[2]
+                        SubtCells = SB[3]
+                        SubtCells[2][1] = str(SubtCells[2][1]) + "サブテーブル失敗"
+                        DLP = DiffListPlus(
+                            SubtCells[1], SubtCells[2], "Sub"
+                        )  # 抽出リストに格納
+                        DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                        # TKCPDFの表外テキスト抽出処理------------------------------
+                        # PDFテキスト内容で税目処理分け
+                        SB = CamelotSerch(
+                            CDict, path_pdf, PageVol, Settingtoml, SCode, y, "stream"
+                        )  # return True, TO,tables, tCells
+                        # ---------------------------------------------------------
+                    else:
+                        # 既に取得済みの初めのページを格納
+                        DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
+                        DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                    # ------------------------------------------------------------
+                else:
                     # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
                     # PDFテキスト内容で税目処理分け
                     SB = CamelotSerch(
-                        path_pdf, PageVol, Settingtoml, SCode, y, "stream"
+                        CDict, path_pdf, PageVol, Settingtoml, SCode, y, "stream"
                     )  # return True, TO,tables, tCells
                     # ---------------------------------------------------------
-                    Subtables = SB[2]
-                    SubtCells = SB[3]
-                    SubtCells[2][1] = str(SubtCells[2][1]) + "サブテーブル失敗"
-                    DLP = DiffListPlus(SubtCells[1], SubtCells[2])  # 抽出リストに格納
-                    DLCList.append(DLP[1])  # できあがった抽出リストを保管
-                else:
+                    if SB[1] is not False:  # 一回目処理がTimeOutしなかったら
+                        Subtables = SB[2]
+                        SubtCells = SB[3]
+                        DLP = DiffListPlus(SubtCells[1], SubtCells[2], "")  # 抽出リストに格納
+                        DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                    else:
+                        logger.debug(path_pdf + "_" + str(y + 1) + "ページ目タイムアウト")
+                        OutputList = [
+                            path_pdf.replace("/", "\\"),
+                            str(y + 1) + "ページ目タイムアウト",
+                            SCode,
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                        ]
+                        DLP = DiffListPlus(
+                            Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
+                        )  # 抽出リストに格納
+                        DLCList.append(DLP[1])  # できあがった抽出リストを保管
+            else:  # 一回目処理結果がTKCだったら
+                if not TO[4] == "TKC3":
+                    tables = TO[2]
+                    tCells = TO[3]
                     # 既に取得済みの初めのページを格納
-                    DLP = DiffListPlus(tCells[1], tCells[2])  # 抽出リストに格納
-                    DLCList.append(DLP[1])  # できあがった抽出リストを保管
-                # ------------------------------------------------------------
-            else:
-                # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
-                # PDFテキスト内容で税目処理分け
-                SB = CamelotSerch(
-                    path_pdf, PageVol, Settingtoml, SCode, y, "stream"
-                )  # return True, TO,tables, tCells
-                # ---------------------------------------------------------
-                if SB[1] is not False:  # 一回目処理がTimeOutしなかったら
-                    Subtables = SB[2]
-                    SubtCells = SB[3]
-                    DLP = DiffListPlus(SubtCells[1], SubtCells[2])  # 抽出リストに格納
-                    DLCList.append(DLP[1])  # できあがった抽出リストを保管
-                else:
-                    logger.debug(path_pdf + "_" + str(y + 1) + "ページ目タイムアウト")
-                    OutputList = [
-                        path_pdf.replace("/", "\\"),
-                        str(y + 1) + "ページ目タイムアウト",
-                        SCode,
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                    ]
-                    DLP = DiffListPlus(
-                        Settingtoml["CsvSaveEnc"]["ErrList"], OutputList
-                    )  # 抽出リストに格納
+                    DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
                     DLCList.append(DLP[1])  # できあがった抽出リストを保管
     except Exception as e:
         if TO[0] is not False:
@@ -244,7 +284,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                 "",
             ]
             DLP = DiffListPlus(
-                Settingtoml["CsvSaveEnc"]["ErrList"], OutputList
+                Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
             )  # 抽出リストに格納
             if DLP[0] is True:
                 DLCList.append(DLP[1])  # できあがった抽出リストを保管
