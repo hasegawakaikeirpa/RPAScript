@@ -134,7 +134,14 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
                 tables = CTO.camelotTimeOut(path_pdf, PageVol, "stream")
         else:
             if "送信された申告データを受付けました。" in Sbtext:
-                TaxType = "MJS"
+                MOUTList = Settingtoml["OUTLIST"]["MJSOutList"]
+                Sbt = Sbtext.replace("\u3000", "").replace("\n", "")
+                for MOUTListItem in MOUTList:
+                    if MOUTListItem in Sbt:
+                        TaxType = "MJSOutList"
+                        break
+                    else:
+                        TaxType = "MJS"
             else:
                 TaxType = "eltaxList"
         # =================================================================
@@ -208,6 +215,13 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                         # ---------------------------------------------------------
                     else:
                         # 既に取得済みの初めのページを格納
+                        # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
+                        # PDFテキスト内容で税目処理分け
+                        SB = CamelotSerch(
+                            CDict, path_pdf, PageVol, Settingtoml, SCode, y, "stream"
+                        )  # return True, TO,tables, tCells
+                        # ---------------------------------------------------------
+
                         DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
                         DLCList.append(DLP[1])  # できあがった抽出リストを保管
                     # ------------------------------------------------------------
@@ -258,6 +272,8 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                     # 既に取得済みの初めのページを格納
                     DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
                     DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                else:
+                    print("TKCテキスト完了")
     except Exception as e:
         if TO[0] is not False:
             logger.debug(path_pdf + "_" + str(y + 1) + "ページ目取得失敗")
