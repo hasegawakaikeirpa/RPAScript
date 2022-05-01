@@ -27,10 +27,13 @@ TKC5 = []
 TKC6 = []
 TKC7 = []
 TKC8 = []
+TKC9 = []
 MJS = []
 MJS2 = []
 MJS3 = []
 MJS4 = []
+MJS5 = []
+MJS6 = []
 ErrList = []  # エラーリスト
 SubErrList = []
 # 関数の引数様にDict格納-------------------------------------------------------------------------
@@ -63,10 +66,13 @@ CSVIndexSortFuncArray = {
     "TKC6": TKC6,
     "TKC7": TKC7,
     "TKC8": TKC8,
+    "TKC9": TKC9,
     "MJS": MJS,
     "MJS2": MJS2,
     "MJS3": MJS3,
     "MJS4": MJS4,
+    "MJS5": MJS5,
+    "MJS6": MJS6,
     "ErrList": ErrList,
     "SubErrList": SubErrList,
 }
