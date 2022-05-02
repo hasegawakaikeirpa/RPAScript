@@ -190,7 +190,11 @@ def CellsActionMJS(stt, rtt, cellsList, ColumList, TxtList, Sbtext):  # 主にel
                     and not SbtextItem == ""
                     and "ＱＲコード" not in SbtextItem
                 ):
-                    SbtextItem = SbtextItem.replace(rttItem + ":", rttItem + "::")
+                    if rttItem + ":" in SbtextItem:
+                        SbtextItem = SbtextItem.replace(rttItem + ":", rttItem + "::")
+                    else:
+                        SbtextItem = SbtextItem.replace(rttItem, rttItem + ":")
+                        SbtextItem = SbtextItem.replace(rttItem + ":", rttItem + "::")
                     SbtextItem = SbtextItem.replace(rttItem + "：", rttItem + "::")
                     SbtextItem = SbtextItem.replace("\u3000", "").replace(r"\u3000", "")
                     SbtextItem = SbtextItem.replace(" ", "")
@@ -643,7 +647,11 @@ def CellsActionTKC(stt, cellsList, ColumList, TxtList, Sbtext):  # 主にeltax�
                     and not SbtextItem == ""
                     and "ＱＲコード" not in SbtextItem
                 ):
-                    SbtextItem = SbtextItem.replace(sttItem + ":", sttItem + "::")
+                    if sttItem + ":" in SbtextItem:
+                        SbtextItem = SbtextItem.replace(sttItem + ":", sttItem + "::")
+                    else:
+                        SbtextItem = SbtextItem.replace(sttItem, sttItem + ":")
+                        SbtextItem = SbtextItem.replace(sttItem + ":", sttItem + "::")
                     SbtextItem = SbtextItem.replace(sttItem + "：", sttItem + "::")
                     SbtextItem = SbtextItem.replace("\u3000", "")
                     SbtextItem = SbtextItem.replace(" ", "")
@@ -829,7 +837,15 @@ def CellsActionTKCList(
                         and not SbtextItem == ""
                         and "ＱＲコード" not in SbtextItem
                     ):
-                        SbtextItem = SbtextItem.replace(sttItem + ":", sttItem + "::")
+                        if sttItem + ":" in SbtextItem:
+                            SbtextItem = SbtextItem.replace(
+                                sttItem + ":", sttItem + "::"
+                            )
+                        else:
+                            SbtextItem = SbtextItem.replace(sttItem, sttItem + ":")
+                            SbtextItem = SbtextItem.replace(
+                                sttItem + ":", sttItem + "::"
+                            )
                         SbtextItem = SbtextItem.replace(sttItem + "：", sttItem + "::")
                         SbtextItem = SbtextItem.replace("\u3000", "")
                         SbtextItem = SbtextItem.replace(" ", "")
