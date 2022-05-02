@@ -28,6 +28,12 @@ TKC6 = []
 TKC7 = []
 TKC8 = []
 TKC9 = []
+TKC10 = []
+TKC11 = []
+TKC12 = []
+TKC13 = []
+TKC14 = []
+TKC15 = []
 MJS = []
 MJS2 = []
 MJS3 = []
@@ -35,6 +41,17 @@ MJS4 = []
 MJS5 = []
 MJS6 = []
 MJS7 = []
+MJS8 = []
+MJS9 = []
+MJS10 = []
+MJS11 = []
+MJS12 = []
+MJS13 = []
+MJS14 = []
+MJS15 = []
+MJS16 = []
+MJS17 = []
+MJSImage = []
 ErrList = []  # エラーリスト
 SubErrList = []
 # 関数の引数様にDict格納-------------------------------------------------------------------------
@@ -68,6 +85,12 @@ CSVIndexSortFuncArray = {
     "TKC7": TKC7,
     "TKC8": TKC8,
     "TKC9": TKC9,
+    "TKC10": TKC10,
+    "TKC11": TKC11,
+    "TKC12": TKC12,
+    "TKC13": TKC13,
+    "TKC14": TKC14,
+    "TKC15": TKC15,
     "MJS": MJS,
     "MJS2": MJS2,
     "MJS3": MJS3,
@@ -75,6 +98,17 @@ CSVIndexSortFuncArray = {
     "MJS5": MJS5,
     "MJS6": MJS6,
     "MJS7": MJS7,
+    "MJS8": MJS8,
+    "MJS9": MJS9,
+    "MJS10": MJS10,
+    "MJS11": MJS11,
+    "MJS12": MJS12,
+    "MJS13": MJS13,
+    "MJS14": MJS14,
+    "MJS15": MJS15,
+    "MJS16": MJS16,
+    "MJS17": MJS17,
+    "MJSImage": MJSImage,
     "ErrList": ErrList,
     "SubErrList": SubErrList,
 }

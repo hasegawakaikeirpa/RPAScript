@@ -103,7 +103,12 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
             tables = CTO.camelotTimeOut(path_pdf, PageVol, "")
         # t = tables._tables[0].data
         # Sbtext = "".join([str(_) for _ in t])
-        Sbtext = extract_text(path_pdf, page_numbers=y, codec="utf-8")  # テキストのみ取得できる
+        mp = []
+        mp.append(y)
+        Sbtext = extract_text(
+            path_pdf, page_numbers=mp, maxpages=1, codec="utf-8"
+        )  # テキストのみ取得できる
+        Sbtext = Sbtext.replace("\n\n", ":")
         # =================================================================
         if "申告のお知らせ" in Sbtext:
             if "課税期間分の中間申告について" in Sbtext:
@@ -124,13 +129,19 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
         elif "前事業年度等" in Sbtext:
             TaxType = "etaxjigyounendo"
         elif "Copyright(C) TKC" in Sbtext:
-            if "税務届出書類等作成支援システム(e-DMS)による電子申請・届出が完了しましたので、ご報告いたします。" in Sbtext:
+            if "国 税 の 電 子 申 請・届 出 完 了 報 告 書" in Sbtext:
+                TaxType = "TKC13"
+                tables = CTO.camelotTimeOut(path_pdf, PageVol, "stream")
+            elif "税務届出書類等作成支援システム(e-DMS)による電子申請・届出が完了しましたので、ご報告いたします。" in Sbtext:
                 if "地 方 税 の 電 子 申 請・届 出 完 了 報 告 書" in Sbtext:
                     TaxType = "TKC2"
                 else:
                     TaxType = "TKC"
             elif "ＴＫＣ電子申告システム" in Sbtext:
                 TaxType = "TKC3"
+                tables = CTO.camelotTimeOut(path_pdf, PageVol, "stream")
+            elif "地 方 税 ポ ー タ ル シ ス テ ム ( e L T A X ) の" in Sbtext:
+                TaxType = "TKC10"
                 tables = CTO.camelotTimeOut(path_pdf, PageVol, "stream")
         else:
             if "送信された申告データを受付けました。" in Sbtext:
@@ -217,7 +228,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                         # 既に取得済みの初めのページを格納
                         # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
                         # PDFテキスト内容で税目処理分け
-                        if not "MJSOutList" == TO[4]:
+                        if "TKC" in TO[4]:
                             SB = CamelotSerch(
                                 CDict,
                                 path_pdf,
@@ -273,7 +284,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                         )  # 抽出リストに格納
                         DLCList.append(DLP[1])  # できあがった抽出リストを保管
             else:  # 一回目処理結果がTKCだったら
-                if not TO[4] == "TKC3":
+                if not TO[4] == "TKC3" and not TO[4] == "TKC13":
                     tables = TO[2]
                     tCells = TO[3]
                     # 既に取得済みの初めのページを格納
@@ -282,7 +293,37 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                 else:
                     print("TKCテキスト完了")
     except Exception as e:
-        if TO[0] is not False:
+        if e.args[0] == "local variable 'tables' referenced before assignment":
+            logger.debug(path_pdf + "_" + str(y + 1) + "ページ目取得失敗")
+            OutputList = [
+                path_pdf.replace("/", "\\"),
+                str(y + 1) + "ページ目取得失敗",
+                SCode,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+            ]
+            DLP = DiffListPlus(
+                Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
+            )  # 抽出リストに格納
+            if DLP[0] is True:
+                DLCList.append(DLP[1])  # できあがった抽出リストを保管
+            print(e)
+        elif TO[0] is not False:
             logger.debug(path_pdf + "_" + str(y + 1) + "ページ目取得失敗")
             OutputList = [
                 path_pdf.replace("/", "\\"),
@@ -391,7 +432,7 @@ with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as
     print(Settingtoml)
 # ----------------------------------------------------------------------------------------
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
-# URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\送信分受信通知"
+# URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-5\\送信分受信通知"
 URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFREADLog"
 try:
