@@ -192,12 +192,18 @@ def CellsActionMJS(stt, rtt, cellsList, ColumList, TxtList, Sbtext):  # 主にel
                 ):
                     if rttItem + ":" in SbtextItem:
                         SbtextItem = SbtextItem.replace(rttItem + ":", rttItem + "::")
+                    elif rttItem + "：" in SbtextItem:
+                        SbtextItem = SbtextItem.replace(rttItem + "：", rttItem + "::")
                     else:
                         SbtextItem = SbtextItem.replace(rttItem, rttItem + ":")
                         SbtextItem = SbtextItem.replace(rttItem + ":", rttItem + "::")
+                        if "受付日::時：" in SbtextItem:
+                            SbtextItem = SbtextItem.replace("受付日::時：", "受付日時::")
+                        elif "受付日::時:" in SbtextItem:
+                            SbtextItem = SbtextItem.replace("受付日::時:", "受付日時::")
                     SbtextItem = SbtextItem.replace(rttItem + "：", rttItem + "::")
                     SbtextItem = SbtextItem.replace("\u3000", "").replace(r"\u3000", "")
-                    SbtextItem = SbtextItem.replace(" ", "")
+                    SbtextItem = SbtextItem.replace(" ", "").replace("円:", "円::")
                     SI = SbtextItem.split("::")
                     ColumList.append(SI[0])
                     TxtList.append(SI[1])
@@ -640,6 +646,8 @@ def CellsActionTKC(stt, cellsList, ColumList, TxtList, Sbtext):  # 主にeltax�
         Sbtext = Sbtext.split("\n")
         print(Sbtext)
         for SbtextItem in Sbtext:  # セルループ
+            SbtextItem = SbtextItem.replace("\u3000", "")
+            SbtextItem = SbtextItem.replace(" ", "")
             # 処理中のテキストがカラムリストにあるか判定--------------------------
             for sttItem in stt:
                 if (
@@ -649,16 +657,35 @@ def CellsActionTKC(stt, cellsList, ColumList, TxtList, Sbtext):  # 主にeltax�
                 ):
                     if sttItem + ":" in SbtextItem:
                         SbtextItem = SbtextItem.replace(sttItem + ":", sttItem + "::")
+                    elif sttItem + "：" in SbtextItem:
+                        SbtextItem = SbtextItem.replace(sttItem + "：", sttItem + "::")
                     else:
                         SbtextItem = SbtextItem.replace(sttItem, sttItem + ":")
                         SbtextItem = SbtextItem.replace(sttItem + ":", sttItem + "::")
+                        if "受付日::時：" in SbtextItem:
+                            SbtextItem = SbtextItem.replace("受付日::時：", "受付日時::")
+                        elif "受付日::時:" in SbtextItem:
+                            SbtextItem = SbtextItem.replace("受付日::時:", "受付日時::")
+                        elif "発行元::の" in SbtextItem:
+                            SbtextItem = SbtextItem.replace("発行元::の", "発行元の")
                     SbtextItem = SbtextItem.replace(sttItem + "：", sttItem + "::")
                     SbtextItem = SbtextItem.replace("\u3000", "")
                     SbtextItem = SbtextItem.replace(" ", "")
-                    SI = SbtextItem.split("::")
-                    ColumList.append(SI[0])
-                    TxtList.append(SI[1])
-                    break
+                    if "::" in SbtextItem:
+                        if (
+                            "地方税ポータルシステム(eLTAX)のメッセージボックスに格納された受付通知は以下の通りです。:"
+                            in SbtextItem
+                        ):
+                            SI = SbtextItem.split(
+                                "地方税ポータルシステム(eLTAX)のメッセージボックスに格納された受付通知は以下の通りです。:"
+                            )
+                            SI.pop(0)
+                            SI = SI[0].split("::")
+                        else:
+                            SI = SbtextItem.split("::")
+                        ColumList.append(SI[0])
+                        TxtList.append(SI[1])
+                        break
         return True, ColumList, TxtList
     except:
         return False, "", ""
@@ -782,6 +809,9 @@ def CellsActionTKCList(
         for SbtextItem in reversed(Sbtext):
             if SbtextItem == "":
                 Sbtext.pop(SBR)
+            elif "国税受付システムからの「受信通知」の内容" in SbtextItem:
+                Relist = SbtextItem.split("国税受付システムからの「受信通知」の内容")
+                Sbtext[SBR] = Sbtext[SBR].replace(Relist[0], "")
             SBR -= 1
         print(Sbtext)
         sKR = 0
@@ -841,14 +871,24 @@ def CellsActionTKCList(
                             SbtextItem = SbtextItem.replace(
                                 sttItem + ":", sttItem + "::"
                             )
+                        elif sttItem + "：" in SbtextItem:
+                            SbtextItem = SbtextItem.replace(
+                                sttItem + "：", sttItem + "::"
+                            )
                         else:
                             SbtextItem = SbtextItem.replace(sttItem, sttItem + ":")
                             SbtextItem = SbtextItem.replace(
                                 sttItem + ":", sttItem + "::"
                             )
+                            if "受付日::時：" in SbtextItem:
+                                SbtextItem = SbtextItem.replace("受付日::時：", "受付日時::")
+                            elif "受付日::時:" in SbtextItem:
+                                SbtextItem = SbtextItem.replace("受付日::時:", "受付日時::")
                         SbtextItem = SbtextItem.replace(sttItem + "：", sttItem + "::")
                         SbtextItem = SbtextItem.replace("\u3000", "")
                         SbtextItem = SbtextItem.replace(" ", "")
+                        if ":提出先::" in SbtextItem:
+                            SbtextItem = SbtextItem.replace(":提出先::", ":提出先:")
                         if "::" in SbtextItem:
                             SI = SbtextItem.split("::")
                             ColumList.append(SI[0])
@@ -881,7 +921,7 @@ def CellsImport(
         ColumList = []  # 項目リスト
         TxtList = []  # テキストリスト
         try:
-            cellsList = list(tables._tables[page].cells)  # セル情報のリスト
+            cellsList = list(tables._tables[0].cells)  # セル情報のリスト
         except:
             cellsList = []
         # 固定パラメーターを挿入------------------------------------------------
@@ -903,6 +943,23 @@ def CellsImport(
             CA = CellsActionJigyounendo(stt, cellsList, ColumList, TxtList)
         elif "TKC" in TaxType:
             if "TKC3" == TaxType:
+                stt = Settingtoml["CsvSaveEnc"][TaxType]
+                ColumList = []
+                TxtList = []
+                CA = CellsActionTKCList(
+                    CDict,
+                    Settingtoml,
+                    stt,
+                    cellsList,
+                    ColumList,
+                    TxtList,
+                    Sbtext,
+                    path_pdf,
+                    page,
+                    SCode,
+                    DLCList,
+                )
+            elif "TKC13" == TaxType:
                 stt = Settingtoml["CsvSaveEnc"][TaxType]
                 ColumList = []
                 TxtList = []
