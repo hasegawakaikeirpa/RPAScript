@@ -217,9 +217,16 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                         # 既に取得済みの初めのページを格納
                         # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
                         # PDFテキスト内容で税目処理分け
-                        SB = CamelotSerch(
-                            CDict, path_pdf, PageVol, Settingtoml, SCode, y, "stream"
-                        )  # return True, TO,tables, tCells
+                        if not "MJSOutList" == TO[4]:
+                            SB = CamelotSerch(
+                                CDict,
+                                path_pdf,
+                                PageVol,
+                                Settingtoml,
+                                SCode,
+                                y,
+                                "stream",
+                            )  # return True, TO,tables, tCells
                         # ---------------------------------------------------------
 
                         DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納

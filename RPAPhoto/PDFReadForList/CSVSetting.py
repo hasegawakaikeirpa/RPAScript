@@ -34,6 +34,7 @@ MJS3 = []
 MJS4 = []
 MJS5 = []
 MJS6 = []
+MJS7 = []
 ErrList = []  # エラーリスト
 SubErrList = []
 # 関数の引数様にDict格納-------------------------------------------------------------------------
@@ -73,6 +74,7 @@ CSVIndexSortFuncArray = {
     "MJS4": MJS4,
     "MJS5": MJS5,
     "MJS6": MJS6,
+    "MJS7": MJS7,
     "ErrList": ErrList,
     "SubErrList": SubErrList,
 }
