@@ -95,6 +95,7 @@ def DiffListCSVOUT(ListURL, ColN):
 # ----------------------------------------------------------------------------------------------
 def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCList):
     try:
+        NextFlag = False
         TO = True  # TimeOut判定変数
         # 第三引数に'stream'を渡すと表外の値を抽出できる
         if engine == "stream":
@@ -129,10 +130,7 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
         elif "前事業年度等" in Sbtext:
             TaxType = "etaxjigyounendo"
         elif "Copyright(C) TKC" in Sbtext:
-            if "国 税 の 電 子 申 請・届 出 完 了 報 告 書" in Sbtext:
-                TaxType = "TKC13"
-                tables = CTO.camelotTimeOut(path_pdf, PageVol, "stream")
-            elif "税務届出書類等作成支援システム(e-DMS)による電子申請・届出が完了しましたので、ご報告いたします。" in Sbtext:
+            if "税務届出書類等作成支援システム(e-DMS)による電子申請・届出が完了しましたので、ご報告いたします。" in Sbtext:
                 if "地 方 税 の 電 子 申 請・届 出 完 了 報 告 書" in Sbtext:
                     TaxType = "TKC2"
                 else:
@@ -156,8 +154,48 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
             else:
                 TaxType = "eltaxList"
         # =================================================================
+        CSbtext = Sbtext.split("\n")
+        SBR = len(CSbtext) - 1
+        for CSbtextItem in reversed(CSbtext):
+            if CSbtextItem == "":
+                CSbtext.pop(SBR)
+            elif "国税受付システムからの「受信通知」の内容" in CSbtextItem:
+                Relist = CSbtextItem.split("国税受付システムからの「受信通知」の内容")
+                CSbtext[SBR] = CSbtext[SBR].replace(Relist[0], "")
+            SBR -= 1
+        SBR = len(CSbtext) - 1
+        for SBRP in range(SBR - 10, SBR):
+            if "ファイル名称" in CSbtext[SBRP]:
+                print("1ページ")
+                NextFlag = False
+                break
+            else:
+                print("続き有")
+                NextFlag = True
+        # もしページで--------------------------------------------------
+        if NextFlag is True:
+            yy = int(PageVol)
+            mp = []
+            mp.append(yy)
+            NSbtext = extract_text(
+                path_pdf, page_numbers=mp, maxpages=1, codec="utf-8"
+            )  # テキストのみ取得できる
+            NSbtext = NSbtext.replace("\n\n", ":")
+            Sbtext = Sbtext + "\n" + NSbtext
+            print(Sbtext)
+
+        # -------------------------------------------------------------
         tCells = FPDF.CellsImport(
-            CDict, Settingtoml, SCode, path_pdf, tables, y, TaxType, Sbtext, DLCList
+            CDict,
+            Settingtoml,
+            SCode,
+            path_pdf,
+            tables,
+            y,
+            TaxType,
+            Sbtext,
+            DLCList,
+            NextFlag,
         )
         if tCells[0] is False:
             TO = False
@@ -284,7 +322,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                         )  # 抽出リストに格納
                         DLCList.append(DLP[1])  # できあがった抽出リストを保管
             else:  # 一回目処理結果がTKCだったら
-                if not TO[4] == "TKC3" and not TO[4] == "TKC13":
+                if not TO[4] == "TKC3":
                     tables = TO[2]
                     tCells = TO[3]
                     # 既に取得済みの初めのページを格納
@@ -293,7 +331,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                 else:
                     print("TKCテキスト完了")
     except Exception as e:
-        if e.args[0] == "local variable 'tables' referenced before assignment":
+        if TO[0] is not False:
             logger.debug(path_pdf + "_" + str(y + 1) + "ページ目取得失敗")
             OutputList = [
                 path_pdf.replace("/", "\\"),
@@ -323,7 +361,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
             if DLP[0] is True:
                 DLCList.append(DLP[1])  # できあがった抽出リストを保管
             print(e)
-        elif TO[0] is not False:
+        elif e.args[0] == "local variable 'tables' referenced before assignment":
             logger.debug(path_pdf + "_" + str(y + 1) + "ページ目取得失敗")
             OutputList = [
                 path_pdf.replace("/", "\\"),
@@ -432,7 +470,7 @@ with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as
     print(Settingtoml)
 # ----------------------------------------------------------------------------------------
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
-# URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-5\\送信分受信通知"
+# URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2\\送信分受信通知"
 URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFREADLog"
 try:

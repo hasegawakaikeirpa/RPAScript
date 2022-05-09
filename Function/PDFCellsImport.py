@@ -826,7 +826,7 @@ def CellsActionTKCList(
                 .replace(r"\u3000", " ")
             )
             if "受信通知】" in strKey or "受付通知】" in strKey:
-                CellPosition.append(sKR)
+                CellPosition.append(sKR + 1)
             sKR += 1
         lcp = len(CellPosition)
         MSbList = []
@@ -884,6 +884,10 @@ def CellsActionTKCList(
                                 SbtextItem = SbtextItem.replace("受付日::時：", "受付日時::")
                             elif "受付日::時:" in SbtextItem:
                                 SbtextItem = SbtextItem.replace("受付日::時:", "受付日時::")
+                            elif "後日、発行元::の担当者から" in SbtextItem:
+                                SbtextItem = SbtextItem.replace("発行元::", "発行元")
+                            elif "円:" in SbtextItem:
+                                SbtextItem = SbtextItem.replace("円:", "円::")
                         SbtextItem = SbtextItem.replace(sttItem + "：", sttItem + "::")
                         SbtextItem = SbtextItem.replace("\u3000", "")
                         SbtextItem = SbtextItem.replace(" ", "")
@@ -891,7 +895,33 @@ def CellsActionTKCList(
                             SbtextItem = SbtextItem.replace(":提出先::", ":提出先:")
                         if "::" in SbtextItem:
                             SI = SbtextItem.split("::")
-                            ColumList.append(SI[0])
+                            if SI[0] == sttItem or "納税者の氏名又は名称" == SI[0]:
+                                SII = SI[0]
+                                if len(SII) == 0:
+                                    ColumList.append(SII)
+                                else:
+                                    ColumList.append(SII)
+                            elif "特別法人事業税申告納付税額" in SbtextItem:
+                                if sttItem == "法人事業税申告納付税額":
+                                    ColumList.append("特別法人事業税申告納付税額")
+                            elif "法人市民税（法人税割）申告納付税額" in SbtextItem:
+                                if sttItem == "法人事業税申告納付税額":
+                                    SIRow = len(SI)
+                                    for SIItemRow in range(SIRow):
+                                        if sttItem in SI[SIItemRow]:
+                                            ColumList.append(SI[SIItemRow])
+                                            SI[1] = SI[SIItemRow + 1]
+                                else:
+                                    SIRow = len(SI)
+                                    for SIItemRow in range(SIRow):
+                                        if sttItem in SI[SIItemRow]:
+                                            ColumList.append(sttItem)
+                            else:
+                                SII = SI[0].split(sttItem)
+                                if len(SII) == 0:
+                                    ColumList.append(SII)
+                                else:
+                                    ColumList.append(SII[1])
                             TxtList.append(SI[1])
                             break
             DLP = DiffListPlus(CDict, Settingtoml, ColumList, TxtList, "")
@@ -907,11 +937,20 @@ def CellsActionTKCList(
 
 # --------------------------------------------------------------------------------------------------
 def CellsImport(
-    CDict, Settingtoml, SCode, path_pdf, tables, page, TaxType, Sbtext, DLCList
+    CDict,
+    Settingtoml,
+    SCode,
+    path_pdf,
+    tables,
+    page,
+    TaxType,
+    Sbtext,
+    DLCList,
+    NextFlag,
 ):
     try:
         # MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
-        # # toml読込------------------------------------------------------------------------------
+        # # toml読込---------------------------------------------------------------------------------
         # with open(
         #     MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8"
         # ) as f:
@@ -991,8 +1030,12 @@ def CellsImport(
                 stt = Settingtoml["CsvSaveEnc"][TaxType]
                 CA = CellsAction(stt, cellsList, ColumList, TxtList)
         else:
-            stt = Settingtoml["CsvSaveEnc"][TaxType]
-            CA = CellsAction(stt, cellsList, ColumList, TxtList)
+            if TaxType == "No":
+                print("テキスト内容からTaxTypeを判定できませんでした。")
+                return False, "テキスト内容からTaxTypeを判定できませんでした。", ""
+            else:
+                stt = Settingtoml["CsvSaveEnc"][TaxType]
+                CA = CellsAction(stt, cellsList, ColumList, TxtList)
         if CA[0] is True:
             return CA
         else:

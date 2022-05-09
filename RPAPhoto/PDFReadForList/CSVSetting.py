@@ -34,6 +34,9 @@ TKC12 = []
 TKC13 = []
 TKC14 = []
 TKC15 = []
+TKC16 = []
+TKC17 = []
+TKC18 = []
 MJS = []
 MJS2 = []
 MJS3 = []
@@ -91,6 +94,9 @@ CSVIndexSortFuncArray = {
     "TKC13": TKC13,
     "TKC14": TKC14,
     "TKC15": TKC15,
+    "TKC16": TKC16,
+    "TKC17": TKC17,
+    "TKC18": TKC18,
     "MJS": MJS,
     "MJS2": MJS2,
     "MJS3": MJS3,
