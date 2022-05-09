@@ -12,6 +12,7 @@ eltaxList4 = []
 eltaxList5 = []
 eltaxPreList = []
 eltaxPreList2 = []
+etaxList = []
 etaxsyouhitodoke = []
 etaxjigyounendo = []
 etaximage = []
@@ -19,6 +20,7 @@ etaxnouhu = []
 etaxnouhu2 = []
 etaxsyouhicyuukan = []
 etaxsyouhisinkoku = []
+etaxseikyuhakkou = []
 TKC = []
 TKC2 = []
 TKC3 = []
@@ -37,6 +39,16 @@ TKC15 = []
 TKC16 = []
 TKC17 = []
 TKC18 = []
+TKC19 = []
+TKC20 = []
+TKC21 = []
+TKC22 = []
+TKC23 = []
+TKC24 = []
+TKC25 = []
+TKC26 = []
+TKC27 = []
+TKC28 = []
 MJS = []
 MJS2 = []
 MJS3 = []
@@ -72,6 +84,7 @@ CSVIndexSortFuncArray = {
     "eltaxList5": eltaxList5,
     "eltaxPreList": eltaxPreList,
     "eltaxPreList2": eltaxPreList2,
+    "etaxList": etaxList,
     "etaxsyouhitodoke": etaxsyouhitodoke,
     "etaxjigyounendo": etaxjigyounendo,
     "etaximage": etaximage,
@@ -79,6 +92,7 @@ CSVIndexSortFuncArray = {
     "etaxnouhu2": etaxnouhu2,
     "etaxsyouhicyuukan": etaxsyouhicyuukan,
     "etaxsyouhisinkoku": etaxsyouhisinkoku,
+    "etaxseikyuhakkou": etaxseikyuhakkou,
     "TKC": TKC,
     "TKC2": TKC2,
     "TKC3": TKC3,
@@ -97,6 +111,16 @@ CSVIndexSortFuncArray = {
     "TKC16": TKC16,
     "TKC17": TKC17,
     "TKC18": TKC18,
+    "TKC19": TKC19,
+    "TKC20": TKC20,
+    "TKC21": TKC21,
+    "TKC22": TKC22,
+    "TKC23": TKC23,
+    "TKC24": TKC24,
+    "TKC25": TKC25,
+    "TKC26": TKC26,
+    "TKC27": TKC27,
+    "TKC28": TKC28,
     "MJS": MJS,
     "MJS2": MJS2,
     "MJS3": MJS3,

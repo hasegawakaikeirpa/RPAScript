@@ -151,59 +151,79 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
                         break
                     else:
                         TaxType = "MJS"
+            elif "（e-Tax）" in Sbtext:
+                TaxType = "etaxList"
             else:
                 TaxType = "eltaxList"
         # =================================================================
-        CSbtext = Sbtext.split("\n")
-        SBR = len(CSbtext) - 1
-        for CSbtextItem in reversed(CSbtext):
-            if CSbtextItem == "":
-                CSbtext.pop(SBR)
-            elif "国税受付システムからの「受信通知」の内容" in CSbtextItem:
-                Relist = CSbtextItem.split("国税受付システムからの「受信通知」の内容")
-                CSbtext[SBR] = CSbtext[SBR].replace(Relist[0], "")
-            SBR -= 1
-        SBR = len(CSbtext) - 1
-        for SBRP in range(SBR - 10, SBR):
-            if "ファイル名称" in CSbtext[SBRP]:
-                print("1ページ")
-                NextFlag = False
-                break
-            else:
-                print("続き有")
-                NextFlag = True
-        # もしページで--------------------------------------------------
-        if NextFlag is True:
-            yy = int(PageVol)
-            mp = []
-            mp.append(yy)
-            NSbtext = extract_text(
-                path_pdf, page_numbers=mp, maxpages=1, codec="utf-8"
-            )  # テキストのみ取得できる
-            NSbtext = NSbtext.replace("\n\n", ":")
-            Sbtext = Sbtext + "\n" + NSbtext
-            print(Sbtext)
+        try:
+            CSbtext = Sbtext.split("\n")
+            SBR = len(CSbtext) - 1
+            for CSbtextItem in reversed(CSbtext):
+                if CSbtextItem == "":
+                    CSbtext.pop(SBR)
+                elif "国税受付システムからの「受信通知」の内容" in CSbtextItem:
+                    Relist = CSbtextItem.split("国税受付システムからの「受信通知」の内容")
+                    CSbtext[SBR] = CSbtext[SBR].replace(Relist[0], "")
+                SBR -= 1
+            SBR = len(CSbtext) - 1
+            for SBRP in range(SBR - 10, SBR):
+                if "ファイル名称" in CSbtext[SBRP]:
+                    print("1ページ")
+                    NextFlag = False
+                    break
+                else:
+                    print("続き有")
+                    NextFlag = True
+            # もしページで--------------------------------------------------
+            if NextFlag is True:
+                yy = int(PageVol)
+                mp = []
+                mp.append(yy)
+                NSbtext = extract_text(
+                    path_pdf, page_numbers=mp, maxpages=1, codec="utf-8"
+                )  # テキストのみ取得できる
+                NSbtext = NSbtext.replace("\n\n", ":")
+                Sbtext = Sbtext + "\n" + NSbtext
+                print(Sbtext)
 
-        # -------------------------------------------------------------
-        tCells = FPDF.CellsImport(
-            CDict,
-            Settingtoml,
-            SCode,
-            path_pdf,
-            tables,
-            y,
-            TaxType,
-            Sbtext,
-            DLCList,
-            NextFlag,
-        )
-        if tCells[0] is False:
-            TO = False
-        return True, TO, tables, tCells, TaxType
-        # tCells = FPDF.CellsImport(Settingtoml,SCode, path_pdf, tables, y)
+            # -------------------------------------------------------------
+            tCells = FPDF.CellsImport(
+                CDict,
+                Settingtoml,
+                SCode,
+                path_pdf,
+                tables,
+                y,
+                TaxType,
+                Sbtext,
+                DLCList,
+                NextFlag,
+            )
+            if tCells[0] is False:
+                TO = False
+            return True, TO, tables, tCells, TaxType, NextFlag
+            # tCells = FPDF.CellsImport(Settingtoml,SCode, path_pdf, tables, y)
+        except:
+            # -------------------------------------------------------------
+            tCells = FPDF.CellsImport(
+                CDict,
+                Settingtoml,
+                SCode,
+                path_pdf,
+                tables,
+                y,
+                TaxType,
+                Sbtext,
+                DLCList,
+                NextFlag,
+            )
+            if tCells[0] is False:
+                TO = False
+            return True, TO, tables, tCells, TaxType, NextFlag
     except:  # TimeOut処理を記述
         TO = False  # TimeOut判定変数
-        return False, TO, tables, tCells, TaxType
+        return False, TO, tables, tCells, TaxType, NextFlag
 
 
 # ----------------------------------------------------------------------------------------------
@@ -223,50 +243,90 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
     # ------------------------------------------------------------------------------------
     try:
         for y in range(num_pages):
-            # TX = extract_text(path_pdf,page_numbers=y,codec='utf-8') テキストのみ取得できる
-            # print(TX)
-            PageVol = str(y + 1)
-            # TimeOutを加味したPDFRead処理TimeOut設定時間はContextTimeOut.pyにコンテキストで設定する
-            # 一回目の処理-----------------------------------------------
-            # PDFテキスト内容で税目処理分け
-            TO = CamelotSerch(
-                CDict, path_pdf, PageVol, Settingtoml, SCode, y, "", DLCList
-            )  # return True, TO,tables, tCells
-            # ---------------------------------------------------------
-            if "TKC" not in TO[4]:  # 一回目処理結果がTKCじゃなければ
-                if TO[1] is not False:  # 一回目処理がTimeOutしなかったら
-                    tables = TO[2]
-                    tCells = TO[3]
-                    t_count = len(tables)  # PDFのテーブル数を格納
-                    # PDFのテーブル数をが二つ以上なら----------------------------------
-                    if t_count >= 2:
-                        # 既に取得済みの初めのページを格納
-                        DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
-                        DLCList.append(DLP[1])  # できあがった抽出リストを保管
-                        # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
-                        # PDFテキスト内容で税目処理分け
-                        SB = CamelotSerch(
-                            CDict, path_pdf, PageVol, Settingtoml, SCode, y, "stream"
-                        )  # return True, TO,tables, tCells
-                        # ---------------------------------------------------------
-                        Subtables = SB[2]
-                        SubtCells = SB[3]
-                        SubtCells[2][1] = str(SubtCells[2][1]) + "サブテーブル失敗"
-                        DLP = DiffListPlus(
-                            SubtCells[1], SubtCells[2], "Sub"
-                        )  # 抽出リストに格納
-                        DLCList.append(DLP[1])  # できあがった抽出リストを保管
-                        # TKCPDFの表外テキスト抽出処理------------------------------
-                        # PDFテキスト内容で税目処理分け
-                        SB = CamelotSerch(
-                            CDict, path_pdf, PageVol, Settingtoml, SCode, y, "stream"
-                        )  # return True, TO,tables, tCells
-                        # ---------------------------------------------------------
-                    else:
-                        # 既に取得済みの初めのページを格納
-                        # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
-                        # PDFテキスト内容で税目処理分け
-                        if "TKC" in TO[4]:
+            if y == 0:
+                NF = False
+            if NF is True:
+                NF = False
+                continue
+            else:
+                # TX = extract_text(path_pdf,page_numbers=y,codec='utf-8') テキストのみ取得できる
+                # print(TX)
+                PageVol = str(y + 1)
+                # TimeOutを加味したPDFRead処理TimeOut設定時間はContextTimeOut.pyにコンテキストで設定する
+                # 一回目の処理-----------------------------------------------
+                # PDFテキスト内容で税目処理分け
+                TO = CamelotSerch(
+                    CDict, path_pdf, PageVol, Settingtoml, SCode, y, "", DLCList
+                )  # return True, TO,tables, tCells
+                try:
+                    NF = TO[5]
+                except:
+                    NF = False
+                # ---------------------------------------------------------
+                if "TKC" not in TO[4]:  # 一回目処理結果がTKCじゃなければ
+                    if NF is False:
+                        if TO[1] is not False:  # 一回目処理がTimeOutしなかったら
+                            tables = TO[2]
+                            tCells = TO[3]
+                            t_count = len(tables)  # PDFのテーブル数を格納
+                            # PDFのテーブル数をが二つ以上なら----------------------------------
+                            if t_count >= 2:
+                                # 既に取得済みの初めのページを格納
+                                DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
+                                DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                                # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
+                                # PDFテキスト内容で税目処理分け
+                                SB = CamelotSerch(
+                                    CDict,
+                                    path_pdf,
+                                    PageVol,
+                                    Settingtoml,
+                                    SCode,
+                                    y,
+                                    "stream",
+                                )  # return True, TO,tables, tCells
+                                # ---------------------------------------------------------
+                                Subtables = SB[2]
+                                SubtCells = SB[3]
+                                SubtCells[2][1] = str(SubtCells[2][1]) + "サブテーブル失敗"
+                                DLP = DiffListPlus(
+                                    SubtCells[1], SubtCells[2], "Sub"
+                                )  # 抽出リストに格納
+                                DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                                # TKCPDFの表外テキスト抽出処理------------------------------
+                                # PDFテキスト内容で税目処理分け
+                                SB = CamelotSerch(
+                                    CDict,
+                                    path_pdf,
+                                    PageVol,
+                                    Settingtoml,
+                                    SCode,
+                                    y,
+                                    "stream",
+                                )  # return True, TO,tables, tCells
+                                # ---------------------------------------------------------
+                            else:
+                                # 既に取得済みの初めのページを格納
+                                # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
+                                # PDFテキスト内容で税目処理分け
+                                if "TKC" in TO[4]:
+                                    SB = CamelotSerch(
+                                        CDict,
+                                        path_pdf,
+                                        PageVol,
+                                        Settingtoml,
+                                        SCode,
+                                        y,
+                                        "stream",
+                                    )  # return True, TO,tables, tCells
+                                # ---------------------------------------------------------
+
+                                DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
+                                DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                            # ------------------------------------------------------------
+                        else:
+                            # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
+                            # PDFテキスト内容で税目処理分け
                             SB = CamelotSerch(
                                 CDict,
                                 path_pdf,
@@ -276,60 +336,86 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                                 y,
                                 "stream",
                             )  # return True, TO,tables, tCells
-                        # ---------------------------------------------------------
-
+                            # ---------------------------------------------------------
+                            if SB[1] is not False:  # 一回目処理がTimeOutしなかったら
+                                Subtables = SB[2]
+                                SubtCells = SB[3]
+                                DLP = DiffListPlus(
+                                    SubtCells[1], SubtCells[2], ""
+                                )  # 抽出リストに格納
+                                DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                            else:
+                                logger.debug(path_pdf + "_" + str(y + 1) + "ページ目タイムアウト")
+                                OutputList = [
+                                    path_pdf.replace("/", "\\"),
+                                    str(y + 1) + "ページ目タイムアウト",
+                                    SCode,
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                ]
+                                DLP = DiffListPlus(
+                                    Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
+                                )  # 抽出リストに格納
+                                DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                    else:
+                        tables = TO[2]
+                        tCells = TO[3]
+                        # 既に取得済みの初めのページを格納
+                        if len(tCells[2]) == 3:
+                            OutputList = [
+                                path_pdf.replace("/", "\\"),
+                                str(y + 1) + "ページ目NFエラー取得失敗",
+                                SCode,
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                            ]
+                            DLP = DiffListPlus(
+                                Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
+                            )  # 抽出リストに格納
+                            DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                        else:
+                            DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
+                            DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                else:  # 一回目処理結果がTKCだったら
+                    if not TO[4] == "TKC3":
+                        tables = TO[2]
+                        tCells = TO[3]
+                        # 既に取得済みの初めのページを格納
                         DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
                         DLCList.append(DLP[1])  # できあがった抽出リストを保管
-                    # ------------------------------------------------------------
-                else:
-                    # 二回目の処理第六引数に'stream'を渡すと表外の値を抽出できる------
-                    # PDFテキスト内容で税目処理分け
-                    SB = CamelotSerch(
-                        CDict, path_pdf, PageVol, Settingtoml, SCode, y, "stream"
-                    )  # return True, TO,tables, tCells
-                    # ---------------------------------------------------------
-                    if SB[1] is not False:  # 一回目処理がTimeOutしなかったら
-                        Subtables = SB[2]
-                        SubtCells = SB[3]
-                        DLP = DiffListPlus(SubtCells[1], SubtCells[2], "")  # 抽出リストに格納
-                        DLCList.append(DLP[1])  # できあがった抽出リストを保管
                     else:
-                        logger.debug(path_pdf + "_" + str(y + 1) + "ページ目タイムアウト")
-                        OutputList = [
-                            path_pdf.replace("/", "\\"),
-                            str(y + 1) + "ページ目タイムアウト",
-                            SCode,
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                        ]
-                        DLP = DiffListPlus(
-                            Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
-                        )  # 抽出リストに格納
-                        DLCList.append(DLP[1])  # できあがった抽出リストを保管
-            else:  # 一回目処理結果がTKCだったら
-                if not TO[4] == "TKC3":
-                    tables = TO[2]
-                    tCells = TO[3]
-                    # 既に取得済みの初めのページを格納
-                    DLP = DiffListPlus(tCells[1], tCells[2], "")  # 抽出リストに格納
-                    DLCList.append(DLP[1])  # できあがった抽出リストを保管
-                else:
-                    print("TKCテキスト完了")
+                        print("TKCテキスト完了")
+                        NF = TO[5]
     except Exception as e:
         if TO[0] is not False:
             logger.debug(path_pdf + "_" + str(y + 1) + "ページ目取得失敗")

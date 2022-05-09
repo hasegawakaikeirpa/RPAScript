@@ -708,6 +708,7 @@ def CellsMoveAction(stt, cellsList, ColumList, TxtList, Sbtext):  # 主にeltax�
                     .replace(r"\u2003", " ")
                     .replace(r"\u3000", " ")
                 )
+                CLIT = CLIT.replace("\n", "")
                 CLIT = CLIT.replace(" ", "")
                 if CLIT == "月数換算":
                     Getu = True  # 月数換算項目フラグ
@@ -721,6 +722,8 @@ def CellsMoveAction(stt, cellsList, ColumList, TxtList, Sbtext):  # 主にeltax�
                         ColumFlag = False
                         TFlag = True
                 if ColumFlag is True:
+                    CLIT = CLIT.replace("\n", "")
+                    CLIT = CLIT.replace(" ", "")
                     ColumList.append(CLIT)
                     ColumFlag = False
                 elif TFlag is True:
@@ -739,9 +742,49 @@ def CellsMoveAction(stt, cellsList, ColumList, TxtList, Sbtext):  # 主にeltax�
                                 CLITs += CLITListItem
                             CLIRow += 1
                         CLIT = CLITs
+                        CLIT = (
+                            CLIT.replace(" ", "")
+                            .replace("'", "")
+                            .replace('"', "")
+                            .replace("\xa0", "")
+                            .replace(r"\n", "")
+                            .replace(r"\u2003", " ")
+                            .replace(r"\u3000", " ")
+                        )
+                        CLIT = (
+                            CLIT.replace(" ", "")
+                            .replace("'", "")
+                            .replace('"', "")
+                            .replace("\xa0", "")
+                            .replace("\n", "")
+                            .replace("\u2003", "")
+                            .replace("\u3000", "")
+                        )
+                        CLIT = CLIT.replace("\n", "")
+                        CLIT = CLIT.replace(" ", "")
                         TxtList.append(CLIT)
                         Getu = False
                     else:
+                        CLIT = (
+                            CLIT.replace(" ", "")
+                            .replace("'", "")
+                            .replace('"', "")
+                            .replace("\xa0", "")
+                            .replace(r"\n", "")
+                            .replace(r"\u2003", " ")
+                            .replace(r"\u3000", " ")
+                        )
+                        CLIT = (
+                            CLIT.replace(" ", "")
+                            .replace("'", "")
+                            .replace('"', "")
+                            .replace("\xa0", "")
+                            .replace("\n", "")
+                            .replace("\u2003", "")
+                            .replace("\u3000", "")
+                        )
+                        CLIT = CLIT.replace("\n", "")
+                        CLIT = CLIT.replace(" ", "")
                         TxtList.append(CLIT)
                     TFlag = False
         return True, ColumList, TxtList
@@ -975,6 +1018,9 @@ def CellsImport(
             stt = Settingtoml["CsvSaveEnc"][TaxType]
             CA = CellsActionOsirase(stt, cellsList, ColumList, TxtList)
         elif "eltaxList" == TaxType:
+            stt = Settingtoml["CsvSaveEnc"][TaxType]
+            CA = CellsAction(stt, cellsList, ColumList, TxtList)
+        elif "etaxList" == TaxType:
             stt = Settingtoml["CsvSaveEnc"][TaxType]
             CA = CellsAction(stt, cellsList, ColumList, TxtList)
         elif "etaxjigyounendo" == TaxType:
