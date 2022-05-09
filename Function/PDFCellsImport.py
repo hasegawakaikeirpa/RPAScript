@@ -911,6 +911,11 @@ def CellsActionTKCList(
                                         if sttItem in SI[SIItemRow]:
                                             ColumList.append(SI[SIItemRow])
                                             SI[1] = SI[SIItemRow + 1]
+                                else:
+                                    SIRow = len(SI)
+                                    for SIItemRow in range(SIRow):
+                                        if sttItem in SI[SIItemRow]:
+                                            ColumList.append(sttItem)
                             else:
                                 SII = SI[0].split(sttItem)
                                 if len(SII) == 0:
