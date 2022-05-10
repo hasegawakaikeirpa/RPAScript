@@ -60,7 +60,11 @@ for x in range(12):
                     try:
                         if x >= 0 and not x == H_dfRow - 1:
 
-                            if not fileobj == "移動時間.CSV":
+                            if (
+                                not fileobj == "移動時間.CSV"
+                                or not fileobj == "移動時間A8.CSV"
+                                or not fileobj == "移動時間A9.CSV"
+                            ):
                                 H_dfDataRow = H_df.loc[x]
                                 H_Tan = fileobj.split("_")
                                 H_Kanyo = H_Tan[0]
