@@ -1,0 +1,2 @@
+[2022/05/11 13:25:33][DEBUG](PDFReadForList copy.py:729) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-2\eLTAX受信通知内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/11 13:26:10][DEBUG](PDFReadForList copy.py:353) //Sv05121a/e/電子ファイル/メッセージボックス/2022-2/eLTAX受信通知/107_有限会社 ブリスアート_【京都市】資産税課（左京区分）_償却資産担当_申告受付完了通知.pdf_1ページ目取得対象外 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py

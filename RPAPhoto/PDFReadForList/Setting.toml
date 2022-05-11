@@ -70,7 +70,8 @@
     "MJS17",
     "MJSImage",
     "ErrList",
-    "SubErrList"
+    "SubErrList",
+    "NotAccessList"
     ]
 [CsvSaveEnc]
     etaxsyotoku = [
@@ -1516,6 +1517,12 @@
     "12",
     "13",
     "14"
+    ]
+
+
+    NotAccessList = [
+    "コード",
+    "URL"
     ]
 [OUTLIST]
     MJSOutList = [

@@ -844,6 +844,7 @@ def CellsActionTKCList(
     page,
     SCode,
     DLCList,
+    PageList,
 ):  # 主にeltax処理
     try:
         CellPosition = []
@@ -897,7 +898,16 @@ def CellsActionTKCList(
             ColumList.append("ページ")
             ColumList.append("コード")
             TxtList.append(path_pdf.replace("/", "\\"))
-            TxtList.append(str(page + 1) + "ページ")
+            if len(PageList) == 0:
+                TxtList.append(str(page + 1) + "ページ")
+            else:
+                Pagestr = []
+                Pagestr.append(str(page + 1))
+                for PageListItem in PageList:
+                    PagesPlus = str(PageListItem + page + 2)
+                    Pagestr.append(PagesPlus)
+                result = "-".join(s for s in Pagestr)
+                TxtList.append(result + "ページ")
             TxtList.append(str(SCode))
             # --------------------------------------------------------------------
             for SbtextItem in MSbList:  # セルループ
@@ -990,6 +1000,7 @@ def CellsImport(
     Sbtext,
     DLCList,
     NextFlag,
+    PageList,
 ):
     try:
         # MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
@@ -1043,6 +1054,7 @@ def CellsImport(
                     page,
                     SCode,
                     DLCList,
+                    PageList,
                 )
             elif "TKC13" == TaxType:
                 stt = Settingtoml["CsvSaveEnc"][TaxType]
@@ -1060,6 +1072,7 @@ def CellsImport(
                     page,
                     SCode,
                     DLCList,
+                    PageList,
                 )
             else:
                 stt = Settingtoml["CsvSaveEnc"][TaxType]

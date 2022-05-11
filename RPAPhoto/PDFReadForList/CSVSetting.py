@@ -69,6 +69,7 @@ MJS17 = []
 MJSImage = []
 ErrList = []  # エラーリスト
 SubErrList = []
+NotAccessList = []
 # 関数の引数様にDict格納-------------------------------------------------------------------------
 CSVIndexSortFuncArray = {
     "etaxsyotoku": etaxsyotoku,
@@ -141,4 +142,5 @@ CSVIndexSortFuncArray = {
     "MJSImage": MJSImage,
     "ErrList": ErrList,
     "SubErrList": SubErrList,
+    "NotAccessList": NotAccessList,
 }
