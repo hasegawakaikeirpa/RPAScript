@@ -75,11 +75,19 @@ def DiffListPlus(ColList, ScrList, Ers):
         # 全てのtomlリストと不一致の場合-----------------------------------------------------------------
         if Ers == "Sub":  # サブテーブル判定引数が指定されていたら
             print("サブテーブル取得エラー")
+            if len(ScrList) < 20:
+                LC = 20 - len(ScrList)
+                for LCC in range(LC):
+                    ScrList.append("")
             CDict["SubErrList"].append(ScrList)
             return False, "SubErrList"
         else:
             # サブテーブル判定引数が指定されていなければtomlリスト未設定のPDF形式
             print("指定列名での設定項目がありませんでした。")
+            if len(ScrList) < 20:
+                LC = 20 - len(ScrList)
+                for LCC in range(LC):
+                    ScrList.append("")
             CDict["ErrList"].append(ScrList)
             return False, "ErrList"
     except:
@@ -91,10 +99,18 @@ def DiffListPlus(ColList, ScrList, Ers):
         print(ScrList)
         if Ers == "Sub":
             print("サブテーブル取得エラー")
+            if len(ScrList) < 20:
+                LC = 20 - len(ScrList)
+                for LCC in range(LC):
+                    ScrList.append("")
             CDict["SubErrList"].append(ScrList)
             return False, "SubErrList"
         else:
             print("指定列名での設定項目がありませんでした。")
+            if len(ScrList) < 20:
+                LC = 20 - len(ScrList)
+                for LCC in range(LC):
+                    ScrList.append("")
             CDict["ErrList"].append(ScrList)
             return False, "ErrList"
 
@@ -147,8 +163,11 @@ def Camelotsp(Sbtext, path_pdf, PageVol):
                 SBR -= 1
             # 指定文字が処理後のPDFテキストに含まれていなければ--------------------------
             if "通知」の内容" not in Sbtext:
-                print("次ページなし")
-                return False, "通知内容無し", FA, FAList
+                if "受 付 通 知" in Sbtext:
+                    return True, Sbtext, FA, FAList
+                else:
+                    print("次ページなし")
+                    return False, "通知内容無し", FA, FAList
             else:
                 SBR = len(CSbtext) - 1  # 処理後PDFテキストリストのデータ数-1
                 # 処理後PDFテキストリストの下から10行分ループ---------------------------
@@ -224,6 +243,8 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
                 TaxType = "etaxjigyounendo"
             else:
                 TaxType = "etaxosirase"
+        elif "税⽬１" in Sbtext or "税⽬２" in Sbtext or "優先税⽬" in Sbtext or "第２税⽬" in Sbtext:
+            TaxType = "etax3retu"
         elif "「消費税の納税義務者でなくなった旨の届出書」を提出していない場合には" in Sbtext:
             TaxType = "etaxsyouhi"
         elif "消費税簡易課税制度選択不適⽤届出" in Sbtext:
@@ -249,7 +270,7 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
                 tables = CTO.camelotTimeOut(path_pdf, PageVol, "stream")
         else:
             if "送信された申告データを受付けました。" in Sbtext:
-                if "GWE03020" in Sbtext:
+                if "GWE" in Sbtext:
                     TaxType = "eltaxList"
                 else:
                     MOUTList = Settingtoml["OUTLIST"]["MJSOutList"]
@@ -262,8 +283,10 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
                             TaxType = "MJS"
             elif "（e-Tax）" in Sbtext:
                 TaxType = "etaxList"
-            else:
+            elif "GWE" in Sbtext:
                 TaxType = "eltaxList"
+            else:
+                TaxType = "None"
         # -----------------------------------------------------------------------------------------------------------
         # 取得したTKCの完了報告書PDF情報から、次ページに取得対象があるかを判定
         if "TKC" in TaxType:
@@ -291,6 +314,36 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
                 if CLsp[1] == "Camelotspエラー":
                     y = y + 1
                 return False, "TO", "tables", "tCells", "TaxType", "NextFlag", y
+        elif TaxType == "None":
+            logger.debug(path_pdf + "_" + str(y + 1) + "ページ目取得対象外")
+            # logger.debug(path_pdf + "_" + str(y + 1) + "ページ目取得対象外")
+            OutputList = [
+                path_pdf.replace("/", "\\"),
+                str(y + 1) + "ページ目取得対象外",
+                SCode,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+            ]
+            DLP = DiffListPlus(
+                Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
+            )  # 抽出リストに格納
+            DLCList.append(DLP[1])  # できあがった抽出リストを保管
+            return False, "None", "tables", "tCells", "TaxType", "NextFlag", y
         else:
             PageList = []
             tCells = FPDF.CellsImport(
@@ -367,7 +420,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                     # ---------------------------------------------------------
                     if "TKC" not in TO[4]:  # 一回目処理結果がTKCじゃなければ
                         if NF is False:
-                            if type(TO[1]) == str:
+                            if type(TO[1]) == str and TO[1] == "TO":
                                 logger.debug(
                                     path_pdf + "_" + str(TO[6] + 1) + "ページ目取得対象外"
                                 )
@@ -398,6 +451,8 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                                     Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
                                 )  # 抽出リストに格納
                                 DLCList.append(DLP[1])  # できあがった抽出リストを保管
+                            elif TO[1] == "None":
+                                print("None格納")
                             elif TO[1] is not False:  # 一回目処理がTimeOutしなかったら
                                 tables = TO[2]
                                 tCells = TO[3]
@@ -649,7 +704,7 @@ def PDFRead(URL, Settingtoml):
                     if e.args[0] == 13:
                         print("PDFファイルアクセス拒否")
                         NoList.append(SCode)
-                        NoList.append(path_pdf)
+                        NoList.append(path_pdf.replace("/", "\\"))
                         DLP = DiffListPlus(
                             Settingtoml["CsvSaveEnc"]["NotAccessList"], NoList, ""
                         )  # 抽出リストに格納
@@ -680,7 +735,7 @@ def PDFRead(URL, Settingtoml):
                         if e.args[0] == 13:
                             print("PDFファイルアクセス拒否")
                             NoList.append(SCode)
-                            NoList.append(path_pdf)
+                            NoList.append(path_pdf.replace("/", "\\"))
                             DLP = DiffListPlus(
                                 Settingtoml["CsvSaveEnc"]["NotAccessList"], NoList, ""
                             )  # 抽出リストに格納
@@ -746,7 +801,7 @@ LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFR
 try:
     logger.debug(URL + "内のPDF抽出開始")
     PDFRead(URL, Settingtoml)
-    CSVLog(URL, LogURL)
+    # CSVLog(URL, LogURL)
     logger.debug(URL + "内のPDF抽出完了")
 except Exception as e:
     logger.debug("エラー終了" + e)

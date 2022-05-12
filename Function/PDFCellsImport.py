@@ -141,7 +141,16 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
                     TFlag = False
                 # -----------------------------------------------------------------------------
             else:
-                txts = repr(cellsListItem[0].text.replace(r"\n", ""))  # 改行コード判定の為repr
+                if (
+                    "税目１" in stt or "税目２" in stt or "優先税⽬" in stt or "第２税⽬" in stt
+                ) and not cellsListItem[1].text == "":
+                    txts = repr(
+                        cellsListItem[1].text.replace(r"\n", "")
+                    )  # 改行コード判定の為repr
+                else:
+                    txts = repr(
+                        cellsListItem[0].text.replace(r"\n", "")
+                    )  # 改行コード判定の為repr
                 txts = (
                     txts.replace("'", "")
                     .replace("'", "")
@@ -156,7 +165,14 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
                 if txts.startswith(" ") is True:
                     txts.replace(" ", "")
                 ColumList.append(txts)  # 項目リストに代入
-                txts = repr(cellsListItem[1].text.replace(r"\n", ""))  # 改行コード判定の為repr
+                if "税目１" in stt or "税目２" in stt or "優先税⽬" in stt or "第２税⽬" in stt:
+                    txts = repr(
+                        cellsListItem[2].text.replace(r"\n", "")
+                    )  # 改行コード判定の為repr
+                else:
+                    txts = repr(
+                        cellsListItem[1].text.replace(r"\n", "")
+                    )  # 改行コード判定の為repr
                 txts = (
                     txts.replace("'", "")
                     .replace("'", "")
@@ -1028,6 +1044,9 @@ def CellsImport(
         if "etaxosirase" == TaxType:
             stt = Settingtoml["CsvSaveEnc"][TaxType]
             CA = CellsActionOsirase(stt, cellsList, ColumList, TxtList)
+        elif "etax3retu" == TaxType:
+            stt = Settingtoml["CsvSaveEnc"][TaxType]
+            CA = CellsAction(stt, cellsList, ColumList, TxtList)
         elif "eltaxList" == TaxType:
             stt = Settingtoml["CsvSaveEnc"][TaxType]
             CA = CellsAction(stt, cellsList, ColumList, TxtList)

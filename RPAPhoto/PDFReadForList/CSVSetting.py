@@ -10,9 +10,25 @@ eltaxList2 = []
 eltaxList3 = []
 eltaxList4 = []
 eltaxList5 = []
+eltaxList6 = []
 eltaxPreList = []
 eltaxPreList2 = []
 etaxList = []
+etaxList2 = []
+etaxList3 = []
+etaxList4 = []
+etaxList5 = []
+etaxList6 = []
+etaxList7 = []
+etaxList8 = []
+etaxList9 = []
+etaxList10 = []
+etaxList11 = []
+etaxList12 = []
+etax3retu = []
+etax3retu2 = []
+etax3retu3 = []
+etax3retu4 = []
 etaxsyouhitodoke = []
 etaxjigyounendo = []
 etaximage = []
@@ -21,6 +37,10 @@ etaxnouhu2 = []
 etaxsyouhicyuukan = []
 etaxsyouhisinkoku = []
 etaxseikyuhakkou = []
+Syoukyaku = []
+KakusinOsirase = []
+TKCuketuke = []
+TKCuketuke2 = []
 TKC = []
 TKC2 = []
 TKC3 = []
@@ -83,9 +103,25 @@ CSVIndexSortFuncArray = {
     "eltaxList3": eltaxList3,
     "eltaxList4": eltaxList4,
     "eltaxList5": eltaxList5,
+    "eltaxList6": eltaxList6,
     "eltaxPreList": eltaxPreList,
     "eltaxPreList2": eltaxPreList2,
     "etaxList": etaxList,
+    "etaxList2": etaxList2,
+    "etaxList3": etaxList3,
+    "etaxList4": etaxList4,
+    "etaxList5": etaxList5,
+    "etaxList6": etaxList6,
+    "etaxList7": etaxList7,
+    "etaxList8": etaxList8,
+    "etaxList9": etaxList9,
+    "etaxList10": etaxList10,
+    "etaxList11": etaxList11,
+    "etaxList12": etaxList12,
+    "etax3retu": etax3retu,
+    "etax3retu2": etax3retu2,
+    "etax3retu3": etax3retu3,
+    "etax3retu4": etax3retu4,
     "etaxsyouhitodoke": etaxsyouhitodoke,
     "etaxjigyounendo": etaxjigyounendo,
     "etaximage": etaximage,
@@ -94,6 +130,10 @@ CSVIndexSortFuncArray = {
     "etaxsyouhicyuukan": etaxsyouhicyuukan,
     "etaxsyouhisinkoku": etaxsyouhisinkoku,
     "etaxseikyuhakkou": etaxseikyuhakkou,
+    "Syoukyaku": Syoukyaku,
+    "KakusinOsirase": KakusinOsirase,
+    "TKCuketuke": TKCuketuke,
+    "TKCuketuke2": TKCuketuke2,
     "TKC": TKC,
     "TKC2": TKC2,
     "TKC3": TKC3,
