@@ -11,8 +11,10 @@ eltaxList3 = []
 eltaxList4 = []
 eltaxList5 = []
 eltaxList6 = []
+eltaxList7 = []
 eltaxPreList = []
 eltaxPreList2 = []
+eltaxPreList3 = []
 etaxList = []
 etaxList2 = []
 etaxList3 = []
@@ -25,6 +27,8 @@ etaxList9 = []
 etaxList10 = []
 etaxList11 = []
 etaxList12 = []
+etaxList13 = []
+etaxList14 = []
 etax3retu = []
 etax3retu2 = []
 etax3retu3 = []
@@ -42,6 +46,7 @@ KakusinOsirase = []
 TKCuketuke = []
 TKCuketuke2 = []
 TKC = []
+TKCL = []
 TKC2 = []
 TKC3 = []
 TKC4 = []
@@ -69,6 +74,12 @@ TKC25 = []
 TKC26 = []
 TKC27 = []
 TKC28 = []
+TKC29 = []
+TKC30 = []
+TKC31 = []
+TKC32 = []
+TKC33 = []
+TKC34 = []
 MJS = []
 MJS2 = []
 MJS3 = []
@@ -86,6 +97,20 @@ MJS14 = []
 MJS15 = []
 MJS16 = []
 MJS17 = []
+MJS18 = []
+MJS19 = []
+MJS20 = []
+MJS21 = []
+MJS22 = []
+MJS23 = []
+MJS24 = []
+MJS25 = []
+MJS26 = []
+MJS27 = []
+MJS28 = []
+MJS29 = []
+MJS30 = []
+MJS31 = []
 MJSImage = []
 ErrList = []  # エラーリスト
 SubErrList = []
@@ -104,8 +129,10 @@ CSVIndexSortFuncArray = {
     "eltaxList4": eltaxList4,
     "eltaxList5": eltaxList5,
     "eltaxList6": eltaxList6,
+    "eltaxList7": eltaxList7,
     "eltaxPreList": eltaxPreList,
     "eltaxPreList2": eltaxPreList2,
+    "eltaxPreList3": eltaxPreList3,
     "etaxList": etaxList,
     "etaxList2": etaxList2,
     "etaxList3": etaxList3,
@@ -118,6 +145,8 @@ CSVIndexSortFuncArray = {
     "etaxList10": etaxList10,
     "etaxList11": etaxList11,
     "etaxList12": etaxList12,
+    "etaxList13": etaxList13,
+    "etaxList14": etaxList14,
     "etax3retu": etax3retu,
     "etax3retu2": etax3retu2,
     "etax3retu3": etax3retu3,
@@ -135,6 +164,7 @@ CSVIndexSortFuncArray = {
     "TKCuketuke": TKCuketuke,
     "TKCuketuke2": TKCuketuke2,
     "TKC": TKC,
+    "TKCL": TKCL,
     "TKC2": TKC2,
     "TKC3": TKC3,
     "TKC4": TKC4,
@@ -162,6 +192,12 @@ CSVIndexSortFuncArray = {
     "TKC26": TKC26,
     "TKC27": TKC27,
     "TKC28": TKC28,
+    "TKC29": TKC29,
+    "TKC30": TKC30,
+    "TKC31": TKC31,
+    "TKC32": TKC32,
+    "TKC33": TKC33,
+    "TKC34": TKC34,
     "MJS": MJS,
     "MJS2": MJS2,
     "MJS3": MJS3,
@@ -179,6 +215,20 @@ CSVIndexSortFuncArray = {
     "MJS15": MJS15,
     "MJS16": MJS16,
     "MJS17": MJS17,
+    "MJS18": MJS18,
+    "MJS19": MJS19,
+    "MJS20": MJS20,
+    "MJS21": MJS21,
+    "MJS22": MJS22,
+    "MJS23": MJS23,
+    "MJS24": MJS24,
+    "MJS25": MJS25,
+    "MJS26": MJS26,
+    "MJS27": MJS27,
+    "MJS28": MJS28,
+    "MJS29": MJS29,
+    "MJS30": MJS30,
+    "MJS31": MJS31,
     "MJSImage": MJSImage,
     "ErrList": ErrList,
     "SubErrList": SubErrList,

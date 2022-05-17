@@ -286,7 +286,17 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
             elif "GWE" in Sbtext:
                 TaxType = "eltaxList"
             else:
-                TaxType = "None"
+                if "備考:" in Sbtext or "手続名:" in Sbtext:
+                    MOUTList = Settingtoml["OUTLIST"]["MJSOutList"]
+                    Sbt = Sbtext.replace("\u3000", "").replace("\n", "")
+                    for MOUTListItem in MOUTList:
+                        if MOUTListItem in Sbt:
+                            TaxType = "MJSOutList"
+                            break
+                        else:
+                            TaxType = "MJS"
+                else:
+                    TaxType = "None"
         # -----------------------------------------------------------------------------------------------------------
         # 取得したTKCの完了報告書PDF情報から、次ページに取得対象があるかを判定
         if "TKC" in TaxType:
@@ -309,7 +319,7 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
                 )
                 if tCells[0] is False:
                     TO = False
-                return True, TO, tables, tCells, TaxType, NextFlag, y
+                return True, TO, tables, tCells, TaxType, NextFlag, CLsp[2]
             else:
                 if CLsp[1] == "Camelotspエラー":
                     y = y + 1
@@ -359,11 +369,38 @@ def CamelotSerch(CDict, path_pdf, PageVol, Settingtoml, SCode, y, engine, DLCLis
                 NextFlag,
                 PageList,
             )
+            # yを返して現在処理したページを更新------------------------------
             if tCells[0] is False:
                 TO = False
+                y = 1
+            else:
+                y = 1
+            # ------------------------------------------------------------
             return True, TO, tables, tCells, TaxType, NextFlag, y
     except:  # TimeOut処理を記述
         TO = False  # TimeOut判定変数
+        try:
+            if len(tables) == 0:
+                tables = "tables"
+        except:
+            tables = "tables"
+        try:
+            if len(tCells) == 0:
+                tCells = "tCells"
+        except:
+            tCells = "tCells"
+        try:
+            if len(TaxType) == 0:
+                TaxType = "TaxType"
+        except:
+            TaxType = "TaxType"
+        try:
+            if len(NextFlag) == 0:
+                NextFlag = "NextFlag"
+        except:
+            NextFlag = "NextFlag"
+        if not y == 0:
+            y = 1
         return False, TO, tables, tCells, TaxType, NextFlag, y
 
 
@@ -405,11 +442,15 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                     PageVol = str(y + 1)
                     # TimeOutを加味したPDFRead処理TimeOut設定時間はContextTimeOut.pyにコンテキストで設定する
                     # 一回目の処理-----------------------------------------------
-                    # PDFテキスト内容で税目処理分け
-                    TO = CamelotSerch(
-                        CDict, path_pdf, PageVol, Settingtoml, SCode, y, "", DLCList
-                    )  # return True, TO,tables, tCells
+                    # # PDFテキスト内容で税目処理分け
+                    # TO = CamelotSerch(
+                    #     CDict, path_pdf, PageVol, Settingtoml, SCode, y, "", DLCList
+                    # )  # return True, TO,tables, tCells
                     try:
+                        # PDFテキスト内容で税目処理分け
+                        TO = CamelotSerch(
+                            CDict, path_pdf, PageVol, Settingtoml, SCode, y, "", DLCList
+                        )  # return True, TO,tables, tCells
                         if type(TO[5]) == str:
                             NF = False
                         else:
@@ -474,6 +515,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                                         SCode,
                                         y,
                                         "stream",
+                                        DLCList,
                                     )  # return True, TO,tables, tCells
                                     # ---------------------------------------------------------
                                     Subtables = SB[2]
@@ -493,6 +535,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                                         SCode,
                                         y,
                                         "stream",
+                                        DLCList,
                                     )  # return True, TO,tables, tCells
                                     # ---------------------------------------------------------
                                 else:
@@ -508,6 +551,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                                             SCode,
                                             y,
                                             "stream",
+                                            DLCList,
                                         )  # return True, TO,tables, tCells
                                     # ---------------------------------------------------------
                                     DLP = DiffListPlus(
@@ -526,6 +570,7 @@ def CSVIndexSort(SCode, path_pdf, DLCList):
                                     SCode,
                                     y,
                                     "stream",
+                                    DLCList,
                                 )  # return True, TO,tables, tCells
                                 # ---------------------------------------------------------
                                 if SB[1] is not False:  # 一回目処理がTimeOutしなかったら
@@ -699,6 +744,36 @@ def PDFRead(URL, Settingtoml):
                         CSVIndexSort(SCode, path_pdf, DLCList)
                     else:
                         print("xdw")
+                        path_pdf = dif.replace("\\", "/")  # PDFパスを代入
+                        logger.debug(path_pdf + "_xdwファイルの為取得不可")
+                        OutputList = [
+                            path_pdf.replace("/", "\\"),
+                            "xdwファイルの為取得不可",
+                            SCode,
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                        ]
+                        DLP = DiffListPlus(
+                            Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
+                        )  # 抽出リストに格納
+                        if DLP[0] is True:
+                            DLCList.append(DLP[1])  # できあがった抽出リストを保管
+
                 except Exception as e:
                     print(e)
                     if e.args[0] == 13:
@@ -730,6 +805,36 @@ def PDFRead(URL, Settingtoml):
                             CSVIndexSort(SCode, path_pdf, DLCList)
                         else:
                             print("xdw")
+                            path_pdf = dif.replace("\\", "/")  # PDFパスを代入
+                            logger.debug(path_pdf + "_xdwファイルの為取得不可")
+                            OutputList = [
+                                path_pdf.replace("/", "\\"),
+                                "xdwファイルの為取得不可",
+                                SCode,
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                            ]
+                            DLP = DiffListPlus(
+                                Settingtoml["CsvSaveEnc"]["ErrList"], OutputList, ""
+                            )  # 抽出リストに格納
+                            if DLP[0] is True:
+                                DLCList.append(DLP[1])  # できあがった抽出リストを保管
+
                     except Exception as e:
                         print(e)
                         if e.args[0] == 13:
@@ -795,7 +900,7 @@ with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as
     print(Settingtoml)
 # ----------------------------------------------------------------------------------------
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
-URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-2"
+URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-3\\送信分受信通知"
 # URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFREADLog"
 try:

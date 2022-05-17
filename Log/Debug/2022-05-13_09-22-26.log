@@ -1,0 +1,10 @@
+[2022/05/13 09:22:26][DEBUG](PDFReadForList copy.py:802) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 09:22:29][DEBUG](PDFReadForList copy.py:318) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/162_合同会社 天龍姫.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 09:22:29][DEBUG](PDFReadForList copy.py:318) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/162_合同会社 天龍姫.pdf_3ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 09:22:32][DEBUG](PDFReadForList copy.py:318) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/181_Ｂａｓｅ ｏｆ ｃａｎｄｌｅｓ.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 09:22:38][DEBUG](PDFReadForList copy.py:318) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/207_有限会社 成和工業.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 09:22:39][DEBUG](PDFReadForList copy.py:318) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/207_有限会社 成和工業.pdf_3ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 09:22:41][DEBUG](PDFReadForList copy.py:318) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/343_株式会社　クローバー.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 09:22:42][DEBUG](PDFReadForList copy.py:318) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/343_株式会社　クローバー.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 09:22:50][DEBUG](PDFReadForList copy.py:318) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/407_株式会社 Ｗｒｅａｔｈ＆Ｃｏ．.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 09:23:02][DEBUG](PDFReadForList copy.py:318) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/433_株式会社 ＡＫ.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
