@@ -12,6 +12,10 @@ eltaxList4 = []
 eltaxList5 = []
 eltaxList6 = []
 eltaxList7 = []
+eltaxList8 = []
+eltaxList9 = []
+eltaxList10 = []
+eltaxList11 = []
 eltaxPreList = []
 eltaxPreList2 = []
 eltaxPreList3 = []
@@ -80,6 +84,7 @@ TKC31 = []
 TKC32 = []
 TKC33 = []
 TKC34 = []
+TKC35 = []
 MJS = []
 MJS2 = []
 MJS3 = []
@@ -130,6 +135,10 @@ CSVIndexSortFuncArray = {
     "eltaxList5": eltaxList5,
     "eltaxList6": eltaxList6,
     "eltaxList7": eltaxList7,
+    "eltaxList8": eltaxList8,
+    "eltaxList9": eltaxList9,
+    "eltaxList10": eltaxList10,
+    "eltaxList11": eltaxList11,
     "eltaxPreList": eltaxPreList,
     "eltaxPreList2": eltaxPreList2,
     "eltaxPreList3": eltaxPreList3,
@@ -198,6 +207,7 @@ CSVIndexSortFuncArray = {
     "TKC32": TKC32,
     "TKC33": TKC33,
     "TKC34": TKC34,
+    "TKC35": TKC35,
     "MJS": MJS,
     "MJS2": MJS2,
     "MJS3": MJS3,

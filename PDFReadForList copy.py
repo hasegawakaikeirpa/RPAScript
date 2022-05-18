@@ -1,5 +1,6 @@
 ﻿from datetime import datetime
 import os
+import csv
 import numpy as np
 from pdfminer.high_level import extract_text
 from pdfminer.pdfparser import PDFParser
@@ -84,6 +85,18 @@ def DiffListPlus(ColList, ScrList, Ers):
         else:
             # サブテーブル判定引数が指定されていなければtomlリスト未設定のPDF形式
             print("指定列名での設定項目がありませんでした。")
+
+            # 列名追記------------------------------------------------------------------------------
+            with open(
+                MeUrl + r"/RPAPhoto/PDFReadForList/ColumnList.CSV",
+                "a",
+                encoding="utf-8",
+            ) as Colup:
+                writer = csv.writer(Colup)
+                writer.writerow(ColList)
+                writer.writerow(ScrList)
+            # ----------------------------------------------------------------------------------------
+
             if len(ScrList) < 20:
                 LC = 20 - len(ScrList)
                 for LCC in range(LC):
@@ -107,6 +120,18 @@ def DiffListPlus(ColList, ScrList, Ers):
             return False, "SubErrList"
         else:
             print("指定列名での設定項目がありませんでした。")
+
+            # 列名追記------------------------------------------------------------------------------
+            with open(
+                MeUrl + r"/RPAPhoto/PDFReadForList/ColumnList.CSV",
+                "a",
+                encoding="utf-8",
+            ) as Colup:
+                writer = csv.writer(Colup)
+                writer.writerow(ColList)
+                writer.writerow(ScrList)
+            # ----------------------------------------------------------------------------------------
+
             if len(ScrList) < 20:
                 LC = 20 - len(ScrList)
                 for LCC in range(LC):
@@ -900,7 +925,7 @@ with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as
     print(Settingtoml)
 # ----------------------------------------------------------------------------------------
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
-URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-3\\送信分受信通知"
+URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-4\\eLTAX"
 # URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFREADLog"
 try:
