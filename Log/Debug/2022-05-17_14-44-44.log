@@ -1,0 +1,3 @@
+[2022/05/17 14:44:45][DEBUG](PDFReadForList copy.py:907) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-3\送信分受信通知内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 14:45:32][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/10102/10102　受信通知.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 14:45:37][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/10102/10102　受信通知2.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py

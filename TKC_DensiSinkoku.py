@@ -634,6 +634,7 @@ def TaxHantei(
             CSVOutPut(CSVURL, CSVName, driver, FolURL2)
             C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
             C_Array = pd.read_csv(C_url, encoding="shiftjis")
+
             return C_Array, True
         else:
             print("ChildCSV無")
@@ -1060,36 +1061,36 @@ def MainFlow(FolURL2):
     #     )
     # -----------------------------------------------------------------------------------------------------------------------
     # 償却資産処理------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
-    conf = 0.9  # 画像認識感度
-    LoopVal = 500
-    CSVName = "SyoukyakuMaster"
-    CSVChildName = "SyoukyakuChild"  # チャイルドのCSVファイル名を指定
-    List = ["Syoukyaku.png", "Syoukyaku2.png"]
-    TaxAns = TaxHantei(
-        List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    )  # pandasにマスターCSVぶっこみ
-    C_Master = TaxAns[0]
-    C_MasterFlag = TaxAns[1]
-    if C_MasterFlag is False:
-        print("C_Masterは空です")
-    else:
-        NoBlue(FolURL2)
-        C_Master = C_Master[C_Master["送信"] == "可"]  # 送信列「可」のみ抽出
-        C_Master = C_Master.drop_duplicates(subset="関与先コード")  # 関与先コードをキーに重複削除
-        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-        MasterLoop(
-            List,
-            FileName,
-            CSVName,
-            CSVChildName,
-            C_Master,
-            C_dfRow,
-            C_dfCol,
-            driver,
-            FolURL2,
-        )
+    # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
+    # conf = 0.9  # 画像認識感度
+    # LoopVal = 500
+    # CSVName = "SyoukyakuMaster"
+    # CSVChildName = "SyoukyakuChild"  # チャイルドのCSVファイル名を指定
+    # List = ["Syoukyaku.png", "Syoukyaku2.png"]
+    # TaxAns = TaxHantei(
+    #     List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    # )  # pandasにマスターCSVぶっこみ
+    # C_Master = TaxAns[0]
+    # C_MasterFlag = TaxAns[1]
+    # if C_MasterFlag is False:
+    #     print("C_Masterは空です")
+    # else:
+    #     NoBlue(FolURL2)
+    #     C_Master = C_Master[C_Master["送信"] == "可"]  # 送信列「可」のみ抽出
+    #     C_Master = C_Master.drop_duplicates(subset="関与先コード")  # 関与先コードをキーに重複削除
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    #     MasterLoop(
+    #         List,
+    #         FileName,
+    #         CSVName,
+    #         CSVChildName,
+    #         C_Master,
+    #         C_dfRow,
+    #         C_dfCol,
+    #         driver,
+    #         FolURL2,
+    #     )
 
     # -----------------------------------------------------------------------------------------------------------------------
     # #贈与税処理------------------------------------------------------------------------------------------------------
@@ -1156,37 +1157,37 @@ def MainFlow(FolURL2):
 
     # #-----------------------------------------------------------------------------------------------------------------------
     # 申請処理---------------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
-    # conf = 0.9  # 画像認識感度
-    # LoopVal = 500
-    # CSVName = "SinseiMaster"  # マスターのCSVファイル名を指定
-    # CSVChildName = "SinseiChild"  # チャイルドのCSVファイル名を指定
-    # List = ["Sinsei.png", "Sinsei2.png"]  # 税種目のタブアイコン画像名を2つ指定
-    # TaxAns = TaxHantei(
-    #     List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    # )  # pandasにマスターCSVぶっこみ
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
-    # if C_MasterFlag is False:
-    #     print("C_Masterは空です")
+    FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
+    conf = 0.9  # 画像認識感度
+    LoopVal = 500
+    CSVName = "SinseiMaster"  # マスターのCSVファイル名を指定
+    CSVChildName = "SinseiChild"  # チャイルドのCSVファイル名を指定
+    List = ["Sinsei.png", "Sinsei2.png"]  # 税種目のタブアイコン画像名を2つ指定
+    TaxAns = TaxHantei(
+        List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    )  # pandasにマスターCSVぶっこみ
+    C_Master = TaxAns[0]
+    C_MasterFlag = TaxAns[1]
+    if C_MasterFlag is False:
+        print("C_Masterは空です")
 
-    # else:
-    #     NoBlue(FolURL2)
-    #     C_Master = C_Master[C_Master["送信"] == "可"]  # 送信列「可」のみ抽出
-    #     C_Master = C_Master.drop_duplicates(subset="関与先コード")  # 関与先コードをキーに重複削除
-    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    #     MasterLoop(
-    #         List,
-    #         FileName,
-    #         CSVName,
-    #         CSVChildName,
-    #         C_Master,
-    #         C_dfRow,
-    #         C_dfCol,
-    #         driver,
-    #         FolURL2,
-    #     )
+    else:
+        NoBlue(FolURL2)
+        C_Master = C_Master[C_Master["送信"] == "可"]  # 送信列「可」のみ抽出
+        C_Master = C_Master.drop_duplicates(subset="関与先コード")  # 関与先コードをキーに重複削除
+        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+        MasterLoop(
+            List,
+            FileName,
+            CSVName,
+            CSVChildName,
+            C_Master,
+            C_dfRow,
+            C_dfCol,
+            driver,
+            FolURL2,
+        )
     # -----------------------------------------------------------------------------------------------------------------------
 
 

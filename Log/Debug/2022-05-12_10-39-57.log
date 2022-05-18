@@ -1,0 +1,4 @@
+[2022/05/12 10:39:57][DEBUG](PDFReadForList copy.py:784) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-2\eTAX内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/12 10:40:14][DEBUG](PDFReadForList copy.py:300) //Sv05121a/e/電子ファイル/メッセージボックス/2022-2/eTAX/1036_和電設/1036_和電設_確定申告等についてのお知らせ_20220208 095057.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/12 10:40:22][DEBUG](PDFReadForList copy.py:300) //Sv05121a/e/電子ファイル/メッセージボックス/2022-2/eTAX/105_株式会社 エス・ケイハウジング/105_株式会社 エス・ケイハウジング_給与所得・退職所得等の所得税徴収高計算書(一般)_20220218 155519.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/12 10:40:26][DEBUG](PDFReadForList copy.py:300) //Sv05121a/e/電子ファイル/メッセージボックス/2022-2/eTAX/1063_前 豪輔/1063_前 豪輔_確定申告等についてのお知らせ_20220208 101121.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py

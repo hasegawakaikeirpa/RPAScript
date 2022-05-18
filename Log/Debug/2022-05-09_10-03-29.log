@@ -1,0 +1,3 @@
+[2022/05/09 10:03:29][DEBUG](PDFReadForList copy.py:497) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/09 10:04:44][DEBUG](PDFReadForList copy.py:355) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/622_株式会社 食団四季_内国法人の確定申告(青色)_20220427 111342.pdf_2ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/09 10:06:38][DEBUG](PDFReadForList copy.py:355) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/622_株式会社 食団四季_消費税及び地方消費税申告(一般・法人)_20220427 111544.pdf_2ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
