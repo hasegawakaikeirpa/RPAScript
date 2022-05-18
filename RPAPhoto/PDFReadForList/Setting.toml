@@ -50,6 +50,7 @@
     "etaxnouhu3",
     "etaxnouhu4",
     "etaxnouhu5",
+    "etaxnouhu6",
     "etaxsyouhicyuukan",
     "etaxsyouhisinkoku",
     "etaxseikyuhakkou",
@@ -1005,6 +1006,25 @@
     "申告区分", 
     "課税期間（自）", 
     "合計金額"
+    ]
+
+
+    etaxnouhu6 = [
+    "URL", 
+    "ページ", 
+    "コード", 
+    "処理日時", 
+    "利用者識別番号", 
+    "氏名（名称）", 
+    "受付番号", 
+    "納付先", 
+    "税目", 
+    "申告区分", 
+    "課税期間（自）", 
+    "課税期間（至）", 
+    "納付金額", 
+    "納付指定日", 
+    "取消指示者（本人／代理人）"
     ]
 
 
