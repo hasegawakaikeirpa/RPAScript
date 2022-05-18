@@ -67,7 +67,22 @@ def DiffListPlus(ColList, ScrList, Ers):
             SColB = set(NewColList) - set(ColList)  # tomlリストと抽出ヘッダーの比較B
             if len(SColA) == 0 and len(SColB) == 0:  # tomlリストと抽出ヘッダーが完全一致したら
                 CDict[LNListItem].append(ScrList)  # tomlリストに格納
+
+                # ログ追記------------------------------------------------------------------------------
+                with open(
+                    MeUrl + r"/RPAPhoto/PDFReadForList/NoErrLog.CSV",
+                    "a",
+                    encoding="utf-8",
+                ) as Colup:
+                    writer = csv.writer(Colup)
+                    writer.writerow(ColList)
+                    writer.writerow(ScrList)
+                # ----------------------------------------------------------------------------------------
+
                 return True, LNListItem
+        print(
+            "#########################################################################################"
+        )
         print(ColList)
         print(
             "========================================================================================"
@@ -81,6 +96,18 @@ def DiffListPlus(ColList, ScrList, Ers):
                 for LCC in range(LC):
                     ScrList.append("")
             CDict["SubErrList"].append(ScrList)
+
+            # Errログ追記------------------------------------------------------------------------------
+            with open(
+                MeUrl + r"/RPAPhoto/PDFReadForList/ErrLog.CSV",
+                "a",
+                encoding="utf-8",
+            ) as Colup:
+                writer = csv.writer(Colup)
+                writer.writerow(ColList)
+                writer.writerow(ScrList)
+            # ----------------------------------------------------------------------------------------
+
             return False, "SubErrList"
         else:
             # サブテーブル判定引数が指定されていなければtomlリスト未設定のPDF形式
@@ -105,6 +132,9 @@ def DiffListPlus(ColList, ScrList, Ers):
             return False, "ErrList"
     except:
         # エラー処理-----------------------------------------------------------------------------------
+        print(
+            "#########################################################################################"
+        )
         print(ColList)
         print(
             "========================================================================================"
@@ -117,6 +147,18 @@ def DiffListPlus(ColList, ScrList, Ers):
                 for LCC in range(LC):
                     ScrList.append("")
             CDict["SubErrList"].append(ScrList)
+
+            # Errログ追記------------------------------------------------------------------------------
+            with open(
+                MeUrl + r"/RPAPhoto/PDFReadForList/ErrLog.CSV",
+                "a",
+                encoding="utf-8",
+            ) as Colup:
+                writer = csv.writer(Colup)
+                writer.writerow(ColList)
+                writer.writerow(ScrList)
+            # ----------------------------------------------------------------------------------------
+
             return False, "SubErrList"
         else:
             print("指定列名での設定項目がありませんでした。")
@@ -770,10 +812,10 @@ def PDFRead(URL, Settingtoml):
                     else:
                         print("xdw")
                         path_pdf = dif.replace("\\", "/")  # PDFパスを代入
-                        logger.debug(path_pdf + "_xdwファイルの為取得不可")
+                        logger.debug(path_pdf + "_PDFファイル以外の為取得不可")
                         OutputList = [
                             path_pdf.replace("/", "\\"),
-                            "xdwファイルの為取得不可",
+                            "PDFファイル以外の為取得不可",
                             SCode,
                             "",
                             "",
@@ -831,10 +873,10 @@ def PDFRead(URL, Settingtoml):
                         else:
                             print("xdw")
                             path_pdf = dif.replace("\\", "/")  # PDFパスを代入
-                            logger.debug(path_pdf + "_xdwファイルの為取得不可")
+                            logger.debug(path_pdf + "_PDFファイル以外の為取得不可")
                             OutputList = [
                                 path_pdf.replace("/", "\\"),
-                                "xdwファイルの為取得不可",
+                                "PDFファイル以外の為取得不可",
                                 SCode,
                                 "",
                                 "",
@@ -917,7 +959,6 @@ def CSVLog(URL, LogURL):
 
 
 # ------------------------------------------------------------------------------------
-
 MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
 # toml読込------------------------------------------------------------------------------
 with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as f:
@@ -925,7 +966,7 @@ with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as
     print(Settingtoml)
 # ----------------------------------------------------------------------------------------
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
-URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-4\\eLTAX"
+URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-4\\eTAX"
 # URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFREADLog"
 try:
