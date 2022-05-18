@@ -1,0 +1,15 @@
+[2022/05/13 18:43:52][DEBUG](PDFReadForList copy.py:847) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:44:22][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(H30).pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:44:53][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(H30).pdf_2ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:45:25][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(H30).pdf_3ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:45:56][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(H30).pdf_4ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:47:20][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(R1).pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:47:51][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(R1).pdf_2ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:48:22][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(R1).pdf_3ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:48:54][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(R1).pdf_4ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:49:25][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(R1).pdf_5ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:50:08][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(R2).pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:50:39][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(R2).pdf_2ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:51:10][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(R2).pdf_3ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:51:41][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(R2).pdf_4ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 18:52:47][DEBUG](PDFReadForList copy.py:850) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出完了 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py

@@ -80,12 +80,21 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
         TFlag = False  # テキスト取得対象フラグ
         txts = []
         Kint = 1
+        PreFlag = False
         for cellsListItem in cellsList:  # セルループ
+            ThreeCol = False
             txt = repr(cellsListItem[1].text)  # 改行コードの数でセル分割の判定
+            if "＜プレ申告データの内容＞" in txt:
+                PreFlag = True
             nc = txt.count(r"\n")  # テキスト内の改行コードの数
             if txt.endswith(r"\n") is True:  # テキスト内の最後の改行コードは省く
                 nc -= 1
             if nc >= 2:  # テキスト内に改行コードが2つ以上ある場合
+                if len(cellsListItem) >= 2:
+                    txt = repr(cellsListItem[0].text)  # 改行コードの数でセル分割の判定
+                    nc = txt.count(r"\n")  # テキスト内の改行コードの数
+                    if nc >= 3:
+                        ThreeCol = True
                 txts = txt.split(r"\n")  # テキストを改行コードで分割する
                 txtsc = len(txts)  # 改行コード分割後のリスト要素数
                 for tx in range(txtsc):  # 改行コード分割後のリストを置換
@@ -103,45 +112,105 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
                 and_list = set(txts) & set(stt)  # テキストリストとカラムリストで一致する要素を抽出
                 if len(and_list) > 0:  # テキストリストとカラムリストで一致する要素が一つ以上なら
                     TFlag = True  # テキスト取得対象フラグを立てる
-                # テキスト取得対象の処理--------------------------------------------------------
-                if TFlag is True:
-                    for tc in range(txtsc):  # 分割後のリストループ
-                        # ヘッダー判定後の処理--------------------------------------------------
-                        if tc % 2 == 0:  # 2で割り切れたらヘッダー
-                            # 処理中のテキストがカラムリストにあるか判定--------------------------
-                            for sttItem in stt:
-                                st = txts[tc]
-                                if st == sttItem:
-                                    ColumFlag = True  # カラム対象フラグを立てる
-                                    break
-                            # ----------------------------------------------------------------
-                            # テキスト内の改行コード総数が3で割り切れる場合------------------------
-                            if nc % 3 == 0 and tc == 0:  # テキスト内初回の処理
-                                if Kint == 1:
-                                    ColumList.append("項目")  # 項目リストに代入
-                                    Kint += 1
+                if PreFlag is True:
+                    for txtsItem in txts:
+                        for sttItem in stt:
+                            if sttItem in txtsItem:
+                                print(txtsItem)
+                                tisp = txtsItem.replace(
+                                    sttItem, sttItem + "::"
+                                )  # テキストを改行コードで分割する
+                                tisp = tisp.split("::")
+                                for sttItem in stt:
+                                    if sttItem == tisp[0]:
+                                        ColumList.append(tisp[0])
+                                        TxtList.append(tisp[1])  # テキストリストに代入
+                else:
+                    # テキスト取得対象の処理--------------------------------------------------------
+                    if TFlag is True:
+                        for tc in range(txtsc):  # 分割後のリストループ
+                            # ヘッダー判定後の処理--------------------------------------------------
+                            if tc % 2 == 0:  # 2で割り切れたらヘッダー
+                                # 処理中のテキストがカラムリストにあるか判定--------------------------
+                                for sttItem in stt:
+                                    st = txts[tc]
+                                    if st == sttItem:
+                                        ColumFlag = True  # カラム対象フラグを立てる
+                                        break
+                                # ----------------------------------------------------------------
+                                # テキスト内の改行コード総数が3で割り切れる場合------------------------
+                                if nc % 3 == 0 and tc == 0:  # テキスト内初回の処理
+                                    if Kint == 1:
+                                        ColumList.append("項目")  # 項目リストに代入
+                                        Kint += 1
+                                    else:
+                                        ColumList.append("項目" + str(Kint))  # 項目リストに代入
+                                        Kint += 1
+                                if ColumFlag is True:  # テキスト内2回目以降でカラム対象フラグが立っている処理
+                                    ColumList.append(st)  # 項目リストに代入
+                                    ColumFlag = False  # カラム対象フラグ解除
                                 else:
-                                    ColumList.append("項目" + str(Kint))  # 項目リストに代入
-                                    Kint += 1
-                            if ColumFlag is True:  # テキスト内2回目以降でカラム対象フラグが立っている処理
-                                ColumList.append(st)  # 項目リストに代入
-                                ColumFlag = False  # カラム対象フラグ解除
+                                    if TFlag is True:
+                                        if not txts[tc] == "" and not txts[tc] == " ":
+                                            TxtList.append(st)  # テキストリストに代入
+                                # ----------------------------------------------------------------
                             else:
-                                if TFlag is True:
-                                    if not txts[tc] == "" and not txts[tc] == " ":
-                                        TxtList.append(st)  # テキストリストに代入
-                            # ----------------------------------------------------------------
-                        else:
-                            if not txts[tc] == "" and not txts[tc] == " ":
-                                tsc = txts[tc]
-                                if tsc.startswith(" ") is True:
-                                    tsc = tsc.replace(" ", "")
-                                TxtList.append(tsc)  # テキストリストに代入
-                        # ---------------------------------------------------------------------
-                    TFlag = False
-                # -----------------------------------------------------------------------------
+                                if (
+                                    not txts[tc] == ""
+                                    and not txts[tc] == " "
+                                    and ThreeCol is False
+                                ):
+                                    tsc = txts[tc]
+                                    if tsc.startswith(" ") is True:
+                                        tsc = tsc.replace(" ", "")
+                                    TxtList.append(tsc)  # テキストリストに代入
+                            # ---------------------------------------------------------------------
+                        TFlag = False
+                    # -----------------------------------------------------------------------------
+                    elif ThreeCol is True:
+                        txt = repr(cellsListItem[0].text)  # 改行コードの数でセル分割の判定
+                        txts = txt.split(r"\n")  # テキストを改行コードで分割する
+                        txt2 = repr(cellsListItem[1].text)  # 改行コードの数でセル分割の判定
+                        txts2 = txt2.split(r"\n")  # テキストを改行コードで分割する
+                        txts.pop(0)
+                        txtsc = len(txts)  # 改行コード分割後のリスト要素数
+                        for tx in range(txtsc):  # 改行コード分割後のリストを置換
+                            txts[tx] = (
+                                txts[tx]
+                                .replace("'", "")
+                                .replace('"', "")
+                                .replace("\xa0", "")
+                                .replace(r"\n", "")
+                                .replace(r"\u2003", " ")
+                                .replace(r"\u3000", " ")
+                            )
+                            txts[tx] = txts[tx].replace(" ", "")
+                            txts[tx] = ChangeBusyu(txts[tx])
+                            if not txts[tx] == "":
+                                ColumList.append(txts[tx])  # 項目リストに代入
+                                txts2[tx] = (
+                                    txts2[tx]
+                                    .replace("'", "")
+                                    .replace('"', "")
+                                    .replace("\xa0", "")
+                                    .replace(r"\n", "")
+                                    .replace(r"\u2003", " ")
+                                    .replace(r"\u3000", " ")
+                                )
+                                txts2[tx] = txts2[tx].replace(" ", "")
+                                txts2[tx] = ChangeBusyu(txts2[tx])
+                                TxtList.append(txts2[tx])  # 項目リストに代入
             else:
-                txts = repr(cellsListItem[0].text.replace(r"\n", ""))  # 改行コード判定の為repr
+                if (
+                    "税目１" in stt or "税目２" in stt or "優先税⽬" in stt or "第２税⽬" in stt
+                ) and not cellsListItem[1].text == "":
+                    txts = repr(
+                        cellsListItem[1].text.replace(r"\n", "")
+                    )  # 改行コード判定の為repr
+                else:
+                    txts = repr(
+                        cellsListItem[0].text.replace(r"\n", "")
+                    )  # 改行コード判定の為repr
                 txts = (
                     txts.replace("'", "")
                     .replace("'", "")
@@ -156,7 +225,14 @@ def CellsAction(stt, cellsList, ColumList, TxtList):  # 主にeltax処理
                 if txts.startswith(" ") is True:
                     txts.replace(" ", "")
                 ColumList.append(txts)  # 項目リストに代入
-                txts = repr(cellsListItem[1].text.replace(r"\n", ""))  # 改行コード判定の為repr
+                if "税目１" in stt or "税目２" in stt or "優先税⽬" in stt or "第２税⽬" in stt:
+                    txts = repr(
+                        cellsListItem[2].text.replace(r"\n", "")
+                    )  # 改行コード判定の為repr
+                else:
+                    txts = repr(
+                        cellsListItem[1].text.replace(r"\n", "")
+                    )  # 改行コード判定の為repr
                 txts = (
                     txts.replace("'", "")
                     .replace("'", "")
@@ -682,7 +758,13 @@ def CellsActionTKC(stt, cellsList, ColumList, TxtList, Sbtext):  # 主にeltax�
                             SI.pop(0)
                             SI = SI[0].split("::")
                         else:
-                            SI = SbtextItem.split("::")
+                            # tomlリストと抽出内容の文字数が一致する場合
+                            Mojisa = len(SbtextItem) - len(sttItem)
+                            if Mojisa >= 50:
+                                print("Skip行")
+                                break
+                            else:
+                                SI = SbtextItem.split("::")
                         ColumList.append(SI[0])
                         TxtList.append(SI[1])
                         break
@@ -844,6 +926,7 @@ def CellsActionTKCList(
     page,
     SCode,
     DLCList,
+    PageList,
 ):  # 主にeltax処理
     try:
         CellPosition = []
@@ -897,7 +980,16 @@ def CellsActionTKCList(
             ColumList.append("ページ")
             ColumList.append("コード")
             TxtList.append(path_pdf.replace("/", "\\"))
-            TxtList.append(str(page + 1) + "ページ")
+            if len(PageList) == 0:
+                TxtList.append(str(page + 1) + "ページ")
+            else:
+                Pagestr = []
+                Pagestr.append(str(page + 1))
+                for PageListItem in PageList:
+                    PagesPlus = str(PageListItem + page + 2)
+                    Pagestr.append(PagesPlus)
+                result = "-".join(s for s in Pagestr)
+                TxtList.append(result + "ページ")
             TxtList.append(str(SCode))
             # --------------------------------------------------------------------
             for SbtextItem in MSbList:  # セルループ
@@ -990,6 +1082,7 @@ def CellsImport(
     Sbtext,
     DLCList,
     NextFlag,
+    PageList,
 ):
     try:
         # MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
@@ -1017,6 +1110,9 @@ def CellsImport(
         if "etaxosirase" == TaxType:
             stt = Settingtoml["CsvSaveEnc"][TaxType]
             CA = CellsActionOsirase(stt, cellsList, ColumList, TxtList)
+        elif "etax3retu" == TaxType:
+            stt = Settingtoml["CsvSaveEnc"][TaxType]
+            CA = CellsAction(stt, cellsList, ColumList, TxtList)
         elif "eltaxList" == TaxType:
             stt = Settingtoml["CsvSaveEnc"][TaxType]
             CA = CellsAction(stt, cellsList, ColumList, TxtList)
@@ -1043,6 +1139,7 @@ def CellsImport(
                     page,
                     SCode,
                     DLCList,
+                    PageList,
                 )
             elif "TKC13" == TaxType:
                 stt = Settingtoml["CsvSaveEnc"][TaxType]
@@ -1060,6 +1157,7 @@ def CellsImport(
                     page,
                     SCode,
                     DLCList,
+                    PageList,
                 )
             else:
                 stt = Settingtoml["CsvSaveEnc"][TaxType]

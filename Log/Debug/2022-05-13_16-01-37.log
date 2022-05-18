@@ -1,0 +1,4 @@
+[2022/05/13 16:01:37][DEBUG](PDFReadForList copy.py:847) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 16:02:18][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/122_株式会社 ニッソク広島.pdf_2ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 16:02:29][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/122_株式会社 ニッソク広島.pdf_3ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/13 16:02:38][DEBUG](PDFReadForList copy.py:850) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出完了 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py

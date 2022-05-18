@@ -10,9 +10,33 @@ eltaxList2 = []
 eltaxList3 = []
 eltaxList4 = []
 eltaxList5 = []
+eltaxList6 = []
+eltaxList7 = []
+eltaxList8 = []
+eltaxList9 = []
+eltaxList10 = []
+eltaxList11 = []
 eltaxPreList = []
 eltaxPreList2 = []
+eltaxPreList3 = []
 etaxList = []
+etaxList2 = []
+etaxList3 = []
+etaxList4 = []
+etaxList5 = []
+etaxList6 = []
+etaxList7 = []
+etaxList8 = []
+etaxList9 = []
+etaxList10 = []
+etaxList11 = []
+etaxList12 = []
+etaxList13 = []
+etaxList14 = []
+etax3retu = []
+etax3retu2 = []
+etax3retu3 = []
+etax3retu4 = []
 etaxsyouhitodoke = []
 etaxjigyounendo = []
 etaximage = []
@@ -21,7 +45,12 @@ etaxnouhu2 = []
 etaxsyouhicyuukan = []
 etaxsyouhisinkoku = []
 etaxseikyuhakkou = []
+Syoukyaku = []
+KakusinOsirase = []
+TKCuketuke = []
+TKCuketuke2 = []
 TKC = []
+TKCL = []
 TKC2 = []
 TKC3 = []
 TKC4 = []
@@ -49,6 +78,13 @@ TKC25 = []
 TKC26 = []
 TKC27 = []
 TKC28 = []
+TKC29 = []
+TKC30 = []
+TKC31 = []
+TKC32 = []
+TKC33 = []
+TKC34 = []
+TKC35 = []
 MJS = []
 MJS2 = []
 MJS3 = []
@@ -66,9 +102,24 @@ MJS14 = []
 MJS15 = []
 MJS16 = []
 MJS17 = []
+MJS18 = []
+MJS19 = []
+MJS20 = []
+MJS21 = []
+MJS22 = []
+MJS23 = []
+MJS24 = []
+MJS25 = []
+MJS26 = []
+MJS27 = []
+MJS28 = []
+MJS29 = []
+MJS30 = []
+MJS31 = []
 MJSImage = []
 ErrList = []  # エラーリスト
 SubErrList = []
+NotAccessList = []
 # 関数の引数様にDict格納-------------------------------------------------------------------------
 CSVIndexSortFuncArray = {
     "etaxsyotoku": etaxsyotoku,
@@ -82,9 +133,33 @@ CSVIndexSortFuncArray = {
     "eltaxList3": eltaxList3,
     "eltaxList4": eltaxList4,
     "eltaxList5": eltaxList5,
+    "eltaxList6": eltaxList6,
+    "eltaxList7": eltaxList7,
+    "eltaxList8": eltaxList8,
+    "eltaxList9": eltaxList9,
+    "eltaxList10": eltaxList10,
+    "eltaxList11": eltaxList11,
     "eltaxPreList": eltaxPreList,
     "eltaxPreList2": eltaxPreList2,
+    "eltaxPreList3": eltaxPreList3,
     "etaxList": etaxList,
+    "etaxList2": etaxList2,
+    "etaxList3": etaxList3,
+    "etaxList4": etaxList4,
+    "etaxList5": etaxList5,
+    "etaxList6": etaxList6,
+    "etaxList7": etaxList7,
+    "etaxList8": etaxList8,
+    "etaxList9": etaxList9,
+    "etaxList10": etaxList10,
+    "etaxList11": etaxList11,
+    "etaxList12": etaxList12,
+    "etaxList13": etaxList13,
+    "etaxList14": etaxList14,
+    "etax3retu": etax3retu,
+    "etax3retu2": etax3retu2,
+    "etax3retu3": etax3retu3,
+    "etax3retu4": etax3retu4,
     "etaxsyouhitodoke": etaxsyouhitodoke,
     "etaxjigyounendo": etaxjigyounendo,
     "etaximage": etaximage,
@@ -93,7 +168,12 @@ CSVIndexSortFuncArray = {
     "etaxsyouhicyuukan": etaxsyouhicyuukan,
     "etaxsyouhisinkoku": etaxsyouhisinkoku,
     "etaxseikyuhakkou": etaxseikyuhakkou,
+    "Syoukyaku": Syoukyaku,
+    "KakusinOsirase": KakusinOsirase,
+    "TKCuketuke": TKCuketuke,
+    "TKCuketuke2": TKCuketuke2,
     "TKC": TKC,
+    "TKCL": TKCL,
     "TKC2": TKC2,
     "TKC3": TKC3,
     "TKC4": TKC4,
@@ -121,6 +201,13 @@ CSVIndexSortFuncArray = {
     "TKC26": TKC26,
     "TKC27": TKC27,
     "TKC28": TKC28,
+    "TKC29": TKC29,
+    "TKC30": TKC30,
+    "TKC31": TKC31,
+    "TKC32": TKC32,
+    "TKC33": TKC33,
+    "TKC34": TKC34,
+    "TKC35": TKC35,
     "MJS": MJS,
     "MJS2": MJS2,
     "MJS3": MJS3,
@@ -138,7 +225,22 @@ CSVIndexSortFuncArray = {
     "MJS15": MJS15,
     "MJS16": MJS16,
     "MJS17": MJS17,
+    "MJS18": MJS18,
+    "MJS19": MJS19,
+    "MJS20": MJS20,
+    "MJS21": MJS21,
+    "MJS22": MJS22,
+    "MJS23": MJS23,
+    "MJS24": MJS24,
+    "MJS25": MJS25,
+    "MJS26": MJS26,
+    "MJS27": MJS27,
+    "MJS28": MJS28,
+    "MJS29": MJS29,
+    "MJS30": MJS30,
+    "MJS31": MJS31,
     "MJSImage": MJSImage,
     "ErrList": ErrList,
     "SubErrList": SubErrList,
+    "NotAccessList": NotAccessList,
 }

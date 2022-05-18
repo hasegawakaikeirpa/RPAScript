@@ -1,10 +1,22 @@
-import ContextTimeOut as CTO
-import Function.PDFCellsImport as FPDF
+import os
+import csv
 
-SCode = "1026"
-path_pdf = "//Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/1026_和炎_広島市（償却資産・中区）_税務部固定資産税課償却資産係_申告受付完了通知.pdf"
-PageVol = "1"
-y = 0
-
-tables = CTO.camelotTimeOut(path_pdf, PageVol, "")
-tCells = FPDF.CellsImport(SCode, path_pdf, tables, y)
+MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
+# 列名追記------------------------------------------------------------------------------
+with open(
+    MeUrl + r"/RPAPhoto/PDFReadForList/ColumnList.CSV",
+    "a",
+    encoding="utf-8",
+) as Colup:
+    ColupList = [
+        "Test",
+        "Test",
+        "Test",
+        "Test",
+        "Test",
+        "Test",
+        "Test",
+    ]
+    writer = csv.writer(Colup)
+    writer.writerow(ColupList)
+# ----------------------------------------------------------------------------------------

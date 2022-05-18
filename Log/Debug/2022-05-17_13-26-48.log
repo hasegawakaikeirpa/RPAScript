@@ -1,0 +1,76 @@
+[2022/05/17 13:26:48][DEBUG](PDFReadForList copy.py:907) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-3\送信分受信通知内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:27:26][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/10102/10102　受信通知2.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:28:26][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1011/1011_西村 英亨.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:29:09][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1016/1016.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:29:18][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1016/1016.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:29:35][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1016/1016.pdf_3ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:29:46][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1017/1017.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:30:03][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1017/1017送付書.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:30:04][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1021/メール詳細-2.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:30:04][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1021/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:31:06][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1034/1034.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:32:07][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1034/1034.pdf_2ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:33:08][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1034/1034.pdf_3ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:33:08][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1034/1034償却資産.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:33:42][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1045/1045.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:33:47][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1054/メール詳細-2.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:33:48][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1054/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:34:36][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/105406/105406.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:35:38][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1064/国税電子申告・納税システム－SU00S140 申告書等送信票（兼送付書）.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:36:21][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1071/1071送付書.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:36:58][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1080/1080.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:36:59][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1084/メール詳細-2.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:36:59][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1084/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:00][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1089/メール詳細-2.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:00][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1089/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:12][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1096/1096.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:22][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1099/1099.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:31][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1099/1099.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:34][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1107/1107.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:36][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1107/1107.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:38][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1107/1107.pdf_3ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:44][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1112/1112.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:44][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/111302/所得税及び復興特別所得税申告.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:37:44][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/111302/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:38:45][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1114/1114.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:39:45][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1114/1114.pdf_2ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:40:47][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1114/1114.pdf_3ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:41:48][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1114/1114.pdf_4ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:42:10][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1114/1114.pdf_5ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:42:10][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1114/1114償却資産.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:43:11][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1115/1115送付書.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:44:36][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1121/国税電子申告・納税システム－SU00S140 申告書等送信票（兼送付書）.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:45:45][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1130/1130送付書.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:45:59][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1133/所得税及び復興特別所得税申告.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:45:59][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1133/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:47:00][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1141/国税電子申告・納税システム－SU00S140 申告書等送信票（兼送付書）.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:47:31][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1142/1142.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:47:59][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1142/1142送付書.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:49:00][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1145/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:49:02][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1160/1160償却資産.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:50:03][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1160/国税電子申告・納税システム－SU00S140 申告書等送信票（兼送付書）.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:50:43][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1165/1165.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:50:46][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1175/メール詳細-2.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:50:46][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1175/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:50:51][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1188/1188.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:51:02][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1193/1193.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:51:03][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1196/1196.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:51:05][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/12003/12003.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:51:08][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1213/1213.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:52:09][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1214/国税電子申告・納税システム－SU00S100 メール詳細(所得税).pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:52:31][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1214/国税電子申告・納税システム－SU00S100 メール詳細(所得税).pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:53:33][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1214/国税電子申告・納税システム－SU00S100 メール詳細.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:53:52][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1214/国税電子申告・納税システム－SU00S100 メール詳細.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:54:54][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1214/国税電子申告・納税システム－SU00S140 申告書等送信票（兼送付書）.pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:54:56][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1219/1219.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:55:37][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1232/1232送付書).pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:55:57][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1237/1237.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:56:23][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1241/1241送付書.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:56:53][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1246/1246.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:57:14][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1246/1246.pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:57:33][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1246/1246.pdf_3ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:57:40][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1247/所得税.pdf_1ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:57:46][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1247/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:57:46][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/126002/所得税及び復興特別所得税申告.xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:57:46][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/126002/消費税及び地方消費税申告(一般・個人).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/17 13:57:46][DEBUG](PDFReadForList copy.py:809) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/126002/申告等送信票(兼送付書).xdw_xdwファイルの為取得不可 PDFRead d:\PythonScript\RPAScript\PDFReadForList copy.py

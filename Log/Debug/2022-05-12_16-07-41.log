@@ -1,0 +1,3 @@
+[2022/05/12 16:07:41][DEBUG](PDFReadForList copy.py:802) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/12 16:07:45][DEBUG](PDFReadForList copy.py:618) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/1511_長野 正也_確定申告等についてのお知らせ_20220208 101620.pdf_1ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/05/12 16:08:33][DEBUG](PDFReadForList copy.py:805) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出完了 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
