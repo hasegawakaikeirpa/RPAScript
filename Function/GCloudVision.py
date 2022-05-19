@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw
 import pandas as pd
 import numpy as np
 from collections import OrderedDict
+from dateutil.parser import parse
 
 # loggerインポート
 from logging import getLogger
@@ -66,6 +67,8 @@ def get_document_bounds(image_file, feature, Flag):
         document = response.full_text_annotation
         if "国税電子申告・納税システム(e-Tax)" in document.text:
             Flag = "etax"
+        elif "フリコミ" in document.text or "CD" in document.text:
+            Flag = "通帳"
         else:
             if not Flag == "eltax":
                 Flag = "MJS"
@@ -232,6 +235,81 @@ def Dfchange(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label, 
         return False, ""
 
 
+def DfTuuchou(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label, Flag):
+    try:
+        strs = ""
+        for YDicListItem in YDicList:
+            YList = getNearestValue(YList, YDicListItem, near)
+        print(YList)
+        Ys = 0
+        for YListItem in YList:
+            XYList[Ys][3] = YListItem
+            Ys += 1
+        dfXYList = pd.DataFrame(XYList)
+        dfXYList.columns = ["No", "テキスト", "X軸", "Y軸"]
+        npXYList = ChangeList(dfXYList, "Y軸")  # pram1:リスト,pram2:str"Y軸"
+        if npXYList[0] is True:
+            dfnp = list(npXYList[1])
+            # CSVDF = pd.DataFrame(dfnp)
+            # CSVDF.to_csv(
+            #     r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\XYList.csv", encoding="cp932"
+            # )
+        dfRow = len(dfnp)
+        DateFlag = False
+        lbCount = 1
+        for lb in range(dfRow):
+            try:
+                if len(strs) >= 8 and not lbCount == lb:
+                    parse(strs)
+                    DateFlag = True
+            except:
+                DateFlag = False
+                lbCount += 1
+            if DateFlag is False:
+                btxt = dfnp[lb][1]
+                bjsonX = dfnp[lb][2]  # 現在の文字の横軸
+                bjsonY = dfnp[lb][3]  # 現在の文字の縦軸
+                if not lb == dfRow - 1:
+                    NextbjsonX = dfnp[lb + 1][2]  # 次の文字の横軸
+                    NextbjsonY = dfnp[lb + 1][3]  # 次の文字の縦軸
+                    diffparX = NextbjsonX - bjsonX  # 次の文字との横軸間隔
+                    diffparY = NextbjsonY - bjsonY  # 次の文字との縦軸間隔
+                    if diffparX > KeyX:  # 次の文字との横軸間隔が指定値以上なら
+                        strs = strs + btxt
+                        strList.append(strs)
+                        strs = ""
+                    elif diffparY > KeyY:  # 次の文字との縦軸間隔が指定値以上なら
+                        strs = strs + btxt
+                        if Flag == "eltax" and len(strList) == 0:
+                            strList.append("発行元::" + strs)
+                        else:
+                            strList.append(strs)
+                        strs = ""
+                    else:
+                        if diffparX > LabelX:  # 次の文字との横軸間隔がラベル指定値以上なら
+                            strs = strs + btxt
+                            if Flag == "eltax" and len(strList) == 2:
+                                strList.append("発行元部署::" + strs)
+                                strs = ""
+                            elif Flag == "eltax" and "発行日時::" in strs:
+                                strList.append(strs)
+                                strs = ""
+                            else:
+                                strs = strs + Label
+                        else:
+                            strs = strs + btxt
+                else:  # 最終行の処理
+                    strs = strs + btxt
+                    strList.append(strs)
+                    strs = ""
+            else:
+                strList.append(strs)
+                strs = ""
+        return True, strList
+    except:
+        return False, ""
+
+
 def rentxtver(
     filein, KeyX, KeyY, LabelX, etaxKeyX, etaxKeyY, etaxLabelX, Label, near, Flag
 ):  # 自作関数一文字づつの軸間を指定値を元に切り分け文章作成
@@ -320,7 +398,25 @@ def rentxtver(
                 else:
                     logger.debug("rentxtver(OCR結果を整形eTax)失敗: debug level log")
                     return False, "eTaxDfchangeエラー"
-
+            elif Flag == "通帳":  # OCRで通帳と判定されたら
+                DC = DfTuuchou(
+                    YDicList,
+                    KeyX,
+                    KeyY,
+                    XYList,
+                    YList,
+                    strList,
+                    near,
+                    LabelX,
+                    Label,
+                    Flag,
+                )
+                if DC[0] is True:
+                    logger.debug("rentxtver(OCR結果を整形eTax以外)成功: debug level log")
+                    return True, DC[1]
+                else:
+                    logger.debug("rentxtver(OCR結果を整形eTax以外)失敗: debug level log")
+                    return False, "eTaxじゃないDfchangeエラー"
             else:  # OCRでeTax以外なら
                 DC = Dfchange(
                     YDicList,

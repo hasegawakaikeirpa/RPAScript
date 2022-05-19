@@ -12,13 +12,14 @@ import Function.CSVOut as FCSV
 import RPAPhoto.PDFeTaxReadForList.CSVSetting as CSVSet  # CSVの設定ファイルの読込
 import cv2
 
+
 # logger設定------------------------------------------------------------------------------
 import logging.config
 
 logging.config.fileConfig(r"LogConf\logging_debug.conf")
 logger = logging.getLogger(__name__)
 # -------------------------------------------------------------------------------------------------------
-def ModelpngDelte(FolURL):
+def ModelpngDelete(FolURL):
     """
     概要: PDF変換後のpngの削除
     @param FolURL : このpyファイルのフォルダ(str)
@@ -55,13 +56,19 @@ def pdf_image(pdf_file, img_path, fmtt, dpi, PDFPage):
 
         # PDFをImage に変換(pdf2imageの関数)
         pages = convert_from_path(pdf_path, dpi, poppler_path=pppath)
-
         # 画像ファイルを１ページずつ保存
         for i, page in enumerate(pages):
             file_name = "OCR" + str(i) + "." + fmtt
             image_path = image_dir / file_name
             page.save(image_path, fmtt)
-
+            yoko = page.size[0]  # 画像の幅
+            tate = page.size[1]  # 画像の高さ
+            # 画像が横向きなら縦向きに回転-------------------------------------------
+            if yoko > tate:
+                img = cv2.imread(image_path._str, 0)
+                img_rotate_90_clockwise = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+                cv2.imwrite(image_path._str, img_rotate_90_clockwise)
+            # ---------------------------------------------------------------------
             # グレースケールに変換
             src = cv2.imread(image_path._str, 0)
             cv2.imwrite(image_path._str, src)
@@ -99,7 +106,7 @@ def DiffListCreate(FolURL, OCRList, KCode, PDFDir, PDFPageTxt):
                 else:
                     Flag = ""
                 GF = GCV.rentxtver(
-                    FileURL, 2000, 15, 300, 2000, 15, 500, "::", 10, Flag
+                    FileURL, 2000, 15, 100, 2000, 15, 500, "::", 10, Flag
                 )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
                 if GF[0] is True:
                     GFTable = GF[1]
@@ -232,7 +239,7 @@ try:
             KCode = CSVRowData["コード"]  # DataFrameから抽出対象のPDFを取得
             PDFPageTxt = CSVRowData["ページ"]
             PDFPage = str(int(re.findall(r"\d", CSVRowData["ページ"])[0]) - 1)  # 対象のページを取得
-            ModelpngDelte(MyURL)  # PDF変換pngの削除
+            ModelpngDelete(MyURL)  # PDF変換pngの削除
             PI = pdf_image(PDFDir, MyURL, "png", 500, PDFPage)  # 対象のPDFをpng変換
             if PI[0] is True:  # png変換に成功したら
                 OCRList = PI[1]  # PDFから変換したpngを全て取得
