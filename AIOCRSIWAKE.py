@@ -219,7 +219,7 @@ with open(
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
 MyURL = os.getcwd() + r"\RPAPhoto\PDFeTaxReadForList"  # このスクリプトの配下の設定フォルダ
 # CSVURL = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST2022-3\受信通知CSV\受信通知取得失敗リスト.csv"  # 取得対象のURLが記載されたCSV
-CSVURL = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\3月受信通知取得失敗リスト.csv"  # 取得対象のURLが記載されたCSV
+CSVURL = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\AIOCRTEST.csv"  # 取得対象のURLが記載されたCSV
 # --------------------------------------------------------------------------------
 try:
     CSVList = FCSV.CsvRead(CSVURL)  # 自作関数でCSVをDataFrameに変換
