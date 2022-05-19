@@ -48,6 +48,7 @@ etaxnouhu2 = []
 etaxnouhu3 = []
 etaxnouhu4 = []
 etaxnouhu5 = []
+etaxnouhu6 = []
 etaxsyouhicyuukan = []
 etaxsyouhisinkoku = []
 etaxseikyuhakkou = []
@@ -177,6 +178,7 @@ CSVIndexSortFuncArray = {
     "etaxnouhu3": etaxnouhu3,
     "etaxnouhu4": etaxnouhu4,
     "etaxnouhu5": etaxnouhu5,
+    "etaxnouhu6": etaxnouhu6,
     "etaxsyouhicyuukan": etaxsyouhicyuukan,
     "etaxsyouhisinkoku": etaxsyouhisinkoku,
     "etaxseikyuhakkou": etaxseikyuhakkou,
