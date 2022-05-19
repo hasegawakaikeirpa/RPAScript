@@ -33,6 +33,9 @@ etaxList11 = []
 etaxList12 = []
 etaxList13 = []
 etaxList14 = []
+etaxList15 = []
+etaxList16 = []
+etaxList17 = []
 etax3retu = []
 etax3retu2 = []
 etax3retu3 = []
@@ -42,6 +45,10 @@ etaxjigyounendo = []
 etaximage = []
 etaxnouhu = []
 etaxnouhu2 = []
+etaxnouhu3 = []
+etaxnouhu4 = []
+etaxnouhu5 = []
+etaxnouhu6 = []
 etaxsyouhicyuukan = []
 etaxsyouhisinkoku = []
 etaxseikyuhakkou = []
@@ -156,6 +163,9 @@ CSVIndexSortFuncArray = {
     "etaxList12": etaxList12,
     "etaxList13": etaxList13,
     "etaxList14": etaxList14,
+    "etaxList15": etaxList15,
+    "etaxList16": etaxList16,
+    "etaxList17": etaxList17,
     "etax3retu": etax3retu,
     "etax3retu2": etax3retu2,
     "etax3retu3": etax3retu3,
@@ -165,6 +175,10 @@ CSVIndexSortFuncArray = {
     "etaximage": etaximage,
     "etaxnouhu": etaxnouhu,
     "etaxnouhu2": etaxnouhu2,
+    "etaxnouhu3": etaxnouhu3,
+    "etaxnouhu4": etaxnouhu4,
+    "etaxnouhu5": etaxnouhu5,
+    "etaxnouhu6": etaxnouhu6,
     "etaxsyouhicyuukan": etaxsyouhicyuukan,
     "etaxsyouhisinkoku": etaxsyouhisinkoku,
     "etaxseikyuhakkou": etaxseikyuhakkou,
