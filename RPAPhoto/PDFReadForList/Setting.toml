@@ -18,6 +18,7 @@
     "eltaxList9",
     "eltaxList10",
     "eltaxList11",
+    "eltaxList12",
     "eltaxPreList",
     "eltaxPreList2",
     "eltaxPreList3",
@@ -445,6 +446,21 @@
     "手続名", 
     "提出先"
     ]
+
+
+    eltaxList12 = [
+    "URL", 
+    "ページ", 
+    "コード", 
+    "発行元", 
+    "件名", 
+    "受付日時", 
+    "手続名", 
+    "納入対象年月", 
+    "まとめ納付見出し", 
+    "合計金額"
+    ]
+
 
     eltaxPreList = [
     "URL",
