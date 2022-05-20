@@ -16,6 +16,7 @@ eltaxList8 = []
 eltaxList9 = []
 eltaxList10 = []
 eltaxList11 = []
+eltaxList12 = []
 eltaxPreList = []
 eltaxPreList2 = []
 eltaxPreList3 = []
@@ -146,6 +147,7 @@ CSVIndexSortFuncArray = {
     "eltaxList9": eltaxList9,
     "eltaxList10": eltaxList10,
     "eltaxList11": eltaxList11,
+    "eltaxList12": eltaxList12,
     "eltaxPreList": eltaxPreList,
     "eltaxPreList2": eltaxPreList2,
     "eltaxPreList3": eltaxPreList3,

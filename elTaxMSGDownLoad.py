@@ -75,7 +75,7 @@ def eTaxWebCrawler(H_id, H_pass, H_fold, H_SC, H_TN):
         EC.presence_of_all_elements_located
     )  # 要素が読み込まれるまで最大30秒待つ
     # 初めの拡張機能ポップアップを閉じる
-    time.sleep(2)
+    time.sleep(1)
     H_PopupCheck_btn = H_driver.find_element_by_xpath(
         "/html/body/div[3]/div[2]/div/form/div/div[1]/input"
     )
@@ -111,7 +111,7 @@ def eTaxWebCrawler(H_id, H_pass, H_fold, H_SC, H_TN):
         WebDriverWait(H_driver, 30).until(
             EC.presence_of_all_elements_located
         )  # 要素が読み込まれるまで最大30秒待つ
-        time.sleep(2)
+        time.sleep(1)
         H_H1 = H_driver.find_element_by_xpath(
             "/html/body/div[3]/form/div/div/div[1]/div/p"
         )  # H1要素を取得
@@ -257,12 +257,41 @@ def ParGet(H_driver, H_MSG_rowItem, H_MSG_row):
             ).text.replace(
                 "\u3000", " "
             )  # 件名
-            return (
-                H_MSG_TableItem1,
-                H_MSG_TableItem2,
-                H_MSG_TableItem3,
-                H_MSG_TableItem4,
-            )
+            if "/" not in H_MSG_TableItem3 and ":" not in H_MSG_TableItem3:
+                H_MSG_TableItem1 = H_driver.find_element_by_xpath(
+                    "/html/body/div[2]/form/div/div/div[2]/table/tbody/tr[1]/td"
+                ).text.replace(
+                    "\u3000", " "
+                )  # 発行元
+                H_MSG_TableItem2 = H_driver.find_element_by_xpath(
+                    "/html/body/div[2]/form/div/div/div[2]/table/tbody/tr[3]/td[1]"
+                ).text.replace(
+                    "\u3000", " "
+                )  # 発行元2
+                H_MSG_TableItem3 = H_driver.find_element_by_xpath(
+                    "/html/body/div[2]/form/div/div/div[2]/table/tbody/tr[2]/td[1]"
+                ).text.replace(
+                    "\u3000", " "
+                )  # 発行日時
+                H_MSG_TableItem4 = H_driver.find_element_by_xpath(
+                    "/html/body/div[2]/form/div/div/div[2]/table/tbody/tr[6]/td"
+                ).text.replace(
+                    "\u3000", " "
+                )  # 件名
+
+                return (
+                    H_MSG_TableItem1,
+                    H_MSG_TableItem2,
+                    H_MSG_TableItem3,
+                    H_MSG_TableItem4,
+                )
+            else:
+                return (
+                    H_MSG_TableItem1,
+                    H_MSG_TableItem2,
+                    H_MSG_TableItem3,
+                    H_MSG_TableItem4,
+                )
 
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -300,10 +329,10 @@ def LogReturn(LogAns, H_driver):
             WebDriverWait(H_driver, 30).until(
                 EC.presence_of_all_elements_located
             )  # 要素が読み込まれるまで最大30秒待つ
-            H_Today = dt.today() + relativedelta(months=-1)
-            H_dtToday = dt.today()
-            # H_Today = dt.today() + relativedelta(months=-0)
-            # H_dtToday = dt.today() + relativedelta(months=-1)
+            # H_Today = dt.today() + relativedelta(months=-1)
+            # H_dtToday = dt.today()
+            H_Today = dt.today() + relativedelta(months=-0)
+            H_dtToday = dt.today() + relativedelta(months=+1)
             Hj = str(H_dtToday.year)
             Hjj = str("{0:02}".format(H_dtToday.month))
             H_Str = Hj + "/" + Hjj + "/01 01:01:01"
@@ -362,10 +391,10 @@ def LogReturn(LogAns, H_driver):
         WebDriverWait(H_driver, 30).until(
             EC.presence_of_all_elements_located
         )  # 要素が読み込まれるまで最大30秒待つ
-        H_Today = dt.today() + relativedelta(months=-1)
-        H_dtToday = dt.today()
-        # H_Today = dt.today() + relativedelta(months=-0)
-        # H_dtToday = dt.today() + relativedelta(months=-1)
+        # H_Today = dt.today() + relativedelta(months=-1)
+        # H_dtToday = dt.today()
+        H_Today = dt.today() + relativedelta(months=-0)
+        H_dtToday = dt.today() + relativedelta(months=+1)
         Hj = str(H_dtToday.year)
         Hjj = str("{0:02}".format(H_dtToday.month))
         H_Str = Hj + "/" + Hjj + "/01 01:01:01"
@@ -480,6 +509,8 @@ def RenamePDF(DownTime, MTitle, KanyoNo, KanyoName, Hakkoumoto, Hakkou, H_row):
             PDFSerch = "メッセージ照会_受付通知（利用届出、申請・届出）" in PDFfolderItem
         if PDFSerch is False:
             PDFSerch = "メッセージ照会_申告書不受理通知" in PDFfolderItem
+        if PDFSerch is False:
+            PDFSerch = "メッセージ照会_納付情報発行依頼通知" in PDFfolderItem
         if MTitle == "プレ申告データに関するお知らせ":
             PDFName = (
                 KanyoFolName
@@ -613,7 +644,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
                 )  # PDF保存先フォルダー作成後リネーム&移動 DownTime,MTitle,KanyoNo,KanyoName
                 if H_MSG_rowItem == H_L_Row - 1:
                     H_LogAnsOBJ.quit()
-                    time.sleep(2)
+                    time.sleep(1)
                 else:
                     H_LogAnsOBJ.switch_to.window(
                         H_LogAnsOBJ.window_handles[0]
@@ -642,7 +673,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
                 print("ファイルが存在します。")
                 if H_MSG_rowItem == H_L_Row - 1:
                     H_LogAnsOBJ.quit()
-                    time.sleep(2)
+                    time.sleep(1)
                 else:
                     H_BackBtn = H_LogAnsOBJ.find_element_by_xpath(
                         "/html/body/div[2]/form/footer/div[1]/div/div[1]/a"
@@ -669,7 +700,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
         )
         NGLog.append(NGstr)
         H_LogAnsOBJ.quit()
-        time.sleep(2)
+        time.sleep(1)
         LogAns = eTaxWebCrawler(
             H_First, H_SecondP, os.getcwd().replace("\\", "/"), H_SCode, H_TKCName
         )  # Nanではない場合
@@ -697,7 +728,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
             )
             NGLog.append(NGstr)
             H_LogAnsOBJ.quit()
-            time.sleep(2)
+            time.sleep(1)
         elif H_LogMSGAns == "認証エラー":
             logger.debug(
                 str(H_SCode)
@@ -709,7 +740,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
                 + str(H_FirstP)
             )
             H_LogAnsOBJ.quit()
-            time.sleep(2)
+            time.sleep(1)
         elif H_LogMSGAns == "データ有":
             logger.debug(
                 str(H_SCode)
@@ -755,7 +786,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
                     )  # PDF保存先フォルダー作成後リネーム&移動 DownTime,MTitle,KanyoNo,KanyoName
                     if H_MSG_rowItem == H_L_Row - 1:
                         H_LogAnsOBJ.quit()
-                        time.sleep(2)
+                        time.sleep(1)
                     else:
                         H_LogAnsOBJ.switch_to.window(
                             H_LogAnsOBJ.window_handles[0]
@@ -784,7 +815,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
                     print("ファイルが存在します。")
                     if H_MSG_rowItem == H_L_Row - 1:
                         H_LogAnsOBJ.quit()
-                        time.sleep(2)
+                        time.sleep(1)
                     else:
                         H_BackBtn = H_LogAnsOBJ.find_element_by_xpath(
                             "/html/body/div[2]/form/footer/div[1]/div/div[1]/a"
@@ -803,10 +834,10 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
             )
             NGLog.append(NGstr)
             H_LogAnsOBJ.quit()
-            time.sleep(2)
+            time.sleep(1)
         else:
             H_LogAnsOBJ.quit()
-            time.sleep(2)
+            time.sleep(1)
     elif H_LogMSGAns == "認証エラー":
         logger.debug(str(H_SCode) + "_" + str(H_TKCName) + "暗証番号の変更")
         print(H_SCode + "_" + H_TKCName + "_" + "暗証番号の変更")
@@ -822,10 +853,10 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
         )
         NGLog.append(NGstr)
         H_LogAnsOBJ.quit()
-        time.sleep(2)
+        time.sleep(1)
     else:
         H_LogAnsOBJ.quit()
-        time.sleep(2)
+        time.sleep(1)
 
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -840,7 +871,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 18:
+        if x >= 68:
             # 関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
