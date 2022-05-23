@@ -1,0 +1,19 @@
+[Hirogin]
+#------------------------------------------------
+Yokojiku = 5000
+Tatejiku = 50
+RabelSpace = 2500
+etaxYokojiku = 5000
+etaxTatejiku = 10
+etaxRabelSpace = 500
+Rabel = "::"
+DougyouTatejiku = 50
+FontSize = 125.5
+ColCount = 5
+1Col = 8
+2Col = 8
+3Col = 14
+4Col = 14
+5Col = 14
+HidukeColNo = 1
+MoneyCol = [3,4,5]

@@ -11,7 +11,8 @@ from pdf2image import convert_from_path
 import Function.CSVOut as FCSV
 import RPAPhoto.PDFeTaxReadForList.CSVSetting as CSVSet  # CSVの設定ファイルの読込
 import cv2
-
+import Function.ImageChange as FIC
+import re
 
 # logger設定------------------------------------------------------------------------------
 import logging.config
@@ -70,9 +71,9 @@ def pdf_image(pdf_file, img_path, fmtt, dpi, PDFPage):
                 cv2.imwrite(image_path._str, img_rotate_90_clockwise)
             # ---------------------------------------------------------------------
             # グレースケールに変換
-            src = cv2.imread(image_path._str, 0)
-            cv2.imwrite(image_path._str, src)
-
+            # src = cv2.imread(image_path._str, 0)
+            # cv2.imwrite(image_path._str, src)
+            IMGURL = FIC.OCRIMGChange(img_path, image_path._str)
         for fd_path, sb_folder, sb_file in os.walk(image_dir):
             for fil in sb_file:
                 # if "OCR" in fil and fil.endswith(".png") is True:
@@ -106,7 +107,7 @@ def DiffListCreate(FolURL, OCRList, KCode, PDFDir, PDFPageTxt):
                 else:
                     Flag = ""
                 GF = GCV.rentxtver(
-                    FileURL, 2000, 15, 100, 2000, 15, 500, "::", 10, Flag
+                    FileURL, 5000, 30, 500, 5000, 10, 500, "::", 30, Flag
                 )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
                 if GF[0] is True:
                     GFTable = GF[1]
@@ -140,6 +141,14 @@ def DiffListCreate(FolURL, OCRList, KCode, PDFDir, PDFPageTxt):
                     # ----------------------------------------------------------------------------
                     GFTCount = 0
                     for GFTableItem in GFTable:
+                        strCount = str(GFTableItem).count("::")
+                        if not strCount < 4:
+                            SGF = str(GFTableItem).split("::")
+                            SC = len(SGF)
+                            for SI in range(SC):
+                                SGFItem = SGF[SI]
+                                if bool(re.search(r"\d", SGFItem)) is True:
+                                    re.sub(r"[^0-9]", "", SGFItem)
                         strGF = str(GFTableItem).replace("給額", "総額").replace("稅", "税")
                         SGF = strGF.split("::")
                         if GFTCount == 0:
