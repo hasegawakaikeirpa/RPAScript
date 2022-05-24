@@ -318,16 +318,26 @@ def DfTuuchou(
         # ---------------------------------------------------------------------------
         if npXYList[0] is True:
             dfnp = list(npXYList[1])  # 並び替えたDFをList化(高速化の為)
-            # CSVDF = pd.DataFrame(dfnp)
-            # CSVDF.to_csv(
-            #     r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\XYList.csv", encoding="cp932"
-            # )
+            # DataFrame作成
+            # df = pd.DataFrame(dfnp)
+            # with open(
+            #     r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\XYList.csv",
+            #     mode="w",
+            #     encoding="shiftjis",
+            #     errors="ignore",
+            #     newline="",
+            # ) as f:
+            #     # pandasでファイルオブジェクトに書き込む
+            #     df.to_csv(f, index=False)
+
         dfRow = len(dfnp)
         InputCount = 0  # テキスト代入変数に代入した回数
         InputSlide = 1  # 現在の編集列番号
         YeqXlistTrrigeer = False
         # 並び替えたListにループ処理---------------------------------------------------
         for lb in range(dfRow):
+            if lb == 907:
+                print()
             btxt = dfnp[lb][1]  # 現在の文字
             bjsonX = dfnp[lb][2]  # 現在の文字の横軸
             bjsonY = dfnp[lb][3]  # 現在の文字の縦軸
@@ -364,27 +374,32 @@ def DfTuuchou(
                         bjsonX >= bjsonYMinXRange[InputSlide - 1][0]
                         and bjsonX <= bjsonYMinXRange[InputSlide - 1][1]
                     ):
-                        if Gyou == bjsonY:
+                        if Gyou == bjsonY:  # 現在の文字縦軸が現在の行の縦軸と一致する場合
                             if InputSlide == Banktoml["HidukeColNo"]:
+                                # 文字列内に不要な文字があれば置換---------------------
                                 for p in reversed(range(len(strs))):
                                     if (
                                         strs[p].isdecimal() is False
-                                        and not strs[p] == ","
                                         and not strs[p] == "."
-                                    ):
+                                    ):  # 文字が数字と,.で無かった場合
                                         print(strs[p])
                                         strs = strs.replace(strs[p], "")
+                                        if not InputCount == 0:
+                                            InputCount -= 1
+                                # -------------------------------------------------
                                 if (
                                     btxt.isdecimal() is True
                                     or btxt == ","
                                     or btxt == "."
-                                ):
+                                ):  # 文字が数字と,.だった場合
                                     strs = strs + btxt
                                     InputCount += 1
-                            else:
+                            else:  # 現在のスライドが日付設定列番と一致しない場合
                                 strs = strs + btxt
                                 InputCount += 1
+                            # 文字列代入変数に指定回数分代入していた場合
                             if InputCount == Banktoml[str(InputSlide) + "Col"]:
+                                # 現在のスライドが通貨設定列番と一致する場合
                                 if InputSlide in Banktoml["MoneyCol"]:
                                     strList.append(
                                         strs.replace(".", "")
@@ -392,47 +407,65 @@ def DfTuuchou(
                                         .replace("*", "")
                                         .replace("'", "")
                                     )
-                                else:
+                                else:  # 現在のスライドが通貨設定列番と一致する場合
                                     strList.append(strs)
                                 InputSlide += 1
                                 InputCount = 0
                                 strs = ""
+                                # 現在のスライドが最大行設定と一致する場合
                                 if InputSlide - 1 == Banktoml["ColCount"]:
                                     FstrList.append(strList)
                                     YeqXlistTrrigeer = False
                                     InputSlide = 1
                                     strList = []
-                        else:
+                            elif lb == dfRow - 1:
+                                strList.append(strs)
+                                FstrList.append(strList)
+                                YeqXlistTrrigeer = False
+                                InputSlide = 1
+                                InputCount = 0
+                                strs = ""
+                                strList = []
+                        else:  # 現在の文字縦軸が現在の行の縦軸と一致しない場合
                             strList.append(strs)
                             InputSlide += 1
                             InputCount = 0
                             strs = ""
+                            # 現在のスライドが最大行設定と一致する場合
                             if InputSlide - 1 == Banktoml["ColCount"]:
                                 FstrList.append(strList)
                                 YeqXlistTrrigeer = False
                                 InputSlide = 1
                                 strList = []
+                            elif lb == dfRow - 1:
+                                FstrList.append(strList)
+                                YeqXlistTrrigeer = False
+                                InputSlide = 1
+                                strList = []
                     else:  # 現在の文字位置が行範囲外の場合
-                        if InputSlide == Banktoml["HidukeColNo"]:
+                        if (
+                            InputSlide == Banktoml["HidukeColNo"]
+                        ):  # 現在のスライドが日付設定列番と一致する場合
+                            # 文字列内に不要な文字があれば置換---------------------
                             for p in reversed(range(len(strs))):
-                                if (
-                                    strs[p].isdecimal() is False
-                                    and not strs[p] == ","
-                                    and not strs[p] == "."
-                                ):
+                                if strs[p].isdecimal() is False and not strs[p] == ".":
                                     strs = strs.replace(strs[p], "")
-                            wn = 0
-                            while not (len(strs) == 8):
+                                    if not InputCount == 0:
+                                        InputCount -= 1
+                            # -------------------------------------------------
+                            wn = 0  # 指定範囲外取得の為の加算変数
+                            while not (len(strs) == 8):  # 文字列が8文字になるまでループ
                                 wn += 1
                                 btxt = btxt = dfnp[lb + wn][1]
                                 if (
                                     btxt.isdecimal() is True
                                     or btxt == ","
                                     or btxt == "."
-                                ):
+                                ):  # 文字が数字と,.で無かった場合
                                     strs = strs + btxt
                                     InputCount += 1
-                        else:
+                        else:  # 現在のスライドが日付設定列番と一致しない場合
+                            # 現在のスライドが通貨設定列番と一致する場合
                             if InputSlide in Banktoml["MoneyCol"]:
                                 strList.append(
                                     strs.replace(".", "")
@@ -440,14 +473,35 @@ def DfTuuchou(
                                     .replace("*", "")
                                     .replace("'", "")
                                 )
-                            else:
-                                strList.append(strs)
-                            InputSlide += 1
-                            InputCount = 0
-                            strs = ""
-                            strs = strs + btxt
-                            InputCount += 1
+                                InputSlide += 1
+                                InputCount = 0
+                                strs = ""
+                                strs = strs + btxt
+                                InputCount += 1
+                            else:  # 現在のスライドが通貨設定列番と一致しない場合
+                                if not InputSlide - 1 == Banktoml["ColCount"]:
+                                    # 現在の文字位置が次の行範囲内ならテキスト代入変数に代入
+                                    if (
+                                        bjsonX >= bjsonYMinXRange[InputSlide][0]
+                                        and bjsonX <= bjsonYMinXRange[InputSlide][1]
+                                    ):
+                                        strList.append(strs)
+                                        InputSlide += 1
+                                        InputCount = 0
+                                        strs = ""
+                                        strs = strs + btxt
+                                        InputCount += 1
+                                    else:
+                                        InputCount = 0
+                                else:
+                                    InputCount = 0
+                            # 現在のスライドが最大行設定と一致する場合
                             if InputSlide - 1 == Banktoml["ColCount"]:
+                                FstrList.append(strList)
+                                YeqXlistTrrigeer = False
+                                InputSlide = 1
+                                strList = []
+                            elif lb == dfRow - 1:
                                 FstrList.append(strList)
                                 YeqXlistTrrigeer = False
                                 InputSlide = 1

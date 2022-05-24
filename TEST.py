@@ -3,6 +3,7 @@ import re
 import os
 from dateutil.parser import parse
 import toml
+import pandas as pd
 
 
 def DiffListCreate(KCode, PDFDir, PDFPageTxt, Banktoml):
@@ -28,107 +29,54 @@ def DiffListCreate(KCode, PDFDir, PDFPageTxt, Banktoml):
         if GF[0] is True:
             GFTable = GF[1]
             GFRow = len(GFTable)
-            GFTColList = []
-            GFTParList = []
             # OCR結果を整形----------------------------------------------------------------
-            for g in reversed(range(GFRow)):
-                if "::" not in GFTable[g]:  # OCR結果行に区切り文字がない場合
-                    if GFTable[g].endswith("円") is True:  # OCR結果行が円で終わる場合
-                        if Flag == "eltax":  # eltax処理の場合
-                            Koumoku = GFTable[g]  # 項目を代入
-                            Money = int(re.sub(r"\D", "", GFTable[g]))  # 数値のみ取得
-                            Money = "{:,}".format(Money)  # 取り出した数値をカンマ区切りにする
-                            Money = Money + "円"  # 末尾に円をつける
-                            Koumoku = Koumoku.replace(Money, "")  # 金額と項目名を置換で切り分け
-                            if Koumoku.endswith("-") is True:
-                                GFTable[g] = (
-                                    Koumoku.replace("-", "") + "::-" + Money
-                                )  # 区切り文字を挿入
-                            else:
-                                GFTable[g] = Koumoku + "::" + Money  # 区切り文字を挿入
-                            Money = ""
-                            Koumoku = ""
+            for g in range(GFRow):
+                for c in Banktoml["Hirogin"]["MoneyCol"]:
+                    strs = ""
+                    ints = ""
+                    S = GFTable[g][c - 1]
+                    for y in range(len(S)):
+                        if S[y].isdecimal() is False:
+                            strs += S[y]
                         else:
-                            GFTable.pop(g)
+                            ints += S[y]
+                    strs = (
+                        strs.replace(",", "")
+                        .replace("*", "")
+                        .replace("'", "")
+                        .replace(",", "")
+                        .replace("○", "")
+                        .replace("×", "")
+                        .replace("✓", "")
+                        .replace("¥", "")
+                        .replace("´", "")
+                        .replace("=", "")
+                        .replace("串", "")
+                        .replace("第", "")
+                        .replace("$", "")
+                        .replace("〒", "")
+                        .replace(".", "")
+                        .replace('"', "")
+                    )
+                    if len(strs) == 0:
+                        GFTable[g][c - 1] = ints
+                    elif len(ints) == 0:
+                        GFTable[g][c - 1] = strs
                     else:
-                        GFTable.pop(g)
+                        GFTable[g][c - 1] = strs + "::" + ints
             # ----------------------------------------------------------------------------
-            GFTCount = 0
-            BeLastList = []
-            LastList = []
-            for GFTableItem in GFTable:
-                strCount = str(GFTableItem).count("::")
-                if strCount < 4:
-                    SGF = str(GFTableItem).split("::")
-                    SC = len(SGF)
-                    for SI in range(SC):
-                        SGFItem = SGF[SI]
-                        strCount = str(GFTableItem).count(".")
-                        if strCount < 2:
-                            if bool(re.search(r"\d", SGFItem)) is True:
-                                try:
-                                    parse(SGFItem)
-                                except:
-                                    strc = len(SGFItem)
-                                    for s in range(strc):
-                                        if not s == strc and not s == 0:
-                                            btx = SGFItem[s - 1].isdecimal()
-                                            tx = SGFItem[s].isdecimal()
-                                            ntx = SGFItem[s + 1].isdecimal()
-                        else:
-                            strc = len(SGFItem)
-                            for s in range(strc):
-                                if not s >= (strc - 1) and not s == 0:
-                                    btx = SGFItem[s - 1].isdecimal()
-                                    tx = SGFItem[s].isdecimal()
-                                    ntx = SGFItem[s + 1].isdecimal()
-                                    if (
-                                        btx is True
-                                        and tx is False
-                                        and ntx is True
-                                        and not SGFItem[s] == ","
-                                        and not SGFItem[s] == "."
-                                    ):
-                                        SGFItem = SGFItem.replace(SGFItem[s], "::")
-                                        SGF[SI] = SGFItem
-                                        GFTableItem = "::".join(SGF)
-                            if "::" not in SGFItem:
-                                DTT = re.sub(r"[^0-9]", "", SGFItem)
-                                DTTL = []
-                                if len(DTT) == 6:
-                                    for c in range(len(DTT)):
-                                        if c % 2 == 0 and not c == 0:
-                                            DTTL.append(".")
-                                            DTTL.append(DTT[c])
-                                            SGFItem = SGFItem.replace(DTT[c], "")
-                                        else:
-                                            DTTL.append(DTT[c])
-                                            SGFItem = SGFItem.replace(DTT[c], "")
-                                    CDA = "".join(DTTL)
-                                    SGF[SI] = CDA + "::" + SGFItem
-                                    GFTableItem = "::".join(SGF)
+            # DataFrame作成
+            df = pd.DataFrame(GFTable)
+            with open(
+                r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\XYList.csv",
+                mode="w",
+                encoding="shiftjis",
+                errors="ignore",
+                newline="",
+            ) as f:
+                # pandasでファイルオブジェクトに書き込む
+                df.to_csv(f, index=False)
 
-                SGF = str(GFTableItem).split("::")
-                SC = len(SGF)
-                for SI in range(SC):
-                    SGFItem = SGF[SI]
-                    try:
-                        if len(SGFItem) >= 8:
-                            parse(SGFItem)
-                            LastList.append(SGFItem)
-                        elif bool(re.search(r"\d", SGFItem)) is True:
-                            SGFItem = re.sub(r"[^0-9]", "", SGFItem)
-                            LastList.append(SGFItem)
-                        else:
-                            LastList.append(SGFItem)
-                    except:
-                        if bool(re.search(r"\d", SGFItem)) is True:
-                            SGFItem = re.sub(r"[^0-9]", "", SGFItem)
-                            LastList.append(SGFItem)
-                        else:
-                            LastList.append(SGFItem)
-                BeLastList.append(LastList)
-                LastList = []
             print("END")
     except:
         print("ループ内エラー抽出失敗")
