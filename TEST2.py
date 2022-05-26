@@ -1,7 +1,5 @@
-from decimal import Underflow
 import os
 import csv
-from wsgiref.headers import tspecials
 import toml
 import Function.ImageChange as FIC
 from PIL import Image, ImageOps
@@ -18,13 +16,17 @@ import time
 #     Banktoml = Banktoml["Hirogin"]
 #     print(Banktoml)
 # # -----------------------------------------------------------
-
 URL = os.getcwd()
-imgurl = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\TEST0.png"
+imgurl = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\NoiseRemovalTEST0.png"
+img = cv2.imread(imgurl)
+size = img.shape  # 画像のサイズ x,y
+Pix = int(size[0] / 400)  # 検出ピクセル数
+if Pix <= 0:
+    Pix = 1
 # FLDインスタンス生成
 FLDs = FIC.FastLineDetector(
-    r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\\NoiseRemovalTEST0.png",
-    5,
+    imgurl,
+    Pix,
     1.41421356,
     50.0,
     50.0,
@@ -37,22 +39,24 @@ print(FLSort)
 # 　線形ピクセル配列ループ---------------------------------------
 for FL in range(len(FLSort)):
     if not FL == len(FLSort) - 1:  # 最終行でなければ
-        ThFL = FLSort[FL][0][1].T  # 現在のx値
-        NeFL = FLSort[FL + 1][0][1].T  # 次のx値
+        ThFL = FLSort[FL][0][1].T  # 現在の上辺x値
+        NeFL = FLSort[FL + 1][0][1].T  # 次の上辺x値
+        ThUFL = FLSort[FL][0][1].T  # 現在の下辺x値
         if FL == 0:
             GyouRanges = np.array(NeFL - ThFL)  # np配列作成
+
         else:
             GyouRanges = np.append(GyouRanges, NeFL - ThFL)  # np配列追加
 # 　-----------------------------------------------------------
 avg = np.average(GyouRanges)  # 全ての行間x値の平均値
-FLCount = 0
-Frow = 0
-FCF = False
-# 　線形ピクセル配列ループ---------------------------------------
+FLCount = 0  # Numpy配列インデックス加算用
+Frow = 0  # Numpy配列インデックス格納用
+FCF = False  # 配列作成フラグ
+# 行間のx値が平均値未満の行を一塊として配列格納--------------------
 for FL in range(len(FLSort)):
-    if not FL == len(FLSort) - 1:
-        FLRn = FLSort[FL + 1][0][1].T - FLSort[FL][0][1].T
-        if avg > FLRn:
+    if not FL == len(FLSort) - 1:  # 最終行でなければ
+        FLRn = FLSort[FL + 1][0][1].T - FLSort[FL][0][1].T  # 次のx値 - 現在のx値
+        if avg > FLRn:  # 全ての行間x値の平均値より小さければ
             if FLCount == 0:
                 FLCount += 1
                 Frow = FL
@@ -72,9 +76,11 @@ for FL in range(len(FLSort)):
                 Frow = FL + 1
                 FCF = True
 # 　-----------------------------------------------------------
-FCBF = False
+FCBF = False  # 配列作成フラグ
+Kijyun = Pix = int(size[0] / 100)
+# 行の集合体に基準値より多いデータのみを抽出-----------------------
 for FCB in range(len(FCFBlock)):
-    if FCFBlock[FCB][2] > 5:
+    if FCFBlock[FCB][2] > Kijyun:  # 基準値
         r1 = FCFBlock[FCB][0]
         r2 = FCFBlock[FCB][1]
         for FCin in range(r1, r2):
@@ -83,43 +89,40 @@ for FCB in range(len(FCFBlock)):
                 FCBF = True
             else:
                 FinalIn = np.append(FinalIn, FLSort[FCin], axis=0)
-F0min = np.min(FinalIn[:, 0])
-F0max = np.max(FinalIn[:, 0])
-F1min = np.min(FinalIn[:, 1])
-F1max = np.max(FinalIn[:, 1])
-F2min = np.min(FinalIn[:, 2])
-F2max = np.max(FinalIn[:, 2])
-F3min = np.min(FinalIn[:, 3])
-F3max = np.max(FinalIn[:, 3])
-
-img = cv2.imread(
-    r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\\NoiseRemovalTEST0.png"
+# 　-----------------------------------------------------------
+print(
+    "=================================================================================="
 )
-size = img.shape  # 画像のサイズ x,y
+FinalIn = FinalIn[FinalIn[:, 1].argsort()]
+print(FinalIn)
 
-LeftHigh = [FinalIn[0][0] + (size[1] / 100), FinalIn[0][1] + (size[0] / 100)]
+TopYmin = np.min(FinalIn[:, 0])  # 検出文字上辺y値の最小値(上辺最左)
+TopYmax = np.max(FinalIn[:, 0])  # 検出文字上辺y値の最大値(上辺最右)
+TopXmin = np.min(FinalIn[:, 1])  # 検出文字上辺x値の最小値(上辺最上)
+TopXmax = np.max(FinalIn[:, 1])  # 検出文字上辺x値の最大値(上辺最下)
+UnderYmin = np.min(FinalIn[:, 2])  # 検出文字下辺y値の最小値(下辺最左)
+UnderYmax = np.max(FinalIn[:, 2])  # 検出文字下辺y値の最大値(下辺最右)
+UnderXmin = np.min(FinalIn[:, 3])  # 検出文字下辺x値の最小値(下辺最上)
+UnderXmax = np.max(FinalIn[:, 3])  # 検出文字下辺x値の最大値(下辺最下)
 
+LeftHigh = [TopYmin - size[1] / 100, TopXmin - size[0] / 100]
+RightHigh = [TopYmax + size[1] / 100, TopXmin - size[0] / 100]
+LeftLow = [TopYmin - size[1] / 100, TopXmax + size[0] / 100]
+RightLow = [TopYmax + size[1] / 100, TopXmax + size[0] / 100]
 
-img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-LeftHigh, RightHigh, LeftLow, RightLow = FIC.trimImageNumNum(URL, img)
-
-p1 = np.array(LeftHigh)  # 左上
-p2 = np.array(RightHigh)  # 右上
-p3 = np.array(LeftLow)  # 左下
-p4 = np.array(RightLow)  # 右下
-o_width = np.linalg.norm(p2 - p1)
-o_width = int(np.floor(o_width))
-o_height = np.linalg.norm(p3 - p1)
-o_height = int(np.floor(o_height))
-
-pts1 = np.float32([LeftHigh, RightHigh, LeftLow, RightLow])
-pts2 = np.float32([[0, 0], [o_width, 0], [0, o_height], [o_width, o_height]])
-
-M = cv2.getPerspectiveTransform(pts1, pts2)
-
-dst = cv2.warpPerspective(img, M, (o_width, o_height))
-
-plt.subplot(121), plt.imshow(img), plt.title("Input")
-plt.subplot(122), plt.imshow(dst), plt.title("Output")
-plt.show()
+img = Image.open(imgurl)
+# 回転-----------------------------------------------------------------------
+# Kakuavg = np.nanmean(tan) * 10  # 認識文字の上辺と下辺のx値差から回転角度を計算
+# img = img.rotate(Kakuavg)
+# im_rotate.save(imgurl)
+# ---------------------------------------------------------------------------
+FIC.trimImageSave(
+    URL,
+    img,
+    int(LeftHigh[0]),
+    int(LeftHigh[1]),
+    int(RightLow[0]),
+    int(RightLow[1]),
+    imgurl,
+)
 time.sleep(2)
