@@ -138,69 +138,73 @@ def trimImageNum(URL, img):
     return tPix - 10, lPix - 10, bPix + 10, rPix + 10
 
 
-# @jit
-def trimImageNumNum(URL, img):
+# FLDテスト処理
+# fileImage : 画像ファイルパス
+#
+def FastLineDetector(fileImage, lenth, disth, canth1, canth2, casize, dom):
     """
-    概要: 画像の余白をトリミング
-    @param URL: 画像フォルダ(str)
-    @param img: cv2で開いた画像
-    @return トリミング軸数値
+    概要: 画像の線形を検出
+    @param lenth: 検出する最小の線分のピクセル数(int)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
+    @return boolean,検出ラインピクセル値配列,ライン描画後画像のcvインスタンス
     """
-    size = img.shape
-    tPix = 100000000
-    bPix = -1
-    lPix = -1
-    rPix = -1
-    lPixShape = []
-    tPixShape = []
-    rPixShape = []
-    bPixShape = []
-    # # ピクセル操作
-    for x in range(size[0]):
-        for y in range(size[1]):
-            r, g, b = img[x, y]
-            rr, rg, rb = img[(size[0] - x - 1, size[1] - y - 1)]
+    colorimg = cv2.imread(fileImage, cv2.IMREAD_COLOR)  # 元画像
+    if colorimg is None:
+        return False, "", ""
+    image = cv2.cvtColor(colorimg.copy(), cv2.COLOR_BGR2GRAY)
 
-            # 色付きのピクセルかどうか（白もしくは白に近しい色を切り抜くため）
-            rgbs = int(r) + int(g) + int(b)
-            rrgbs = int(rr) + int(rg) + int(rb)
-            if rgbs < 600 and len(lPixShape) == 0:
-                if lPix == -1:
-                    lPix = x
-                    lPixShape = [x, y]
-            elif rgbs < 600:
-                if y < tPix:
-                    tPix = y
-                    tPixShape = [x, y]
-
-            if rrgbs < 600 and len(rPixShape) == 0:
-                if rPix == -1 and len(rPixShape) == 0:
-                    rPix = size[0] - x
-                    rPixShape = [size[0] - x, size[1] - y]
-            elif rrgbs < 600:
-                if size[1] - y > bPix:
-                    bPix = size[1] - y
-                    bPixShape = [size[0] - x, size[1] - y]
-    try:
-        tPix = tPix
-        lPix = lPix
-        bPix = bPix
-        rPix = rPix
-    except:
-        return tPix, lPix, bPix, rPix, lPixShape, tPixShape, rPixShape, bPixShape
-    return (
-        tPix,
-        lPix,
-        bPix,
-        rPix,
-        lPixShape,
-        tPixShape,
-        rPixShape,
-        bPixShape,
+    # FLDパラメーター設定--------------------------------------------
+    length_threshold = lenth
+    distance_threshold = disth
+    canny_th1 = canth1
+    canny_th2 = canth2
+    canny_aperture_size = casize
+    do_merge = dom
+    # -------------------------------------------------------------
+    # 高速ライン検出器生成
+    fld = cv2.ximgproc.createFastLineDetector(
+        length_threshold,
+        distance_threshold,
+        canny_th1,
+        canny_th2,
+        canny_aperture_size,
+        do_merge,
     )
+    # fld = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD) # LSD
+
+    # ライン取得
+    lines = fld.detect(image)
+    # lines, width, prec, nfa = fld.detect(image) # LSD
+    # # ライン描画後画像のインスタンス作成
+    out = fld.drawSegments(colorimg, lines)
+    # # ウィンドウサイズ変更可能設定
+    # cv2.namedWindow("Fast Line Detector(LINE)", cv2.WINDOW_NORMAL)
+    # # ウィンドウ表示
+    # cv2.imshow("Fast Line Detector(LINE)", out)
+    # cv2.waitKey()
+    # # 線形描画後画像の保存
+    # cv2.imwrite(
+    #     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\\FLDTESTOUT.png", out
+    # )
+    return True, lines, out
 
 
 def trimImageSave(URL, img, lPix, tPix, rPix, bPix, imgurl):
+    """
+    概要: 画像をトリミングして上書き
+    @param URL: 画像フォルダ(str)
+    @param img: cv2で開いた画像(obj)
+    @param Lefthigh: 左上角のy,x値(list)
+    @param Righthigh: 右上角のy,x値(list)
+    @param Leftunder: 左下角のy,x値(list)
+    @param Rightunder: 右下角のy,x値(list)
+    @param imgurl: 保存ファイルURL(str)
+    @return 保存ファイルURL(str)
+    """
     try:
         trimImageFile = img.crop((lPix, tPix, rPix, bPix))  # トリミング
         trimImageFile.save(imgurl, quality=100)  # 保存
