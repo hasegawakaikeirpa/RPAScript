@@ -24,27 +24,21 @@ imgurl = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\TEST0.png"
 # FLDインスタンス生成
 FLDs = FIC.FastLineDetector(
     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\\NoiseRemovalTEST0.png",
-    10,
+    5,
     1.41421356,
     50.0,
     50.0,
     3,
     True,
 )  # boolean,yx値
-FL = FLDs[1]
-print(FL[0])
-print()
-print()
-print()
-
-FLSort = FLDs[1][np.argsort(FLDs[1])]  # 昇順に並びかえ
-print(FLDs[1])
+FLnum = FLDs[1]
+FLSort = FLnum[FLnum[:, 0][:, 1].argsort(), :]  # x軸基準に昇順並びかえ
 print(FLSort)
 # 　線形ピクセル配列ループ---------------------------------------
 for FL in range(len(FLSort)):
     if not FL == len(FLSort) - 1:  # 最終行でなければ
-        ThFL = FLSort[FL][0][1]  # 現在のx値
-        NeFL = FLSort[FL + 1][0][1]  # 次のx値
+        ThFL = FLSort[FL][0][1].T  # 現在のx値
+        NeFL = FLSort[FL + 1][0][1].T  # 次のx値
         if FL == 0:
             GyouRanges = np.array(NeFL - ThFL)  # np配列作成
         else:
@@ -57,7 +51,7 @@ FCF = False
 # 　線形ピクセル配列ループ---------------------------------------
 for FL in range(len(FLSort)):
     if not FL == len(FLSort) - 1:
-        FLRn = FLSort[FL + 1][0][1] - FLSort[FL][0][1]
+        FLRn = FLSort[FL + 1][0][1].T - FLSort[FL][0][1].T
         if avg > FLRn:
             if FLCount == 0:
                 FLCount += 1
@@ -89,7 +83,15 @@ for FCB in range(len(FCFBlock)):
                 FCBF = True
             else:
                 FinalIn = np.append(FinalIn, FLSort[FCin], axis=0)
-print(FinalIn)
+F0min = np.min(FinalIn[:, 0])
+F0max = np.max(FinalIn[:, 0])
+F1min = np.min(FinalIn[:, 1])
+F1max = np.max(FinalIn[:, 1])
+F2min = np.min(FinalIn[:, 2])
+F2max = np.max(FinalIn[:, 2])
+F3min = np.min(FinalIn[:, 3])
+F3max = np.max(FinalIn[:, 3])
+
 img = cv2.imread(
     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\\NoiseRemovalTEST0.png"
 )
