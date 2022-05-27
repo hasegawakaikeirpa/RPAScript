@@ -26,56 +26,6 @@ class FeatureType(Enum):
     SYMBOL = 5
 
 
-def show_image(img, **kwargs):
-    """
-    Show an RGB numpy array of an image without any interpolation
-    """
-    plt.subplot()
-    plt.axis("off")
-    plt.imshow(X=img, interpolation="none", **kwargs)
-
-
-def ColorInverter(img):
-    """
-    概要: 画像白黒反転
-    @param img: Image.openで開いた画像
-    @return 白黒反転した画像
-    """
-    img.convert("RGB")
-    Inv_img = ImageOps.invert(img)
-    return Inv_img
-
-
-def NoiseRemoval(img):
-    """
-    概要: 画像ノイズ除去（収縮⇒膨張）
-    @param img: Image.openで開いた画像
-    @return 画像ノイズ除去した画像
-    """
-    kernel = np.ones((2, 2))
-    Open_img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
-    return Open_img
-
-
-def OCRIMGChange(URL, imgurl):
-    """
-    概要: 画像白黒反転後画像ノイズ除去（収縮⇒膨張）
-    @param URL: 画像フォルダ(str)
-    @param imgurl: 画像URL(str)
-    @return 画像白黒反転後画像ノイズ除去した画像
-    """
-    img = Image.open(imgurl)  # 画像オープン
-    Inv_img = ColorInverter(img)  # 白黒反転
-    Inv_img.save(URL + "\\CI.png")  # 白黒反転保存
-    img = cv2.imread(URL + "\\CI.png", 0)  # 白黒反転画像
-    CleanUp_img = NoiseRemoval(img)  # ノイズ除去
-    cv2.imwrite(URL + "\\CleanUp_img.png", CleanUp_img)  # ノイズ除去保存
-    img = Image.open(URL + "\\CleanUp_img.png")  # 画像オープン
-    Inv_img = ColorInverter(img)  # 白黒反転
-    Inv_img.save(URL + "\\Last.png")  # 白黒反転保存
-    return URL + "\\Last.png"
-
-
 def draw_boxes(image, bounds, color):
     """Draw a border around the image using the hints in the vector list."""
     draw = ImageDraw.Draw(image)
@@ -178,22 +128,22 @@ def getNearestValue(list, num, near):
     # リスト要素と対象値の差分を計算し最小値のインデックスを取得
     nlist = np.array(list)
     nnlist = np.where(nlist == num, 0, nlist)
-    idx = np.abs(nnlist - num).argmin()
-    nearVol = list[idx]
-    if nearVol - num > (near * -1) and nearVol - num < (near * 1):
-        nlist = np.where(nlist == nearVol, num, nlist)
+    NmiVol = 0
+    while NmiVol < near and NmiVol > (near * -1):
+        idx = np.abs(nnlist - num).argmin()
+        nearVol = list[idx]
+        if nearVol == num:
+            break
+        else:
+            NmiVol = nearVol - near
+            if nearVol - num > (near * -1) and nearVol - num < (near * 1):
+                nlist = np.where(nlist == nearVol, num, nlist)
 
-    nnlist = np.where(nlist == num, 0, nlist)
-    idx = np.abs(nnlist - num).argmin()
-    nearVol = list[idx]
-    if nearVol - num > (near * -1) and nearVol - num < (near * 1):
-        nlist = np.where(nlist == nearVol, num, nlist)
-
-    nnlist = np.where(nlist == num, 0, nlist)
-    idx = np.abs(nnlist - num).argmin()
-    nearVol = list[idx]
-    if nearVol - num > (near * -1) and nearVol - num < (near * 1):
-        nlist = np.where(nlist == nearVol, num, nlist)
+            nnlist = np.where(nlist == num, 0, nlist)
+            idx = np.abs(nnlist - num).argmin()
+            nearVol = list[idx]
+            if nearVol - num > (near * -1) and nearVol - num < (near * 1):
+                nlist = np.where(nlist == nearVol, num, nlist)
     return nlist
 
 
@@ -226,10 +176,20 @@ def ChangeList(dflist, Fname):
 def Dfchange(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label, Flag):
     try:
         strs = ""  # テキスト代入変数
-        # Y軸リストを閾値で統一し置換(行を揃える)----------------------------------------
-        for YDicListItem in YDicList:
-            YList = getNearestValue(YList, YDicListItem, near)
-        print(YList)
+        YD = len(YDicList)
+        # Y軸リストを閾値(near)で統一し置換(行を揃える)----------------------------------
+        for YDN in range(YD):
+            if not YDN == YD - 1:
+                key = YDicList[YDN]
+                for YDNN in range(YD):
+                    key2 = YDicList[YDNN]
+                    Sa = key - key2
+                    if Sa < 0:
+                        if Sa >= (near * -1):
+                            YDicList[YDNN] = key
+                    else:
+                        if Sa <= near:
+                            YDicList[YDNN] = key
         # ---------------------------------------------------------------------------
         Ys = 0
         # 行を揃えたY軸リストを元にXYListを作成-----------------------------------------
@@ -246,7 +206,8 @@ def Dfchange(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label, 
             dfnp = list(npXYList[1])  # 並び替えたDFをList化(高速化の為)
             # CSVDF = pd.DataFrame(dfnp)
             # CSVDF.to_csv(
-            #     r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\XYList.csv", encoding="cp932"
+            #     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList.csv",
+            #     encoding="cp932",
             # )
         dfRow = len(dfnp)
         # 並び替えたListにループ処理---------------------------------------------------
@@ -300,10 +261,20 @@ def DfTuuchou(
     try:
         strs = ""  # テキスト代入変数
         FstrList = []
-        # Y軸リストを閾値で統一し置換(行を揃える)----------------------------------------
-        for YDicListItem in YDicList:
-            YList = getNearestValue(YList, YDicListItem, near)
-        print(YList)
+        YD = len(YDicList)
+        # Y軸リストを閾値(near)で統一し置換(行を揃える)----------------------------------
+        for YDN in range(YD):
+            if not YDN == YD - 1:
+                key = YDicList[YDN]
+                for YDNN in range(YD):
+                    key2 = YDicList[YDNN]
+                    Sa = key - key2
+                    if Sa < 0:
+                        if Sa >= (near * -1):
+                            YDicList[YDNN] = key
+                    else:
+                        if Sa <= near:
+                            YDicList[YDNN] = key
         # ---------------------------------------------------------------------------
         Ys = 0
         # 行を揃えたY軸リストを元にXYListを作成-----------------------------------------
@@ -319,28 +290,29 @@ def DfTuuchou(
         if npXYList[0] is True:
             dfnp = list(npXYList[1])  # 並び替えたDFをList化(高速化の為)
             # DataFrame作成
-            # df = pd.DataFrame(dfnp)
-            # with open(
-            #     r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\XYList.csv",
-            #     mode="w",
-            #     encoding="shiftjis",
-            #     errors="ignore",
-            #     newline="",
-            # ) as f:
-            #     # pandasでファイルオブジェクトに書き込む
-            #     df.to_csv(f, index=False)
+            df = pd.DataFrame(dfnp)
+            with open(
+                r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList.csv",
+                mode="w",
+                encoding="shiftjis",
+                errors="ignore",
+                newline="",
+            ) as f:
+                # pandasでファイルオブジェクトに書き込む
+                df.to_csv(f, index=False)
 
         dfRow = len(dfnp)
         InputCount = 0  # テキスト代入変数に代入した回数
         InputSlide = 1  # 現在の編集列番号
         YeqXlistTrrigeer = False
+        FontSize = 0
         # 並び替えたListにループ処理---------------------------------------------------
         for lb in range(dfRow):
-            if lb == 907:
-                print()
             btxt = dfnp[lb][1]  # 現在の文字
             bjsonX = dfnp[lb][2]  # 現在の文字の横軸
             bjsonY = dfnp[lb][3]  # 現在の文字の縦軸
+            if FontSize == 0:
+                FontSize = dfnp[lb + 1][3] - bjsonY
             # テキスト代入変数に代入した回数がtomlの値以外なら---------------------------
             if not InputCount == Banktoml[str(InputSlide) + "Col"]:
                 if YeqXlistTrrigeer is False:
@@ -355,15 +327,13 @@ def DfTuuchou(
                         if bj == 0:
                             Fval = min(YeqXlist)  # 行範囲始点
                             Lval = (
-                                Banktoml["FontSize"] * Banktoml[str(bj + 1) + "Col"]
+                                FontSize * Banktoml[str(bj + 1) + "Col"]
                             ) + Fval  # 行範囲終点
                             bjsonYMinXRange.append([round(Fval), round(Lval)])
                         else:
-                            Fval = (
-                                Banktoml["FontSize"] + bjsonYMinXRange[bj - 1][1]
-                            )  # 行範囲始点
+                            Fval = FontSize + bjsonYMinXRange[bj - 1][1]  # 行範囲始点
                             Lval = (
-                                Banktoml["FontSize"] * Banktoml[str(bj + 1) + "Col"]
+                                FontSize * Banktoml[str(bj + 1) + "Col"]
                             ) + Fval  # 行範囲終点
                             bjsonYMinXRange.append([round(Fval), round(Lval)])
                     YeqXlistTrrigeer = True

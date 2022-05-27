@@ -24,7 +24,7 @@ def DiffListCreate(KCode, PDFDir, PDFPageTxt, Banktoml):
         # else:
         Flag = ""
         GF = GCV.Bankrentxtver(
-            FileURL, 5000, 50, 2500, 5000, 10, 500, "::", 50, Flag, Banktoml["Hirogin"]
+            FileURL, 2000, 60, 600, 2000, 60, 600, "::", 60, Flag, Banktoml["Hirogin"]
         )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
         if GF[0] is True:
             GFTable = GF[1]
@@ -68,7 +68,7 @@ def DiffListCreate(KCode, PDFDir, PDFPageTxt, Banktoml):
             # DataFrame作成
             df = pd.DataFrame(GFTable)
             with open(
-                r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\XYList.csv",
+                r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList.csv",
                 mode="w",
                 encoding="shiftjis",
                 errors="ignore",

@@ -54,7 +54,13 @@ def pdf_image(pdf_file, img_path, fmtt, dpi, PDFPage):
         # pdf_file、img_pathをPathにする
         pdf_path = Path(pdf_file)
         image_dir = Path(img_path)
-
+        # 線形検出パラメータ設定########################################
+        disth = 1.41421356
+        canth1 = 50.0
+        canth2 = 50.0
+        casize = 3
+        do = True
+        # ############################################################
         # PDFをImage に変換(pdf2imageの関数)
         pages = convert_from_path(pdf_path, dpi, poppler_path=pppath)
         # 画像ファイルを１ページずつ保存
@@ -70,10 +76,9 @@ def pdf_image(pdf_file, img_path, fmtt, dpi, PDFPage):
                 img_rotate_90_clockwise = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
                 cv2.imwrite(image_path._str, img_rotate_90_clockwise)
             # ---------------------------------------------------------------------
-            # グレースケールに変換
-            # src = cv2.imread(image_path._str, 0)
-            # cv2.imwrite(image_path._str, src)
-            IMGURL = FIC.OCRIMGChange(img_path, image_path._str)
+            IMGURL = FIC.OCRIMGChange(
+                img_path, image_path._str, disth, canth1, canth2, casize, do
+            )
         for fd_path, sb_folder, sb_file in os.walk(image_dir):
             for fil in sb_file:
                 # if "OCR" in fil and fil.endswith(".png") is True:
