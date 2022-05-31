@@ -396,8 +396,11 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
             )  # 一巡目
             time.sleep(2)
             pg.press("return")
-            pyperclip.copy(xls_tx)
-            pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
+            if xls_tx == xls_tx:
+                print("nan")
+            else:
+                pyperclip.copy(xls_tx)
+                pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
             pg.press("return")
             pg.write(xls_mn, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
             pg.press("return")
@@ -486,8 +489,11 @@ def OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
         )  # 一巡目
         time.sleep(2)
         pg.press("return")
-        pyperclip.copy(xls_tx)
-        pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
+        if xls_tx == xls_tx:
+            print("nan")
+        else:
+            pyperclip.copy(xls_tx)
+            pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
         pg.press("return")
         pg.write(xls_mn, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
         pg.press("return")
