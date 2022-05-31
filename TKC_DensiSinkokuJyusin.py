@@ -1194,42 +1194,42 @@ def MainFlow(FolURL2):  # メインの処理
     pg.press("return")  # 小林常務を選択
     # FileName = "KanyoHasegawa.png"#担当税理士所長判定
     # 法人税消費税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
-    # conf = 0.9  # 画像認識感度
-    # LoopVal = 500
-    # CSVName = "HoujinSyouhizeiJyusinMaster"
-    # CSVChildName = "HoujinSyouhizeiJyusinChild"  # チャイルドのCSVファイル名を指定
-    # List = ["HoujinSyouhizei.png", "HoujinSyouhizei2.png"]
-    # TaxAns = TaxHantei(
-    #     List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    # )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]
-    # C_Master = C_Master.drop_duplicates(subset="関与先コード")
-    # print(C_Master)
-    # C_MasterFlag = TaxAns[1]
-    # C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-    # C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    # CsvKey = "法人税"
-    # if C_MasterFlag is False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_LoopRow = np.array(C_Master).shape[0]  # 配列行数取得
-    #     for x in range(C_LoopRow):
-    #         MasterLoop(
-    #             List,
-    #             FileName,
-    #             CSVName,
-    #             CSVChildName,
-    #             C_Master,
-    #             C_dfRow,
-    #             C_dfCol,
-    #             driver,
-    #             FolURL2,
-    #             CsvKey,
-    #         )
+    FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
+    conf = 0.9  # 画像認識感度
+    LoopVal = 500
+    CSVName = "HoujinSyouhizeiJyusinMaster"
+    CSVChildName = "HoujinSyouhizeiJyusinChild"  # チャイルドのCSVファイル名を指定
+    List = ["HoujinSyouhizei.png", "HoujinSyouhizei2.png"]
+    TaxAns = TaxHantei(
+        List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    C_Master = TaxAns[0]
+    C_Master = C_Master.drop_duplicates(subset="関与先コード")
+    print(C_Master)
+    C_MasterFlag = TaxAns[1]
+    C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    CsvKey = "法人税"
+    if C_MasterFlag is False:
+        print("C_Masterは空です")
+    else:
+        C_LoopRow = np.array(C_Master).shape[0]  # 配列行数取得
+        for x in range(C_LoopRow):
+            MasterLoop(
+                List,
+                FileName,
+                CSVName,
+                CSVChildName,
+                C_Master,
+                C_dfRow,
+                C_dfCol,
+                driver,
+                FolURL2,
+                CsvKey,
+            )
     # -----------------------------------------------------------------------------------------------------------------------
     # #所得税消費税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
+    FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
     # conf = 0.9#画像認識感度
     # LoopVal = 500
     # CSVName = 'SyotokuSyouhizeiJyusinMaster'
@@ -1303,7 +1303,7 @@ def MainFlow(FolURL2):  # メインの処理
             )
     # -----------------------------------------------------------------------------------------------------------------------
     # 償却資産処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
+    FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
     # conf = 0.9  # 画像認識感度
     # LoopVal = 500
     # CSVName = "SyoukyakuJyusinMaster"
