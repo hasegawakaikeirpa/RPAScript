@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 from numba import jit
+import math
 
 # loggerインポート
 from logging import getLogger
@@ -19,13 +20,13 @@ def show_image(img, **kwargs):
     plt.imshow(X=img, interpolation="none", **kwargs)
 
 
-def ColorInverter(img):
+def ColorInverter(imgurl):
     """
     概要: 画像白黒反転
-    @param img: Image.openで開いた画像
+    @param img: 画像URL(str)
     @return 白黒反転した画像(cv2)
     """
-    img.convert("RGB")
+    img = Image.open(imgurl).convert("RGB")
     Inv_img = ImageOps.invert(img)
     return Inv_img
 
@@ -33,7 +34,7 @@ def ColorInverter(img):
 def NoiseRemoval(img):
     """
     概要: 画像ノイズ除去（収縮⇒膨張）
-    @param img: Image.openで開いた画像
+    @param img: cv2で開いた画像
     @return 画像ノイズ除去した画像(cv2)
     """
     kernel = np.ones((2, 2))
@@ -44,73 +45,13 @@ def NoiseRemoval(img):
     return Open_img
 
 
-def NoiseExpCont(img):
-    """
-    概要: 画像膨張・収縮処理
-    @param img: cv2で開いた画像
-    @return 膨張・収縮した画像(cv2)
-    """
-    # 近傍の定義
-    neiborhood = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
-    # 収縮
-    img_erode = cv2.erode(img, neiborhood, iterations=100)
-    # 膨張
-    img_dilate = cv2.dilate(img_erode, neiborhood, iterations=100)
-    # 膨張
-    img_dilate = cv2.dilate(img_dilate, neiborhood, iterations=100)
-    # 収縮
-    img_erode = cv2.erode(img_dilate, neiborhood, iterations=100)
-    return img_erode
-
-
-@jit
-def trimImageNum(URL, img):
-    """
-    概要: 画像の余白をトリミング
-    @param URL: 画像フォルダ(str)
-    @param img: cv2で開いた画像
-    @return トリミング軸数値
-    """
-    size = img.shape
-    tPix = 100000000
-    bPix = -1
-    lPix = -1
-    rPix = -1
-
-    # # ピクセル操作
-    for x in range(size[0]):
-        for y in range(size[1]):
-            r, g, b = img[x, y]
-            rr, rg, rb = img[(size[0] - x - 1, size[1] - y - 1)]
-
-            # 色付きのピクセルかどうか（白もしくは白に近しい色を切り抜くため）
-            if (r + g + b) < 600:
-                if lPix == -1:
-                    lPix = x
-                if y < tPix:
-                    tPix = y
-
-            if (rr + rg + rb) < 600:
-                if rPix == -1:
-                    rPix = size[0] - x
-                if size[1] - y > bPix:
-                    bPix = size[1] - y
-    try:
-        tPix = tPix - 20
-        lPix = lPix - 20
-        bPix = bPix + 20
-        rPix = rPix + 20
-    except:
-        return tPix, lPix, bPix, rPix
-    return tPix - 10, lPix - 10, bPix + 10, rPix + 10
-
-
 # FLDテスト処理
 # fileImage : 画像ファイルパス
 #
 def FastLineDetector(fileImage, lenth, disth, canth1, canth2, casize, dom):
     """
     概要: 画像の線形を検出
+    @param fileImage: 画像URL(str)
     @param lenth: 検出する最小の線分のピクセル数(int)
     @param disth: マージする線分の距離(float)
     @param canth1: Canny Edge Detectorの引数1(float)
@@ -132,7 +73,7 @@ def FastLineDetector(fileImage, lenth, disth, canth1, canth2, casize, dom):
     canny_aperture_size = casize
     do_merge = dom
     # -------------------------------------------------------------
-    # 高速ライン検出器生成
+    # FLDインスタンス化
     fld = cv2.ximgproc.createFastLineDetector(
         length_threshold,
         distance_threshold,
@@ -181,40 +122,78 @@ def trimImageSave(URL, img, left, upper, right, lower, imgurl):
         return "エラー"
 
 
-def OCRIMGChange(URL, imgurl):
+def StraightLineDetection(URL, imgurl, disth, canth1, canth2, casize, do):
     """
-    概要: 画像白黒反転後画像ノイズ除去（収縮⇒膨張）
+    概要: 画像から直線を検出し、画像の傾きを調べる
     @param URL: 画像フォルダ(str)
     @param imgurl: 画像URL(str)
-    @return 画像白黒反転後画像ノイズ除去した画像URL(str)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
+    @return 傾き値リスト(np配列)
     """
-    img = Image.open(imgurl)  # 画像オープン
-    Inv_img = ColorInverter(img)  # 白黒反転
-    Inv_img.save(URL + "\\CI.png")  # 白黒反転保存
-    img = cv2.imread(URL + "\\CI.png", 0)  # 白黒反転画像
-    CleanUp_img = NoiseRemoval(img)  # ノイズ除去
-    cv2.imwrite(URL + "\\CleanUp_img.png", CleanUp_img)  # ノイズ除去保存
-    img = Image.open(URL + "\\CleanUp_img.png")  # 画像オープン
-    Inv_img = ColorInverter(img)  # 白黒反転
-    Inv_img.save(URL + "\\Last.png")  # 白黒反転保存
-    img = cv2.imread(
-        filename=URL + "\\Last.png",
-        flags=cv2.IMREAD_COLOR,
-    )
-    # imgsize = img.shape
-    img = NoiseExpCont(img)
-    AutoTrimming(URL, imgurl)
-    img = Image.open(img)
-    img = img.resize(size=(1920, 1920), resample=Image.BILINEAR)
-    img.save(imgurl)
-    return imgurl
+    try:
+        img = cv2.imread(imgurl)
+        size = img.shape  # 画像のサイズ x,y
+        Pix = int(size[0] / 100)  # 検出ピクセル数
+        LCheck = False  # ライン検出フラグ
+        while LCheck is False:  # ライン検出フラグTrueまでループ
+            FLStock = []
+            if Pix <= 0:
+                Pix = 1
+            # FLDインスタンス生成
+            FLDs = FastLineDetector(
+                imgurl,
+                Pix,
+                disth,
+                canth1,
+                canth2,
+                casize,
+                do,
+            )  # boolean,yx値
+            if FLDs[0] is True:  # 連続ピクセルを検知したら
+                FLDItem = len(FLDs[1])  # 配列要素数
+                if FLDItem <= 5:  # 配列要素数0なら
+                    print(str(FLDItem) + "要素なので終了")
+                    FLStock = FLDs[1]
+                    LCheck = True
+                else:
+                    print(str(FLDItem) + "要素取得")
+                    FLStock = FLDs[1]
+            PlPix = size[0] / 1000
+            if PlPix < 1:
+                Pix += 1
+            else:
+                Pix += int(PlPix)
+        XLFlag = False
+        for x in range(len(FLStock)):
+            UpY = FLStock[x][0][0]
+            UpX = FLStock[x][0][1]
+            LoY = FLStock[x][0][2]
+            LoX = FLStock[x][0][3]
+            # if UpX != LoX:
+            if XLFlag is False:
+                XList = np.array([[UpY, UpX, LoY, LoX]])
+                XLFlag = True
+            else:
+                XList = np.append(XList, [[UpY, UpX, LoY, LoX]], axis=0)
+        return True, XList
+    except:
+        return False, ""
 
 
-def AutoTrimming(URL, imgurl):
+def AutoTrimming(URL, imgurl, disth, canth1, canth2, casize, do):
     """
     概要: 画像からデータ集合部を検出し、自動トリミング
     @param URL: 画像フォルダ(str)
     @param imgurl: 画像URL(str)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
     @return boolean
     """
     try:
@@ -227,11 +206,11 @@ def AutoTrimming(URL, imgurl):
         FLDs = FastLineDetector(
             imgurl,
             Pix,
-            1.41421356,
-            50.0,
-            50.0,
-            3,
-            True,
+            disth,
+            canth1,
+            canth2,
+            casize,
+            do,
         )  # boolean,yx値
         FLnum = FLDs[1]
         FLSort = FLnum[FLnum[:, 0][:, 1].argsort(), :]  # x軸基準に昇順並びかえ
@@ -299,22 +278,17 @@ def AutoTrimming(URL, imgurl):
         TopYmax = np.max(FinalIn[:, 0])  # 検出文字上辺y値の最大値(上辺最右)
         TopXmin = np.min(FinalIn[:, 1])  # 検出文字上辺x値の最小値(上辺最上)
         TopXmax = np.max(FinalIn[:, 1])  # 検出文字上辺x値の最大値(上辺最下)
-        UnderYmin = np.min(FinalIn[:, 2])  # 検出文字下辺y値の最小値(下辺最左)
-        UnderYmax = np.max(FinalIn[:, 2])  # 検出文字下辺y値の最大値(下辺最右)
-        UnderXmin = np.min(FinalIn[:, 3])  # 検出文字下辺x値の最小値(下辺最上)
-        UnderXmax = np.max(FinalIn[:, 3])  # 検出文字下辺x値の最大値(下辺最下)
+        # UnderYmin = np.min(FinalIn[:, 2])  # 検出文字下辺y値の最小値(下辺最左)
+        # UnderYmax = np.max(FinalIn[:, 2])  # 検出文字下辺y値の最大値(下辺最右)
+        # UnderXmin = np.min(FinalIn[:, 3])  # 検出文字下辺x値の最小値(下辺最上)
+        # UnderXmax = np.max(FinalIn[:, 3])  # 検出文字下辺x値の最大値(下辺最下)
 
         LeftHigh = [TopYmin - size[1] / 100, TopXmin - size[0] / 100]
-        RightHigh = [TopYmax + size[1] / 100, TopXmin - size[0] / 100]
-        LeftLow = [TopYmin - size[1] / 100, TopXmax + size[0] / 100]
+        # RightHigh = [TopYmax + size[1] / 100, TopXmin - size[0] / 100]
+        # LeftLow = [TopYmin - size[1] / 100, TopXmax + size[0] / 100]
         RightLow = [TopYmax + size[1] / 100, TopXmax + size[0] / 100]
 
         img = Image.open(imgurl)
-        # 回転-----------------------------------------------------------------------
-        # Kakuavg = np.nanmean(tan) * 10  # 認識文字の上辺と下辺のx値差から回転角度を計算
-        # img = img.rotate(Kakuavg)
-        # im_rotate.save(imgurl)
-        # ---------------------------------------------------------------------------
         trimImageSave(
             URL,
             img,
@@ -327,3 +301,105 @@ def AutoTrimming(URL, imgurl):
         return True
     except:
         return False
+
+
+@jit
+def ImageColorChange(URL, img):
+    """
+    概要: 画像の黒以外を白く
+    @param URL: 画像フォルダ(str)
+    @param img: cv2で開いた画像
+    @return boolean
+    """
+    size = img.shape
+    # ピクセル操作
+    for x in range(size[0]):
+        for y in range(size[1]):
+            r, g, b = img[x, y]
+            # 色付きのピクセルかどうか（白もしくは白に近しい色を切り抜くため）
+            if (r + g + b) < 600:
+                print(img[x, y])
+                img[x, y] = 0, 0, 0
+            else:
+                img[x, y] = 255, 255, 255
+    cv2.imwrite(URL + "\\ChangeColor.png", img)  # ノイズ除去保存(cv2)
+
+    return True
+
+
+def ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do):
+    """
+    概要: 画像から直線を検出し、画像の傾きを調べ回転して上書き保存
+    @param URL: 画像フォルダ(str)
+    @param imgurl: 画像URL(str)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
+    @return 傾き値リスト(np配列)
+    """
+    try:
+        img = cv2.imread(imgurl)
+        # 回転-----------------------------------------------------------------------
+        # StraightLineDetectionで最後の一つになるまで絞りだしたピクセル連続線から
+        # 角度をmathアークタンジェントで計算し、degreesでラジアン→℃変換後画像を回転
+        Kakuavg = StraightLineDetection(URL, imgurl, disth, canth1, canth2, casize, do)
+        if Kakuavg[0] is True:
+            x1 = Kakuavg[1][:, 1]
+            y1 = Kakuavg[1][:, 0]
+            x2 = Kakuavg[1][:, 3]
+            y2 = Kakuavg[1][:, 2]
+            # numpyとmathではy,x軸が反対なので入替--------------------------------------
+            x = np.average(y1) - np.average(y2)
+            y = np.average(x1) - np.average(x2)
+            # ------------------------------------------------------------------------
+            tan = math.degrees(math.atan2(y, x))
+            img = Image.open(imgurl)
+            img = img.rotate(tan)
+            img.save(imgurl)
+        # ---------------------------------------------------------------------------
+        else:
+            return False
+        return True
+    except:
+        return False
+
+
+def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
+    """
+    概要: OCR読込用に画像を自動編集
+    @param URL: 画像フォルダ(str)
+    @param imgurl: 画像URL(str)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
+    @return OCR読込用に画像を自動編集した画像URL(str)
+    """
+    Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
+    Inv_img.save(imgurl)  # 白黒反転保存(PIL)
+    img = cv2.imread(imgurl)  # 白黒反転画像(cv2)
+    CleanUp_img = NoiseRemoval(img)  # ノイズ除去(cv2)
+    cv2.imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
+    Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
+    Inv_img.save(imgurl)  # 白黒反転保存(PIL)
+    ILT = ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do)
+    if ILT is True:
+        AutoTrimming(URL, imgurl, disth, canth1, canth2, casize, do)
+        img = cv2.imread(imgurl)
+        IMGsize = [1920, 1920]
+        h, w = img.shape[:2]
+        ash = IMGsize[1] / h
+        asw = IMGsize[0] / w
+        if asw < ash:
+            sizeas = (int(w * asw), int(h * asw))
+        else:
+            sizeas = (int(w * ash), int(h * ash))
+        img = cv2.resize(img, dsize=sizeas)
+        cv2.imwrite(imgurl, img)
+        ImageColorChange(URL, img)
+        return imgurl
+    else:
+        return imgurl

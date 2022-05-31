@@ -1192,7 +1192,7 @@ def MainFlow(FolURL2):  # メインの処理
     time.sleep(1)
     pg.press("down")
     pg.press("return")  # 小林常務を選択
-    # FileName = "KanyoHasegawa.png"#担当税理士所長判定
+    FileName = "KanyoHasegawa.png"  # 担当税理士所長判定
     # 法人税消費税処理------------------------------------------------------------------------------------------------------
     FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
     conf = 0.9  # 画像認識感度

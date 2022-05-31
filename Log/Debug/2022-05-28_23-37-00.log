@@ -1,0 +1,17 @@
+[2022/05/28 23:37:00][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/05/28 23:37:00][DEBUG](MJSOpen.py:111) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/05/28 23:37:01][DEBUG](MJSOpen.py:117) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/05/28 23:37:04][DEBUG](MJSOpen.py:128) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/05/28 23:37:20][DEBUG](MJS_DensiSinkoku.py:772) MJS操作画面へ偏移 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:36][DEBUG](MJS_DensiSinkoku.py:774) CSVをDataFrameに MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:37][DEBUG](MJS_DensiSinkoku.py:777) FindIcon.pngをクリック MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:39][DEBUG](MJS_DensiSinkoku.py:780) JyoukenBar.pngを待機 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:41][DEBUG](MJS_DensiSinkoku.py:792) CSVループ開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:41][DEBUG](MJS_DensiSinkoku.py:800) CSV行データから値格納 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:41][DEBUG](MJS_DensiSinkoku.py:813) SinkokuTuuti.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:41][DEBUG](MJS_DensiSinkoku.py:838) Tantousya.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:43][DEBUG](MJS_DensiSinkoku.py:845) KCodeBox.pngにコード入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:46][DEBUG](MJS_DensiSinkoku.py:851) NendoBox.pngに年度入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:48][DEBUG](MJS_DensiSinkoku.py:861) 税目処理分け MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:54][DEBUG](MJS_DensiSinkoku.py:883) 検索開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/05/28 23:37:58][DEBUG](MJS_DensiSinkoku.py:888) チェックボックスクリックを開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
