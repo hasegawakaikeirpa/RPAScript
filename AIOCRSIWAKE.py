@@ -71,10 +71,10 @@ def pdf_image(pdf_file, img_path, fmtt, dpi, PDFPage):
             yoko = page.size[0]  # 画像の幅
             tate = page.size[1]  # 画像の高さ
             # 画像が横向きなら縦向きに回転-------------------------------------------
-            if yoko > tate:
-                img = cv2.imread(image_path._str, 0)
-                img_rotate_90_clockwise = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
-                cv2.imwrite(image_path._str, img_rotate_90_clockwise)
+            # if yoko > tate:
+            #     img = cv2.imread(image_path._str, 0)
+            #     img_rotate_90_clockwise = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+            #     cv2.imwrite(image_path._str, img_rotate_90_clockwise)
             # ---------------------------------------------------------------------
             IMGURL = FIC.OCRIMGChange(
                 img_path, image_path._str, disth, canth1, canth2, casize, do

@@ -273,35 +273,40 @@ def DfTuuchou(
     YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label, Flag, Banktoml
 ):
     try:
-        dfnp = XYList
-        # DataFrame作成
-        df = pd.DataFrame(dfnp)
-        with open(
-            r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList2.csv",
-            mode="w",
-            encoding="shiftjis",
-            errors="ignore",
-            newline="",
-        ) as f:
-            # pandasでファイルオブジェクトに書き込む
-            df.to_csv(f, index=False)
-
         strs = ""  # テキスト代入変数
         FstrList = []
         YD = len(YList)
+        NpYlist = []
         # Y軸リストを閾値(near)で統一し置換(行を揃える)----------------------------------
         for YDN in range(YD):
             if not YDN == YD - 1:
                 key = YList[YDN]
-                for YDNN in range(YD):
-                    key2 = YList[YDNN]
-                    Sa = key - key2
-                    if Sa < 0:
-                        if Sa >= (near * -1):
-                            YList[YDNN] = key
-                    else:
-                        if Sa <= near:
-                            YList[YDNN] = key
+                if key not in NpYlist:
+                    for YDNN in range(YD):
+                        key2 = YList[YDNN]
+                        Sa = key - key2
+                        if Sa < 0:
+                            if Sa >= (near * -1):
+                                YList[YDNN] = key
+                                if key not in NpYlist:
+                                    NpYlist.append(key)
+                        else:
+                            if Sa <= near:
+                                YList[YDNN] = key
+                                if key not in NpYlist:
+                                    NpYlist.append(key)
+
+        # # DataFrame作成
+        # df = pd.DataFrame(YList)
+        # with open(
+        #     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\YList.csv",
+        #     mode="w",
+        #     encoding="shiftjis",
+        #     errors="ignore",
+        #     newline="",
+        # ) as f:
+        #     # pandasでファイルオブジェクトに書き込む
+        #     df.to_csv(f, index=False)
         # ---------------------------------------------------------------------------
         Ys = 0
         # 行を揃えたY軸リストを元にXYListを作成-----------------------------------------
@@ -315,19 +320,19 @@ def DfTuuchou(
         npXYList = ChangeList(dfXYList, "Y軸")  # pram1:リスト,pram2:str"Y軸"
         # ---------------------------------------------------------------------------
         if npXYList[0] is True:
-            # dfnp = list(npXYList[1])  # 並び替えたDFをList化(高速化の為)
-            dfnp = XYList
-            # DataFrame作成
-            df = pd.DataFrame(dfnp)
-            with open(
-                r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList2.csv",
-                mode="w",
-                encoding="shiftjis",
-                errors="ignore",
-                newline="",
-            ) as f:
-                # pandasでファイルオブジェクトに書き込む
-                df.to_csv(f, index=False)
+            dfnp = list(npXYList[1])  # 並び替えたDFをList化(高速化の為)
+            # dfnp = XYList
+            # # DataFrame作成
+            # df = pd.DataFrame(dfnp)
+            # with open(
+            #     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList3.csv",
+            #     mode="w",
+            #     encoding="shiftjis",
+            #     errors="ignore",
+            #     newline="",
+            # ) as f:
+            #     # pandasでファイルオブジェクトに書き込む
+            #     df.to_csv(f, index=False)
 
         dfRow = len(dfnp)
         InputCount = 0  # テキスト代入変数に代入した回数
@@ -639,6 +644,18 @@ def Bankrentxtver(
                 XYList.append([lb, btxt, bjsonX, bjsonY])
                 YList.append(bjsonY)
             YDicList = list(OrderedDict.fromkeys(YList))  # 抽出リストの重複削除
+
+            # df = pd.DataFrame(XYList)
+            # with open(
+            #     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList.csv",
+            #     mode="w",
+            #     encoding="shiftjis",
+            #     errors="ignore",
+            #     newline="",
+            # ) as f:
+            #     # pandasでファイルオブジェクトに書き込む
+            #     df.to_csv(f, index=False)
+
             if Flag == "etax":  # OCRでeTaxと判定されたら
                 Xd = len(XYList) - 1  # XYList最終行インデックス
                 # XYListで600より上の情報を削除---------------------------------

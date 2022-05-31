@@ -800,7 +800,7 @@ def MainFlow(FolURL2):
             logger.debug("CSV行データから値格納")
             # CSV要素取得-------------------------------------------------------------------------------------------------------------
             C_dfDataRow = C_df.iloc[y, :]
-            C_SCode = str(C_dfDataRow["顧問先コード"])
+            C_SCode = str(int(C_dfDataRow["顧問先コード"]))
             C_Name = str(C_dfDataRow["顧問先名称"])
             C_Name = C_Name.replace("\u3000", " ")
             C_Nendo = str(C_dfDataRow["年度"]).replace("\\", "-")

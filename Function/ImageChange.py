@@ -479,3 +479,75 @@ def TesseOCRLotate(URL, fileurl):
         return True
     except:
         return False
+
+
+def StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do):
+    """
+    概要: 画像から直線を検出し、画像の傾きを調べる
+    @param URL: 画像フォルダ(str)
+    @param imgurl: 画像URL(str)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
+    @return 傾き値リスト(np配列)
+    """
+    try:
+        img = cv2.imread(imgurl)
+        size = img.shape  # 画像のサイズ x,y
+        Pix = int(size[0] / 100)  # 検出ピクセル数
+        LCheck = False  # ライン検出フラグ
+        while LCheck is False:  # ライン検出フラグTrueまでループ
+            FLStock = []
+            if Pix <= 0:
+                Pix = 1
+            # FLDインスタンス生成
+            FLDs = FastLineDetector(
+                imgurl,
+                Pix,
+                disth,
+                canth1,
+                canth2,
+                casize,
+                do,
+            )  # boolean,yx値
+            if FLDs[0] is True:  # 連続ピクセルを検知したら
+                FLDItem = len(FLDs[1])  # 配列要素数
+                if FLDItem <= 3:  # 配列要素数0なら
+                    print(str(FLDItem) + "要素なので終了")
+                    FLStock = FLDs[1]
+                    LCheck = True
+                else:
+                    print(str(FLDItem) + "要素取得")
+                    FLStock = FLDs[1]
+            PlPix = size[0] / 1000
+            if PlPix < 1:
+                Pix += 1
+            else:
+                Pix += int(PlPix)
+        XLFlag = False
+        for x in range(len(FLStock)):
+            UpY = FLStock[x][0][0]
+            UpX = FLStock[x][0][1]
+            LoY = FLStock[x][0][2]
+            LoX = FLStock[x][0][3]
+            # if UpX != LoX:
+            if XLFlag is False:
+                XList = np.array([[UpY, UpX, LoY, LoX]])
+                XLFlag = True
+            else:
+                XList = np.append(XList, [[UpY, UpX, LoY, LoX]], axis=0)
+        return True, XList
+    except:
+        return False, ""
+
+
+URL = r""
+imgurl = r""
+disth = 0
+canth1 = 0
+canth2 = 0
+casize = 0
+do = 0
+StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do)
