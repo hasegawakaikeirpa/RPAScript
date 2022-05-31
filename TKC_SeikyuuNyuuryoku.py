@@ -21,6 +21,7 @@ import pyautogui
 import calendar
 import pyperclip
 import tkinter
+from tkinter import filedialog
 
 # ----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH, driver):  # XPATH要素を取得するまで待機
@@ -395,6 +396,9 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
             )  # 一巡目
             time.sleep(2)
             pg.press("return")
+            # if xls_tx == xls_tx:
+            #     print("nan")
+            # else:
             pyperclip.copy(xls_tx)
             pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
             pg.press("return")
@@ -485,6 +489,9 @@ def OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
         )  # 一巡目
         time.sleep(2)
         pg.press("return")
+        # if xls_tx == xls_tx:
+        #     print("nan")
+        # else:
         pyperclip.copy(xls_tx)
         pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
         pg.press("return")
