@@ -4,6 +4,8 @@ import cv2
 import matplotlib.pyplot as plt
 from numba import jit
 import math
+import pyocr
+import os
 
 # loggerインポート
 from logging import getLogger
@@ -155,7 +157,7 @@ def StraightLineDetection(URL, imgurl, disth, canth1, canth2, casize, do):
             )  # boolean,yx値
             if FLDs[0] is True:  # 連続ピクセルを検知したら
                 FLDItem = len(FLDs[1])  # 配列要素数
-                if FLDItem <= 5:  # 配列要素数0なら
+                if FLDItem <= 3:  # 配列要素数0なら
                     print(str(FLDItem) + "要素なので終了")
                     FLStock = FLDs[1]
                     LCheck = True
@@ -389,7 +391,7 @@ def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
     if ILT is True:
         AutoTrimming(URL, imgurl, disth, canth1, canth2, casize, do)
         img = cv2.imread(imgurl)
-        IMGsize = [1920, 1920]
+        IMGsize = [3840, 3840]
         h, w = img.shape[:2]
         ash = IMGsize[1] / h
         asw = IMGsize[0] / w
@@ -399,7 +401,81 @@ def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
             sizeas = (int(w * ash), int(h * ash))
         img = cv2.resize(img, dsize=sizeas)
         cv2.imwrite(imgurl, img)
-        ImageColorChange(URL, img)
+        TesseOCRLotate(URL, imgurl)
+        # ImageColorChange(URL, img)
         return imgurl
     else:
         return imgurl
+
+
+def TesseOCRLotate(URL, fileurl):
+    """
+    概要: TesseractOCRで画像回転
+    @param URL: 画像フォルダ(str)
+    @param fileurl: 画像URL(str)
+    @return boolean
+    """
+    try:
+        # インストールしたTesseract-OCRのパスを環境変数「PATH」へ追記する。
+        # OS自体に設定してあれば以下の2行は不要
+        path = "C:\\Program Files\\Tesseract-OCR"
+        os.environ["PATH"] = os.environ["PATH"] + path
+
+        # pyocrへ利用するOCRエンジンをTesseractに指定する。
+        tools = pyocr.get_available_tools()
+        tool = tools[0]
+
+        # OCR対象の画像ファイルを読み込む
+        lotateFiles = []
+        MaxFile = []
+        img = Image.open(fileurl)
+        img = img.rotate(
+            90,
+            expand=True,
+        )
+        img.save(fileurl.replace(r".png", "") + "90c.png")
+        lotateFiles.append(str(fileurl.replace(r".png", "")) + "90c.png")
+        MaxFile.append(0)
+        img = Image.open(fileurl.replace(r".png", "") + "90c.png")
+        img = img.rotate(
+            90,
+            expand=True,
+        )
+        img.save(fileurl.replace(r".png", "") + "180c.png")
+        lotateFiles.append(str(fileurl.replace(r".png", "")) + "180c.png")
+        MaxFile.append(0)
+        img = Image.open(fileurl.replace(r".png", "") + "180c.png")
+        img = img.rotate(
+            90,
+            expand=True,
+        )
+        img.save(fileurl.replace(r".png", "") + "270c.png")
+        lotateFiles.append(str(fileurl.replace(r".png", "")) + "270c.png")
+        MaxFile.append(0)
+        img = Image.open(fileurl.replace(r".png", "") + "270c.png")
+        img = img.rotate(
+            90,
+            expand=True,
+        )
+        img.save(fileurl.replace(r".png", "") + "360c.png")
+        lotateFiles.append(str(fileurl.replace(r".png", "")) + "360c.png")
+        MaxFile.append(0)
+        # 画像から文字を読み込む
+        lf = 0
+        for lotateFilesItem in lotateFiles:
+            builder = pyocr.builders.TextBuilder(tesseract_layout=6)
+            img = Image.open(lotateFilesItem)
+            text = tool.image_to_string(img, lang="jpn", builder=builder)
+            TC = 0
+            for textItem in text:
+                if textItem.isdecimal() is True:
+                    TC += 1
+            MaxFile[lf] = TC
+            lf += 1
+        MaxIn = MaxFile.index(max(MaxFile))
+        print(lotateFiles[MaxIn])
+        img = Image.open(lotateFiles[MaxIn])
+        img.save(fileurl)
+        return True
+    except:
+        return False

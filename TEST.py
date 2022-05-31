@@ -24,7 +24,7 @@ def DiffListCreate(KCode, PDFDir, PDFPageTxt, Banktoml):
         # else:
         Flag = ""
         GF = GCV.Bankrentxtver(
-            FileURL, 2000, 60, 600, 2000, 60, 600, "::", 60, Flag, Banktoml["Hirogin"]
+            FileURL, 2000, 50, 600, 2000, 60, 600, "::", 50, Flag, Banktoml["Hirogin"]
         )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
         if GF[0] is True:
             GFTable = GF[1]

@@ -112,7 +112,7 @@ def DiffListCreate(FolURL, OCRList, KCode, PDFDir, PDFPageTxt):
                 else:
                     Flag = ""
                 GF = GCV.rentxtver(
-                    FileURL, 5000, 30, 500, 5000, 10, 500, "::", 30, Flag
+                    FileURL, 5000, 30, 500, 5000, 10, 500, "::", 90, Flag
                 )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
                 if GF[0] is True:
                     GFTable = GF[1]
