@@ -126,8 +126,15 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
     ListCheck = ImgCheckForList(FolURL2, List, conf)
     if ListCheck[0] is True:
         logger.debug("Pass入力開始: debug level log")
-        ImgClick(FolURL2, ListCheck[1], conf, LoopVal)  # 電子申告・申請タブを押す
-        pg.write("051210561111111", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+        MLI = ImgCheck(FolURL2, "MyLogIn.png", 0.9, 10)
+        if MLI[0] is True:
+            ImgClick(FolURL2, ListCheck[1], conf, LoopVal)  # 電子申告・申請タブを押す
+            pg.write("051210561111111", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+        else:
+            ImgClick(FolURL2, "LoginBox.png", 0.9, 10)  # 電子申告・申請タブを押す
+            pg.write("561", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+            ImgClick(FolURL2, ListCheck[1], conf, LoopVal)  # 電子申告・申請タブを押す
+            pg.write("051210561111111", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
         ImgClick(FolURL2, "LoginOKBtn.png", conf, LoopVal)  # 電子申告・申請タブを押す
         time.sleep(1)
         IC = ImgCheck(FolURL2, "MJSOsiraseClose.png", conf, LoopVal)  # お知らせ画面があるかチェック
