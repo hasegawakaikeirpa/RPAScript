@@ -23,6 +23,8 @@ import pyautogui
 import codecs
 import pyperclip  # クリップボードへのコピーで使用
 import Function.ExcelFileAction as EFA
+import datetime
+import openpyxl
 
 # logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
@@ -254,7 +256,7 @@ def FolCre(C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui):
         return False, ""
 
 
-def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, driver):
+def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver):
     try:
         print(ExSheet[3 : len(ExSheet)])
         li = np.array(ExSheet[3 : len(ExSheet)])
@@ -265,7 +267,7 @@ def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, driver):
             ExRow = ExDf.iloc[Ex]
             if ExRow["関与先番号"] == ExRow["関与先番号"]:  # nan判定
                 # nanでない場合
-                OpenSystem(FolURL, TFolURL, ExRow, ExrcHeader, driver)
+                OpenSystem(FolURL, TFolURL, ExRow, ExrcHeader, isnItem, driver)
             else:
                 # nanの場合
                 print("nan")
@@ -274,7 +276,7 @@ def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def OpenSystem(FolURL, TFolURL, ExRow, ExrcHeader, driver):
+def OpenSystem(FolURL, TFolURL, ExRow, ExrcHeader, isnItem, driver):
     try:
         for ExrcHeaderItem in ExrcHeader:
             if "_繰越対象" in ExrcHeaderItem:
@@ -292,8 +294,28 @@ def OpenSystem(FolURL, TFolURL, ExRow, ExrcHeader, driver):
                     print("スタート")
                     if "会計大将" == SysN[0]:
                         SystemUp = KaikeiUpDate(FolURL, TFolURL, ExRow, driver)
+                        if SystemUp[0] is True:
+                            dt_now = datetime.datetime.now()
+                            WriteEx = openpyxl.load_workbook(XLSURL)
+                            WriteExSheet = WriteEx[isnItem]
+                            c = int(ExRow[str(SysN[0]) + "_列"])
+                            r = int(ExRow[str(SysN[0]) + "_行"])
+                            WriteExSheet.cell(row=r, column=c).value = dt_now
+                            WriteExSheet.cell(row=(r), column=(c - 3)).value = "*"
+                            print("シート書き込み完了")
+                            WriteEx.save(XLSURL)
                     elif "決算内訳書" == SysN[0]:
-                        print("決算内訳書")
+                        SystemUp = KessanUpDate(FolURL, TFolURL, ExRow, driver)
+                        if SystemUp[0] is True:
+                            dt_now = datetime.datetime.now()
+                            WriteEx = openpyxl.load_workbook(XLSURL)
+                            WriteExSheet = WriteEx[isnItem]
+                            c = int(ExRow[str(SysN[0]) + "_列"])
+                            r = int(ExRow[str(SysN[0]) + "_行"])
+                            WriteExSheet.cell(row=r, column=c).value = dt_now
+                            WriteExSheet.cell(row=(r), column=(c - 3)).value = "*"
+                            print("シート書き込み完了")
+                            WriteEx.save(XLSURL)
                     elif "減価償却" == SysN[0]:
                         print("減価償却")
                     elif "法人税申告書" == SysN[0]:
@@ -313,7 +335,7 @@ def OpenSystem(FolURL, TFolURL, ExRow, ExrcHeader, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
+def KessanUpDate(FolURL, TFolURL, ExRow, driver):
     """
     00:"関与先番号"
     01:"関与先名"
@@ -345,35 +367,340 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
     27:"所得税確定申告"
     """
     try:
-        ImgList = [r"\K_TaisyouIcon.png", r"\K_TaisyouIcon2.png"]
+        # 決算内訳書のアイコンを探す-------------------------------------------------
+        ImgList = [r"\K_Uchiwake.png", r"\K_Uchiwake2.png"]
         ICFL = ImgCheckForList(TFolURL, ImgList, 0.9, 10)
-        if ICFL[0] is True:
-            ImgClick(TFolURL, ICFL[1], 0.9, 10)
+        # -----------------------------------------------------------------------
+        if ICFL[0] is True:  # 決算内訳書のアイコンがあれば
+            ImgClick(TFolURL, ICFL[1], 0.9, 10)  # 決算内訳書のアイコンをクリック
+            # 決算内訳書フラグが表示されるまで待機------------------------------------
             while (
-                pg.locateOnScreen(TFolURL + r"\Kaikei_CFlag.png", confidence=0.9)
+                pg.locateOnScreen(TFolURL + r"\Kessan_CFlag.png", confidence=0.9)
                 is None
             ):
                 time.sleep(1)
+            # ------------------------------------------------------------------
             time.sleep(1)
-
-            DriverClick(
-                "XPATH",
-                'Window[@ClassName="TMJSFilerAppClF"][@Name="ACELINK NX-Pro ホームウィンドウ"]/Pane[@ClassName="TMNXDesktopBkPanel"]/Pane[@ClassName="TMPanel"]/Pane[@ClassName="TMPanel"]/Pane[@ClassName="TMPanel"]/Pane[@ClassName="TMPanel"]/ComboBox[@ClassName="TMComboBox"]/Button[@Name="開く"][@AutomationId="DropDown"]',
-                driver,
-            )
-
+            # 年度を最新に指定----------------------------------------------------
+            IC = ImgCheck(TFolURL, r"\Nendo_Saisin.png", 0.9, 10)
+            if IC[0] is False:
+                IC2 = ImgCheck(TFolURL, r"\Nendo_All.png", 0.9, 10)
+                if IC2[0] is False:
+                    print("年度選択がない")
+                else:
+                    ImgClick(TFolURL, r"\Nendo_All.png", 0.9, 10)
+                    pg.press("home")
+                    time.sleep(1)
+                    pg.press("down")
+                    time.sleep(1)
+                    pg.press("return")
+                    time.sleep(1)
+            # ------------------------------------------------------------------
+            # 関与先コード入力ボックスをクリック------------------------------------
             ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
             while (
                 pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
                 is None
             ):
                 time.sleep(1)
-            pyperclip.copy(ExRow["関与先番号"])
-            pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
-            print("ctrl")
-        print("stop")
+            pg.write(str(ExRow["関与先番号"]))
+            pg.press("return")
+            # 入力した関与先コードを取得------------
+            pg.keyDown("shift")
+            pg.press("tab")
+            pg.keyUp("shift")
+            pg.hotkey("ctrl", "c")
+            ThisNo = pyperclip.paste()
+            # -----------------------------------
+            pg.press("return")
+            # 表示された年度を取得-----------------
+            pg.hotkey("ctrl", "c")
+            ThisYear = pyperclip.paste()
+            # -----------------------------------
+            pg.press("return")
+            # 表示された月を取得-------------------
+            pg.hotkey("ctrl", "c")
+            ThisMonth = pyperclip.paste()
+            # -----------------------------------
+            time.sleep(1)
+            if str(ExRow["関与先番号"]) == ThisNo:
+                print("関与先あり")
+                pg.press(["return", "return", "return"])
+                # 決算内訳書メニューが表示されるまで待機------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\KessanMenu.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                # 一括更新のアイコンが表示されるまで待機----------------------------------
+                while (
+                    pg.locateOnScreen(
+                        TFolURL + r"\IkkatsuKessanKousin.png", confidence=0.9
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                ImgClick(
+                    TFolURL, r"\IkkatsuKessanKousin.png", 0.9, 10
+                )  # 一括更新のアイコンをクリック
+                # 一括更新メニューが表示されるまで待機------------------------------------
+                while (
+                    pg.locateOnScreen(
+                        TFolURL + r"\IkkatuKessanOpenFlag.png", confidence=0.9
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                ImgClick(
+                    TFolURL, r"\IkkatuKessanOpenFlag.png", 0.9, 10
+                )  # 一括更新メニューのアイコンをクリック
+                pg.press(["tab", "tab"])
+                time.sleep(3)
+                pg.press("space")
+                # チェックマークが表示されるまで待機-------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\IkkatuCheck.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                time.sleep(1)
+                ImgClick(
+                    TFolURL, r"\IkkatuKessanStart.png", 0.9, 10
+                )  # 一括更新開始のアイコンをクリック
+                # 確認ウィンドウが表示されるまで待機-------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\SakuseiKessanQ.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                pg.press("y")  # yで決定(nがキャンセル)
+                # 処理終了ウィンドウが表示されるまで待機----------------------------------
+                while (
+                    pg.locateOnScreen(
+                        TFolURL + r"\IkkatuKessanEndFlag.png", confidence=0.9
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                pg.press("return")  # 決定
+                # チェックマークが表示されなくなるまで待機-------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\IkkatuCheck.png", confidence=0.9)
+                    is not None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                ImgClick(TFolURL, r"\MenuEnd.png", 0.9, 10)  # 終了アイコンをクリック
+                # 一括更新のアイコンが表示されるまで待機----------------------------------
+                while (
+                    pg.locateOnScreen(
+                        TFolURL + r"\IkkatsuKessanKousin.png", confidence=0.9
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                # 閉じる処理--------------------------
+                pg.keyDown("alt")
+                pg.press("f4")
+                pg.keyUp("alt")
+                # -----------------------------------
+                # 決算内訳書フラグが表示されるまで待機-------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\Kessan_CFlag.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                    al4c = ImgCheck(TFolURL, r"\altf4Q.png", 0.9, 10)  # 終了確認が表示されたら
+                    if al4c[0] is True:
+                        pg.press("y")  # yで決定(nがキャンセル)
+                # --------------------------------------------------------------------
+                print("更新完了")
+                return True, ThisNo, ThisYear, ThisMonth
+            else:
+                print("関与先なし")
+                return False, "関与先なし", "", ""
+        else:
+            return False, "決算内訳書起動失敗", "", ""
     except:
-        print("Err")
+        return False, "exceptエラー", "", ""
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
+    """
+    概要: 会計大将更新処理
+    @param FolURL : ミロク起動関数のフォルダ(str)
+    @param TFolURL : このpyファイルのフォルダ(str)
+    @param ExRow : Excel抽出行(obj)
+    @param driver : 画面操作ドライバー(obj)
+    @return : bool,ミロク入力関与先コード, ミロク入力処理年, ミロク入力処理月
+    """
+    try:
+        # 会計大将のアイコンを探す-------------------------------------------------
+        ImgList = [r"\K_TaisyouIcon.png", r"\K_TaisyouIcon2.png"]
+        ICFL = ImgCheckForList(TFolURL, ImgList, 0.9, 10)
+        # -----------------------------------------------------------------------
+        if ICFL[0] is True:  # 会計大将のアイコンがあれば
+            ImgClick(TFolURL, ICFL[1], 0.9, 10)  # 会計大将のアイコンをクリック
+            # 会計大将フラグが表示されるまで待機------------------------------------
+            while (
+                pg.locateOnScreen(TFolURL + r"\Kaikei_CFlag.png", confidence=0.9)
+                is None
+            ):
+                time.sleep(1)
+            # ------------------------------------------------------------------
+            time.sleep(1)
+            # 年度を最新に指定----------------------------------------------------
+            IC = ImgCheck(TFolURL, r"\Nendo_Saisin.png", 0.9, 10)
+            if IC[0] is False:
+                IC2 = ImgCheck(TFolURL, r"\Nendo_All.png", 0.9, 10)
+                if IC2[0] is False:
+                    print("年度選択がない")
+                else:
+                    ImgClick(TFolURL, r"\Nendo_All.png", 0.9, 10)
+                    pg.press("home")
+                    time.sleep(1)
+                    pg.press("down")
+                    time.sleep(1)
+                    pg.press("return")
+                    time.sleep(1)
+            # ------------------------------------------------------------------
+            # 関与先コード入力ボックスをクリック------------------------------------
+            ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
+            while (
+                pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
+                is None
+            ):
+                time.sleep(1)
+            pg.write(str(ExRow["関与先番号"]))
+            pg.press("return")
+            # 入力した関与先コードを取得------------
+            pg.keyDown("shift")
+            pg.press("tab")
+            pg.keyUp("shift")
+            pg.hotkey("ctrl", "c")
+            ThisNo = pyperclip.paste()
+            # -----------------------------------
+            pg.press("return")
+            # 表示された年度を取得-----------------
+            pg.hotkey("ctrl", "c")
+            ThisYear = pyperclip.paste()
+            # -----------------------------------
+            pg.press("return")
+            # 表示された月を取得-------------------
+            pg.hotkey("ctrl", "c")
+            ThisMonth = pyperclip.paste()
+            # -----------------------------------
+            time.sleep(1)
+            if str(ExRow["関与先番号"]) == ThisNo:
+                print("関与先あり")
+                pg.press(["return", "return", "return"])
+                # 会計大将メニューが表示されるまで待機------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\K_TaisyouMenu.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                ImgClick(TFolURL, r"\M_Sonota.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
+                # 一括更新のアイコンが表示されるまで待機----------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\IkkatsuKousin.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                ImgClick(TFolURL, r"\IkkatsuKousin.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
+                # 一括更新メニューが表示されるまで待機------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\IkkatuOpenFlag.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                ImgClick(TFolURL, r"\IkkatuOpenFlag.png", 0.9, 10)  # 一括更新メニューのアイコンをクリック
+                pg.press("tab")
+                time.sleep(3)
+                pg.press("space")
+                # チェックマークが表示されるまで待機-------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\IkkatuCheck.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                time.sleep(1)
+                ImgClick(TFolURL, r"\IkkatuStart.png", 0.9, 10)  # 一括更新開始のアイコンをクリック
+                # 確認ウィンドウが表示されるまで待機-------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\SakuseiQ.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                pg.press("y")  # yで決定(nがキャンセル)
+                # 確認ウィンドウが表示されるまで待機-------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\SakuseiQ2.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                pg.press("return")  # 決定
+                # 処理終了ウィンドウが表示されるまで待機----------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\IkkatuEndFlag.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                pg.press("return")  # 決定
+                # チェックマークが表示されなくなるまで待機-------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\IkkatuCheck.png", confidence=0.9)
+                    is not None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                ImgClick(TFolURL, r"\MenuEnd.png", 0.9, 10)  # 終了アイコンをクリック
+                # 一括更新のアイコンが表示されるまで待機----------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\IkkatsuKousin.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                # 閉じる処理--------------------------
+                pg.keyDown("alt")
+                pg.press("f4")
+                pg.keyUp("alt")
+                # -----------------------------------
+                # 会計大将フラグが表示されるまで待機-------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\Kaikei_CFlag.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                    al4c = ImgCheck(TFolURL, r"\altf4Q.png", 0.9, 10)  # 終了確認が表示されたら
+                    if al4c[0] is True:
+                        pg.press("y")  # yで決定(nがキャンセル)
+                # --------------------------------------------------------------------
+                print("更新完了")
+                return True, ThisNo, ThisYear, ThisMonth
+            else:
+                print("関与先なし")
+                return False, "関与先なし", "", ""
+        else:
+            return False, "会計大将起動失敗", "", ""
+    except:
+        return False, "exceptエラー", "", ""
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -402,7 +729,7 @@ def MainFlow(FolURL, TFolURL, Exlsx):
         print("Sheet の数:", num_sheet)
         print(input_sheet_name)
         for isnItem in input_sheet_name:
-            # DataFrameとしてsheet1枚のデータ(2019)を読込み
+            # DataFrameとしてsheetのデータ読込み
             if isnItem == "更新申請":
                 ExSheet = Exlsx.parse(isnItem, skiprows=0)
                 Exrc = np.array(ExSheet).shape[0]  # 列数
@@ -428,7 +755,7 @@ def MainFlow(FolURL, TFolURL, Exlsx):
                             # nanの場合
                             ExrcHeader.append(Txt)
                 MainStarter(
-                    FolURL, TFolURL, ExSheet, ExrcHeader, driver
+                    FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver
                 )  # データ送信画面までの関数
     except Exception as e:
         logger.debug(e)
