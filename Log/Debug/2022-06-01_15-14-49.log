@@ -1,0 +1,4 @@
+[2022/06/01 15:14:49][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/01 15:14:49][DEBUG](MJSOpen.py:111) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/01 15:14:49][DEBUG](MJSOpen.py:117) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/01 15:14:51][DEBUG](MJSOpen.py:128) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py

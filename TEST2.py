@@ -1,46 +1,58 @@
-import Function.GCloudVision as GCV
-import numpy as np
-import csv
-from collections import OrderedDict
+# モジュールインポート
+import pyautogui as pg
+import time
+import MJSOpen
 
-strs = ""  # テキスト代入変数
-FstrList = []
-with open(
-    r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList.csv",
-    mode="r",
-    encoding="shiftjis",
-    errors="ignore",
-    newline="",
-) as f:
-    CSVList = list(csv.reader(f))
-YList = []
-for CSVListItem in CSVList:
-    YList.append(int(CSVListItem[3]))
-near = 50
-YDicList = list(OrderedDict.fromkeys(YList))  # 抽出リストの重複削除
-YD = len(YDicList)
-NewList = []
-# Y軸リストを閾値(near)で統一し置換(行を揃える)----------------------------------
-for YDN in range(YD):
-    if not YDN == YD - 1:
-        key = YDicList[YDN]
-        for YDNN in range(YD):
-            key2 = YDicList[YDNN]
-            Sa = key - key2
-            if Sa < 0:
-                if Sa >= (near * -1):
-                    YDicList[YDNN] = key
-            else:
-                if Sa <= near:
-                    YDicList[YDNN] = key
-# Y軸リストを閾値で統一し置換(行を揃える)----------------------------------------
-for YDicListItem in YDicList:
-    YList = GCV.getNearestValue(YList, YDicListItem, near)
-print(YList)
-# ---------------------------------------------------------------------------
-Ys = 0
-# 行を揃えたY軸リストを元にXYListを作成-----------------------------------------
-for YListItem in YList:
-    CSVList[Ys][3] = YListItem
-    Ys += 1
-# ---------------------------------------------------------------------------
+# pandasインポート
+import pandas as pd
+
+# 配列計算関数numpyインポート
+import numpy as np
+
+# osインポート
+import os
+
+# datetimeインポート
+from datetime import datetime as dt
+
+# 例外処理判定の為のtracebackインポート
+import traceback
+import openpyxl
+import datetime
+
+# pandas(pd)で関与先データCSVを取得
+import pyautogui
+import codecs
+import pyperclip  # クリップボードへのコピーで使用
+import Function.ExcelFileAction as EFA
+
+# logger設定------------------------------------------------------------------------------------------------------------
+import logging.config
+
+logging.config.fileConfig(r"LogConf\logging_debug.conf")
+logger = logging.getLogger(__name__)
+# ----------------------------------------------------------------------------------------------------------------------
+
+# RPA用画像フォルダの作成---------------------------------------------------------
+FolURL = os.getcwd().replace("\\", "/")  # 先
+TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
+XLSURL = TFolURL + r"\ミロク更新項目.xlsx"
+# --------------------------------------------------------------------------------
+Exlsx = EFA.XlsmRead(XLSURL)
+if Exlsx[0] is True:
+    try:
+        dt_now = datetime.datetime.now()
+        WriteEx = openpyxl.load_workbook(XLSURL)
+        WriteExSheet = WriteEx["更新申請"]
+        c = 5
+        r = 7
+        cn = 8
+        WriteExSheet.cell(row=r, column=cn).value = dt_now
+        WriteExSheet.cell(row=r, column=c).value = "*"
+        print("シート書き込み完了")
+        WriteEx.save(XLSURL)
+    except:
+        traceback.print_exc()
+else:
+    print("Excel読み込みエラー")
+    logger.debug("Excel読み込みエラー")
