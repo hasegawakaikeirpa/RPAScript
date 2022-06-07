@@ -550,6 +550,7 @@ def KanyoScroll(FolURL2):  # 関与先毎の時間集計操作
                                 "KousagyouOpen.png",
                                 "KousagyouOpen2.png",
                                 "KousagyouOpen3.png",
+                                "KousagyouOpen4.png",
                             ]
                             while ImgCheckForList(FolURL2, KouList, 0.9)[0] is False:
                                 time.sleep(1)
