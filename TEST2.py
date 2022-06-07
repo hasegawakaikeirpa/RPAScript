@@ -25,6 +25,7 @@ import pyautogui
 import codecs
 import pyperclip  # クリップボードへのコピーで使用
 import Function.ExcelFileAction as EFA
+from openpyxl.formatting.rule import Rule
 
 # logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
@@ -36,7 +37,8 @@ logger = logging.getLogger(__name__)
 # RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
-XLSURL = TFolURL + r"\ミロク更新項目.xlsx"
+XLSURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\ミロク更新項目.xlsx"
+LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
 # --------------------------------------------------------------------------------
 Exlsx = EFA.XlsmRead(XLSURL)
 if Exlsx[0] is True:
@@ -44,11 +46,7 @@ if Exlsx[0] is True:
         dt_now = datetime.datetime.now()
         WriteEx = openpyxl.load_workbook(XLSURL)
         WriteExSheet = WriteEx["更新申請"]
-        c = 5
-        r = 7
-        cn = 8
-        WriteExSheet.cell(row=r, column=cn).value = dt_now
-        WriteExSheet.cell(row=r, column=c).value = "*"
+        WriteExSheet.cell(row=5, column=6).value = dt_now
         print("シート書き込み完了")
         WriteEx.save(XLSURL)
     except:

@@ -240,7 +240,7 @@ def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリッ�
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver):
+def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, driver):
     if "会計大将" == Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
@@ -394,21 +394,25 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
+        # Rno = ExRow["関与先番号"]
+        # Rn = ExRow["関与先名"]
+        Rno = 1
+        Rn = "TEST"
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理開始"], file=f)
         # ------------------------------------------------------------------------------------------
-        SystemUp = HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver)
+        Fname = (
+            r"D:\PythonScript\RPAScript\RPAPhoto\MJS_SystemPrintOut\PDF\\" + PN + ".pdf"
+        )
+        SystemUp = HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver, PN, Fname)
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
             print("シート書き込み完了")
             WriteEx.save(XLSURL)
             WriteEx.close
@@ -1569,7 +1573,250 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
+def HoujinzeiUpdateSinkokuItiran(
+    FolURL, TFolURL, ExRow, driver, PN, Fname, ThisNo, ThisYear, ThisMonth
+):
+    # 申告税一覧表印刷処理----------------------------------------------------
+    OP = ImgCheckForList(
+        CFolURL,
+        [
+            r"\Houjinzei\01SinkokuNyuuryoku.png",
+            r"\Houjinzei\01SinkokuNyuuryoku2.png",
+        ],
+        0.9,
+        10,
+    )
+    if OP[0] is True:
+        ImgClick(CFolURL, OP[1], 0.9, 10)
+        # 法人税メニューが表示されるまで待機------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        ImgClick(CFolURL, r"\Houjinzei\DownPrint.png", 0.9, 10)
+        time.sleep(1)
+        if PN == "申告税一覧表":
+            pg.press("n")
+            # 一覧表メニューが表示されるまで待機------------------------------------
+            while (
+                pg.locateOnScreen(
+                    CFolURL + r"\Houjinzei\ItiranFlag.png", confidence=0.9
+                )
+                is None
+            ):
+                time.sleep(1)
+            # --------------------------------------------------------------------
+            ImgClick(CFolURL, r"\Houjinzei\Print.png", 0.9, 10)
+            # 一覧表出力項目指定が表示されるまで待機---------------------------------
+            while (
+                pg.locateOnScreen(
+                    CFolURL + r"\Houjinzei\ItiranSyutuQ.png", confidence=0.9
+                )
+                is None
+            ):
+                time.sleep(1)
+            # --------------------------------------------------------------------
+            pg.press("return")
+            # 一覧表出力項目指定が表示されるまで待機---------------------------------
+            while (
+                pg.locateOnScreen(CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9)
+                is None
+            ):
+                time.sleep(1)
+            # --------------------------------------------------------------------
+            # 申告税一覧表印刷処理----------------------------------------------------
+            FO = ImgCheckForList(
+                CFolURL,
+                [
+                    r"\Houjinzei\FileOut.png",
+                    r"\Houjinzei\FileOut2.png",
+                ],
+                0.9,
+                10,
+            )
+            if FO[0] is True:
+                ImgClick(CFolURL, FO[1], 0.9, 10)
+            ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
+            pg.press("return")
+            pg.press("delete")
+            pyperclip.copy(Fname)
+            pg.hotkey("ctrl", "v")
+            pg.press("return")
+            time.sleep(1)
+            ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+            # 印刷中が表示されるまで待機---------------------------------
+            while (
+                pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
+                is None
+            ):
+                time.sleep(1)
+                FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
+                if FO[0] is True:
+                    pg.press("y")
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\NowPrint.png",
+                            confidence=0.9,
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+            # --------------------------------------------------------------------
+            # 印刷中が表示されなくなるまで待機---------------------------------
+            while (
+                pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
+                is not None
+            ):
+                time.sleep(1)
+            # --------------------------------------------------------------------
+            pg.keyDown("alt")
+            pg.press("x")
+            pg.keyUp("alt")
+            time.sleep(3)
+            ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+            # 終了確認が表示されるまで待機---------------------------------
+            while (
+                pg.locateOnScreen(
+                    CFolURL + r"\Houjinzei\SinkokuEndQ.png", confidence=0.9
+                )
+                is None
+            ):
+                time.sleep(1)
+            # --------------------------------------------------------------------
+            pg.press("y")
+            while (
+                ImgCheckForList(
+                    CFolURL,
+                    [
+                        r"\Houjinzei\01SinkokuNyuuryoku.png",
+                        r"\Houjinzei\01SinkokuNyuuryoku2.png",
+                    ],
+                    0.9,
+                    10,
+                )[0]
+                is False
+            ):
+                time.sleep(1)
+                SEQ = ImgCheck(CFolURL, r"\Houjinzei\SinkokuEndQ2.png", 0.9, 10)
+                if SEQ[0] is True:
+                    ImgClick(CFolURL, r"\Houjinzei\SinkokuEndQ2Btn.png", 0.9, 10)
+            # 閉じる処理--------------------------
+            pg.keyDown("alt")
+            pg.press("f4")
+            pg.keyUp("alt")
+            # -----------------------------------
+            # 法人税フラグが表示されるまで待機-------------------------------------
+            while (
+                pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None
+            ):
+                time.sleep(1)
+            # --------------------------------------------------------------------
+            # 初期画面で開封された法人税項目を閉じる----------------------------------
+            HoujinList = [
+                r"\FastMenuHoujinzei.png",
+                r"\FastMenuHoujinzei2.png",
+            ]
+            HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+            if HLI[0] is True:
+                ImgClick(TFolURL, HLI[1], 0.9, 10)
+            # --------------------------------------------------------------------
+            return True, ThisNo, ThisYear, ThisMonth
+    elif PN == "第6号様式（県）":
+        ImgClick(CFolURL, r"\Houjinzei\HoujinzeiSelecter.png", 0.9, 10)
+        # 申告書印刷メニューが表示されるまで待機------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\BeppyouIcon.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        pg.press("end")
+        pg.press(["up", "up"])
+        pg.press("return")
+        time.sleep(1)
+        ImgClick(CFolURL, r"\Houjinzei\PreviewIcon.png", 0.9, 10)
+        # プレビュー画面が表示されるまで待機------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\PreviewFlag.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        # ロード完了まで待機----------------------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\PreviewLoad.png", confidence=0.9)
+            is not None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        ImgClick(CFolURL, r"\Houjinzei\ThisPIcon.png", 0.9, 10)
+        # 印刷ダイアログ待機----------------------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\ThisPMenu.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        pyperclip.copy(Fname)
+        pg.hotkey("ctrl", "v")
+        pg.press("return")
+        # 印刷完了まで待機----------------------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrintQ.png", confidence=0.9)
+            is not None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        # 終了確認が表示されるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\SinkokuEndQ.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        pg.press("y")
+        while (
+            ImgCheckForList(
+                CFolURL,
+                [
+                    r"\Houjinzei\01SinkokuNyuuryoku.png",
+                    r"\Houjinzei\01SinkokuNyuuryoku2.png",
+                ],
+                0.9,
+                10,
+            )[0]
+            is False
+        ):
+            time.sleep(1)
+            SEQ = ImgCheck(CFolURL, r"\Houjinzei\SinkokuEndQ2.png", 0.9, 10)
+            if SEQ[0] is True:
+                ImgClick(CFolURL, r"\Houjinzei\SinkokuEndQ2Btn.png", 0.9, 10)
+        # 閉じる処理--------------------------
+        pg.keyDown("alt")
+        pg.press("f4")
+        pg.keyUp("alt")
+        # -----------------------------------
+        # 法人税フラグが表示されるまで待機-------------------------------------
+        while pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None:
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        # 初期画面で開封された法人税項目を閉じる----------------------------------
+        HoujinList = [
+            r"\FastMenuHoujinzei.png",
+            r"\FastMenuHoujinzei2.png",
+        ]
+        HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+        if HLI[0] is True:
+            ImgClick(TFolURL, HLI[1], 0.9, 10)
+        # --------------------------------------------------------------------
+        return True, ThisNo, ThisYear, ThisMonth
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver, PN, Fname):
     """
     概要: 法人税更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -1693,162 +1940,26 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
                     HQ = ImgCheck(TFolURL, r"\HoujinOpenQ.png", 0.9, 10)
                     if HQ[0] is True:
                         ImgClick(TFolURL, r"\HoujinOpenQCansel.png", 0.9, 10)
-                # --------------------------------------------------------------------
-                ImgClick(
-                    TFolURL, r"\IkkatsuHoujinKousin.png", 0.9, 10
-                )  # 一括更新のアイコンをクリック
-                # 法人税メニューが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\HoujinzeiMenu.png", confidence=0.9)
-                    is None
+                # 指示内容で処理分け----------------------------------------------------------
+                if (
+                    PN == "申告税一覧表"
+                    or PN == "第6号様式（県）"
+                    or PN == "第6号様式別表9（県）"
+                    or PN == "第20号様式（市）"
+                    or PN == "別表１　緑色"
                 ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                # 再計算ウィンドウが表示されていないかチェック-----------------------------
-                DRC = ImgCheck(TFolURL, r"\DataReCalc.png", 0.9, 10)
-                if DRC[0] is True:
-                    pg.press("return")
-                    ErrStr = "ReCalc"  # Rpaエラー判別変数
-                # ------------------------------------------------------------------
-                if ErrStr == "":
-                    ListCheck = False  # 申告種類判定変数
-                    # Excelの値から申告種類を判定------------------------------------
-                    try:
-                        ExPar = str(ExRow["法人税申告書_繰越対象"])
-                        if ExPar == "1":
-                            TaxPngName = r"\KakuteiNext.png"
-                        elif ExPar == "2":
-                            TaxPngName = r"\CyuukanNext.png"
-                        elif ExPar == "3":
-                            TaxPngName = r"\YoteiNext.png"
-                        elif ExPar == "4":
-                            TaxPngName = r"\SyuuseiThis.png"
-                        else:
-                            TaxPngName = "Err"
-                    except:
-                        TaxPngName = "Err"
-                    time.sleep(1)
-                    if TaxPngName == "Err":
-                        # 確認ウィンドウが表示されるまで待機-------------------------------------
-                        while (
-                            pg.locateOnScreen(
-                                TFolURL + r"\HoujinEndQ.png", confidence=0.9
-                            )
-                            is None
-                        ):
-                            time.sleep(1)
-                            # --------------------------------------------------------------------
-                            ME = ImgCheckForList(
-                                TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
-                            )
-                            if ME[0] is True:
-                                ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
-                        # --------------------------------------------------------------------
-                        pg.press("y")
-                        # 法人税メニューが表示されるまで待機------------------------------------
-                        while (
-                            pg.locateOnScreen(
-                                TFolURL + r"\HoujinzeiMenu.png", confidence=0.9
-                            )
-                            is None
-                        ):
-                            time.sleep(1)
-                        # --------------------------------------------------------------------
-                        # 閉じる処理--------------------------
-                        pg.keyDown("alt")
-                        pg.press("f4")
-                        pg.keyUp("alt")
-                        # -----------------------------------
-                        # 法人税フラグが表示されるまで待機-------------------------------------
-                        while (
-                            pg.locateOnScreen(
-                                TFolURL + r"\HoujinFlag.png", confidence=0.9
-                            )
-                            is None
-                        ):
-                            time.sleep(1)
-                        # --------------------------------------------------------------------
-                        # 初期画面で開封された法人税項目を閉じる----------------------------------
-                        HoujinList = [
-                            r"\FastMenuHoujinzei.png",
-                            r"\FastMenuHoujinzei2.png",
-                        ]
-                        HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
-                        if HLI[0] is True:
-                            ImgClick(TFolURL, HLI[1], 0.9, 10)
-                        # --------------------------------------------------------------------
-                        print("更新完了")
-
-                        return False, "要申告指定", "", ""
-                    else:
-                        # 申告種類に応じたリスト画像までループ----------------------------
-                        while ListCheck is False:
-                            pg.press("down")
-                            TPN = ImgCheck(TFolURL, TaxPngName, 0.9, 10)
-                            if TPN[0] is True:
-                                ListCheck = True
-                                pg.press("return")
-                        # ------------------------------------------------------------
-                        time.sleep(1)
-                        ImgClick(
-                            TFolURL, r"\HoujinStart.png", 0.9, 10
-                        )  # 更新開始のアイコンをクリック
-                        # 確認ウィンドウが表示されるまで待機-------------------------------------
-                        while (
-                            pg.locateOnScreen(TFolURL + r"\HoujinQ.png", confidence=0.9)
-                            is None
-                        ):
-                            time.sleep(1)
-                        # --------------------------------------------------------------------
-                        pg.press("y")  # yで決定(nがキャンセル)
-                        # 処理終了ウィンドウが表示されるまで待機----------------------------------
-                        while (
-                            pg.locateOnScreen(
-                                TFolURL + r"\HoujinEnd.png", confidence=0.9
-                            )
-                            is None
-                        ):
-                            time.sleep(1)
-                        # --------------------------------------------------------------------
-                        pg.press("return")  # 決定
-                        # 一括更新のアイコンが表示されるまで待機----------------------------------
-                        while (
-                            pg.locateOnScreen(
-                                TFolURL + r"\HoujinzeiMenu.png", confidence=0.9
-                            )
-                            is None
-                        ):
-                            time.sleep(1)
-                        # --------------------------------------------------------------------
-                        # 閉じる処理--------------------------
-                        pg.keyDown("alt")
-                        pg.press("f4")
-                        pg.keyUp("alt")
-                        # -----------------------------------
-                        # 法人税フラグが表示されるまで待機-------------------------------------
-                        while (
-                            pg.locateOnScreen(
-                                TFolURL + r"\HoujinFlag.png", confidence=0.9
-                            )
-                            is None
-                        ):
-                            time.sleep(1)
-                            HEQ2 = ImgCheck(TFolURL, r"\HoujinEndQ2.png", 0.9, 10)
-                            if HEQ2[0] is True:
-                                pg.press("y")
-                        # --------------------------------------------------------------------
-                        # 初期画面で開封された法人税項目を閉じる----------------------------------
-                        HoujinList = [
-                            r"\FastMenuHoujinzei.png",
-                            r"\FastMenuHoujinzei2.png",
-                        ]
-                        HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
-                        if HLI[0] is True:
-                            ImgClick(TFolURL, HLI[1], 0.9, 10)
-                        # --------------------------------------------------------------------
-                        print("更新完了")
-                        if ErrStr == "":
-                            return True, ThisNo, ThisYear, ThisMonth
+                    PNFlow = HoujinzeiUpdateSinkokuItiran(
+                        FolURL,
+                        TFolURL,
+                        ExRow,
+                        driver,
+                        PN,
+                        Fname,
+                        ThisNo,
+                        ThisYear,
+                        ThisMonth,
+                    )
+                    return PNFlow[0], PNFlow[1], PNFlow[2], PNFlow[3]
                 elif ErrStr == "ReCalc":
                     # 閉じる処理--------------------------
                     pg.keyDown("alt")
@@ -2468,32 +2579,44 @@ def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver):
 def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
     try:
         Eh = 0
+        # 列名からMJSシステムリストを作成------------------------------------------------
+        SystemList = []
+        CountList = []
         for ExrcHeaderItem in ExrcHeader:
-            if "_繰越対象" in ExrcHeaderItem:
-                SysN = ExrcHeaderItem.split("_")
-                Title = str(SysN[0])
-                if not ExRow[Title + "_繰越対象"] == "-":
-                    if ExRow[Title + "_繰越対象"] == ExRow[Title + "_繰越対象"]:
-                        # nanでない場合
-                        if ExRow[Title + "_繰越処理日"] == ExRow[Title + "_繰越処理日"]:
-                            # nanでない場合
-                            print(ExRow[Title + "_繰越処理日"])
-                        else:
-                            # nanの場合
-                            # Log--------------------------------------------
-                            dt_s = datetime.datetime.now()
-                            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-                            Rno = ExRow["関与先番号"]
-                            Rn = ExRow["関与先名"].replace("\u3000", "")
-                            logger.debug(
-                                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_メイン処理開始"
+            if "_" in ExrcHeaderItem:
+                SP = ExrcHeaderItem.split("_")
+                SystemList.append(SP[0])
+        for SystemListItem in SystemList:
+            CountList.append(int(SystemList.count(SystemListItem)))
+        SL = np.array(SystemList)
+        CL = np.array(CountList)
+        FMaxSystemList = SL[CL.argsort(axis=0)[::-1]]
+        FMaxSystemList = list(dict.fromkeys(FMaxSystemList))
+        print(FMaxSystemList)
+        # ----------------------------------------------------------------------------
+        for FMaxSystemListItem in FMaxSystemList:
+            for ExrcHeaderItem in ExrcHeader:
+                if FMaxSystemListItem in ExrcHeaderItem:
+                    Title = FMaxSystemListItem  # MJSSytem名
+                    PN = ExrcHeaderItem.split("_")[1]  # MJS出力帳表名
+                    # nanの場合
+                    # Log--------------------------------------------
+                    dt_s = datetime.datetime.now()
+                    dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                    Rno = ExRow["関与先番号"]
+                    # Rn = ExRow["関与先名"]
+                    Rn = "TEST"
+                    if ExRow[ExrcHeaderItem] == "○":
+                        logger.debug(
+                            dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_プリントメイン処理開始"
+                        )
+                        with open(LURL, "a") as f:
+                            print(
+                                [dt_s, "関与先番号:" + str(Rno), str(Rn), "プリントメイン処理開始"],
+                                file=f,
                             )
-                            with open(LURL, "a") as f:
-                                print(
-                                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "メイン処理開始"],
-                                    file=f,
-                                )
-                            # -----------------------------------------------
+                        # -----------------------------------------------
+                        if not Title == "なし" or not Title == "決算フォルダ":
                             ChildFlow(
                                 FolURL,
                                 TFolURL,
@@ -2503,41 +2626,10 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
                                 ExrcHeader,
                                 isnItem,
                                 Title,
+                                PN,
                                 driver,
                             )
-                    else:
-                        # nanでない場合
-                        if ExRow[Title + "_繰越処理日"] == ExRow[Title + "_繰越処理日"]:
-                            # nanでない場合
-                            print("スタート")
-                        else:
-                            # nanの場合
-                            # Log--------------------------------------------
-                            dt_s = datetime.datetime.now()
-                            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-                            Rno = ExRow["関与先番号"]
-                            Rn = ExRow["関与先名"].replace("\u3000", "")
-                            logger.debug(
-                                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_メイン処理開始"
-                            )
-                            with open(LURL, "a") as f:
-                                print(
-                                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "メイン処理開始"],
-                                    file=f,
-                                )
-                            # -----------------------------------------------
-                            ChildFlow(
-                                FolURL,
-                                TFolURL,
-                                ExRow,
-                                Ex,
-                                Eh,
-                                ExrcHeader,
-                                isnItem,
-                                Title,
-                                driver,
-                            )
-            Eh += 1
+                Eh += 1
     except:
         print("TEST")
 
@@ -2545,7 +2637,7 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
 # ------------------------------------------------------------------------------------------------------------------
 def MainFlow(FolURL, TFolURL, Exlsx):
     """
-    概要: メイン処理
+    概要: プリントメイン処理
     @param FolURL : ミロク起動関数のフォルダ(str)
     @param TFolURL : このpyファイルのフォルダ(str)
     @param Exlsx : Excel指示シート(obj)
@@ -2557,11 +2649,11 @@ def MainFlow(FolURL, TFolURL, Exlsx):
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         logger.debug(dt_s + "_MJSシステム更新開始")
         # -----------------------------------------------
-        # BatUrl = FolURL + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
-        # driver = MJSOpen.MainFlow(
-        #     BatUrl, FolURL, "RPAPhoto/MJS_DensiSinkoku"
-        # )  # MJSを起動しログイン後インスタンス化
-        driver = []
+        BatUrl = FolURL + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
+        driver = MJSOpen.MainFlow(
+            BatUrl, FolURL, "RPAPhoto/MJS_DensiSinkoku"
+        )  # MJSを起動しログイン後インスタンス化
+        # driver = []
         FolURL = FolURL + "/RPAPhoto/MJS_DensiSinkoku"
         # ----------------------------------------------------------------------------------------------------------------------
         logger.debug("xlsxをDataFrameに")
@@ -2592,11 +2684,12 @@ def MainFlow(FolURL, TFolURL, Exlsx):
                 Exrc = np.array(ExSheet).shape[1]  # 列数
                 ExrcHeader = []
                 for Ex in range(Exrc):
-                    ExRow = ExSheet.iloc[0]
-                    ExSecondRow = ExSheet.iloc[1]
+                    ExRow = ExSheet.iloc[1]
+                    print(ExRow)
+                    ExSecondRow = ExSheet.iloc[2]
+                    print(ExSecondRow)
                     if ExRow[Ex] == ExRow[Ex]:  # nan判定
                         # nanでない場合
-                        Txt = ExRow[Ex]
                         if ExSecondRow[Ex] == ExSecondRow[Ex]:  # nan判定
                             # nanでない場合
                             ExrcHeader.append(ExRow[Ex] + "_" + ExSecondRow[Ex])
@@ -2605,13 +2698,7 @@ def MainFlow(FolURL, TFolURL, Exlsx):
                             ExrcHeader.append(ExRow[Ex])
                     else:
                         # nanの場合
-                        if ExSecondRow[Ex] == ExSecondRow[Ex]:  # nan判定
-                            # nanでない場合
-                            Txt = ExRow[Ex]
-                            ExrcHeader.append(Txt + "_" + ExSecondRow[Ex])
-                        else:
-                            # nanの場合
-                            ExrcHeader.append(Txt)
+                        ExrcHeader.append(ExSecondRow[Ex])
                 # Log--------------------------------------------
                 dt_s = datetime.datetime.now()
                 dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
@@ -2629,6 +2716,7 @@ def MainFlow(FolURL, TFolURL, Exlsx):
 # RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
+CFolURL = FolURL + r"\RPAPhoto\MJS_SystemPrintOut"  # 先
 XLSURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\ミロク更新項目.xlsx"
 LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
 # --------------------------------------------------------------------------------

@@ -24,6 +24,8 @@ import Function.ExcelFileAction as EFA
 import Function.CSVOut as FCO
 import datetime
 import openpyxl
+from openpyxl.formatting.rule import Rule
+from ctypes import windll
 
 # logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
@@ -244,7 +246,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"]
+        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新処理開始"], file=f)
@@ -253,12 +255,13 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Excel書き込み--------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
             print("シート書き込み完了")
+            print(WriteEx)
             WriteEx.save(XLSURL)
             WriteEx.close
             # ---------------------------------------------------------------
@@ -266,7 +269,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新処理終了"], file=f)
@@ -276,7 +279,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理エラー中断")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新エラー中断"], file=f)
@@ -286,7 +289,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"]
+        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理開始"], file=f)
@@ -295,7 +298,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Excel書き込み--------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -307,14 +310,14 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理終了"], file=f)
             # ------------------------------------------------------------------------------------------
         elif SystemUp[1] == "Noren":
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -326,7 +329,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理終了"], file=f)
@@ -336,7 +339,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"]
+        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "減価償却更新処理開始"], file=f)
@@ -345,7 +348,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -357,14 +360,14 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "減価償却更新処理終了"], file=f)
             # ------------------------------------------------------------------------------------------
         elif SystemUp[1] == "Noren":
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -376,7 +379,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(
                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算未確定減価償却更新処理終了"
             )
@@ -392,7 +395,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"]
+        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理開始"], file=f)
@@ -401,7 +404,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -413,14 +416,14 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理終了"], file=f)
             # ------------------------------------------------------------------------------------------
         elif SystemUp[1] == "要データ再計算":
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -432,14 +435,14 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理終了"], file=f)
             # ------------------------------------------------------------------------------------------
         elif SystemUp[1] == "要申告指定":
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -451,7 +454,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(
                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書申告指定無しの為中断"
             )
@@ -466,7 +469,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"]
+        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新処理開始"], file=f)
@@ -475,7 +478,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -487,14 +490,14 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新処理終了"], file=f)
             # ------------------------------------------------------------------------------------------
         elif SystemUp[1] == "Nocalc":
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -506,19 +509,39 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(
                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新処理計算未処理で終了"
             )
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新処理計算未処理で終了"], file=f)
+        elif SystemUp[0] is False:
+            dt_now = datetime.datetime.now()
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+            WriteEx = openpyxl.load_workbook(XLSURL)
+            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "関与先無"
+            print("シート書き込み完了")
+            WriteEx.save(XLSURL)
+            WriteEx.close
+            # Log---------------------------------------------------------------------------------------
+            dt_s = datetime.datetime.now()
+            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+            Rno = ExRow["関与先番号"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
+            logger.debug(
+                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新関与先無しの為終了"
+            )
+            with open(LURL, "a") as f:
+                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新関与先無しの為終了"], file=f)
             # ------------------------------------------------------------------------------------------
     elif "財産評価明細書" == Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"]
+        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_財産評価明細書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "財産評価明細書更新処理開始"], file=f)
@@ -527,7 +550,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -539,7 +562,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_財産評価明細書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "財産評価明細書更新処理終了"], file=f)
@@ -550,7 +573,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"]
+        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_年末調整更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "年末調整更新処理開始"], file=f)
@@ -559,7 +582,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -571,7 +594,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"]
+            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_年末調整更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "年末調整更新処理終了"], file=f)
@@ -582,7 +605,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"]
+        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法定調書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法定調書更新処理開始"], file=f)
@@ -591,7 +614,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
@@ -604,7 +627,7 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"]
+        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法定調書更新処理終了")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法定調書更新処理終了"], file=f)
@@ -682,16 +705,22 @@ def HouteiUpdate(FolURL, TFolURL, ExRow, driver):
             ):
                 time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("return")
+            pg.press(["return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
-            pg.press("tab")
+            pg.press(["tab", "tab"])
             pg.keyUp("shift")
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             # -----------------------------------
             pg.press("return")
             # 表示された年度を取得-----------------
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -867,16 +896,22 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
             ):
                 time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("return")
+            pg.press(["return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
-            pg.press("tab")
+            pg.press(["tab", "tab"])
             pg.keyUp("shift")
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             # -----------------------------------
             pg.press("return")
             # 表示された年度を取得-----------------
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -1098,29 +1133,69 @@ def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
             ):
                 time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("return")
-            # 入力した関与先コードを取得------------
-            pg.keyDown("shift")
-            pg.press("tab")
-            pg.keyUp("shift")
-            pg.hotkey("ctrl", "c")
-            ThisNo = pyperclip.paste()
+            pg.press(["return", "return"])
             # -----------------------------------
-            pg.press("return")
-            # 表示された年度を取得-----------------
-            pg.hotkey("ctrl", "c")
-            ThisYear = pyperclip.paste()
-            # -----------------------------------
-            pg.press("return")
-            #####################################
-            # [ここは税目種類のドロップボックス]
-            #####################################
-            pg.press("return")
-            # 表示された申告種類を取得---------------
-            pg.hotkey("ctrl", "c")
-            ThisMonth = pyperclip.paste()
-            # -----------------------------------
-            time.sleep(1)
+            if ImgCheck(TFolURL, r"\NotData.png", 0.9, 10)[0] is True:
+                # 入力した関与先コードを取得------------
+                pg.press(["return", "return"])
+                pg.keyDown("shift")
+                pg.press(["tab", "tab", "tab", "tab"])
+                pg.keyUp("shift")
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisNo = pyperclip.paste()
+                pg.press("return")
+                # クリップボードをクリア----------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                # ------------------------------------
+                # 表示された年度を取得-----------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisYear = pyperclip.paste()
+                # -----------------------------------
+                pg.press("return")
+                # 表示された申告種類を取得---------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisMonth = pyperclip.paste()
+                pg.press("return")
+                # -----------------------------------
+            else:
+                # 入力した関与先コードを取得------------
+                pg.press(["return", "return"])
+                pg.keyDown("shift")
+                pg.press(["tab", "tab", "tab", "tab"])
+                pg.keyUp("shift")
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisNo = pyperclip.paste()
+                pg.press("return")
+                # 表示された年度を取得-----------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisYear = pyperclip.paste()
+                # -----------------------------------
+                pg.press("return")
+                # 表示された申告種類を取得---------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisMonth = pyperclip.paste()
+                pg.press("return")
+                # -----------------------------------
             # 他システムとメニューが違う-------------------------------------------------------
             if str(ExRow["関与先番号"]) == ThisNo:
                 print("関与先あり")
@@ -1307,25 +1382,69 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
             ):
                 time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("return")
-            # 入力した関与先コードを取得------------
-            pg.keyDown("shift")
-            pg.press("tab")
-            pg.keyUp("shift")
-            pg.hotkey("ctrl", "c")
-            ThisNo = pyperclip.paste()
+            pg.press(["return", "return"])
             # -----------------------------------
-            pg.press("return")
-            # 表示された年度を取得-----------------
-            pg.hotkey("ctrl", "c")
-            ThisYear = pyperclip.paste()
-            # -----------------------------------
-            pg.press("return")
-            # 表示された申告種類を取得---------------
-            pg.hotkey("ctrl", "c")
-            ThisMonth = pyperclip.paste()
-            # -----------------------------------
-            time.sleep(1)
+            if ImgCheck(TFolURL, r"\NotData.png", 0.9, 10)[0] is True:
+                # 入力した関与先コードを取得------------
+                pg.press("return")
+                pg.keyDown("shift")
+                pg.press(["tab", "tab", "tab", "tab"])
+                pg.keyUp("shift")
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisNo = pyperclip.paste()
+                pg.press("return")
+                # クリップボードをクリア----------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                # ------------------------------------
+                # 表示された年度を取得-----------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisYear = pyperclip.paste()
+                # -----------------------------------
+                pg.press("return")
+                # 表示された申告種類を取得---------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisMonth = pyperclip.paste()
+                pg.press("return")
+                # -----------------------------------
+            else:
+                # 入力した関与先コードを取得------------
+                pg.press("return")
+                pg.keyDown("shift")
+                pg.press(["tab", "tab", "tab", "tab"])
+                pg.keyUp("shift")
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisNo = pyperclip.paste()
+                pg.press("return")
+                # 表示された年度を取得-----------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisYear = pyperclip.paste()
+                # -----------------------------------
+                pg.press("return")
+                # 表示された申告種類を取得---------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisMonth = pyperclip.paste()
+                pg.press("return")
+                # -----------------------------------
             # 他システムとメニューが違う-------------------------------------------------------
             if str(ExRow["関与先番号"]) == ThisNo:
                 print("関与先あり")
@@ -1433,6 +1552,15 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                     return True, "Nocalc", ThisYear, ThisMonth
             else:
                 print("関与先なし")
+                # 初期画面で開封された所得税項目を閉じる----------------------------------
+                HoujinList = [
+                    r"\Syotoku.png",
+                    r"\Syotoku2.png",
+                ]
+                HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+                if HLI[0] is True:
+                    ImgClick(TFolURL, HLI[1], 0.9, 10)
+                # --------------------------------------------------------------------
                 return False, "関与先なし", "", ""
         else:
             return False, "所得税起動失敗", "", ""
@@ -1489,29 +1617,69 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
             ):
                 time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("return")
-            # 入力した関与先コードを取得------------
-            pg.keyDown("shift")
-            pg.press("tab")
-            pg.keyUp("shift")
-            pg.hotkey("ctrl", "c")
-            ThisNo = pyperclip.paste()
+            pg.press(["return", "return"])
             # -----------------------------------
-            pg.press("return")
-            # 表示された年度を取得-----------------
-            pg.hotkey("ctrl", "c")
-            ThisYear = pyperclip.paste()
-            # -----------------------------------
-            pg.press("return")
-            #####################################
-            # [ここは申告種類のドロップボックス]
-            #####################################
-            pg.press("return")
-            # 表示された申告Noを取得---------------
-            pg.hotkey("ctrl", "c")
-            ThisMonth = pyperclip.paste()
-            # -----------------------------------
-            time.sleep(1)
+            if ImgCheck(TFolURL, r"\NotData.png", 0.9, 10)[0] is True:
+                # 入力した関与先コードを取得------------
+                pg.press(["return", "return"])
+                pg.keyDown("shift")
+                pg.press(["tab", "tab", "tab", "tab"])
+                pg.keyUp("shift")
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisNo = pyperclip.paste()
+                pg.press("return")
+                # クリップボードをクリア----------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                # ------------------------------------
+                # 表示された年度を取得-----------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisYear = pyperclip.paste()
+                # -----------------------------------
+                pg.press("return")
+                # 表示された申告種類を取得---------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisMonth = pyperclip.paste()
+                pg.press("return")
+                # -----------------------------------
+            else:
+                # 入力した関与先コードを取得------------
+                pg.press(["return", "return"])
+                pg.keyDown("shift")
+                pg.press(["tab", "tab", "tab", "tab"])
+                pg.keyUp("shift")
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisNo = pyperclip.paste()
+                pg.press("return")
+                # 表示された年度を取得-----------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisYear = pyperclip.paste()
+                # -----------------------------------
+                pg.press("return")
+                # 表示された申告種類を取得---------------
+                if windll.user32.OpenClipboard(None):
+                    windll.user32.EmptyClipboard()
+                    windll.user32.CloseClipboard()
+                pg.hotkey("ctrl", "c")
+                ThisMonth = pyperclip.paste()
+                pg.press("return")
+                # -----------------------------------
             # 他システムとメニューが違う-------------------------------------------------------
             if str(ExRow["関与先番号"]) == ThisNo:
                 print("関与先あり")
@@ -1546,14 +1714,14 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
                     ListCheck = False  # 申告種類判定変数
                     # Excelの値から申告種類を判定------------------------------------
                     try:
-                        ExPar = int(ExRow["法人税申告書_繰越対象"])
-                        if ExPar == 31:
+                        ExPar = str(ExRow["法人税申告書_繰越対象"])
+                        if ExPar == "1":
                             TaxPngName = r"\KakuteiNext.png"
-                        elif ExPar == 41:
+                        elif ExPar == "2":
                             TaxPngName = r"\CyuukanNext.png"
-                        elif ExPar == 51:
+                        elif ExPar == "3":
                             TaxPngName = r"\YoteiNext.png"
-                        elif ExPar == 61:
+                        elif ExPar == "4":
                             TaxPngName = r"\SyuuseiThis.png"
                         else:
                             TaxPngName = "Err"
@@ -1561,12 +1729,6 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
                         TaxPngName = "Err"
                     time.sleep(1)
                     if TaxPngName == "Err":
-                        # --------------------------------------------------------------------
-                        ME = ImgCheckForList(
-                            TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
-                        )
-                        if ME[0] is True:
-                            ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
                         # 確認ウィンドウが表示されるまで待機-------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -1575,6 +1737,12 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
                             is None
                         ):
                             time.sleep(1)
+                            # --------------------------------------------------------------------
+                            ME = ImgCheckForList(
+                                TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
+                            )
+                            if ME[0] is True:
+                                ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
                         # --------------------------------------------------------------------
                         pg.press("y")
                         # 法人税メニューが表示されるまで待機------------------------------------
@@ -1646,7 +1814,7 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
                         # 一括更新のアイコンが表示されるまで待機----------------------------------
                         while (
                             pg.locateOnScreen(
-                                TFolURL + r"\IkkatsuHoujinKousin.png", confidence=0.9
+                                TFolURL + r"\HoujinzeiMenu.png", confidence=0.9
                             )
                             is None
                         ):
@@ -1665,6 +1833,9 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
                             is None
                         ):
                             time.sleep(1)
+                            HEQ2 = ImgCheck(TFolURL, r"\HoujinEndQ2.png", 0.9, 10)
+                            if HEQ2[0] is True:
+                                pg.press("y")
                         # --------------------------------------------------------------------
                         # 初期画面で開封された法人税項目を閉じる----------------------------------
                         HoujinList = [
@@ -1756,21 +1927,30 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, ExRow, driver):
             ):
                 time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("return")
+            pg.press(["return", "return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
-            pg.press("tab")
+            pg.press(["tab", "tab", "tab"])
             pg.keyUp("shift")
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             # -----------------------------------
             pg.press("return")
             # 表示された年度を取得-----------------
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
             pg.press("return")
             # 表示された月を取得-------------------
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             # -----------------------------------
@@ -1922,21 +2102,30 @@ def KessanUpDate(FolURL, TFolURL, ExRow, driver):
             ):
                 time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("return")
+            pg.press(["return", "return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
-            pg.press("tab")
+            pg.press(["tab", "tab", "tab"])
             pg.keyUp("shift")
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             # -----------------------------------
             pg.press("return")
             # 表示された年度を取得-----------------
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
             pg.press("return")
             # 表示された月を取得-------------------
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             # -----------------------------------
@@ -2093,21 +2282,30 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
             ):
                 time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("return")
+            pg.press(["return", "return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
-            pg.press("tab")
+            pg.press(["tab", "tab", "tab"])
             pg.keyUp("shift")
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             # -----------------------------------
             pg.press("return")
             # 表示された年度を取得-----------------
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
             pg.press("return")
             # 表示された月を取得-------------------
+            if windll.user32.OpenClipboard(None):
+                windll.user32.EmptyClipboard()
+                windll.user32.CloseClipboard()
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             # -----------------------------------
@@ -2137,12 +2335,12 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                     is None
                 ):
                     time.sleep(1)
-                    UW = ImgCheck(TFolURL, r"\Underwindow.png", 0.9, 10)
-                    if UW[0] is True:
-                        ImgClick(TFolURL, r"\Underwindow.png", 0.9, 10)
-                        UW2 = ImgCheck(TFolURL, r"\Underwindow2.png", 0.9, 10)
-                        if UW2[0] is True:
-                            ImgClick(TFolURL, r"\Underwindow2.png", 0.9, 10)
+                    # UW = ImgCheck(TFolURL, r"\Underwindow.png", 0.9, 10)
+                    # if UW[0] is True:
+                    #     ImgClick(TFolURL, r"\Underwindow.png", 0.9, 10)
+                    #     UW2 = ImgCheck(TFolURL, r"\Underwindow2.png", 0.9, 10)
+                    #     if UW2[0] is True:
+                    #         ImgClick(TFolURL, r"\Underwindow2.png", 0.9, 10)
                 # --------------------------------------------------------------------
                 ImgClick(TFolURL, r"\IkkatuOpenFlag.png", 0.9, 10)  # 一括更新メニューのアイコンをクリック
                 pg.press("tab")
@@ -2207,18 +2405,18 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                     is True
                 ):
                     time.sleep(1)
-                # --------------------------------------------------------------------
-                ME = ImgCheckForList(
-                    TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
-                )
-                if ME[0] is True:
-                    ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
                 # 一括更新のアイコンが表示されるまで待機----------------------------------
                 while (
                     pg.locateOnScreen(TFolURL + r"\IkkatsuKousin.png", confidence=0.9)
                     is None
                 ):
                     time.sleep(1)
+                    # --------------------------------------------------------------------
+                    ME = ImgCheckForList(
+                        TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
+                    )
+                    if ME[0] is True:
+                        ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
                 # --------------------------------------------------------------------
                 # 閉じる処理--------------------------
                 pg.keyDown("alt")
@@ -2274,70 +2472,71 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
             if "_繰越対象" in ExrcHeaderItem:
                 SysN = ExrcHeaderItem.split("_")
                 Title = str(SysN[0])
-                if ExRow[Title + "_繰越対象"] == ExRow[Title + "_繰越対象"]:
-                    # nanでない場合
-                    if ExRow[Title + "_繰越処理日"] == ExRow[Title + "_繰越処理日"]:
+                if not ExRow[Title + "_繰越対象"] == "-":
+                    if ExRow[Title + "_繰越対象"] == ExRow[Title + "_繰越対象"]:
                         # nanでない場合
-                        print(ExRow[Title + "_繰越処理日"])
-                    else:
-                        # nanの場合
-                        # Log--------------------------------------------
-                        dt_s = datetime.datetime.now()
-                        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-                        Rno = ExRow["関与先番号"]
-                        Rn = ExRow["関与先名"]
-                        logger.debug(
-                            dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_メイン処理開始"
-                        )
-                        with open(LURL, "a") as f:
-                            print(
-                                [dt_s, "関与先番号:" + str(Rno), str(Rn), "メイン処理開始"],
-                                file=f,
+                        if ExRow[Title + "_繰越処理日"] == ExRow[Title + "_繰越処理日"]:
+                            # nanでない場合
+                            print(ExRow[Title + "_繰越処理日"])
+                        else:
+                            # nanの場合
+                            # Log--------------------------------------------
+                            dt_s = datetime.datetime.now()
+                            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                            Rno = ExRow["関与先番号"]
+                            Rn = ExRow["関与先名"].replace("\u3000", "")
+                            logger.debug(
+                                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_メイン処理開始"
                             )
-                        # -----------------------------------------------
-                        ChildFlow(
-                            FolURL,
-                            TFolURL,
-                            ExRow,
-                            Ex,
-                            Eh,
-                            ExrcHeader,
-                            isnItem,
-                            Title,
-                            driver,
-                        )
-                else:
-                    # nanでない場合
-                    if ExRow[Title + "_繰越処理日"] == ExRow[Title + "_繰越処理日"]:
+                            with open(LURL, "a") as f:
+                                print(
+                                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "メイン処理開始"],
+                                    file=f,
+                                )
+                            # -----------------------------------------------
+                            ChildFlow(
+                                FolURL,
+                                TFolURL,
+                                ExRow,
+                                Ex,
+                                Eh,
+                                ExrcHeader,
+                                isnItem,
+                                Title,
+                                driver,
+                            )
+                    else:
                         # nanでない場合
-                        print("スタート")
-                    else:
-                        # nanの場合
-                        # Log--------------------------------------------
-                        dt_s = datetime.datetime.now()
-                        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-                        Rno = ExRow["関与先番号"]
-                        Rn = ExRow["関与先名"]
-                        logger.debug(
-                            dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_メイン処理開始"
-                        )
-                        with open(LURL, "a") as f:
-                            print(
-                                [dt_s, "関与先番号:" + str(Rno), str(Rn), "メイン処理開始"],
-                                file=f,
+                        if ExRow[Title + "_繰越処理日"] == ExRow[Title + "_繰越処理日"]:
+                            # nanでない場合
+                            print("スタート")
+                        else:
+                            # nanの場合
+                            # Log--------------------------------------------
+                            dt_s = datetime.datetime.now()
+                            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                            Rno = ExRow["関与先番号"]
+                            Rn = ExRow["関与先名"].replace("\u3000", "")
+                            logger.debug(
+                                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_メイン処理開始"
                             )
-                        # -----------------------------------------------
-                        ChildFlow(
-                            FolURL,
-                            TFolURL,
-                            ExRow,
-                            Ex,
-                            Eh,
-                            ExrcHeader,
-                            isnItem,
-                            Title,
-                            driver,
-                        )
+                            with open(LURL, "a") as f:
+                                print(
+                                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "メイン処理開始"],
+                                    file=f,
+                                )
+                            # -----------------------------------------------
+                            ChildFlow(
+                                FolURL,
+                                TFolURL,
+                                ExRow,
+                                Ex,
+                                Eh,
+                                ExrcHeader,
+                                isnItem,
+                                Title,
+                                driver,
+                            )
             Eh += 1
     except:
         print("TEST")
