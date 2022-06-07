@@ -550,6 +550,7 @@ def KanyoScroll(FolURL2):  # 関与先毎の時間集計操作
                                 "KousagyouOpen.png",
                                 "KousagyouOpen2.png",
                                 "KousagyouOpen3.png",
+                                "KousagyouOpen4.png",
                             ]
                             while ImgCheckForList(FolURL2, KouList, 0.9)[0] is False:
                                 time.sleep(1)
@@ -623,8 +624,34 @@ def MainFlow(FolURL2):
                 #     ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
                 #     time.sleep(1)
                 #     KanyoScroll(FolURL2)  # 関与先毎の時間集計操作
-                # ------------------------------------------------------------------------------
-                TgyoumuListRow = CSVCheck("A10公会計作業（その他）", TgyoumuList[1], "業務")
+                # # ------------------------------------------------------------------------------
+                # TgyoumuListRow = CSVCheck("A10公会計作業（その他）", TgyoumuList[1], "業務")
+                # if TgyoumuListRow[0] is True:
+                #     # GList = ["1gyou.png","1gyou2.png"]
+                #     # GL = ImgCheckForList(FolURL2,GList,0.99999)
+                #     # ImgClick(FolURL2,GL[1],0.99999,1)
+                #     time.sleep(1)
+                #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                #     for x in range(TgyoumuListRow[1]):
+                #         pg.press("down")
+                #     time.sleep(1)
+                #     pg.press("return")
+                #     time.sleep(1)
+                #     while (
+                #         pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
+                #         is not None
+                #     ):
+                #         time.sleep(1)
+                #     while (
+                #         pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
+                #         is None
+                #     ):
+                #         time.sleep(1)
+                #     ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
+                #     time.sleep(1)
+                #     KanyoScroll(FolURL2)  # 関与先毎の時間集計操作
+                # # ------------------------------------------------------------------------------
+                TgyoumuListRow = CSVCheck("A11公営作業", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
                     # GList = ["1gyou.png","1gyou2.png"]
                     # GL = ImgCheckForList(FolURL2,GList,0.99999)
