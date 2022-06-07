@@ -1,0 +1,10 @@
+[2022/06/03 08:20:57][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/03 08:20:57][DEBUG](MJSOpen.py:111) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/03 08:20:58][DEBUG](MJSOpen.py:117) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/03 08:20:59][DEBUG](MJSOpen.py:128) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/03 08:21:07][DEBUG](MJS_SystemNextCreate.py:1408) MJS操作画面へ偏移 MainFlow d:\PythonScript\RPAScript\MJS_SystemNextCreate.py
+[2022/06/03 08:21:07][DEBUG](MJS_SystemNextCreate.py:1409) xlsxをDataFrameに MainFlow d:\PythonScript\RPAScript\MJS_SystemNextCreate.py
+[2022/06/03 08:21:58][DEBUG](font_manager.py:1439) Using fontManager instance from C:\Users\soumu\.matplotlib\fontlist-v330.json _load_fontmanager d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\matplotlib\font_manager.py
+[2022/06/03 08:21:58][DEBUG](pyplot.py:281) Loaded backend tkagg version unknown. switch_backend d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\matplotlib\pyplot.py
+[2022/06/03 08:21:58][DEBUG](pyplot.py:281) Loaded backend TkAgg version unknown. switch_backend d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\matplotlib\pyplot.py
+[2022/06/03 08:21:58][DEBUG](pyplot.py:281) Loaded backend tkagg version unknown. switch_backend d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\matplotlib\pyplot.py

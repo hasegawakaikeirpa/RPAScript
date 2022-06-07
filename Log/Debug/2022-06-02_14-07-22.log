@@ -1,0 +1,6 @@
+[2022/06/02 14:07:22][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/02 14:07:22][DEBUG](MJSOpen.py:111) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/02 14:07:23][DEBUG](MJSOpen.py:117) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/02 14:07:24][DEBUG](MJSOpen.py:128) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/02 14:07:33][DEBUG](MJS_SystemNextCreate.py:1148) MJS操作画面へ偏移 MainFlow d:\PythonScript\RPAScript\MJS_SystemNextCreate.py
+[2022/06/02 14:07:33][DEBUG](MJS_SystemNextCreate.py:1149) xlsxをDataFrameに MainFlow d:\PythonScript\RPAScript\MJS_SystemNextCreate.py

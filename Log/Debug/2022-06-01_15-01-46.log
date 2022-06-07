@@ -1,0 +1,5 @@
+[2022/06/01 15:01:47][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/01 15:01:47][DEBUG](MJSOpen.py:111) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/01 15:01:47][DEBUG](MJSOpen.py:117) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/01 15:01:49][DEBUG](MJSOpen.py:128) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/06/01 15:01:51][DEBUG](MJS_SystemNextCreate.py:597) 'bool' object is not subscriptable MainFlow d:\PythonScript\RPAScript\MJS_SystemNextCreate.py

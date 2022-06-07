@@ -966,7 +966,7 @@ with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as
     print(Settingtoml)
 # ----------------------------------------------------------------------------------------
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
-URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-5\\送信分受信通知"
+URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-5\\eLTAX"
 # URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
 LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFREADLog"
 try:

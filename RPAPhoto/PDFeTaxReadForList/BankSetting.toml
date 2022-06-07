@@ -15,4 +15,33 @@ ColCount = 5
 4Col = 15
 5Col = 16
 HidukeColNo = 1
+HidukeCount = 8
 MoneyCol = [3,4,5]
+StartPos = 25
+
+
+[HiroginSouzoku]
+#------------------------------------------------
+Yokojiku = 2000
+Tatejiku = 27
+RabelSpace = 600
+etaxYokojiku = 2000
+etaxTatejiku = 27
+etaxRabelSpace = 600
+Rabel = "::"
+DougyouTatejiku = 27
+ColCount = 9
+1Col = 7
+2Col = 6
+3Col = 4
+4Col = 10
+5Col = 4
+6Col = 16
+7Col = 16
+8Col = 16
+9Col = 16
+HidukeColNo = 1
+HidukeCount = 6
+MoneyCol = [6,7,8]
+StartPos = 25
+FontSize = 30
