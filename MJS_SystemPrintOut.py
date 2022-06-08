@@ -240,26 +240,40 @@ def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリッ�
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, driver):
+def ChildFlow(
+    FolURL,
+    TFolURL,
+    CFolURL,
+    ExRow,
+    Ex,
+    Eh,
+    ExrcHeader,
+    isnItem,
+    Title,
+    PN,
+    driver,
+    Rno,
+    Rn,
+):
     if "会計大将" == Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新処理開始"], file=f)
         # ------------------------------------------------------------------------------------------
-        SystemUp = KaikeiUpDate(FolURL, TFolURL, ExRow, driver)
+        Fname = (
+            r"D:\PythonScript\RPAScript\RPAPhoto\MJS_SystemPrintOut\PDF\\" + PN + ".pdf"
+        )
+        SystemUp = KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname)
         # Excel書き込み--------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
             print("シート書き込み完了")
             print(WriteEx)
             WriteEx.save(XLSURL)
@@ -268,8 +282,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, dr
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新処理終了"], file=f)
@@ -278,8 +290,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, dr
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理エラー中断")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新エラー中断"], file=f)
@@ -288,29 +298,27 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, dr
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理開始"], file=f)
         # ------------------------------------------------------------------------------------------
-        SystemUp = KessanUpDate(FolURL, TFolURL, ExRow, driver)
+        Fname = (
+            r"D:\PythonScript\RPAScript\RPAPhoto\MJS_SystemPrintOut\PDF\\" + PN + ".pdf"
+        )
+        SystemUp = KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname)
         # Excel書き込み--------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
             print("シート書き込み完了")
             WriteEx.save(XLSURL)
             WriteEx.close
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理終了"], file=f)
@@ -320,16 +328,13 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, dr
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "連動対象無エラー"
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
             print("シート書き込み完了")
             WriteEx.save(XLSURL)
             WriteEx.close
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理終了"], file=f)
@@ -338,74 +343,16 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, dr
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "減価償却更新処理開始"], file=f)
         # ------------------------------------------------------------------------------------------
-        SystemUp = GenkasyoukyakuUpdate(FolURL, TFolURL, ExRow, driver)
-        # Excel書き込み---------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
-            logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却更新処理終了")
-            with open(LURL, "a") as f:
-                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "減価償却更新処理終了"], file=f)
-            # ------------------------------------------------------------------------------------------
-        elif SystemUp[1] == "Noren":
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "決算未確定更新"
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
-            logger.debug(
-                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算未確定減価償却更新処理終了"
-            )
-            with open(LURL, "a") as f:
-                print(
-                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "決算未確定_減価償却更新処理終了"],
-                    file=f,
-                )
-            # ------------------------------------------------------------------------------------------
-        # ---------------------------------------------------------------
-    elif "法人税申告書" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        # Rno = ExRow["関与先番号"]
-        # Rn = ExRow["関与先名"]
-        Rno = 1
-        Rn = "TEST"
-        logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理開始")
-        with open(LURL, "a") as f:
-            print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理開始"], file=f)
-        # ------------------------------------------------------------------------------------------
         Fname = (
             r"D:\PythonScript\RPAScript\RPAPhoto\MJS_SystemPrintOut\PDF\\" + PN + ".pdf"
         )
-        SystemUp = HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver, PN, Fname)
+        SystemUp = GenkasyoukyakuUpdate(
+            FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname
+        )
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             dt_now = datetime.datetime.now()
@@ -419,8 +366,56 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, dr
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
+            logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却更新処理終了")
+            with open(LURL, "a") as f:
+                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "減価償却更新処理終了"], file=f)
+            # ------------------------------------------------------------------------------------------
+        elif SystemUp[1] == "Noren":
+            dt_now = datetime.datetime.now()
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+            WriteEx = openpyxl.load_workbook(XLSURL)
+            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
+            print("シート書き込み完了")
+            WriteEx.save(XLSURL)
+            WriteEx.close
+            # Log---------------------------------------------------------------------------------------
+            dt_s = datetime.datetime.now()
+            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+            logger.debug(
+                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算未確定減価償却更新処理終了"
+            )
+            with open(LURL, "a") as f:
+                print(
+                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "決算未確定_減価償却更新処理終了"],
+                    file=f,
+                )
+            # ------------------------------------------------------------------------------------------
+    elif "法人税申告書" == Title:
+        # Log---------------------------------------------------------------------------------------
+        dt_s = datetime.datetime.now()
+        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+        logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理開始")
+        with open(LURL, "a") as f:
+            print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理開始"], file=f)
+        # ------------------------------------------------------------------------------------------
+        Fname = (
+            r"D:\PythonScript\RPAScript\RPAPhoto\MJS_SystemPrintOut\PDF\\" + PN + ".pdf"
+        )
+        SystemUp = HoujinzeiUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname)
+        # Excel書き込み---------------------------------------------------
+        if SystemUp[0] is True:
+            dt_now = datetime.datetime.now()
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+            WriteEx = openpyxl.load_workbook(XLSURL)
+            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
+            print("シート書き込み完了")
+            WriteEx.save(XLSURL)
+            WriteEx.close
+            # Log---------------------------------------------------------------------------------------
+            dt_s = datetime.datetime.now()
+            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理終了"], file=f)
@@ -430,16 +425,13 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, dr
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "要データ再計算"
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
             print("シート書き込み完了")
             WriteEx.save(XLSURL)
             WriteEx.close
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理終了"], file=f)
@@ -449,16 +441,13 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, dr
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL)
             WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "要申告指定"
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
             print("シート書き込み完了")
             WriteEx.save(XLSURL)
             WriteEx.close
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(
                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書申告指定無しの為中断"
             )
@@ -468,1113 +457,17 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, PN, dr
                     file=f,
                 )
             # ------------------------------------------------------------------------------------------
-    elif "所得税確定申告" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
-        logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新処理開始")
-        with open(LURL, "a") as f:
-            print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新処理開始"], file=f)
-        # ------------------------------------------------------------------------------------------
-        SystemUp = SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver)
-        # Excel書き込み---------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
-            logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新処理終了")
-            with open(LURL, "a") as f:
-                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新処理終了"], file=f)
-            # ------------------------------------------------------------------------------------------
-        elif SystemUp[1] == "Nocalc":
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "計算未処理更新"
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
-            logger.debug(
-                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新処理計算未処理で終了"
-            )
-            with open(LURL, "a") as f:
-                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新処理計算未処理で終了"], file=f)
-        elif SystemUp[0] is False:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "関与先無"
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
-            logger.debug(
-                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新関与先無しの為終了"
-            )
-            with open(LURL, "a") as f:
-                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新関与先無しの為終了"], file=f)
-            # ------------------------------------------------------------------------------------------
-    elif "財産評価明細書" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
-        logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_財産評価明細書更新処理開始")
-        with open(LURL, "a") as f:
-            print([dt_s, "関与先番号:" + str(Rno), str(Rn), "財産評価明細書更新処理開始"], file=f)
-        # ------------------------------------------------------------------------------------------
-        SystemUp = ZaisanUpdate(FolURL, TFolURL, ExRow, driver)
-        # Excel書き込み---------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
-            logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_財産評価明細書更新処理終了")
-            with open(LURL, "a") as f:
-                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "財産評価明細書更新処理終了"], file=f)
-            # ------------------------------------------------------------------------------------------
-        # ---------------------------------------------------------------
-    elif "年末調整" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
-        logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_年末調整更新処理開始")
-        with open(LURL, "a") as f:
-            print([dt_s, "関与先番号:" + str(Rno), str(Rn), "年末調整更新処理開始"], file=f)
-        # ------------------------------------------------------------------------------------------
-        SystemUp = NencyouUpdate(FolURL, TFolURL, ExRow, driver)
-        # Excel書き込み---------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
-            logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_年末調整更新処理終了")
-            with open(LURL, "a") as f:
-                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "年末調整更新処理終了"], file=f)
-            # ------------------------------------------------------------------------------------------
-        # ---------------------------------------------------------------
-    elif "法定調書" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
-        logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法定調書更新処理開始")
-        with open(LURL, "a") as f:
-            print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法定調書更新処理開始"], file=f)
-        # ------------------------------------------------------------------------------------------
-        SystemUp = HouteiUpdate(FolURL, TFolURL, ExRow, driver)
-        # Excel書き込み---------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
-        # ---------------------------------------------------------------
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
-        logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法定調書更新処理終了")
-        with open(LURL, "a") as f:
-            print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法定調書更新処理終了"], file=f)
-        # ------------------------------------------------------------------------------------------
+    elif "電子申告" == Title:
+        print("電子申告")
+    elif "決算内訳書" == Title:
+        print("決算内訳書")
     else:
         print("NoSystem")
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def HouteiUpdate(FolURL, TFolURL, ExRow, driver):
-    """
-    00:"関与先番号"
-    01:"関与先名"
-    02:"担当者_ｺｰﾄﾞ"
-    03:"担当者_担当者名"
-    04:"会計大将_繰越対象"
-    07:"会計大将_繰越処理日"
-    08:"決算内訳書_繰越対象"
-    11:"決算内訳書_繰越処理日"
-    12:"減価償却_繰越対象"
-    15:"減価償却_繰越処理日"
-    16:"法人税申告書_繰越対象"
-    19:"法人税申告書_繰越処理日"
-    20:"財産評価明細書_繰越対象"
-    23:"財産評価明細書_繰越処理日"
-    24:"財産評価明細書"
-    25:"年末調整"
-    26:"法定調書"
-    27:"所得税確定申告"
-    """
-    """
-    概要: 法定調書更新処理
-    @param FolURL : ミロク起動関数のフォルダ(str)
-    @param TFolURL : このpyファイルのフォルダ(str)
-    @param ExRow : Excel抽出行(obj)
-    @param driver : 画面操作ドライバー(obj)
-    @return : bool,ミロク入力関与先コード, ミロク入力処理年, ミロク入力処理月
-    """
-    try:
-        ErrStr = ""  # Rpaエラー判別変数
-        # 法定調書のアイコンを探す-------------------------------------------------
-        ImgList = [r"\Houtei.png", r"\Houtei2.png"]
-        ICFL = ImgCheckForList(TFolURL, ImgList, 0.9, 10)
-        # -----------------------------------------------------------------------
-        if ICFL[0] is True:  # 法定調書のアイコンがあれば
-            ImgClick(TFolURL, ICFL[1], 0.9, 10)  # 法定調書のアイコンをクリック
-            # 法定調書フラグが表示されるまで待機------------------------------------
-            while (
-                pg.locateOnScreen(TFolURL + r"\HouteiFlag.png", confidence=0.9) is None
-            ):
-                time.sleep(1)
-            # ------------------------------------------------------------------
-            time.sleep(1)
-            # 他システムとメニューが違う-------------------------------------------------------
-            # 年度を最新に指定----------------------------------------------------
-            IC = ImgCheck(TFolURL, r"\Nendo_Saisin.png", 0.9, 10)
-            if IC[0] is False:
-                IC2 = ImgCheck(TFolURL, r"\Nendo_All.png", 0.9, 10)
-                if IC2[0] is False:
-                    print("年度選択がない")
-                else:
-                    ImgClick(TFolURL, r"\Nendo_All.png", 0.9, 10)
-                    pg.press("home")
-                    time.sleep(1)
-                    pg.press("down")
-                    time.sleep(1)
-                    pg.press("return")
-                    time.sleep(1)
-            # ------------------------------------------------------------------
-            # 関与先コード入力ボックスをクリック------------------------------------
-            ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
-            while (
-                pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
-                is None
-            ):
-                time.sleep(1)
-            pg.write(str(ExRow["関与先番号"]))
-            pg.press(["return", "return"])
-            # 入力した関与先コードを取得------------
-            pg.keyDown("shift")
-            pg.press(["tab", "tab"])
-            pg.keyUp("shift")
-            if windll.user32.OpenClipboard(None):
-                windll.user32.EmptyClipboard()
-                windll.user32.CloseClipboard()
-            pg.hotkey("ctrl", "c")
-            ThisNo = pyperclip.paste()
-            # -----------------------------------
-            pg.press("return")
-            # 表示された年度を取得-----------------
-            if windll.user32.OpenClipboard(None):
-                windll.user32.EmptyClipboard()
-                windll.user32.CloseClipboard()
-            pg.hotkey("ctrl", "c")
-            ThisYear = pyperclip.paste()
-            # -----------------------------------
-            pg.press("return")
-            pg.press("return")
-            time.sleep(1)
-            # 他システムとメニューが違う-------------------------------------------------------
-            if str(ExRow["関与先番号"]) == ThisNo:
-                print("関与先あり")
-                pg.press(["return", "return", "return"])
-                # 法定調書メニューが表示されるまで待機--------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\HouteiMenu.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                ImgClick(TFolURL, r"\HouteiKousin.png", 0.9, 10)  # 法定調書更新をクリック
-                # 法定調書メニューが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\HouteiAll.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                time.sleep(1)
-                # 更新区分フラグが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\HouteiZenken.png", confidence=0.9)
-                    is None
-                ):
-                    pg.press("tab")
-                # --------------------------------------------------------------------
-                if ErrStr == "":
-                    pg.press("return")
-                    pg.press("space")
-                    # チェックマークが表示されるまで待機-------------------------------------
-                    while (
-                        ImgCheckForList(
-                            TFolURL,
-                            [
-                                r"IkkatuCheck.png",
-                                r"ZaisanCheck.png",
-                                r"NendCheck.png",
-                                r"HouteiCheck.png",
-                            ],
-                            0.9,
-                            10,
-                        )[0]
-                        is False
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    time.sleep(1)
-                    ImgClick(TFolURL, r"\HouteiStart.png", 0.9, 10)  # 更新開始のアイコンをクリック
-                    # 確認ウィンドウが表示されるまで待機-------------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\HouteiQ.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    pg.press("y")  # yで決定(nがキャンセル)
-                    # 処理終了ウィンドウが表示されるまで待機----------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\HouteiEnd.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    pg.press("return")
-                    # ロードを待機----------------------------------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            TFolURL + r"\HouteiNoCheck.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    # 法定調書終了確認が表示されるまで待機--------------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            TFolURL + r"\HouteiEndMsg.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                        ME = ImgCheckForList(
-                            TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
-                        )
-                        if ME[0] is True:
-                            ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
-                    # --------------------------------------------------------------------
-                    pg.press("y")
-                    # 法定調書開始フラグが表示されるまで待機--------------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\HouteiMenu.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    # 閉じる処理--------------------------
-                    pg.keyDown("alt")
-                    pg.press("f4")
-                    pg.keyUp("alt")
-                    # -----------------------------------
-                    # 法定調書フラグが表示されるまで待機-------------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\HouteiFlag.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    print("更新完了")
-                    if ErrStr == "":
-                        return True, ThisNo, ThisYear, "ThisMonth"
-            else:
-                print("関与先なし")
-                return False, "関与先なし", "", ""
-        else:
-            return False, "法定調書起動失敗", "", ""
-    except:
-        return False, "exceptエラー", "", ""
-
-
-# ------------------------------------------------------------------------------------------------------------------
-def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
-    """
-    概要: 年調更新処理
-    @param FolURL : ミロク起動関数のフォルダ(str)
-    @param TFolURL : このpyファイルのフォルダ(str)
-    @param ExRow : Excel抽出行(obj)
-    @param driver : 画面操作ドライバー(obj)
-    @return : bool,ミロク入力関与先コード, ミロク入力処理年, ミロク入力処理月
-    """
-    try:
-        ErrStr = ""  # Rpaエラー判別変数
-        # 年調のアイコンを探す-------------------------------------------------
-        ImgList = [r"\Nencyou.png", r"\Nencyou2.png"]
-        ICFL = ImgCheckForList(TFolURL, ImgList, 0.9, 10)
-        # -----------------------------------------------------------------------
-        if ICFL[0] is True:  # 年調のアイコンがあれば
-            ImgClick(TFolURL, ICFL[1], 0.9, 10)  # 年調のアイコンをクリック
-            # 年調フラグが表示されるまで待機------------------------------------
-            while (
-                pg.locateOnScreen(TFolURL + r"\NencyouFlag.png", confidence=0.9) is None
-            ):
-                time.sleep(1)
-            # ------------------------------------------------------------------
-            time.sleep(1)
-            # 他システムとメニューが違う-------------------------------------------------------
-            # 年度を最新に指定----------------------------------------------------
-            IC = ImgCheck(TFolURL, r"\Nendo_Saisin.png", 0.9, 10)
-            if IC[0] is False:
-                IC2 = ImgCheck(TFolURL, r"\Nendo_All.png", 0.9, 10)
-                if IC2[0] is False:
-                    print("年度選択がない")
-                else:
-                    ImgClick(TFolURL, r"\Nendo_All.png", 0.9, 10)
-                    pg.press("home")
-                    time.sleep(1)
-                    pg.press("down")
-                    time.sleep(1)
-                    pg.press("return")
-                    time.sleep(1)
-            # ------------------------------------------------------------------
-            # 関与先コード入力ボックスをクリック------------------------------------
-            ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
-            while (
-                pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
-                is None
-            ):
-                time.sleep(1)
-            pg.write(str(ExRow["関与先番号"]))
-            pg.press(["return", "return"])
-            # 入力した関与先コードを取得------------
-            pg.keyDown("shift")
-            pg.press(["tab", "tab"])
-            pg.keyUp("shift")
-            if windll.user32.OpenClipboard(None):
-                windll.user32.EmptyClipboard()
-                windll.user32.CloseClipboard()
-            pg.hotkey("ctrl", "c")
-            ThisNo = pyperclip.paste()
-            # -----------------------------------
-            pg.press("return")
-            # 表示された年度を取得-----------------
-            if windll.user32.OpenClipboard(None):
-                windll.user32.EmptyClipboard()
-                windll.user32.CloseClipboard()
-            pg.hotkey("ctrl", "c")
-            ThisYear = pyperclip.paste()
-            # -----------------------------------
-            pg.press("return")
-            pg.press("return")
-            time.sleep(1)
-            # 他システムとメニューが違う-------------------------------------------------------
-            if str(ExRow["関与先番号"]) == ThisNo:
-                print("関与先あり")
-                pg.press(["return", "return", "return"])
-                # 年調更新アイコンが表示されるまで待機--------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\NencyouOpenFlag.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                ImgClick(TFolURL, r"\NencyouTopMenu.png", 0.9, 10)  # 一括更新のアイコンをクリック
-                # 年調メニューが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\NencyouKousin.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                time.sleep(1)
-                # 年調更新をクリック---------------------------------------------------
-                ImgClick(TFolURL, r"\NencyouKousin.png", 0.9, 10)
-                # 更新区分フラグが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(
-                        TFolURL + r"\NencyouKousinFlag.png", confidence=0.9
-                    )
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                if ErrStr == "":
-                    pg.press("return")
-                    pg.press("space")
-                    # チェックマークが表示されるまで待機-------------------------------------
-                    while (
-                        ImgCheckForList(
-                            TFolURL,
-                            [
-                                r"IkkatuCheck.png",
-                                r"ZaisanCheck.png",
-                                r"NendCheck.png",
-                                r"HouteiCheck.png",
-                            ],
-                            0.9,
-                            10,
-                        )[0]
-                        is False
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    time.sleep(1)
-                    ImgClick(TFolURL, r"\NencyouStart.png", 0.9, 10)  # 更新開始のアイコンをクリック
-                    # 確認ウィンドウが表示されるまで待機-------------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\NencyouQ.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    pg.press("y")  # yで決定(nがキャンセル)
-                    # 確認ウィンドウが表示されるまで待機-------------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\NencyouQ2.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    pg.press("y")  # yで決定(nがキャンセル)
-                    # 処理終了ウィンドウが表示されるまで待機----------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\NencyouFQ.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                        # 年調データが完了していない場合表示される----------------------------
-                        ErrC = ImgCheck(TFolURL, r"NencyouQ3ErrMsg.png", 0.9, 10)
-                        if ErrC[0] is True:
-                            pg.press("y")  # yで決定(nがキャンセル)
-                    # --------------------------------------------------------------------
-                    pg.press("return")
-                    # チェックマークが表示されなくなるまで待機-------------------------------
-                    while (
-                        ImgCheckForList(
-                            TFolURL,
-                            [
-                                r"IkkatuCheck.png",
-                                r"ZaisanCheck.png",
-                                r"NendCheck.png",
-                                r"HouteiCheck.png",
-                            ],
-                            0.9,
-                            10,
-                        )[0]
-                        is True
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    # 処理終了ウィンドウが表示されるまで待機----------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\NencyouEnd.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    pg.press("return")
-                    # --------------------------------------------------------------------
-                    ME = ImgCheckForList(
-                        TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
-                    )
-                    if ME[0] is True:
-                        ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
-                    # 年調開始フラグが表示されるまで待機--------------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            TFolURL + r"\NencyouOpenFlag.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    # 閉じる処理--------------------------
-                    pg.keyDown("alt")
-                    pg.press("f4")
-                    pg.keyUp("alt")
-                    # -----------------------------------
-                    # 年調フラグが表示されるまで待機-------------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\NencyouFlag.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    print("更新完了")
-                    if ErrStr == "":
-                        return True, ThisNo, ThisYear, "ThisMonth"
-            else:
-                print("関与先なし")
-                return False, "関与先なし", "", ""
-        else:
-            return False, "年調起動失敗", "", ""
-    except:
-        return False, "exceptエラー", "", ""
-
-
-# ------------------------------------------------------------------------------------------------------------------
-def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
-    """
-    00:"関与先番号"
-    01:"関与先名"
-    02:"担当者_ｺｰﾄﾞ"
-    03:"担当者_担当者名"
-    04:"会計大将_繰越対象"
-    07:"会計大将_繰越処理日"
-    08:"決算内訳書_繰越対象"
-    11:"決算内訳書_繰越処理日"
-    12:"減価償却_繰越対象"
-    15:"減価償却_繰越処理日"
-    16:"法人税申告書_繰越対象"
-    19:"法人税申告書_繰越処理日"
-    20:"財産評価明細書_繰越対象"
-    23:"財産評価明細書_繰越処理日"
-    24:"財産評価明細書"
-    25:"年末調整"
-    26:"法定調書"
-    27:"所得税確定申告"
-    """
-    """
-    概要: 財産評価更新処理
-    @param FolURL : ミロク起動関数のフォルダ(str)
-    @param TFolURL : このpyファイルのフォルダ(str)
-    @param ExRow : Excel抽出行(obj)
-    @param driver : 画面操作ドライバー(obj)
-    @return : bool,ミロク入力関与先コード, ミロク入力処理年, ミロク入力処理月
-    """
-    try:
-        ErrStr = ""  # Rpaエラー判別変数
-        # 財産評価のアイコンを探す-------------------------------------------------
-        ImgList = [r"\Zaisanhyouka.png", r"\Zaisanhyouka2.png"]
-        ICFL = ImgCheckForList(TFolURL, ImgList, 0.9, 10)
-        # -----------------------------------------------------------------------
-        if ICFL[0] is True:  # 財産評価のアイコンがあれば
-            ImgClick(TFolURL, ICFL[1], 0.9, 10)  # 財産評価のアイコンをクリック
-            # 財産評価フラグが表示されるまで待機------------------------------------
-            while (
-                pg.locateOnScreen(TFolURL + r"\ZaisanhyoukaFlag.png", confidence=0.9)
-                is None
-            ):
-                time.sleep(1)
-            # ------------------------------------------------------------------
-            time.sleep(1)
-            # 他システムとメニューが違う-------------------------------------------------------
-            # 年度を最新に指定----------------------------------------------------
-            IC = ImgCheck(TFolURL, r"\Nendo_Saisin.png", 0.9, 10)
-            if IC[0] is False:
-                IC2 = ImgCheck(TFolURL, r"\Nendo_All.png", 0.9, 10)
-                if IC2[0] is False:
-                    print("年度選択がない")
-                else:
-                    ImgClick(TFolURL, r"\Nendo_All.png", 0.9, 10)
-                    pg.press("home")
-                    time.sleep(1)
-                    pg.press("down")
-                    time.sleep(1)
-                    pg.press("return")
-                    time.sleep(1)
-            # ------------------------------------------------------------------
-            # 関与先コード入力ボックスをクリック------------------------------------
-            ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
-            while (
-                pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
-                is None
-            ):
-                time.sleep(1)
-            pg.write(str(ExRow["関与先番号"]))
-            pg.press(["return", "return"])
-            # -----------------------------------
-            if ImgCheck(TFolURL, r"\NotData.png", 0.9, 10)[0] is True:
-                # 入力した関与先コードを取得------------
-                pg.press(["return", "return"])
-                pg.keyDown("shift")
-                pg.press(["tab", "tab", "tab", "tab"])
-                pg.keyUp("shift")
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisNo = pyperclip.paste()
-                pg.press("return")
-                # クリップボードをクリア----------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                # ------------------------------------
-                # 表示された年度を取得-----------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisYear = pyperclip.paste()
-                # -----------------------------------
-                pg.press("return")
-                # 表示された申告種類を取得---------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisMonth = pyperclip.paste()
-                pg.press("return")
-                # -----------------------------------
-            else:
-                # 入力した関与先コードを取得------------
-                pg.press(["return", "return"])
-                pg.keyDown("shift")
-                pg.press(["tab", "tab", "tab", "tab"])
-                pg.keyUp("shift")
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisNo = pyperclip.paste()
-                pg.press("return")
-                # 表示された年度を取得-----------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisYear = pyperclip.paste()
-                # -----------------------------------
-                pg.press("return")
-                # 表示された申告種類を取得---------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisMonth = pyperclip.paste()
-                pg.press("return")
-                # -----------------------------------
-            # 他システムとメニューが違う-------------------------------------------------------
-            if str(ExRow["関与先番号"]) == ThisNo:
-                print("関与先あり")
-                pg.press(["return", "return", "return"])
-                # 財産評価更新アイコンが表示されるまで待機--------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\ZaisanKousin.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                    HQ = ImgCheck(TFolURL, r"\ZaisanOpenQ.png", 0.9, 10)
-                    if HQ[0] is True:
-                        ImgClick(TFolURL, r"\ZaisanOpenQCansel.png", 0.9, 10)
-                # --------------------------------------------------------------------
-                ImgClick(TFolURL, r"\ZaisanKousin.png", 0.9, 10)  # 一括更新のアイコンをクリック
-                # 財産評価メニューが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\ZaisanOpenFlag.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                time.sleep(3)
-                # 更新区分を次年繰越に変更---------------------------------------------
-                ImgClick(TFolURL, r"\Kousinkubun.png", 0.9, 10)
-                pg.press("home")
-                pg.press("return")
-                # 更新区分フラグが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\KousinkubunFlag.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                if ErrStr == "":
-                    pg.press(["return", "return", "return"])
-                    pg.press("space")
-                    # チェックマークが表示されるまで待機-------------------------------------
-                    while (
-                        ImgCheckForList(
-                            TFolURL,
-                            [
-                                r"IkkatuCheck.png",
-                                r"ZaisanCheck.png",
-                                r"NendCheck.png",
-                                r"HouteiCheck.png",
-                            ],
-                            0.9,
-                            10,
-                        )[0]
-                        is False
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    time.sleep(1)
-                    ImgClick(TFolURL, r"\ZaisanStart.png", 0.9, 10)  # 更新開始のアイコンをクリック
-                    # 確認ウィンドウが表示されるまで待機-------------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            TFolURL + r"\ZaisanStartQ.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    pg.press("y")  # yで決定(nがキャンセル)
-                    # 処理終了ウィンドウが表示されるまで待機----------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\ZaisanEnd.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    pg.press("return")
-                    # チェックマークが表示されなくなるまで待機-------------------------------
-                    while (
-                        ImgCheckForList(
-                            TFolURL,
-                            [
-                                r"IkkatuCheck.png",
-                                r"ZaisanCheck.png",
-                                r"NendCheck.png",
-                                r"HouteiCheck.png",
-                            ],
-                            0.9,
-                            10,
-                        )[0]
-                        is True
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    ME = ImgCheckForList(
-                        TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
-                    )
-                    if ME[0] is True:
-                        ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
-                    # 一括更新のアイコンが表示されるまで待機----------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            TFolURL + r"\ZaisanOpenFlag.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    # 閉じる処理--------------------------
-                    pg.keyDown("alt")
-                    pg.press("f4")
-                    pg.keyUp("alt")
-                    # -----------------------------------
-                    # 財産評価フラグが表示されるまで待機-------------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            TFolURL + r"\ZaisanhyoukaFlag.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    # 初期画面で開封された財産評価項目を閉じる----------------------------------
-                    HoujinList = [r"\Zaisanhyouka.png", r"\Zaisanhyouka2.png"]
-                    HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
-                    if HLI[0] is True:
-                        ImgClick(TFolURL, HLI[1], 0.9, 10)
-                    # --------------------------------------------------------------------
-                    print("更新完了")
-                    if ErrStr == "":
-                        return True, ThisNo, ThisYear, ThisMonth
-            else:
-                print("関与先なし")
-                return False, "関与先なし", "", ""
-        else:
-            return False, "財産評価起動失敗", "", ""
-    except:
-        return False, "exceptエラー", "", ""
-
-
-# ------------------------------------------------------------------------------------------------------------------
-def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
-    """
-    概要: 所得税更新処理
-    @param FolURL : ミロク起動関数のフォルダ(str)
-    @param TFolURL : このpyファイルのフォルダ(str)
-    @param ExRow : Excel抽出行(obj)
-    @param driver : 画面操作ドライバー(obj)
-    @return : bool,ミロク入力関与先コード, ミロク入力処理年, ミロク入力処理月
-    """
-    try:
-        ErrStr = ""  # Rpaエラー判別変数
-        # 所得税のアイコンを探す-------------------------------------------------
-        ImgList = [r"\Syotoku.png", r"\Syotoku2.png"]
-        ICFL = ImgCheckForList(TFolURL, ImgList, 0.9, 10)
-        # -----------------------------------------------------------------------
-        if ICFL[0] is True:  # 所得税のアイコンがあれば
-            ImgClick(TFolURL, ICFL[1], 0.9, 10)  # 所得税のアイコンをクリック
-            # 所得税フラグが表示されるまで待機------------------------------------
-            while (
-                pg.locateOnScreen(TFolURL + r"\SyotokuFlag.png", confidence=0.9) is None
-            ):
-                time.sleep(1)
-            # ------------------------------------------------------------------
-            time.sleep(1)
-            # 他システムとメニューが違う-------------------------------------------------------
-            # 年度を最新に指定----------------------------------------------------
-            IC = ImgCheck(TFolURL, r"\Nendo_Saisin.png", 0.9, 10)
-            if IC[0] is False:
-                IC2 = ImgCheck(TFolURL, r"\Nendo_All.png", 0.9, 10)
-                if IC2[0] is False:
-                    print("年度選択がない")
-                else:
-                    ImgClick(TFolURL, r"\Nendo_All.png", 0.9, 10)
-                    pg.press("home")
-                    time.sleep(1)
-                    pg.press("down")
-                    time.sleep(1)
-                    pg.press("return")
-                    time.sleep(1)
-            # ------------------------------------------------------------------
-            # 関与先コード入力ボックスをクリック------------------------------------
-            ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
-            while (
-                pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
-                is None
-            ):
-                time.sleep(1)
-            pg.write(str(ExRow["関与先番号"]))
-            pg.press(["return", "return"])
-            # -----------------------------------
-            if ImgCheck(TFolURL, r"\NotData.png", 0.9, 10)[0] is True:
-                # 入力した関与先コードを取得------------
-                pg.press("return")
-                pg.keyDown("shift")
-                pg.press(["tab", "tab", "tab", "tab"])
-                pg.keyUp("shift")
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisNo = pyperclip.paste()
-                pg.press("return")
-                # クリップボードをクリア----------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                # ------------------------------------
-                # 表示された年度を取得-----------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisYear = pyperclip.paste()
-                # -----------------------------------
-                pg.press("return")
-                # 表示された申告種類を取得---------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisMonth = pyperclip.paste()
-                pg.press("return")
-                # -----------------------------------
-            else:
-                # 入力した関与先コードを取得------------
-                pg.press("return")
-                pg.keyDown("shift")
-                pg.press(["tab", "tab", "tab", "tab"])
-                pg.keyUp("shift")
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisNo = pyperclip.paste()
-                pg.press("return")
-                # 表示された年度を取得-----------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisYear = pyperclip.paste()
-                # -----------------------------------
-                pg.press("return")
-                # 表示された申告種類を取得---------------
-                if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
-                    windll.user32.CloseClipboard()
-                pg.hotkey("ctrl", "c")
-                ThisMonth = pyperclip.paste()
-                pg.press("return")
-                # -----------------------------------
-            # 他システムとメニューが違う-------------------------------------------------------
-            if str(ExRow["関与先番号"]) == ThisNo:
-                print("関与先あり")
-                pg.press(["return", "return", "return"])
-                # 所得税メニューが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\SyotokuMenu.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                ImgClick(TFolURL, r"\SyotokuKousin.png", 0.9, 10)  # 一括更新のアイコンをクリック
-                # 所得税メニューが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\SyotokuKMenu.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                # チェックボックス直前までTAB------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\SyotokuZenken.png", confidence=0.9)
-                    is None
-                ):
-                    pg.press("tab")
-                # --------------------------------------------------------------------
-                pg.press("tab")
-                pg.press("space")
-                # チェックマークが表示されるまで待機-------------------------------------
-                while (
-                    ImgCheckForList(
-                        TFolURL,
-                        [
-                            r"IkkatuCheck.png",
-                            r"ZaisanCheck.png",
-                            r"NendCheck.png",
-                            r"HouteiCheck.png",
-                        ],
-                        0.9,
-                        10,
-                    )[0]
-                    is False
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                SNC = ImgCheck(TFolURL, r"SyotokuNoCalc.png", 0.9, 10)
-                if SNC[0] is True:
-                    ErrStr = "Nocalc"
-                    pg.press("y")  # yで決定(nがキャンセル)
-                time.sleep(2)
-                ImgClick(TFolURL, r"\SyotokuStart.png", 0.9, 10)  # 更新開始のアイコンをクリック
-                # 確認ウィンドウが表示されるまで待機-------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\SyotokuQ.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                pg.press("y")  # yで決定(nがキャンセル)
-                # 処理終了ウィンドウが表示されるまで待機----------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\SyotokuEnd.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                pg.press("return")  # 決定
-                # 一括更新のアイコンが表示されるまで待機----------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\SyotokuMenu.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                    ME = ImgCheckForList(
-                        TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
-                    )
-                    if ME[0] is True:
-                        ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
-                # --------------------------------------------------------------------
-                # 閉じる処理--------------------------
-                pg.keyDown("alt")
-                pg.press("f4")
-                pg.keyUp("alt")
-                # -----------------------------------
-                # 所得税フラグが表示されるまで待機-------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\SyotokuFlag.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                # 初期画面で開封された所得税項目を閉じる----------------------------------
-                HoujinList = [
-                    r"\Syotoku.png",
-                    r"\Syotoku2.png",
-                ]
-                HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
-                if HLI[0] is True:
-                    ImgClick(TFolURL, HLI[1], 0.9, 10)
-                # --------------------------------------------------------------------
-                print("更新完了")
-                if ErrStr == "":
-                    return True, ThisNo, ThisYear, ThisMonth
-                elif ErrStr == "Nocalc":
-                    return True, "Nocalc", ThisYear, ThisMonth
-            else:
-                print("関与先なし")
-                # 初期画面で開封された所得税項目を閉じる----------------------------------
-                HoujinList = [
-                    r"\Syotoku.png",
-                    r"\Syotoku2.png",
-                ]
-                HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
-                if HLI[0] is True:
-                    ImgClick(TFolURL, HLI[1], 0.9, 10)
-                # --------------------------------------------------------------------
-                return False, "関与先なし", "", ""
-        else:
-            return False, "所得税起動失敗", "", ""
-    except:
-        return False, "exceptエラー", "", ""
-
-
-# ------------------------------------------------------------------------------------------------------------------
 def HoujinzeiUpdateSinkokuItiran(
-    FolURL, TFolURL, ExRow, driver, PN, Fname, ThisNo, ThisYear, ThisMonth
+    FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname, ThisNo, ThisYear, ThisMonth
 ):
     # 申告税一覧表印刷処理----------------------------------------------------
     OP = ImgCheckForList(
@@ -1595,9 +488,9 @@ def HoujinzeiUpdateSinkokuItiran(
         ):
             time.sleep(1)
         # --------------------------------------------------------------------
-        ImgClick(CFolURL, r"\Houjinzei\DownPrint.png", 0.9, 10)
-        time.sleep(1)
         if PN == "申告税一覧表":
+            ImgClick(CFolURL, r"\Houjinzei\DownPrint.png", 0.9, 10)
+            time.sleep(1)
             pg.press("n")
             # 一覧表メニューが表示されるまで待機------------------------------------
             while (
@@ -1671,6 +564,7 @@ def HoujinzeiUpdateSinkokuItiran(
             ):
                 time.sleep(1)
             # --------------------------------------------------------------------
+            time.sleep(1)
             pg.keyDown("alt")
             pg.press("x")
             pg.keyUp("alt")
@@ -1723,52 +617,485 @@ def HoujinzeiUpdateSinkokuItiran(
                 ImgClick(TFolURL, HLI[1], 0.9, 10)
             # --------------------------------------------------------------------
             return True, ThisNo, ThisYear, ThisMonth
-    elif PN == "第6号様式（県）":
-        ImgClick(CFolURL, r"\Houjinzei\HoujinzeiSelecter.png", 0.9, 10)
-        # 申告書印刷メニューが表示されるまで待機------------------------------------
+        elif (
+            PN == "第6号様式（県）"
+            or PN == "第6号様式別表9（県）"
+            or PN == "第20号様式（市）"
+            or PN == "別表１　緑色"
+        ):
+            ImgClick(CFolURL, r"\Houjinzei\HoujinzeiSelecter.png", 0.9, 10)
+            # 申告書印刷メニューが表示されるまで待機------------------------------------
+            while (
+                pg.locateOnScreen(
+                    CFolURL + r"\Houjinzei\BeppyouIcon.png", confidence=0.9
+                )
+                is None
+            ):
+                time.sleep(1)
+            # --------------------------------------------------------------------
+            if PN == "第6号様式（県）":
+                pg.press("end")
+                pg.press(["up", "up"])
+                pg.press("return")
+            elif PN == "第6号様式別表9（県）":
+                pg.press("end")
+                pg.press("up")
+                pg.press("return")
+            elif PN == "第20号様式（市）":
+                pg.press("end")
+                pg.press("return")
+            elif PN == "別表１　緑色":
+                pg.press("home")
+                pg.press("return")
+            time.sleep(1)
+            ImgClick(CFolURL, r"\Houjinzei\PreviewIcon.png", 0.9, 10)
+            # プレビュー画面が表示されるまで待機------------------------------------
+            while (
+                pg.locateOnScreen(
+                    CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9
+                )
+                is None
+            ):
+                time.sleep(1)
+            # --------------------------------------------------------------------
+            time.sleep(3)
+            # ロード完了まで待機----------------------------------------------------
+            while (
+                pg.locateOnScreen(
+                    CFolURL + r"\Houjinzei\PreviewLoad.png", confidence=0.9
+                )
+                is not None
+            ):
+                time.sleep(1)
+            # --------------------------------------------------------------------
+            TPI = ImgCheckForList(
+                CFolURL,
+                [r"\Houjinzei\ThisPIcon.png", r"\Houjinzei\ThisPIcon2.png"],
+                0.9,
+                10,
+            )  # 現在項印刷アイコンを探す
+            if TPI[0] is True:  # 現在項印刷アイコンがあれば
+                # pg.keydown("alt")
+                # pg.press("c")
+                # pg.keyup("alt")
+                ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
+                # 印刷ダイアログ待機----------------------------------------------------
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\ThisPMenu.png", confidence=0.9
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                pyperclip.copy(Fname.replace("\\\\", "\\"))
+                pg.hotkey("ctrl", "v")
+                pg.press("return")
+                # 印刷完了まで待機----------------------------------------------------
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\ThisPMenu2.png", confidence=0.9
+                    )
+                    is not None
+                ):
+                    time.sleep(1)
+                    TPOQ = ImgCheck(
+                        CFolURL, r"\Houjinzei\ThisPOverQ.png", 0.9, 10
+                    )  # 上書き確認
+                    if TPOQ[0] is True:
+                        pg.press("y")  # yで上書き
+                # -------------------------------------------------------------------
+                # 印刷完了まで待機----------------------------------------------------
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9
+                    )
+                    is not None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+                # 終了確認が表示されるまで待機---------------------------------
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\SinkokuEndQ.png", confidence=0.9
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                pg.press("y")
+                while (
+                    ImgCheckForList(
+                        CFolURL,
+                        [
+                            r"\Houjinzei\01SinkokuNyuuryoku.png",
+                            r"\Houjinzei\01SinkokuNyuuryoku2.png",
+                        ],
+                        0.9,
+                        10,
+                    )[0]
+                    is False
+                ):
+                    time.sleep(1)
+                    SEQ = ImgCheck(CFolURL, r"\Houjinzei\SinkokuEndQ2.png", 0.9, 10)
+                    if SEQ[0] is True:
+                        ImgClick(CFolURL, r"\Houjinzei\SinkokuEndQ2Btn.png", 0.9, 10)
+                # 閉じる処理--------------------------
+                pg.keyDown("alt")
+                pg.press("f4")
+                pg.keyUp("alt")
+                # -----------------------------------
+                # 法人税フラグが表示されるまで待機-------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                # 初期画面で開封された法人税項目を閉じる----------------------------------
+                HoujinList = [
+                    r"\FastMenuHoujinzei.png",
+                    r"\FastMenuHoujinzei2.png",
+                ]
+                HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+                if HLI[0] is True:
+                    ImgClick(TFolURL, HLI[1], 0.9, 10)
+                # --------------------------------------------------------------------
+                return True, ThisNo, ThisYear, ThisMonth
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def HoujinzeiUpdateZeimuDairi(
+    FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname, ThisNo, ThisYear, ThisMonth
+):
+    # 税務代理権限証書印刷処理----------------------------------------------------
+    OP = ImgCheckForList(
+        CFolURL,
+        [
+            r"\Houjinzei\15Zeimudairi.png",
+            r"\Houjinzei\15Zeimudairi2.png",
+        ],
+        0.9,
+        10,
+    )
+    if OP[0] is True:
+        ImgClick(CFolURL, OP[1], 0.9, 10)
+        # 法人税メニューが表示されるまで待機------------------------------------
         while (
-            pg.locateOnScreen(CFolURL + r"\Houjinzei\BeppyouIcon.png", confidence=0.9)
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9)
             is None
         ):
             time.sleep(1)
         # --------------------------------------------------------------------
-        pg.press("end")
-        pg.press(["up", "up"])
-        pg.press("return")
+        ImgClick(CFolURL, r"\Houjinzei\ZeimuPrint.png", 0.9, 10)
         time.sleep(1)
-        ImgClick(CFolURL, r"\Houjinzei\PreviewIcon.png", 0.9, 10)
-        # プレビュー画面が表示されるまで待機------------------------------------
+        # 一覧表出力項目指定が表示されるまで待機---------------------------------
         while (
-            pg.locateOnScreen(CFolURL + r"\Houjinzei\PreviewFlag.png", confidence=0.9)
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9)
             is None
         ):
             time.sleep(1)
         # --------------------------------------------------------------------
-        # ロード完了まで待機----------------------------------------------------
-        while (
-            pg.locateOnScreen(CFolURL + r"\Houjinzei\PreviewLoad.png", confidence=0.9)
-            is not None
-        ):
-            time.sleep(1)
-        # --------------------------------------------------------------------
-        ImgClick(CFolURL, r"\Houjinzei\ThisPIcon.png", 0.9, 10)
-        # 印刷ダイアログ待機----------------------------------------------------
-        while (
-            pg.locateOnScreen(CFolURL + r"\Houjinzei\ThisPMenu.png", confidence=0.9)
-            is None
-        ):
-            time.sleep(1)
-        # --------------------------------------------------------------------
+        # 申告税一覧表印刷処理----------------------------------------------------
+        FO = ImgCheckForList(
+            CFolURL,
+            [
+                r"\Houjinzei\FileOut.png",
+                r"\Houjinzei\FileOut2.png",
+            ],
+            0.9,
+            10,
+        )
+        if FO[0] is True:
+            ImgClick(CFolURL, FO[1], 0.9, 10)
+        ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
+        pg.press("return")
+        pg.press("delete")
         pyperclip.copy(Fname)
         pg.hotkey("ctrl", "v")
         pg.press("return")
-        # 印刷完了まで待機----------------------------------------------------
+        time.sleep(1)
+        ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        # 印刷中が表示されるまで待機---------------------------------
         while (
-            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrintQ.png", confidence=0.9)
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+            FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
+            if FO[0] is True:
+                pg.press("y")
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\NowPrint.png",
+                        confidence=0.9,
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+        # --------------------------------------------------------------------
+        # 印刷中が表示されなくなるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowZeimuPrint.png", confidence=0.9)
             is not None
         ):
             time.sleep(1)
         # --------------------------------------------------------------------
+        time.sleep(1)
+        ImgClick(CFolURL, r"\Houjinzei\ZeimuMEnd.png", 0.9, 10)
+        # 終了確認が表示されるまで待機---------------------------------
+        while (
+            ImgCheckForList(
+                CFolURL,
+                [
+                    r"\Houjinzei\15Zeimudairi.png",
+                    r"\Houjinzei\15Zeimudairi2.png",
+                ],
+                0.9,
+                10,
+            )[0]
+            is False
+        ):
+            time.sleep(1)
+            SEQ = ImgCheck(CFolURL, r"\Houjinzei\SinkokuEndQ2.png", 0.9, 10)
+            if SEQ[0] is True:
+                ImgClick(CFolURL, r"\Houjinzei\SinkokuEndQ2Btn.png", 0.9, 10)
+        # 閉じる処理--------------------------
+        pg.keyDown("alt")
+        pg.press("f4")
+        pg.keyUp("alt")
+        # -----------------------------------
+        # 法人税フラグが表示されるまで待機-------------------------------------
+        while pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None:
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        # 初期画面で開封された法人税項目を閉じる----------------------------------
+        HoujinList = [
+            r"\FastMenuHoujinzei.png",
+            r"\FastMenuHoujinzei2.png",
+        ]
+        HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+        if HLI[0] is True:
+            ImgClick(TFolURL, HLI[1], 0.9, 10)
+        # --------------------------------------------------------------------
+        return True, ThisNo, ThisYear, ThisMonth
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def HoujinzeiUpdateSyomen(
+    FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname, ThisNo, ThisYear, ThisMonth
+):
+    # 税務代理権限証書印刷処理----------------------------------------------------
+    OP = ImgCheckForList(
+        CFolURL,
+        [
+            r"\Houjinzei\16TenpuSyomen.png",
+            r"\Houjinzei\16TenpuSyomen2.png",
+        ],
+        0.9,
+        10,
+    )
+    if OP[0] is True:
+        ImgClick(CFolURL, OP[1], 0.9, 10)
+        # 法人税メニューが表示されるまで待機------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        ImgClick(CFolURL, r"\Houjinzei\ZeimuPrint.png", 0.9, 10)
+        time.sleep(1)
+        # 用紙選択が表示されるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\YousiSentaku.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        ImgClick(CFolURL, r"\Houjinzei\YousiOK.png", 0.9, 10)
+        # 申告税一覧表印刷処理----------------------------------------------------
+        FO = ImgCheckForList(
+            CFolURL,
+            [
+                r"\Houjinzei\FileOut.png",
+                r"\Houjinzei\FileOut2.png",
+            ],
+            0.9,
+            10,
+        )
+        if FO[0] is True:
+            ImgClick(CFolURL, FO[1], 0.9, 10)
+        ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
+        pg.press("return")
+        pg.press("delete")
+        pyperclip.copy(Fname)
+        pg.hotkey("ctrl", "v")
+        pg.press("return")
+        time.sleep(1)
+        ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        # 印刷中が表示されるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+            FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
+            if FO[0] is True:
+                pg.press("y")
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\NowPrint.png",
+                        confidence=0.9,
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+        # --------------------------------------------------------------------
+        # 印刷中が表示されなくなるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(
+                CFolURL + r"\Houjinzei\NowSyomenPrint.png", confidence=0.9
+            )
+            is not None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        time.sleep(1)
+        ImgClick(CFolURL, r"\Houjinzei\ZeimuMEnd.png", 0.9, 10)
+        # 終了確認が表示されるまで待機---------------------------------
+        while (
+            ImgCheckForList(
+                CFolURL,
+                [
+                    r"\Houjinzei\16TenpuSyomen.png",
+                    r"\Houjinzei\16TenpuSyomen2.png",
+                ],
+                0.9,
+                10,
+            )[0]
+            is False
+        ):
+            time.sleep(1)
+            SEQ = ImgCheck(CFolURL, r"\Houjinzei\SinkokuEndQ2.png", 0.9, 10)
+            if SEQ[0] is True:
+                ImgClick(CFolURL, r"\Houjinzei\SinkokuEndQ2Btn.png", 0.9, 10)
+        # 閉じる処理--------------------------
+        pg.keyDown("alt")
+        pg.press("f4")
+        pg.keyUp("alt")
+        # -----------------------------------
+        # 法人税フラグが表示されるまで待機-------------------------------------
+        while pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None:
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        # 初期画面で開封された法人税項目を閉じる----------------------------------
+        HoujinList = [
+            r"\FastMenuHoujinzei.png",
+            r"\FastMenuHoujinzei2.png",
+        ]
+        HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+        if HLI[0] is True:
+            ImgClick(TFolURL, HLI[1], 0.9, 10)
+        # --------------------------------------------------------------------
+        return True, ThisNo, ThisYear, ThisMonth
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def HoujinzeiUpdateBeppyou(
+    FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname, ThisNo, ThisYear, ThisMonth
+):
+    # 別表2-16印刷処理--------------------------------------------------------
+    OP = ImgCheckForList(
+        CFolURL,
+        [
+            r"\Houjinzei\01SinkokuNyuuryoku.png",
+            r"\Houjinzei\01SinkokuNyuuryoku2.png",
+        ],
+        0.9,
+        10,
+    )
+    if OP[0] is True:
+        ImgClick(CFolURL, OP[1], 0.9, 10)
+        # 法人税メニューが表示されるまで待機------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        ImgClick(CFolURL, r"\Houjinzei\DownPrint.png", 0.9, 10)
+        time.sleep(1)
+        pg.press("s")
+        # 一覧表メニューが表示されるまで待機------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\SItiranFlag.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+            HEQ = ImgCheck(CFolURL, r"\Houjinzei\HNoEntryQ.png", 0.9, 10)
+            if HEQ[0] is True:  # 法人番号未登録ダイアログが表示されていたら
+                pg.press("y")  # yで確定
+        # --------------------------------------------------------------------
+        ImgClick(CFolURL, r"\Houjinzei\SPrint.png", 0.9, 10)
+        # 一覧表出力項目指定が表示されるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        # 申告税一覧表印刷処理----------------------------------------------------
+        FO = ImgCheckForList(
+            CFolURL,
+            [
+                r"\Houjinzei\FileOut.png",
+                r"\Houjinzei\FileOut2.png",
+            ],
+            0.9,
+            10,
+        )
+        if FO[0] is True:
+            ImgClick(CFolURL, FO[1], 0.9, 10)
+        ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
+        pg.press("return")
+        pg.press("delete")
+        pyperclip.copy(Fname)
+        pg.hotkey("ctrl", "v")
+        pg.press("return")
+        time.sleep(1)
+        ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        # 印刷中が表示されるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+            FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
+            if FO[0] is True:
+                pg.press("y")
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\NowPrint.png",
+                        confidence=0.9,
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+        # --------------------------------------------------------------------
+        # 印刷中が表示されなくなるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
+            is not None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        time.sleep(1)
+        pg.keyDown("alt")
+        pg.press("x")
+        pg.keyUp("alt")
+        time.sleep(3)
         ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
         # 終了確認が表示されるまで待機---------------------------------
         while (
@@ -1816,7 +1143,166 @@ def HoujinzeiUpdateSinkokuItiran(
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver, PN, Fname):
+def HoujinzeiUpdateGaikyou(
+    FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname, ThisNo, ThisYear, ThisMonth
+):
+    # 事業概況説明書印刷処理--------------------------------------------------------
+    OP = ImgCheckForList(
+        CFolURL,
+        [
+            r"\Houjinzei\02JigyouGaikyou.png",
+            r"\Houjinzei\02JigyouGaikyou2.png",
+        ],
+        0.9,
+        10,
+    )
+    if OP[0] is True:
+        ImgClick(CFolURL, OP[1], 0.9, 10)
+        # 法人税メニューが表示されるまで待機------------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        ImgClick(CFolURL, r"\Houjinzei\GaikyouPrint.png", 0.9, 10)
+        # 一覧表出力項目指定が表示されるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+            # 印刷条件設定----------------------------------------------------------
+            GP = ImgCheck(CFolURL, r"\Houjinzei\GPMenu.png", 0.9, 10)
+            if GP[0] is True:
+                # 白紙チェックボックス確認
+                HP = ImgCheck(CFolURL, r"\Houjinzei\HPCheck.png", 0.9, 10)
+                if HP[0] is True:
+                    # 白紙チェックボックスが未指定ならクリック
+                    ImgClick(CFolURL, r"\Houjinzei\HPCheck.png", 0.9, 10)
+                    # 両面チェックボックス確認
+                    RM = ImgCheck(CFolURL, r"\Houjinzei\Ryoumen.png", 0.9, 10)
+                    if RM[0] is True:
+                        # 両面チェックボックスが未指定ならクリック
+                        ImgClick(CFolURL, r"\Houjinzei\Ryoumen.png", 0.9, 10)
+                        # 印刷ボタンクリック
+                        ImgClick(CFolURL, r"\Houjinzei\GPPrint.png", 0.9, 10)
+                    else:
+                        # 両面チェックボックスが指定済の場合
+                        # 印刷ボタンクリック
+                        ImgClick(CFolURL, r"\Houjinzei\GPPrint.png", 0.9, 10)
+                else:
+                    # 白紙チェックボックスが指定済の場合
+                    # 両面チェックボックス確認
+                    RM = ImgCheck(CFolURL, r"\Houjinzei\Ryoumen.png", 0.9, 10)
+                    if RM[0] is True:
+                        # 両面チェックボックスが未指定ならクリック
+                        ImgClick(CFolURL, r"\Houjinzei\Ryoumen.png", 0.9, 10)
+                        # 印刷ボタンクリック
+                        ImgClick(CFolURL, r"\Houjinzei\GPPrint.png", 0.9, 10)
+                    else:
+                        # 両面チェックボックスが指定済の場合
+                        # 印刷ボタンクリック
+                        ImgClick(CFolURL, r"\Houjinzei\GPPrint.png", 0.9, 10)
+        # --------------------------------------------------------------------------
+        # 申告税一覧表印刷処理----------------------------------------------------
+        FO = ImgCheckForList(
+            CFolURL,
+            [
+                r"\Houjinzei\FileOut.png",
+                r"\Houjinzei\FileOut2.png",
+            ],
+            0.9,
+            10,
+        )
+        if FO[0] is True:
+            ImgClick(CFolURL, FO[1], 0.9, 10)
+        ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
+        pg.press("return")
+        pg.press("delete")
+        pyperclip.copy(Fname)
+        pg.hotkey("ctrl", "v")
+        pg.press("return")
+        time.sleep(1)
+        ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        # 印刷中が表示されるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+            FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
+            if FO[0] is True:
+                pg.press("y")
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\NowPrint.png",
+                        confidence=0.9,
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+        # --------------------------------------------------------------------
+        # 印刷中が表示されなくなるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
+            is not None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        time.sleep(1)
+        pg.keyDown("alt")
+        pg.press("x")
+        pg.keyUp("alt")
+        time.sleep(3)
+        ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        # 終了確認が表示されるまで待機---------------------------------
+        while (
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\GaikyouEndQ.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        pg.press("y")
+        while (
+            ImgCheckForList(
+                CFolURL,
+                [
+                    r"\Houjinzei\02JigyouGaikyou.png",
+                    r"\Houjinzei\02JigyouGaikyou2.png",
+                ],
+                0.9,
+                10,
+            )[0]
+            is False
+        ):
+            time.sleep(1)
+            SEQ = ImgCheck(CFolURL, r"\Houjinzei\SinkokuEndQ2.png", 0.9, 10)
+            if SEQ[0] is True:
+                ImgClick(CFolURL, r"\Houjinzei\SinkokuEndQ2Btn.png", 0.9, 10)
+        # 閉じる処理--------------------------
+        pg.keyDown("alt")
+        pg.press("f4")
+        pg.keyUp("alt")
+        # -----------------------------------
+        # 法人税フラグが表示されるまで待機-------------------------------------
+        while pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None:
+            time.sleep(1)
+        # --------------------------------------------------------------------
+        # 初期画面で開封された法人税項目を閉じる----------------------------------
+        HoujinList = [
+            r"\FastMenuHoujinzei.png",
+            r"\FastMenuHoujinzei2.png",
+        ]
+        HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+        if HLI[0] is True:
+            ImgClick(TFolURL, HLI[1], 0.9, 10)
+        # --------------------------------------------------------------------
+        return True, ThisNo, ThisYear, ThisMonth
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def HoujinzeiUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
     """
     概要: 法人税更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -1960,6 +1446,58 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver, PN, Fname):
                         ThisMonth,
                     )
                     return PNFlow[0], PNFlow[1], PNFlow[2], PNFlow[3]
+                elif PN == "税務代理権限書":
+                    PNFlow = HoujinzeiUpdateZeimuDairi(
+                        FolURL,
+                        TFolURL,
+                        ExRow,
+                        driver,
+                        PN,
+                        Fname,
+                        ThisNo,
+                        ThisYear,
+                        ThisMonth,
+                    )
+                    return PNFlow[0], PNFlow[1], PNFlow[2], PNFlow[3]
+                elif PN == "書面添付　法人税":
+                    PNFlow = HoujinzeiUpdateSyomen(
+                        FolURL,
+                        TFolURL,
+                        ExRow,
+                        driver,
+                        PN,
+                        Fname,
+                        ThisNo,
+                        ThisYear,
+                        ThisMonth,
+                    )
+                    return PNFlow[0], PNFlow[1], PNFlow[2], PNFlow[3]
+                elif PN == "別表2-16":
+                    PNFlow = HoujinzeiUpdateBeppyou(
+                        FolURL,
+                        TFolURL,
+                        ExRow,
+                        driver,
+                        PN,
+                        Fname,
+                        ThisNo,
+                        ThisYear,
+                        ThisMonth,
+                    )
+                    return PNFlow[0], PNFlow[1], PNFlow[2], PNFlow[3]
+                elif PN == "法人事業概況説明書":
+                    PNFlow = HoujinzeiUpdateGaikyou(
+                        FolURL,
+                        TFolURL,
+                        ExRow,
+                        driver,
+                        PN,
+                        Fname,
+                        ThisNo,
+                        ThisYear,
+                        ThisMonth,
+                    )
+                    return PNFlow[0], PNFlow[1], PNFlow[2], PNFlow[3]
                 elif ErrStr == "ReCalc":
                     # 閉じる処理--------------------------
                     pg.keyDown("alt")
@@ -1990,7 +1528,7 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver, PN, Fname):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def GenkasyoukyakuUpdate(FolURL, TFolURL, ExRow, driver):
+def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
     """
     概要: 減価償却更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -2165,7 +1703,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, ExRow, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def KessanUpDate(FolURL, TFolURL, ExRow, driver):
+def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver):
     """
     概要: 決算内訳書更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -2345,7 +1883,7 @@ def KessanUpDate(FolURL, TFolURL, ExRow, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
+def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
     """
     概要: 会計大将更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -2431,121 +1969,586 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                 ):
                     time.sleep(1)
                 # --------------------------------------------------------------------
-                ImgClick(TFolURL, r"\M_Sonota.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
-                # 一括更新のアイコンが表示されるまで待機----------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\IkkatsuKousin.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                ImgClick(TFolURL, r"\IkkatsuKousin.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
-                # 一括更新メニューが表示されるまで待機------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\IkkatuOpenFlag.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                    # UW = ImgCheck(TFolURL, r"\Underwindow.png", 0.9, 10)
-                    # if UW[0] is True:
-                    #     ImgClick(TFolURL, r"\Underwindow.png", 0.9, 10)
-                    #     UW2 = ImgCheck(TFolURL, r"\Underwindow2.png", 0.9, 10)
-                    #     if UW2[0] is True:
-                    #         ImgClick(TFolURL, r"\Underwindow2.png", 0.9, 10)
-                # --------------------------------------------------------------------
-                ImgClick(TFolURL, r"\IkkatuOpenFlag.png", 0.9, 10)  # 一括更新メニューのアイコンをクリック
-                pg.press("tab")
-                time.sleep(1)
-                pg.press("space")
-                # チェックマークが表示されるまで待機-------------------------------------
-                while (
-                    ImgCheckForList(
-                        TFolURL,
-                        [
-                            r"IkkatuCheck.png",
-                            r"ZaisanCheck.png",
-                            r"NendCheck.png",
-                            r"HouteiCheck.png",
-                        ],
+                # 指示内容で処理分け----------------------------------------------------------
+                if PN == "消費税確定申告書":
+                    ImgClick(
+                        CFolURL, r"\KTaisyou\KessanSinkoku.png", 0.9, 10
+                    )  # 決算申告書アイコンをクリック
+                    # 決算申告書が表示されるまで待機----------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\KessanFlag.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # サイドメニューより消費税申告書を確認------------------------------------------
+                    SSM = ImgCheckForList(
+                        CFolURL,
+                        [r"\KTaisyou\Syouhizei.png", r"\KTaisyou\Syouhizei2.png"],
                         0.9,
                         10,
-                    )[0]
-                    is False
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                time.sleep(1)
-                ImgClick(TFolURL, r"\IkkatuStart.png", 0.9, 10)  # 一括更新開始のアイコンをクリック
-                # 確認ウィンドウが表示されるまで待機-------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\SakuseiQ.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                pg.press("y")  # yで決定(nがキャンセル)
-                # 確認ウィンドウが表示されるまで待機-------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\SakuseiQ2.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                pg.press("return")  # 決定
-                # 処理終了ウィンドウが表示されるまで待機----------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\IkkatuEndFlag.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                # --------------------------------------------------------------------
-                pg.press("return")  # 決定
-                # チェックマークが表示されなくなるまで待機-------------------------------
-                while (
-                    ImgCheckForList(
-                        TFolURL,
-                        [
-                            r"IkkatuCheck.png",
-                            r"ZaisanCheck.png",
-                            r"NendCheck.png",
-                            r"HouteiCheck.png",
-                        ],
-                        0.9,
-                        10,
-                    )[0]
-                    is True
-                ):
-                    time.sleep(1)
-                # 一括更新のアイコンが表示されるまで待機----------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\IkkatsuKousin.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
-                    # --------------------------------------------------------------------
-                    ME = ImgCheckForList(
-                        TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
                     )
-                    if ME[0] is True:
-                        ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
-                # --------------------------------------------------------------------
-                # 閉じる処理--------------------------
-                pg.keyDown("alt")
-                pg.press("f4")
-                pg.keyUp("alt")
-                # -----------------------------------
-                # 会計大将フラグが表示されるまで待機-------------------------------------
-                while (
-                    pg.locateOnScreen(TFolURL + r"\Kaikei_CFlag.png", confidence=0.9)
-                    is None
-                ):
+                    if SSM[0] is True:  # 消費税申告書があれば
+                        ImgClick(CFolURL, SSM[1], 0.9, 10)  # 消費税申告書アイコンをクリック
+                        time.sleep(2)
+                    # 申告書・付表入力を確認------------------------------------------------
+                    SFI = ImgCheckForList(
+                        CFolURL,
+                        [r"\KTaisyou\SFIcon.png", r"\KTaisyou\SFIcon2.png"],
+                        0.9,
+                        10,
+                    )
+                    if SFI[0] is True:  # 申告書・付表入力があれば
+                        ImgClick(CFolURL, SFI[1], 0.9, 10)  # 申告書・付表入力アイコンをクリック
+                    # 申告選択ウィンドウが表示されるまで待機-------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\SinkokuSentaku.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                        # 申告回数設定ウィンドウがひょうじされたら
+                        SCQ = ImgCheck(CFolURL, r"\KTaisyou\ScountQ.png", 0.9, 10)
+                        if SCQ[0] is True:
+                            pg.press("n")  # nでいいえ
+                    # 申告種で処理分け----------------------------------------------------------------------------------
+                    SL = ImgCheck(
+                        CFolURL, r"\KTaisyou\SinkokuList.png", 0.9, 10
+                    )  # 申告種類選択ボックスが開かれてるか確認
+                    if SL[0] is True:
+                        if ExRow["会計大将_消費税確定申告書"] == "1":  # Excel数値が確定申告なら
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\KTaisyou\Kakutei.png", confidence=0.9
+                                )
+                                is None
+                            ):
+                                pg.press("down")
+                            pg.press("return")
+                        elif ExRow["会計大将_消費税確定申告書"] == "2":  # Excel数値が修正確定なら
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\KTaisyou\Syuusei.png", confidence=0.9
+                                )
+                                is None
+                            ):
+                                pg.press("down")
+                            pg.press("return")
+                        elif ExRow["会計大将_消費税確定申告書"] == "3":  # Excel数値が中間申告なら
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\KTaisyou\Cyuukan.png", confidence=0.9
+                                )
+                                is None
+                            ):
+                                pg.press("down")
+                            pg.press("return")
+                        elif ExRow["会計大将_消費税確定申告書"] == "4":  # Excel数値が修正中間なら
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\KTaisyou\SCyuukan.png", confidence=0.9
+                                )
+                                is None
+                            ):
+                                pg.press("down")
+                            pg.press("return")
+                        elif ExRow["会計大将_消費税確定申告書"] == "5":  # Excel数値が予定申告なら
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\KTaisyou\Yotei.png", confidence=0.9
+                                )
+                                is None
+                            ):
+                                pg.press("down")
+                            pg.press("return")
+                    else:
+                        SA = ImgCheck(
+                            CFolURL, r"\KTaisyou\SinkokuArrow.png", 0.9, 10
+                        )  # 申告区分ドロップボックスが開けるか確認
+                        if SA[0] is True:
+                            ImgClick(
+                                CFolURL, r"\KTaisyou\SinkokuArrow.png", 0.9, 10
+                            )  # 一括更新開始のアイコンをクリック
+                            if ExRow["会計大将_消費税確定申告書"] == "1":  # Excel数値が確定申告なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\Kakutei.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                            elif ExRow["会計大将_消費税確定申告書"] == "2":  # Excel数値が修正確定なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\Syuusei.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                            elif ExRow["会計大将_消費税確定申告書"] == "3":  # Excel数値が中間申告なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\Cyuukan.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                            elif ExRow["会計大将_消費税確定申告書"] == "4":  # Excel数値が修正中間なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\SCyuukan.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                            elif ExRow["会計大将_消費税確定申告書"] == "5":  # Excel数値が予定申告なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\Yotei.png", confidence=0.9
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                        else:
+                            # 現在の申告回数を取得
+                            pg.hotkey("ctrl", "c")
+                            SinNo = pyperclip.paste()
+                            NextSinNo = int(SinNo) + 1
+                            pg.write(str(NextSinNo))
+                            pg.press("return")
+                            if ExRow["会計大将_消費税確定申告書"] == "1":  # Excel数値が確定申告なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\Kakutei.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                            elif ExRow["会計大将_消費税確定申告書"] == "2":  # Excel数値が修正確定なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\Syuusei.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                            elif ExRow["会計大将_消費税確定申告書"] == "3":  # Excel数値が中間申告なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\Cyuukan.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                            elif ExRow["会計大将_消費税確定申告書"] == "4":  # Excel数値が修正中間なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\SCyuukan.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                            elif ExRow["会計大将_消費税確定申告書"] == "5":  # Excel数値が予定申告なら
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\Yotei.png", confidence=0.9
+                                    )
+                                    is None
+                                ):
+                                    pg.press("down")
+                                pg.press("return")
+                            time.sleep(1)
+                            pg.press("return")
+                            time.sleep(1)
+                            pg.press("return")
+                            time.sleep(1)
+                            # 申告回数変更を求められた場合--------------------------------------------
+                            SCQ = ImgCheck(CFolURL, r"\KTaisyou\S_CountQ.png", 0.9, 10)
+                            if SCQ[0] is True:
+                                pg.press("N")  # 申告回数変更しない
+                                time.sleep(1)
+                                pg.write(str(SinNo))  # 取得していた現在申告区分Noを入力
+                                pg.press("return")
+                                ImgClick(CFolURL, r"\KTaisyou\S_Delete.png", 0.9, 10)
+                                # 申告データ削除ダイアログ表示まで待機----------------------------------
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\S_DeleteQ.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    time.sleep(1)
+                                pg.press("y")
+                                # ---------------------------------------------------------------------
+                                # 申告データ削除完了まで待機----------------------------------
+                                while (
+                                    pg.locateOnScreen(
+                                        CFolURL + r"\KTaisyou\S_DeleteQ2.png",
+                                        confidence=0.9,
+                                    )
+                                    is None
+                                ):
+                                    time.sleep(1)
+                                pg.press("return")
+                                # ---------------------------------------------------------------------
+                                time.sleep(1)
+                                pg.press("return")
+                                time.sleep(1)
+                                pg.press("home")
+                                time.sleep(1)
+                                SL = ImgCheck(
+                                    CFolURL, r"\KTaisyou\SinkokuList.png", 0.9, 10
+                                )  # 申告種類選択ボックスが開かれてるか確認
+                                if SL[0] is True:
+                                    if ExRow["会計大将_消費税確定申告書"] == "1":  # Excel数値が確定申告なら
+                                        while (
+                                            pg.locateOnScreen(
+                                                CFolURL + r"\KTaisyou\Kakutei.png",
+                                                confidence=0.9,
+                                            )
+                                            is None
+                                        ):
+                                            pg.press("down")
+                                        pg.press("return")
+                                    elif (
+                                        ExRow["会計大将_消費税確定申告書"] == "2"
+                                    ):  # Excel数値が修正確定なら
+                                        while (
+                                            pg.locateOnScreen(
+                                                CFolURL + r"\KTaisyou\Syuusei.png",
+                                                confidence=0.9,
+                                            )
+                                            is None
+                                        ):
+                                            pg.press("down")
+                                        pg.press("return")
+                                    elif (
+                                        ExRow["会計大将_消費税確定申告書"] == "3"
+                                    ):  # Excel数値が中間申告なら
+                                        while (
+                                            pg.locateOnScreen(
+                                                CFolURL + r"\KTaisyou\Cyuukan.png",
+                                                confidence=0.9,
+                                            )
+                                            is None
+                                        ):
+                                            pg.press("down")
+                                        pg.press("return")
+                                    elif (
+                                        ExRow["会計大将_消費税確定申告書"] == "4"
+                                    ):  # Excel数値が修正中間なら
+                                        while (
+                                            pg.locateOnScreen(
+                                                CFolURL + r"\KTaisyou\SCyuukan.png",
+                                                confidence=0.9,
+                                            )
+                                            is None
+                                        ):
+                                            pg.press("down")
+                                        pg.press("return")
+                                    elif (
+                                        ExRow["会計大将_消費税確定申告書"] == "5"
+                                    ):  # Excel数値が予定申告なら
+                                        while (
+                                            pg.locateOnScreen(
+                                                CFolURL + r"\KTaisyou\Yotei.png",
+                                                confidence=0.9,
+                                            )
+                                            is None
+                                        ):
+                                            pg.press("down")
+                                        pg.press("return")
+                    # ----------------------------------------------------------------------------------------------------
                     time.sleep(1)
-                    al4c = ImgCheck(TFolURL, r"\altf4Q.png", 0.9, 10)  # 終了確認が表示されたら
-                    if al4c[0] is True:
-                        pg.press("y")  # yで決定(nがキャンセル)
-                # --------------------------------------------------------------------
-                print("更新完了")
-                return True, ThisNo, ThisYear, ThisMonth
+                    # OKボタンにフォーカスするまでエンター押下-------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\SinkokuAllOK.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        pg.press("return")
+                    # ---------------------------------------------------------------------
+                    pg.press("return")  # 確定
+                    # 確認ウィンドウが表示されるまで待機-------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\SinkokuWin.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    time.sleep(1)
+                    SKQ = ImgCheck(CFolURL, r"\KTaisyou\KakuninQ.png", 0.9, 10)
+                    if SKQ[0] is True:
+                        pg.press("return")
+                    time.sleep(1)
+                    ImgClick(CFolURL, r"\KTaisyou\SyouhiPrint.png", 0.9, 10)
+                    # 確認ウィンドウが表示されるまで待機-------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\S_Huhyou.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    pg.press("p")  # 決定
+                    time.sleep(1)
+                    # 法人番号未登録確認が表示されているか確認
+                    SAL = ImgCheck(CFolURL, r"\KTaisyou\S_Alert.png", 0.9, 10)
+                    if SAL[0] is True:  # 法人番号未登録確認が表示された場合
+                        pg.press("y")  # yで確定
+                    # 一覧表出力項目指定が表示されるまで待機---------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    # 申告税一覧表印刷処理----------------------------------------------------
+                    FO = ImgCheckForList(
+                        CFolURL,
+                        [
+                            r"\Houjinzei\FileOut.png",
+                            r"\Houjinzei\FileOut2.png",
+                        ],
+                        0.9,
+                        10,
+                    )
+                    if FO[0] is True:
+                        ImgClick(CFolURL, FO[1], 0.9, 10)
+                    ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
+                    pg.press("return")
+                    pg.press("delete")
+                    pyperclip.copy(Fname)
+                    pg.hotkey("ctrl", "v")
+                    pg.press("return")
+                    time.sleep(1)
+                    ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    # 印刷中が表示されるまで待機---------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\NowSyouhiPrint.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                        FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
+                        if FO[0] is True:
+                            pg.press("y")
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\KTaisyou\NowSyouhiPrint.png",
+                                    confidence=0.9,
+                                )
+                                is None
+                            ):
+                                time.sleep(1)
+                    # --------------------------------------------------------------------
+                    # 印刷中が表示されなくなるまで待機---------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\NowSyouhiPrint.png", confidence=0.9
+                        )
+                        is not None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    time.sleep(1)
+                    pg.keyDown("alt")
+                    pg.press("x")
+                    pg.keyUp("alt")
+                    time.sleep(3)
+                    ImgClick(CFolURL, r"\KTaisyou\MenuEnd.png", 0.9, 10)
+                    # 終了確認が表示されるまで待機---------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\KTaisyouEndQ.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    pg.press("y")
+                    while (
+                        ImgCheckForList(
+                            CFolURL,
+                            [r"\KTaisyou\Syouhizei.png", r"\KTaisyou\Syouhizei2.png"],
+                            0.9,
+                            10,
+                        )[0]
+                        is False
+                    ):
+                        time.sleep(1)
+                    # 閉じる処理--------------------------
+                    pg.keyDown("alt")
+                    pg.press("f4")
+                    pg.keyUp("alt")
+                    # -----------------------------------
+                    # 会計大将フラグが表示されるまで待機------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            TFolURL + r"\Kaikei_CFlag.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # ------------------------------------------------------------------
+                    return True, ThisNo, ThisYear, ThisMonth
+                elif PN == "書面添付　消費税":
+                    ImgClick(
+                        CFolURL, r"\KTaisyou\KessanSinkoku.png", 0.9, 10
+                    )  # 決算申告書アイコンをクリック
+                    # 決算申告書が表示されるまで待機----------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\KessanFlag.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # サイドメニューより消費税申告書を確認------------------------------------------
+                    SSM = ImgCheckForList(
+                        CFolURL,
+                        [r"\KTaisyou\Syouhizei.png", r"\KTaisyou\Syouhizei2.png"],
+                        0.9,
+                        10,
+                    )
+                    if SSM[0] is True:  # 消費税申告書があれば
+                        ImgClick(CFolURL, SSM[1], 0.9, 10)  # 消費税申告書アイコンをクリック
+                        time.sleep(2)
+                    # 添付書面を確認------------------------------------------------
+                    SFI = ImgCheckForList(
+                        CFolURL,
+                        [r"\KTaisyou\14Tenpu.png", r"\KTaisyou\14Tenpu2.png"],
+                        0.9,
+                        10,
+                    )
+                    if SFI[0] is True:  # 添付書面があれば
+                        ImgClick(CFolURL, SFI[1], 0.9, 10)  # 添付書面アイコンをクリック
+                    # 添付書面申告種類選択ウィンドウが表示されるまで待機--------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\TenpuBar.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    pg.press(["return", "return"])
+                    # 添付書面印刷ウィンドウが表示されるまで待機---------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\TenpuFlag.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    ImgClick(CFolURL, r"\KTaisyou\TenpuFlagPrint.png", 0.9, 10)
+                    # 添付書面印刷サイズ選択が表示されるまで待機---------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\TenpuPrintType.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    A4T = ImgCheck(CFolURL, r"\KTaisyou\A4Box.png", 0.99999, 10)
+                    if A4T[0] is True:
+                        ImgClick(CFolURL, r"\KTaisyou\A4Box.png", 0.99999, 10)
+                    ImgClick(CFolURL, r"\KTaisyou\A4BoxOK.png", 0.9, 10)
+                    # 一覧表出力項目指定が表示されるまで待機---------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    # 申告税一覧表印刷処理----------------------------------------------------
+                    FO = ImgCheckForList(
+                        CFolURL,
+                        [
+                            r"\Houjinzei\FileOut.png",
+                            r"\Houjinzei\FileOut2.png",
+                        ],
+                        0.9,
+                        10,
+                    )
+                    if FO[0] is True:
+                        ImgClick(CFolURL, FO[1], 0.9, 10)
+                    ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
+                    pg.press("return")
+                    pg.press("delete")
+                    pyperclip.copy(Fname)
+                    pg.hotkey("ctrl", "v")
+                    pg.press("return")
+                    time.sleep(1)
+                    ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    # 印刷中が表示されるまで待機---------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\KTaisyou\TenpuPBar.png", confidence=0.9
+                        )
+                        is not None
+                    ):
+                        time.sleep(1)
+                        FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
+                        if FO[0] is True:
+                            pg.press("y")
+                    # --------------------------------------------------------------------
+                    time.sleep(2)
+                    ImgClick(CFolURL, r"\KTaisyou\MenuEnd.png", 0.9, 10)
+                    # 終了確認が表示されるまで待機---------------------------------
+                    while (
+                        ImgCheckForList(
+                            CFolURL,
+                            [r"\KTaisyou\14Tenpu.png", r"\KTaisyou\14Tenpu2.png"],
+                            0.9,
+                            10,
+                        )[0]
+                        is False
+                    ):
+                        time.sleep(1)
+                    # 閉じる処理--------------------------
+                    pg.keyDown("alt")
+                    pg.press("f4")
+                    pg.keyUp("alt")
+                    # -----------------------------------
+                    # 会計大将フラグが表示されるまで待機------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            TFolURL + r"\Kaikei_CFlag.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # ------------------------------------------------------------------
+                    return True, ThisNo, ThisYear, ThisMonth
             else:
                 print("関与先なし")
                 return False, "関与先なし", "", ""
@@ -2556,7 +2559,7 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver):
+def MainStarter(FolURL, TFolURL, CFolURL, NameDF, ExSheet, ExrcHeader, isnItem, driver):
     try:
         print(ExSheet[3 : len(ExSheet)])
         li = np.array(ExSheet[3 : len(ExSheet)])
@@ -2567,7 +2570,17 @@ def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver):
             ExRow = ExDf.iloc[Ex]
             if ExRow["関与先番号"] == ExRow["関与先番号"]:  # nan判定
                 # nanでない場合
-                OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver)
+                OpenSystem(
+                    FolURL,
+                    TFolURL,
+                    CFolURL,
+                    NameDF,
+                    ExRow,
+                    Ex,
+                    ExrcHeader,
+                    isnItem,
+                    driver,
+                )
             else:
                 # nanの場合
                 print("nan")
@@ -2576,7 +2589,22 @@ def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
+def NameSearch(NameDF, Rno):
+    try:
+        Nr = len(NameDF)
+        for Nrx in range(Nr):
+            NameDFRow = NameDF.iloc[Nrx]
+            print(NameDFRow["コード"])
+            if Rno == NameDFRow["コード"]:
+                return NameDFRow["顧問先名称"]
+    except:
+        return "NameErr"
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def OpenSystem(
+    FolURL, TFolURL, CFolURL, NameDF, ExRow, Ex, ExrcHeader, isnItem, driver
+):
     try:
         Eh = 0
         # 列名からMJSシステムリストを作成------------------------------------------------
@@ -2594,8 +2622,8 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
         FMaxSystemList = list(dict.fromkeys(FMaxSystemList))
         print(FMaxSystemList)
         # ----------------------------------------------------------------------------
-        for FMaxSystemListItem in FMaxSystemList:
-            for ExrcHeaderItem in ExrcHeader:
+        for ExrcHeaderItem in ExrcHeader:
+            for FMaxSystemListItem in FMaxSystemList:
                 if FMaxSystemListItem in ExrcHeaderItem:
                     Title = FMaxSystemListItem  # MJSSytem名
                     PN = ExrcHeaderItem.split("_")[1]  # MJS出力帳表名
@@ -2604,9 +2632,14 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
                     dt_s = datetime.datetime.now()
                     dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
                     Rno = ExRow["関与先番号"]
-                    # Rn = ExRow["関与先名"]
-                    Rn = "TEST"
-                    if ExRow[ExrcHeaderItem] == "○":
+                    Rn = NameSearch(NameDF, Rno)
+                    Rn = Rn.replace("\u3000", " ")
+                    NumList = [1, 2, 3, 4, 5]
+                    strNumList = ["1", "2", "3", "4", "5"]
+                    if (
+                        ExRow[ExrcHeaderItem] in NumList
+                        or ExRow[ExrcHeaderItem] in strNumList
+                    ):
                         logger.debug(
                             dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_プリントメイン処理開始"
                         )
@@ -2620,6 +2653,7 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
                             ChildFlow(
                                 FolURL,
                                 TFolURL,
+                                CFolURL,
                                 ExRow,
                                 Ex,
                                 Eh,
@@ -2628,14 +2662,16 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
                                 Title,
                                 PN,
                                 driver,
+                                Rno,
+                                Rn,
                             )
-                Eh += 1
+            Eh += 1
     except:
         print("TEST")
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL, TFolURL, Exlsx):
+def MainFlow(FolURL, TFolURL, CFolURL, Exlsx):
     """
     概要: プリントメイン処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -2668,11 +2704,13 @@ def MainFlow(FolURL, TFolURL, Exlsx):
             # DataFrameとしてsheetのデータ読込み
             if isnItem == "印刷申請":
                 ExSheet = Exlsx.parse(isnItem, skiprows=0)
+                NameSheet = Exlsx.parse("顧問先別システム採用一覧表")
                 print(ExSheet)
                 # 初回読込時の保存--------------------------
                 dt_s = datetime.datetime.now()
                 dt_s = dt_s.strftime("%Y-%m-%d %H-%M-%S")
                 DF = pd.DataFrame(ExSheet)
+                NameDF = pd.DataFrame(NameSheet)
                 DF.to_csv(
                     r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\初回起動_プリント"
                     + dt_s
@@ -2707,7 +2745,14 @@ def MainFlow(FolURL, TFolURL, Exlsx):
                     print([dt_s, "Excelシート読込完了"], file=f)
                 # -----------------------------------------------
                 MainStarter(
-                    FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver
+                    FolURL,
+                    TFolURL,
+                    CFolURL,
+                    NameDF,
+                    ExSheet,
+                    ExrcHeader,
+                    isnItem,
+                    driver,
                 )  # データ送信画面までの関数
     except Exception as e:
         logger.debug(e)
@@ -2724,7 +2769,7 @@ open(LURL, "w").close()
 Exlsx = EFA.XlsmRead(XLSURL)
 if Exlsx[0] is True:
     try:
-        MainFlow(FolURL, TFolURL, Exlsx[1])
+        MainFlow(FolURL, TFolURL, CFolURL, Exlsx[1])
     except:
         traceback.print_exc()
 else:
