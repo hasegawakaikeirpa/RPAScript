@@ -44,7 +44,10 @@ for x in range(12):
     dir_path = "//Sv05121a/e/C 作業台/RPA/公会計時間分析/" + Toyear + "-" + s
     Tan_path = dir_path + "/担当者別"
     for current_dir, sub_dirs, files_list in os.walk(Tan_path):
+        fn = 0
         for fileobj in files_list:
+            if fn == 297:
+                print(fn)
             fileurl = Tan_path + "/" + fileobj.replace("\u3000", "　")  # 空白\u3000を置換
             # ##############################################月指定################################################
             if "2022-05" in fileurl:
@@ -73,8 +76,8 @@ for x in range(12):
 
                             if (
                                 not fileobj == "移動時間.CSV"
-                                or not fileobj == "移動時間A8.CSV"
-                                or not fileobj == "移動時間A9.CSV"
+                                and not fileobj == "移動時間A8.CSV"
+                                and not fileobj == "移動時間A9.CSV"
                             ):
                                 H_dfDataRow = H_df.loc[x]
                                 H_Tan = fileobj.split("_")
@@ -157,6 +160,7 @@ for x in range(12):
                                         break
                     except:
                         pass
+            fn += 1
         try:
             H_MargesRow = np.array(H_Marges).shape[0]  # 配列行数取得
             if H_MargesRow > 0:
