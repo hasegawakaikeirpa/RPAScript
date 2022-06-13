@@ -15,6 +15,7 @@ import os
 # pandas(pd)で関与先データCSVを取得
 import pyautogui
 import pyperclip  # クリップボードへのコピーで使用
+import PyPDF2
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from io import BytesIO
 from reportlab.pdfgen import canvas
@@ -264,15 +265,23 @@ def insert_text_output_pdf_PyPDF2(pdf_file_path, insert_text, output_name):
 
     # テンプレートとなるPDFを読む --- (*5)
     template_pdf = PdfFileReader(template_file)
+    num_pages = template_pdf.getNumPages()  # ページ数の取得
     template_page = template_pdf.getPage(0)
+    merger = PyPDF2.PdfFileMerger()
+    output = PdfFileWriter()
 
     # 一時ファイルを読んで合成する --- (*6)
     tmp_pdf = PdfFileReader(tmp_file)
-    template_page.mergePage(tmp_pdf.getPage(0))
+    for x in range(num_pages):
+        if x == 0:
+            template_page.mergePage(tmp_pdf.getPage(0))
+            output.addPage(template_page)
+            # merger.append(tmp_file)
+        else:
+            output.addPage(template_pdf.getPage(x))
+            # merger.append(template_file, pages=(x))
 
     # 書き込み先PDFを用意 --- (*7)
-    output = PdfFileWriter()
-    output.addPage(template_page)
     with open(output_file, "wb") as fp:
         output.write(fp)
 
@@ -281,17 +290,16 @@ def ChangeDir():
 
     List = []
     idir = TFolURL
-    file_path = tkinter.filedialog.askopenfilename(initialdir=idir)
+    file_path = tkinter.filedialog.askdirectory(initialdir=idir)
     # file_path = file_path.replace("\u3000","\　")
     for fd_path, sb_folder, sb_file in os.walk(file_path):
         for fil in sb_file:
             List.append([fd_path + "\\" + fil, fil.replace(".pdf", "")])
     for ListItem in List:
-        SP = ListItem.split(ListItem)
-        SPName = SP[len(SP)]
-        ReSPName = ListItem.replace(".pdf", "") + "(印字).pdf"
+        SPName = ListItem[1]
+        ReSPName = ListItem[0].replace(".pdf", "") + "(印字).pdf"
         insert_text_output_pdf_PyPDF2(
-            ListItem,
+            ListItem[0],
             SPName,
             ReSPName,
         )
