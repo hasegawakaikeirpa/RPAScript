@@ -21,7 +21,7 @@ import pyautogui
 import calendar
 import pyperclip
 import tkinter
-from tkinter import filedialog
+import tkinter.filedialog
 
 # ----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitXPATH(UIPATH, driver):  # XPATH要素を取得するまで待機
