@@ -22,6 +22,7 @@ import pyautogui
 import pyperclip  # クリップボードへのコピーで使用
 import Function.ExcelFileAction as EFA
 import Function.CSVOut as FCO
+import Function.MJSSPOPDFMarge as PDFM
 import datetime
 import openpyxl
 from openpyxl.formatting.rule import Rule
@@ -240,6 +241,19 @@ def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリッ�
 
 
 # ------------------------------------------------------------------------------------------------------------------
+def NameSearch(NameDF, Rno):
+    try:
+        Nr = len(NameDF)
+        for Nrx in range(Nr):
+            NameDFRow = NameDF.iloc[Nrx]
+            print(NameDFRow["コード"])
+            if Rno == NameDFRow["コード"]:
+                return NameDFRow["顧問先名称"]
+    except:
+        return "NameErr"
+
+
+# ------------------------------------------------------------------------------------------------------------------
 def ChildFlow(
     FolURL,
     TFolURL,
@@ -255,255 +269,322 @@ def ChildFlow(
     Rno,
     Rn,
 ):
-    if "会計大将" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(
-            dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将_" + PN + "印刷処理開始"
-        )
-        with open(LURL, "a") as f:
-            print(
-                [dt_s, "関与先番号:" + str(Rno), str(Rn), "_会計大将_" + PN + "印刷処理開始"], file=f
-            )
-        # ------------------------------------------------------------------------------------------
-        Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
-        SystemUp = KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname)
-        # Excel書き込み--------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
-            print("シート書き込み完了")
-            print(WriteEx)
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # ---------------------------------------------------------------
+    try:
+        if "会計大将" == Title:
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             logger.debug(
-                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将_" + PN + "印刷処理終了"
+                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将_" + PN + "印刷処理開始"
             )
             with open(LURL, "a") as f:
                 print(
-                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_会計大将_" + PN + "印刷処理終了"],
+                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_会計大将_" + PN + "印刷処理開始"],
                     file=f,
                 )
             # ------------------------------------------------------------------------------------------
-        elif SystemUp[0] is False:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "計算エラー" + dt_now
-            print("シート書き込み完了")
-            print(WriteEx)
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # ---------------------------------------------------------------
+            Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
+            SystemUp = KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname)
+            # Excel書き込み--------------------------------------------------
+            if SystemUp[0] is True:
+                dt_now = datetime.datetime.now()
+                dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+                WriteEx = openpyxl.load_workbook(XLSURL)
+                WriteExSheet = WriteEx[isnItem]
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
+                print("シート書き込み完了")
+                print(WriteEx)
+                WriteEx.save(XLSURL)
+                WriteEx.close
+                # ---------------------------------------------------------------
+                # Log---------------------------------------------------------------------------------------
+                dt_s = datetime.datetime.now()
+                dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                logger.debug(
+                    dt_s
+                    + "_関与先番号:"
+                    + str(Rno)
+                    + ":"
+                    + str(Rn)
+                    + "_会計大将_"
+                    + PN
+                    + "印刷処理終了"
+                )
+                with open(LURL, "a") as f:
+                    print(
+                        [dt_s, "関与先番号:" + str(Rno), str(Rn), "_会計大将_" + PN + "印刷処理終了"],
+                        file=f,
+                    )
+                # ------------------------------------------------------------------------------------------
+            elif SystemUp[0] is False:
+                dt_now = datetime.datetime.now()
+                dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+                WriteEx = openpyxl.load_workbook(XLSURL)
+                WriteExSheet = WriteEx[isnItem]
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "計算エラー" + dt_now
+                print("シート書き込み完了")
+                print(WriteEx)
+                WriteEx.save(XLSURL)
+                WriteEx.close
+                # ---------------------------------------------------------------
+                # Log---------------------------------------------------------------------------------------
+                dt_s = datetime.datetime.now()
+                dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                logger.debug(
+                    dt_s
+                    + "_関与先番号:"
+                    + str(Rno)
+                    + ":"
+                    + str(Rn)
+                    + "_会計大将_"
+                    + PN
+                    + "計算エラーで処理終了"
+                )
+                with open(LURL, "a") as f:
+                    print(
+                        [
+                            dt_s,
+                            "関与先番号:" + str(Rno),
+                            str(Rn),
+                            "_会計大将_" + PN + "計算エラーで処理終了",
+                        ],
+                        file=f,
+                    )
+                # ------------------------------------------------------------------------------------------
+        elif "決算内訳書" == Title:
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             logger.debug(
-                dt_s
-                + "_関与先番号:"
-                + str(Rno)
-                + ":"
-                + str(Rn)
-                + "_会計大将_"
-                + PN
-                + "計算エラーで処理終了"
+                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書_" + PN + "印刷処理開始"
             )
             with open(LURL, "a") as f:
                 print(
-                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_会計大将_" + PN + "計算エラーで処理終了"],
+                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_決算内訳書_" + PN + "印刷処理開始"],
                     file=f,
                 )
             # ------------------------------------------------------------------------------------------
-    elif "決算内訳書" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(
-            dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書_" + PN + "印刷処理開始"
-        )
-        with open(LURL, "a") as f:
-            print(
-                [dt_s, "関与先番号:" + str(Rno), str(Rn), "_決算内訳書_" + PN + "印刷処理開始"], file=f
-            )
-        # ------------------------------------------------------------------------------------------
-        Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
-        SystemUp = KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname)
-        # Excel書き込み--------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
+            Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
+            SystemUp = KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname)
+            # Excel書き込み--------------------------------------------------
+            if SystemUp[0] is True:
+                dt_now = datetime.datetime.now()
+                dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+                WriteEx = openpyxl.load_workbook(XLSURL)
+                WriteExSheet = WriteEx[isnItem]
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
+                print("シート書き込み完了")
+                WriteEx.save(XLSURL)
+                WriteEx.close
+                # Log---------------------------------------------------------------------------------------
+                dt_s = datetime.datetime.now()
+                dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                logger.debug(
+                    dt_s
+                    + "_関与先番号:"
+                    + str(Rno)
+                    + ":"
+                    + str(Rn)
+                    + "_決算内訳書_"
+                    + PN
+                    + "印刷処理終了"
+                )
+                with open(LURL, "a") as f:
+                    print(
+                        [dt_s, "関与先番号:" + str(Rno), str(Rn), "_決算内訳書_" + PN + "印刷処理終了"],
+                        file=f,
+                    )
+                # ------------------------------------------------------------------------------------------
+        elif "減価償却" == Title:
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             logger.debug(
-                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書_" + PN + "印刷処理終了"
+                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却_" + PN + "印刷処理開始"
             )
             with open(LURL, "a") as f:
                 print(
-                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_決算内訳書_" + PN + "印刷処理終了"],
+                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_減価償却_" + PN + "印刷処理開始"],
                     file=f,
                 )
             # ------------------------------------------------------------------------------------------
-    elif "減価償却" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(
-            dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却_" + PN + "印刷処理開始"
-        )
-        with open(LURL, "a") as f:
-            print(
-                [dt_s, "関与先番号:" + str(Rno), str(Rn), "_減価償却_" + PN + "印刷処理開始"], file=f
+            Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
+            SystemUp = GenkasyoukyakuUpdate(
+                FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname
             )
-        # ------------------------------------------------------------------------------------------
-        Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
-        SystemUp = GenkasyoukyakuUpdate(
-            FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname
-        )
-        # Excel書き込み---------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            logger.debug(
-                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却_" + PN + "印刷処理終了"
-            )
-            with open(LURL, "a") as f:
-                print(
-                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_減価償却_" + PN + "印刷処理終了"],
-                    file=f,
+            # Excel書き込み---------------------------------------------------
+            if SystemUp[0] is True:
+                dt_now = datetime.datetime.now()
+                dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+                WriteEx = openpyxl.load_workbook(XLSURL)
+                WriteExSheet = WriteEx[isnItem]
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
+                print("シート書き込み完了")
+                WriteEx.save(XLSURL)
+                WriteEx.close
+                # Log---------------------------------------------------------------------------------------
+                dt_s = datetime.datetime.now()
+                dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                logger.debug(
+                    dt_s
+                    + "_関与先番号:"
+                    + str(Rno)
+                    + ":"
+                    + str(Rn)
+                    + "_減価償却_"
+                    + PN
+                    + "印刷処理終了"
                 )
-        elif SystemUp[0] is False:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "資産無し" + dt_now
-            print("シート書き込み完了")
-            print(WriteEx)
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # ---------------------------------------------------------------
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            logger.debug(
-                dt_s
-                + "_関与先番号:"
-                + str(Rno)
-                + ":"
-                + str(Rn)
-                + "_会計大将_"
-                + PN
-                + "計算エラーで処理終了"
-            )
-            with open(LURL, "a") as f:
-                print(
-                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_会計大将_" + PN + "資産無しで処理終了"],
-                    file=f,
+                with open(LURL, "a") as f:
+                    print(
+                        [dt_s, "関与先番号:" + str(Rno), str(Rn), "_減価償却_" + PN + "印刷処理終了"],
+                        file=f,
+                    )
+            elif SystemUp[0] is False:
+                dt_now = datetime.datetime.now()
+                dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+                WriteEx = openpyxl.load_workbook(XLSURL)
+                WriteExSheet = WriteEx[isnItem]
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "資産無し" + dt_now
+                print("シート書き込み完了")
+                print(WriteEx)
+                WriteEx.save(XLSURL)
+                WriteEx.close
+                # ---------------------------------------------------------------
+                # Log---------------------------------------------------------------------------------------
+                dt_s = datetime.datetime.now()
+                dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                logger.debug(
+                    dt_s
+                    + "_関与先番号:"
+                    + str(Rno)
+                    + ":"
+                    + str(Rn)
+                    + "_会計大将_"
+                    + PN
+                    + "計算エラーで処理終了"
                 )
-            # ------------------------------------------------------------------------------------------
-    elif "法人税申告書" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(
-            dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書_" + PN + "印刷処理開始"
-        )
-        with open(LURL, "a") as f:
-            print(
-                [dt_s, "関与先番号:" + str(Rno), str(Rn), "_法人税申告書_" + PN + "印刷処理開始"], file=f
-            )
-        # ------------------------------------------------------------------------------------------
-        Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
-        SystemUp = HoujinzeiUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname)
-        # Excel書き込み---------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
+                with open(LURL, "a") as f:
+                    print(
+                        [
+                            dt_s,
+                            "関与先番号:" + str(Rno),
+                            str(Rn),
+                            "_会計大将_" + PN + "資産無しで処理終了",
+                        ],
+                        file=f,
+                    )
+                # ------------------------------------------------------------------------------------------
+        elif "法人税申告書" == Title:
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             logger.debug(
-                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書_" + PN + "印刷処理終了"
+                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書_" + PN + "印刷処理開始"
             )
             with open(LURL, "a") as f:
                 print(
-                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_法人税申告書_" + PN + "印刷処理終了"],
+                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_法人税申告書_" + PN + "印刷処理開始"],
                     file=f,
                 )
             # ------------------------------------------------------------------------------------------
-    elif "電子申告" == Title:
-        # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(
-            dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_電子申告_" + PN + "印刷処理開始"
-        )
-        with open(LURL, "a") as f:
-            print(
-                [dt_s, "関与先番号:" + str(Rno), str(Rn), "_電子申告_" + PN + "印刷処理開始"], file=f
+            Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
+            SystemUp = HoujinzeiUpdate(
+                FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname
             )
-        # ------------------------------------------------------------------------------------------
-        Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
-        SystemUp = DensisinkokuUpDate(
-            FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname
-        )
-        # Excel書き込み--------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
-            print("シート書き込み完了")
-            print(WriteEx)
-            WriteEx.save(XLSURL)
-            WriteEx.close
-            # ---------------------------------------------------------------
+            # Excel書き込み---------------------------------------------------
+            if SystemUp[0] is True:
+                dt_now = datetime.datetime.now()
+                dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+                WriteEx = openpyxl.load_workbook(XLSURL)
+                WriteExSheet = WriteEx[isnItem]
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
+                print("シート書き込み完了")
+                WriteEx.save(XLSURL)
+                WriteEx.close
+                # Log---------------------------------------------------------------------------------------
+                dt_s = datetime.datetime.now()
+                dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                logger.debug(
+                    dt_s
+                    + "_関与先番号:"
+                    + str(Rno)
+                    + ":"
+                    + str(Rn)
+                    + "_法人税申告書_"
+                    + PN
+                    + "印刷処理終了"
+                )
+                with open(LURL, "a") as f:
+                    print(
+                        [
+                            dt_s,
+                            "関与先番号:" + str(Rno),
+                            str(Rn),
+                            "_法人税申告書_" + PN + "印刷処理終了",
+                        ],
+                        file=f,
+                    )
+                return True
+            else:
+                return False
+                # ------------------------------------------------------------------------------------------
+        elif "電子申告" == Title:
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
             logger.debug(
-                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_電子申告_" + PN + "印刷処理終了"
+                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_電子申告_" + PN + "印刷処理開始"
             )
             with open(LURL, "a") as f:
                 print(
-                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_電子申告_" + PN + "印刷処理終了"],
+                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "_電子申告_" + PN + "印刷処理開始"],
                     file=f,
                 )
             # ------------------------------------------------------------------------------------------
-    else:
-        print("NoSystem")
+            Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
+            SystemUp = DensisinkokuUpDate(
+                FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname
+            )
+            # Excel書き込み--------------------------------------------------
+            if SystemUp[0] is True:
+                dt_now = datetime.datetime.now()
+                dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+                WriteEx = openpyxl.load_workbook(XLSURL)
+                WriteExSheet = WriteEx[isnItem]
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = dt_now
+                print("シート書き込み完了")
+                print(WriteEx)
+                WriteEx.save(XLSURL)
+                WriteEx.close
+                # ---------------------------------------------------------------
+                # Log---------------------------------------------------------------------------------------
+                dt_s = datetime.datetime.now()
+                dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                logger.debug(
+                    dt_s
+                    + "_関与先番号:"
+                    + str(Rno)
+                    + ":"
+                    + str(Rn)
+                    + "_電子申告_"
+                    + PN
+                    + "印刷処理終了"
+                )
+                with open(LURL, "a") as f:
+                    print(
+                        [dt_s, "関与先番号:" + str(Rno), str(Rn), "_電子申告_" + PN + "印刷処理終了"],
+                        file=f,
+                    )
+                return True
+            else:
+                return False
+                # ------------------------------------------------------------------------------------------
+        else:
+            print("NoSystem")
+            return True
+    except:
+        return False
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -544,6 +625,9 @@ def HoujinzeiUpdateSinkokuItiran(
                 SRC = ImgCheck(CFolURL, r"\Houjinzei\S_RendouCheck.png", 0.9, 10)
                 if SRC[0] is True:
                     pg.press("return")
+                SRCC = ImgCheck(CFolURL, r"\Houjinzei\S_Rendou2.png", 0.9, 10)
+                if SRCC[0] is True:
+                    pg.press("n")
             # --------------------------------------------------------------------
             ImgClick(CFolURL, r"\Houjinzei\Print.png", 0.9, 10)
             # 一覧表出力項目指定が表示されるまで待機---------------------------------
@@ -613,7 +697,15 @@ def HoujinzeiUpdateSinkokuItiran(
             pg.press("x")
             pg.keyUp("alt")
             time.sleep(3)
-            ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+            # 確実に閉じる---------------------------------------------------------
+            HME = ImgCheck(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+            if HME[0] is True:
+                ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+            else:
+                pg.keyDown("alt")
+                pg.press("x")
+                pg.keyUp("alt")
+            # --------------------------------------------------------------------
             # 終了確認が表示されるまで待機---------------------------------
             while (
                 pg.locateOnScreen(
@@ -689,17 +781,24 @@ def HoujinzeiUpdateSinkokuItiran(
                 is None
             ):
                 time.sleep(1)
+                SLQ = ImgCheck(CFolURL, r"\Houjinzei\SelectQ.png", 0.9, 10)
+                if SLQ[0] is True:
+                    ImgClick(CFolURL, r"\Houjinzei\Kousin.png", 0.9, 10)
             # --------------------------------------------------------------------
             if PN == "第6号様式（県）":
-                pg.press("end")
-                pg.press(["up", "up"])
+                ImgClick(CFolURL, r"\Houjinzei\HSCancel.png", 0.9, 10)
+                time.sleep(1)
+                pg.write("0600")
                 pg.press("return")
             elif PN == "第6号様式別表9（県）":
-                pg.press("end")
-                pg.press("up")
+                ImgClick(CFolURL, r"\Houjinzei\HSCancel.png", 0.9, 10)
+                time.sleep(1)
+                pg.write("0690")
                 pg.press("return")
             elif PN == "第20号様式（市）":
-                pg.press("end")
+                ImgClick(CFolURL, r"\Houjinzei\HSCancel.png", 0.9, 10)
+                time.sleep(1)
+                pg.write("2000")
                 pg.press("return")
             elif PN == "別表１　緑色":
                 pg.press("home")
@@ -771,7 +870,15 @@ def HoujinzeiUpdateSinkokuItiran(
                 ):
                     time.sleep(1)
                 # --------------------------------------------------------------------
-                ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+                # 確実に閉じる---------------------------------------------------------
+                HME = ImgCheck(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+                if HME[0] is True:
+                    ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+                else:
+                    pg.keyDown("alt")
+                    pg.press("x")
+                    pg.keyUp("alt")
+                # --------------------------------------------------------------------
                 # 終了確認が表示されるまで待機---------------------------------
                 while (
                     pg.locateOnScreen(
@@ -901,7 +1008,15 @@ def HoujinzeiUpdateZeimuDairi(
                 time.sleep(2)
         # --------------------------------------------------------------------
         time.sleep(1)
-        ImgClick(CFolURL, r"\Houjinzei\ZeimuMEnd.png", 0.9, 10)
+        # 確実に閉じる---------------------------------------------------------
+        HME = ImgCheck(CFolURL, r"\Houjinzei\ZeimuMEnd.png", 0.9, 10)
+        if HME[0] is True:
+            ImgClick(CFolURL, r"\Houjinzei\ZeimuMEnd.png", 0.9, 10)
+        else:
+            pg.keyDown("alt")
+            pg.press("x")
+            pg.keyUp("alt")
+        # --------------------------------------------------------------------
         # 終了確認が表示されるまで待機---------------------------------
         while (
             ImgCheckForList(
@@ -976,6 +1091,9 @@ def HoujinzeiUpdateSyomen(
         ):
             time.sleep(1)
         # --------------------------------------------------------------------
+        AYR = ImgCheck(CFolURL, r"\Houjinzei\AYear.png", 0.9, 10)
+        if AYR[0] is True:
+            pg.press("n")
         ImgClick(CFolURL, r"\Houjinzei\ZeimuPrint.png", 0.9, 10)
         time.sleep(1)
         # 用紙選択が表示されるまで待機---------------------------------
@@ -1015,9 +1133,16 @@ def HoujinzeiUpdateSyomen(
             FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
             if FO[0] is True:
                 pg.press("y")
-        # --------------------------------------------------------------------
         time.sleep(1)
-        ImgClick(CFolURL, r"\Houjinzei\ZeimuMEnd.png", 0.9, 10)
+        # 確実に閉じる---------------------------------------------------
+        ZME = ImgCheck(CFolURL, r"\Houjinzei\ZeimuMEnd.png", 0.9, 10)
+        if ZME[0] is True:
+            ImgClick(CFolURL, r"\Houjinzei\ZeimuMEnd.png", 0.9, 10)
+        else:
+            pg.keyDown("alt")
+            pg.press("x")
+            pg.keyUp("alt")
+        # ---------------------------------------------------------------
         # 終了確認が表示されるまで待機---------------------------------
         while (
             ImgCheckForList(
@@ -1105,6 +1230,15 @@ def HoujinzeiUpdateBeppyou(
             if HEQ[0] is True:  # 法人番号未登録ダイアログが表示されていたら
                 pg.press("y")  # yで確定
         # --------------------------------------------------------------------
+        if ImgCheck(CFolURL, r"\Houjinzei\Teisyutu.png", 0.99999, 10)[0] is True:
+            ImgClick(CFolURL, r"\Houjinzei\Teisyutu.png", 0.99999, 10)
+        if ImgCheck(CFolURL, r"\Houjinzei\Nyuuryoku.png", 0.99999, 10)[0] is True:
+            ImgClick(CFolURL, r"\Houjinzei\Nyuuryoku.png", 0.99999, 10)
+        if ImgCheck(CFolURL, r"\Houjinzei\Hikae.png", 0.99999, 10)[0] is True:
+            ImgClick(CFolURL, r"\Houjinzei\Hikae.png", 0.99999, 10)
+        if ImgCheck(CFolURL, r"\Houjinzei\Beppyou.png", 0.99999, 10)[0] is True:
+            ImgClick(CFolURL, r"\Houjinzei\Beppyou.png", 0.99999, 10)
+            pg.press("space")
         ImgClick(CFolURL, r"\Houjinzei\SPrint.png", 0.9, 10)
         # 一覧表出力項目指定が表示されるまで待機---------------------------------
         while (
@@ -1158,12 +1292,22 @@ def HoujinzeiUpdateBeppyou(
         ):
             time.sleep(1)
         # --------------------------------------------------------------------
-        time.sleep(1)
+        time.sleep(3)
+        # 確実に閉じる---------------------------------------------------
         pg.keyDown("alt")
         pg.press("x")
         pg.keyUp("alt")
+        # ---------------------------------------------------------------
         time.sleep(3)
-        ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        # 確実に閉じる---------------------------------------------------
+        ZME = ImgCheck(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        if ZME[0] is True:
+            ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        else:
+            pg.keyDown("alt")
+            pg.press("x")
+            pg.keyUp("alt")
+        # ---------------------------------------------------------------
         # 終了確認が表示されるまで待機---------------------------------
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\SinkokuEndQ.png", confidence=0.9)
@@ -1307,21 +1451,13 @@ def HoujinzeiUpdateGaikyou(
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
         # 印刷中が表示されるまで待機---------------------------------
         while (
-            pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
-            is None
+            pg.locateOnScreen(CFolURL + r"\Houjinzei\HPCFlag.png", confidence=0.9)
+            is not None
         ):
             time.sleep(1)
             FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
             if FO[0] is True:
                 pg.press("y")
-                while (
-                    pg.locateOnScreen(
-                        CFolURL + r"\Houjinzei\NowPrint.png",
-                        confidence=0.9,
-                    )
-                    is None
-                ):
-                    time.sleep(1)
         # --------------------------------------------------------------------
         # 印刷中が表示されなくなるまで待機---------------------------------
         while (
@@ -1331,11 +1467,25 @@ def HoujinzeiUpdateGaikyou(
             time.sleep(1)
         # --------------------------------------------------------------------
         time.sleep(1)
-        pg.keyDown("alt")
-        pg.press("x")
-        pg.keyUp("alt")
+        # 確実に閉じる---------------------------------------------------
+        ZME = ImgCheck(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        if ZME[0] is True:
+            ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        else:
+            pg.keyDown("alt")
+            pg.press("x")
+            pg.keyUp("alt")
+        # ---------------------------------------------------------------
         time.sleep(3)
-        ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        # 確実に閉じる---------------------------------------------------
+        ZME = ImgCheck(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        if ZME[0] is True:
+            ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+        else:
+            pg.keyDown("alt")
+            pg.press("x")
+            pg.keyUp("alt")
+        # ---------------------------------------------------------------
         # 終了確認が表示されるまで待機---------------------------------
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\GaikyouEndQ.png", confidence=0.9)
@@ -1443,6 +1593,16 @@ def HoujinzeiUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                 time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
             pg.press(["return", "return"])
+            # 申告種類が確定申告になっているか確認-----------------------------------
+            KF = ImgCheck(CFolURL, r"\Houjinzei\KakuteiFlag.png", 0.99999, 10)
+            if KF[0] is False:
+                while (
+                    ImgCheck(CFolURL, r"\Houjinzei\KakuteiFlag.png", 0.99999, 10)[0]
+                    is False
+                ):
+                    ImgClick(CFolURL, r"\Houjinzei\SinkokuArrow.png", 0.9, 10)
+                    pg.press("down")
+                    pg.press("return")
             # -----------------------------------
             if ImgCheck(TFolURL, r"\NotData.png", 0.9, 10)[0] is True:
                 # 入力した関与先コードを取得------------
@@ -1788,7 +1948,15 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             pg.press("y")
                     # --------------------------------------------------------------------
                     time.sleep(1)
-                    ImgClick(CFolURL, r"\GenkaSyoukyaku\01G_End.png", 0.9, 10)
+                    # 確実に閉じる---------------------------------------------------
+                    ZME = ImgCheck(CFolURL, r"\GenkaSyoukyaku\01G_End.png", 0.9, 10)
+                    if ZME[0] is True:
+                        ImgClick(CFolURL, r"\GenkaSyoukyaku\01G_End.png", 0.9, 10)
+                    else:
+                        pg.keyDown("alt")
+                        pg.press("x")
+                        pg.keyUp("alt")
+                    # ---------------------------------------------------------------
                     time.sleep(1)
                     while (
                         ImgCheckForList(
@@ -1840,41 +2008,50 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
-                    # --------------------------------------------------------------------
-                    time.sleep(1)
-                    ImgClick(
-                        CFolURL, r"\GenkaSyoukyaku\03G_PrintOK.png", 0.9, 10
-                    )  # 出力条件設定OKをクリック
-                    # 出力条件ウィンドウが表示されるなくなるまで待機--------------------------
-                    while (
-                        pg.locateOnScreen(
-                            CFolURL + r"\GenkaSyoukyaku\03G_PrintWait.png",
-                            confidence=0.9,
+                        GN = ImgCheck(
+                            CFolURL, r"\GenkaSyoukyaku\03G_Nodata.png", 0.9, 10
                         )
-                        is not None
-                    ):
-                        time.sleep(1)
-                    time.sleep(3)
-                    # --------------------------------------------------------------------
-                    ImgClick(
-                        CFolURL, r"\GenkaSyoukyaku\01G_PrintBtn.png", 0.9, 10
-                    )  # 印刷ボタンをクリック
-                    # 印刷設定が表示されるまで待機---------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                        SJS = ImgCheck(CFolURL, r"\Houjinzei\Nodata.png", 0.9, 10)
-                        if SJS[0] is True:
+                        if GN[0] is True:
                             pg.press("return")
-                            ImgClick(CFolURL, r"\Houjinzei\NodataCan.png", 0.9, 10)
                             Nod = "Nodata"
                         if Nod == "Nodata":
                             break
                     # --------------------------------------------------------------------
+                    time.sleep(1)
+                    if Nod == "":
+                        ImgClick(
+                            CFolURL, r"\GenkaSyoukyaku\03G_PrintOK.png", 0.9, 10
+                        )  # 出力条件設定OKをクリック
+                        # 出力条件ウィンドウが表示されるなくなるまで待機--------------------------
+                        while (
+                            pg.locateOnScreen(
+                                CFolURL + r"\GenkaSyoukyaku\03G_PrintWait.png",
+                                confidence=0.9,
+                            )
+                            is not None
+                        ):
+                            time.sleep(1)
+                        time.sleep(3)
+                        # --------------------------------------------------------------------
+                        ImgClick(
+                            CFolURL, r"\GenkaSyoukyaku\01G_PrintBtn.png", 0.9, 10
+                        )  # 印刷ボタンをクリック
+                        # 印刷設定が表示されるまで待機---------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                            SJS = ImgCheck(CFolURL, r"\Houjinzei\Nodata.png", 0.9, 10)
+                            if SJS[0] is True:
+                                pg.press("return")
+                                ImgClick(CFolURL, r"\Houjinzei\NodataCan.png", 0.9, 10)
+                                Nod = "Nodata"
+                            if Nod == "Nodata":
+                                break
+                        # --------------------------------------------------------------------
                     if Nod == "":
                         # 申告税一覧表印刷処理----------------------------------------------------
                         FO = ImgCheckForList(
@@ -1909,9 +2086,16 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                                 pg.press("y")
                         # --------------------------------------------------------------------
                         time.sleep(1)
-                        ImgClick(CFolURL, r"\GenkaSyoukyaku\01G_End.png", 0.9, 10)
+                        # 確実に閉じる---------------------------------------------------
+                        ZME = ImgCheck(CFolURL, r"\GenkaSyoukyaku\01G_End.png", 0.9, 10)
+                        if ZME[0] is True:
+                            ImgClick(CFolURL, r"\GenkaSyoukyaku\01G_End.png", 0.9, 10)
+                        else:
+                            pg.keyDown("alt")
+                            pg.press("x")
+                            pg.keyUp("alt")
+                        # ---------------------------------------------------------------
                         time.sleep(1)
-
                         while (
                             ImgCheckForList(
                                 CFolURL,
@@ -2006,26 +2190,33 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ):
                         time.sleep(1)
                     time.sleep(3)
-                    # --------------------------------------------------------------------
-                    ImgClick(
-                        CFolURL, r"\GenkaSyoukyaku\01G_PrintBtn.png", 0.9, 10
-                    )  # 印刷ボタンをクリック
-                    # 印刷設定が表示されるまで待機---------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                        SJS = ImgCheck(CFolURL, r"\Houjinzei\Nodata.png", 0.9, 10)
-                        if SJS[0] is True:
-                            pg.press("return")
-                            ImgClick(CFolURL, r"\Houjinzei\NodataCan.png", 0.9, 10)
-                            Nod = "Nodata"
-                        if Nod == "Nodata":
-                            break
-                    # --------------------------------------------------------------------
+                    GN = ImgCheck(CFolURL, r"\GenkaSyoukyaku\01G_Nodata.png", 0.9, 10)
+                    if GN[0] is True:
+                        pg.press("return")
+                        Nod = "Nodata"
+                    if Nod == "":
+                        # --------------------------------------------------------------------
+                        ImgClick(
+                            CFolURL, r"\GenkaSyoukyaku\01G_PrintBtn.png", 0.9, 10
+                        )  # 印刷ボタンをクリック
+                        # 印刷設定が表示されるまで待機---------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                            SJS = ImgCheck(CFolURL, r"\Houjinzei\Nodata.png", 0.9, 10)
+                            if SJS[0] is True:
+                                pg.press("return")
+                                ImgClick(CFolURL, r"\Houjinzei\NodataCan.png", 0.9, 10)
+                                Nod = "Nodata"
+                            if Nod == "Nodata":
+                                break
+                        # --------------------------------------------------------------------
+                    else:
+                        ImgClick(CFolURL, r"\GenkaSyoukyaku\03G_Cancel.png", 0.9, 10)
                     if Nod == "":
                         # 申告税一覧表印刷処理----------------------------------------------------
                         FO = ImgCheckForList(
@@ -2060,7 +2251,15 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                                 pg.press("y")
                         # --------------------------------------------------------------------
                         time.sleep(1)
-                        ImgClick(CFolURL, r"\GenkaSyoukyaku\01G_End.png", 0.9, 10)
+                        # 確実に閉じる---------------------------------------------------
+                        ZME = ImgCheck(CFolURL, r"\GenkaSyoukyaku\01G_End.png", 0.9, 10)
+                        if ZME[0] is True:
+                            ImgClick(CFolURL, r"\GenkaSyoukyaku\01G_End.png", 0.9, 10)
+                        else:
+                            pg.keyDown("alt")
+                            pg.press("x")
+                            pg.keyUp("alt")
+                        # ---------------------------------------------------------------
                         time.sleep(1)
                         while (
                             ImgCheckForList(
@@ -2284,7 +2483,31 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("y")
                 # --------------------------------------------------------------------
                 time.sleep(1)
-                ImgClick(CFolURL, r"\Uchiwake\11U_End.png", 0.9, 10)
+                #  印刷中が表示されるまで待機-------------------------------------------
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+                #  印刷中が表示されなくなるまで待機-------------------------------------
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9
+                    )
+                    is not None
+                ):
+                    time.sleep(1)
+                #  確実に閉じる--------------------------------------------------------
+                UED = ImgCheck(CFolURL, r"\Uchiwake\11U_End.png", 0.9, 10)
+                if UED[0] is True:
+                    ImgClick(CFolURL, r"\Uchiwake\11U_End.png", 0.9, 10)
+                else:
+                    pg.keyDown("alt")
+                    pg.press("x")
+                    pg.keyUp("alt")
+                # --------------------------------------------------------------------
                 time.sleep(1)
                 while (
                     ImgCheckForList(
@@ -2773,6 +2996,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
+                        SIQ = ImgCheck(CFolURL, r"\KTaisyou\SiwakeInputQ.png", 0.9, 10)
+                        if SIQ[0] is True:
+                            pg.press("y")
                     # --------------------------------------------------------------------
                     time.sleep(1)
                     SKQ = ImgCheck(CFolURL, r"\KTaisyou\KakuninQ.png", 0.9, 10)
@@ -2973,6 +3199,11 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
+                    time.sleep(3)
+                    BEF = ImgCheck(CFolURL, r"\KTaisyou\BeforeQ.png", 0.9, 10)
+                    if BEF[0] is True:
+                        pg.press("n")
+                    # ----------------------------------------------------------------------
                     WPC = ImgCheckForList(
                         CFolURL,
                         [
@@ -2988,6 +3219,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.keyDown("alt")
                         pg.press("return")
                         pg.keyUp("alt")
+                    # ----------------------------------------------------------------------
                     # 添付書面印刷サイズ選択が表示されるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -2996,9 +3228,6 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
-                        BEF = ImgCheck(CFolURL, r"\KTaisyou\BeforeQ.png", 0.9, 10)
-                        if BEF[0] is True:
-                            pg.press("n")
                     A4T = ImgCheck(CFolURL, r"\KTaisyou\A4Box.png", 0.99999, 10)
                     if A4T[0] is True:
                         ImgClick(CFolURL, r"\KTaisyou\A4Box.png", 0.99999, 10)
@@ -3647,7 +3876,15 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("y")
             # --------------------------------------------------------------------
             time.sleep(1)
-            ImgClick(CFolURL, r"\Densi\14D_End.png", 0.9, 10)
+            #  確実に閉じる--------------------------------------------
+            DED = ImgCheck(CFolURL, r"\Densi\14D_End.png", 0.9, 10)
+            if DED[0] is True:
+                ImgClick(CFolURL, r"\Densi\14D_End.png", 0.9, 10)
+            else:
+                pg.keyDown("alt")
+                pg.press("x")
+                pg.keyUp("alt")
+            # ---------------------------------------------------------
             time.sleep(1)
             while (
                 ImgCheckForList(
@@ -3687,49 +3924,6 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
             return False, "電子申告起動失敗", "", ""
     except:
         return False, "exceptエラー", "", ""
-
-
-# ------------------------------------------------------------------------------------------------------------------
-def MainStarter(FolURL, TFolURL, CFolURL, NameDF, ExSheet, ExrcHeader, isnItem, driver):
-    try:
-        print(ExSheet[3 : len(ExSheet)])
-        li = np.array(ExSheet[3 : len(ExSheet)])
-        ExDf = pd.DataFrame(li, columns=ExrcHeader)
-        print(ExDf)
-        Exrc = np.array(ExDf).shape[1]  # 行数
-        for Ex in range(Exrc):
-            ExRow = ExDf.iloc[Ex]
-            if ExRow["関与先番号"] == ExRow["関与先番号"]:  # nan判定
-                # nanでない場合
-                OpenSystem(
-                    FolURL,
-                    TFolURL,
-                    CFolURL,
-                    NameDF,
-                    ExRow,
-                    Ex,
-                    ExrcHeader,
-                    isnItem,
-                    driver,
-                )
-            else:
-                # nanの場合
-                print("nan")
-    except:
-        return False, ""
-
-
-# ------------------------------------------------------------------------------------------------------------------
-def NameSearch(NameDF, Rno):
-    try:
-        Nr = len(NameDF)
-        for Nrx in range(Nr):
-            NameDFRow = NameDF.iloc[Nrx]
-            print(NameDFRow["コード"])
-            if Rno == NameDFRow["コード"]:
-                return NameDFRow["顧問先名称"]
-    except:
-        return "NameErr"
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -3797,12 +3991,58 @@ def OpenSystem(
                                 Rn,
                             )
             Eh += 1
+        return True
     except:
         print("TEST")
+        return False
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL, TFolURL, CFolURL, Exlsx):
+def MainStarter(
+    FolURL, TFolURL, CFolURL, SerchURL, NameDF, ExSheet, ExrcHeader, isnItem, driver
+):
+    try:
+        print(ExSheet[3 : len(ExSheet)])
+        li = np.array(ExSheet[3 : len(ExSheet)])
+        ExDf = pd.DataFrame(li, columns=ExrcHeader)
+        print(ExDf)
+        Exrc = np.array(ExDf).shape[1]  # 行数
+        for Ex in range(Exrc):
+            ExRow = ExDf.iloc[Ex]
+            Title = str(ExRow["関与先番号"]) + "_" + str(ExRow["関与先名"]) + "_RPA決算書"
+            EXNo = int(ExRow["関与先番号"])
+            EXdir = str(ExRow["年度_(保管フォルダ名)"])
+            if ExRow["関与先番号"] == ExRow["関与先番号"]:  # nan判定
+                # nanでない場合
+                OSM = OpenSystem(
+                    FolURL,
+                    TFolURL,
+                    CFolURL,
+                    NameDF,
+                    ExRow,
+                    Ex,
+                    ExrcHeader,
+                    isnItem,
+                    driver,
+                )
+                if OSM is True:
+                    PDFM.PDFMarge(
+                        CFolURL + r"\All\ListNumber.csv",
+                        CFolURL + r"\PDF",
+                        SerchURL,
+                        Title,
+                        EXNo,
+                        EXdir,
+                    )
+            else:
+                # nanの場合
+                print("nan")
+    except:
+        return False, ""
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx):
     """
     概要: プリントメイン処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -3879,6 +4119,7 @@ def MainFlow(FolURL, TFolURL, CFolURL, Exlsx):
                     FolURL,
                     TFolURL,
                     CFolURL,
+                    SerchURL,
                     NameDF,
                     ExSheet,
                     ExrcHeader,
@@ -3893,6 +4134,7 @@ def MainFlow(FolURL, TFolURL, CFolURL, Exlsx):
 FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
 CFolURL = FolURL + r"\RPAPhoto\MJS_SystemPrintOut"  # 先
+SerchURL = r"\\Sv05121a\e\電子ファイル\(3)法人決算"  # 先
 XLSURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\ミロク更新項目.xlsx"
 LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
 # --------------------------------------------------------------------------------
@@ -3900,7 +4142,7 @@ open(LURL, "w").close()
 Exlsx = EFA.XlsmRead(XLSURL)
 if Exlsx[0] is True:
     try:
-        MainFlow(FolURL, TFolURL, CFolURL, Exlsx[1])
+        MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx[1])
     except:
         traceback.print_exc()
 else:
