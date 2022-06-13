@@ -47,7 +47,7 @@ def ImgCheck(FolURL2, FileName, conf, LoopVal):  # 画像があればTrueを返�
         except:
             Flag = 0
     if Flag == 0:
-        return False
+        return False, "", ""
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -131,7 +131,8 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
             ImgClick(FolURL2, ListCheck[1], conf, LoopVal)  # 電子申告・申請タブを押す
             pg.write("051210561111111", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
         else:
-            ImgClick(FolURL2, "LoginBox.png", 0.9, 10)  # 電子申告・申請タブを押す
+            LB = ImgCheckForList(FolURL2, ["LoginBox.png", "LoginBox2.png"], 0.9, 10)
+            ImgClick(FolURL2, LB[1], 0.9, 10)  # 電子申告・申請タブを押す
             pg.write("561", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
             ImgClick(FolURL2, ListCheck[1], conf, LoopVal)  # 電子申告・申請タブを押す
             pg.write("051210561111111", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
