@@ -115,8 +115,12 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
     # ----------------------------------------------------------------------------------------------------------------------
     # MJSを起動-------------------------------------------------------------------------------------------------------------
     logger.debug("MJS起動: debug level log")
-    MJSURL = r"C:\Program Files (x86)\MJS\MJSNXSVA\MJSDesktopNX.exe"
-    ExeOpen(MJSURL)
+    try:
+        MJSURL = r"C:\Program Files (x86)\MJS\MJSNXSVA\MJSDesktopNX.exe"
+        ExeOpen(MJSURL)
+    except:
+        MJSURL = r"C:\Program Files (x86)\MJS\MJSNXSVB\MJSDesktopNX.exe"
+        ExeOpen(MJSURL)
     FolURL2 = FolURL2 + "/" + ImgFolName
     # time.sleep(10)
     # 画像が出現するまで待機-------------------------------------------------------------------------------------------
