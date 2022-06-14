@@ -669,11 +669,13 @@ def HoujinzeiUpdateSinkokuItiran(
             ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
             pg.press("return")
             pg.press("delete")
+            pg.press("backspace")
             pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
             pg.hotkey("ctrl", "v")
             pg.press("return")
             time.sleep(1)
             ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+            time.sleep(2)
             # 印刷中が表示されるまで待機---------------------------------
             while (
                 pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
@@ -858,6 +860,7 @@ def HoujinzeiUpdateSinkokuItiran(
                     # pg.keyDown("alt")
                     # pg.press("c")
                     # pg.keyup("alt")
+                    # ImgClick(TFolURL, r"\HoujinFlag.png", 0.9, 10)
                     ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
                     # 印刷ダイアログ待機----------------------------------------------------
                     while (
@@ -952,6 +955,7 @@ def HoujinzeiUpdateSinkokuItiran(
                             # pg.keyDown("alt")
                             # pg.press("c")
                             # pg.keyup("alt")
+                            # ImgClick(TFolURL, r"\HoujinFlag.png", 0.9, 10)
                             ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
                             # 印刷ダイアログ待機----------------------------------------------------
                             while (
@@ -1097,6 +1101,7 @@ def HoujinzeiUpdateSinkokuItiran(
                     # pg.keyDown("alt")
                     # pg.press("c")
                     # pg.keyup("alt")
+                    # ImgClick(TFolURL, r"\HoujinFlag.png", 0.9, 10)
                     ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
                     # 印刷ダイアログ待機----------------------------------------------------
                     while (
@@ -1261,11 +1266,13 @@ def HoujinzeiUpdateZeimuDairi(
         ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
         pg.press("return")
         pg.press("delete")
+        pg.press("backspace")
         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
         pg.hotkey("ctrl", "v")
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        time.sleep(2)
         # 印刷中が表示されなくなるまで待機---------------------------------
         while (
             pg.locateOnScreen(
@@ -1396,11 +1403,13 @@ def HoujinzeiUpdateSyomen(
         ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
         pg.press("return")
         pg.press("delete")
+        pg.press("backspace")
         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
         pg.hotkey("ctrl", "v")
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        time.sleep(2)
         # 操作ガイドが表示されなくなるまで待機---------------------------------
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\HPCFlag.png", confidence=0.9)
@@ -1587,11 +1596,13 @@ def HoujinzeiUpdateBeppyou(
         ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
         pg.press("return")
         pg.press("delete")
+        pg.press("backspace")
         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
         pg.hotkey("ctrl", "v")
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
@@ -1774,11 +1785,13 @@ def HoujinzeiUpdateGaikyou(
         ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
         pg.press("return")
         pg.press("delete")
+        pg.press("backspace")
         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
         pg.hotkey("ctrl", "v")
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\HPCFlag.png", confidence=0.9)
@@ -2273,11 +2286,13 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
                     pg.press("return")
                     pg.press("delete")
+                    pg.press("backspace")
                     pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
                     time.sleep(1)
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    time.sleep(2)
                     #  印刷設定が表示されなくなるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -2411,11 +2426,13 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
                         pg.press("return")
                         pg.press("delete")
+                        pg.press("backspace")
                         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
                         pg.hotkey("ctrl", "v")
                         pg.press("return")
                         time.sleep(1)
                         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                        time.sleep(2)
                         #  印刷設定が表示されなくなるまで待機---------------------------------
                         while (
                             pg.locateOnScreen(
@@ -2576,11 +2593,13 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
                         pg.press("return")
                         pg.press("delete")
+                        pg.press("backspace")
                         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
                         pg.hotkey("ctrl", "v")
                         pg.press("return")
                         time.sleep(1)
                         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                        time.sleep(2)
                         #  印刷設定が表示されなくなるまで待機---------------------------------
                         while (
                             pg.locateOnScreen(
@@ -2812,11 +2831,13 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                 ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
                 pg.press("return")
                 pg.press("delete")
+                pg.press("backspace")
                 pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
                 pg.hotkey("ctrl", "v")
                 pg.press("return")
                 time.sleep(1)
                 ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                time.sleep(2)
                 #  印刷設定が表示されなくなるまで待機---------------------------------
                 while (
                     pg.locateOnScreen(
@@ -3412,11 +3433,13 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
                     pg.press("return")
                     pg.press("delete")
+                    pg.press("backspace")
                     pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
                     time.sleep(1)
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    time.sleep(2)
                     # 印刷中が表示されるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -3619,11 +3642,13 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
                     pg.press("return")
                     pg.press("delete")
+                    pg.press("backspace")
                     pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
                     time.sleep(1)
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    time.sleep(2)
                     # 印刷中が表示されるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -3740,11 +3765,13 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
                     pg.press("return")
                     pg.press("delete")
+                    pg.press("backspace")
                     pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
                     time.sleep(1)
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    time.sleep(2)
                     # 印刷ボタンが表示されるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -4219,11 +4246,13 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
             ImgClick(CFolURL, r"\Houjinzei\PDFBar.png", 0.9, 10)
             pg.press("return")
             pg.press("delete")
+            pg.press("backspace")
             pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
             pg.hotkey("ctrl", "v")
             pg.press("return")
             time.sleep(1)
             ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+            time.sleep(2)
             #  印刷設定が表示されなくなるまで待機---------------------------------
             while (
                 pg.locateOnScreen(CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9)
