@@ -675,6 +675,7 @@ def HoujinzeiUpdateSinkokuItiran(
             pg.press("return")
             time.sleep(1)
             ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+            time.sleep(2)
             # 印刷中が表示されるまで待機---------------------------------
             while (
                 pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
@@ -1271,6 +1272,7 @@ def HoujinzeiUpdateZeimuDairi(
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        time.sleep(2)
         # 印刷中が表示されなくなるまで待機---------------------------------
         while (
             pg.locateOnScreen(
@@ -1407,6 +1409,7 @@ def HoujinzeiUpdateSyomen(
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        time.sleep(2)
         # 操作ガイドが表示されなくなるまで待機---------------------------------
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\HPCFlag.png", confidence=0.9)
@@ -1599,6 +1602,7 @@ def HoujinzeiUpdateBeppyou(
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
@@ -1787,6 +1791,7 @@ def HoujinzeiUpdateGaikyou(
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+        time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\HPCFlag.png", confidence=0.9)
@@ -2287,6 +2292,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("return")
                     time.sleep(1)
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    time.sleep(2)
                     #  印刷設定が表示されなくなるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -2426,6 +2432,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         time.sleep(1)
                         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                        time.sleep(2)
                         #  印刷設定が表示されなくなるまで待機---------------------------------
                         while (
                             pg.locateOnScreen(
@@ -2592,6 +2599,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         time.sleep(1)
                         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                        time.sleep(2)
                         #  印刷設定が表示されなくなるまで待機---------------------------------
                         while (
                             pg.locateOnScreen(
@@ -2829,6 +2837,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                 pg.press("return")
                 time.sleep(1)
                 ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                time.sleep(2)
                 #  印刷設定が表示されなくなるまで待機---------------------------------
                 while (
                     pg.locateOnScreen(
@@ -3430,6 +3439,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("return")
                     time.sleep(1)
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    time.sleep(2)
                     # 印刷中が表示されるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -3638,6 +3648,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("return")
                     time.sleep(1)
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    time.sleep(2)
                     # 印刷中が表示されるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -3760,6 +3771,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("return")
                     time.sleep(1)
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+                    time.sleep(2)
                     # 印刷ボタンが表示されるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -4240,6 +4252,7 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
             pg.press("return")
             time.sleep(1)
             ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
+            time.sleep(2)
             #  印刷設定が表示されなくなるまで待機---------------------------------
             while (
                 pg.locateOnScreen(CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9)
