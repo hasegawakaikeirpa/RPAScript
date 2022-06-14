@@ -859,6 +859,7 @@ def HoujinzeiUpdateSinkokuItiran(
                     # pg.keyDown("alt")
                     # pg.press("c")
                     # pg.keyup("alt")
+                    ImgClick(TFolURL, r"\HoujinFlag.png", 0.9, 10)
                     ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
                     # 印刷ダイアログ待機----------------------------------------------------
                     while (
@@ -953,6 +954,7 @@ def HoujinzeiUpdateSinkokuItiran(
                             # pg.keyDown("alt")
                             # pg.press("c")
                             # pg.keyup("alt")
+                            ImgClick(TFolURL, r"\HoujinFlag.png", 0.9, 10)
                             ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
                             # 印刷ダイアログ待機----------------------------------------------------
                             while (
@@ -1098,6 +1100,7 @@ def HoujinzeiUpdateSinkokuItiran(
                     # pg.keyDown("alt")
                     # pg.press("c")
                     # pg.keyup("alt")
+                    ImgClick(TFolURL, r"\HoujinFlag.png", 0.9, 10)
                     ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
                     # 印刷ダイアログ待機----------------------------------------------------
                     while (
