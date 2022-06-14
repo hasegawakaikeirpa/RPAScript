@@ -677,11 +677,15 @@ def HoujinzeiUpdateSinkokuItiran(
             ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
             time.sleep(2)
             # 印刷中が表示されるまで待機---------------------------------
+            IC = 0
             while (
                 pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
                 is None
             ):
                 time.sleep(1)
+                IC += 1
+                if IC == 5:
+                    break
                 FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
                 if FO[0] is True:
                     pg.press("y")
@@ -1604,11 +1608,15 @@ def HoujinzeiUpdateBeppyou(
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
         time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
+        IC = 0
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9)
             is None
         ):
             time.sleep(1)
+            IC += 1
+            if IC == 5:
+                break
             FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
             if FO[0] is True:
                 pg.press("y")
@@ -1793,11 +1801,15 @@ def HoujinzeiUpdateGaikyou(
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
         time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
+        IC = 0
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\HPCFlag.png", confidence=0.9)
             is not None
         ):
             time.sleep(1)
+            IC += 1
+            if IC == 5:
+                break
             FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
             if FO[0] is True:
                 pg.press("y")
@@ -2852,6 +2864,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                 # --------------------------------------------------------------------
                 time.sleep(1)
                 #  印刷中が表示されるまで待機-------------------------------------------
+                IC = 0
                 while (
                     pg.locateOnScreen(
                         CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9
@@ -2859,6 +2872,9 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     is None
                 ):
                     time.sleep(1)
+                    IC += 1
+                    if IC == 5:
+                        break
                 #  印刷中が表示されなくなるまで待機-------------------------------------
                 while (
                     pg.locateOnScreen(
@@ -3441,6 +3457,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
                     time.sleep(2)
                     # 印刷中が表示されるまで待機---------------------------------
+                    IC = 0
                     while (
                         pg.locateOnScreen(
                             CFolURL + r"\KTaisyou\NowSyouhiPrint.png", confidence=0.9
@@ -3448,6 +3465,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
+                        IC += 1
+                        if IC == 5:
+                            break
                         FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
                         if FO[0] is True:
                             pg.press("y")
@@ -3650,6 +3670,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
                     time.sleep(2)
                     # 印刷中が表示されるまで待機---------------------------------
+                    IC = 0
                     while (
                         pg.locateOnScreen(
                             CFolURL + r"\KTaisyou\TenpuPBar.png", confidence=0.9
@@ -3657,6 +3678,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is not None
                     ):
                         time.sleep(1)
+                        IC += 1
+                        if IC == 5:
+                            break
                         FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
                         if FO[0] is True:
                             pg.press("y")
