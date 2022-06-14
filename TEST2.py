@@ -266,7 +266,89 @@ def delete_page(file_name, page_nums, PW):
             return pdf_writer
 
 
-# ------------------------------------------------------------------------------------------------------------------
+def BeppyouPDFSplit(
+    path_pdf,
+    PDFDir,
+):
+    output = PyPDF2.PdfFileWriter()
+    output2 = PyPDF2.PdfFileWriter()
+    output3 = PyPDF2.PdfFileWriter()
+    output4 = PyPDF2.PdfFileWriter()
+    output5 = PyPDF2.PdfFileWriter()
+    fp = open(path_pdf, "rb")  # PDFファイルを読み込み
+    parser = PDFParser(fp)  # PDFperserを作成。
+    document = PDFDocument(parser)  # PDFperserを格納。
+    num_pages = 0  # ページ数格納変数を初期化
+    num_pagesList = []
+    for page in PDFPage.create_pages(document):  # ページオブジェ分ループ
+        num_pages += 1  # ページ数カウント
+        num_pagesList.append(num_pages - 1)
+    print(num_pages)  # ページ数確認
+    # ------------------------------------------------------------------------------------
+    try:
+        # PDFのページ数分ループ---------------------------------------------------------------------------
+        for y in range(num_pages):
+            infile = PyPDF2.PdfFileReader(path_pdf, "rb")
+            PL = []
+            PL.append(y)
+            Sbtext = extract_text(
+                path_pdf, page_numbers=PL, maxpages=1, codec="utf-8"
+            )  # テキストのみ取得できる
+            Sbtext = (
+                Sbtext.replace("\n", "")
+                .replace("\u3000", "")
+                .replace("\x0c", "")
+                .replace(" ", "")
+            )
+            if (
+                "第六号様式（提出用）" in Sbtext
+                or "第六号様式（入力用）" in Sbtext
+                or "第六号様式別表九（提出用）" in Sbtext
+                or "第六号様式別表九（入力用）" in Sbtext
+                or "第二十号様式（提出用）" in Sbtext
+                or "第二十号様式（入力用）" in Sbtext
+            ):
+                print("不要")
+            elif "第六号様式（控用）" in Sbtext:
+                print(Sbtext)
+                p = infile.getPage(y)
+                output2.addPage(p)
+            elif "第六号様式別表九（控用）" in Sbtext:
+                print(Sbtext)
+                p = infile.getPage(y)
+                output3.addPage(p)
+            elif "第二十号様式（控用）" in Sbtext:
+                print(Sbtext)
+                p = infile.getPage(y)
+                output4.addPage(p)
+            elif "第二十二号の二様式" in Sbtext:
+                print(Sbtext)
+                p = infile.getPage(y)
+                output5.addPage(p)
+            elif "個別注記表" in Sbtext:
+                print(Sbtext)
+                p = infile.getPage(y)
+                output5.addPage(p)
+            else:
+                print(Sbtext)
+                p = infile.getPage(y)
+                output.addPage(p)
+        splitext = os.path.splitext(path_pdf)
+        with open(path_pdf, "wb") as output_file:
+            output.write(output_file)
+        with open(PDFDir + r"\第6号様式（県）" + splitext[1], "wb") as output_file:
+            output2.write(output_file)
+        with open(PDFDir + r"\第6号様式別表9（県）" + splitext[1], "wb") as output_file:
+            output3.write(output_file)
+        with open(PDFDir + r"\第20号様式（市）" + splitext[1], "wb") as output_file:
+            output4.write(output_file)
+        with open(PDFDir + r"\第22号の2様式" + splitext[1], "wb") as output_file:
+            output5.write(output_file)
+        return True
+    except:
+        return False
+
+
 # RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
@@ -274,79 +356,12 @@ CFolURL = FolURL + r"\RPAPhoto\MJS_SystemPrintOut"  # 先
 SerchURL = r"\\Sv05121a\e\電子ファイル\(3)法人決算"  # 先
 XLSURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\ミロク更新項目.xlsx"
 LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
-path_pdf = r"D:\PythonScript\RPAScript\RPAPhoto\MJS_SystemPrintOut\PDF\TEST.pdf"
+Title = "490_㈲ムカイハタタイヤ_RPA決算書"
+EXNo = 490
+EXdir = "R3"
 # --------------------------------------------------------------------------------
-output = PyPDF2.PdfFileWriter()
-output2 = PyPDF2.PdfFileWriter()
-output3 = PyPDF2.PdfFileWriter()
-output4 = PyPDF2.PdfFileWriter()
-output5 = PyPDF2.PdfFileWriter()
-fp = open(path_pdf, "rb")  # PDFファイルを読み込み
-parser = PDFParser(fp)  # PDFperserを作成。
-document = PDFDocument(parser)  # PDFperserを格納。
-num_pages = 0  # ページ数格納変数を初期化
-num_pagesList = []
-for page in PDFPage.create_pages(document):  # ページオブジェ分ループ
-    num_pages += 1  # ページ数カウント
-    num_pagesList.append(num_pages - 1)
-print(num_pages)  # ページ数確認
-# ------------------------------------------------------------------------------------
-xy = 0  # 次ページ取得対象のPDFファイルだった場合のページカウント加算変数の初期化
-try:
-    # PDFのページ数分ループ---------------------------------------------------------------------------
-    for y in range(num_pages):
-        infile = PyPDF2.PdfFileReader(path_pdf, "rb")
-        PL = []
-        PageVol = str(y + 1)
-        PL.append(y)
-        Sbtext = extract_text(
-            path_pdf, page_numbers=PL, maxpages=1, codec="utf-8"
-        )  # テキストのみ取得できる
-        Sbtext = (
-            Sbtext.replace("\n", "")
-            .replace("\u3000", "")
-            .replace("\x0c", "")
-            .replace(" ", "")
-        )
-        if (
-            "第六号様式（提出用）" in Sbtext
-            or "第六号様式（入力用）" in Sbtext
-            or "第六号様式別表九（提出用）" in Sbtext
-            or "第六号様式別表九（入力用）" in Sbtext
-            or "第二十号様式（提出用）" in Sbtext
-            or "第二十号様式（入力用）" in Sbtext
-        ):
-            print("不要")
-        elif "第六号様式（控用）" in Sbtext:
-            print(Sbtext)
-            p = infile.getPage(y)
-            output2.addPage(p)
-        elif "第六号様式別表九（控用）" in Sbtext:
-            print(Sbtext)
-            p = infile.getPage(y)
-            output3.addPage(p)
-        elif "第二十号様式（控用）" in Sbtext:
-            print(Sbtext)
-            p = infile.getPage(y)
-            output4.addPage(p)
-        elif "第二十二号の二様式" in Sbtext:
-            print(Sbtext)
-            p = infile.getPage(y)
-            output5.addPage(p)
-        else:
-            print(Sbtext)
-            p = infile.getPage(y)
-            output.addPage(p)
-    splitext = os.path.splitext(path_pdf)
-    with open(splitext[0] + "_deleted" + splitext[1], "wb") as output_file:
-        output.write(output_file)
-    with open(splitext[0] + "第六号様式（控用）_deleted" + splitext[1], "wb") as output_file:
-        output2.write(output_file)
-    with open(splitext[0] + "第六号様式別表九（控用）_deleted" + splitext[1], "wb") as output_file:
-        output3.write(output_file)
-    with open(splitext[0] + "第二十号様式（控用）_deleted" + splitext[1], "wb") as output_file:
-        output4.write(output_file)
-    with open(splitext[0] + "第二十二号の二様式_deleted" + splitext[1], "wb") as output_file:
-        output5.write(output_file)
-except:
-    print("")
+
+BeppyouPDFSplit(
+    r"D:\TEST.pdf",
+    r"D:",
+)
