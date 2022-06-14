@@ -628,6 +628,13 @@ def HoujinzeiUpdateSinkokuItiran(
                 SRCC = ImgCheck(CFolURL, r"\Houjinzei\S_Rendou2.png", 0.9, 10)
                 if SRCC[0] is True:
                     pg.press("n")
+                SRCCC = ImgCheck(CFolURL, r"\Houjinzei\S_Rendou3.png", 0.9, 10)
+                if SRCCC[0] is True:
+                    pg.press("n")
+                # 新規別表追加選択-------------------------------------------------
+                SB = ImgCheck(CFolURL, r"\Houjinzei\SaiyouBeppyou.png", 0.9, 10)
+                if SB[0] is True:
+                    ImgClick(CFolURL, r"\Houjinzei\SBKousin.png", 0.9, 10)
             # --------------------------------------------------------------------
             ImgClick(CFolURL, r"\Houjinzei\Print.png", 0.9, 10)
             # 一覧表出力項目指定が表示されるまで待機---------------------------------
@@ -770,6 +777,7 @@ def HoujinzeiUpdateSinkokuItiran(
             PN == "第6号様式（県）"
             or PN == "第6号様式別表9（県）"
             or PN == "第20号様式（市）"
+            or PN == "第22号の2様式"
             or PN == "別表１　緑色"
         ):
             ImgClick(CFolURL, r"\Houjinzei\HoujinzeiSelecter.png", 0.9, 10)
@@ -800,76 +808,191 @@ def HoujinzeiUpdateSinkokuItiran(
                 time.sleep(1)
                 pg.write("2000")
                 pg.press("return")
+            elif PN == "第22号の2様式":
+                ImgClick(CFolURL, r"\Houjinzei\HSCancel.png", 0.9, 10)
+                time.sleep(1)
+                pg.write("2202")
+                pg.press("return")
             elif PN == "別表１　緑色":
                 pg.press("home")
                 pg.press("return")
-            time.sleep(1)
-            ImgClick(CFolURL, r"\Houjinzei\PreviewIcon.png", 0.9, 10)
-            # プレビュー画面が表示されるまで待機------------------------------------
-            while (
-                pg.locateOnScreen(
-                    CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9
-                )
-                is None
-            ):
+
+            if PN == "第20号様式（市）":
+                # 市町村の数だけループ-------------------------------------------------------------
+                # 画像に名前を付ける
+                SSN = "20ScreenShot.png"
+                SSN2 = "20ScreenShot2.png"
+                Win = "Window.png"
+                while ImgCheck(CFolURL, r"\\All\\" + Win, 0.9, 10)[0] is True:
+                    WC = ImgCheck(CFolURL, r"\\All\\" + Win, 0.9, 10)
+                    pyautogui.click(WC[1], WC[2], button="right")
+                    pg.press("x")
                 time.sleep(1)
-            # --------------------------------------------------------------------
-            time.sleep(3)
-            # ロード完了まで待機----------------------------------------------------
-            while (
-                pg.locateOnScreen(
-                    CFolURL + r"\Houjinzei\PreviewLoad.png", confidence=0.9
-                )
-                is not None
-            ):
-                time.sleep(1)
-            # --------------------------------------------------------------------
-            TPI = ImgCheckForList(
-                CFolURL,
-                [r"\Houjinzei\ThisPIcon.png", r"\Houjinzei\ThisPIcon2.png"],
-                0.9,
-                10,
-            )  # 現在項印刷アイコンを探す
-            if TPI[0] is True:  # 現在項印刷アイコンがあれば
-                # pg.keyDown("alt")
-                # pg.press("c")
-                # pg.keyup("alt")
-                ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
-                # 印刷ダイアログ待機----------------------------------------------------
+                ImgClick(CFolURL, r"\Houjinzei\PreviewIcon.png", 0.9, 10)
+                # プレビュー画面が表示されるまで待機------------------------------------
                 while (
                     pg.locateOnScreen(
-                        CFolURL + r"\Houjinzei\ThisPMenu.png", confidence=0.9
+                        CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9
                     )
                     is None
                 ):
                     time.sleep(1)
                 # --------------------------------------------------------------------
-                pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
-                pg.hotkey("ctrl", "v")
-                pg.press("return")
-                # 印刷完了まで待機----------------------------------------------------
+                time.sleep(3)
+                # ロード完了まで待機----------------------------------------------------
                 while (
                     pg.locateOnScreen(
-                        CFolURL + r"\Houjinzei\ThisPMenu2.png", confidence=0.9
-                    )
-                    is not None
-                ):
-                    time.sleep(1)
-                    TPOQ = ImgCheck(
-                        CFolURL, r"\Houjinzei\ThisPOverQ.png", 0.9, 10
-                    )  # 上書き確認
-                    if TPOQ[0] is True:
-                        pg.press("y")  # yで上書き
-                # -------------------------------------------------------------------
-                # 印刷完了まで待機----------------------------------------------------
-                while (
-                    pg.locateOnScreen(
-                        CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9
+                        CFolURL + r"\Houjinzei\PreviewLoad.png", confidence=0.9
                     )
                     is not None
                 ):
                     time.sleep(1)
                 # --------------------------------------------------------------------
+                TPI = ImgCheckForList(
+                    CFolURL,
+                    [r"\Houjinzei\ThisPIcon.png", r"\Houjinzei\ThisPIcon2.png"],
+                    0.9,
+                    10,
+                )  # 現在項印刷アイコンを探す
+                if TPI[0] is True:  # 現在項印刷アイコンがあれば
+                    # pg.keyDown("alt")
+                    # pg.press("c")
+                    # pg.keyup("alt")
+                    ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
+                    # 印刷ダイアログ待機----------------------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\ThisPMenu.png",
+                            confidence=0.9,
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                    pg.hotkey("ctrl", "v")
+                    pg.press("return")
+                    # 印刷完了まで待機----------------------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\ThisPMenu2.png",
+                            confidence=0.9,
+                        )
+                        is not None
+                    ):
+                        time.sleep(1)
+                        TPOQ = ImgCheck(
+                            CFolURL, r"\Houjinzei\ThisPOverQ.png", 0.9, 10
+                        )  # 上書き確認
+                        if TPOQ[0] is True:
+                            pg.press("y")  # yで上書き
+                    # -------------------------------------------------------------------
+                    # 印刷完了まで待機----------------------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9
+                        )
+                        is not None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                # 市町村の数だけループ-------------------------------------------------------------
+                for CNo in range(1, 100):
+                    ICFL = ImgCheckForList(
+                        CFolURL,
+                        [r"\\All\\TihouKey.png", r"\\All\\TihouKey.png"],
+                        0.9,
+                        10,
+                    )
+                    if ICFL[0] is True:
+                        # 一回目のスクショ----------------------------------------------
+                        s = pyautogui.screenshot(region=(820, 250, 450, 40))  # スクショ
+                        s.save(CFolURL + r"\\All\\" + SSN)  # 保存
+                        # -------------------------------------------------------------
+                        ImgClick(CFolURL, ICFL[1], 0.9, 10)
+                        CNo += 1
+                        pg.write(str(CNo))
+                        pg.press("return")
+                        # 二回目以降のスクショ------------------------------------------
+                        s = pyautogui.screenshot(region=(820, 250, 450, 40))  # スクショ
+                        s.save(CFolURL + r"\\All\\" + SSN2)  # 保存
+                        # -------------------------------------------------------------
+                    WC = ImgCheck(CFolURL, r"\\All\\" + SSN, 0.9, 10)
+                    if WC[0] is True:
+                        break
+                    else:
+                        time.sleep(1)
+                        ImgClick(CFolURL, r"\Houjinzei\PreviewIcon.png", 0.9, 10)
+                        # プレビュー画面が表示されるまで待機------------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
+                        time.sleep(3)
+                        # ロード完了まで待機----------------------------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                CFolURL + r"\Houjinzei\PreviewLoad.png", confidence=0.9
+                            )
+                            is not None
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
+                        TPI = ImgCheckForList(
+                            CFolURL,
+                            [r"\Houjinzei\ThisPIcon.png", r"\Houjinzei\ThisPIcon2.png"],
+                            0.9,
+                            10,
+                        )  # 現在項印刷アイコンを探す
+                        if TPI[0] is True:  # 現在項印刷アイコンがあれば
+                            # pg.keyDown("alt")
+                            # pg.press("c")
+                            # pg.keyup("alt")
+                            ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
+                            # 印刷ダイアログ待機----------------------------------------------------
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\Houjinzei\ThisPMenu.png",
+                                    confidence=0.9,
+                                )
+                                is None
+                            ):
+                                time.sleep(1)
+                            # --------------------------------------------------------------------
+                            Fname = Fname.replace(".pdf", "") + str(CNo) + ".pdf"
+                            pyperclip.copy(
+                                Fname.replace("\\\\", "\\").replace("/", "\\")
+                            )
+                            pg.hotkey("ctrl", "v")
+                            pg.press("return")
+                            # 印刷完了まで待機----------------------------------------------------
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\Houjinzei\ThisPMenu2.png",
+                                    confidence=0.9,
+                                )
+                                is not None
+                            ):
+                                time.sleep(1)
+                                TPOQ = ImgCheck(
+                                    CFolURL, r"\Houjinzei\ThisPOverQ.png", 0.9, 10
+                                )  # 上書き確認
+                                if TPOQ[0] is True:
+                                    pg.press("y")  # yで上書き
+                            # -------------------------------------------------------------------
+                            # 印刷完了まで待機----------------------------------------------------
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9
+                                )
+                                is not None
+                            ):
+                                time.sleep(1)
+                            # --------------------------------------------------------------------
                 # 確実に閉じる---------------------------------------------------------
                 HME = ImgCheck(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
                 if HME[0] is True:
@@ -911,7 +1034,8 @@ def HoujinzeiUpdateSinkokuItiran(
                         # 地方税一覧入力が表示されるまで待機---------------------------------
                         while (
                             pg.locateOnScreen(
-                                CFolURL + r"\Houjinzei\SinkokuEndQ4.png", confidence=0.9
+                                CFolURL + r"\Houjinzei\SinkokuEndQ4.png",
+                                confidence=0.9,
                             )
                             is None
                         ):
@@ -940,6 +1064,150 @@ def HoujinzeiUpdateSinkokuItiran(
                     ImgClick(TFolURL, HLI[1], 0.9, 10)
                 # --------------------------------------------------------------------
                 return True, ThisNo, ThisYear, ThisMonth
+                # --------------------------------------------------------------------------------
+            else:
+                time.sleep(1)
+                ImgClick(CFolURL, r"\Houjinzei\PreviewIcon.png", 0.9, 10)
+                # プレビュー画面が表示されるまで待機------------------------------------
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\HoujinOpen.png", confidence=0.9
+                    )
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                time.sleep(3)
+                # ロード完了まで待機----------------------------------------------------
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\PreviewLoad.png", confidence=0.9
+                    )
+                    is not None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
+                TPI = ImgCheckForList(
+                    CFolURL,
+                    [r"\Houjinzei\ThisPIcon.png", r"\Houjinzei\ThisPIcon2.png"],
+                    0.9,
+                    10,
+                )  # 現在項印刷アイコンを探す
+                if TPI[0] is True:  # 現在項印刷アイコンがあれば
+                    # pg.keyDown("alt")
+                    # pg.press("c")
+                    # pg.keyup("alt")
+                    ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
+                    # 印刷ダイアログ待機----------------------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\ThisPMenu.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                    pg.hotkey("ctrl", "v")
+                    pg.press("return")
+                    # 印刷完了まで待機----------------------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\ThisPMenu2.png", confidence=0.9
+                        )
+                        is not None
+                    ):
+                        time.sleep(1)
+                        TPOQ = ImgCheck(
+                            CFolURL, r"\Houjinzei\ThisPOverQ.png", 0.9, 10
+                        )  # 上書き確認
+                        if TPOQ[0] is True:
+                            pg.press("y")  # yで上書き
+                    # -------------------------------------------------------------------
+                    # 印刷完了まで待機----------------------------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\NowPrint.png", confidence=0.9
+                        )
+                        is not None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    # 確実に閉じる---------------------------------------------------------
+                    HME = ImgCheck(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+                    if HME[0] is True:
+                        ImgClick(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
+                    else:
+                        pg.keyDown("alt")
+                        pg.press("x")
+                        pg.keyUp("alt")
+                    # --------------------------------------------------------------------
+                    # 終了確認が表示されるまで待機---------------------------------
+                    while (
+                        pg.locateOnScreen(
+                            CFolURL + r"\Houjinzei\SinkokuEndQ.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    pg.press("y")
+                    while (
+                        ImgCheckForList(
+                            CFolURL,
+                            [
+                                r"\Houjinzei\01SinkokuNyuuryoku.png",
+                                r"\Houjinzei\01SinkokuNyuuryoku2.png",
+                            ],
+                            0.9,
+                            10,
+                        )[0]
+                        is False
+                    ):
+                        time.sleep(1)
+                        SEQ = ImgCheck(CFolURL, r"\Houjinzei\SinkokuEndQ2.png", 0.9, 10)
+                        if SEQ[0] is True:
+                            ImgClick(
+                                CFolURL, r"\Houjinzei\SinkokuEndQ2Btn.png", 0.9, 10
+                            )
+                        SEQQ = ImgCheck(
+                            CFolURL, r"\Houjinzei\SinkokuEndQ3.png", 0.9, 10
+                        )
+                        if SEQQ[0] is True:
+                            pg.press("return")
+                            # 地方税一覧入力が表示されるまで待機---------------------------------
+                            while (
+                                pg.locateOnScreen(
+                                    CFolURL + r"\Houjinzei\SinkokuEndQ4.png",
+                                    confidence=0.9,
+                                )
+                                is None
+                            ):
+                                time.sleep(1)
+                            ImgClick(CFolURL, r"\Houjinzei\SinkokuEndQ4.png", 0.9, 10)
+                            # --------------------------------------------------------------------
+                    # 閉じる処理--------------------------
+                    pg.keyDown("alt")
+                    pg.press("f4")
+                    pg.keyUp("alt")
+                    # -----------------------------------
+                    # 法人税フラグが表示されるまで待機-------------------------------------
+                    while (
+                        pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9)
+                        is None
+                    ):
+                        time.sleep(1)
+                    # --------------------------------------------------------------------
+                    # 初期画面で開封された法人税項目を閉じる----------------------------------
+                    HoujinList = [
+                        r"\FastMenuHoujinzei.png",
+                        r"\FastMenuHoujinzei2.png",
+                    ]
+                    HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+                    if HLI[0] is True:
+                        ImgClick(TFolURL, HLI[1], 0.9, 10)
+                    # --------------------------------------------------------------------
+                    return True, ThisNo, ThisYear, ThisMonth
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -964,6 +1232,10 @@ def HoujinzeiUpdateZeimuDairi(
             is None
         ):
             time.sleep(1)
+            # 新規別表追加選択-------------------------------------------------
+            SB = ImgCheck(CFolURL, r"\Houjinzei\SaiyouBeppyou.png", 0.9, 10)
+            if SB[0] is True:
+                ImgClick(CFolURL, r"\Houjinzei\SBKousin.png", 0.9, 10)
         # --------------------------------------------------------------------
         ImgClick(CFolURL, r"\Houjinzei\ZeimuPrint.png", 0.9, 10)
         time.sleep(1)
@@ -1090,7 +1362,12 @@ def HoujinzeiUpdateSyomen(
             is None
         ):
             time.sleep(1)
+            # 新規別表追加選択-------------------------------------------------
+            SB = ImgCheck(CFolURL, r"\Houjinzei\SaiyouBeppyou.png", 0.9, 10)
+            if SB[0] is True:
+                ImgClick(CFolURL, r"\Houjinzei\SBKousin.png", 0.9, 10)
         # --------------------------------------------------------------------
+        time.sleep(3)
         AYR = ImgCheck(CFolURL, r"\Houjinzei\AYear.png", 0.9, 10)
         if AYR[0] is True:
             pg.press("n")
@@ -1216,6 +1493,10 @@ def HoujinzeiUpdateBeppyou(
             is None
         ):
             time.sleep(1)
+            # 新規別表追加選択-------------------------------------------------
+            SB = ImgCheck(CFolURL, r"\Houjinzei\SaiyouBeppyou.png", 0.9, 10)
+            if SB[0] is True:
+                ImgClick(CFolURL, r"\Houjinzei\SBKousin.png", 0.9, 10)
         # --------------------------------------------------------------------
         ImgClick(CFolURL, r"\Houjinzei\DownPrint.png", 0.9, 10)
         time.sleep(1)
@@ -1239,6 +1520,50 @@ def HoujinzeiUpdateBeppyou(
         if ImgCheck(CFolURL, r"\Houjinzei\Beppyou.png", 0.99999, 10)[0] is True:
             ImgClick(CFolURL, r"\Houjinzei\Beppyou.png", 0.99999, 10)
             pg.press("space")
+        # --------------------------------------------------------------------
+        # while (
+        #     ImgCheckForList(
+        #         CFolURL,
+        #         [
+        #             r"\Houjinzei\6Icon.png",
+        #             r"\Houjinzei\69Icon.png",
+        #             r"\Houjinzei\20Icon.png",
+        #         ],
+        #         0.99999,
+        #         10,
+        #     )[0]
+        #     is False
+        # ):
+        #     pg.press(["pagedown", "pagedown"])
+        # while (
+        #     ImgCheckForList(
+        #         CFolURL,
+        #         [
+        #             r"\Houjinzei\6Icon.png",
+        #             r"\Houjinzei\69Icon.png",
+        #             r"\Houjinzei\20Icon.png",
+        #         ],
+        #         0.99999,
+        #         10,
+        #     )[0]
+        #     is True
+        # ):
+        #     ImgClick(
+        #         CFolURL,
+        #         ImgCheckForList(
+        #             CFolURL,
+        #             [
+        #                 r"\Houjinzei\6Icon.png",
+        #                 r"\Houjinzei\69Icon.png",
+        #                 r"\Houjinzei\20Icon.png",
+        #             ],
+        #             0.99999,
+        #             10,
+        #         )[1],
+        #         0.99999,
+        #         10,
+        #     )
+        #     pg.press("space")
         ImgClick(CFolURL, r"\Houjinzei\SPrint.png", 0.9, 10)
         # 一覧表出力項目指定が表示されるまで待機---------------------------------
         while (
@@ -1363,6 +1688,7 @@ def HoujinzeiUpdateBeppyou(
         if HLI[0] is True:
             ImgClick(TFolURL, HLI[1], 0.9, 10)
         # --------------------------------------------------------------------
+        PDFM.BeppyouPDFSplit(Fname, CFolURL + r"\PDF")
         return True, ThisNo, ThisYear, ThisMonth
 
 
@@ -1388,6 +1714,10 @@ def HoujinzeiUpdateGaikyou(
             is None
         ):
             time.sleep(1)
+            # 新規別表追加選択-------------------------------------------------
+            SB = ImgCheck(CFolURL, r"\Houjinzei\SaiyouBeppyou.png", 0.9, 10)
+            if SB[0] is True:
+                ImgClick(CFolURL, r"\Houjinzei\SBKousin.png", 0.9, 10)
         # --------------------------------------------------------------------
         ImgClick(CFolURL, r"\Houjinzei\GaikyouPrint.png", 0.9, 10)
         # 一覧表出力項目指定が表示されるまで待機---------------------------------
@@ -1678,12 +2008,21 @@ def HoujinzeiUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     HQ = ImgCheck(TFolURL, r"\HoujinOpenQ.png", 0.9, 10)
                     if HQ[0] is True:
                         ImgClick(TFolURL, r"\HoujinOpenQCansel.png", 0.9, 10)
+                    # 顧問先情報更新ダイアログ確認------------------------------------------
+                    KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
+                    if KK[0] is True:
+                        pg.press("a")
+                    # 新規別表追加選択-------------------------------------------------
+                    SB = ImgCheck(CFolURL, r"\Houjinzei\SaiyouBeppyou.png", 0.9, 10)
+                    if SB[0] is True:
+                        ImgClick(CFolURL, r"\Houjinzei\SBKousin.png", 0.9, 10)
                 # 指示内容で処理分け----------------------------------------------------------
                 if (
                     PN == "申告税一覧表"
                     or PN == "第6号様式（県）"
                     or PN == "第6号様式別表9（県）"
                     or PN == "第20号様式（市）"
+                    or PN == "第22号の2様式"
                     or PN == "別表１　緑色"
                 ):
                     PNFlow = HoujinzeiUpdateSinkokuItiran(
@@ -1853,6 +2192,10 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     GSUM = ImgCheck(TFolURL, r"\G_SyoukyakuUpMsg.png", 0.9, 10)
                     if GSUM[0] is True:
                         ImgClick(TFolURL, r"\G_SyoukyakuUpMsgCansel.png", 0.9, 10)
+                    # 顧問先情報更新ダイアログ確認------------------------------------------
+                    KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
+                    if KK[0] is True:
+                        pg.press("a")
                 # --------------------------------------------------------------------
                 ImgClick(
                     CFolURL, r"\GenkaSyoukyaku\G_Insatu.png", 0.9, 10
@@ -2412,6 +2755,10 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     is None
                 ):
                     time.sleep(1)
+                    # 顧問先情報更新ダイアログ確認------------------------------------------
+                    KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
+                    if KK[0] is True:
+                        pg.press("a")
                 # --------------------------------------------------------------------
                 # 内訳書印刷メニューが表示されるまで待機----------------------------------
                 while (
@@ -2629,6 +2976,10 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     is None
                 ):
                     time.sleep(1)
+                    # 顧問先情報更新ダイアログ確認------------------------------------------
+                    KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
+                    if KK[0] is True:
+                        pg.press("a")
                 # --------------------------------------------------------------------
                 # 指示内容で処理分け----------------------------------------------------------
                 if PN == "消費税確定申告書":
@@ -2999,6 +3350,14 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         SIQ = ImgCheck(CFolURL, r"\KTaisyou\SiwakeInputQ.png", 0.9, 10)
                         if SIQ[0] is True:
                             pg.press("y")
+                        # 再計算確認ウィンドウがあるか確認
+                        RCQ = ImgCheck(CFolURL, r"\KTaisyou\ReCalcQ.png", 0.9, 10)
+                        if RCQ[0] is True:
+                            pg.press("n")
+                        # 消費税不明取引確認ウィンドウがあるか確認
+                        KN = ImgCheck(CFolURL, r"\KTaisyou\S_Humei.png", 0.9, 10)
+                        if KN[0] is True:
+                            pg.press("y")
                     # --------------------------------------------------------------------
                     time.sleep(1)
                     SKQ = ImgCheck(CFolURL, r"\KTaisyou\KakuninQ.png", 0.9, 10)
@@ -3018,6 +3377,10 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         RCQ = ImgCheck(CFolURL, r"\KTaisyou\ReCalcQ.png", 0.9, 10)
                         if RCQ[0] is True:
                             pg.press("n")
+                        # 消費税不明取引確認ウィンドウがあるか確認
+                        KN = ImgCheck(CFolURL, r"\KTaisyou\S_Humei.png", 0.9, 10)
+                        if KN[0] is True:
+                            pg.press("y")
                     # --------------------------------------------------------------------
                     pg.press("p")  # 決定
                     time.sleep(1)
@@ -3314,7 +3677,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         time.sleep(1)
                     # ------------------------------------------------------------------
                     return True, ThisNo, ThisYear, ThisMonth
-                elif PN == "決算報告書 除 注記表":
+                elif PN == "決算報告書":
                     CalcErr = "Err"
                     ImgClick(
                         CFolURL, r"\KTaisyou\KessanSinkoku.png", 0.9, 10
@@ -3826,16 +4189,12 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                 # ------------------------------------------------------------------
             # チェックボックスが表示されなくなるまで待機------------------------------------
             while (
-                pg.locateOnScreen(
-                    CFolURL + r"\Densi\14D_CheckBox.png", confidence=0.9
-                )
+                pg.locateOnScreen(CFolURL + r"\Densi\14D_CheckBox.png", confidence=0.9)
                 is not None
             ):
                 time.sleep(1)
                 # ------------------------------------------------------------------
-                ImgClick(
-                    CFolURL, r"\Densi\14D_CheckBox.png", 0.9, 10
-                )  # チェックボックスをクリック
+                ImgClick(CFolURL, r"\Densi\14D_CheckBox.png", 0.9, 10)  # チェックボックスをクリック
             time.sleep(1)
             ImgClick(CFolURL, r"\Densi\14D_Print.png", 0.9, 10)  # 印刷開始ボタンをクリック
             # 印刷設定が表示されるまで待機---------------------------------
@@ -3946,6 +4305,7 @@ def OpenSystem(
         FMaxSystemList = SL[CL.argsort(axis=0)[::-1]]
         FMaxSystemList = list(dict.fromkeys(FMaxSystemList))
         print(FMaxSystemList)
+        ChildFFlag = False
         # ----------------------------------------------------------------------------
         for ExrcHeaderItem in ExrcHeader:
             for FMaxSystemListItem in FMaxSystemList:
@@ -3975,6 +4335,7 @@ def OpenSystem(
                             )
                         # -----------------------------------------------
                         if not Title == "なし" or not Title == "決算フォルダ":
+                            ChildFFlag = True
                             ChildFlow(
                                 FolURL,
                                 TFolURL,
@@ -3991,7 +4352,10 @@ def OpenSystem(
                                 Rn,
                             )
             Eh += 1
-        return True
+        if ChildFFlag is True:
+            return True
+        else:
+            return False
     except:
         print("TEST")
         return False
@@ -4009,8 +4373,9 @@ def MainStarter(
         Exrc = np.array(ExDf).shape[1]  # 行数
         for Ex in range(Exrc):
             ExRow = ExDf.iloc[Ex]
-            Title = str(ExRow["関与先番号"]) + "_" + str(ExRow["関与先名"]) + "_RPA決算書"
             EXNo = int(ExRow["関与先番号"])
+            EXName = NameSearch(NameDF, EXNo)
+            Title = str(EXNo) + "_" + str(EXName) + "_RPA決算書"
             EXdir = str(ExRow["年度_(保管フォルダ名)"])
             if ExRow["関与先番号"] == ExRow["関与先番号"]:  # nan判定
                 # nanでない場合
