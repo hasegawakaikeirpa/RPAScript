@@ -1594,10 +1594,10 @@ def HoujinzeiUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
             pg.write(str(ExRow["関与先番号"]))
             pg.press(["return", "return"])
             # 申告種類が確定申告になっているか確認-----------------------------------
-            KF = ImgCheck(CFolURL, r"\Houjinzei\KakuteiFlag.png", 0.99999, 10)
+            KF = ImgCheck(CFolURL, r"\Houjinzei\KakuteiFlag.png", 0.9, 10)
             if KF[0] is False:
                 while (
-                    ImgCheck(CFolURL, r"\Houjinzei\KakuteiFlag.png", 0.99999, 10)[0]
+                    ImgCheck(CFolURL, r"\Houjinzei\KakuteiFlag.png", 0.9, 10)[0]
                     is False
                 ):
                     ImgClick(CFolURL, r"\Houjinzei\SinkokuArrow.png", 0.9, 10)
@@ -3827,14 +3827,14 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
             # チェックボックスが表示されなくなるまで待機------------------------------------
             while (
                 pg.locateOnScreen(
-                    CFolURL + r"\Densi\14D_CheckBox.png", confidence=0.99999
+                    CFolURL + r"\Densi\14D_CheckBox.png", confidence=0.9
                 )
                 is not None
             ):
                 time.sleep(1)
                 # ------------------------------------------------------------------
                 ImgClick(
-                    CFolURL, r"\Densi\14D_CheckBox.png", 0.99999, 10
+                    CFolURL, r"\Densi\14D_CheckBox.png", 0.9, 10
                 )  # チェックボックスをクリック
             time.sleep(1)
             ImgClick(CFolURL, r"\Densi\14D_Print.png", 0.9, 10)  # 印刷開始ボタンをクリック

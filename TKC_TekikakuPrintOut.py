@@ -251,7 +251,7 @@ def insert_text_output_pdf_PyPDF2(pdf_file_path, insert_text, output_name):
 
     # フォントを登録しCanvasに設定 --- (*2)
     font_size = 10
-    ttf_file = r"D:\PythonScript\RPAScript\IPAexfont00401\ipaexg.ttf"
+    ttf_file = os.getcwd() + r"\IPAexfont00401\ipaexg.ttf"
     pdfmetrics.registerFont(TTFont("IPAexGothic", ttf_file))
     cv.setFont("IPAexGothic", font_size)
 
