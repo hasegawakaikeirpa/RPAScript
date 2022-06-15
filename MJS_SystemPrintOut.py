@@ -685,6 +685,7 @@ def HoujinzeiUpdateSinkokuItiran(
                 time.sleep(1)
                 IC += 1
                 if IC == 5:
+                    pg.press("tab")
                     break
                 FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
                 if FO[0] is True:
@@ -1616,6 +1617,7 @@ def HoujinzeiUpdateBeppyou(
             time.sleep(1)
             IC += 1
             if IC == 5:
+                pg.press("tab")
                 break
             FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
             if FO[0] is True:
@@ -1809,6 +1811,7 @@ def HoujinzeiUpdateGaikyou(
             time.sleep(1)
             IC += 1
             if IC == 5:
+                pg.press("tab")
                 break
             FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
             if FO[0] is True:
@@ -2874,6 +2877,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     time.sleep(1)
                     IC += 1
                     if IC == 5:
+                        pg.press("tab")
                         break
                 #  印刷中が表示されなくなるまで待機-------------------------------------
                 while (
@@ -3467,6 +3471,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         time.sleep(1)
                         IC += 1
                         if IC == 5:
+                            pg.press("tab")
                             break
                         FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
                         if FO[0] is True:
@@ -3680,6 +3685,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         time.sleep(1)
                         IC += 1
                         if IC == 5:
+                            pg.press("tab")
                             break
                         FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
                         if FO[0] is True:
