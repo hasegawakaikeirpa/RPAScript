@@ -203,5 +203,63 @@ def SeirekiDate(Nengou, Nen, Mon, Da):
         print("エラー")
 
 
+def SeirekiSTRDate(d):
+    """
+    令和3年4月1日(引数)→2021/4/1(戻り値)
+    """
+    omikuji = {"明治": 1868, "大正": 1912, "昭和": 1926, "平成": 1989, "令和": 2019}
+    if "明治" in d:
+        Nengou = "明治"
+        dsp = d.split("明治")
+        dsp = dsp[1].split("年")
+        Nen = int(dsp[0])
+        dsp = dsp[1].split("月")
+        Mon = int(dsp[0])
+        dsp = dsp[1].split("日")
+        Da = int(dsp[0])
+    elif "大正" in d:
+        Nengou = "大正"
+        dsp = d.split("大正")
+        dsp = dsp[1].split("年")
+        Nen = int(dsp[0])
+        dsp = dsp[1].split("月")
+        Mon = int(dsp[0])
+        dsp = dsp[1].split("日")
+        Da = int(dsp[0])
+    elif "昭和" in d:
+        Nengou = "昭和"
+        dsp = d.split("昭和")
+        dsp = dsp[1].split("年")
+        Nen = int(dsp[0])
+        dsp = dsp[1].split("月")
+        Mon = int(dsp[0])
+        dsp = dsp[1].split("日")
+        Da = int(dsp[0])
+    elif "平成" in d:
+        Nengou = "平成"
+        dsp = d.split("平成")
+        dsp = dsp[1].split("年")
+        Nen = int(dsp[0])
+        dsp = dsp[1].split("月")
+        Mon = int(dsp[0])
+        dsp = dsp[1].split("日")
+        Da = int(dsp[0])
+    elif "令和" in d:
+        Nengou = "令和"
+        dsp = d.split("令和")
+        dsp = dsp[1].split("年")
+        Nen = int(dsp[0])
+        dsp = dsp[1].split("月")
+        Mon = int(dsp[0])
+        dsp = dsp[1].split("日")
+        Da = int(dsp[0])
+    if Nengou in omikuji:
+        PlusYear = omikuji[Nengou]
+        Dater = str(PlusYear + Nen - 1) + "/" + str(Mon) + "/" + str(Da)
+        return Dater
+    else:
+        print("エラー")
+
+
 if __name__ == "__main__":
     pass
