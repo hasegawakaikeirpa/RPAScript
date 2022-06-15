@@ -4482,7 +4482,7 @@ def MainStarter(
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx):
+def MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx, driver):
     """
     概要: プリントメイン処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -4491,17 +4491,6 @@ def MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx):
     @return : bool
     """
     try:
-        # Log--------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(dt_s + "_MJSシステム更新開始")
-        # -----------------------------------------------
-        BatUrl = FolURL + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
-        driver = MJSOpen.MainFlow(
-            BatUrl, FolURL, "RPAPhoto/MJS_DensiSinkoku"
-        )  # MJSを起動しログイン後インスタンス化
-        # driver = []
-        FolURL = FolURL + "/RPAPhoto/MJS_DensiSinkoku"
         # ----------------------------------------------------------------------------------------------------------------------
         logger.debug("xlsxをDataFrameに")
         # sheet_namesメソッドでExcelブック内の各シートの名前をリストで取得できる
@@ -4578,6 +4567,17 @@ SerchURL = r"\\Sv05121a\e\電子ファイル\(3)法人決算"  # 先
 XLSDir = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新"
 LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
 # --------------------------------------------------------------------------------
+# Log--------------------------------------------
+dt_s = datetime.datetime.now()
+dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+logger.debug(dt_s + "_MJSシステム更新開始")
+# -----------------------------------------------
+BatUrl = FolURL + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
+driver = MJSOpen.MainFlow(
+    BatUrl, FolURL, "RPAPhoto/MJS_DensiSinkoku"
+)  # MJSを起動しログイン後インスタンス化
+# driver = []
+FolURL = FolURL + "/RPAPhoto/MJS_DensiSinkoku"
 for fd_path, sb_folder, sb_file in os.walk(XLSDir):
     FDP = fd_path
     for sb_fileItem in sb_file:
@@ -4594,7 +4594,7 @@ for fd_path, sb_folder, sb_file in os.walk(XLSDir):
             Exlsx = EFA.XlsmRead(XLSURL)
             if Exlsx[0] is True:
                 try:
-                    MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx[1])
+                    MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx[1], driver)
                 except:
                     traceback.print_exc()
                 Exlsx = "閉じろや"
