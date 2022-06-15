@@ -4436,7 +4436,7 @@ def MainStarter(
         ExDf = pd.DataFrame(li, columns=ExrcHeader)
         print(ExDf)
         Exrc = np.array(ExDf).shape[1]  # 行数
-        for Ex in range(Exrc):
+        for Ex in range(1, Exrc):
             try:
                 ExRow = ExDf.iloc[Ex]
                 EXNo = int(ExRow["関与先番号"])

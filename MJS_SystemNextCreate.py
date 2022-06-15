@@ -2543,7 +2543,7 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL, TFolURL, Exlsx):
+def MainFlow(FolURL, TFolURL, Exlsx, driver):
     """
     概要: メイン処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -2552,17 +2552,6 @@ def MainFlow(FolURL, TFolURL, Exlsx):
     @return : bool
     """
     try:
-        # Log--------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(dt_s + "_MJSシステム更新開始")
-        # -----------------------------------------------
-        BatUrl = FolURL + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
-        driver = MJSOpen.MainFlow(
-            BatUrl, FolURL, "RPAPhoto/MJS_DensiSinkoku"
-        )  # MJSを起動しログイン後インスタンス化
-        # driver = []
-        FolURL = FolURL + "/RPAPhoto/MJS_DensiSinkoku"
         # ----------------------------------------------------------------------------------------------------------------------
         logger.debug("xlsxをDataFrameに")
         # sheet_namesメソッドでExcelブック内の各シートの名前をリストで取得できる
@@ -2591,7 +2580,7 @@ def MainFlow(FolURL, TFolURL, Exlsx):
                 # ----------------------------------------
                 Exrc = np.array(ExSheet).shape[1]  # 列数
                 ExrcHeader = []
-                for Ex in range(Exrc):
+                for Ex in range(1, Exrc):
                     ExRow = ExSheet.iloc[0]
                     ExSecondRow = ExSheet.iloc[1]
                     if ExRow[Ex] == ExRow[Ex]:  # nan判定
@@ -2628,16 +2617,41 @@ def MainFlow(FolURL, TFolURL, Exlsx):
 # RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
-XLSURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\ミロク更新項目.xlsx"
+XLSDir = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新"
 LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
 # --------------------------------------------------------------------------------
-open(LURL, "w").close()
-Exlsx = EFA.XlsmRead(XLSURL)
-if Exlsx[0] is True:
-    try:
-        MainFlow(FolURL, TFolURL, Exlsx[1])
-    except:
-        traceback.print_exc()
-else:
-    print("Excel読み込みエラー")
-    logger.debug("Excel読み込みエラー")
+# Log--------------------------------------------
+dt_s = datetime.datetime.now()
+dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+logger.debug(dt_s + "_MJSシステム更新開始")
+# -----------------------------------------------
+BatUrl = FolURL + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
+driver = MJSOpen.MainFlow(
+    BatUrl, FolURL, "RPAPhoto/MJS_DensiSinkoku"
+)  # MJSを起動しログイン後インスタンス化
+# driver = []
+FolURL = FolURL + "/RPAPhoto/MJS_DensiSinkoku"
+for fd_path, sb_folder, sb_file in os.walk(XLSDir):
+    FDP = fd_path
+    for sb_fileItem in sb_file:
+        print(sb_fileItem)
+        if "ミロク更新項目" in sb_fileItem and not "ミロク更新項目(原本).xlsx" == sb_fileItem:
+            XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+            MoveXLSURL = (
+                FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
+            )
+            os.rename(XLSURL, MoveXLSURL)
+            MoveXLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+            XLSURL = FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
+            open(LURL, "w").close()
+            Exlsx = EFA.XlsmRead(XLSURL)
+            if Exlsx[0] is True:
+                try:
+                    MainFlow(FolURL, TFolURL, Exlsx[1], driver)
+                except:
+                    traceback.print_exc()
+                Exlsx = "閉じろや"
+                os.rename(XLSURL, MoveXLSURL)
+            else:
+                print("Excel読み込みエラー")
+                logger.debug("Excel読み込みエラー")
