@@ -241,16 +241,16 @@ def BeppyouPDFSplit(
         if not op == 0:
             with open(path_pdf, "wb") as output_file:
                 output.write(output_file)
-        elif not op2 == 0:
+        if not op2 == 0:
             with open(PDFDir + r"\第6号様式（県）" + splitext[1], "wb") as output_file:
                 output2.write(output_file)
-        elif not op3 == 0:
+        if not op3 == 0:
             with open(PDFDir + r"\第6号様式別表9（県）" + splitext[1], "wb") as output_file:
                 output3.write(output_file)
-        elif not op4 == 0:
+        if not op4 == 0:
             with open(PDFDir + r"\第20号様式（市）" + splitext[1], "wb") as output_file:
                 output4.write(output_file)
-        elif not op5 == 0:
+        if not op5 == 0:
             with open(PDFDir + r"\第22号の2様式" + splitext[1], "wb") as output_file:
                 output5.write(output_file)
         return True
