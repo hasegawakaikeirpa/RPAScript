@@ -1709,7 +1709,9 @@ def HoujinzeiUpdateBeppyou(
         if HLI[0] is True:
             ImgClick(TFolURL, HLI[1], 0.9, 10)
         # --------------------------------------------------------------------
-        PDFM.BeppyouPDFSplit(Fname, CFolURL + r"\PDF")
+        PDFM.BeppyouPDFSplit(
+            Fname.replace("\\\\", "\\").replace("/", "\\"), CFolURL + r"\PDF"
+        )
         return True, ThisNo, ThisYear, ThisMonth
 
 
@@ -3844,6 +3846,10 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ):
                         time.sleep(1)
                     # ------------------------------------------------------------------
+                    PDFM.BeppyouPDFSplit(
+                        Fname.replace("\\\\", "\\").replace("/", "\\"),
+                        CFolURL + r"\PDF",
+                    )
                     if CalcErr == "":
                         return True, ThisNo, ThisYear, ThisMonth
                     else:
