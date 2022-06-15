@@ -4437,36 +4437,46 @@ def MainStarter(
         print(ExDf)
         Exrc = np.array(ExDf).shape[1]  # 行数
         for Ex in range(Exrc):
-            ExRow = ExDf.iloc[Ex]
-            EXNo = int(ExRow["関与先番号"])
-            EXName = NameSearch(NameDF, EXNo)
-            Title = str(EXNo) + "_" + str(EXName) + "_RPA決算書"
-            EXdir = str(ExRow["年度_(保管フォルダ名)"])
-            if ExRow["関与先番号"] == ExRow["関与先番号"]:  # nan判定
-                # nanでない場合
-                OSM = OpenSystem(
-                    FolURL,
-                    TFolURL,
-                    CFolURL,
-                    NameDF,
-                    ExRow,
-                    Ex,
-                    ExrcHeader,
-                    isnItem,
-                    driver,
-                )
-                if OSM is True:
-                    PDFM.PDFMarge(
-                        CFolURL + r"\All\ListNumber.csv",
-                        CFolURL + r"\PDF",
-                        SerchURL,
-                        Title,
-                        EXNo,
-                        EXdir,
+            try:
+                ExRow = ExDf.iloc[Ex]
+                EXNo = int(ExRow["関与先番号"])
+                EXName = NameSearch(NameDF, EXNo)
+                Title = str(EXNo) + "_" + str(EXName) + "_RPA決算書"
+                EXdir = str(ExRow["年度_(保管フォルダ名)"])
+                if ExRow["関与先番号"] == ExRow["関与先番号"]:  # nan判定
+                    # nanでない場合
+                    OSM = OpenSystem(
+                        FolURL,
+                        TFolURL,
+                        CFolURL,
+                        NameDF,
+                        ExRow,
+                        Ex,
+                        ExrcHeader,
+                        isnItem,
+                        driver,
                     )
-            else:
-                # nanの場合
-                print("nan")
+                    if OSM is True:
+                        PMURL = PDFM.PDFMarge(
+                            CFolURL + r"\All\ListNumber.csv",
+                            CFolURL + r"\PDF",
+                            SerchURL,
+                            Title,
+                            EXNo,
+                            EXdir,
+                        )
+                        Eh = len(ExrcHeader)
+                        WriteEx = openpyxl.load_workbook(XLSURL)
+                        WriteExSheet = WriteEx[isnItem]
+                        WriteExSheet.cell(row=Ex + 5, column=Eh).hyperlink = PMURL
+                        print("シート書き込み完了")
+                        WriteEx.save(XLSURL)
+                        WriteEx.close
+                else:
+                    # nanの場合
+                    print("nan")
+            except:
+                print("データ無")
     except:
         return False, ""
 
@@ -4565,16 +4575,30 @@ FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
 CFolURL = FolURL + r"\RPAPhoto\MJS_SystemPrintOut"  # 先
 SerchURL = r"\\Sv05121a\e\電子ファイル\(3)法人決算"  # 先
-XLSURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\ミロク更新項目.xlsx"
+XLSDir = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新"
 LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
 # --------------------------------------------------------------------------------
-open(LURL, "w").close()
-Exlsx = EFA.XlsmRead(XLSURL)
-if Exlsx[0] is True:
-    try:
-        MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx[1])
-    except:
-        traceback.print_exc()
-else:
-    print("Excel読み込みエラー")
-    logger.debug("Excel読み込みエラー")
+for fd_path, sb_folder, sb_file in os.walk(XLSDir):
+    FDP = fd_path
+    for sb_fileItem in sb_file:
+        print(sb_fileItem)
+        if "ミロク更新項目" in sb_fileItem and not "ミロク更新項目(原本).xlsx" == sb_fileItem:
+            XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+            MoveXLSURL = (
+                FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
+            )
+            os.rename(XLSURL, MoveXLSURL)
+            MoveXLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+            XLSURL = FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
+            open(LURL, "w").close()
+            Exlsx = EFA.XlsmRead(XLSURL)
+            if Exlsx[0] is True:
+                try:
+                    MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx[1])
+                except:
+                    traceback.print_exc()
+                Exlsx = "閉じろや"
+                os.rename(XLSURL, MoveXLSURL)
+            else:
+                print("Excel読み込みエラー")
+                logger.debug("Excel読み込みエラー")
