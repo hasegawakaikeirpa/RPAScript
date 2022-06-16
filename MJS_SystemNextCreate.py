@@ -2451,8 +2451,8 @@ def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver):
         li = np.array(ExSheet[3 : len(ExSheet)])
         ExDf = pd.DataFrame(li, columns=ExrcHeader)
         print(ExDf)
-        Exrc = np.array(ExDf).shape[1]  # 行数
-        for Ex in range(Exrc):
+        Exrc = np.array(ExDf).shape[0]  # 行数
+        for Ex in range(1, Exrc):
             ExRow = ExDf.iloc[Ex]
             if ExRow["関与先番号"] == ExRow["関与先番号"]:  # nan判定
                 # nanでない場合
@@ -2472,7 +2472,10 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
             if "_繰越対象" in ExrcHeaderItem:
                 SysN = ExrcHeaderItem.split("_")
                 Title = str(SysN[0])
-                if not ExRow[Title + "_繰越対象"] == "-":
+                if (
+                    not ExRow[Title + "_繰越対象"] == "-"
+                    and str(ExRow[Title + "_繰越対象"]) == "1"
+                ):
                     if ExRow[Title + "_繰越対象"] == ExRow[Title + "_繰越対象"]:
                         # nanでない場合
                         if ExRow[Title + "_繰越処理日"] == ExRow[Title + "_繰越処理日"]:
@@ -2580,7 +2583,7 @@ def MainFlow(FolURL, TFolURL, Exlsx, driver):
                 # ----------------------------------------
                 Exrc = np.array(ExSheet).shape[1]  # 列数
                 ExrcHeader = []
-                for Ex in range(1, Exrc):
+                for Ex in range(Exrc):
                     ExRow = ExSheet.iloc[0]
                     ExSecondRow = ExSheet.iloc[1]
                     if ExRow[Ex] == ExRow[Ex]:  # nan判定
