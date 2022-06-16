@@ -258,67 +258,72 @@ LURL = TFolURL + r"\顧問先-名称.csv"  # 処理状況CSVのURL
 CSVs = FCO.CsvRead(LURL)[1]
 CSVLen = len(CSVs)
 for CV in range(CSVLen):
-    CSVsRow = CSVs.iloc[CV]
-    print(CSVsRow["コード"])
-    KCB = ImgCheck(TFolURL, r"\K_CodeBox.png", 0.9, 10)
-    if KCB[0] is True:
-        pyautogui.click(KCB[1] + 100, KCB[2])  # 横軸,縦軸
-        pg.write(str(CSVsRow["コード"]))
-        pg.press("return")
-        time.sleep(1)
-        MB = ImgCheckForList(
-            TFolURL, [r"\M_Bar.png", r"\M_Bar2.png", r"\M_Bar3.png"], 0.9, 10
-        )
-        if MB[0] is True:
-            pyautogui.click(MB[2], MB[3])  # 横軸,縦軸
-            RS = ImgCheckForList(TFolURL, [r"\R_Sou.png", r"\R_Sou2.png"], 0.9, 10)
-            if RS[0] is True:
-                pyautogui.click(RS[2] + 100, RS[3])  # 横軸,縦軸
-                pg.press(
-                    [
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                        "backspace",
-                    ]
-                )
-                pg.press(
-                    [
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                        "delete",
-                    ]
-                )
-                pg.write(str(CSVsRow["コード"]))
+    if CV > 12:
+        CSVsRow = CSVs.iloc[CV]
+        if not CSVsRow["顧問先"] == CSVsRow["顧問先"]:
+            print("nan")
+        else:
+            print(CSVsRow["コード"])
+            KCB = ImgCheck(TFolURL, r"\K_CodeBox.png", 0.9, 10)
+            if KCB[0] is True:
+                pyautogui.click(KCB[1] + 100, KCB[2])  # 横軸,縦軸
+                pyperclip.copy(str(CSVsRow["コード"]))
+                pg.hotkey("ctrl","v")
                 pg.press("return")
-                ImgClick(TFolURL, r"\U_Btn.png", 0.9, 10)
                 time.sleep(1)
-                while (
-                    pg.locateOnScreen(
-                        TFolURL + r"\\" + "UpDateFlag.png", confidence=0.9
-                    )
-                    is not None
-                ):
-                    time.sleep(1)
-                time.sleep(1)
+                MB = ImgCheckForList(
+                    TFolURL, [r"\M_Bar.png", r"\M_Bar2.png", r"\M_Bar3.png",r"\Name.png",r"\Name2.png",r"\Name3.png"], 0.9, 10
+                )
+                if MB[0] is True:
+                    pyautogui.click(MB[2], MB[3])  # 横軸,縦軸
+                    RS = ImgCheckForList(TFolURL, [r"\R_Sou.png", r"\R_Sou2.png"], 0.9, 10)
+                    if RS[0] is True:
+                        pyautogui.click(RS[2] + 150, RS[3])  # 横軸,縦軸
+                        pg.press(
+                            [
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                                "backspace",
+                            ]
+                        )
+                        pg.press(
+                            [
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                                "delete",
+                            ]
+                        )
+                        pyperclip.copy(str(CSVsRow["コード"]))
+                        pg.hotkey("ctrl","v")
+                        ImgClick(TFolURL, r"\U_Btn.png", 0.9, 10)
+                        time.sleep(1)
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\\" + "UpDateFlag.png", confidence=0.9
+                            )
+                            is not None
+                        ):
+                            time.sleep(1)
+                        time.sleep(1)
