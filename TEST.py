@@ -25,23 +25,23 @@ def DiffListCreate(KCode, PDFDir, PDFPageTxt, Banktoml):
         Flag = ""
         GF = GCV.Bankrentxtver(
             FileURL,
-            Banktoml["HiroginSouzoku"]["Yokojiku"],
-            Banktoml["HiroginSouzoku"]["Tatejiku"],
-            Banktoml["HiroginSouzoku"]["RabelSpace"],
-            Banktoml["HiroginSouzoku"]["etaxYokojiku"],
-            Banktoml["HiroginSouzoku"]["etaxTatejiku"],
-            Banktoml["HiroginSouzoku"]["etaxRabelSpace"],
-            Banktoml["HiroginSouzoku"]["Rabel"],
-            Banktoml["HiroginSouzoku"]["DougyouTatejiku"],
+            Banktoml["Momiji"]["Yokojiku"],
+            Banktoml["Momiji"]["Tatejiku"],
+            Banktoml["Momiji"]["RabelSpace"],
+            Banktoml["Momiji"]["etaxYokojiku"],
+            Banktoml["Momiji"]["etaxTatejiku"],
+            Banktoml["Momiji"]["etaxRabelSpace"],
+            Banktoml["Momiji"]["Rabel"],
+            Banktoml["Momiji"]["DougyouTatejiku"],
             Flag,
-            Banktoml["HiroginSouzoku"],
+            Banktoml["Momiji"],
         )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
         if GF[0] is True:
             GFTable = GF[1]
             GFRow = len(GFTable)
             # OCR結果を整形----------------------------------------------------------------
             for g in range(GFRow):
-                for c in Banktoml["Hirogin"]["MoneyCol"]:
+                for c in Banktoml["Momiji"]["MoneyCol"]:
                     strs = ""
                     ints = ""
                     S = GFTable[g][c - 1]

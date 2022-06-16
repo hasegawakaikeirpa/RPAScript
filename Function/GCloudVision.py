@@ -100,6 +100,54 @@ def get_document_bounds(image_file, feature, Flag):
         return "boundsなし", "verListなし", "Flagなし"
 
 
+def get_document_bounds_BANK(image_file, feature, Flag):
+    try:
+        """GoovleVisionAPIでOCR"""
+        logger.debug("get_document_bounds(GoogleVisionAPI)開始: debug level log")
+        credentials = service_account.Credentials.from_service_account_file(
+            os.getcwd() + "/key.json"
+        )  # GAPIキーのURL
+        client = vision.ImageAnnotatorClient(credentials=credentials)
+        # client = vision.ImageAnnotatorClient()
+        verList = []
+        bounds = []
+
+        with io.open(image_file, "rb") as image_file:
+            content = image_file.read()
+
+        image = vision.Image(content=content)
+
+        response = client.document_text_detection(image=image)
+        document = response.full_text_annotation
+
+        Flag = "通帳"
+
+        # Collect specified feature bounds by enumerating all document features
+        for page in document.pages:
+            for block in page.blocks:
+                for paragraph in block.paragraphs:
+                    for word in paragraph.words:
+                        for symbol in word.symbols:
+                            verList.append([symbol.text, symbol.bounding_box])
+                            if feature == FeatureType.SYMBOL:
+                                bounds.append(symbol.bounding_box)
+
+                        if feature == FeatureType.WORD:
+                            bounds.append(word.bounding_box)
+
+                    if feature == FeatureType.PARA:
+                        bounds.append(paragraph.bounding_box)
+
+                if feature == FeatureType.BLOCK:
+                    bounds.append(block.bounding_box)
+
+        # The list `bounds` contains the coordinates of the bounding boxes.
+        logger.debug("get_document_bounds(GoogleVisionAPI)終了: debug level log")
+        return bounds, verList, Flag
+    except:
+        return "boundsなし", "verListなし", "Flagなし"
+
+
 def render_doc_text(filein, fileout):
     logger.debug("render_doc_text(Visionテキスト識別エリアに色塗り)開始: debug level log")
     image = Image.open(filein)
@@ -731,13 +779,13 @@ def DfTuuchou(
         FontSize = Banktoml["FontSize"]
         # 並び替えたListにループ処理---------------------------------------------------
         for lb in range(dfRow):
-            if lb == 257:
-                print("")
             btxt = dfnp[lb][1]  # 現在の文字
             bjsonX = dfnp[lb][3]  # 現在の文字の縦軸
             bjsonY = dfnp[lb][2]  # 現在の文字の横軸
             NeDiff = FontSize * Banktoml[str(InputSlide) + "Col"]
-            NextYDiff = dfnp[lb][2] - dfnp[lb - 1][2]  # 前の文字との横軸差
+            FS = int(dfnp[lb][2])
+            LS = int(dfnp[lb - 1][2])
+            NextYDiff = FS - LS  # 前の文字との横軸差
             # テキスト代入変数に代入した回数がtomlの値以外なら---------------------------
             if not InputCount == Banktoml[str(InputSlide) + "Col"]:
                 if YeqXlistTrrigeer is False:
@@ -770,17 +818,38 @@ def DfTuuchou(
                                                 Yav.append(sa)
                                 # ----------------------------
                     for bj in range(Banktoml["ColCount"]):
-
                         if bj == 0:
-                            PlusStr = FontSize * Banktoml[str(bj + 1) + "Col"]
-                            Fval = Banktoml["StartPos"]  # 行範囲始点
+                            if (bj + 1) == Banktoml["SmallTXTCol"]:
+                                PlusStr = (
+                                    FontSize * Banktoml["SmallTXTMag"]
+                                ) * Banktoml[str(bj + 1) + "Col"]
+                            else:
+                                PlusStr = FontSize * Banktoml[str(bj + 1) + "Col"]
+                            Fval = min(YeqXlist)  # 行範囲始点
+                            # Fval = Banktoml["StartPos"]  # 行範囲始点
                             Lval = PlusStr + Fval  # 行範囲終点
                             bjsonYMinXRange.append([round(Fval), round(Lval)])
                         else:
-                            PlusStr = FontSize * Banktoml[str(bj + 1) + "Col"]
-                            Fval = FontSize + bjsonYMinXRange[bj - 1][1]  # 行範囲始点
-                            Lval = PlusStr + Fval  # 行範囲終点
-                            bjsonYMinXRange.append([round(Fval), round(Lval)])
+                            try:
+                                KVal = bjsonYMinXRange[bj - 1][1]
+                                KValList = []
+                                for YeqXlistItem in YeqXlist:
+                                    if KVal < YeqXlistItem:
+                                        KValList.append(YeqXlistItem)
+                                Fval = min(KValList)  # 行範囲始点
+                                if (Fval - KVal) > (FontSize * 4):
+                                    Fval = FontSize + bjsonYMinXRange[bj - 1][1]
+                                if (bj + 1) == Banktoml["SmallTXTCol"]:
+                                    PlusStr = (
+                                        FontSize * Banktoml["SmallTXTMag"]
+                                    ) * Banktoml[str(bj + 1) + "Col"]
+                                else:
+                                    PlusStr = FontSize * Banktoml[str(bj + 1) + "Col"]
+                                # Fval = FontSize + bjsonYMinXRange[bj - 1][1]  # 行範囲始点
+                                Lval = PlusStr + Fval  # 行範囲終点
+                                bjsonYMinXRange.append([round(Fval), round(Lval)])
+                            except:
+                                print("文章分けテーブル作成失敗")
                     YeqXlistTrrigeer = True
                     # -----------------------------------------------------------------
                 if len(YeqXlist) >= 8:
@@ -817,21 +886,39 @@ def DfTuuchou(
                                     strs = strs + btxt
                                     InputCount += 1
                             else:
-                                strList.append(strs)
+                                if InputSlide == Banktoml["HidukeColNo"]:
+                                    # 文字列内に不要な文字があれば置換---------------------
+                                    for p in reversed(range(len(strs))):
+                                        if (
+                                            strs[p].isdecimal() is False
+                                            and not strs[p] == "."
+                                            and not strs[p] == "-"
+                                        ):  # 文字が数字と-.で無かった場合
+                                            print(strs[p])
+                                            strs = strs.replace(strs[p], "")
+                                    # -------------------------------------------------
+                                    strList.append(strs)
+                                elif InputSlide in Banktoml["MoneyCol"]:
+                                    strList.append(
+                                        strs.replace(".", "")
+                                        .replace(",", "")
+                                        .replace("*", "")
+                                        .replace("'", "")
+                                        .replace("-", "")
+                                        .replace("✓", "")
+                                        .replace("$", "")
+                                    )
+                                else:  # 現在のスライドが通貨設定列番と一致する場合
+                                    strList.append(strs)
                                 strs = ""
                                 InputSlide += 1
-                                if not dfnp[lb][3] == dfnp[lb - 1][3]:
-                                    InputSlide += 1
+                                # if not dfnp[lb][3] == dfnp[lb - 1][3]:
+                                #     InputSlide += 1
                                 InputCount = 0
                                 strs = strs + btxt
                                 InputCount += 1
                             # 現在のスライドが最大行設定と一致する場合
                             if InputSlide - 1 == Banktoml["ColCount"]:
-                                strList.append("")
-                                InputSlide += 1
-                                InputCount = 0
-                                strs = strs + btxt
-                                InputCount += 1
                                 FstrList.append(strList)
                                 YeqXlistTrrigeer = False
                                 InputSlide = 1
@@ -841,6 +928,62 @@ def DfTuuchou(
                                 YeqXlistTrrigeer = False
                                 InputSlide = 1
                                 strList = []
+                else:
+                    # 横軸リストのデータ数が不足していれば読まずにリセット
+                    YeqXlistTrrigeer = False
+            else:
+                if InputSlide == Banktoml["HidukeColNo"]:
+                    # 文字列内に不要な文字があれば置換---------------------
+                    for p in reversed(range(len(strs))):
+                        if (
+                            strs[p].isdecimal() is False
+                            and not strs[p] == "."
+                            and not strs[p] == "-"
+                        ):  # 文字が数字と-.で無かった場合
+                            print(strs[p])
+                            strs = strs.replace(strs[p], "")
+                    # -------------------------------------------------
+                    strList.append(strs)
+                elif InputSlide in Banktoml["MoneyCol"]:
+                    strList.append(
+                        strs.replace(".", "")
+                        .replace(",", "")
+                        .replace("*", "")
+                        .replace("'", "")
+                        .replace("-", "")
+                        .replace("✓", "")
+                        .replace("$", "")
+                    )
+                else:  # 現在のスライドが通貨設定列番と一致する場合
+                    strList.append(strs)
+                InputSlide += 1
+                InputCount = 0
+                strs = ""
+                # 現在の文字位置が次の行範囲内ならテキスト代入変数に代入
+                if bjsonY >= bjsonYMinXRange[InputSlide][1]:
+                    strList.append(strs)
+                    InputSlide += 1
+                    InputCount = 0
+                    strs = ""
+                    strs = strs + btxt
+                    InputCount += 1
+                else:
+                    strs = strs + btxt
+                    InputCount += 1
+                # 現在のスライドが最大行設定と一致する場合
+                if InputSlide - 1 == Banktoml["ColCount"]:
+                    FstrList.append(strList)
+                    YeqXlistTrrigeer = False
+                    InputSlide = 1
+                    strList = []
+                elif lb == dfRow - 1:
+                    strList.append(strs)
+                    FstrList.append(strList)
+                    YeqXlistTrrigeer = False
+                    InputSlide = 1
+                    InputCount = 0
+                    strs = ""
+                    strList = []
         return True, FstrList
     except:
         return False, ""
@@ -860,7 +1003,7 @@ def Bankrentxtver(
     Banktoml,
 ):  # 自作関数一文字づつの軸間を指定値を元に切り分け文章作成
     try:
-        bounds = get_document_bounds(
+        bounds = get_document_bounds_BANK(
             filein, FeatureType.PARA, Flag
         )  # Vision結果を一文字とverticesに分けリスト格納
         Flag = bounds[2]
@@ -889,75 +1032,7 @@ def Bankrentxtver(
             ) as f:
                 # pandasでファイルオブジェクトに書き込む
                 df.to_csv(f, index=False)
-
-            if Flag == "etax":  # OCRでeTaxと判定されたら
-                Xd = len(XYList) - 1  # XYList最終行インデックス
-                # XYListで600より上の情報を削除---------------------------------
-                for XYListItem in reversed(XYList):  # XYListで600より上の情報を削除
-                    if XYListItem[3] <= 600 or XYListItem[3] >= 5500:
-                        XYList.pop(Xd)
-                    Xd -= 1
-                # -------------------------------------------------------------
-                YList = []  # Y軸のリストを初期化
-                Xd = len(XYList)  # XYList要素数分
-                # 600より上の情報を削除したXYListからY軸のリストを作成-------------
-                for lb in range(Xd):
-                    bjsonY = XYList[lb][3]  # 現在の文字の縦軸
-                    YList.append(bjsonY)
-                # -------------------------------------------------------------
-                DC = Dfchange(
-                    YDicList,
-                    etaxKeyX,
-                    etaxKeyY,
-                    XYList,
-                    YList,
-                    strList,
-                    near,
-                    etaxLabelX,
-                    Label,
-                    Flag,
-                )
-                if DC[0] is True:
-                    logger.debug("rentxtver(OCR結果を整形eTax)成功: debug level log")
-                    return True, DC[1]
-                else:
-                    logger.debug("rentxtver(OCR結果を整形eTax)失敗: debug level log")
-                    return False, "eTaxDfchangeエラー"
-            elif Flag == "eltax":  # OCRでelTaxと判定されたら
-                Xd = len(XYList) - 1  # XYList最終行インデックス
-                # XYListで600より上の情報を削除---------------------------------
-                for XYListItem in reversed(XYList):  # XYListで600より上の情報を削除
-                    if XYListItem[3] <= 600 or XYListItem[3] >= 5500:
-                        XYList.pop(Xd)
-                    Xd -= 1
-                # -------------------------------------------------------------
-                YList = []  # Y軸のリストを初期化
-                Xd = len(XYList)  # XYList要素数分
-                # 600より上の情報を削除したXYListからY軸のリストを作成-------------
-                for lb in range(Xd):
-                    bjsonY = XYList[lb][3]  # 現在の文字の縦軸
-                    YList.append(bjsonY)
-                # -------------------------------------------------------------
-                DC = Dfchange(
-                    YDicList,
-                    etaxKeyX,
-                    etaxKeyY,
-                    XYList,
-                    YList,
-                    strList,
-                    near,
-                    etaxLabelX,
-                    Label,
-                    Flag,
-                )
-                if DC[0] is True:
-                    logger.debug("rentxtver(OCR結果を整形eTax)成功: debug level log")
-                    return True, DC[1]
-                else:
-                    logger.debug("rentxtver(OCR結果を整形eTax)失敗: debug level log")
-                    return False, "eTaxDfchangeエラー"
-            elif Flag == "通帳":  # OCRで通帳と判定されたら
-
+            if Flag == "通帳":  # OCRで通帳と判定されたら
                 DC = DfTuuchou(
                     YDicList,
                     KeyX,

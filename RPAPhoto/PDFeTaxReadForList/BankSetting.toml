@@ -1,9 +1,9 @@
 [Hirogin]
 #------------------------------------------------
-Yokojiku = 5000
+Yokojiku = 7000
 Tatejiku = 90
 RabelSpace = 2500
-etaxYokojiku = 5000
+etaxYokojiku = 7000
 etaxTatejiku = 10
 etaxRabelSpace = 500
 Rabel = "::"
@@ -17,7 +17,38 @@ ColCount = 5
 HidukeColNo = 1
 HidukeCount = 8
 MoneyCol = [3,4,5]
-StartPos = 25
+SmallTXTCol = []
+SmallTXTMag = 0.5
+StartPos = 0
+FontSize = 50
+
+
+[Momiji]
+#------------------------------------------------
+Yokojiku = 7000
+Tatejiku = 55
+RabelSpace = 2500
+etaxYokojiku = 7000
+etaxTatejiku = 55
+etaxRabelSpace = 500
+Rabel = "::"
+DougyouTatejiku = 55
+ColCount = 8
+1Col = 3
+2Col = 8
+3Col = 3
+4Col = 3
+5Col = 2
+6Col = 16
+7Col = 16
+8Col = 16
+HidukeColNo = 2
+HidukeCount = 8
+MoneyCol = [6,7,8]
+SmallTXTCol = [1]
+SmallTXTMag = 0.5
+StartPos = 0
+FontSize = 85
 
 
 [HiroginSouzoku]

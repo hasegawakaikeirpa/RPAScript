@@ -41,7 +41,7 @@ def NoiseRemoval(img):
     """
     kernel = np.ones((2, 2))
     Open_img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
-    ksize = 11
+    ksize = 3
     # 中央値フィルタ
     Open_img = cv2.medianBlur(Open_img, ksize)
     return Open_img
@@ -368,46 +368,6 @@ def ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do):
         return False
 
 
-def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
-    """
-    概要: OCR読込用に画像を自動編集
-    @param URL: 画像フォルダ(str)
-    @param imgurl: 画像URL(str)
-    @param disth: マージする線分の距離(float)
-    @param canth1: Canny Edge Detectorの引数1(float)
-    @param canth2: Canny Edge Detectorの引数2(float)
-    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
-    @param dom: Trueなら線分をマージして出力する(boolean)
-    @return OCR読込用に画像を自動編集した画像URL(str)
-    """
-    Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
-    Inv_img.save(imgurl)  # 白黒反転保存(PIL)
-    img = cv2.imread(imgurl)  # 白黒反転画像(cv2)
-    CleanUp_img = NoiseRemoval(img)  # ノイズ除去(cv2)
-    cv2.imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
-    Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
-    Inv_img.save(imgurl)  # 白黒反転保存(PIL)
-    ILT = ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do)
-    if ILT is True:
-        AutoTrimming(URL, imgurl, disth, canth1, canth2, casize, do)
-        img = cv2.imread(imgurl)
-        IMGsize = [3840, 3840]
-        h, w = img.shape[:2]
-        ash = IMGsize[1] / h
-        asw = IMGsize[0] / w
-        if asw < ash:
-            sizeas = (int(w * asw), int(h * asw))
-        else:
-            sizeas = (int(w * ash), int(h * ash))
-        img = cv2.resize(img, dsize=sizeas)
-        cv2.imwrite(imgurl, img)
-        TesseOCRLotate(URL, imgurl)
-        # ImageColorChange(URL, img)
-        return imgurl
-    else:
-        return imgurl
-
-
 def TesseOCRLotate(URL, fileurl):
     """
     概要: TesseractOCRで画像回転
@@ -543,11 +503,83 @@ def StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do):
         return False, ""
 
 
-URL = r""
-imgurl = r""
-disth = 0
-canth1 = 0
-canth2 = 0
-casize = 0
-do = 0
-StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do)
+def toneCurveDownContrast(frame, n=1):
+    """
+    概要: トーンカーブでコントラストを下げる
+    @param frame: cv2.imread(path)(obj)
+    @return cv2(obj) 戻り値をcv2.imwrite(cv2(obj),URL)等で保存できる
+    """
+    look_up_table = np.zeros((256, 1), dtype="uint8")
+    for i in range(256):
+        if i < 256 / n:
+            look_up_table[i][0] = i * n
+        else:
+            look_up_table[i][0] = 255
+    return cv2.LUT(frame, look_up_table)
+
+
+def toneCurveUpContrast(frame, n=1):
+    """
+    概要: トーンカーブでコントラストを上げる
+    @param frame: cv2.imread(path)(obj)
+    @return cv2(obj) 戻り値をcv2.imwrite(cv2(obj),URL)等で保存できる
+    """
+    look_up_table = np.zeros((256, 1), dtype="uint8")
+    for i in range(256):
+        if i < 256 - 256 / n:
+            look_up_table[i][0] = 0
+        else:
+            look_up_table[i][0] = i * n - 255 * (n - 1)
+    return cv2.LUT(frame, look_up_table)
+
+
+def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
+    """
+    概要: OCR読込用に画像を自動編集
+    @param URL: 画像フォルダ(str)
+    @param imgurl: 画像URL(str)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
+    @return OCR読込用に画像を自動編集した画像URL(str)
+    """
+    Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
+    Inv_img.save(imgurl)  # 白黒反転保存(PIL)
+    img = cv2.imread(imgurl)  # 白黒反転画像(cv2)
+    CleanUp_img = NoiseRemoval(img)  # ノイズ除去(cv2)
+    cv2.imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
+    Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
+    Inv_img.save(imgurl)  # 白黒反転保存(PIL)
+    ILT = ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do)
+    if ILT is True:
+        AutoTrimming(URL, imgurl, disth, canth1, canth2, casize, do)
+        img = cv2.imread(imgurl)
+        IMGsize = [7680, 7680]
+        h, w = img.shape[:2]
+        ash = IMGsize[1] / h
+        asw = IMGsize[0] / w
+        if asw < ash:
+            sizeas = (int(w * asw), int(h * asw))
+        else:
+            sizeas = (int(w * ash), int(h * ash))
+        img = cv2.resize(img, dsize=sizeas)
+        cv2.imwrite(imgurl, img)
+        TesseOCRLotate(URL, imgurl)
+        img = cv2.imread(imgurl)
+        TC = toneCurveUpContrast(img)
+        cv2.imwrite(imgurl, TC)
+        # ImageColorChange(URL, img)
+        return imgurl
+    else:
+        return imgurl
+
+
+imgurl = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\OCR0.png"
+sv = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\OCRToneC.png"
+img = cv2.imread(imgurl)
+TC = toneCurveUpContrast(img)
+TC = toneCurveUpContrast(TC)
+TC = toneCurveUpContrast(TC)
+cv2.imwrite(sv, TC)
