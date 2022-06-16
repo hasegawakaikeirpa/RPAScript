@@ -253,7 +253,7 @@ def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリッ�
 # RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJSKomonsakiUpDate"  # 先
-LURL = r"D:\顧問先-名称.csv"  # 処理状況CSVのURL
+LURL = TFolURL + r"\顧問先-名称.csv"  # 処理状況CSVのURL
 # --------------------------------------------------------------------------------
 CSVs = FCO.CsvRead(LURL)[1]
 CSVLen = len(CSVs)
