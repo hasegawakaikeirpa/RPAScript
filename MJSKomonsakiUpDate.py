@@ -258,7 +258,7 @@ LURL = TFolURL + r"\顧問先-名称.csv"  # 処理状況CSVのURL
 CSVs = FCO.CsvRead(LURL)[1]
 CSVLen = len(CSVs)
 for CV in range(CSVLen):
-    if CV > 12:
+    if CV > 2222:
         CSVsRow = CSVs.iloc[CV]
         if not CSVsRow["顧問先"] == CSVsRow["顧問先"]:
             print("nan")
