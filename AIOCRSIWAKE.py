@@ -12,7 +12,9 @@ import Function.CSVOut as FCSV
 import RPAPhoto.PDFeTaxReadForList.CSVSetting as CSVSet  # CSVの設定ファイルの読込
 import cv2
 import Function.ImageChange as FIC
-import re
+import Function.CV2Setting as CV2S
+import csv
+import pandas as pd
 
 # logger設定------------------------------------------------------------------------------
 import logging.config
@@ -67,18 +69,16 @@ def pdf_image(pdf_file, img_path, fmtt, dpi, PDFPage):
         for i, page in enumerate(pages):
             file_name = "OCR" + str(i) + "." + fmtt
             image_path = image_dir / file_name
-            page.save(image_path, fmtt)
-            yoko = page.size[0]  # 画像の幅
-            tate = page.size[1]  # 画像の高さ
+            # page.save(image_path, fmtt)
             # 画像が横向きなら縦向きに回転-------------------------------------------
             # if yoko > tate:
             #     img = cv2.imread(image_path._str, 0)
             #     img_rotate_90_clockwise = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
             #     cv2.imwrite(image_path._str, img_rotate_90_clockwise)
             # ---------------------------------------------------------------------
-            IMGURL = FIC.OCRIMGChange(
-                img_path, image_path._str, disth, canth1, canth2, casize, do
-            )
+            # FIC.OCRIMGChange(
+            #     img_path, image_path._str, disth, canth1, canth2, casize, do
+            # )
         for fd_path, sb_folder, sb_file in os.walk(image_dir):
             for fil in sb_file:
                 # if "OCR" in fil and fil.endswith(".png") is True:
@@ -91,7 +91,7 @@ def pdf_image(pdf_file, img_path, fmtt, dpi, PDFPage):
 
 
 # -------------------------------------------------------------------------------------------------------
-def DiffListCreate(FolURL, OCRList, KCode, PDFDir, PDFPageTxt):
+def DiffListCreate(FileURL, KCode, PDFDir, PDFPageTxt, Banktoml):
     """
     概要: GoogleApiで取得した内容を整形
     @param FolURL : このpyファイルのフォルダ(str)
@@ -104,83 +104,84 @@ def DiffListCreate(FolURL, OCRList, KCode, PDFDir, PDFPageTxt):
     @return : 変換後画像から取得して抽出した値のリスト(list)
     """
     try:
-        for OCRListItem in OCRList:
-            try:
-                FileURL = OCRListItem[0] + "\\" + OCRListItem[1]
-                if "eLTAX受信通知" in PDFDir:
-                    Flag = "eltax"
-                else:
-                    Flag = ""
-                GF = GCV.rentxtver(
-                    FileURL, 5000, 30, 500, 5000, 10, 500, "::", 90, Flag
-                )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
-                if GF[0] is True:
-                    GFTable = GF[1]
-                    GFRow = len(GFTable)
-                    GFTColList = []
-                    GFTParList = []
-                    # OCR結果を整形----------------------------------------------------------------
-                    for g in reversed(range(GFRow)):
-                        if "::" not in GFTable[g]:  # OCR結果行に区切り文字がない場合
-                            if GFTable[g].endswith("円") is True:  # OCR結果行が円で終わる場合
-                                if Flag == "eltax":  # eltax処理の場合
-                                    Koumoku = GFTable[g]  # 項目を代入
-                                    Money = int(re.sub(r"\D", "", GFTable[g]))  # 数値のみ取得
-                                    Money = "{:,}".format(Money)  # 取り出した数値をカンマ区切りにする
-                                    Money = Money + "円"  # 末尾に円をつける
-                                    Koumoku = Koumoku.replace(
-                                        Money, ""
-                                    )  # 金額と項目名を置換で切り分け
-                                    if Koumoku.endswith("-") is True:
-                                        GFTable[g] = (
-                                            Koumoku.replace("-", "") + "::-" + Money
-                                        )  # 区切り文字を挿入
+        COLArray = CV2S.straightlinesetting(FileURL)  # cv2で直線を描き直線軸をリスト化
+        with open(
+            r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\StraightListYoko.csv",
+            "w",
+            newline="",
+        ) as file:
+            writer = csv.writer(file)
+            writer.writerow(COLArray[1])
+        with open(
+            r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\StraightListTate.csv",
+            "w",
+            newline="",
+        ) as file:
+            writer = csv.writer(file)
+            writer.writerow(COLArray[2])
+
+        # COLArray = True, Banktoml["TESTYOKO"]["Y"], Banktoml["TESTTATE"]["T"]
+        if COLArray[0] is True:
+            GF = GCV.Bankrentxtver(
+                FileURL,
+                COLArray[1],
+                COLArray[2],
+            )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
+            if GF[0] is True:
+                GFTable = GF[1]
+                GFRow = len(GFTable)
+                # OCR結果を整形----------------------------------------------------------------
+                for g in range(GFRow):
+                    for c in Banktoml["Momiji"]["MoneyCol"]:
+                        strs = ""
+                        ints = ""
+                        try:
+                            S = GFTable[g][c - 1]
+                            if len(S) > 0:
+                                for y in range(len(S)):
+                                    if S[y].isdecimal() is False:
+                                        strs += S[y]
                                     else:
-                                        GFTable[g] = Koumoku + "::" + Money  # 区切り文字を挿入
-                                    Money = ""
-                                    Koumoku = ""
+                                        ints += S[y]
+                                strs = (
+                                    strs.replace(",", "")
+                                    .replace("*", "")
+                                    .replace("'", "")
+                                    .replace(",", "")
+                                    .replace("○", "")
+                                    .replace("×", "")
+                                    .replace("✓", "")
+                                    .replace("¥", "")
+                                    .replace("´", "")
+                                    .replace("=", "")
+                                    .replace("串", "")
+                                    .replace("第", "")
+                                    .replace("$", "")
+                                    .replace("〒", "")
+                                    .replace(".", "")
+                                    .replace('"', "")
+                                    .replace("(", "")
+                                    .replace(")", "")
+                                    .replace("#", "")
+                                    .replace("-", "")
+                                    .replace(":", "")
+                                )
+                                if len(strs) == 0:
+                                    GFTable[g][c - 1] = ints
+                                elif len(ints) == 0:
+                                    GFTable[g][c - 1] = strs
                                 else:
-                                    GFTable.pop(g)
-                            else:
-                                GFTable.pop(g)
-                    # ----------------------------------------------------------------------------
-                    GFTCount = 0
-                    for GFTableItem in GFTable:
-                        strCount = str(GFTableItem).count("::")
-                        if not strCount < 4:
-                            SGF = str(GFTableItem).split("::")
-                            SC = len(SGF)
-                            for SI in range(SC):
-                                SGFItem = SGF[SI]
-                                if bool(re.search(r"\d", SGFItem)) is True:
-                                    re.sub(r"[^0-9]", "", SGFItem)
-                        strGF = str(GFTableItem).replace("給額", "総額").replace("稅", "税")
-                        SGF = strGF.split("::")
-                        if GFTCount == 0:
-                            GFTColList.append("URL")
-                            GFTParList.append(str(PDFDir))
-                            GFTColList.append("ページ")
-                            GFTParList.append(str(PDFPageTxt))
-                        if "氏名又は名称" in strGF:
-                            GFTColList.append("コード")
-                            GFTParList.append(str(KCode))
-                            GFTColList.append(SGF[0].replace(",", ""))
-                            GFTParList.append(SGF[1])
-                        else:
-                            GFTColList.append(SGF[0].replace(",", ""))
-                            GFTParList.append(SGF[1])
-                        GFTCount += 1
-                    print(GFTColList)
-                    print(GFTParList)
-                    return True, GFTColList, GFTParList
-            except:
-                print("ループ内エラー抽出失敗")
-                logger.debug(FolURL + "ループ内エラー抽出失敗")
-                return False, "", ""
+                                    GFTable[g][c - 1] = strs + "::" + ints
+                        except:
+                            print("Nodata")
+                # ----------------------------------------------------------------------------
+                # DataFrame作成
+                df = pd.DataFrame(GFTable, columns=Banktoml["Momiji"]["ColumnName"])
+                FName = str(KCode) + "_TEST.csv"
+                df.to_csv(FName, index=False, encoding="cp932")
+                print("END")
     except:
-        print("エラー抽出失敗")
-        logger.debug(FolURL + "ループ内エラー抽出失敗")
-        return False, "", ""
+        print("ループ内エラー抽出失敗")
 
 
 # -------------------------------------------------------------------------------------------------------
@@ -236,11 +237,17 @@ with open(
 ) as f:
     Settingtoml = toml.load(f)
     print(Settingtoml)
-# -----------------------------------------------------------
+# toml読込------------------------------------------------------------------------------
+with open(
+    os.getcwd() + r"/RPAPhoto/PDFeTaxReadForList/BankSetting.toml", encoding="utf-8"
+) as f:
+    Banktoml = toml.load(f)
+    print(Banktoml)
+# ---------------------------------------------------------------------------------------
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
 MyURL = os.getcwd() + r"\RPAPhoto\PDFeTaxReadForList"  # このスクリプトの配下の設定フォルダ
 # CSVURL = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST2022-3\受信通知CSV\受信通知取得失敗リスト.csv"  # 取得対象のURLが記載されたCSV
-CSVURL = r"\\Sv05121a\e\電子ファイル\メッセージボックス\TEST\AIOCRTEST.csv"  # 取得対象のURLが記載されたCSV
+CSVURL = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\AIOCRTEST.csv"  # 取得対象のURLが記載されたCSV
 # --------------------------------------------------------------------------------
 try:
     CSVList = FCSV.CsvRead(CSVURL)  # 自作関数でCSVをDataFrameに変換
@@ -253,12 +260,13 @@ try:
             KCode = CSVRowData["コード"]  # DataFrameから抽出対象のPDFを取得
             PDFPageTxt = CSVRowData["ページ"]
             PDFPage = str(int(re.findall(r"\d", CSVRowData["ページ"])[0]) - 1)  # 対象のページを取得
-            ModelpngDelete(MyURL)  # PDF変換pngの削除
+            # ModelpngDelete(MyURL)  # PDF変換pngの削除
             PI = pdf_image(PDFDir, MyURL, "png", 500, PDFPage)  # 対象のPDFをpng変換
             if PI[0] is True:  # png変換に成功したら
                 OCRList = PI[1]  # PDFから変換したpngを全て取得
+                FileURL = str(OCRList[0][0]) + r"\\" + str(OCRList[0][1])
                 DLC = DiffListCreate(
-                    MyURL, OCRList, KCode, PDFDir, PDFPageTxt
+                    FileURL, KCode, PDFDir, PDFPageTxt, Banktoml
                 )  # APIで画像テキスト抽出
                 if DLC[0] is True:  # 画像テキスト抽出成功なら
                     DLP = DiffListPlus(DLC[1], DLC[2])  # 抽出リストに格納

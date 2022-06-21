@@ -1,78 +1,37 @@
 [Hirogin]
 #------------------------------------------------
-Yokojiku = 7000
-Tatejiku = 90
-RabelSpace = 2500
-etaxYokojiku = 7000
-etaxTatejiku = 10
-etaxRabelSpace = 500
-Rabel = "::"
-DougyouTatejiku = 90
-ColCount = 5
-1Col = 8
-2Col = 8
-3Col = 15
-4Col = 15
-5Col = 16
 HidukeColNo = 1
-HidukeCount = 8
 MoneyCol = [3,4,5]
-SmallTXTCol = []
-SmallTXTMag = 0.5
-StartPos = 0
-FontSize = 50
-
+ColumnName = ["No","日付","預金番号1","預金番号2","摘要","出金","入金","残高"]
 
 [Momiji]
 #------------------------------------------------
-Yokojiku = 7000
-Tatejiku = 55
-RabelSpace = 2500
-etaxYokojiku = 7000
-etaxTatejiku = 55
-etaxRabelSpace = 500
-Rabel = "::"
-DougyouTatejiku = 55
-ColCount = 8
-1Col = 3
-2Col = 8
-3Col = 3
-4Col = 3
-5Col = 2
-6Col = 16
-7Col = 16
-8Col = 16
 HidukeColNo = 2
-HidukeCount = 8
 MoneyCol = [6,7,8]
-SmallTXTCol = [1]
-SmallTXTMag = 0.5
-StartPos = 0
-FontSize = 85
+ColumnName = ["No","日付","預金番号1","預金番号2","摘要","出金","入金","残高"]
 
 
 [HiroginSouzoku]
 #------------------------------------------------
-Yokojiku = 2000
-Tatejiku = 27
-RabelSpace = 600
-etaxYokojiku = 2000
-etaxTatejiku = 27
-etaxRabelSpace = 600
-Rabel = "::"
-DougyouTatejiku = 27
-ColCount = 9
-1Col = 7
-2Col = 6
-3Col = 4
-4Col = 10
-5Col = 4
-6Col = 16
-7Col = 16
-8Col = 16
-9Col = 16
 HidukeColNo = 1
-HidukeCount = 6
 MoneyCol = [6,7,8]
-StartPos = 25
-FontSize = 30
+ChangeTextCol = [4,9]
+ColumnName = ["日付","No","無題","摘要","種類","出金","入金","残高","摘要2"]
+ChangeText = [
+    "トヨタファイナンス(カブ",
+    "ヒロシマギンコウDC",
+    "オリコ",
+    "ハートフォードセイメイホケ",
+    "カゴメ",
+    "イトウハム",
+    "トウシンブンパイキン",
+    "トウシンコウニュウ",
+    "UC(アオヤマキャピタル)",
+    "クレジット",
+    "キュウヨ",
+    "フリコミ",
+    "リソク",
+    "ハイトウキン",
+    "フリカエ",
+    "テイキ"
+    ]

@@ -6,6 +6,7 @@ from numba import jit
 import math
 import pyocr
 import os
+from PIL import Image, ImageDraw
 
 # loggerインポート
 from logging import getLogger
@@ -41,7 +42,7 @@ def NoiseRemoval(img):
     """
     kernel = np.ones((2, 2))
     Open_img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
-    ksize = 3
+    ksize = 7
     # 中央値フィルタ
     Open_img = cv2.medianBlur(Open_img, ksize)
     return Open_img
@@ -305,7 +306,7 @@ def AutoTrimming(URL, imgurl, disth, canth1, canth2, casize, do):
         return False
 
 
-@jit
+# @jit
 def ImageColorChange(URL, img):
     """
     概要: 画像の黒以外を白く
@@ -324,7 +325,7 @@ def ImageColorChange(URL, img):
                 img[x, y] = 0, 0, 0
             else:
                 img[x, y] = 255, 255, 255
-    cv2.imwrite(URL + "\\ChangeColor.png", img)  # ノイズ除去保存(cv2)
+    cv2.imwrite(URL + r"\\ChangeColor.png", img)  # ノイズ除去保存(cv2)
 
     return True
 
@@ -443,7 +444,7 @@ def TesseOCRLotate(URL, fileurl):
 
 def StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do):
     """
-    概要: 画像から直線を検出し、画像の傾きを調べる
+    概要: 画像から直線を検出し、白で塗り潰す
     @param URL: 画像フォルダ(str)
     @param imgurl: 画像URL(str)
     @param disth: マージする線分の距離(float)
@@ -455,8 +456,9 @@ def StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do):
     """
     try:
         img = cv2.imread(imgurl)
-        size = img.shape  # 画像のサイズ x,y
-        Pix = int(size[0] / 100)  # 検出ピクセル数
+        size = img.shape  # 画像のサイズ 横,縦
+        Pix = int(size[0] / 50)  # 検出ピクセル数
+        LineWidth = int((size[0] / 2000))
         LCheck = False  # ライン検出フラグ
         while LCheck is False:  # ライン検出フラグTrueまでループ
             FLStock = []
@@ -474,33 +476,52 @@ def StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do):
             )  # boolean,yx値
             if FLDs[0] is True:  # 連続ピクセルを検知したら
                 FLDItem = len(FLDs[1])  # 配列要素数
-                if FLDItem <= 3:  # 配列要素数0なら
-                    print(str(FLDItem) + "要素なので終了")
-                    FLStock = FLDs[1]
-                    LCheck = True
-                else:
-                    print(str(FLDItem) + "要素取得")
-                    FLStock = FLDs[1]
-            PlPix = size[0] / 1000
-            if PlPix < 1:
-                Pix += 1
-            else:
-                Pix += int(PlPix)
-        XLFlag = False
+                FLStock = FLDs[1]
+                LCheck = True
+        ######################################################
+        img = Image.open(imgurl)
+        draw = ImageDraw.Draw(img)
+        ######################################################
         for x in range(len(FLStock)):
-            UpY = FLStock[x][0][0]
-            UpX = FLStock[x][0][1]
-            LoY = FLStock[x][0][2]
-            LoX = FLStock[x][0][3]
-            # if UpX != LoX:
-            if XLFlag is False:
-                XList = np.array([[UpY, UpX, LoY, LoX]])
-                XLFlag = True
+            # UpY = int(FLStock[x][0][0])  # 縦
+            # UpX = int(FLStock[x][0][1])  # 横
+            # LoY = int(FLStock[x][0][2])  # 縦
+            # LoX = int(FLStock[x][0][3])  # 横
+
+            UpY = FLStock[x][0][0]  # 縦
+            UpX = FLStock[x][0][1]  # 横
+            LoY = FLStock[x][0][2]  # 縦
+            LoX = FLStock[x][0][3]  # 横
+
+            YDif = UpY - LoY
+            if YDif < 0:
+                YDif = YDif * -1
+            XDif = UpX - LoX
+            if XDif < 0:
+                XDif = XDif * -1
+            # 線を消す(白で線を引く)
+            if YDif > XDif:
+                # no_lines_img = cv2.line(
+                #     img, (0, UpX), (size[1], LoX), (255, 255, 255), LineWidth
+                # )
+                draw.line([(0, UpX), (size[1], LoX)], fill="White", width=LineWidth)
+            elif YDif < XDif:
+                # no_lines_img = cv2.line(
+                #     img, (UpY, 0), (LoY, size[0]), (255, 255, 255), LineWidth
+                # )
+                draw.line([(UpY, 0), (LoY, size[0])], fill="White", width=LineWidth)
             else:
-                XList = np.append(XList, [[UpY, UpX, LoY, LoX]], axis=0)
-        return True, XList
+                # no_lines_img = cv2.line(
+                #     img, (UpY, UpX), (LoY, LoX), (255, 255, 255), LineWidth
+                # )
+                draw.line([(UpY, UpX), (LoY, LoX)], fill="White", width=LineWidth)
+        # cv2.imwrite(URL + r"\NoLine.png", no_lines_img)
+        # 画像の表示
+        img.save(imgurl)
+        # img.show()
+        return True
     except:
-        return False, ""
+        return False
 
 
 def toneCurveDownContrast(frame, n=1):
@@ -533,6 +554,75 @@ def toneCurveUpContrast(frame, n=1):
     return cv2.LUT(frame, look_up_table)
 
 
+def FSDArray(imgurl, txt, th, mll, mlg):
+    """
+    概要: 引数指定の画像から指定方向の直線の軸リストを作成
+    @param txt: 直線の方向(縦or横:str)
+    @param th: 直線とみなすための閾値(int)
+    @param mll: 直線とみなす最小の長さ(int)
+    @param mlg: 同一直線とみなす点間隔の長さ(int)
+    @return ReturnList(list) 指定方向の直線の軸リスト
+    """
+    try:
+        # 画像の読み込み
+        img = cv2.imread(imgurl)
+        # グレースケールに変換します。
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # ネガポジ変換で反転
+        edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+        # ハフ変換で直線検出
+        lines = cv2.HoughLinesP(
+            edges,
+            rho=1,
+            theta=np.pi / 360,
+            threshold=th,
+            minLineLength=mll,
+            maxLineGap=mlg,
+        )
+        ReturnList = []
+        #  直線検出して、指定方向の軸リスト作成
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            if txt == "縦":
+                if x1 == x2:  # 縦の直線のみ
+                    if len(ReturnList) == 0:
+                        ReturnList.append([x1, y1, x2, y2])
+                    else:
+                        inFlag = True
+                        for ReturnListItem in ReturnList:
+                            if (
+                                ReturnListItem[0] - x1 > 100
+                                or ReturnListItem[0] - x1 < -100
+                            ):
+                                inFlag = True
+                            else:
+                                inFlag = False
+                                break
+                        if inFlag is True:
+                            ReturnList.append([x1, y1, x2, y2])
+            elif txt == "横":
+                if y1 == y2:  # 横の直線のみ
+                    if len(ReturnList) == 0:
+                        ReturnList.append([x1, y1, x2, y2])
+                    else:
+                        inFlag = True
+                        for ReturnListItem in ReturnList:
+                            if (
+                                ReturnListItem[1] - y1 > 100
+                                or ReturnListItem[1] - y1 < -100
+                            ):
+                                inFlag = True
+                            else:
+                                inFlag = False
+                                break
+                        if inFlag is True:
+                            ReturnList.append([x1, y1, x2, y2])
+        ReturnList = sorted(ReturnList, key=lambda x: x[0])
+        return True, ReturnList
+    except:
+        return False, ""
+
+
 def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
     """
     概要: OCR読込用に画像を自動編集
@@ -556,7 +646,7 @@ def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
     if ILT is True:
         AutoTrimming(URL, imgurl, disth, canth1, canth2, casize, do)
         img = cv2.imread(imgurl)
-        IMGsize = [7680, 7680]
+        IMGsize = [3840, 3840]
         h, w = img.shape[:2]
         ash = IMGsize[1] / h
         asw = IMGsize[0] / w
@@ -576,10 +666,24 @@ def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
         return imgurl
 
 
-imgurl = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\OCR0.png"
-sv = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\OCRToneC.png"
-img = cv2.imread(imgurl)
-TC = toneCurveUpContrast(img)
-TC = toneCurveUpContrast(TC)
-TC = toneCurveUpContrast(TC)
-cv2.imwrite(sv, TC)
+if __name__ == "__main__":
+    URL = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList"
+    imgurl = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\OCRTEST.png"
+
+    # 線形検出パラメータ設定########################################
+    disth = 1.41421356
+    canth1 = 50.0
+    canth2 = 50.0
+    casize = 3
+    do = True
+    # ############################################################
+
+    # sv = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\OCRToneC.png"
+    # img = cv2.imread(imgurl)
+    # FLDテスト処理
+    # fileImage : 画像ファイルパス
+    # imgurl = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\OCRTEST.png"
+    # Lis = FSDArray(imgurl, "縦", 500, 500, 1000)
+    # print(Lis)
+    # print("")
+    StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do)
