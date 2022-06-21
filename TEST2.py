@@ -385,7 +385,7 @@ def BeppyouPDFSplit(
 FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
 CFolURL = FolURL + r"\RPAPhoto\MJS_SystemPrintOut"  # 先
-SerchURL = r"\\Sv05121a\e\電子ファイル\(3)法人決算"  # 先
+SerchURL = r"\\nas-sv\B_監査etc\B2_電子ﾌｧｲﾙ\(3)法人決算"  # 先
 XLSURL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\ミロク更新項目.xlsx"
 LURL = (
     r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL

@@ -38,5 +38,5 @@ def dirMarge(Url):
         pdf_writer.write(f)
 
 
-Url = "//Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知"
+Url = "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/2022-3/送信分受信通知"
 dirCheck(Url)

@@ -1650,7 +1650,7 @@ def PDFRead(URL, Settingtoml):
                 except Exception as e:
                     print(e)
     # ------------------------------------------------------------------------------------
-    ListURL = FC.CreFol("//Sv05121a/e/電子ファイル/メッセージボックス/TEST", "受信通知CSV")
+    ListURL = FC.CreFol("//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/TEST", "受信通知CSV")
     for f in os.listdir(ListURL):
         if os.path.isfile(os.path.join(ListURL, f)):
             if ".csv" in f:
