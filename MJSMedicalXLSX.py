@@ -394,7 +394,7 @@ def CSVCheck(CsvArr, CodeNo, CodeNendo):
 
 # -------------------------------------------------------------------------------------------------------------------------------
 def FolCreate(FolURL2):
-    idir = r"\\Sv05121a\e\B 業務\Ⅰ 業務\８ 確申・年調・納特・労働保険\(3)確申"
+    idir = r"\\nas-sv\B_監査etc\B0_業務\08_確申・年調・納特・労働保険\03_確申"
     fol_path = tkinter.filedialog.askdirectory(
         initialdir=idir, title="確申年度フォルダを指定してください。"
     )

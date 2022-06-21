@@ -551,7 +551,7 @@ def MainFlow(FolURL2, xls_data, KamokuCD, Lday):
 
 
 Lday = calendar.monthrange(dt.today().year, dt.today().month - 1)
-idir = r"\\Sv05121a\e\特２ 特別\Ⅲ総務\１　総務"
+idir = r"\\nas-sv\K_管理\A1_総務\01_総務"
 file_path = tkinter.filedialog.askopenfilename(initialdir=idir)
 # file_path = file_path.replace("\u3000","\　")
 xls_data = pd.read_excel(file_path, sheet_name=0, engine="openpyxl")

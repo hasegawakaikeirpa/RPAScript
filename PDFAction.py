@@ -162,7 +162,6 @@ def MergeFilsT(URL):
 
 
 URL = r"\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\2022-3\\送信分受信通知"
-# URL = "//Sv05121a/e/電子ファイル/メッセージボックス/2022-2/eLTAX"
 # URL = "\\\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\2022-2\\eLTAX"
 try:
     logger.debug(URL + "内のPDF結合開始")
