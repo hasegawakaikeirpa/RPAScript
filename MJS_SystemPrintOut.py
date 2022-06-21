@@ -4563,7 +4563,7 @@ def MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx, driver):
 FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
 CFolURL = FolURL + r"\RPAPhoto\MJS_SystemPrintOut"  # 先
-SerchURL = r"\\Sv05121a\e\電子ファイル\(3)法人決算"  # 先
+SerchURL = r"\\nas-sv\B_監査etc\B2_電子ﾌｧｲﾙ\03_法人決算"  # 先
 XLSDir = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新"
 LURL = (
     r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
@@ -4582,25 +4582,28 @@ driver = MJSOpen.MainFlow(
 FolURL = FolURL + "/RPAPhoto/MJS_DensiSinkoku"
 for fd_path, sb_folder, sb_file in os.walk(XLSDir):
     FDP = fd_path
-    for sb_fileItem in sb_file:
-        print(sb_fileItem)
-        if "ミロク更新項目" in sb_fileItem and not "ミロク更新項目(原本).xlsx" == sb_fileItem:
-            XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-            MoveXLSURL = (
-                FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
-            )
-            os.rename(XLSURL, MoveXLSURL)
-            MoveXLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-            XLSURL = FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
-            open(LURL, "w").close()
-            Exlsx = EFA.XlsmRead(XLSURL)
-            if Exlsx[0] is True:
-                try:
-                    MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx[1], driver)
-                except:
-                    traceback.print_exc()
-                Exlsx = "閉じろや"
+    if not len(sb_folder) == 0:
+        for sb_fileItem in sb_file:
+            print(sb_fileItem)
+            if "ミロク更新項目" in sb_fileItem and not "ミロク更新項目(原本).xlsx" == sb_fileItem:
+                XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                MoveXLSURL = (
+                    FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
+                )
                 os.rename(XLSURL, MoveXLSURL)
-            else:
-                print("Excel読み込みエラー")
-                logger.debug("Excel読み込みエラー")
+                MoveXLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                XLSURL = (
+                    FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
+                )
+                open(LURL, "w").close()
+                Exlsx = EFA.XlsmRead(XLSURL)
+                if Exlsx[0] is True:
+                    try:
+                        MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx[1], driver)
+                    except:
+                        traceback.print_exc()
+                    Exlsx = "閉じろや"
+                    os.rename(XLSURL, MoveXLSURL)
+                else:
+                    print("Excel読み込みエラー")
+                    logger.debug("Excel読み込みエラー")

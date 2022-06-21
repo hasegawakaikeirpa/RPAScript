@@ -240,13 +240,36 @@ def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリッ�
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver):
+def NameSearch(NameDF, Rno):
+    try:
+        Nr = len(NameDF)
+        for Nrx in range(Nr):
+            NameDFRow = NameDF.iloc[Nrx]
+            print(NameDFRow["コード"])
+            if Rno == NameDFRow["コード"]:
+                return NameDFRow["顧問先名称"]
+    except:
+        return "NameErr"
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def ChildFlow(
+    FolURL,
+    TFolURL,
+    ExRow,
+    Ex,
+    Eh,
+    ExrcHeader,
+    isnItem,
+    Title,
+    driver,
+    Rno,
+    Rn,
+):
     if "会計大将" == Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新処理開始"], file=f)
@@ -268,8 +291,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新処理終了"], file=f)
@@ -278,8 +299,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理エラー中断")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新エラー中断"], file=f)
@@ -288,8 +307,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理開始"], file=f)
@@ -309,8 +326,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理終了"], file=f)
@@ -328,8 +343,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理終了"], file=f)
@@ -338,8 +351,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "減価償却更新処理開始"], file=f)
@@ -359,8 +370,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_減価償却更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "減価償却更新処理終了"], file=f)
@@ -378,8 +387,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(
                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算未確定減価償却更新処理終了"
             )
@@ -394,8 +401,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理開始"], file=f)
@@ -415,8 +420,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理終了"], file=f)
@@ -434,8 +437,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法人税申告書更新処理終了"], file=f)
@@ -453,8 +454,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(
                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法人税申告書申告指定無しの為中断"
             )
@@ -468,8 +467,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新処理開始"], file=f)
@@ -489,8 +486,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新処理終了"], file=f)
@@ -508,8 +503,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(
                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新処理計算未処理で終了"
             )
@@ -528,20 +521,17 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(
                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_所得税更新関与先無しの為終了"
             )
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "所得税更新関与先無しの為終了"], file=f)
-            # ------------------------------------------------------------------------------------------
+            # -----------------------------------------------
+            # -------------------------------------------
     elif "財産評価明細書" == Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_財産評価明細書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "財産評価明細書更新処理開始"], file=f)
@@ -561,8 +551,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_財産評価明細書更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "財産評価明細書更新処理終了"], file=f)
@@ -572,8 +560,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_年末調整更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "年末調整更新処理開始"], file=f)
@@ -593,8 +579,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            Rno = ExRow["関与先番号"]
-            Rn = ExRow["関与先名"].replace("\u3000", "")
             logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_年末調整更新処理終了")
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "年末調整更新処理終了"], file=f)
@@ -604,8 +588,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法定調書更新処理開始")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法定調書更新処理開始"], file=f)
@@ -626,8 +608,6 @@ def ChildFlow(FolURL, TFolURL, ExRow, Ex, Eh, ExrcHeader, isnItem, Title, driver
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        Rno = ExRow["関与先番号"]
-        Rn = ExRow["関与先名"].replace("\u3000", "")
         logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_法定調書更新処理終了")
         with open(LURL, "a") as f:
             print([dt_s, "関与先番号:" + str(Rno), str(Rn), "法定調書更新処理終了"], file=f)
@@ -1209,6 +1189,26 @@ def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
                     HQ = ImgCheck(TFolURL, r"\ZaisanOpenQ.png", 0.9, 10)
                     if HQ[0] is True:
                         ImgClick(TFolURL, r"\ZaisanOpenQCansel.png", 0.9, 10)
+                    # 顧問先情報変更ダイアログが表示されたら
+                    CDQ = ImgCheck(
+                        TFolURL,
+                        r"ZChangeDataQ.png",
+                        0.9,
+                        10,
+                    )
+                    if CDQ[0] is True:
+                        pg.press("y")  # yで決定
+                        # 顧問先情報取込メニューが表示されるまで待機--------------------------
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\ZChangeDataBtn.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        ImgClick(
+                            TFolURL, r"\ZChangeDataBtn.png", 0.9, 10
+                        )  # 顧問先情報取込ボタンをクリック
                 # --------------------------------------------------------------------
                 ImgClick(TFolURL, r"\ZaisanKousin.png", 0.9, 10)  # 一括更新のアイコンをクリック
                 # 財産評価メニューが表示されるまで待機------------------------------------
@@ -1230,9 +1230,27 @@ def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
                 ):
                     time.sleep(1)
                 # --------------------------------------------------------------------
+                FC = ImgCheckForList(
+                    TFolURL,
+                    [
+                        r"IkkatuFind.png",
+                        r"IkkatuFind2.png",
+                    ],
+                    0.9,
+                    10,
+                )
+                if FC[0] is True:
+                    ImgClick(TFolURL, FC[1], 0.9, 10)  # 一括更新メニューのアイコンをクリック
+                    pg.write(str(ExRow["関与先番号"]))
+                    # 検索ボタンまでエンター-------------------------------------
+                    while ImgCheck(TFolURL, r"ZFindFlag.png", 0.9, 10)[0] is False:
+                        time.sleep(1)
+                        pg.press("return")
+                pg.press("return")
+                time.sleep(1)
+                pg.press("space")
+
                 if ErrStr == "":
-                    pg.press(["return", "return", "return"])
-                    pg.press("space")
                     # チェックマークが表示されるまで待機-------------------------------------
                     while (
                         ImgCheckForList(
@@ -2319,6 +2337,26 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                     is None
                 ):
                     time.sleep(1)
+                    # 顧問先情報変更ダイアログが表示されたら
+                    CDQ = ImgCheck(
+                        TFolURL,
+                        r"ChangeDataQ.png",
+                        0.9,
+                        10,
+                    )
+                    if CDQ[0] is True:
+                        pg.press("y")  # yで決定
+                        # 顧問先情報取込メニューが表示されるまで待機--------------------------
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\ChangeDataBtn.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        ImgClick(
+                            TFolURL, r"\ChangeDataBtn.png", 0.9, 10
+                        )  # 顧問先情報取込ボタンをクリック
                 # --------------------------------------------------------------------
                 ImgClick(TFolURL, r"\M_Sonota.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
                 # 一括更新のアイコンが表示されるまで待機----------------------------------
@@ -2343,7 +2381,23 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                     #         ImgClick(TFolURL, r"\Underwindow2.png", 0.9, 10)
                 # --------------------------------------------------------------------
                 ImgClick(TFolURL, r"\IkkatuOpenFlag.png", 0.9, 10)  # 一括更新メニューのアイコンをクリック
-                pg.press("tab")
+                FC = ImgCheckForList(
+                    TFolURL,
+                    [
+                        r"IkkatuFind.png",
+                        r"IkkatuFind2.png",
+                    ],
+                    0.9,
+                    10,
+                )
+                if FC[0] is True:
+                    ImgClick(TFolURL, FC[1], 0.9, 10)  # 一括更新メニューのアイコンをクリック
+                    pg.write(str(ExRow["関与先番号"]))
+                    # 検索ボタンまでエンター-------------------------------------
+                    while ImgCheck(TFolURL, r"FindFlag.png", 0.9, 10)[0] is False:
+                        time.sleep(1)
+                        pg.press("return")
+                pg.press("return")
                 time.sleep(1)
                 pg.press("space")
                 # チェックマークが表示されるまで待機-------------------------------------
@@ -2445,7 +2499,7 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver):
+def MainStarter(FolURL, TFolURL, NameDF, ExSheet, ExrcHeader, isnItem, driver):
     try:
         print(ExSheet[3 : len(ExSheet)])
         li = np.array(ExSheet[3 : len(ExSheet)])
@@ -2456,7 +2510,9 @@ def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver):
             ExRow = ExDf.iloc[Ex]
             if ExRow["関与先番号"] == ExRow["関与先番号"]:  # nan判定
                 # nanでない場合
-                OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver)
+                OpenSystem(
+                    FolURL, TFolURL, NameDF, ExRow, Ex, ExrcHeader, isnItem, driver
+                )
             else:
                 # nanの場合
                 print("nan")
@@ -2465,7 +2521,7 @@ def MainStarter(FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
+def OpenSystem(FolURL, TFolURL, NameDF, ExRow, Ex, ExrcHeader, isnItem, driver):
     try:
         Eh = 0
         for ExrcHeaderItem in ExrcHeader:
@@ -2487,7 +2543,8 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
                             dt_s = datetime.datetime.now()
                             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
                             Rno = ExRow["関与先番号"]
-                            Rn = ExRow["関与先名"].replace("\u3000", "")
+                            Rn = NameSearch(NameDF, Rno)
+                            Rn = Rn.replace("\u3000", "")
                             logger.debug(
                                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_メイン処理開始"
                             )
@@ -2507,6 +2564,8 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
                                 isnItem,
                                 Title,
                                 driver,
+                                Rno,
+                                Rn,
                             )
                     else:
                         # nanでない場合
@@ -2519,7 +2578,8 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
                             dt_s = datetime.datetime.now()
                             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
                             Rno = ExRow["関与先番号"]
-                            Rn = ExRow["関与先名"].replace("\u3000", "")
+                            Rn = NameSearch(NameDF, Rno)
+                            Rn = Rn.replace("\u3000", "")
                             logger.debug(
                                 dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_メイン処理開始"
                             )
@@ -2539,6 +2599,8 @@ def OpenSystem(FolURL, TFolURL, ExRow, Ex, ExrcHeader, isnItem, driver):
                                 isnItem,
                                 Title,
                                 driver,
+                                Rno,
+                                Rn,
                             )
             Eh += 1
     except:
@@ -2568,11 +2630,13 @@ def MainFlow(FolURL, TFolURL, Exlsx, driver):
             # DataFrameとしてsheetのデータ読込み
             if isnItem == "更新申請":
                 ExSheet = Exlsx.parse(isnItem, skiprows=0)
+                NameSheet = Exlsx.parse("顧問先別システム採用一覧表")
                 print(ExSheet)
                 # 初回読込時の保存--------------------------
                 dt_s = datetime.datetime.now()
                 dt_s = dt_s.strftime("%Y-%m-%d %H-%M-%S")
                 DF = pd.DataFrame(ExSheet)
+                NameDF = pd.DataFrame(NameSheet)
                 DF.to_csv(
                     r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\初回起動_"
                     + dt_s
@@ -2611,7 +2675,13 @@ def MainFlow(FolURL, TFolURL, Exlsx, driver):
                     print([dt_s, "Excelシート読込完了"], file=f)
                 # -----------------------------------------------
                 MainStarter(
-                    FolURL, TFolURL, ExSheet, ExrcHeader, isnItem, driver
+                    FolURL,
+                    TFolURL,
+                    NameDF,
+                    ExSheet,
+                    ExrcHeader,
+                    isnItem,
+                    driver,
                 )  # データ送信画面までの関数
     except Exception as e:
         logger.debug(e)
@@ -2638,25 +2708,28 @@ driver = MJSOpen.MainFlow(
 FolURL = FolURL + "/RPAPhoto/MJS_DensiSinkoku"
 for fd_path, sb_folder, sb_file in os.walk(XLSDir):
     FDP = fd_path
-    for sb_fileItem in sb_file:
-        print(sb_fileItem)
-        if "ミロク更新項目" in sb_fileItem and not "ミロク更新項目(原本).xlsx" == sb_fileItem:
-            XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-            MoveXLSURL = (
-                FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
-            )
-            os.rename(XLSURL, MoveXLSURL)
-            MoveXLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-            XLSURL = FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
-            open(LURL, "w").close()
-            Exlsx = EFA.XlsmRead(XLSURL)
-            if Exlsx[0] is True:
-                try:
-                    MainFlow(FolURL, TFolURL, Exlsx[1], driver)
-                except:
-                    traceback.print_exc()
-                Exlsx = "閉じろや"
+    if not len(sb_folder) == 0:
+        for sb_fileItem in sb_file:
+            print(sb_fileItem)
+            if "ミロク更新項目" in sb_fileItem and not "ミロク更新項目(原本).xlsx" == sb_fileItem:
+                XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                MoveXLSURL = (
+                    FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
+                )
                 os.rename(XLSURL, MoveXLSURL)
-            else:
-                print("Excel読み込みエラー")
-                logger.debug("Excel読み込みエラー")
+                MoveXLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                XLSURL = (
+                    FDP + r"\\MJSLog\\" + sb_fileItem.replace("~", "").replace("$", "")
+                )
+                open(LURL, "w").close()
+                Exlsx = EFA.XlsmRead(XLSURL)
+                if Exlsx[0] is True:
+                    try:
+                        MainFlow(FolURL, TFolURL, Exlsx[1], driver)
+                    except:
+                        traceback.print_exc()
+                    Exlsx = "閉じろや"
+                    os.rename(XLSURL, MoveXLSURL)
+                else:
+                    print("Excel読み込みエラー")
+                    logger.debug("Excel読み込みエラー")

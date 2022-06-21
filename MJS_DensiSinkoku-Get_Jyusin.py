@@ -245,7 +245,7 @@ def SortCSVItem(SortURL, SortName, Key):  # CSVと列名を4つ与えて4つの�
 
 def SortPDF(PDFName):
     Fol = str(dt.today().year) + "-" + str(dt.today().month)
-    pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
+    pt = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\" + Fol + "\\送信分受信通知"
     # path = path.replace('\\','/')#先
     PDFFileList = os.listdir(pt)
     Cou = 1
@@ -260,7 +260,7 @@ def SortPDF(PDFName):
 # ------------------------------------------------------------------------------------------------------------------
 def FolCre(C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui):
     Fol = str(dt.today().year) + "-" + str(dt.today().month)
-    pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
+    pt = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\" + Fol + "\\送信分受信通知"
     try:
         if os.path.exists(pt) is False:
             os.mkdir(pt)
@@ -1027,7 +1027,7 @@ def MainFlow(FolURL2):
 
 # --------------------------------------------------------------------------------------------------
 # RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"  # 元
+FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"  # 元
 FolURL2 = os.getcwd().replace("\\", "/")  # 先
 # --------------------------------------------------------------------------------
 try:

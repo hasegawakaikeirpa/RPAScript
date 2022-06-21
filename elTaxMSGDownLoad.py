@@ -442,10 +442,10 @@ def LogReturn(LogAns, H_driver):
 def RenamePDF(DownTime, MTitle, KanyoNo, KanyoName, Hakkoumoto, Hakkou, H_row):
     tdy = dt.strptime(DownTime, "%Y/%m/%d %H:%M:%S")  # 文字列を日付型に変換
     CfolName = str(tdy.year) + "-" + str(tdy.month)
-    folders = glob.glob("//Sv05121a/e/電子ファイル/メッセージボックス/*-*")
+    folders = glob.glob("//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/*-*")
     KanyoFolName = str(KanyoNo) + "_" + KanyoName
     for foldersItem in folders:
-        if foldersItem == "//Sv05121a/e/電子ファイル/メッセージボックス\\" + CfolName:
+        if foldersItem == "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\" + CfolName:
             Subfolders = glob.glob(foldersItem + "/*")  # フォルダーがあった場合
             if MTitle == "プレ申告データに関するお知らせ":
                 MotherFol = foldersItem + "\\eLTAX"
@@ -576,11 +576,14 @@ def SortPDF(DownTime, MTitle, KanyoNo, KanyoName, Hakkoumoto, Hakkou, H_row):
             + ".pdf"
         )
         dir_path = (
-            "//Sv05121a/e/電子ファイル/メッセージボックス/" + CfolName + "/eLTAX//" + KanyoFolName
+            "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/"
+            + CfolName
+            + "/eLTAX//"
+            + KanyoFolName
         )
     else:
         PDFName = KanyoFolName + "_" + Hakkoumoto + "_" + Hakkou + "_" + MTitle + ".pdf"
-        dir_path = "//Sv05121a/e/電子ファイル/メッセージボックス/" + CfolName + "/eLTAX受信通知"
+        dir_path = "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/" + CfolName + "/eLTAX受信通知"
     for current_dir, sub_dirs, files_list in os.walk(dir_path):
         for file_name in files_list:
             foldersItem = os.path.join(current_dir, file_name).replace("\u3000", "")
@@ -861,7 +864,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # pandas(pd)で関与先データCSVを取得
-H_url = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/Heidi関与先DB.csv"
+H_url = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/Heidi関与先DB.csv"
 H_df = pd.read_csv(H_url, encoding="utf-8")
 H_forCount = 0
 
@@ -896,44 +899,44 @@ for x in range(H_dfRow):
                 if H_ePass == H_ePass:  # 自身比較のNan判定
                     LoginLoop(H_SCode, H_TKCName, H_MSikibetu, H_ePass, H_elPass)
                     pd.DataFrame(OKLog).to_csv(
-                        "//Sv05121a/e/電子ファイル/メッセージボックス/PyOKLog.csv",
+                        "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
                         encoding="shift-jis",
                     )
                     pd.DataFrame(NGLog).to_csv(
-                        "//Sv05121a/e/電子ファイル/メッセージボックス/PyNGLog.csv",
+                        "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
                         encoding="shift-jis",
                     )
                 else:
                     if H_elPass == H_elPass:  # 自身比較のNan判定
                         LoginLoop(H_SCode, H_TKCName, H_MSikibetu, H_ePass, H_elPass)
                         pd.DataFrame(OKLog).to_csv(
-                            "//Sv05121a/e/電子ファイル/メッセージボックス/PyOKLog.csv",
+                            "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
                             encoding="shift-jis",
                         )
                         pd.DataFrame(NGLog).to_csv(
-                            "//Sv05121a/e/電子ファイル/メッセージボックス/PyNGLog.csv",
+                            "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
                             encoding="shift-jis",
                         )
             elif H_TSikibetu == H_TSikibetu:
                 if H_ePass == H_ePass:  # 自身比較のNan判定
                     LoginLoop(H_SCode, H_TKCName, H_TSikibetu, H_ePass, H_elPass)
                     pd.DataFrame(OKLog).to_csv(
-                        "//Sv05121a/e/電子ファイル/メッセージボックス/PyOKLog.csv",
+                        "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
                         encoding="shift-jis",
                     )
                     pd.DataFrame(NGLog).to_csv(
-                        "//Sv05121a/e/電子ファイル/メッセージボックス/PyNGLog.csv",
+                        "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
                         encoding="shift-jis",
                     )
                 else:
                     if H_elPass == H_elPass:  # 自身比較のNan判定
                         LoginLoop(H_SCode, H_TKCName, H_TSikibetu, H_ePass, H_elPass)
                         pd.DataFrame(OKLog).to_csv(
-                            "//Sv05121a/e/電子ファイル/メッセージボックス/PyOKLog.csv",
+                            "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
                             encoding="shift-jis",
                         )
                         pd.DataFrame(NGLog).to_csv(
-                            "//Sv05121a/e/電子ファイル/メッセージボックス/PyNGLog.csv",
+                            "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
                             encoding="shift-jis",
                         )
                     else:
@@ -942,7 +945,7 @@ for x in range(H_dfRow):
                         NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
                         NGLog.append(NGstr)
                         pd.DataFrame(NGLog).to_csv(
-                            "//Sv05121a/e/電子ファイル/メッセージボックス/PyNGLog.csv",
+                            "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
                             encoding="shift-jis",
                         )
             else:
@@ -950,7 +953,8 @@ for x in range(H_dfRow):
                 NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
                 NGLog.append(NGstr)
                 pd.DataFrame(NGLog).to_csv(
-                    "//Sv05121a/e/電子ファイル/メッセージボックス/PyNGLog.csv", encoding="shift-jis"
+                    "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
+                    encoding="shift-jis",
                 )
     except:
         traceback.print_exc()
@@ -965,7 +969,8 @@ for x in range(H_dfRow):
             )
             NGLog.append(NGstr)
             pd.DataFrame(NGLog).to_csv(
-                "//Sv05121a/e/電子ファイル/メッセージボックス/PyNGLog.csv", encoding="shift-jis"
+                "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
+                encoding="shift-jis",
             )
         except:
             print("どうしようもないがな！")

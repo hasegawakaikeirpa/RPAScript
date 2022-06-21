@@ -46,11 +46,3 @@ def camelotTimeOut(URL, Page, flv):
     else:
         CRP = camelot.read_pdf(URL, pages=Page)
         return CRP
-
-
-# try:
-#     pg = camelotTimeOut('//Sv05121a/e/電子ファイル/メッセージボックス/TEST/1011/ミロク送信分/1011_西村 英亨.pdf', '1','stream')
-#     PDFdf = pg[0].df# PDFテーブルをdf化
-#     print(PDFdf)
-# except:#TimeOut処理を記述
-#     pass
