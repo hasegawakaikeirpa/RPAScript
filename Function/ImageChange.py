@@ -642,10 +642,13 @@ def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
     cv2.imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
     Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
     Inv_img.save(imgurl)  # 白黒反転保存(PIL)
+    # 画像から直線を検出し、画像の傾きを調べ回転して上書き保存
     ILT = ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do)
     if ILT is True:
+        # 画像からデータ集合体位置を算出し、トリミング
         AutoTrimming(URL, imgurl, disth, canth1, canth2, casize, do)
         img = cv2.imread(imgurl)
+        # 画像リサイズ-----------------------------------------------
         IMGsize = [3840, 3840]
         h, w = img.shape[:2]
         ash = IMGsize[1] / h
@@ -656,10 +659,14 @@ def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):
             sizeas = (int(w * ash), int(h * ash))
         img = cv2.resize(img, dsize=sizeas)
         cv2.imwrite(imgurl, img)
-        TesseOCRLotate(URL, imgurl)
+        # ----------------------------------------------------------
+        TesseOCRLotate(URL, imgurl)  # 無料OCRで回転
         img = cv2.imread(imgurl)
-        TC = toneCurveUpContrast(img)
+        TC = toneCurveUpContrast(img)  # トーンカーブ処理
         cv2.imwrite(imgurl, TC)
+        # 直線を削除------------------------------------------------------
+        StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do)
+        # ---------------------------------------------------------------
         # ImageColorChange(URL, img)
         return imgurl
     else:

@@ -201,48 +201,37 @@ if __name__ == "__main__":
     imgurl = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\OCR0.png"
     YURL = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\StraightListYoko.csv"
     TURL = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\StraightListTate.csv"
+    # ####################################################################################
+    readcsv1 = []
     with open(
-        YURL,
+        r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\StraightListYoko.csv",
         "r",
         newline="",
-    ) as file:
-        CSV1 = list(csv.reader(file))
+    ) as inputfile:
+        for row in csv.reader(inputfile):
+            for rowItem in row:
+                rsp = (
+                    rowItem.replace("[", "")
+                    .replace("]", "")
+                    .replace(" ", "")
+                    .split(",")
+                )
+                readcsv1.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
+    readcsv2 = []
     with open(
-        TURL,
+        r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\StraightListTate.csv",
         "r",
         newline="",
-    ) as file:
-        CSV2 = list(csv.reader(file))
-    straightlineImport(imgurl, CSV1, CSV2)
-# # 画像の読み込み
-# img = cv2.imread(imgurl)
-# # グレースケールに変換します。
-# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-# # ネガポジ変換で反転
-# edges = cv2.Canny(gray, 50, 150, apertureSize=3)
-# # ハフ変換で直線検出
-# lines = cv2.HoughLinesP(
-#     edges, rho=1, theta=np.pi / 360, threshold=500, minLineLength=500, maxLineGap=1000
-# )
-# print(lines[:5])
-
-# #  直線検出して、赤線を引いて画像を作成します。
-# for line in lines:
-#     x1, y1, x2, y2 = line[0]
-#     if x1 == x2:  # 縦の直線のみ
-#         # 赤線を引く
-#         red_line_img = cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 3)
-#         print("")
-#     elif y1 == y2:  # 横の直線のみ
-#         # 緑線を引く
-#         blue_line_img = cv2.line(img, (x1, y1), (x2, y2), (0, 255, 0), 3)
-
-# cv2.imwrite(URL + r"\\output.png", red_line_img)
-# cv2.imwrite(URL + r"\\output.png", blue_line_img)
-# img_p = cv2.imread(URL + r"\\output.png")
-# for line in lines:
-#     x1, y1, x2, y2 = line[0]
-#     # 線を消す(白で線を引く)
-#     no_lines_img = cv2.line(img, (x1, y1), (x2, y2), (255, 255, 255), 3)
-# # 線を消して、画像を作成します。
-# cv2.imwrite(URL + r"\\output2.png", no_lines_img)
+    ) as inputfile:
+        for row in csv.reader(inputfile):
+            for rowItem in row:
+                rsp = (
+                    rowItem.replace("[", "")
+                    .replace("]", "")
+                    .replace(" ", "")
+                    .split(",")
+                )
+                readcsv2.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
+    COLArray = True, readcsv1, readcsv2
+    # ####################################################################################
+    straightlineImport(imgurl, readcsv1, readcsv2)
