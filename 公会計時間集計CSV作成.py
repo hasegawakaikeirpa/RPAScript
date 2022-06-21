@@ -25,10 +25,10 @@ def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-H_url = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/Heidi関与先DB.csv"
+H_url = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/Heidi関与先DB.csv"
 Enc = getFileEncoding(H_url)
 H_df = pd.read_csv(H_url, encoding=Enc)
-H_Murl = "//Sv05121a/e/C 作業台/RPA/公会計時間分析/公会計名簿.csv"
+H_Murl = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/公会計名簿.csv"
 Enc = getFileEncoding(H_Murl)
 H_Mdf = pd.read_csv(H_Murl, encoding=Enc)
 H_forCount = 0
@@ -41,7 +41,7 @@ Toyear = str(tdy.year)
 for x in range(12):
     H_Marges = []
     s = format(x + 1, "02")
-    dir_path = "//Sv05121a/e/C 作業台/RPA/公会計時間分析/" + Toyear + "-" + s
+    dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
     Tan_path = dir_path + "/担当者別"
     for current_dir, sub_dirs, files_list in os.walk(Tan_path):
         fn = 0

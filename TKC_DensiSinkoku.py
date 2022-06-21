@@ -1192,7 +1192,7 @@ def MainFlow(FolURL2):
 
 
 # RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"  # 元
+FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"  # 元
 FolURL2 = os.getcwd().replace("\\", "/")  # 先
 # --------------------------------------------------------------------------------
 try:

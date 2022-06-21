@@ -252,7 +252,7 @@ def SortCSVItem(SortURL, SortName, Key):  # CSVと列名を4つ与えて4つの�
 # ----------------------------------------------------------------------------------------------------------------------
 def SortPDF(PDFName):
     Fol = str(dt.today().year) + "-" + str(dt.today().month)
-    pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
+    pt = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\" + Fol + "\\送信分受信通知"
     # path = path.replace('\\','/')#先
     PDFFileList = os.listdir(pt)
     Cou = 1
@@ -743,7 +743,7 @@ def AllPrint(FolURL2, driver, MaChar, Tuki):
 
 # --------------------------------------------------------------------------------------------------------------------------
 def FolCre(FolURL2, MaChar, Nen, Tuki):
-    Out_Dir = "//Sv05121a/e/C 作業台/RPA/試算表/承認待ち"
+    Out_Dir = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/試算表/承認待ち"
     try:
         SyanaiCode = MaChar  # '{0:04}'.format(MaChar)#MaChar[0])
         sqlstr = "SELECT * FROM m_kkanyo WHERE vc_KnrCd=" + SyanaiCode
@@ -1008,7 +1008,7 @@ def MainFlow(FolURL2, MasterCSV):
 
 # -------------------------------------------------------------------------------------------------------------------------------
 # RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"  # 元
+FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"  # 元
 FolURL2 = os.getcwd().replace("\\", "/")  # 先
 # --------------------------------------------------------------------------------
 MaChar = "0561"

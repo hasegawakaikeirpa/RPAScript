@@ -359,7 +359,7 @@ def FirstOpen(FolURL2):
                         time.sleep(1)
                     time.sleep(1)
                     TKCTimeCSVOut(
-                        FolURL2, "移動時間", "//Sv05121a/e/C 作業台/RPA/公会計時間分析/担当者別"
+                        FolURL2, "移動時間", "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/担当者別"
                     )
                     time.sleep(1)
                     pg.press("f10")
@@ -518,7 +518,7 @@ def KanyoScroll(FolURL2):  # 関与先毎の時間集計操作
                                             TKCTimeCSVOut(
                                                 FolURL2,
                                                 FN,
-                                                "//Sv05121a/e/C 作業台/RPA/公会計時間分析/担当者別",
+                                                "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/担当者別",
                                             )
                                             time.sleep(1)
                                             pg.press("f10")
@@ -683,7 +683,9 @@ def MainFlow(FolURL2):
 
 # ----------------------------------------------------------------------------------------------------------------------
 # RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_KoukaikeiTimetabulation"  # 元
+FolURL = (
+    "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/TKC_KoukaikeiTimetabulation"  # 元
+)
 # FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
 FolURL2 = os.getcwd().replace("\\", "/")  # 先
 # --------------------------------------------------------------------------------

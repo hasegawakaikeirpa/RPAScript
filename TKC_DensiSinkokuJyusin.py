@@ -642,7 +642,7 @@ def SortCSVItem(
 # ----------------------------------------------------------------------------------------------------------------------
 def SortPDF(PDFName):
     Fol = str(dt.today().year) + "-" + str(dt.today().month)
-    pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
+    pt = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\" + Fol + "\\送信分受信通知"
     # path = path.replace('\\','/')#先
     PDFFileList = os.listdir(pt)
     Cou = 1
@@ -728,7 +728,7 @@ def TaxHantei(
 # ------------------------------------------------------------------------------------------------------------------
 def FolCre(driver, FolURL2, C_SCode, C_Name, C_Zeimoku, C_Teisyutu, CSVName, CsvKey):
     Fol = str(dt.today().year) + "-" + str(dt.today().month)
-    pt = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\" + Fol + "\\送信分受信通知"
+    pt = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\" + Fol + "\\送信分受信通知"
     try:
         if os.path.exists(pt) is False:
             os.mkdir(pt)
@@ -1437,7 +1437,7 @@ def MainFlow(FolURL2):  # メインの処理
 
 
 # RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = "//Sv05121a/e/C 作業台/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"  # 元
+FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"  # 元
 FolURL2 = os.getcwd().replace("\\", "/")  # 先
 # 印刷対象をターミナルで設定------------------------------------------------------------
 NitijiBunkiTrigger = input("最新日時順にダウンロードしますか？y/n\n")

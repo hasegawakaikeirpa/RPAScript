@@ -966,9 +966,9 @@ with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as
     print(Settingtoml)
 # ----------------------------------------------------------------------------------------
 CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
-URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\2022-5\\eLTAX"
-# URL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\TEST"
-LogURL = "\\\\Sv05121a\\e\\電子ファイル\\メッセージボックス\\PDFREADLog"
+URL = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\2022-5\\eLTAX"
+# URL = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\TEST"
+LogURL = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\PDFREADLog"
 try:
     logger.debug(URL + "内のPDF抽出開始")
     PDFRead(URL, Settingtoml)
