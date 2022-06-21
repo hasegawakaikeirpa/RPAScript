@@ -263,8 +263,8 @@ def BeppyouPDFSplit(
 # TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
 # CFolURL = FolURL + r"\RPAPhoto\MJS_SystemPrintOut"  # 先
 # SerchURL = r"\\Sv05121a\e\電子ファイル\(3)法人決算"  # 先
-# XLSURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\ミロク更新項目.xlsx"
-# LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
+# XLSURL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\ミロク更新項目.xlsx"
+# LURL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
 # Title = "490_㈲ムカイハタタイヤ_RPA決算書"
 # EXNo = 490
 # EXdir = "R3"

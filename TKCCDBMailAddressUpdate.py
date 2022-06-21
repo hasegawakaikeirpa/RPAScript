@@ -289,7 +289,7 @@ def CDBOpen(FolURL2, Lday, driver, ws, XlsmURL):
         # --------------------------------------------------------------------------------------------------------------
         LenRow = np.array(ws).shape[0]  # dfインスタンスの行数取得
         for x in range(LenRow):
-            CSVURL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
+            CSVURL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\ALLDataBase\m_kfmsrireki.csv"
             CSVURL = CSVURL.replace("\\", "/")  # URLリネーム
             FCSV.CsvRead(CSVURL)
             wsRow = ws.iloc[x]  # dfインスタンスの行データ
@@ -508,7 +508,7 @@ def MainFlow(FolURL2, Lday):
     driver = OMSOpen.MainFlow(BatUrl, FolURL2, "RPAPhoto")  # OMSを起動しログイン後インスタンス化
     # driver = ""
     FolURL2 = FolURL2 + "/RPAPhoto/TKCCDBMailAddressUpdate"  # RPA用画像保管フォルダを指定
-    # XlsmURL = r"\\Sv05121a\e\C 作業台\請求書メールアドレス収集\アドレス新規登録シート.xlsm"  # アドレス登録シートを指定
+    # XlsmURL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\請求書メールアドレス収集\アドレス新規登録シート.xlsm"  # アドレス登録シートを指定
     XlsmURL = r"D:\アドレス新規登録シート.xlsm"  # アドレス登録シートを指定
     XlsmURL = XlsmURL.replace("\\", "/")  # URLリネーム
     # エクセルブックを読込------------------------------------------------------------------------------------------------

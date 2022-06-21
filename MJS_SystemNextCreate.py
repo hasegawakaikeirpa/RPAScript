@@ -2574,7 +2574,7 @@ def MainFlow(FolURL, TFolURL, Exlsx, driver):
                 dt_s = dt_s.strftime("%Y-%m-%d %H-%M-%S")
                 DF = pd.DataFrame(ExSheet)
                 DF.to_csv(
-                    r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\初回起動_"
+                    r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\初回起動_"
                     + dt_s
                     + ".csv",
                     encoding="cp932",
@@ -2620,8 +2620,10 @@ def MainFlow(FolURL, TFolURL, Exlsx, driver):
 # RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
-XLSDir = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新"
-LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
+XLSDir = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新"
+LURL = (
+    r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
+)
 # --------------------------------------------------------------------------------
 # Log--------------------------------------------
 dt_s = datetime.datetime.now()

@@ -4512,7 +4512,7 @@ def MainFlow(FolURL, TFolURL, CFolURL, SerchURL, Exlsx, driver):
                 DF = pd.DataFrame(ExSheet)
                 NameDF = pd.DataFrame(NameSheet)
                 DF.to_csv(
-                    r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\初回起動_プリント"
+                    r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\初回起動_プリント"
                     + dt_s
                     + ".csv",
                     encoding="cp932",
@@ -4564,8 +4564,10 @@ FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
 CFolURL = FolURL + r"\RPAPhoto\MJS_SystemPrintOut"  # 先
 SerchURL = r"\\Sv05121a\e\電子ファイル\(3)法人決算"  # 先
-XLSDir = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新"
-LURL = r"\\Sv05121a\e\C 作業台\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
+XLSDir = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新"
+LURL = (
+    r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
+)
 # --------------------------------------------------------------------------------
 # Log--------------------------------------------
 dt_s = datetime.datetime.now()

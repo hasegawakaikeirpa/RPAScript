@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 # ----------------------------------------------------------------------------------------------------------------------
 # 関与先データベースをCSVアウト-------------------------------------------------------
 sql = "SELECT * FROM m_kkanyo"
-URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kkanyo.csv"
+URL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\ALLDataBase\m_kkanyo.csv"
 URL = URL.replace("\\", "/")
 
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
@@ -16,7 +16,7 @@ SQDF.to_csv(URL, index=False)
 logger.debug("関与先データベースをCSVアウト完了: debug level log")
 # 社員情報をCSVアウト----------------------------------------------------------------
 sql = "SELECT * FROM m_syain"
-URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_syain.csv"
+URL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\ALLDataBase\m_syain.csv"
 URL = URL.replace("\\", "/")
 
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
@@ -64,7 +64,7 @@ CASE WHEN R.vc_SousinK5 IS NOT NULL THEN R.vc_SousinK5 ELSE SM.vc_SousinK5 END A
 CASE WHEN R.vc_Mail5 IS NOT NULL THEN R.vc_Mail5 ELSE SM.vc_Mail5 END AS vc_Mail5\
  FROM SubMix SM LEFT JOIN RIREKI R ON SM.vc_FMSKnrCd = R.vc_FMSKnrCd;"
 sql = WithA + WithB + WithC + WithD + WithE + SelectStr
-URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsmail.csv"
+URL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\ALLDataBase\m_kfmsmail.csv"
 URL = URL.replace("\\", "/")
 
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
@@ -72,7 +72,7 @@ SQDF.to_csv(URL, index=False)
 logger.debug("FMSMAILLISTをCSVアウト完了: debug level log")
 # メアド変更履歴をCSVアウト---------------------------------------------------------
 sql = "SELECT * FROM m_kfmsrireki AS m WHERE NOT EXISTS (SELECT * FROM m_kfmsrireki AS s WHERE m.vc_FMSKnrCd = s.vc_FMSKnrCd AND m.in_RrkNo_pk < s.in_RrkNo_pk);"
-URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_kfmsrireki.csv"
+URL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\ALLDataBase\m_kfmsrireki.csv"
 URL = URL.replace("\\", "/")
 
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
@@ -111,7 +111,7 @@ SQDF.to_csv(URL, index=False)
 logger.debug("メアド変更履歴をCSVアウト完了: debug level log")
 # 人事異動をCSVアウト--------------------------------------------------------------
 sql = "SELECT * FROM d_jnjido"
-URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\d_jnjido.csv"
+URL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\ALLDataBase\d_jnjido.csv"
 URL = URL.replace("\\", "/")
 
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
@@ -131,7 +131,7 @@ SelectStr = "SubTotal AS (SELECT Mst.vc_SyainCd_pk,Mst.in_RrkNo_pk,Mst.vc_UsrID,
             ,Ido.cr_SyainKbn,Ido.vc_BmnCd,Ido.cr_YakuCd,Ido.vc_GrpCd,Ido.vc_Biko As vc_IdoBiko FROM m_Syain Mst LEFT JOIN SubIdo Ido ON Mst.vc_SyainCd_pk = Ido.vc_SyainCd_pk WHERE Mst.cr_RecKbn = '0' ORDER BY Mst.vc_SyainCd_pk)"
 LastSelect = "SELECT sbt.vc_SyainCd_pk,sbt.in_RrkNo_pk,sbt.vc_Name,sbt.vc_ComMail,sbt.vc_BmnCd,sbm.vc_BmnNm FROM SubTotal sbt INNER JOIN Submn sbm ON sbt.vc_BmnCd = sbm.vc_BmnCd_pk"
 sql = WithA + WithB + WithC + SelectStr + LastSelect
-URL = r"\\Sv05121a\e\C 作業台\RPA\ALLDataBase\m_bmn.csv"
+URL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\ALLDataBase\m_bmn.csv"
 URL = URL.replace("\\", "/")
 
 SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[1]
