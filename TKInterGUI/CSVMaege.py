@@ -8,7 +8,7 @@ if __name__ == "__main__":
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)
         print(Banktoml)
-    # -----------------------------------------------------------
+    # --------------------------------------------------------------------------------------
 
     readcsv = []
     URL = r"D:\SouzokuOCR"
