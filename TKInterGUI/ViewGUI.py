@@ -2,6 +2,7 @@ import sys
 import tkinter as tk
 from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
+import TKINTERCV2Setting as TKCV2
 
 
 class ViewGUI:
@@ -47,6 +48,7 @@ class ViewGUI:
         label_flip = tk.Label(self.window_sub_ctrl2, text="[Flip]")
         label_clip = tk.Label(self.window_sub_ctrl2, text="[Clip]")
         label_run = tk.Label(self.window_sub_ctrl2, text="[Final Edit]")
+        label_Line = tk.Label(self.window_sub_ctrl2, text="[Line Edit]")
 
         # フォルダ選択ボタン生成
         self.button_setdir = tk.Button(
@@ -94,6 +96,11 @@ class ViewGUI:
         )
         button_undo = tk.Button(
             self.window_sub_ctrl2, text="Undo", width=5, command=self.event_undo
+        )
+
+        # LineOCR起動ボタン生成
+        button_LinOCR = tk.Button(
+            self.window_sub_ctrl2, text="LinOCR_Open", width=10, command=self.LinOCROpen
         )
 
         # ラジオボタン生成
@@ -159,6 +166,9 @@ class ViewGUI:
         label_run.grid(row=8, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
         button_undo.grid(row=9, column=1, padx=5, pady=5, sticky=tk.W)
         button_save.grid(row=9, column=2, padx=5, pady=5, sticky=tk.W)
+
+        label_Line.grid(row=10, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        button_LinOCR.grid(row=11, column=1, padx=5, pady=5, sticky=tk.W)
 
         # window_sub_ctrl3
         label_s3_blk1.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.EW)
@@ -245,6 +255,12 @@ class ViewGUI:
         self.control.UndoImage("None")
         self.radio_intvar1.set(0)
         self.radio_intvar2.set(0)
+
+    def LinOCROpen(self):
+        FDir = self.entry_dir.get()
+        FN = self.combo_file.get()
+        Imgurl = FDir + r"\\" + FN
+        TKCV2.Main(Imgurl)
 
 
 if __name__ == "__main__":
