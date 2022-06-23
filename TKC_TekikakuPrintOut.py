@@ -2,6 +2,7 @@
 # モジュールインポート
 import pyautogui as pg
 import time
+import csv
 
 # pandasインポート
 import pandas as pd
@@ -310,55 +311,55 @@ FolURL = os.getcwd().replace("\\", "/")  # 先
 TFolURL = FolURL + r"\RPAPhoto\TKC_TekikakuPrintOut"  # 先
 CSVURL = TFolURL + r"\List.CSV"
 # --------------------------------------------------------------------------------
-# with open(CSVURL, "r", encoding="cp932") as f:
-#     LM = csv.reader(f)
-#     Line = [row for row in LM]
+with open(CSVURL, "r", encoding="cp932") as f:
+    LM = csv.reader(f)
+    Line = [row for row in LM]
 """
 コード,関与先名・納税者名,税務署,課税方式区分,書類作成,電子申請ﾃﾞｰﾀ作成,担当者
 """
-Call = ChangeDir()
-# CSVF = pd.read_csv(CSVURL, encoding="cp932")
-# CSVR = len(CSVF)
-# PV = ImgCheck(TFolURL, r"\Preview.png", 0.9, 10)
-# PVx = PV[1]
-# PVy = PV[2] + 45
-# SPos = PV[2] + 45
-# CRCount = 1
-# for CR in range(CSVR):
-#     CSVRow = CSVF.iloc[CR]
-#     Title = CSVRow["コード"] + "_" + CSVRow["担当者"] + ".pdf"
-#     Title = Title.replace("/", "_")
-#     Fname = TFolURL.replace("/", "\\") + "\\" + Title
-#     if int(CSVRow["行"]) >= 183:
-#         pyautogui.click(PVx, PVy)
-#         while pg.locateOnScreen(TFolURL + r"\PrintTitle.png", confidence=0.9) is None:
-#             time.sleep(1)
-#         ImgClick(TFolURL, r"\PrintTitle.png", 0.9, 10)
-#         pg.keyDown("ctrl")
-#         pg.press("p")
-#         pg.keyUp("ctrl")
-#         while pg.locateOnScreen(TFolURL + r"\PrintBtn.png", confidence=0.9) is None:
-#             time.sleep(1)
-#         ImgClick(TFolURL, r"\PrintBtn.png", 0.9, 10)
-#         time.sleep(1)
-#         pyperclip.copy(Fname)
-#         pg.hotkey("ctrl", "v")
-#         pg.press("return")
-#         while pg.locateOnScreen(TFolURL + r"\PrintTitle.png", confidence=0.9) is None:
-#             if ImgCheck(TFolURL, r"\RepFile.png", 0.9, 10)[0] is True:
-#                 pg.press("y")
-#         time.sleep(1)
-#         ImgClick(TFolURL, r"\PrintTitle.png", 0.9, 10)
-#         pg.keyDown("alt")
-#         pg.press("f4")
-#         pg.keyUp("alt")
-#         time.sleep(1)
-#     if CRCount == 14:
-#         pyautogui.click(PVx, PV[2])
-#         pg.press("pagedown")
-#         CRCount = 1
-#         PVy = SPos
-#     else:
-#         pyautogui.click(PVx, PV[2])
-#         CRCount += 1
-#         PVy += 30
+# Call = ChangeDir()
+CSVF = pd.read_csv(CSVURL, encoding="cp932")
+CSVR = len(CSVF)
+PV = ImgCheck(TFolURL, r"\Preview.png", 0.9, 10)
+PVx = PV[1]
+PVy = PV[2] + 45
+SPos = PV[2] + 45
+CRCount = 1
+for CR in range(CSVR):
+    CSVRow = CSVF.iloc[CR]
+    Title = CSVRow["コード"] + "_" + CSVRow["担当者"] + ".pdf"
+    Title = Title.replace("/", "_")
+    Fname = TFolURL.replace("/", "\\") + "\\" + Title
+    if int(CSVRow["行"]) >= 183:
+        pyautogui.click(PVx, PVy)
+        while pg.locateOnScreen(TFolURL + r"\PrintTitle.png", confidence=0.9) is None:
+            time.sleep(1)
+        ImgClick(TFolURL, r"\PrintTitle.png", 0.9, 10)
+        pg.keyDown("ctrl")
+        pg.press("p")
+        pg.keyUp("ctrl")
+        while pg.locateOnScreen(TFolURL + r"\PrintBtn.png", confidence=0.9) is None:
+            time.sleep(1)
+        ImgClick(TFolURL, r"\PrintBtn.png", 0.9, 10)
+        time.sleep(1)
+        pyperclip.copy(Fname)
+        pg.hotkey("ctrl", "v")
+        pg.press("return")
+        while pg.locateOnScreen(TFolURL + r"\PrintTitle.png", confidence=0.9) is None:
+            if ImgCheck(TFolURL, r"\RepFile.png", 0.9, 10)[0] is True:
+                pg.press("y")
+        time.sleep(1)
+        ImgClick(TFolURL, r"\PrintTitle.png", 0.9, 10)
+        pg.keyDown("alt")
+        pg.press("f4")
+        pg.keyUp("alt")
+        time.sleep(1)
+    if CRCount == 14:
+        pyautogui.click(PVx, PV[2])
+        pg.press("pagedown")
+        CRCount = 1
+        PVy = SPos
+    else:
+        pyautogui.click(PVx, PV[2])
+        CRCount += 1
+        PVy += 30
