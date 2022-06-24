@@ -20,7 +20,9 @@ class ControlGUI:
         self.canvas = None
 
     def is_target(self, name, key_list):
-
+        """
+        self.ext_keysで指定した拡張子のみリスト化
+        """
         valid = False
         for ks in key_list:
             if ks in name:
@@ -29,7 +31,9 @@ class ControlGUI:
         return valid
 
     def get_file(self, command, set_pos=-1):
-
+        """
+        画像プレビュー機能の設定
+        """
         if command == "prev":
             self.file_pos = self.file_pos - 1
         elif command == "next":
@@ -53,7 +57,9 @@ class ControlGUI:
     # Public
 
     def SetDirlist(self, dir_path):
-
+        """
+        フォルダー内画像ファイルをリスト化
+        """
         self.dir_path = dir_path
         self.target_files = []
 
@@ -71,17 +77,23 @@ class ControlGUI:
         return self.target_files
 
     def SetCanvas(self, window_canvas):
-
+        """
+        キャンバス配置
+        """
         self.canvas = window_canvas
 
     def DrawImage(self, command, set_pos=-1):
-
+        """
+        キャンバスに画像を読込む
+        """
         fname = self.get_file(command, set_pos)
         self.model.DrawImage(fname, self.canvas, "None")
         return self.file_pos
 
     def DrawRectangle(self, command, pos_y, pos_x):
-
+        """
+        キャンバス画像クリックで範囲指定完了後
+        """
         if command == "clip_start":
             self.clip_sy, self.clip_sx = pos_y, pos_x
             self.clip_ey, self.clip_ex = pos_y + 1, pos_x + 1
@@ -103,7 +115,9 @@ class ControlGUI:
         )
 
     def EditImage(self, command):
-
+        """
+        画像トリミング
+        """
         args = {}
         if command == "clip_done":
             args["sx"], args["sy"] = self.clip_sx, self.clip_sy
@@ -113,11 +127,15 @@ class ControlGUI:
         self.model.DrawImage(fname, self.canvas, command, args=args)
 
     def SaveImage(self):
-
+        """
+        画像上書き保存
+        """
         fname = self.get_file("current")
         self.model.SaveImage(fname)
 
     def UndoImage(self, command):
-
+        """
+        画像編集復元
+        """
         fname = self.get_file("current")
         self.model.DrawImage(fname, self.canvas, command)

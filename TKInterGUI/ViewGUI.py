@@ -3,11 +3,11 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
 import TKINTERCV2Setting as TKCV2
+from tkinter import messagebox
 
 
 class ViewGUI:
     def __init__(self, window_root, default_path):
-
         # Controller Class生成
         self.control = ControlGUI(default_path)
 
@@ -19,16 +19,26 @@ class ViewGUI:
         # メインウィンドウ
         self.window_root = window_root
         # 　メインウィンドウサイズ指定
-        self.window_root.geometry("800x600")
+        self.window_root.geometry("800x600")  # 縦,横
+        NWINSize = ["800", "600"]  # 縦,横
         # 　メインウィンドウタイトル
         self.window_root.title("GUI Image Editor v0.90")
-
+        # self.window_root.bind("<Button-1>", self.ChangeWSize)
         # サブウィンドウ
+        # フォルダ・ファイル選択
         self.window_sub_ctrl1 = tk.Frame(self.window_root, height=300, width=300)
-        self.window_sub_ctrl2 = tk.Frame(self.window_root, height=500, width=300)
-        self.window_sub_ctrl3 = tk.Frame(self.window_root, height=150, width=400)
+        # 画像加工
+        self.window_sub_ctrl2 = tk.Frame(self.window_root, height=300, width=300)
+        # プレビュー
+        self.window_sub_ctrl3 = tk.Frame(self.window_root, height=50, width=400)
+        # 画像加工2
+        self.window_sub_ctrl4 = tk.Frame(self.window_root, height=50, width=400)
+        # キャンバス
+        FCH = int(int(NWINSize[0]) * 0.4)
+        FCW = int(int(NWINSize[1]) * 0.4)
+        self.window_sub_FrameCanvas = tk.Frame(self.window_root, height=FCH, width=FCW)
         self.window_sub_canvas = tk.Canvas(
-            self.window_root, height=450, width=400, bg="gray"
+            self.window_root, height=FCH, width=FCW, bg="gray"
         )
 
         # オブジェクト
@@ -47,8 +57,8 @@ class ViewGUI:
         label_rotate = tk.Label(self.window_sub_ctrl2, text="[Rotate]")
         label_flip = tk.Label(self.window_sub_ctrl2, text="[Flip]")
         label_clip = tk.Label(self.window_sub_ctrl2, text="[Clip]")
-        label_run = tk.Label(self.window_sub_ctrl2, text="[Final Edit]")
-        label_Line = tk.Label(self.window_sub_ctrl2, text="[Line Edit]")
+        label_run = tk.Label(self.window_sub_ctrl4, text="[Final Edit]")
+        label_Line = tk.Label(self.window_sub_ctrl4, text="[Line Edit]")
 
         # フォルダ選択ボタン生成
         self.button_setdir = tk.Button(
@@ -92,15 +102,15 @@ class ViewGUI:
 
         # Save/Undoボタン生成
         button_save = tk.Button(
-            self.window_sub_ctrl2, text="Save", width=5, command=self.event_save
+            self.window_sub_ctrl4, text="Save", width=5, command=self.event_save
         )
         button_undo = tk.Button(
-            self.window_sub_ctrl2, text="Undo", width=5, command=self.event_undo
+            self.window_sub_ctrl4, text="Undo", width=5, command=self.event_undo
         )
 
         # LineOCR起動ボタン生成
         button_LinOCR = tk.Button(
-            self.window_sub_ctrl2, text="LinOCR_Open", width=10, command=self.LinOCROpen
+            self.window_sub_ctrl4, text="LinOCR_Open", width=10, command=self.LinOCROpen
         )
 
         # ラジオボタン生成
@@ -131,57 +141,69 @@ class ViewGUI:
                 )
             )
         self.radio_intvar2.set(0)  # 0:No select
-
+        # キャンバス内クリック開始イベントに関数バインド
         self.window_sub_canvas.bind("<ButtonPress-1>", self.event_clip_start)
+        # キャンバス内ドラッグイベントに関数バインド
         self.window_sub_canvas.bind("<Button1-Motion>", self.event_clip_keep)
+        # キャンバス内クリック終了イベントに関数バインド
         self.window_sub_canvas.bind("<ButtonRelease-1>", self.event_clip_end)
 
-        ## ウィジェット配置
-        # サブウィンドウ
-        self.window_sub_ctrl1.place(relx=0.65, rely=0.05)
-        self.window_sub_ctrl2.place(relx=0.65, rely=0.25)
-        self.window_sub_ctrl3.place(relx=0.15, rely=0.9)
-        self.window_sub_canvas.place(relx=0.05, rely=0.05)
-
-        # window_sub_ctrl1
+        # ウィジェット配置
+        # # サブウィンドウ
+        # self.window_sub_ctrl1.place(relx=0.65, rely=0.05)
+        # self.window_sub_ctrl2.place(relx=0.65, rely=0.25)
+        # self.window_sub_ctrl3.place(relx=0.15, rely=0.9)
+        # # キャンバスを配置
+        # self.window_sub_canvas.place(relx=0.05, rely=0.05)
+        # キャンバスを配置
+        self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
+        self.window_sub_ctrl3.pack(side=tk.LEFT, fill="both", expand=True)
+        self.window_sub_ctrl1.pack(side=tk.LEFT, fill="both", expand=True)
+        self.window_sub_ctrl2.pack(side=tk.LEFT, fill="both", expand=True)
+        self.window_sub_ctrl4.pack(side=tk.LEFT, fill="both", expand=True)
+        # window_sub_ctrl1---------------------------------------------------
         self.button_setdir.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
         self.entry_dir.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
         label_target.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
         self.combo_file.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
-
-        # window_sub_ctrl2
+        # -------------------------------------------------------------------
+        # window_sub_ctrl2---------------------------------------------------
         label_s2_blk1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        label_rotate.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_rotate[0].grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_rotate[1].grid(row=3, column=2, padx=5, pady=5, sticky=tk.W)
-        radio_rotate[2].grid(row=3, column=3, padx=5, pady=5, sticky=tk.W)
+        label_rotate.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+        radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
+        radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
+        radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
 
-        label_flip.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_flip[0].grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_flip[1].grid(row=5, column=2, padx=5, pady=5, sticky=tk.W)
+        label_flip.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
+        radio_flip[0].grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
+        radio_flip[1].grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
 
-        label_clip.grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
-        button_clip_start.grid(row=7, column=1, padx=5, pady=5, sticky=tk.W)
-        button_clip_done.grid(row=7, column=2, padx=5, pady=5, sticky=tk.W)
-        label_run.grid(row=8, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        button_undo.grid(row=9, column=1, padx=5, pady=5, sticky=tk.W)
-        button_save.grid(row=9, column=2, padx=5, pady=5, sticky=tk.W)
+        label_clip.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
+        button_clip_start.grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
+        button_clip_done.grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
+        label_run.grid(row=7, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        # -------------------------------------------------------------------
+        # window_sub_ctrl4---------------------------------------------------
+        button_undo.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+        button_save.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
 
-        label_Line.grid(row=10, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        button_LinOCR.grid(row=11, column=1, padx=5, pady=5, sticky=tk.W)
-
-        # window_sub_ctrl3
+        label_Line.grid(row=2, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        button_LinOCR.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
+        # -------------------------------------------------------------------
+        # window_sub_ctrl3---------------------------------------------------
         label_s3_blk1.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.EW)
         button_prev.grid(row=1, column=3, padx=5, pady=5, sticky=tk.E)
         label_s3_blk2.grid(row=1, column=4, columnspan=2, padx=5, pady=5, sticky=tk.EW)
         button_next.grid(row=1, column=6, padx=5, pady=5, sticky=tk.W)
+        # -------------------------------------------------------------------
+        self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
 
-        # Set Canvas
-        self.control.SetCanvas(self.window_sub_canvas)
-
-    # Event Callback
+    # Event Callback----------------------------------------------------------------------
     def event_set_folder(self):
-        print(sys._getframe().f_code.co_name)
+        """
+        フォルダー選択ボタンクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         self.dir_path = filedialog.askdirectory(
             initialdir=self.dir_path, mustexist=True
         )
@@ -190,77 +212,125 @@ class ViewGUI:
         self.combo_file["value"] = self.file_list
 
     def event_updatefile(self):
-        print(sys._getframe().f_code.co_name)
+        """
+        ファイル選択ウィンドウクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         self.file_list = self.control.SetDirlist(self.dir_path)
         self.combo_file["value"] = self.file_list
 
     def event_selectfile(self, event):
-        print(sys._getframe().f_code.co_name)
+        """
+        ファイル選択後イベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         set_pos = self.combo_file.current()
         self.control.DrawImage("set", set_pos=set_pos)
 
     def event_prev(self):
-        print(sys._getframe().f_code.co_name)
+        """
+        prevボタンクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         pos = self.control.DrawImage("prev")
         self.combo_file.set(self.file_list[pos])
 
     def event_next(self):
-        print(sys._getframe().f_code.co_name)
+        """
+        nextボタンクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         pos = self.control.DrawImage("next")
         self.combo_file.set(self.file_list[pos])
 
     def event_rotate(self):
+        """
+        画像回転変更イベント
+        """
         val = self.radio_intvar1.get()
         cmd = "rotate-" + str(val)
         self.control.EditImage(cmd)
         print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
 
     def event_flip(self):
+        """
+        画像反転イベント
+        """
         val = self.radio_intvar2.get()
         cmd = "flip-" + str(val)
         self.control.EditImage(cmd)
         print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
 
     def event_clip_try(self):
-        print(sys._getframe().f_code.co_name)
+        """
+        Tryボタンイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         self.clip_enable = True
 
     def event_clip_done(self):
-        print(sys._getframe().f_code.co_name)
+        """
+        Doneボタンイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         if self.clip_enable:
             self.control.EditImage("clip_done")
             self.clip_enable = False
 
     def event_clip_start(self, event):
+        """
+        画像処理Saveイベント
+        """
         print(sys._getframe().f_code.co_name, event.x, event.y)
         if self.clip_enable:
             self.control.DrawRectangle("clip_start", event.y, event.x)
 
     def event_clip_keep(self, event):
-        # print(sys._getframe().f_code.co_name)
+        """
+        画像処理Undoイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         if self.clip_enable:
             self.control.DrawRectangle("clip_keep", event.y, event.x)
 
     def event_clip_end(self, event):
+        """
+        キャンバス画像左クリック範囲指定で終端まで確定後
+        """
         print(sys._getframe().f_code.co_name, event.x, event.y)
         if self.clip_enable:
             self.control.DrawRectangle("clip_end", event.y, event.x)
 
     def event_save(self):
-        print(sys._getframe().f_code.co_name)
+        """
+        Saveボタンクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         self.control.SaveImage()
 
     def event_undo(self):
-        print(sys._getframe().f_code.co_name)
+        """
+        Undoボタンクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         self.control.UndoImage("None")
         self.radio_intvar1.set(0)
         self.radio_intvar2.set(0)
 
     def LinOCROpen(self):
+        """
+        OCROpenボタンクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         FDir = self.entry_dir.get()
         FN = self.combo_file.get()
         Imgurl = FDir + r"\\" + FN
-        TKCV2.Main(Imgurl)
+        if "[select file]" in Imgurl:
+            messagebox.showinfo("確認", "画像ファイルを選択してください。")
+        else:
+            TKCV2.Main(Imgurl)
+
+    # ------------------------------------------------------------------------------------
 
 
 if __name__ == "__main__":

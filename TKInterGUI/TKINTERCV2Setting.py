@@ -13,12 +13,14 @@ class Application(tk.Frame):
     def __init__(self, master=None):
         global TKimg  # 画像オブジェクト用グローバル変数
         global txt
+        global CW, CH
         # Windowの初期設定を行う。
         super().__init__(master)
         # Windowの画面サイズを設定する。
         # geometryについて : https://kuroro.blog/python/rozH3S2CYE0a0nB3s2QL/
         self.master.geometry("1480x800+0+0")  # Window表示位置指定
         # 画像の読込#####################################################################
+        # 透過キャンバスの画像範囲検出の為リサイズ比率等を算出
         IR = LoadImg()
         CW, CH, HCW, HCH, TKimg = IR[0], IR[1], IR[2], IR[3], IR[4]
         # ##############################################################################
@@ -60,9 +62,9 @@ class Application(tk.Frame):
         frame = tk.Frame(
             self.top,
             bg="White",
-            height=500,
+            height=800,
             width=90,
-            pady=10,
+            pady=1,
             padx=50,
             relief=tk.GROOVE,
         )
@@ -137,12 +139,36 @@ class Application(tk.Frame):
             height=BH,
         )  # ボタン作成
         button.pack(side=tk.TOP, pady=10, padx=10, fill=tk.BOTH)
+        # 戻るボタン---------------------------------------------------------------
+        button = tk.Button(
+            # self.top,
+            frame,
+            text="戻る",
+            fg="White",
+            command=lambda: ReturnBack(self),
+            bg="Orange",
+            font=fonts,
+            width=BW,
+            height=BH,
+        )  # ボタン作成
+        button.pack(side=tk.TOP, pady=10, padx=10, fill=tk.BOTH)
         # ##############################################################################
         Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)  # 透過キャンバスに罫線描画
         # ##############################################################################
         self.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
-        self.back = tk.Canvas(self.master, background="white", width=CW, height=CH)
         # 下Windowのキャンバス作成
+        # 画像の配置#####################################################################
+        self.InportIMG()
+        # ##############################################################################
+
+    def InportIMG(self):
+        global TKimg
+        global imgurl
+        global CW, CH
+        img = Image.open(imgurl)
+        img = img.resize((CW, CH))  # 画像リサイズ
+        self.back = tk.Canvas(self.master, background="white", width=CW, height=CH)
+        TKimg = ImageTk.PhotoImage(img, master=self.back)  # 下Windowに表示する画像オブジェクト
         self.back.create_image(0, 0, image=TKimg, anchor=tk.NW)  # 下Windowのキャンバスに画像挿入
         self.back.pack(fill=tk.BOTH, expand=True)  # 下Windowを配置
         self.bind("<Configure>", self.change)
@@ -164,6 +190,13 @@ class Application(tk.Frame):
         x, y = self.back.winfo_rootx(), self.back.winfo_rooty()
         w, h = self.winfo_width(), self.winfo_height()
         self.top.geometry(f"{w}x{h}+{x}+{y}")
+
+
+# ---------------------------------------------------------------------------------------------
+def ReturnBack(self):
+    self.top.destroy()
+    self.master.destroy()
+    # root.destroy()
 
 
 # ---------------------------------------------------------------------------------------------
@@ -227,8 +260,8 @@ def LoadImg():
     CW, CH = int(CW), int(CH)
     HCW, HCH = CW / img.width, CH / img.height  # リサイズ比率
     img = img.resize((CW, CH))  # 画像リサイズ
-    TKimg = ImageTk.PhotoImage(img)  # 下Windowに表示する画像オブジェクト
-    return CW, CH, HCW, HCH, TKimg
+    imgobj = ImageTk.PhotoImage(img)  # 下Windowに表示する画像オブジェクト
+    return CW, CH, HCW, HCH, imgobj
     # ##############################################################################
 
 
@@ -468,8 +501,11 @@ def drag1(event):
     y1 = y2
 
 
-def Main(imgurl):
+def Main(US):
+    global imgurl
     global readcsv1, readcsv2
+    global URL
+    imgurl = US
     URL = os.getcwd()
     # imgurl = URL + r"\TKInterGUI\OCR0.png"
     # toml読込------------------------------------------------------------------------------
@@ -517,8 +553,8 @@ def Main(imgurl):
     app.mainloop()
 
 
-URL = os.getcwd()
-imgurl = r"D:\Souzoku_JAPng\Souzoku_JA-07.png"
+# URL = os.getcwd()
+# imgurl = r"D:\Souzoku_JAPng\Souzoku_JA-07.png"
 # toml読込------------------------------------------------------------------------------
 with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
     Banktoml = toml.load(f)
