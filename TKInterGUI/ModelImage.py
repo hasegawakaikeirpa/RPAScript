@@ -14,7 +14,9 @@ class ModelImage:
         self.canvas_h = 0
 
     def set_image_layout(self, canvas, image):
-
+        """
+        キャンバスサイズにあわせた画像サイズ変換関数
+        """
         self.canvas_w = canvas.winfo_width()
         self.canvas_h = canvas.winfo_height()
 
@@ -61,9 +63,9 @@ class ModelImage:
             rate = w / self.canvas_w
             y_spc = self.pad_y * rate
             sy, sx, ch, cw = self.get_correct_values(rate, sy, sx, ey, ex)
-            sy = sy - y_spc
-            sy = int(np.max((sy, 0)))
-            sy = int(np.min((sy, h)))
+            # sy = sy - y_spc
+            # sy = int(np.max((sy, 0)))
+            # sy = int(np.min((sy, h)))
 
         return sy, sx, ch, cw
 
@@ -96,7 +98,9 @@ class ModelImage:
     # Public
 
     def GetValidPos(self, pos_y, pos_x):
-
+        """
+        トリミング範囲計算
+        """
         if self.resize_h > self.resize_w:
             valid_pos_y = pos_y
             valid_pos_x = np.max((pos_x, self.pad_x))
@@ -122,8 +126,14 @@ class ModelImage:
             self.original_img = img
             self.edit_img = None
             self.set_image_layout(canvas, self.original_img)
-
+            self.original_width = img.size[0]
+            self.original_height = img.size[1]
         if command != "None":
+            if not len(args) == 0:
+                args["sx"] = int(args["sx"] * (self.resize_w / self.original_width))
+                args["sy"] = int(args["sy"] * (self.resize_h / self.original_height))
+                args["ex"] = int(args["ex"] * (self.resize_w / self.original_width))
+                args["ey"] = int(args["ey"] * (self.resize_h / self.original_height))
             img = self.edit_image_command(
                 self.original_img, self.edit_img, command, args=args
             )
@@ -151,6 +161,15 @@ class ModelImage:
             name, ext = os.path.splitext(fname)
             dt = datetime.now()
             fpath = name + "_" + dt.strftime("%H%M%S") + ".png"
+
+            self.edit_img.save(fpath)
+            print("Saved: {}".format(fpath))
+
+    def OverSaveImage(self, fname):
+
+        if self.edit_img != None:
+            name, ext = os.path.splitext(fname)
+            fpath = name
 
             self.edit_img.save(fpath)
             print("Saved: {}".format(fpath))

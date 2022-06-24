@@ -88,7 +88,7 @@ class ControlGUI:
         """
         fname = self.get_file(command, set_pos)
         self.model.DrawImage(fname, self.canvas, "None")
-        return self.file_pos
+        return self.file_pos, self.model
 
     def DrawRectangle(self, command, pos_y, pos_x):
         """
@@ -119,19 +119,98 @@ class ControlGUI:
         画像トリミング
         """
         args = {}
-        if command == "clip_done":
-            args["sx"], args["sy"] = self.clip_sx, self.clip_sy
-            args["ex"], args["ey"] = self.clip_ex, self.clip_ey
+        if command == "clip_done":  # トリミング確定ボタンが押されたら
+            # キャンバスサイズと表示画像サイズの比率を算出---------------------------
+            CWiPar = self.model.canvas_w / self.model.resize_w  # 幅
+            CHePar = self.model.canvas_h / self.model.resize_h  # 高さ
+            # --------------------------------------------------------------------
+            # キャンバスサイズと元画像サイズの比率を算出---------------------------
+            WiPar = self.model.original_width / self.model.canvas_w
+            HePar = self.model.original_height / self.model.canvas_h
+            # --------------------------------------------------------------------
+            if CWiPar < 1:  # 幅が圧縮されていたら
+                minus = ["width", CWiPar]
+            elif CHePar < 1:  # 高さが圧縮されていたら
+                minus = ["height", CHePar]
+            else:  # 比率変更なしの場合(キャンバスと表示画像サイズが一致)
+                minus = ["Nothing", 0]
+            # --------------------------------------------------------------------
+            if minus[0] == "width":  # 幅が圧縮されていたら
+                # 幅圧縮率を高さにかける
+                IMGSize = [
+                    int(self.model.resize_w),
+                    int(self.model.resize_h * minus[1]),
+                ]
+                SXPOS = 0  # スタート幅ポジション
+                SYPOS = (self.model.canvas_h - IMGSize[1]) / 2  # スタート高さポジション
+                sx = int(self.clip_sx * WiPar)
+                sy = int((self.clip_sy - SYPOS) * HePar)
+                ex = int(self.clip_ex * WiPar)
+                ey = int((self.clip_ey + SYPOS) * HePar)
+            elif minus[0] == "height":  # 高さが圧縮されていたら
+                # 高さ圧縮率を幅にかける
+                IMGSize = [
+                    int(self.model.resize_w * minus[1]),
+                    int(self.model.resize_h),
+                ]
+                SXPOS = (self.model.canvas_w - IMGSize[0]) / 2  # スタート幅ポジション
+                SYPOS = 0  # スタート高さポジション
+                sx = int((self.clip_sx - SXPOS) * WiPar)
+                sy = int(self.clip_sy * HePar)
+                ex = int((self.clip_ex + SXPOS) * WiPar)
+                ey = int(self.clip_ey * HePar)
+            else:
+                IMGSize = [
+                    int(self.model.resize_w),
+                    int(self.model.resize_h),
+                ]
+                SXPOS = 0
+                SYPOS = 0
+                sx = int(self.clip_sx * WiPar)
+                sy = int(self.clip_sy * HePar)
+                ex = int(self.clip_ex * WiPar)
+                ey = int(self.clip_ey * HePar)
+            # 元画像と比較してポジション調整-------------------------------------------
+            if sx < 0:
+                sx = 0
+            elif sx > self.model.original_width:
+                sx = self.model.original_width
+            if ex < 0:
+                ex = 0
+            elif ex > self.model.original_width:
+                ex = self.model.original_width
+            if sy < 0:
+                sy = 0
+            elif sy > self.model.original_height:
+                sy = self.model.original_height
+            if ey < 0:
+                ey = 0
+            elif ey > self.model.original_height:
+                ey = self.model.original_height
+            # --------------------------------------------------------------------
+            # WiPar = self.model.original_width / self.model.resize_w
+            # HePar = self.model.original_height / self.model.resize_h
+            args["sx"], args["sy"] = sx, sy
+            args["ex"], args["ey"] = ex, ey
+            # args["sx"], args["sy"] = self.clip_sx, self.clip_sy
+            # args["ex"], args["ey"] = self.clip_ex, self.clip_ey
 
         fname = self.get_file("current")
         self.model.DrawImage(fname, self.canvas, command, args=args)
 
     def SaveImage(self):
         """
-        画像上書き保存
+        画像ファイル名日付追加保存
         """
         fname = self.get_file("current")
         self.model.SaveImage(fname)
+
+    def OverSaveImage(self):
+        """
+        画像上書き保存
+        """
+        fname = self.get_file("current")
+        self.model.OverSaveImage(fname)
 
     def UndoImage(self, command):
         """

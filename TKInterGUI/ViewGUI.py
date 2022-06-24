@@ -101,6 +101,12 @@ class ViewGUI:
         )
 
         # Save/Undoボタン生成
+        button_Oversave = tk.Button(
+            self.window_sub_ctrl4,
+            text="OverSave",
+            width=10,
+            command=self.event_Oversave,
+        )
         button_save = tk.Button(
             self.window_sub_ctrl4, text="Save", width=5, command=self.event_save
         )
@@ -149,17 +155,15 @@ class ViewGUI:
         self.window_sub_canvas.bind("<ButtonRelease-1>", self.event_clip_end)
 
         # ウィジェット配置
-        # # サブウィンドウ
-        # self.window_sub_ctrl1.place(relx=0.65, rely=0.05)
-        # self.window_sub_ctrl2.place(relx=0.65, rely=0.25)
-        # self.window_sub_ctrl3.place(relx=0.15, rely=0.9)
-        # # キャンバスを配置
-        # self.window_sub_canvas.place(relx=0.05, rely=0.05)
         # キャンバスを配置
         self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
+        # プレビューを配置
         self.window_sub_ctrl3.pack(side=tk.LEFT, fill="both", expand=True)
+        # フォルダー・ファイル選択を配置
         self.window_sub_ctrl1.pack(side=tk.LEFT, fill="both", expand=True)
+        # 画像編集1を配置
         self.window_sub_ctrl2.pack(side=tk.LEFT, fill="both", expand=True)
+        # 画像編集2を配置
         self.window_sub_ctrl4.pack(side=tk.LEFT, fill="both", expand=True)
         # window_sub_ctrl1---------------------------------------------------
         self.button_setdir.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
@@ -184,9 +188,9 @@ class ViewGUI:
         label_run.grid(row=7, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # window_sub_ctrl4---------------------------------------------------
-        button_undo.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        button_save.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
-
+        button_Oversave.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+        button_undo.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+        button_save.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
         label_Line.grid(row=2, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
         button_LinOCR.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
@@ -223,6 +227,7 @@ class ViewGUI:
         """
         ファイル選択後イベント
         """
+
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         set_pos = self.combo_file.current()
         self.control.DrawImage("set", set_pos=set_pos)
@@ -307,6 +312,13 @@ class ViewGUI:
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         self.control.SaveImage()
+
+    def event_Oversave(self):
+        """
+        OverSaveボタンクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.control.OverSaveImage()
 
     def event_undo(self):
         """
