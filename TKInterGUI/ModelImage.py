@@ -1,7 +1,9 @@
 import os
 import numpy as np
+import cv2
 from datetime import datetime
 from PIL import Image, ImageTk, ImageOps
+import math
 
 
 class ModelImage:
@@ -88,6 +90,10 @@ class ModelImage:
             cmd = int(command.replace("rotate-", ""))
             np_img = np.rot90(np_img, cmd)
 
+        elif "rotateFree-" in command:
+            cmd = int(command.replace("rotateFree-", ""))
+            return img.rotate(cmd, expand=True)
+
         elif "clip_done" in command:
             h, w = np_img[:, :, 0].shape
             sy, sx, ch, cw = self.get_original_coords(h, w, args)
@@ -139,7 +145,6 @@ class ModelImage:
             )
             self.edit_img = img
             self.set_image_layout(canvas, self.edit_img)
-
         pil_img = ImageOps.pad(img, (self.canvas_w, self.canvas_h))
         self.tk_img = ImageTk.PhotoImage(image=pil_img)
         canvas.create_image(
@@ -169,7 +174,185 @@ class ModelImage:
 
         if self.edit_img != None:
             name, ext = os.path.splitext(fname)
-            fpath = name
+            fpath = name + ".png"
 
             self.edit_img.save(fpath)
             print("Saved: {}".format(fpath))
+
+    def ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do):
+        """
+        概要: 画像から直線を検出し、画像の傾きを調べ回転して上書き保存
+        @param URL: 画像フォルダ(str)
+        @param imgurl: 画像URL(str)
+        @param disth: マージする線分の距離(float)
+        @param canth1: Canny Edge Detectorの引数1(float)
+        @param canth2: Canny Edge Detectorの引数2(float)
+        @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+        @param dom: Trueなら線分をマージして出力する(boolean)
+        @return 傾き値リスト(np配列)
+        """
+        try:
+            img = cv2.imread(imgurl)
+            # 回転-----------------------------------------------------------------------
+            # StraightLineDetectionで最後の一つになるまで絞りだしたピクセル連続線から
+            # 角度をmathアークタンジェントで計算し、degreesでラジアン→℃変換後画像を回転
+            Kakuavg = StraightLineDetection(
+                URL, imgurl, disth, canth1, canth2, casize, do
+            )
+            if Kakuavg[0] is True:
+                x1 = Kakuavg[1][:, 1]
+                y1 = Kakuavg[1][:, 0]
+                x2 = Kakuavg[1][:, 3]
+                y2 = Kakuavg[1][:, 2]
+                # numpyとmathではy,x軸が反対なので入替--------------------------------------
+                x = np.average(y1) - np.average(y2)
+                y = np.average(x1) - np.average(x2)
+                # ------------------------------------------------------------------------
+                tan = math.degrees(math.atan2(y, x))
+                img = Image.open(imgurl)
+                img = img.rotate(tan)
+            # ---------------------------------------------------------------------------
+            else:
+                return False
+            return img
+        except:
+            return False
+
+    def TotalNoise(self, imgurl, ksize):
+
+        Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
+        Inv_img.save(imgurl)  # 白黒反転保存(PIL)
+        img = cv2.imread(imgurl)  # 白黒反転画像(cv2)
+        CleanUp_img = NoiseRemoval(img, ksize)  # ノイズ除去(cv2)
+        cv2.imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
+        Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
+        Inv_img.save(imgurl)  # 白黒反転保存(PIL)
+        Inv_img = Image.open(imgurl)
+        return Inv_img
+
+
+def StraightLineDetection(URL, imgurl, disth, canth1, canth2, casize, do):
+    """
+    概要: 画像から直線を検出し、画像の傾きを調べる
+    @param URL: 画像フォルダ(str)
+    @param imgurl: 画像URL(str)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
+    @return 傾き値リスト(np配列)
+    """
+    try:
+        img = cv2.imread(imgurl)
+        size = img.shape  # 画像のサイズ x,y
+        Pix = int(size[0] / 100)  # 検出ピクセル数
+        LCheck = False  # ライン検出フラグ
+        while LCheck is False:  # ライン検出フラグTrueまでループ
+            FLStock = []
+            if Pix <= 0:
+                Pix = 1
+            # FLDインスタンス生成
+            FLDs = FastLineDetector(
+                imgurl,
+                Pix,
+                disth,
+                canth1,
+                canth2,
+                casize,
+                do,
+            )  # boolean,yx値
+            if FLDs[0] is True:  # 連続ピクセルを検知したら
+                FLDItem = len(FLDs[1])  # 配列要素数
+                if FLDItem <= 3:  # 配列要素数0なら
+                    print(str(FLDItem) + "要素なので終了")
+                    FLStock = FLDs[1]
+                    LCheck = True
+                else:
+                    print(str(FLDItem) + "要素取得")
+                    FLStock = FLDs[1]
+            PlPix = size[0] / 1000
+            if PlPix < 1:
+                Pix += 1
+            else:
+                Pix += int(PlPix)
+        XLFlag = False
+        for x in range(len(FLStock)):
+            UpY = FLStock[x][0][0]
+            UpX = FLStock[x][0][1]
+            LoY = FLStock[x][0][2]
+            LoX = FLStock[x][0][3]
+            if XLFlag is False:
+                XList = np.array([[UpY, UpX, LoY, LoX]])
+                XLFlag = True
+            else:
+                XList = np.append(XList, [[UpY, UpX, LoY, LoX]], axis=0)
+        return True, XList
+    except:
+        return False, ""
+
+
+def FastLineDetector(fileImage, lenth, disth, canth1, canth2, casize, dom):
+    """
+    概要: 画像の線形を検出
+    @param fileImage: 画像URL(str)
+    @param lenth: 検出する最小の線分のピクセル数(int)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
+    @return boolean,検出ラインピクセル値配列,ライン描画後画像のcvインスタンス
+    """
+    colorimg = cv2.imread(fileImage, cv2.IMREAD_COLOR)  # 元画像
+    if colorimg is None:
+        return False, "", ""
+    image = cv2.cvtColor(colorimg.copy(), cv2.COLOR_BGR2GRAY)
+
+    # FLDパラメーター設定--------------------------------------------
+    length_threshold = lenth
+    distance_threshold = disth
+    canny_th1 = canth1
+    canny_th2 = canth2
+    canny_aperture_size = casize
+    do_merge = dom
+    # -------------------------------------------------------------
+    # FLDインスタンス化
+    fld = cv2.ximgproc.createFastLineDetector(
+        length_threshold,
+        distance_threshold,
+        canny_th1,
+        canny_th2,
+        canny_aperture_size,
+        do_merge,
+    )
+
+    # ライン取得
+    lines = fld.detect(image)
+    # # ライン描画後画像のインスタンス作成
+    out = fld.drawSegments(colorimg, lines)
+    return True, lines, out
+
+
+def ColorInverter(imgurl):
+    """
+    概要: 画像白黒反転
+    @param img: 画像URL(str)
+    @return 白黒反転した画像(cv2)
+    """
+    img = Image.open(imgurl).convert("RGB")
+    Inv_img = ImageOps.invert(img)
+    return Inv_img
+
+
+def NoiseRemoval(img, ksize):
+    """
+    概要: 画像ノイズ除去（収縮⇒膨張）
+    @param img: cv2で開いた画像
+    @return 画像ノイズ除去した画像(cv2)
+    """
+    kernel = np.ones((2, 2))
+    Open_img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+    # 中央値フィルタ
+    Open_img = cv2.medianBlur(Open_img, ksize)
+    return Open_img

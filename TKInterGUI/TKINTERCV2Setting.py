@@ -61,7 +61,7 @@ class Application(tk.Frame):
         # フレーム配置------------------------------------------------------------------
         frame = tk.Frame(
             self.top,
-            bg="White",
+            bg="Gray94",
             height=800,
             width=90,
             pady=1,
@@ -553,15 +553,22 @@ def Main(US):
     app.mainloop()
 
 
-# URL = os.getcwd()
-# imgurl = r"D:\Souzoku_JAPng\Souzoku_JA-07.png"
+URL = os.getcwd()
 # toml読込------------------------------------------------------------------------------
 with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
     Banktoml = toml.load(f)
     print(Banktoml)
 # -----------------------------------------------------------
-if __name__ == "__main__":
 
+
+if __name__ == "__main__":
+    URL = os.getcwd()
+    imgurl = r"D:\Souzoku_JAPng\Souzoku_JA-07.png"
+    # toml読込------------------------------------------------------------------------------
+    with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
+        Banktoml = toml.load(f)
+        print(Banktoml)
+    # -----------------------------------------------------------
     readcsv1 = []
     with open(
         URL + r"\TKInterGUI\StraightListYoko.csv",
