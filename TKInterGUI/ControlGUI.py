@@ -1,5 +1,4 @@
 import os
-import ImageChange as IC
 from ModelImage import ModelImage
 
 
@@ -91,34 +90,6 @@ class ControlGUI:
         self.model.DrawImage(fname, self.canvas, "None")
         return self.file_pos, self.model
 
-    def MenuFuncRun(self, command,whlist set_pos=-1):
-        """
-        menuボタンクリック
-        """
-        fname = self.get_file(command, set_pos)
-
-        # 線形検出パラメータ設定########################################
-        disth = 1.41421356
-        canth1 = 50.0
-        canth2 = 50.0
-        casize = 3
-        do = True
-        # ############################################################
-        if command == "Noise":
-            limg = self.model.TotalNoise(fname, 7)
-        elif command == "LineLotate":
-            limg = self.model.ImageLotate(fname, disth, canth1, canth2, casize, do)
-        elif command == "Resize":
-            limg = self.model.edit_img
-        self.model.edit_img = limg
-        args = {}
-        self.model.DrawImage(fname, self.canvas, command, args=args)
-
-    def ResizeRun(self, command, set_pos=-1):
-        """
-        resizeボタンクリック
-        """
-        fname = self.get_file(command, set_pos)
     def DrawRectangle(self, command, pos_y, pos_x):
         """
         キャンバス画像クリックで範囲指定完了後
@@ -208,7 +179,6 @@ class ControlGUI:
                 ex = 0
             elif ex > self.model.original_width:
                 ex = self.model.original_width
-
             if sy < 0:
                 sy = 0
             elif sy > self.model.original_height:
