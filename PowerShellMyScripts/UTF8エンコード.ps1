@@ -1,1 +1,0 @@
-﻿PS C:\WINDOWS\system32> Get-Content -Encoding utf-8 \\Sv05121a\e\C 作業台\RPA\ALLDataBase\関与先DB.csv | Out-File -Encoding shift-jis \\Sv05121a\e\C 作業台\RPA\ALLDataBase\123456.csv

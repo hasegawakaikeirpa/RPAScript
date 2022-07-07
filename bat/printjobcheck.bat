@@ -1,1 +1,0 @@
-cscript C:\Windows\System32\Printing_Admin_Scripts\ja-JP\prnjobs.vbs -l
