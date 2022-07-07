@@ -1,0 +1,2 @@
+[2022/04/26 11:24:16][DEBUG](PDFReadForList copy.py:346) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
+[2022/04/26 11:24:48][DEBUG](PDFReadForList copy.py:234) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/47_キュートク 株式会社_給与所得・退職所得等の所得税徴収高計算書(一般)_20220301 135739.pdf_1ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py

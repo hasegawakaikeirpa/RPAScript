@@ -1,0 +1,38 @@
+[2022/03/28 11:51:52][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:02][DEBUG](elTaxMSGDownLoad.py:104) メッセージ照会
+ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:24][DEBUG](elTaxMSGDownLoad.py:375) 25_有限会社 成鉄工業ログイン成功 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:24][DEBUG](elTaxMSGDownLoad.py:388) 2022/02/26 00:15:37_プレ申告データに関するお知らせ_25_有限会社 成鉄工業_広島県 西 部 県税事務所長_法人課税課_1_未ダウンロード LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:25][DEBUG](elTaxMSGDownLoad.py:170) 印刷完了 PrintIFS d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:25][DEBUG](elTaxMSGDownLoad.py:280) //Sv05121a/e/電子ファイル/メッセージボックス\2022-2\eLTAX\25_有限会社 成鉄工業_作成 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:25][DEBUG](elTaxMSGDownLoad.py:326) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-2\eLTAX\25_有限会社 成鉄工業\25_有限会社 成鉄工業_広島県 西 部 県税事務所長_法人課税課_プレ申告データに関するお知らせ[1].pdf_PDF作成成功 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:26][DEBUG](elTaxMSGDownLoad.py:388) 2022/02/24 20:02:27_申告受付完了通知_25_有限会社 成鉄工業_廿日市市役所_課税課_2_未ダウンロード LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:26][DEBUG](elTaxMSGDownLoad.py:170) 印刷完了 PrintIFS d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:26][DEBUG](elTaxMSGDownLoad.py:296) //Sv05121a/e/電子ファイル/メッセージボックス\2022-2\eLTAX受信通知_作成 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:26][DEBUG](elTaxMSGDownLoad.py:326) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-2\eLTAX受信通知\25_有限会社 成鉄工業_廿日市市役所_課税課_申告受付完了通知.pdf_PDF作成成功 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:31][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:38][DEBUG](elTaxMSGDownLoad.py:104) メッセージ照会
+ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:40][DEBUG](elTaxMSGDownLoad.py:477) 26_株式会社 ＶＩＬＬＡ Ｃｏｒｐｏｒａｔｉｏｎ該当するデータはありませんでした。 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:44][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:52][DEBUG](elTaxMSGDownLoad.py:104) メッセージ照会
+ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:55][DEBUG](elTaxMSGDownLoad.py:375) 27_有限会社 川本電建ログイン成功 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:55][DEBUG](elTaxMSGDownLoad.py:388) 2022/02/26 00:18:06_プレ申告データに関するお知らせ_27_有限会社 川本電建_広島県 西 部 県税事務所長_法人課税課_1_未ダウンロード LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:56][DEBUG](elTaxMSGDownLoad.py:170) 印刷完了 PrintIFS d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:56][DEBUG](elTaxMSGDownLoad.py:280) //Sv05121a/e/電子ファイル/メッセージボックス\2022-2\eLTAX\27_有限会社 川本電建_作成 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:52:56][DEBUG](elTaxMSGDownLoad.py:326) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-2\eLTAX\27_有限会社 川本電建\27_有限会社 川本電建_広島県 西 部 県税事務所長_法人課税課_プレ申告データに関するお知らせ[1].pdf_PDF作成成功 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:00][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:15][DEBUG](elTaxMSGDownLoad.py:113) メッセージ照会
+ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:16][DEBUG](elTaxMSGDownLoad.py:375) 28_有限会社 坂本システムログイン成功 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:17][DEBUG](elTaxMSGDownLoad.py:388) 2022/02/26 00:18:59_プレ申告データに関するお知らせ_28_有限会社 坂本システム_広島県 西 部 県税事務所長_法人課税課_1_未ダウンロード LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:17][DEBUG](elTaxMSGDownLoad.py:170) 印刷完了 PrintIFS d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:17][DEBUG](elTaxMSGDownLoad.py:280) //Sv05121a/e/電子ファイル/メッセージボックス\2022-2\eLTAX\28_有限会社 坂本システム_作成 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:17][DEBUG](elTaxMSGDownLoad.py:326) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-2\eLTAX\28_有限会社 坂本システム\28_有限会社 坂本システム_広島県 西 部 県税事務所長_法人課税課_プレ申告データに関するお知らせ[1].pdf_PDF作成成功 RenamePDF d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:22][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:30][DEBUG](elTaxMSGDownLoad.py:94) ログインできませんでした。
+表示内容を確認の上、再度入力してください。
+入力された利用者IDまたは暗証番号に誤りがあります。（MWA003E） eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:30][DEBUG](elTaxMSGDownLoad.py:408) 29_有限会社 大田不動産管理ログイン失敗1回目ssb50889944_Ota002901 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/03/28 11:53:34][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py

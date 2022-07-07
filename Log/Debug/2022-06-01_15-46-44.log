@@ -1,0 +1,6 @@
+[2022/06/01 15:46:44][DEBUG](MJS_SystemNextCreate.py:728) MJSëÄçÏâÊñ Ç÷ïŒà⁄ MainFlow d:\PythonScript\RPAScript\MJS_SystemNextCreate.py
+[2022/06/01 15:46:44][DEBUG](MJS_SystemNextCreate.py:729) xlsxÇDataFrameÇ… MainFlow d:\PythonScript\RPAScript\MJS_SystemNextCreate.py
+[2022/06/01 15:46:44][DEBUG](font_manager.py:1439) Using fontManager instance from C:\Users\soumu\.matplotlib\fontlist-v330.json _load_fontmanager d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\matplotlib\font_manager.py
+[2022/06/01 15:46:44][DEBUG](pyplot.py:281) Loaded backend tkagg version unknown. switch_backend d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\matplotlib\pyplot.py
+[2022/06/01 15:46:44][DEBUG](pyplot.py:281) Loaded backend TkAgg version unknown. switch_backend d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\matplotlib\pyplot.py
+[2022/06/01 15:46:44][DEBUG](pyplot.py:281) Loaded backend tkagg version unknown. switch_backend d:\PythonScript\RPAScript\py378RPA.env\lib\site-packages\matplotlib\pyplot.py

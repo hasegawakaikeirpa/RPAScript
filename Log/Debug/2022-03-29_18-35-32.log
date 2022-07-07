@@ -1,0 +1,17 @@
+[2022/03/29 18:35:32][DEBUG](PDFReadForList.py:209) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-3\送信分受信通知内のPDF結合開始 <module> d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:36:28][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/10102/10102　受信通知2.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:36:53][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/10107/ミロク送信分/10107_秋本 尚孝_R 4_固定・償却_全資産（電）.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:20][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1011/消費税及び地方消費税申告(一般・個人).pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:25][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1016/1016.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:27][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1016/1016.pdf_2ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:28][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1016/1016.pdf_3ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:29][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1017/1017.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:34][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1017/1017送付書.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:34][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1017/1017送付書.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:35][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1017/ミロク送信分/1017_蔭地 啓市_R 4_固定・償却_全資産（電）.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:40][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1019/ミロク送信分/1019_西 康行_R 4_固定・償却_増減資産.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:40][DEBUG](PDFReadForList.py:202) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1021/Thumbs.db.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:41][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1023/ミロク送信分/1023_瀬田 五明_R 3_個人消費税_確定.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:44][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1023/ミロク送信分/1023_瀬田 五明_R 3_所得税_確定申告等送信票(兼送付書).pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:44][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1023/ミロク送信分/1023_瀬田 五明_R 3_所得税_確定申告等送信票(兼送付書).pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
+[2022/03/29 18:38:47][DEBUG](PDFReadForList.py:197) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/1026/ミロク送信分/1026_和炎_R 4_固定・償却_全資産（電）.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py

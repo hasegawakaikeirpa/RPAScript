@@ -1,0 +1,8 @@
+[2022/04/12 11:00:05][DEBUG](OMSOpen.py:42) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
+[2022/04/12 11:00:05][DEBUG](OMSOpen.py:52) OMS起動: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
+[2022/04/12 11:00:11][DEBUG](OMSOpen.py:65) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
+[2022/04/12 11:00:19][DEBUG](OMSOpen.py:91) OMScodeTextBox要素取得に失敗: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
+[2022/04/12 11:00:20][DEBUG](SQLConnect.py:151) MysqlColumnPic(テーブルのカラム情報をタプルで返す)完了: debug level log MysqlColumnPic d:\PythonScript\RPAScript\Function\SQLConnect.py
+[2022/04/12 11:00:20][DEBUG](TKCFMSMailAddressUpdate.py:532) 履歴DBより登録状況がCDBの物のみ抽出 MainFlow d:\PythonScript\RPAScript\TKCFMSMailAddressUpdate.py
+[2022/04/12 11:00:20][DEBUG](SQLConnect.py:57) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\Function\SQLConnect.py
+[2022/04/12 11:00:20][DEBUG](TKCFMSMailAddressUpdate.py:538) FMSの処理開始 MainFlow d:\PythonScript\RPAScript\TKCFMSMailAddressUpdate.py

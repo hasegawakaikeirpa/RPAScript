@@ -1,0 +1,28 @@
+[2022/07/04 11:22:28][DEBUG](elTaxMSGDownLoad.py:44) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:32][DEBUG](elTaxMSGDownLoad.py:132) メッセージ照会
+ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:33][DEBUG](elTaxMSGDownLoad.py:848) 580_合同会社 ブロード該当するデータはありませんでした。 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:36][DEBUG](elTaxMSGDownLoad.py:44) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:41][DEBUG](elTaxMSGDownLoad.py:132) メッセージ照会
+ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:42][DEBUG](elTaxMSGDownLoad.py:848) 581_大気テクノ 株式会社該当するデータはありませんでした。 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:45][DEBUG](elTaxMSGDownLoad.py:44) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:50][DEBUG](elTaxMSGDownLoad.py:118) ログインできませんでした。
+表示内容を確認の上、再度入力してください。
+入力された利用者IDまたは暗証番号に誤りがあります。（MWA003E） eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:50][DEBUG](elTaxMSGDownLoad.py:694) 582_株式会社 Ｓ・Ｓ・Ｓログイン失敗1回目gmk42076701_Satou058200111 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:53][DEBUG](elTaxMSGDownLoad.py:44) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:57][DEBUG](elTaxMSGDownLoad.py:118) ログインできませんでした。
+表示内容を確認の上、再度入力してください。
+入力された利用者IDまたは暗証番号に誤りがあります。（MWA003E） eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:22:57][DEBUG](elTaxMSGDownLoad.py:722) 582_株式会社 Ｓ・Ｓ・Ｓログイン失敗2回目gmk42076701_Satou058200111 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:23:01][DEBUG](elTaxMSGDownLoad.py:44) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:23:06][DEBUG](elTaxMSGDownLoad.py:118) ログインできませんでした。
+表示内容を確認の上、再度入力してください。
+入力された利用者IDまたは暗証番号に誤りがあります。（MWA003E） eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:23:06][DEBUG](elTaxMSGDownLoad.py:694) 583_株式会社 ＳＬＯＰＥログイン失敗1回目tgx11945079_Kajitani058301 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:23:09][DEBUG](elTaxMSGDownLoad.py:44) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:23:13][DEBUG](elTaxMSGDownLoad.py:118) ログインできませんでした。
+表示内容を確認の上、再度入力してください。
+入力された利用者IDまたは暗証番号に誤りがあります。（MWA003E） eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
+[2022/07/04 11:23:13][DEBUG](elTaxMSGDownLoad.py:722) 583_株式会社 ＳＬＯＰＥログイン失敗2回目tgx11945079_Kajitani058301 LoginLoop d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
