@@ -1,5 +1,0 @@
-[2022/05/13 19:09:21][DEBUG](PDFReadForList copy.py:847) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/05/13 19:10:21][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(H30).pdf_1ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/05/13 19:10:47][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(H30).pdf_2ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/05/13 19:11:47][DEBUG](PDFReadForList copy.py:585) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(H30).pdf_3ページ目タイムアウト CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/05/13 19:12:09][DEBUG](PDFReadForList copy.py:328) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/109修正(H30).pdf_4ページ目取得対象外 CamelotSerch d:\PythonScript\RPAScript\PDFReadForList copy.py

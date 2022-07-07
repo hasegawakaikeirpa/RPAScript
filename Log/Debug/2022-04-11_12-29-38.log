@@ -1,4 +1,0 @@
-[2022/04/11 12:29:38][DEBUG](OMSOpen.py:42) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/04/11 12:29:39][DEBUG](OMSOpen.py:52) OMS起動: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/04/11 12:29:44][DEBUG](OMSOpen.py:65) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/04/11 12:30:02][DEBUG](OMSOpen.py:80) OMSログイン完了: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py

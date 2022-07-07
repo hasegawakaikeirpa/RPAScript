@@ -1,4 +1,0 @@
-[2022/04/12 10:58:59][DEBUG](OMSOpen.py:42) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/04/12 10:58:59][DEBUG](OMSOpen.py:52) OMS起動: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/04/12 10:59:05][DEBUG](OMSOpen.py:65) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/04/12 10:59:17][DEBUG](OMSOpen.py:91) OMScodeTextBox要素取得に失敗: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py

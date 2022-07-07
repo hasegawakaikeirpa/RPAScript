@@ -1,4 +1,0 @@
-[2022/05/31 17:57:37][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
-[2022/05/31 17:57:37][DEBUG](MJSOpen.py:111) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
-[2022/05/31 17:57:38][DEBUG](MJSOpen.py:117) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
-[2022/05/31 17:58:11][DEBUG](MJS_DensiSinkoku.py:1028) 'bool' object is not subscriptable MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py

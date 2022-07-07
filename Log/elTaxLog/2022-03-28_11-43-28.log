@@ -1,3 +1,0 @@
-[2022/03/28 11:43:36][DEBUG](elTaxMSGDownLoad.py:40) WebDriver起動 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py
-[2022/03/28 11:44:35][DEBUG](elTaxMSGDownLoad.py:104) メッセージ照会
-ログインしている利用者あてのメッセージを照会します。 eTaxWebCrawler d:\PythonScript\RPAScript\elTaxMSGDownLoad.py

@@ -1,3 +1,0 @@
-[2022/04/26 17:11:06][DEBUG](PDFReadForList copy.py:339) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/04/26 17:11:29][DEBUG](PDFReadForList copy.py:227) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/115_凛音 株式会社_消費税及び地方消費税の中間申告について_20220301 123046.pdf_1ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/04/26 17:11:44][DEBUG](PDFReadForList copy.py:227) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/129_有限会社 モリモト建装_法人税及び地方法人税の予定申告について_20220301 105201.pdf_1ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py

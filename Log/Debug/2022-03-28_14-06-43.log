@@ -1,7 +1,0 @@
-[2022/03/28 14:06:44][DEBUG](SQLConnect.py:100) MysqlColumnPic(テーブルのカラム情報をタプルで返す)完了: debug level log MysqlColumnPic d:\PythonScript\RPAScript\SQLConnect.py
-[2022/03/28 14:06:44][DEBUG](SQLConnect.py:27) MySQLGet(SQL文を送信し、結果を返す)完了: debug level log MySQLGet d:\PythonScript\RPAScript\SQLConnect.py
-[2022/03/28 14:06:44][DEBUG](SQLConnect.py:81) MysqlColumnCheck(引数のカラム名(ColN)と一致する引数テーブル(TB)のカラムのデータ型を返す)完了: debug level log MysqlColumnCheck d:\PythonScript\RPAScript\SQLConnect.py
-[2022/03/28 14:06:44][DEBUG](SQLConnect.py:176) ChangeData(引数で渡したTBのカラムに応じたデータ型に合わせて値を変更する。)完了: debug level log ChangeData d:\PythonScript\RPAScript\SQLConnect.py
-[2022/03/28 14:06:44][DEBUG](SQLConnect.py:81) MysqlColumnCheck(引数のカラム名(ColN)と一致する引数テーブル(TB)のカラムのデータ型を返す)完了: debug level log MysqlColumnCheck d:\PythonScript\RPAScript\SQLConnect.py
-[2022/03/28 14:07:25][DEBUG](SQLConnect.py:176) ChangeData(引数で渡したTBのカラムに応じたデータ型に合わせて値を変更する。)完了: debug level log ChangeData d:\PythonScript\RPAScript\SQLConnect.py
-[2022/03/28 14:07:25][DEBUG](SQLConnect.py:81) MysqlColumnCheck(引数のカラム名(ColN)と一致する引数テーブル(TB)のカラムのデータ型を返す)完了: debug level log MysqlColumnCheck d:\PythonScript\RPAScript\SQLConnect.py

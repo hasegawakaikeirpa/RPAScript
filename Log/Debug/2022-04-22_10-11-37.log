@@ -1,5 +1,0 @@
-[2022/04/22 10:11:37][DEBUG](PDFReadForList copy.py:1934) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/04/22 10:11:40][DEBUG](PDFReadForList copy.py:1614) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/1026_和炎_広島市（償却資産・中区）_税務部固定資産税課償却資産係_申告受付完了通知.pdf_1ページ目タイムアウトエラー CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/04/22 10:11:42][DEBUG](PDFReadForList copy.py:1614) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/1034_天神川なかむら内科_府中町役場_税務課_申告受付完了通知.pdf_1ページ目タイムアウトエラー CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/04/22 10:11:44][DEBUG](PDFReadForList copy.py:1614) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/1054_佐々木メンタルクリニック_広島市（償却資産・西区）_税務部固定資産税課償却資産係_申告受付完了通知.pdf_1ページ目タイムアウトエラー CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py
-[2022/04/22 10:11:47][DEBUG](PDFReadForList copy.py:1614) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/el/1078_ファミリア歯科_府中町役場_税務課_申告受付完了通知.pdf_1ページ目タイムアウトエラー CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList copy.py

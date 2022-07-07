@@ -1,9 +1,0 @@
-[2022/04/13 11:45:43][DEBUG](PDFReadForList.py:1828) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出開始 <module> d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/04/13 11:46:43][DEBUG](PDFReadForList.py:1533) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/127/ミロク送信分/127_株式会社 広島ハウジング.pdf_5ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/04/13 11:48:34][DEBUG](PDFReadForList.py:1533) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/252/ミロク送信分/252_株式会社 wishAI.pdf_1ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/04/13 11:50:41][DEBUG](PDFReadForList.py:1533) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/399/ミロク送信分/399_株式会社 SWINGING BIRD.pdf_2ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/04/13 11:53:30][DEBUG](PDFReadForList.py:1533) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/566/ミロク送信分/566_株式会社 Ｒｏｃｋ.pdf_2ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/04/13 11:54:09][DEBUG](PDFReadForList.py:1533) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/631/ミロク送信分/631_株式会社 片山工業.pdf_1ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/04/13 11:56:19][DEBUG](PDFReadForList.py:1533) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/738/ミロク送信分/738_株式会社 久保アグリファーム.pdf_4ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/04/13 11:58:44][DEBUG](PDFReadForList.py:1533) //Sv05121a/e/電子ファイル/メッセージボックス/TEST/942/ミロク送信分/942_株式会社 雅興業.pdf_2ページ目取得失敗 CSVIndexSort d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/04/13 12:00:56][DEBUG](PDFReadForList.py:1831) \\Sv05121a\e\電子ファイル\メッセージボックス\TEST内のPDF抽出完了 <module> d:\PythonScript\RPAScript\PDFReadForList.py

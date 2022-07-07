@@ -1,5 +1,0 @@
-[2022/03/28 12:26:15][DEBUG](OMSOpen.py:44) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/03/28 12:26:15][DEBUG](OMSOpen.py:52) OMS起動: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/03/28 12:26:22][DEBUG](OMSOpen.py:62) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/03/28 12:26:48][DEBUG](OMSOpen.py:77) OMSログイン完了: debug level log MainFlow d:\PythonScript\RPAScript\OMSOpen.py
-[2022/03/28 12:26:48][DEBUG](SQLConnect.py:100) MysqlColumnPic(テーブルのカラム情報をタプルで返す)完了: debug level log MysqlColumnPic d:\PythonScript\RPAScript\SQLConnect.py
