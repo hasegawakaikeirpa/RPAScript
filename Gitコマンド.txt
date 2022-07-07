@@ -1,2 +1,0 @@
-マスターソースダウンロード
-git pull origin master
