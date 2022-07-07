@@ -1,0 +1,6 @@
+[2022/04/11 13:52:40][DEBUG](SQLConnect.py:57) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\Function\SQLConnect.py
+[2022/04/11 13:52:41][DEBUG](SQLCSVOUT.py:18) 関与先データベースをCSVアウト完了: debug level log <module> d:\PythonScript\RPAScript\SQLCSVOUT.py
+[2022/04/11 13:52:41][DEBUG](SQLConnect.py:57) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\Function\SQLConnect.py
+[2022/04/11 13:52:41][DEBUG](SQLCSVOUT.py:26) 社員情報をCSVアウト完了: debug level log <module> d:\PythonScript\RPAScript\SQLCSVOUT.py
+[2022/04/11 13:52:41][DEBUG](SQLConnect.py:57) MySQLHeaderTo_df(SQL文を送信し、結果をDFに格納)完了: debug level log MySQLHeaderTo_df d:\PythonScript\RPAScript\Function\SQLConnect.py
+[2022/04/11 13:52:41][DEBUG](SQLCSVOUT.py:39) FMSMAILLISTをCSVアウト完了: debug level log <module> d:\PythonScript\RPAScript\SQLCSVOUT.py
