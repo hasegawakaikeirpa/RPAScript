@@ -255,9 +255,26 @@ class ViewGUI:
         label_s3_blk2.grid(row=1, column=4, columnspan=2, padx=5, pady=5, sticky=tk.EW)
         button_next.grid(row=1, column=6, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
+        # Exposeイベントbind
+        for event_type in tk.EventType.__members__.keys():
+            if event_type == "Expose":
+                event_seq = "<" + event_type + ">"
+                try:
+                    self.window_root.bind_all(event_seq, self.event_handler)
+                    # print(event_type)
+                except tk.TclError:
+                    # print("bind error:", event_type)
+                    pass
+        # -------------------------------------------------------------------
         self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
 
     # Event Callback----------------------------------------------------------------------
+    # イベントハンドラ
+    def event_handler(self, event):
+        # print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        set_pos = self.combo_file.current()
+        self.control.DrawImage("Map", set_pos=set_pos)
+
     def event_menu(self):
         # menu作成######################################################################
         self.menuwin = tk.Toplevel()  # サブWindow作成
@@ -473,6 +490,7 @@ class ViewGUI:
         FDir = self.entry_dir.get()
         FN = self.combo_file.get()
         Imgurl = FDir + r"\\" + FN
+        Imgurl = Imgurl.replace("/", r"\\")
         if "[select file]" in Imgurl:
             messagebox.showinfo("確認", "画像ファイルを選択してください。")
         else:

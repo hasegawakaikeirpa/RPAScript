@@ -88,7 +88,10 @@ class ControlGUI:
         キャンバスに画像を読込む
         """
         fname = self.get_file(command, set_pos)
-        self.model.DrawImage(fname, self.canvas, "None")
+        if command == "Map":
+            self.model.DrawImage(fname, self.canvas, "Map")
+        else:
+            self.model.DrawImage(fname, self.canvas, "None")
         return self.file_pos, self.model
 
     def MenuFuncRun(self, command, whlist, set_pos=-1):

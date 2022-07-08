@@ -134,7 +134,18 @@ class ModelImage:
             self.set_image_layout(canvas, self.original_img)
             self.original_width = img.size[0]
             self.original_height = img.size[1]
-        if command != "None":
+        if command != "None" and not command == "Map":
+            if not len(args) == 0:
+                args["sx"] = int(args["sx"] * (self.resize_w / self.original_width))
+                args["sy"] = int(args["sy"] * (self.resize_h / self.original_height))
+                args["ex"] = int(args["ex"] * (self.resize_w / self.original_width))
+                args["ey"] = int(args["ey"] * (self.resize_h / self.original_height))
+            img = self.edit_image_command(
+                self.original_img, self.edit_img, command, args=args
+            )
+            self.edit_img = img
+            self.set_image_layout(canvas, self.edit_img)
+        elif command == "Map":
             if not len(args) == 0:
                 args["sx"] = int(args["sx"] * (self.resize_w / self.original_width))
                 args["sy"] = int(args["sy"] * (self.resize_h / self.original_height))
