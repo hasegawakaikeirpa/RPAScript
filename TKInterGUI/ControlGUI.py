@@ -1,5 +1,4 @@
 import os
-import ImageChange as IC
 from ModelImage import ModelImage
 
 
@@ -91,6 +90,7 @@ class ControlGUI:
         self.model.DrawImage(fname, self.canvas, "None")
         return self.file_pos, self.model
 
+<<<<<<< HEAD
     def MenuFuncRun(self, command, whlist, set_pos=-1):
         """
         menuボタンクリック
@@ -120,6 +120,8 @@ class ControlGUI:
         """
         fname = self.get_file(command, set_pos)
 
+=======
+>>>>>>> 644f16f4993faa4697914289c5d42a0abdf2d248
     def DrawRectangle(self, command, pos_y, pos_x):
         """
         キャンバス画像クリックで範囲指定完了後
@@ -209,7 +211,6 @@ class ControlGUI:
                 ex = 0
             elif ex > self.model.original_width:
                 ex = self.model.original_width
-
             if sy < 0:
                 sy = 0
             elif sy > self.model.original_height:
