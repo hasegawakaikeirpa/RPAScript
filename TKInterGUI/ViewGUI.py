@@ -22,17 +22,17 @@ class ViewGUI:
         self.window_root.geometry("800x600")  # 縦,横
         NWINSize = ["800", "600"]  # 縦,横
         # 　メインウィンドウタイトル
-        self.window_root.title("OCR Image Editor v0.10")
+        self.window_root.title("GUI Image Editor v0.90")
         # self.window_root.bind("<Button-1>", self.ChangeWSize)
         # サブウィンドウ
         # フォルダ・ファイル選択
-        self.window_sub_ctrl1 = tk.Frame(self.window_root, height=30, width=30)
+        self.window_sub_ctrl1 = tk.Frame(self.window_root, height=300, width=300)
         # 画像加工
-        self.window_sub_ctrl2 = tk.Frame(self.window_root, height=30, width=30)
+        self.window_sub_ctrl2 = tk.Frame(self.window_root, height=300, width=300)
         # プレビュー
-        self.window_sub_ctrl3 = tk.Frame(self.window_root, height=5, width=40)
+        self.window_sub_ctrl3 = tk.Frame(self.window_root, height=50, width=400)
         # 画像加工2
-        self.window_sub_ctrl4 = tk.Frame(self.window_root, height=5, width=40)
+        self.window_sub_ctrl4 = tk.Frame(self.window_root, height=50, width=400)
         # キャンバス
         FCH = int(int(NWINSize[0]) * 0.4)
         FCW = int(int(NWINSize[1]) * 0.4)
@@ -58,9 +58,6 @@ class ViewGUI:
         label_flip = tk.Label(self.window_sub_ctrl2, text="[Flip]")
         label_clip = tk.Label(self.window_sub_ctrl2, text="[Clip]")
         label_run = tk.Label(self.window_sub_ctrl4, text="[Final Edit]")
-        label_resize = tk.Label(self.window_sub_ctrl4, text="[Resize]")
-        label_width = tk.Label(self.window_sub_ctrl4, text="width")
-        label_height = tk.Label(self.window_sub_ctrl4, text="height")
         label_Line = tk.Label(self.window_sub_ctrl4, text="[Line Edit]")
 
         # フォルダ選択ボタン生成
@@ -72,7 +69,7 @@ class ViewGUI:
         )
         # 　テキストエントリ生成
         self.entry_dir = tk.Entry(
-            self.window_sub_ctrl1, text="entry_dir", textvariable=self.str_dir, width=15
+            self.window_sub_ctrl1, text="entry_dir", textvariable=self.str_dir, width=40
         )
         self.str_dir.set(self.dir_path)
         # コンボBOX生成
@@ -81,7 +78,7 @@ class ViewGUI:
             text="combo_file",
             value=self.file_list,
             state="readonly",
-            width=10,
+            width=30,
             postcommand=self.event_updatefile,
         )
         self.combo_file.set(self.file_list[0])
@@ -122,33 +119,6 @@ class ViewGUI:
             self.window_sub_ctrl4, text="LinOCR_Open", width=10, command=self.LinOCROpen
         )
 
-        # menuボタン生成
-        button_menu = tk.Button(
-            self.window_sub_ctrl4, text="menu", width=5, command=self.event_menu
-        )
-
-        # 　テキストエントリ生成
-        Resizewidth = tk.Entry(
-            self.window_sub_ctrl4,
-            text="Resizewidth",
-            width=15,
-        )
-
-        # 　テキストエントリ生成
-        Resizeheight = tk.Entry(
-            self.window_sub_ctrl4,
-            text="Resizeheight",
-            width=15,
-        )
-
-        # Resizeボタン生成
-        button_Resize = tk.Button(
-            self.window_sub_ctrl4,
-            text="Resize",
-            width=5,
-            command=lambda: self.Resize(Resizewidth, Resizeheight),
-        )
-
         # ラジオボタン生成
         radio_rotate = []
         for val, text in enumerate(
@@ -177,23 +147,6 @@ class ViewGUI:
                 )
             )
         self.radio_intvar2.set(0)  # 0:No select
-
-        # Scaleの作成
-        self.scale_var = tk.DoubleVar()
-        scaleH = tk.Scale(
-            self.window_sub_ctrl2,
-            variable=self.scale_var,
-            command=self.slider_scroll,
-            orient=tk.HORIZONTAL,  # 配置の向き、水平(HORIZONTAL)、垂直(VERTICAL)
-            length=200,  # 全体の長さ
-            width=20,  # 全体の太さ
-            sliderlength=20,  # スライダー（つまみ）の幅
-            from_=-45,  # 最小値（開始の値）
-            to=45,  # 最大値（終了の値）
-            resolution=1,  # 変化の分解能(初期値:1)
-            tickinterval=5,  # 目盛りの分解能(初期値0で表示なし)
-        )
-        # ---------------------------------------------------------------
         # キャンバス内クリック開始イベントに関数バインド
         self.window_sub_canvas.bind("<ButtonPress-1>", self.event_clip_start)
         # キャンバス内ドラッグイベントに関数バインド
@@ -220,34 +173,26 @@ class ViewGUI:
         # -------------------------------------------------------------------
         # window_sub_ctrl2---------------------------------------------------
         label_s2_blk1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        label_s2_blk1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
         label_rotate.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
         radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
         radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
         radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
-        scaleH.grid(row=3, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
-        label_flip.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_flip[0].grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_flip[1].grid(row=5, column=2, padx=5, pady=5, sticky=tk.W)
 
-        label_clip.grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
-        button_clip_start.grid(row=7, column=1, padx=5, pady=5, sticky=tk.W)
-        button_clip_done.grid(row=7, column=2, padx=5, pady=5, sticky=tk.W)
+        label_flip.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
+        radio_flip[0].grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
+        radio_flip[1].grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
+
+        label_clip.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
+        button_clip_start.grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
+        button_clip_done.grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
+        label_run.grid(row=7, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # window_sub_ctrl4---------------------------------------------------
-        label_run.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        button_Oversave.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
-        button_undo.grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
-        button_save.grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
-        label_resize.grid(row=4, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        label_width.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
-        Resizewidth.grid(row=5, column=2, padx=5, pady=5, sticky=tk.W)
-        label_height.grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
-        Resizeheight.grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
-        button_Resize.grid(row=7, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
-        label_Line.grid(row=8, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        button_LinOCR.grid(row=9, column=1, padx=5, pady=5, sticky=tk.W)
-        button_menu.grid(row=9, column=2, padx=5, pady=5, sticky=tk.W)
+        button_Oversave.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+        button_undo.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+        button_save.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
+        label_Line.grid(row=2, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        button_LinOCR.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # window_sub_ctrl3---------------------------------------------------
         label_s3_blk1.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.EW)
@@ -269,6 +214,8 @@ class ViewGUI:
         self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
 
     # Event Callback----------------------------------------------------------------------
+<<<<<<< HEAD
+=======
     # イベントハンドラ
     def event_handler(self, event):
         # print(sys._getframe().f_code.co_name)  # ターミナルへ表示
@@ -356,6 +303,7 @@ class ViewGUI:
         self.control.EditImage(cmd)
         print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
 
+>>>>>>> 6e4df10589f3d052308ffeed0b0b46894687e7dc
     def event_set_folder(self):
         """
         フォルダー選択ボタンクリックイベント
