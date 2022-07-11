@@ -4613,8 +4613,8 @@ def Main(FolURL, TFolURL, CFolURL, SerchURL, XLSDir, LURL):
                 for sb_fileItem in sb_file:
                     print(sb_fileItem)
                     if (
-                        "ミロク印刷申請" in sb_fileItem
-                        and not "ミロク印刷申請(原本).xlsm" == sb_fileItem
+                        "製本・電子ファイル印刷申請ミロク" in sb_fileItem
+                        and not "製本・電子ファイル印刷申請ミロク(原本).xlsm" == sb_fileItem
                     ):
                         XLSURL = (
                             FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
@@ -4685,7 +4685,10 @@ if __name__ == "__main__":
         if not len(sb_folder) == 0:
             for sb_fileItem in sb_file:
                 print(sb_fileItem)
-                if "ミロク印刷申請" in sb_fileItem and not "ミロク印刷申請(原本).xlsm" == sb_fileItem:
+                if (
+                    "製本・電子ファイル印刷申請ミロク" in sb_fileItem
+                    and not "製本・電子ファイル印刷申請ミロク(原本).xlsm" == sb_fileItem
+                ):
                     XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
                     MoveXLSURL = (
                         FDP

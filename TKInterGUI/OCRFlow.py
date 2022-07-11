@@ -57,6 +57,15 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
             for g in range(GFRow):
                 if g == 21:
                     print("")
+
+                # toml設定の列数以上の列を削除-----------------------------------------------
+                lentoml = len(Banktoml[tomltitle]["ColumnName"])
+                lenGT = len(GFTable[g])
+                if lentoml < lenGT:
+                    for c in range(lenGT - lentoml):
+                        GFTable[g].pop(lenGT + c - 1)
+                # -------------------------------------------------------------------------
+
                 for c in Banktoml[tomltitle]["MoneyCol"]:
                     strs = ""
                     ints = ""
@@ -116,7 +125,8 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
             df = pd.DataFrame(GFTable, columns=Banktoml[tomltitle]["ColumnName"])
             FU = FileURL.split("\\")
             FN = FU[len(FU) - 1].replace(".png", ".csv")
-            FileName = r"D:\SouzokuOCR" + r"\\" + FN
+            FDir = FileURL.replace(FU[len(FU) - 1], "")
+            FileName = FDir + r"\\" + FN
 
             # with open(
             #     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList.csv",
@@ -126,7 +136,10 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
             #     newline="",
             # ) as f:
             # pandasでファイルオブジェクトに書き込む
-            df.to_csv(FileName, index=False, encoding="utf8")
+            try:
+                df.to_csv(FileName, index=False, encoding="cp932")
+            except:
+                df.to_csv(FileName, index=False, encoding="utf8")
             print("END")
             return True, FileName
     # except:

@@ -21,7 +21,12 @@ class Application(tk.Frame):
         self.master.geometry("1480x800+0+0")  # Window表示位置指定
         # 画像の読込#####################################################################
         # 透過キャンバスの画像範囲検出の為リサイズ比率等を算出
-        IR = LoadImg()
+        print(self.master.geometry())
+        W = self.master.geometry().split("x")
+        Wwidth = int(1480 * 0.8)  # int(W[0]) * 0.7
+        W = W[1].split("+")
+        Wheight = int(800 * 0.8)  # int(W[0]) * 0.7
+        IR = LoadImg(Wwidth, Wheight)
         CW, CH, HCW, HCH, TKimg = IR[0], IR[1], IR[2], IR[3], IR[4]
         # ##############################################################################
         self.top = tk.Toplevel()  # サブWindow作成
@@ -31,12 +36,12 @@ class Application(tk.Frame):
         self.top.forward = tk.Canvas(
             self.top, background="white", width=CW, height=CH
         )  # 透過キャンバス作成
-        self.top.forward.pack(fill=tk.BOTH, expand=True)  # 透過キャンバスを配置
+        self.top.forward.pack(fill=tk.BOTH, expand=False)  # 透過キャンバスを配置
         # ##############################################################################
         # 配置
         # テキストボックスの作成と配置---------------------------------------------------
-        txt = tk.Entry(self.top, width=90)
-        txt.pack(side=tk.TOP, pady=50, padx=50, anchor=tk.E)
+        txt = tk.Entry(self.top, width=30)
+        txt.pack(side=tk.TOP, pady=50, padx=10, anchor=tk.E)
         # フレーム配置------------------------------------------------------------------
         frame0 = tk.Frame(
             self.top,
@@ -48,7 +53,7 @@ class Application(tk.Frame):
             relief=tk.GROOVE,
         )
         frame0.pack(
-            side=tk.TOP, padx=200, anchor=tk.E
+            side=tk.TOP, padx=10, anchor=tk.E
         )  # , pady=10, padx=10, anchor=tk.E)
         # リストボックス-----------------------------------------------------------------
         tlc = tomlListCreate(frame0)
@@ -63,14 +68,14 @@ class Application(tk.Frame):
             self.top,
             bg="White",
             height=800,
-            width=90,
+            width=50,
             pady=1,
-            padx=50,
+            padx=10,
             relief=tk.GROOVE,
         )
-        frame.pack(side=tk.TOP, pady=50, padx=50, anchor=tk.E)
+        frame.pack(side=tk.TOP, pady=50, padx=10, anchor=tk.E)
         # ##############################################################################
-        BW = 38  # ボタン横幅
+        BW = 15  # ボタン横幅
         BH = 2  # ボタン縦幅
         fonts = ("", 16)  # ボタンフォントの設定
         # ##############################################################################
@@ -86,7 +91,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button.pack(side=tk.TOP, pady=10, padx=10, fill=tk.BOTH)
+        button.pack(side=tk.TOP, pady=10, fill=tk.BOTH)
         # 横直線追加ボタン---------------------------------------------------------------
         button = tk.Button(
             # self.top,
@@ -99,7 +104,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button.pack(side=tk.TOP, pady=10, padx=10, fill=tk.BOTH)
+        button.pack(side=tk.TOP, pady=10, fill=tk.BOTH)
         # 新規直線描画ボタン---------------------------------------------------------------
         button = tk.Button(
             # self.top,
@@ -112,7 +117,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button.pack(side=tk.TOP, pady=10, padx=10, fill=tk.BOTH)
+        button.pack(side=tk.TOP, pady=10, fill=tk.BOTH)
         # 確定ボタン---------------------------------------------------------------
         button = tk.Button(
             # self.top,
@@ -125,7 +130,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button.pack(side=tk.TOP, pady=10, padx=10, fill=tk.BOTH)
+        button.pack(side=tk.TOP, pady=10, fill=tk.BOTH)
         # 削除ボタン---------------------------------------------------------------
         button = tk.Button(
             # self.top,
@@ -138,7 +143,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button.pack(side=tk.TOP, pady=10, padx=10, fill=tk.BOTH)
+        button.pack(side=tk.TOP, pady=10, fill=tk.BOTH)
         # 戻るボタン---------------------------------------------------------------
         button = tk.Button(
             # self.top,
@@ -151,7 +156,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button.pack(side=tk.TOP, pady=10, padx=10, fill=tk.BOTH)
+        button.pack(side=tk.TOP, pady=10, fill=tk.BOTH)
         # ##############################################################################
         Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)  # 透過キャンバスに罫線描画
         # ##############################################################################
@@ -168,9 +173,11 @@ class Application(tk.Frame):
         img = Image.open(imgurl)
         img = img.resize((CW, CH))  # 画像リサイズ
         self.back = tk.Canvas(self.master, background="white", width=CW, height=CH)
+
         TKimg = ImageTk.PhotoImage(img, master=self.back)  # 下Windowに表示する画像オブジェクト
         self.back.create_image(0, 0, image=TKimg, anchor=tk.NW)  # 下Windowのキャンバスに画像挿入
-        self.back.pack(fill=tk.BOTH, expand=True)  # 下Windowを配置
+        self.back.pack(fill=tk.BOTH, expand=False)  # 下Windowを配置
+
         self.bind("<Configure>", self.change)
         self.back.bind("<Unmap>", self.unmap)
         self.back.bind("<Map>", self.map)
@@ -248,17 +255,16 @@ def tomlListCreate(self):
 
 
 # ---------------------------------------------------------------------------------------------
-def LoadImg():
+def LoadImg(Wwidth, Wheight):
     global MaxW, MaxH
     global imgurl
     # 画像の読込#####################################################################
     # 画像を指定
     img = Image.open(imgurl)
-    Par = 4.5  # 倍率
     MaxW, MaxH = img.width, img.height
-    CW, CH = img.width // Par, img.height // Par  # 基準サイズ値
-    CW, CH = int(CW), int(CH)
-    HCW, HCH = CW / img.width, CH / img.height  # リサイズ比率
+    CW, CH = int(Wwidth), int(Wheight)
+    HCW, HCH = CW / MaxW, CH / MaxH  # リサイズ比率
+
     img = img.resize((CW, CH))  # 画像リサイズ
     imgobj = ImageTk.PhotoImage(img)  # 下Windowに表示する画像オブジェクト
     return CW, CH, HCW, HCH, imgobj
@@ -303,10 +309,10 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
     ri = 0
     for readcsv1Item in readcsv1:
         ri += 1
-        ripar0 = readcsv1Item[0] * HCH  # * CHh
-        ripar1 = readcsv1Item[1] * HCW  # * CWw
-        ripar2 = readcsv1Item[2] * HCH  # * CHh
-        ripar3 = readcsv1Item[3] * HCW  # * CWw
+        ripar0 = readcsv1Item[0] * HCW  # * CHh
+        ripar1 = readcsv1Item[1] * HCH  # * CWw
+        ripar2 = readcsv1Item[2] * HCW  # * CHh
+        ripar3 = readcsv1Item[3] * HCH  # * CWw
         TName = "Line" + str(ri)
         canvas.create_line(ripar0, ripar1, ripar2, ripar3, tags=TName, fill="#FF0000")
         canvas.tag_bind(TName, "<ButtonPress-1>", click1)
@@ -315,10 +321,10 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
         BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Yoko"])
     for readcsv2Item in readcsv2:
         ri += 1
-        ripar0 = readcsv2Item[0] * HCH  # * CHh
-        ripar1 = readcsv2Item[1] * HCW  # * CWw
-        ripar2 = readcsv2Item[2] * HCH  # * CHh
-        ripar3 = readcsv2Item[3] * HCW  # * CWw
+        ripar0 = readcsv2Item[0] * HCW  # * CHh
+        ripar1 = readcsv2Item[1] * HCH  # * CWw
+        ripar2 = readcsv2Item[2] * HCW  # * CHh
+        ripar3 = readcsv2Item[3] * HCH  # * CWw
         TName = "Line" + str(ri)
         canvas.create_line(ripar0, ripar1, ripar2, ripar3, tags=TName, fill="#00FF40")
         canvas.tag_bind(TName, "<ButtonPress-1>", click1)
@@ -561,7 +567,17 @@ with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
     print(Banktoml)
 # -----------------------------------------------------------
 if __name__ == "__main__":
+<<<<<<< HEAD
 
+=======
+    URL = os.getcwd()
+    imgurl = r"D:\OCRTESTPDF\TEST3.png"
+    # toml読込------------------------------------------------------------------------------
+    with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
+        Banktoml = toml.load(f)
+        print(Banktoml)
+    # -----------------------------------------------------------
+>>>>>>> 6e4df10589f3d052308ffeed0b0b46894687e7dc
     readcsv1 = []
     with open(
         URL + r"\TKInterGUI\StraightListYoko.csv",

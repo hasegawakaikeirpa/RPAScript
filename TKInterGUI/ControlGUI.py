@@ -87,7 +87,10 @@ class ControlGUI:
         キャンバスに画像を読込む
         """
         fname = self.get_file(command, set_pos)
-        self.model.DrawImage(fname, self.canvas, "None")
+        if command == "Map":
+            self.model.DrawImage(fname, self.canvas, "Map")
+        else:
+            self.model.DrawImage(fname, self.canvas, "None")
         return self.file_pos, self.model
 
 <<<<<<< HEAD
@@ -178,7 +181,7 @@ class ControlGUI:
                 sx = int(self.clip_sx * WiPar)
                 sy = int((self.clip_sy - SYPOS) * HePar)
                 ex = int(self.clip_ex * WiPar)
-                ey = int((self.clip_ey + SYPOS) * HePar)
+                ey = int((self.clip_ey) * HePar)
             elif minus[0] == "height":  # 高さが圧縮されていたら
                 # 高さ圧縮率を幅にかける
                 IMGSize = [
@@ -189,7 +192,7 @@ class ControlGUI:
                 SYPOS = 0  # スタート高さポジション
                 sx = int((self.clip_sx - SXPOS) * WiPar)
                 sy = int(self.clip_sy * HePar)
-                ex = int((self.clip_ex + SXPOS) * WiPar)
+                ex = int((self.clip_ex) * WiPar)
                 ey = int(self.clip_ey * HePar)
             else:
                 IMGSize = [
