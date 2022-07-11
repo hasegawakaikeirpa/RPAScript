@@ -2954,8 +2954,8 @@ def Main(FolURL, TFolURL, XLSDir, LURL):
                 for sb_fileItem in sb_file:
                     print(sb_fileItem)
                     if (
-                        "ミロク更新申請" in sb_fileItem
-                        and not "ミロク更新申請(原本).xlsm" == sb_fileItem
+                        "一括更新申請ミロク" in sb_fileItem
+                        and not "一括更新申請ミロク(原本).xlsm" == sb_fileItem
                     ):
                         XLSURL = (
                             FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
@@ -3014,7 +3014,10 @@ if __name__ == "__main__":
         if not len(sb_folder) == 0:
             for sb_fileItem in sb_file:
                 print(sb_fileItem)
-                if "ミロク更新申請" in sb_fileItem and not "ミロク更新申請(原本).xlsm" == sb_fileItem:
+                if (
+                    "一括更新申請ミロク" in sb_fileItem
+                    and not "一括更新申請ミロク(原本).xlsm" == sb_fileItem
+                ):
                     XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
                     MoveXLSURL = (
                         FDP
