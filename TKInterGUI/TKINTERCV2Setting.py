@@ -569,7 +569,7 @@ with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
 
 if __name__ == "__main__":
     URL = os.getcwd()
-    imgurl = r"D:\Souzoku_JAPng\Souzoku_JA-07.png"
+    imgurl = r"D:\OCRTESTPDF\TEST3.png"
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)
