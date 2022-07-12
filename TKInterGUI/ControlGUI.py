@@ -9,7 +9,7 @@ class ControlGUI:
         self.model = ModelImage()
 
         self.dir_path = default_path
-        self.ext_keys = [".png", ".jpg", ".jpeg", ".JPG", ".PNG"]
+        self.ext_keys = [".png", ".jpg", ".jpeg", ".JPG", ".PNG", "PDF", "pdf"]
         self.target_files = []
         self.file_pos = 0
 
@@ -93,7 +93,6 @@ class ControlGUI:
             self.model.DrawImage(fname, self.canvas, "None")
         return self.file_pos, self.model
 
-<<<<<<< HEAD
     def MenuFuncRun(self, command, whlist, set_pos=-1):
         """
         menuボタンクリック
@@ -123,8 +122,6 @@ class ControlGUI:
         """
         fname = self.get_file(command, set_pos)
 
-=======
->>>>>>> 644f16f4993faa4697914289c5d42a0abdf2d248
     def DrawRectangle(self, command, pos_y, pos_x):
         """
         キャンバス画像クリックで範囲指定完了後

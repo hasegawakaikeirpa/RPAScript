@@ -1,6 +1,6 @@
 [DataList]
 #------------------------------------------------
-Datas = ["Hirogin","Momiji","HiroginSouzoku","JASouzoku"]
+Datas = ["Hirogin","Momiji","HiroginSouzoku","JASouzoku","Tuka"]
 
 [Hirogin]
 #------------------------------------------------
@@ -21,6 +21,9 @@ HidukeColNo = 1
 MoneyCol = [6,7,8]
 ChangeTextCol = [4,9]
 ColumnName = ["日付","No","無題","摘要","種類","出金","入金","残高","摘要2"]
+NyuName = "入金"
+SyutuName = "出金"
+ZanName = "残高"
 ChangeText = [
     "トヨタファイナンス(カブ",
     "ヒロシマギンコウDC",
@@ -53,4 +56,32 @@ ChangeText = [
     "サンヨウガス",
     "#借",
     "通帳"
+    ]
+
+[Tuka]
+#------------------------------------------------
+HidukeColNo = 1
+MoneyCol = [3,4,5]
+ChangeTextCol = [1]
+ColumnName = ["品名","数量","単価","金額","摘要"]
+NyuName = "単価"
+SyutuName = "金額"
+ZanName = "摘要"
+ChangeText = [
+    "トヨタファイナンス(カブ",
+    "ヒロシマギンコウDC",
+    "オリコ",
+    "ハートフォードセイメイホケ",
+    "カゴメ",
+    "イトウハム",
+    "トウシンブンパイキン",
+    "トウシンコウニュウ",
+    "UC(アオヤマキャピタル)",
+    "クレジット",
+    "キュウヨ",
+    "フリコミ",
+    "リソク",
+    "ハイトウキン",
+    "フリカエ",
+    "テイキ"
     ]
