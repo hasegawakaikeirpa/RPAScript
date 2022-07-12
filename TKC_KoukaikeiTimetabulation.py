@@ -614,7 +614,7 @@ def EigyouScroll(FolURL2):  # 関与先毎の時間集計操作
                 KArrRowData = KArr.iloc[y, :]
                 KArrName = KArrRowData["関与先"]
                 KArrTime = KArrRowData["実　績(A)"]
-                if not KArrTime == "":
+                if KArrTime != KArrTime is False:
                     KArrListRow = CSVCheck(KArrName, KArr, "関与先")
                     if KArrListRow[0] is True:
                         # GList = ["1gyou.png","1gyou2.png"]
