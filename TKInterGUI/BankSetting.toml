@@ -21,6 +21,9 @@ HidukeColNo = 1
 MoneyCol = [6,7,8]
 ChangeTextCol = [4,9]
 ColumnName = ["日付","No","無題","摘要","種類","出金","入金","残高","摘要2"]
+NyuName = "出金"
+SyutuName = "入金"
+ZanName = "残高"
 ChangeText = [
     "トヨタファイナンス(カブ",
     "ヒロシマギンコウDC",
