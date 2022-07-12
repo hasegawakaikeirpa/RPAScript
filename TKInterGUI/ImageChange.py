@@ -402,7 +402,7 @@ def ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do):
             # ------------------------------------------------------------------------
             tan = math.degrees(math.atan2(y, x))
             img = Image.open(imgurl)
-            img = img.rotate(tan)
+            img = img.rotate(tan, expand=True)
             img.save(imgurl)
         # ---------------------------------------------------------------------------
         else:

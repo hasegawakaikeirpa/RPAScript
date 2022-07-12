@@ -198,13 +198,14 @@ class ControlGUI:
                     int(self.model.resize_w),
                     int(self.model.resize_h),
                 ]
-                SXPOS = 0
-                SYPOS = 0
-                sx = int(self.clip_sx * WiPar)
-                sy = int(self.clip_sy * HePar)
-                ex = int(self.clip_ex * WiPar)
-                ey = int(self.clip_ey * HePar)
+                SXPOS = (self.model.canvas_w - IMGSize[0]) / 2  # スタート幅ポジション
+                SYPOS = (self.model.canvas_h - IMGSize[1]) / 2  # スタート高さポジション
+                sx = int(self.clip_sx * WiPar) - SXPOS
+                sy = int(self.clip_sy * HePar) - SYPOS
+                ex = int(self.clip_ex * WiPar) - SXPOS
+                ey = int(self.clip_ey * HePar) - SYPOS
             # 元画像と比較してポジション調整-------------------------------------------
+
             if sx < 0:
                 sx = 0
             elif sx > self.model.original_width:

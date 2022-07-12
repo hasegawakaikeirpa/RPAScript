@@ -246,6 +246,7 @@ def tomlListCreate(self):
     リストボックス作成
     return:リストボックス(obj),スクロールバー(obj)
     """
+    global Banktoml
     module = Banktoml["DataList"]["Datas"]
     var = tk.StringVar(value=module)
     listbox = tk.Listbox(self, listvariable=var, selectmode="multiple", height=6)
@@ -511,6 +512,7 @@ def Main(US):
     global imgurl
     global readcsv1, readcsv2
     global URL
+    global Banktoml
     imgurl = US
     URL = os.getcwd()
     # imgurl = URL + r"\TKInterGUI\OCR0.png"
