@@ -119,6 +119,11 @@ class ViewGUI:
             self.window_sub_ctrl4, text="LinOCR_Open", width=10, command=self.LinOCROpen
         )
 
+        # SubMenu起動ボタン生成
+        button_SubMenu = tk.Button(
+            self.window_sub_ctrl4, text="SubMenu", width=10, command=self.event_menu
+        )
+
         # ラジオボタン生成
         radio_rotate = []
         for val, text in enumerate(
@@ -185,14 +190,15 @@ class ViewGUI:
         label_clip.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
         button_clip_start.grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
         button_clip_done.grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
-        label_run.grid(row=7, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # window_sub_ctrl4---------------------------------------------------
-        button_Oversave.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        button_undo.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
-        button_save.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
-        label_Line.grid(row=2, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        button_LinOCR.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
+        label_run.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        button_Oversave.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
+        button_undo.grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
+        button_save.grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
+        label_Line.grid(row=3, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        button_LinOCR.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
+        button_SubMenu.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # window_sub_ctrl3---------------------------------------------------
         label_s3_blk1.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.EW)
@@ -214,8 +220,6 @@ class ViewGUI:
         self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
 
     # Event Callback----------------------------------------------------------------------
-<<<<<<< HEAD
-=======
     # イベントハンドラ
     def event_handler(self, event):
         # print(sys._getframe().f_code.co_name)  # ターミナルへ表示
@@ -303,7 +307,6 @@ class ViewGUI:
         self.control.EditImage(cmd)
         print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
 
->>>>>>> 6e4df10589f3d052308ffeed0b0b46894687e7dc
     def event_set_folder(self):
         """
         フォルダー選択ボタンクリックイベント
