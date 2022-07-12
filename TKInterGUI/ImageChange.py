@@ -2,16 +2,59 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from numba import jit
+
+# from numba import jit
 import math
 import pyocr
 import os
+
 from PIL import Image, ImageDraw
+from pathlib import Path
+from pdf2image import convert_from_path
 
 # loggerインポート
 from logging import getLogger
 
 logger = getLogger()
+
+
+def pdf_image(pdf_file, fmtt, dpi):
+    """
+    概要: popplerでPDFを指定した画像形式に変換
+    @param pdf_file : PDFURL(str)
+    @param img_path : 画像フォルダURL(str)
+    @param fmtt : 変換後の画像形式(str)
+    @param dpi : 変換する際の解像度(int)
+    @param PDFPage : 変換するPDFのページ番号(str)
+    @return : bool
+    @return : 変換後画像URLのリスト(list)
+    """
+    try:
+        Mydir = os.getcwd()
+        pppath = Mydir + r"\poppler-22.01.0\Library\bin"
+        # pdf_file、img_pathをPathにする
+        pdf_path = Path(pdf_file)
+        image_dir = os.path.dirname(pdf_file)
+        FileKey = os.path.basename(pdf_file)
+        FileKey = FileKey.replace(".pdf", "").replace(".PDF", "")
+        # 線形検出パラメータ設定########################################
+        disth = 1.41421356
+        canth1 = 50.0
+        canth2 = 50.0
+        casize = 3
+        do = True
+        # ############################################################
+        # PDFをImage に変換(pdf2imageの関数)
+        pages = convert_from_path(pdf_path, dpi, poppler_path=pppath)
+        # 画像ファイルを１ページずつ保存
+        for i, page in enumerate(pages):
+            file_name = FileKey + "_" + str(i + 1) + "page." + fmtt
+            image_path = image_dir + r"/" + file_name
+            page.save(image_path, fmtt)
+            PDFChange(image_dir, image_path, disth, canth1, canth2, casize, do)
+        return True
+    except:
+        return False
 
 
 def show_image(img, **kwargs):
@@ -621,6 +664,54 @@ def FSDArray(imgurl, txt, th, mll, mlg):
         return True, ReturnList
     except:
         return False, ""
+
+
+def PDFChange(URL, imgurl, disth, canth1, canth2, casize, do):
+    """
+    概要: OCR読込用に画像を自動編集
+    @param URL: 画像フォルダ(str)
+    @param imgurl: 画像URL(str)
+    @param disth: マージする線分の距離(float)
+    @param canth1: Canny Edge Detectorの引数1(float)
+    @param canth2: Canny Edge Detectorの引数2(float)
+    @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    @param dom: Trueなら線分をマージして出力する(boolean)
+    @return OCR読込用に画像を自動編集した画像URL(str)
+    """
+    Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
+    Inv_img.save(imgurl)  # 白黒反転保存(PIL)
+    img = cv2.imread(imgurl)  # 白黒反転画像(cv2)
+    CleanUp_img = NoiseRemoval(img)  # ノイズ除去(cv2)
+    cv2.imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
+    Inv_img = ColorInverter(imgurl)  # 白黒反転(PIL)
+    Inv_img.save(imgurl)  # 白黒反転保存(PIL)
+    # 画像から直線を検出し、画像の傾きを調べ回転して上書き保存
+    ILT = ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do)
+    if ILT is True:
+        img = cv2.imread(imgurl)
+        # 画像リサイズ-----------------------------------------------
+        IMGsize = [3840, 3840]
+        h, w = img.shape[:2]
+        ash = IMGsize[1] / h
+        asw = IMGsize[0] / w
+        if asw < ash:
+            sizeas = (int(w * asw), int(h * asw))
+        else:
+            sizeas = (int(w * ash), int(h * ash))
+        img = cv2.resize(img, dsize=sizeas)
+        cv2.imwrite(imgurl, img)
+        # ----------------------------------------------------------
+        TesseOCRLotate(URL, imgurl)  # 無料OCRで回転
+        img = cv2.imread(imgurl)
+        TC = toneCurveUpContrast(img)  # トーンカーブ処理
+        cv2.imwrite(imgurl, TC)
+        # 直線を削除------------------------------------------------------
+        StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do)
+        # ---------------------------------------------------------------
+        # ImageColorChange(URL, img)
+        return imgurl
+    else:
+        return imgurl
 
 
 def OCRIMGChange(URL, imgurl, disth, canth1, canth2, casize, do):

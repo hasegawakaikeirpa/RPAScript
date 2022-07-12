@@ -180,7 +180,7 @@ class ModelImage:
 
         if self.edit_img != None:
             name, ext = os.path.splitext(fname)
-            fpath = name
+            fpath = name.replace("\\\\", "/")
 
             self.edit_img.save(fpath)
             print("Saved: {}".format(fpath))

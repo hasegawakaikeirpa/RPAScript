@@ -4,6 +4,7 @@ from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
 import TKINTERCV2Setting as TKCV2
 from tkinter import messagebox
+import ImageChange as IC
 
 
 class ViewGUI:
@@ -264,6 +265,7 @@ class ViewGUI:
         # ------------------------------------------------------------------------------
 
     # ##############################################################################
+
     def Resize(self, Resizewidth, Resizeheight):
         set_pos = self.combo_file.current()
 
@@ -334,7 +336,13 @@ class ViewGUI:
 
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         set_pos = self.combo_file.current()
-        self.control.DrawImage("set", set_pos=set_pos)
+        FN = self.control.get_file("set", set_pos=set_pos)
+        if ".PDF" in FN or ".pdf" in FN:
+            msg = messagebox.askokcancel("確認", "PDFが選択されています。PNGに変換しますか？")
+            if msg is True:
+                IC.pdf_image(FN, "png", 600)
+        else:
+            self.control.DrawImage("set", set_pos=set_pos)
 
     def event_prev(self):
         """
