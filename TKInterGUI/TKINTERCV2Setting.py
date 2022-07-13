@@ -36,7 +36,9 @@ class Application(tk.Frame):
         self.top.forward = tk.Canvas(
             self.top, background="white", width=CW, height=CH
         )  # 透過キャンバス作成
-        self.top.forward.pack(fill=tk.BOTH, expand=False)  # 透過キャンバスを配置
+        self.top.forward.pack(
+            side=tk.TOP, anchor=tk.W, fill=tk.BOTH, expand=False
+        )  # 透過キャンバスを配置
         # ##############################################################################
         # 配置
         # テキストボックスの作成と配置---------------------------------------------------

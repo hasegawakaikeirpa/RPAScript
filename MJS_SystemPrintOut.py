@@ -2419,11 +2419,22 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
-                            SJS = ImgCheck(CFolURL, r"\Houjinzei\Nodata.png", 0.9, 10)
+                            SJS = ImgCheckForList(
+                                CFolURL,
+                                [r"\Houjinzei\Nodata.png", r"\Houjinzei\NodataQ.png"],
+                                0.9,
+                                10,
+                            )
                             if SJS[0] is True:
-                                pg.press("return")
-                                ImgClick(CFolURL, r"\Houjinzei\NodataCan.png", 0.9, 10)
-                                Nod = "Nodata"
+                                if "NodataQ.png" in SJS[1] is True:
+                                    pg.press("return")
+                                    Nod = "Nodata"
+                                else:
+                                    pg.press("return")
+                                    ImgClick(
+                                        CFolURL, r"\Houjinzei\NodataCan.png", 0.9, 10
+                                    )
+                                    Nod = "Nodata"
                             if Nod == "Nodata":
                                 break
                         # --------------------------------------------------------------------
@@ -4378,7 +4389,7 @@ def OpenSystem(
         ChildFFlag = False
         # ----------------------------------------------------------------------------
         for ExrcHeaderItem in ExrcHeader:
-            if Eh <= (len(ExrcHeader) - 1):
+            if Eh < (len(ExrcHeader) - 1):
                 for FMaxSystemListItem in FMaxSystemList:
                     if FMaxSystemListItem in ExrcHeaderItem:
                         Title = FMaxSystemListItem  # MJSSytem名
@@ -4432,6 +4443,7 @@ def OpenSystem(
                                 if CF is True:
                                     print("")
                 Eh += 1
+
         if ChildFFlag is True:
             return True
         else:
@@ -4503,6 +4515,7 @@ def MainStarter(
                     print("nan")
             except:
                 print("データ無")
+        return True, ""
     except:
         return False, ""
 
@@ -4541,7 +4554,7 @@ def MainFlow(FolURL, TFolURL, CFolURL, SerchURL, XLSDir, LURL, Exlsx, driver, XL
                 DF = pd.DataFrame(ExSheet)
                 NameDF = pd.DataFrame(NameSheet)
                 DF.to_csv(
-                    r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\初回起動_プリント"
+                    r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\製本・電子ファイル印刷申請\MJSLog\初回起動_プリント"
                     + dt_s
                     + ".csv",
                     encoding="cp932",
@@ -4590,8 +4603,11 @@ def MainFlow(FolURL, TFolURL, CFolURL, SerchURL, XLSDir, LURL, Exlsx, driver, XL
                     isnItem,
                     driver,
                 )  # データ送信画面までの関数
+        print("MainStarter終了")
+        return True
     except Exception as e:
         logger.debug(e)
+        return False
 
 
 def Main(FolURL, TFolURL, CFolURL, SerchURL, XLSDir, LURL):
@@ -4666,8 +4682,8 @@ if __name__ == "__main__":
     TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
     CFolURL = FolURL + r"\RPAPhoto\MJS_SystemPrintOut"  # 先
     SerchURL = r"\\nas-sv\B_監査etc\B2_電子ﾌｧｲﾙ\03_法人決算"  # 先
-    XLSDir = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新"
-    LURL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\RPA_ミロクシステム次年更新\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
+    XLSDir = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\製本・電子ファイル印刷申請"
+    LURL = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\製本・電子ファイル印刷申請\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
     # --------------------------------------------------------------------------------
     # Log--------------------------------------------
     dt_s = datetime.datetime.now()
