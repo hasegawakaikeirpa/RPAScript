@@ -87,7 +87,7 @@ def straightlinesetting(imgurl):
 
 if __name__ == "__main__":
 
-    imgurl = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\OCR0.png"
+    imgurl = r"D:\OCRTESTPDF\PDFTEST\PDF1_1page.png"
     YURL = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\StraightListYoko.csv"
     TURL = r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\StraightListTate.csv"
     # ####################################################################################
@@ -123,4 +123,4 @@ if __name__ == "__main__":
                 readcsv2.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
     COLArray = True, readcsv1, readcsv2
     # ####################################################################################
-    straightlinesetting(imgurl, readcsv1, readcsv2)
+    straightlinesetting(imgurl)

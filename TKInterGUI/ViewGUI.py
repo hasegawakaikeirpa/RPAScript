@@ -100,6 +100,9 @@ class ViewGUI:
         button_clip_done = tk.Button(
             self.window_sub_ctrl2, text="Done", width=5, command=self.event_clip_done
         )
+        button_clip_Erace = tk.Button(
+            self.window_sub_ctrl2, text="Erace", width=5, command=self.event_clip_Erace
+        )
 
         # Save/Undoボタン生成
         button_Oversave = tk.Button(
@@ -153,6 +156,24 @@ class ViewGUI:
                 )
             )
         self.radio_intvar2.set(0)  # 0:No select
+
+        # Scaleの作成
+        self.scale_var = tk.DoubleVar()
+        scaleH = tk.Scale(
+            self.window_sub_ctrl2,
+            variable=self.scale_var,
+            command=self.slider_scroll,
+            orient=tk.HORIZONTAL,  # 配置の向き、水平(HORIZONTAL)、垂直(VERTICAL)
+            length=200,  # 全体の長さ
+            width=20,  # 全体の太さ
+            sliderlength=20,  # スライダー（つまみ）の幅
+            from_=-10,  # 最小値（開始の値）
+            to=10,  # 最大値（終了の値）
+            resolution=1,  # 変化の分解能(初期値:1)
+            tickinterval=5,  # 目盛りの分解能(初期値0で表示なし)
+        )
+        # ---------------------------------------------------------------
+
         # キャンバス内クリック開始イベントに関数バインド
         self.window_sub_canvas.bind("<ButtonPress-1>", self.event_clip_start)
         # キャンバス内ドラッグイベントに関数バインド
@@ -183,14 +204,15 @@ class ViewGUI:
         radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
         radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
         radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
+        scaleH.grid(row=4, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
+        label_flip.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
+        radio_flip[0].grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
+        radio_flip[1].grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
 
-        label_flip.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_flip[0].grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_flip[1].grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
-
-        label_clip.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
-        button_clip_start.grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
-        button_clip_done.grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
+        label_clip.grid(row=7, column=1, padx=5, pady=5, sticky=tk.W)
+        button_clip_start.grid(row=8, column=1, padx=5, pady=5, sticky=tk.W)
+        button_clip_done.grid(row=8, column=2, padx=5, pady=5, sticky=tk.W)
+        button_clip_Erace.grid(row=8, column=3, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # window_sub_ctrl4---------------------------------------------------
         label_run.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
@@ -238,30 +260,42 @@ class ViewGUI:
         self.menuwinFrame.pack(fill=tk.BOTH, expand=True)
         # 　ボタン生成------------------------------------------------------------------
         menubutton1 = tk.Button(
-            self.menuwinFrame, text="線抽出自動回転", width=10, command=self.menubutton1_click
+            self.menuwinFrame, text="線抽出自動回転", width=50, command=self.menubutton1_click
         )
-        # menubutton1.grid(row=1, column=1, columnspan=3, padx=5, pady=5, sticky=tk.EW)
-        menubutton1.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5, expand=True)
+        menubutton1.grid(row=1, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
         # ------------------------------------------------------------------------------
         # 　ラベル生成--------------------------------------------------------------------
         label_tb1 = tk.Label(self.menuwinFrame, text="[ノイズ除去値]")
-        # label_tb1.grid(row=2, column=1, padx=5, pady=5, sticky=tk.EW)
-        label_tb1.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=True)
+        label_tb1.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
         # ------------------------------------------------------------------------------
         # 　テキストボックス生成---------------------------------------------------------
-        textbox1 = tk.Entry(self.menuwinFrame, text="ノイズ除去値(奇数)", width=5)
-        # textbox1.grid(row=2, column=2, padx=5, pady=5, sticky=tk.EW)
-        textbox1.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=True)
+        textbox1 = tk.Entry(self.menuwinFrame, text="ノイズ除去値(奇数)", width=15)
+        textbox1.grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
         # ------------------------------------------------------------------------------
         # 　ボタン生成------------------------------------------------------------------
         menubutton2 = tk.Button(
             self.menuwinFrame,
             text="ノイズ除去",
-            width=10,
+            width=20,
             command=lambda: self.menubutton2_click(textbox1),
         )
-        # menubutton2.grid(row=2, column=3, padx=5, pady=5, sticky=tk.EW)
-        menubutton2.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=True)
+        menubutton2.grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
+        # 　ラベル生成--------------------------------------------------------------------
+        label_tb1 = tk.Label(self.menuwinFrame, text="[線形基準値]")
+        label_tb1.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
+        # ------------------------------------------------------------------------------
+        # 　テキストボックス生成---------------------------------------------------------
+        textbox2 = tk.Entry(self.menuwinFrame, text="1.41421356", width=15)
+        textbox2.grid(row=3, column=2, padx=5, pady=5, sticky=tk.W)
+        # ------------------------------------------------------------------------------
+        # 　ボタン生成------------------------------------------------------------------
+        menubutton3 = tk.Button(
+            self.menuwinFrame,
+            text="線形削除",
+            width=20,
+            command=lambda: self.menubutton3_click(textbox2),
+        )
+        menubutton3.grid(row=3, column=3, padx=5, pady=5, sticky=tk.W)
         # ------------------------------------------------------------------------------
 
     # ##############################################################################
@@ -302,6 +336,12 @@ class ViewGUI:
         except:
             msg = messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
 
+    def menubutton3_click(self, textbox2):
+        set_pos = self.combo_file.current()
+        msg = messagebox.askokcancel("確認", "線形削除を適用しますか？(undoで戻せません)")
+        if msg is True:
+            self.control.MenuFuncRun("LineDelete", textbox2, set_pos=set_pos)
+
     def slider_scroll(self, event=None):
         """スライダーを移動したとき"""
         val = int(self.scale_var.get())
@@ -340,7 +380,11 @@ class ViewGUI:
         if ".PDF" in FN or ".pdf" in FN:
             msg = messagebox.askokcancel("確認", "PDFが選択されています。PNGに変換しますか？")
             if msg is True:
-                IC.pdf_image(FN, "png", 600)
+                spd = self.control.pdf_image(FN, "png", 600)
+                if spd is True:
+                    msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
+                else:
+                    msg = messagebox.askokcancel("確認", "PNG変換に失敗しました。")
         else:
             self.control.DrawImage("set", set_pos=set_pos)
 
@@ -392,6 +436,15 @@ class ViewGUI:
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         if self.clip_enable:
             self.control.EditImage("clip_done")
+            self.clip_enable = False
+
+    def event_clip_Erace(self):
+        """
+        Eraceボタンイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        if self.clip_enable:
+            self.control.EditImage("clip_Erace")
             self.clip_enable = False
 
     def event_clip_start(self, event):

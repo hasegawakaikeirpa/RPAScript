@@ -564,7 +564,7 @@ def Main(US):
 # ------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     URL = os.getcwd()
-    imgurl = r"D:\OCRTESTPDF\PDF1.png"
+    imgurl = r"D:\OCRTESTPDF\PDFTEST\PDF1_1page.png"
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)

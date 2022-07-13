@@ -95,6 +95,13 @@ class ControlGUI:
             self.model.DrawImage(fname, self.canvas, "None")
         return self.file_pos, self.model
 
+    def pdf_image(self, pdf_file, fmtt, dpi):
+        mpd = self.model.pdf_image(pdf_file, fmtt, dpi)
+        if mpd is True:
+            return True
+        else:
+            return False
+
     def MenuFuncRun(self, command, whlist, set_pos=-1):
         """
         menuボタンクリック
@@ -114,6 +121,12 @@ class ControlGUI:
             limg = self.model.ImageLotate(fname, disth, canth1, canth2, casize, do)
         elif command == "Resize":
             limg = self.model.edit_img
+        elif command == "LineDelete":
+            disth = whlist
+            limg = self.model.StraightLineErase(
+                fname, disth, canth1, canth2, casize, do
+            )
+
         self.model.edit_img = limg
         args = {}
         self.model.DrawImage(fname, self.canvas, command, args=args)
@@ -153,7 +166,7 @@ class ControlGUI:
         画像トリミング
         """
         args = {}
-        if command == "clip_done":  # トリミング確定ボタンが押されたら
+        if command == "clip_done" or command == "clip_Erace":  # トリミング確定ボタンが押されたら
             # キャンバスサイズと表示画像サイズの比率を算出---------------------------
             CWiPar = self.model.canvas_w / self.model.resize_w  # 幅
             CHePar = self.model.canvas_h / self.model.resize_h  # 高さ
@@ -173,26 +186,26 @@ class ControlGUI:
                 # 幅圧縮率を高さにかける
                 IMGSize = [
                     int(self.model.resize_w),
-                    int(self.model.resize_h * minus[1]),
+                    int(self.model.resize_h * CWiPar),
                 ]
                 SXPOS = 0  # スタート幅ポジション
                 SYPOS = (self.model.canvas_h - IMGSize[1]) / 2  # スタート高さポジション
-                sx = int(self.clip_sx * WiPar)
-                sy = int((self.clip_sy - SYPOS) * HePar)
-                ex = int(self.clip_ex * WiPar)
-                ey = int((self.clip_ey) * HePar)
+                sx = int(((self.clip_sx - SXPOS) / CHePar) * WiPar)
+                sy = int(((self.clip_sy - SYPOS) / CWiPar) * HePar)
+                ex = int(((self.clip_ex - SXPOS) / CHePar) * WiPar)
+                ey = int(((self.clip_ey - SYPOS) / CWiPar) * HePar)
             elif minus[0] == "height":  # 高さが圧縮されていたら
                 # 高さ圧縮率を幅にかける
                 IMGSize = [
-                    int(self.model.resize_w * minus[1]),
+                    int(self.model.resize_w * CHePar),
                     int(self.model.resize_h),
                 ]
                 SXPOS = (self.model.canvas_w - IMGSize[0]) / 2  # スタート幅ポジション
                 SYPOS = 0  # スタート高さポジション
-                sx = int((self.clip_sx - SXPOS) * WiPar)
-                sy = int(self.clip_sy * HePar)
-                ex = int((self.clip_ex) * WiPar)
-                ey = int(self.clip_ey * HePar)
+                sx = int(((self.clip_sx - SXPOS) / CHePar) * WiPar)
+                sy = int(((self.clip_sy - SYPOS) / CWiPar) * HePar)
+                ex = int(((self.clip_ex - SXPOS) / CHePar) * WiPar)
+                ey = int(((self.clip_ey - SYPOS) / CWiPar) * HePar)
             else:
                 IMGSize = [
                     int(self.model.resize_w),
@@ -200,10 +213,11 @@ class ControlGUI:
                 ]
                 SXPOS = (self.model.canvas_w - IMGSize[0]) / 2  # スタート幅ポジション
                 SYPOS = (self.model.canvas_h - IMGSize[1]) / 2  # スタート高さポジション
-                sx = int(self.clip_sx * WiPar) - SXPOS
-                sy = int(self.clip_sy * HePar) - SYPOS
-                ex = int(self.clip_ex * WiPar) - SXPOS
-                ey = int(self.clip_ey * HePar) - SYPOS
+                sx = int(((self.clip_sx - SXPOS) * CWiPar) * WiPar)
+                sy = int(((self.clip_sy - SYPOS) * CHePar) * HePar)
+                ex = int(((self.clip_ex - SXPOS) * CWiPar) * WiPar)
+                ey = int(((self.clip_ey - SYPOS) * CHePar) * HePar)
+
             # 元画像と比較してポジション調整-------------------------------------------
 
             if sx < 0:
