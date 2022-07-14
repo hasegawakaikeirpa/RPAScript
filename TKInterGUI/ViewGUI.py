@@ -9,6 +9,8 @@ import ImageChange as IC
 
 class ViewGUI:
     def __init__(self, window_root, default_path):
+        global Sval  # スライダー初期値
+        Sval = 0  # スライダー初期値
         # Controller Class生成
         self.control = ControlGUI(default_path)
 
@@ -20,8 +22,8 @@ class ViewGUI:
         # メインウィンドウ
         self.window_root = window_root
         # 　メインウィンドウサイズ指定
-        self.window_root.geometry("800x600")  # 縦,横
-        NWINSize = ["800", "600"]  # 縦,横
+        self.window_root.geometry("1480x750")  # 横,縦
+        NWINSize = ["1480", "750"]  # 横,縦
         # 　メインウィンドウタイトル
         self.window_root.title("GUI Image Editor v0.90")
         # self.window_root.bind("<Button-1>", self.ChangeWSize)
@@ -35,8 +37,8 @@ class ViewGUI:
         # 画像加工2
         self.window_sub_ctrl4 = tk.Frame(self.window_root, height=50, width=400)
         # キャンバス
-        FCH = int(int(NWINSize[0]) * 0.4)
-        FCW = int(int(NWINSize[1]) * 0.4)
+        FCW = int(int(NWINSize[0]) * 0.4)
+        FCH = int(int(NWINSize[1]) * 0.4)
         self.window_sub_FrameCanvas = tk.Frame(self.window_root, height=FCH, width=FCW)
         self.window_sub_canvas = tk.Canvas(
             self.window_root, height=FCH, width=FCW, bg="gray"
@@ -343,10 +345,17 @@ class ViewGUI:
             self.control.MenuFuncRun("LineDelete", textbox2, set_pos=set_pos)
 
     def slider_scroll(self, event=None):
+        global Sval
         """スライダーを移動したとき"""
         val = int(self.scale_var.get())
+        if Sval < 0:  # スライダー初期値が0未満の場合
+            Sval = Sval * -1
+            val = Sval + val
+        else:
+            val = val
         cmd = "rotateFree-" + str(val)
         self.control.EditImage(cmd)
+        Sval = val
         print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
 
     def event_set_folder(self):

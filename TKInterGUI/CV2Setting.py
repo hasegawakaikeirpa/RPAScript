@@ -1,5 +1,7 @@
 import cv2
 import csv
+from tkinter import messagebox
+from tkinter import ttk, filedialog
 
 
 class mouse_event_handler:
@@ -57,11 +59,14 @@ def straightlinesetting(imgurl):
         # 画像の読み込み
         img = cv2.imread(imgurl, 1)
         height, width = img.shape[:2]
-        HE = int(height / 2)
-        WD = int(width / 2)
-        cv2.resize(img, (WD, HE))
+        widPar = 1480 / width
+        heiPar = 750 / height
+        HE = int(750)
+        WD = int(1480)
+        img = cv2.resize(img, (WD, HE))
         # ウィンドウのサイズを変更可能にする
-        cv2.namedWindow("img", cv2.WINDOW_NORMAL)
+        cv2.namedWindow("img", cv2.WINDOW_AUTOSIZE)  # cv2.WINDOW_NORMAL)
+        # cv2.setWindowProperty("img", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
         # マウスイベント時に関数mouse_eventの処理を行う
         # cv2.setMouseCallback("img", mouse_event)
         cv2.setMouseCallback(
@@ -76,11 +81,41 @@ def straightlinesetting(imgurl):
             cv2.imshow("img", img)
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
-        TP = sorted(m.Tpoints, key=lambda x: x[1])
-        YP = sorted(m.Ypoints, key=lambda x: x[0])
-        cv2.destroyAllWindows()
+        # 元画像に対する直線設定
+        TpList = []
+        for TpointsItem in m.Tpoints:
+            TpList.append(
+                [
+                    round(TpointsItem[0] / widPar),
+                    round(TpointsItem[1] / heiPar),
+                    round(TpointsItem[2] / widPar),
+                    round(TpointsItem[3] / heiPar),
+                ]
+            )
+        YpList = []
+        for YpointsItem in m.Ypoints:
+            YpList.append(
+                [
+                    round(YpointsItem[0] / widPar),
+                    round(YpointsItem[1] / heiPar),
+                    round(YpointsItem[2] / widPar),
+                    round(YpointsItem[3] / heiPar),
+                ]
+            )
+        TP = sorted(TpList, key=lambda x: x[1])
+        YP = sorted(YpList, key=lambda x: x[0])
+
+        msg = messagebox.askokcancel("確認", "画像を保存しますか？(直線削除の際は保存してください。)")
+        if msg is True:
+            save_path = filedialog.asksaveasfilename(initialdir=imgurl)
+            img = cv2.resize(img, (width, height))
+            cv2.imwrite(save_path, img)
+            cv2.destroyAllWindows()
+            return True, "直線削除", "直線削除"
+        else:
+            cv2.destroyAllWindows()
+            return True, YP, TP
         # cv2.imwrite(imgurl, img)
-        return True, YP, TP
     except:
         return False, "m.Ypoints", "m.Tpoints"
 

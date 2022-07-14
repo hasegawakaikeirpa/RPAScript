@@ -1,6 +1,19 @@
 [DataList]
 #------------------------------------------------
-Datas = ["Hirogin","Momiji","HiroginSouzoku","JASouzoku","Tuka"]
+Datas = ["JA","Hirogin","Momiji","HiroginSouzoku","JASouzoku","Tuka"]
+
+[JA]
+#------------------------------------------------
+HidukeColNo = 1
+MoneyCol = [4,5,6]
+ChangeTextCol = [2]
+ColumnName = ["日付","摘要","摘要2","出金","入金","残高"]
+NyuName = "入金"
+SyutuName = "出金"
+ZanName = "残高"
+ChangeText = [
+    "ATM"
+    ]
 
 [Hirogin]
 #------------------------------------------------

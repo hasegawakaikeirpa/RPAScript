@@ -57,15 +57,16 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
             for g in range(GFRow):
                 if g == 21:
                     print("")
-
-                # toml設定の列数以上の列を削除-----------------------------------------------
-                lentoml = len(Banktoml[tomltitle]["ColumnName"])
-                lenGT = len(GFTable[g])
-                if lentoml < lenGT:
-                    for c in range(lenGT - lentoml):
-                        GFTable[g].pop(lenGT + c - 1)
-                # -------------------------------------------------------------------------
-
+                try:
+                    # toml設定の列数以上の列を削除-----------------------------------------------
+                    lentoml = len(Banktoml[tomltitle]["ColumnName"])
+                    lenGT = len(GFTable[g])
+                    if lentoml < lenGT:
+                        for c in range(lenGT - lentoml):
+                            GFTable[g].pop(lenGT + c - 1)
+                    # -------------------------------------------------------------------------
+                except:
+                    print("toml設定の列数以上の列を削除エラー")
                 for c in Banktoml[tomltitle]["MoneyCol"]:
                     strs = ""
                     ints = ""

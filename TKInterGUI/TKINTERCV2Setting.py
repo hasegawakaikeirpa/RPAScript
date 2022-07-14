@@ -18,21 +18,21 @@ class Application(tk.Frame):
         super().__init__(master)
         # Windowの画面サイズを設定する。
         # geometryについて : https://kuroro.blog/python/rozH3S2CYE0a0nB3s2QL/
-        self.master.geometry("1480x800+0+0")  # Window表示位置指定
+        self.master.geometry("1480x750+0+0")  # Window表示位置指定
         # 画像の読込#####################################################################
         # 透過キャンバスの画像範囲検出の為リサイズ比率等を算出
         print(self.master.geometry())
         W = self.master.geometry().split("x")
         Wwidth = int(1480 * 0.8)  # int(W[0]) * 0.7
         W = W[1].split("+")
-        Wheight = int(800 * 0.8)  # int(W[0]) * 0.7
+        Wheight = int(750 * 0.8)  # int(W[0]) * 0.7
         IR = LoadImg(Wwidth, Wheight)
         CW, CH, HCW, HCH, TKimg = IR[0], IR[1], IR[2], IR[3], IR[4]
         # ##############################################################################
         self.top = tk.Toplevel()  # サブWindow作成
         self.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
         # self.top.overrideredirect(True)  # ウィンドウのタイトル部分を消去
-        self.top.geometry("1480x800+0+0")  # トップWindow表示位置指定
+        self.top.geometry("1480x750+0+0")  # トップWindow表示位置指定
         self.top.forward = tk.Canvas(
             self.top, background="white", width=CW, height=CH
         )  # 透過キャンバス作成
@@ -67,7 +67,7 @@ class Application(tk.Frame):
         frame = tk.Frame(
             self.top,
             bg="White",
-            height=800,
+            height=750,
             width=50,
             pady=1,
             padx=10,
@@ -236,7 +236,9 @@ def NewLineCreate(self, selfC, HCW, HCH):
             Gra(selfC, SLS[1], SLS[2], HCW, HCH)  # 透過キャンバスに罫線描画
             map(self)
         else:
-            MSG = messagebox.showinfo("直線描画失敗", "直線描画に失敗しました。")
+            MSG = messagebox.showinfo(
+                "直線描画失敗", "直線描画に失敗しました。画像ファイル名に日本語が混じっている可能性があります。"
+            )
             map(self)
 
 
@@ -282,7 +284,7 @@ def StLine(canvastop, CW, CH):
     canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
     canvastop.tag_bind(TName, "<B1-Motion>", drag1)
     BSS = [0, 0, 0, 0]
-    TSS = [TName, CW - 50, 0, CW - 50, CH]
+    TSS = [TName, CW - 50, 0, CW - 50, CH, "Yoko"]
     tagsList.append([TSS, BSS])
 
 
@@ -295,7 +297,7 @@ def StWLine(canvastop, CW, CH):
     canvastop.create_line(0, CH - 50, CW, CH - 50, tags=TName, fill="#00FF40")
     canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
     canvastop.tag_bind(TName, "<B1-Motion>", drag1)
-    TSS = [TName, 0, CH - 50, CW, CH - 50]
+    TSS = [TName, 0, CH - 50, CW, CH - 50, "Tate"]
     BSS = [0, 0, 0, 0]
     tagsList.append([TSS, BSS])
 
@@ -459,8 +461,15 @@ def LineDelete(self):
     選択直線の削除
     """
     global id1
+    global tagsList
     TName = "Line" + str(id1[0])
     self.delete(TName)
+    r = 0
+    for tagsListItem in tagsList:
+        if TName == tagsListItem[0][0]:
+            tagsList.pop(r)
+            break
+        r += 1
 
 
 # ---------------------------------------------------------------------------------------------
@@ -521,37 +530,45 @@ def Main(US):
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
-    readcsv1 = []
-    with open(
-        URL + r"\TKInterGUI\StraightListYoko.csv",
-        "r",
-        newline="",
-    ) as inputfile:
-        for row in csv.reader(inputfile):
-            for rowItem in row:
-                rsp = (
-                    rowItem.replace("[", "")
-                    .replace("]", "")
-                    .replace(" ", "")
-                    .split(",")
-                )
-                readcsv1.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
-    readcsv2 = []
-    with open(
-        URL + r"\TKInterGUI\StraightListTate.csv",
-        "r",
-        newline="",
-    ) as inputfile:
-        for row in csv.reader(inputfile):
-            for rowItem in row:
-                rsp = (
-                    rowItem.replace("[", "")
-                    .replace("]", "")
-                    .replace(" ", "")
-                    .split(",")
-                )
-                readcsv2.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
-
+    try:
+        readcsv1 = []
+        with open(
+            URL + r"\TKInterGUI\StraightListYoko.csv",
+            "r",
+            newline="",
+        ) as inputfile:
+            for row in csv.reader(inputfile):
+                for rowItem in row:
+                    rsp = (
+                        rowItem.replace("[", "")
+                        .replace("]", "")
+                        .replace(" ", "")
+                        .split(",")
+                    )
+                    readcsv1.append(
+                        [int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])]
+                    )
+        readcsv2 = []
+        with open(
+            URL + r"\TKInterGUI\StraightListTate.csv",
+            "r",
+            newline="",
+        ) as inputfile:
+            for row in csv.reader(inputfile):
+                for rowItem in row:
+                    rsp = (
+                        rowItem.replace("[", "")
+                        .replace("]", "")
+                        .replace(" ", "")
+                        .split(",")
+                    )
+                    readcsv2.append(
+                        [int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])]
+                    )
+    except:
+        print("行列CSVインポートエラー")
+        readcsv1 = []
+        readcsv2 = []
     # Windowについて : https://kuroro.blog/python/116yLvTkzH2AUJj8FHLx/
     root = tk.Tk()  # Window生成
     app = Application(master=root)
