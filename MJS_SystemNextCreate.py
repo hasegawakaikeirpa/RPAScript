@@ -555,6 +555,28 @@ def ChildFlow(
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "財産評価明細書更新処理終了"], file=f)
             # ------------------------------------------------------------------------------------------
+        elif SystemUp[1] == "更新対象年度無し":
+            dt_now = datetime.datetime.now()
+            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+            WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
+            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
+            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "更新対象年度無し"
+            print("シート書き込み完了")
+            WriteEx.save(XLSURL)
+            WriteEx.close
+            # Log---------------------------------------------------------------------------------------
+            dt_s = datetime.datetime.now()
+            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+            logger.debug(
+                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_財産評価明細書更新処理終了_更新対象年度無し"
+            )
+            with open(LURL, "a") as f:
+                print(
+                    [dt_s, "関与先番号:" + str(Rno), str(Rn), "財産評価明細書更新処理終了_更新対象年度無し"],
+                    file=f,
+                )
+            # ------------------------------------------------------------------------------------------
         # ---------------------------------------------------------------
     elif "年末調整" == Title:
         # Log---------------------------------------------------------------------------------------
@@ -1368,81 +1390,128 @@ def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
                         is False
                     ):
                         time.sleep(1)
+                        ZND = ImgCheck(TFolURL, r"ZaisanNoData.png", 0.9, 10)
+                        if ZND[0] is True:
+                            ErrStr = "NoData"
+                            break
                     # --------------------------------------------------------------------
                     time.sleep(1)
-                    ImgClick(TFolURL, r"\ZaisanStart.png", 0.9, 10)  # 更新開始のアイコンをクリック
-                    # 確認ウィンドウが表示されるまで待機-------------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            TFolURL + r"\ZaisanStartQ.png", confidence=0.9
+                    if not ErrStr == "NoData":
+                        ImgClick(
+                            TFolURL, r"\ZaisanStart.png", 0.9, 10
+                        )  # 更新開始のアイコンをクリック
+                        # 確認ウィンドウが表示されるまで待機-------------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\ZaisanStartQ.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
+                        pg.press("y")  # yで決定(nがキャンセル)
+                        # 処理終了ウィンドウが表示されるまで待機----------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\ZaisanEnd.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
+                        pg.press("return")
+                        # チェックマークが表示されなくなるまで待機-------------------------------
+                        while (
+                            ImgCheckForList(
+                                TFolURL,
+                                [
+                                    r"IkkatuCheck.png",
+                                    r"ZaisanCheck.png",
+                                    r"NendCheck.png",
+                                    r"HouteiCheck.png",
+                                ],
+                                0.9,
+                                10,
+                            )[0]
+                            is True
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
+                        ME = ImgCheckForList(
+                            TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
                         )
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    pg.press("y")  # yで決定(nがキャンセル)
-                    # 処理終了ウィンドウが表示されるまで待機----------------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\ZaisanEnd.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    pg.press("return")
-                    # チェックマークが表示されなくなるまで待機-------------------------------
-                    while (
-                        ImgCheckForList(
-                            TFolURL,
-                            [
-                                r"IkkatuCheck.png",
-                                r"ZaisanCheck.png",
-                                r"NendCheck.png",
-                                r"HouteiCheck.png",
-                            ],
-                            0.9,
-                            10,
-                        )[0]
-                        is True
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    ME = ImgCheckForList(
-                        TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
-                    )
-                    if ME[0] is True:
-                        ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
-                    # 一括更新のアイコンが表示されるまで待機----------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            TFolURL + r"\ZaisanOpenFlag.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    # 閉じる処理--------------------------
-                    pg.keyDown("alt")
-                    pg.press("f4")
-                    pg.keyUp("alt")
-                    # -----------------------------------
-                    # 財産評価フラグが表示されるまで待機-------------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            TFolURL + r"\ZaisanhyoukaFlag.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
-                    # 初期画面で開封された財産評価項目を閉じる----------------------------------
-                    HoujinList = [r"\Zaisanhyouka.png", r"\Zaisanhyouka2.png"]
-                    HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
-                    if HLI[0] is True:
-                        ImgClick(TFolURL, HLI[1], 0.9, 10)
-                    # --------------------------------------------------------------------
-                    print("更新完了")
+                        if ME[0] is True:
+                            ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
+                        # 一括更新のアイコンが表示されるまで待機----------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\ZaisanOpenFlag.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
+                        # 閉じる処理--------------------------
+                        pg.keyDown("alt")
+                        pg.press("f4")
+                        pg.keyUp("alt")
+                        # -----------------------------------
+                        # 財産評価フラグが表示されるまで待機-------------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\ZaisanhyoukaFlag.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
+                        # 初期画面で開封された財産評価項目を閉じる----------------------------------
+                        HoujinList = [r"\Zaisanhyouka.png", r"\Zaisanhyouka2.png"]
+                        HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+                        if HLI[0] is True:
+                            ImgClick(TFolURL, HLI[1], 0.9, 10)
+                        # --------------------------------------------------------------------
+                        print("更新完了")
                     if ErrStr == "":
                         return True, ThisNo, ThisYear, ThisMonth
+                    else:
+                        # --------------------------------------------------------------------
+                        ME = ImgCheckForList(
+                            TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
+                        )
+                        if ME[0] is True:
+                            ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
+                        # 一括更新のアイコンが表示されるまで待機----------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\ZaisanOpenFlag.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
+                        # 閉じる処理--------------------------
+                        pg.keyDown("alt")
+                        pg.press("f4")
+                        pg.keyUp("alt")
+                        # -----------------------------------
+                        # 財産評価フラグが表示されるまで待機-------------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\ZaisanhyoukaFlag.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
+                        # 初期画面で開封された財産評価項目を閉じる----------------------------------
+                        HoujinList = [r"\Zaisanhyouka.png", r"\Zaisanhyouka2.png"]
+                        HLI = ImgCheckForList(TFolURL, HoujinList, 0.9, 10)
+                        if HLI[0] is True:
+                            ImgClick(TFolURL, HLI[1], 0.9, 10)
+                        # --------------------------------------------------------------------
+                        print("更新完了_更新対象年度無し")
+                        return False, "更新対象年度無し", "", ""
             else:
                 print("関与先なし")
                 return False, "関与先なし", "", ""
@@ -2747,7 +2816,7 @@ def OpenSystem(FolURL, TFolURL, NameDF, ExRow, Ex, ExrcHeader, isnItem, driver):
     try:
         Eh = 0
         for ExrcHeaderItem in ExrcHeader:
-            if Eh <= (len(ExrcHeader) - 1):
+            if Eh < (len(ExrcHeader) - 1):
                 if "_繰越対象" in ExrcHeaderItem:
                     SysN = ExrcHeaderItem.split("_")
                     Title = str(SysN[0])
@@ -2847,8 +2916,10 @@ def OpenSystem(FolURL, TFolURL, NameDF, ExRow, Ex, ExrcHeader, isnItem, driver):
                                         Rn,
                                     )
                 Eh += 1
+        return True
     except:
         print("TEST")
+        return False
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -2896,7 +2967,7 @@ def MainFlow(FolURL, TFolURL, Exlsx, driver, XLSURL):
                 ExrcHeader = []
                 for Ex in range(Exrc):
                     ExRow = ExSheet.iloc[0]
-                    ExSecondRow = ExSheet.iloc[2]
+                    ExSecondRow = ExSheet.iloc[1]
                     if ExRow[Ex] == ExRow[Ex]:  # nan判定
                         # nanでない場合
                         Txt = ExRow[Ex]
