@@ -1385,14 +1385,27 @@ def HoujinzeiUpdateSyomen(
             pg.press("n")
         ImgClick(CFolURL, r"\Houjinzei\ZeimuPrint.png", 0.9, 10)
         time.sleep(1)
+        FO = False, ""
         # 用紙選択が表示されるまで待機---------------------------------
         while (
             pg.locateOnScreen(CFolURL + r"\Houjinzei\YousiSentaku.png", confidence=0.9)
             is None
         ):
             time.sleep(1)
+            FO = ImgCheckForList(
+                CFolURL,
+                [
+                    r"\Houjinzei\FileOut.png",
+                    r"\Houjinzei\FileOut2.png",
+                ],
+                0.9,
+                10,
+            )
+            if FO[0] is True:
+                break
         # --------------------------------------------------------------------
-        ImgClick(CFolURL, r"\Houjinzei\YousiOK.png", 0.9, 10)
+        if FO[0] is False:
+            ImgClick(CFolURL, r"\Houjinzei\YousiOK.png", 0.9, 10)
         # 申告税一覧表印刷処理----------------------------------------------------
         FO = ImgCheckForList(
             CFolURL,
@@ -3644,6 +3657,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         pg.keyUp("alt")
                     # ----------------------------------------------------------------------
+                    FO = False, ""
                     # 添付書面印刷サイズ選択が表示されるまで待機---------------------------------
                     while (
                         pg.locateOnScreen(
@@ -3652,19 +3666,31 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
-                    A4T = ImgCheck(CFolURL, r"\KTaisyou\A4Box.png", 0.99999, 10)
-                    if A4T[0] is True:
-                        ImgClick(CFolURL, r"\KTaisyou\A4Box.png", 0.99999, 10)
-                    ImgClick(CFolURL, r"\KTaisyou\A4BoxOK.png", 0.9, 10)
-                    # 一覧表出力項目指定が表示されるまで待機---------------------------------
-                    while (
-                        pg.locateOnScreen(
-                            CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9
+                        FO = ImgCheckForList(
+                            CFolURL,
+                            [
+                                r"\Houjinzei\FileOut.png",
+                                r"\Houjinzei\FileOut2.png",
+                            ],
+                            0.9,
+                            10,
                         )
-                        is None
-                    ):
-                        time.sleep(1)
-                    # --------------------------------------------------------------------
+                        if FO[0] is True:
+                            break
+                    if FO[0] is False:
+                        A4T = ImgCheck(CFolURL, r"\KTaisyou\A4Box.png", 0.99999, 10)
+                        if A4T[0] is True:
+                            ImgClick(CFolURL, r"\KTaisyou\A4Box.png", 0.99999, 10)
+                        ImgClick(CFolURL, r"\KTaisyou\A4BoxOK.png", 0.9, 10)
+                        # 一覧表出力項目指定が表示されるまで待機---------------------------------
+                        while (
+                            pg.locateOnScreen(
+                                CFolURL + r"\Houjinzei\PrintBar.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                        # --------------------------------------------------------------------
                     # 申告税一覧表印刷処理----------------------------------------------------
                     FO = ImgCheckForList(
                         CFolURL,
@@ -4502,7 +4528,7 @@ def MainStarter(
                             EXNo,
                             EXdir,
                         )
-                        Eh = len(ExrcHeader)
+                        Eh = len(ExrcHeader) - 1  # RowEndセルを取得しているので-1
                         WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
                         WriteExSheet = WriteEx[isnItem]
                         WriteExSheet.cell(row=Ex + 5, column=Eh).value = PMURL

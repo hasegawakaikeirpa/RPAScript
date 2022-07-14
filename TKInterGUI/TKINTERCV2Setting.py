@@ -36,9 +36,7 @@ class Application(tk.Frame):
         self.top.forward = tk.Canvas(
             self.top, background="white", width=CW, height=CH
         )  # 透過キャンバス作成
-        self.top.forward.pack(
-            side=tk.TOP, anchor=tk.W, fill=tk.BOTH, expand=False
-        )  # 透過キャンバスを配置
+        self.top.forward.pack(side=tk.LEFT, anchor=tk.N)  # 透過キャンバスを配置
         # ##############################################################################
         # 配置
         # テキストボックスの作成と配置---------------------------------------------------
@@ -178,7 +176,7 @@ class Application(tk.Frame):
 
         TKimg = ImageTk.PhotoImage(img, master=self.back)  # 下Windowに表示する画像オブジェクト
         self.back.create_image(0, 0, image=TKimg, anchor=tk.NW)  # 下Windowのキャンバスに画像挿入
-        self.back.pack(fill=tk.BOTH, expand=False)  # 下Windowを配置
+        self.back.pack(side=tk.LEFT, anchor=tk.N)  # 下Windowを配置
 
         self.bind("<Configure>", self.change)
         self.back.bind("<Unmap>", self.unmap)
