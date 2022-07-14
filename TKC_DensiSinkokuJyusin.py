@@ -1157,7 +1157,7 @@ def MasterLoop(
 
 
 # メインの処理----------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2):  # メインの処理
+def MainFlow(FolURL2, MasterTrigger):  # メインの処理
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl, FolURL2, "RPAPhoto")  # OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"  # このフローで必要な画像保存先
@@ -1200,15 +1200,41 @@ def MainFlow(FolURL2):  # メインの処理
     # CSVName = "HoujinSyouhizeiJyusinMaster"
     # CSVChildName = "HoujinSyouhizeiJyusinChild"  # チャイルドのCSVファイル名を指定
     # List = ["HoujinSyouhizei.png", "HoujinSyouhizei2.png"]
-    # TaxAns = TaxHantei(
-    #     List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    # )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]
-    # C_Master = C_Master.drop_duplicates(subset="関与先コード")
-    # print(C_Master)
-    # C_MasterFlag = TaxAns[1]
-    # C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-    # C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # if MasterTrigger != "y":
+    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+    #         if ImgCheckForList(FolURL2, List, conf)[0] is True:
+    #             FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+    #             ImgClick(FolURL2, FindURL, conf, LoopVal)
+    #         time.sleep(1)
+    #     # -------------------------------------------------------------------------
+    #     time.sleep(1)
+    #     # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+    #     FileName = "SinkokuLoad.png"
+    #     conf = 0.9  # 画像認識感度
+    #     while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+    #         time.sleep(1)
+    #     if NitijiBunkiTrigger == "y":
+    #         if (
+    #             CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+    #         ):  # 処理が申請の場合
+    #             NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+    #         else:
+    #             NitijiBunki(FolURL2, conf, LoopVal)
+    #     CSVURL = FolURL2
+    #     C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+    #     SerchEnc = format(getFileEncoding(C_url))
+    #     C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+    #     C_MasterFlag = True
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # else:
+    #     TaxAns = TaxHantei(
+    #         List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    #     )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    #     C_Master = TaxAns[0]  # マスターCSVを格納
+    #     C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     # CsvKey = "法人税"
     # if C_MasterFlag is False:
     #     print("C_Masterは空です")
@@ -1235,9 +1261,41 @@ def MainFlow(FolURL2):  # メインの処理
     # CSVName = 'SyotokuSyouhizeiJyusinMaster'
     # CSVChildName = 'SyotokuSyouhizeiJyusinChild'#チャイルドのCSVファイル名を指定
     # List = ["SyotokuSyouhizei.png","SyotokuSyouhizei2.png"]
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
+    # if MasterTrigger != "y":
+    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+    #         if ImgCheckForList(FolURL2, List, conf)[0] is True:
+    #             FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+    #             ImgClick(FolURL2, FindURL, conf, LoopVal)
+    #         time.sleep(1)
+    #     # -------------------------------------------------------------------------
+    #     time.sleep(1)
+    #     # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+    #     FileName = "SinkokuLoad.png"
+    #     conf = 0.9  # 画像認識感度
+    #     while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+    #         time.sleep(1)
+    #     if NitijiBunkiTrigger == "y":
+    #         if (
+    #             CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+    #         ):  # 処理が申請の場合
+    #             NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+    #         else:
+    #             NitijiBunki(FolURL2, conf, LoopVal)
+    #     CSVURL = FolURL2
+    #     C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+    #     SerchEnc = format(getFileEncoding(C_url))
+    #     C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+    #     C_MasterFlag = True
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # else:
+    #     TaxAns = TaxHantei(
+    #         List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    #     )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    #     C_Master = TaxAns[0]  # マスターCSVを格納
+    #     C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     # CsvKey = "所得税"
     # if C_MasterFlag is False:
     #    print("C_Masterは空です")
@@ -1255,12 +1313,41 @@ def MainFlow(FolURL2):  # メインの処理
     # CSVName = 'HouteiKyuuhouJyusinMaster'
     # CSVChildName = 'HouteiKyuuhouJyusinChild'#チャイルドのCSVファイル名を指定
     # List = ["HouteiKyuuhou.png","HouteiKyuuhou2.png"] #タブアイコン2色のNameをリスト化
-    # TaxAns = TaxHantei(List,FolURL2,FileName,conf,LoopVal,CSVName,driver)#pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]
-    # C_Master = C_Master[C_Master.duplicated(subset='関与先コード')]
-    # C_MasterFlag = TaxAns[1]
-    # C_dfRow = np.array(C_Master).shape[0]#配列行数取得
-    # C_dfCol = np.array(C_Master).shape[1]#配列列数取得
+    # if MasterTrigger != "y":
+    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+    #         if ImgCheckForList(FolURL2, List, conf)[0] is True:
+    #             FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+    #             ImgClick(FolURL2, FindURL, conf, LoopVal)
+    #         time.sleep(1)
+    #     # -------------------------------------------------------------------------
+    #     time.sleep(1)
+    #     # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+    #     FileName = "SinkokuLoad.png"
+    #     conf = 0.9  # 画像認識感度
+    #     while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+    #         time.sleep(1)
+    #     if NitijiBunkiTrigger == "y":
+    #         if (
+    #             CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+    #         ):  # 処理が申請の場合
+    #             NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+    #         else:
+    #             NitijiBunki(FolURL2, conf, LoopVal)
+    #     CSVURL = FolURL2
+    #     C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+    #     SerchEnc = format(getFileEncoding(C_url))
+    #     C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+    #     C_MasterFlag = True
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # else:
+    #     TaxAns = TaxHantei(
+    #         List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    #     )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    #     C_Master = TaxAns[0]  # マスターCSVを格納
+    #     C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     # CsvKey = "法定調書"
     # if C_MasterFlag is False:
     #     print("C_Masterは空です")
@@ -1276,13 +1363,41 @@ def MainFlow(FolURL2):  # メインの処理
     CSVName = "SinseiJyusinMaster"  # 保存するCSVの名称を指定y
     CSVChildName = "SinseiJyusinChild"  # チャイルドのCSVファイル名を指定
     List = ["Sinsei.png", "Sinsei2.png"]  # タブアイコン2色のNameをリスト化
-    TaxAns = TaxHantei(
-        List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    C_Master = TaxAns[0]  # マスターCSVを格納
-    C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
-    C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-    C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    if MasterTrigger != "y":
+        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+            if ImgCheckForList(FolURL2, List, conf)[0] is True:
+                FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+                ImgClick(FolURL2, FindURL, conf, LoopVal)
+            time.sleep(1)
+        # -------------------------------------------------------------------------
+        time.sleep(1)
+        # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+        FileName = "SinkokuLoad.png"
+        conf = 0.9  # 画像認識感度
+        while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+            time.sleep(1)
+        if NitijiBunkiTrigger == "y":
+            if (
+                CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+            ):  # 処理が申請の場合
+                NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+            else:
+                NitijiBunki(FolURL2, conf, LoopVal)
+        CSVURL = FolURL2
+        C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+        SerchEnc = format(getFileEncoding(C_url))
+        C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+        C_MasterFlag = True
+        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    else:
+        TaxAns = TaxHantei(
+            List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+        )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+        C_Master = TaxAns[0]  # マスターCSVを格納
+        C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     CsvKey = "申請"
     if C_MasterFlag is False:  # マスターCSVが空だったら～
         print("C_Masterは空です")
@@ -1309,13 +1424,41 @@ def MainFlow(FolURL2):  # メインの処理
     # CSVName = "SyoukyakuJyusinMaster"
     # CSVChildName = "SyoukyakuJyusinChild"  # チャイルドのCSVファイル名を指定
     # List = ["Syoukyaku.png", "Syoukyaku2.png"]  # タブアイコン2色のNameをリスト化
-    # TaxAns = TaxHantei(
-    #     List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    # )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]  # マスターCSVを格納
-    # C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
-    # C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-    # C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # if MasterTrigger != "y":
+    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+    #         if ImgCheckForList(FolURL2, List, conf)[0] is True:
+    #             FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+    #             ImgClick(FolURL2, FindURL, conf, LoopVal)
+    #         time.sleep(1)
+    #     # -------------------------------------------------------------------------
+    #     time.sleep(1)
+    #     # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+    #     FileName = "SinkokuLoad.png"
+    #     conf = 0.9  # 画像認識感度
+    #     while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+    #         time.sleep(1)
+    #     if NitijiBunkiTrigger == "y":
+    #         if (
+    #             CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+    #         ):  # 処理が申請の場合
+    #             NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+    #         else:
+    #             NitijiBunki(FolURL2, conf, LoopVal)
+    #     CSVURL = FolURL2
+    #     C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+    #     SerchEnc = format(getFileEncoding(C_url))
+    #     C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+    #     C_MasterFlag = True
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # else:
+    #     TaxAns = TaxHantei(
+    #         List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    #     )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    #     C_Master = TaxAns[0]  # マスターCSVを格納
+    #     C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     # CsvKey = "償却資産"
     # if C_MasterFlag is False:  # マスターCSVが空だったら～
     #     print("C_Masterは空です")
@@ -1342,11 +1485,41 @@ def MainFlow(FolURL2):  # メインの処理
     # CSVName = "ZouyoJyusinMaster"
     # CSVChildName = "ZouyoJyusinChild"  # チャイルドのCSVファイル名を指定
     # List = ["Zouyo.png", "Zouyo2.png"]  # タブアイコン2色のNameをリスト化
-    # TaxAns = TaxHantei(
-    #     List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    # )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
+    # if MasterTrigger != "y":
+    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+    #         if ImgCheckForList(FolURL2, List, conf)[0] is True:
+    #             FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+    #             ImgClick(FolURL2, FindURL, conf, LoopVal)
+    #         time.sleep(1)
+    #     # -------------------------------------------------------------------------
+    #     time.sleep(1)
+    #     # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+    #     FileName = "SinkokuLoad.png"
+    #     conf = 0.9  # 画像認識感度
+    #     while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+    #         time.sleep(1)
+    #     if NitijiBunkiTrigger == "y":
+    #         if (
+    #             CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+    #         ):  # 処理が申請の場合
+    #             NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+    #         else:
+    #             NitijiBunki(FolURL2, conf, LoopVal)
+    #     CSVURL = FolURL2
+    #     C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+    #     SerchEnc = format(getFileEncoding(C_url))
+    #     C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+    #     C_MasterFlag = True
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # else:
+    #     TaxAns = TaxHantei(
+    #         List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    #     )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    #     C_Master = TaxAns[0]  # マスターCSVを格納
+    #     C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     # CsvKey = "贈与税"
     # if C_MasterFlag is False:
     #     print("C_Masterは空です")
@@ -1375,11 +1548,41 @@ def MainFlow(FolURL2):  # メインの処理
     # CSVName = "SouzokuJyusinMaster"
     # CSVChildName = "SouzokuJyusinChild"  # チャイルドのCSVファイル名を指定
     # List = ["Souzoku.png", "Souzoku2.png"]  # タブアイコン2色のNameをリスト化
-    # TaxAns = TaxHantei(
-    #     List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    # )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
+    # if MasterTrigger != "y":
+    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+    #         if ImgCheckForList(FolURL2, List, conf)[0] is True:
+    #             FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+    #             ImgClick(FolURL2, FindURL, conf, LoopVal)
+    #         time.sleep(1)
+    #     # -------------------------------------------------------------------------
+    #     time.sleep(1)
+    #     # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+    #     FileName = "SinkokuLoad.png"
+    #     conf = 0.9  # 画像認識感度
+    #     while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+    #         time.sleep(1)
+    #     if NitijiBunkiTrigger == "y":
+    #         if (
+    #             CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+    #         ):  # 処理が申請の場合
+    #             NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+    #         else:
+    #             NitijiBunki(FolURL2, conf, LoopVal)
+    #     CSVURL = FolURL2
+    #     C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+    #     SerchEnc = format(getFileEncoding(C_url))
+    #     C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+    #     C_MasterFlag = True
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # else:
+    #     TaxAns = TaxHantei(
+    #         List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    #     )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    #     C_Master = TaxAns[0]  # マスターCSVを格納
+    #     C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     # CsvKey = "相続税"
     # if C_MasterFlag is False:
     #     print("C_Masterは空です")
@@ -1408,11 +1611,41 @@ def MainFlow(FolURL2):  # メインの処理
     # CSVName = "HaitouJyusinMaster"
     # CSVChildName = "HaitouJyusinChild"  # チャイルドのCSVファイル名を指定
     # List = ["Haitou.png", "Haitou2.png"]  # タブアイコン2色のNameをリスト化
-    # TaxAns = TaxHantei(
-    #     List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    # )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    # C_Master = TaxAns[0]
-    # C_MasterFlag = TaxAns[1]
+    # if MasterTrigger != "y":
+    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+    #         if ImgCheckForList(FolURL2, List, conf)[0] is True:
+    #             FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+    #             ImgClick(FolURL2, FindURL, conf, LoopVal)
+    #         time.sleep(1)
+    #     # -------------------------------------------------------------------------
+    #     time.sleep(1)
+    #     # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+    #     FileName = "SinkokuLoad.png"
+    #     conf = 0.9  # 画像認識感度
+    #     while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+    #         time.sleep(1)
+    #     if NitijiBunkiTrigger == "y":
+    #         if (
+    #             CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+    #         ):  # 処理が申請の場合
+    #             NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+    #         else:
+    #             NitijiBunki(FolURL2, conf, LoopVal)
+    #     CSVURL = FolURL2
+    #     C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+    #     SerchEnc = format(getFileEncoding(C_url))
+    #     C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+    #     C_MasterFlag = True
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # else:
+    #     TaxAns = TaxHantei(
+    #         List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    #     )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    #     C_Master = TaxAns[0]  # マスターCSVを格納
+    #     C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     # CsvKey = "配当調書"
     # if C_MasterFlag is False:
     #     print("C_Masterは空です")
@@ -1445,8 +1678,11 @@ if NitijiBunkiTrigger == "y":
     DayC = int(input("申告受付日時が本日から何日以内の範囲でダウンロードしますか？数値のみ記載してください。\n"))
 else:
     DayC = 15
+
+MasterTrigger = input("マスターCSVを毎回更新しますか？y/n\n")
+
 try:
     Syoridumi = 0  # 初回起動フラグ
-    MainFlow(FolURL2)
+    MainFlow(FolURL2, MasterTrigger)
 except:
     traceback.print_exc()
