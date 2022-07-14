@@ -706,9 +706,9 @@ def HouteiUpdate(FolURL, TFolURL, ExRow, driver):
                 is None
             ):
                 time.sleep(1)
-            pg.press("nonconvert")
+
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("nonconvert")
+
             pg.press(["return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
@@ -796,9 +796,9 @@ def HouteiUpdate(FolURL, TFolURL, ExRow, driver):
                 )
                 if FC[0] is True:
                     ImgClick(TFolURL, FC[1], 0.9, 10)  # 一括更新メニューのアイコンをクリック
-                    pg.press("nonconvert")
+
                     pg.write(str(ExRow["関与先番号"]))
-                    pg.press("nonconvert")
+
                     # 検索ボタンまでエンター-------------------------------------
                     while ImgCheck(TFolURL, r"ZFindFlag.png", 0.9, 10)[0] is False:
                         time.sleep(1)
@@ -949,9 +949,9 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                 is None
             ):
                 time.sleep(1)
-            pg.press("nonconvert")
+
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("nonconvert")
+
             pg.press(["return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
@@ -1043,9 +1043,9 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                 )
                 if FC[0] is True:
                     ImgClick(TFolURL, FC[1], 0.9, 10)  # 一括更新メニューのアイコンをクリック
-                    pg.press("nonconvert")
+
                     pg.write(str(ExRow["関与先番号"]))
-                    pg.press("nonconvert")
+
                     # 検索ボタンまでエンター-------------------------------------
                     while ImgCheck(TFolURL, r"ZNBtn.png", 0.9, 10)[0] is False:
                         time.sleep(1)
@@ -1236,9 +1236,9 @@ def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
                 is None
             ):
                 time.sleep(1)
-            pg.press("nonconvert")
+
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("nonconvert")
+
             pg.press(["return", "return"])
             # -----------------------------------
             if ImgCheck(TFolURL, r"\NotData.png", 0.9, 10)[0] is True:
@@ -1374,9 +1374,9 @@ def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
                 )
                 if FC[0] is True:
                     ImgClick(TFolURL, FC[1], 0.9, 10)  # 一括更新メニューのアイコンをクリック
-                    pg.press("nonconvert")
+
                     pg.write(str(ExRow["関与先番号"]))
-                    pg.press("nonconvert")
+
                     # 検索ボタンまでエンター-------------------------------------
                     while ImgCheck(TFolURL, r"ZFindFlag.png", 0.9, 10)[0] is False:
                         time.sleep(1)
@@ -1581,9 +1581,9 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                 is None
             ):
                 time.sleep(1)
-            pg.press("nonconvert")
+
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("nonconvert")
+
             pg.press(["return", "return"])
             # -----------------------------------
             if ImgCheck(TFolURL, r"\NotData.png", 0.9, 10)[0] is True:
@@ -1845,9 +1845,9 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
                 is None
             ):
                 time.sleep(1)
-            pg.press("nonconvert")
+
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("nonconvert")
+
             pg.press(["return", "return"])
             # -----------------------------------
             if ImgCheck(TFolURL, r"\NotData.png", 0.9, 10)[0] is True:
@@ -2184,9 +2184,9 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, ExRow, driver):
                 is None
             ):
                 time.sleep(1)
-            pg.press("nonconvert")
+
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("nonconvert")
+
             pg.press(["return", "return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
@@ -2388,9 +2388,9 @@ def KessanUpDate(FolURL, TFolURL, ExRow, driver):
                 is None
             ):
                 time.sleep(1)
-            pg.press("nonconvert")
+
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("nonconvert")
+
             pg.press(["return", "return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
@@ -2601,9 +2601,9 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                 is None
             ):
                 time.sleep(1)
-            pg.press("nonconvert")
+
             pg.write(str(ExRow["関与先番号"]))
-            pg.press("nonconvert")
+
             pg.press(["return", "return", "return"])
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
@@ -2703,9 +2703,9 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                 )
                 if FC[0] is True:
                     ImgClick(TFolURL, FC[1], 0.9, 10)  # 一括更新メニューのアイコンをクリック
-                    pg.press("nonconvert")
+
                     pg.write(str(ExRow["関与先番号"]))
-                    pg.press("nonconvert")
+
                     # 検索ボタンまでエンター-------------------------------------
                     while ImgCheck(TFolURL, r"FindFlag.png", 0.9, 10)[0] is False:
                         time.sleep(1)
