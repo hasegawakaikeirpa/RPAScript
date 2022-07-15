@@ -160,19 +160,34 @@ class ViewGUI:
         self.radio_intvar2.set(0)  # 0:No select
 
         # Scaleの作成
-        self.scale_var = tk.DoubleVar()
-        scaleH = tk.Scale(
+        # self.scale_var = tk.DoubleVar()
+        # scaleH = tk.Scale(
+        #     self.window_sub_ctrl2,
+        #     variable=self.scale_var,
+        #     command=self.slider_scroll,
+        #     orient=tk.HORIZONTAL,  # 配置の向き、水平(HORIZONTAL)、垂直(VERTICAL)
+        #     length=200,  # 全体の長さ
+        #     width=20,  # 全体の太さ
+        #     sliderlength=20,  # スライダー（つまみ）の幅
+        #     from_=-10,  # 最小値（開始の値）
+        #     to=10,  # 最大値（終了の値）
+        #     resolution=1,  # 変化の分解能(初期値:1)
+        #     tickinterval=5,  # 目盛りの分解能(初期値0で表示なし)
+        # )
+
+        # 右回転ボタン生成
+        button_RightLotate = tk.Button(
             self.window_sub_ctrl2,
-            variable=self.scale_var,
-            command=self.slider_scroll,
-            orient=tk.HORIZONTAL,  # 配置の向き、水平(HORIZONTAL)、垂直(VERTICAL)
-            length=200,  # 全体の長さ
-            width=20,  # 全体の太さ
-            sliderlength=20,  # スライダー（つまみ）の幅
-            from_=-10,  # 最小値（開始の値）
-            to=10,  # 最大値（終了の値）
-            resolution=1,  # 変化の分解能(初期値:1)
-            tickinterval=5,  # 目盛りの分解能(初期値0で表示なし)
+            text="RightLotate",
+            width=10,
+            command=self.button_RightLotate,
+        )
+        # 左回転ボタン生成
+        button_LeftLotate = tk.Button(
+            self.window_sub_ctrl2,
+            text="LeftLotate",
+            width=10,
+            command=self.button_LeftLotate,
         )
         # ---------------------------------------------------------------
 
@@ -206,7 +221,9 @@ class ViewGUI:
         radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
         radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
         radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
-        scaleH.grid(row=4, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
+        # scaleH.grid(row=4, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
+        button_LeftLotate.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
+        button_RightLotate.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
         label_flip.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
         radio_flip[0].grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
         radio_flip[1].grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
@@ -344,19 +361,26 @@ class ViewGUI:
         if msg is True:
             self.control.MenuFuncRun("LineDelete", textbox2, set_pos=set_pos)
 
-    def slider_scroll(self, event=None):
-        global Sval
-        """スライダーを移動したとき"""
-        val = int(self.scale_var.get())
-        if Sval < 0:  # スライダー初期値が0未満の場合
-            Sval = Sval * -1
-            val = Sval + val
-        else:
-            val = val
-        cmd = "rotateFree-" + str(val)
+    def button_LeftLotate(self, event=None):
+        cmd = "rotateFree-" + str(1)
         self.control.EditImage(cmd)
-        Sval = val
-        print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
+
+    def button_RightLotate(self, event=None):
+        cmd = "rotateFree-" + str(-1)
+        self.control.EditImage(cmd)
+
+    # def slider_scroll(self, event=None):
+    #     global Sval
+    #     """スライダーを移動したとき"""
+    #     val = int(self.scale_var.get())
+    #     if Sval < val:  # スライダー初期値が0未満の場合
+    #         val = val - Sval
+    #     else:
+    #         val = Sval - val
+    #     cmd = "rotateFree-" + str(val)
+    #     self.control.EditImage(cmd)
+    #     Sval = val
+    #     print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
 
     def event_set_folder(self):
         """

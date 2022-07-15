@@ -122,6 +122,15 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
                     if 1.0 - GNV[0] < 0.5:
                         GFTable[g][c - 1] = GNV[1]
             # ----------------------------------------------------------------------------
+            for g in range(GFRow):
+                for c in range(len(GFTable[g])):
+                    ChangeTxt = GFTable[g][c]
+                    result = ChangeTxt.encode("utf-8")
+                    henkan = result.decode("cp932", errors="ignore")
+                    fukugenhenkan = henkan.encode("cp932")
+                    kekkafukugen = fukugenhenkan.decode("utf-8", errors="ignore")
+                    GFTable[g][c] = kekkafukugen
+
             # DataFrame作成
             df = pd.DataFrame(GFTable, columns=Banktoml[tomltitle]["ColumnName"])
             FU = FileURL.split("\\")
@@ -140,7 +149,15 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
             try:
                 df.to_csv(FileName, index=False, encoding="cp932")
             except:
-                df.to_csv(FileName, index=False, encoding="utf8")
+                with open(
+                    FileName,
+                    mode="w",
+                    encoding="cp932",
+                    errors="ignore",
+                    newline="",
+                ) as f:
+                    df.to_csv(f, index=False)
+                # df.to_csv(FileName, index=False, encoding="utf8")
             print("END")
             return True, FileName
     # except:

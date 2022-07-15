@@ -445,33 +445,33 @@ class ModelImage:
         cv2.imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
         Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
         Inv_img.save(imgurl)  # 白黒反転保存(PIL)
-        # 画像から直線を検出し、画像の傾きを調べ回転して上書き保存
-        ILT = self.ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do)
-        if ILT is True:
-            img = cv2.imread(imgurl)
-            # 画像リサイズ-----------------------------------------------
-            IMGsize = [3840, 3840]
-            h, w = img.shape[:2]
-            ash = IMGsize[1] / h
-            asw = IMGsize[0] / w
-            if asw < ash:
-                sizeas = (int(w * asw), int(h * asw))
-            else:
-                sizeas = (int(w * ash), int(h * ash))
-            img = cv2.resize(img, dsize=sizeas)
-            cv2.imwrite(imgurl, img)
-            # ----------------------------------------------------------
-            self.TesseOCRLotate(URL, imgurl)  # 無料OCRで回転
-            img = cv2.imread(imgurl)
-            TC = self.toneCurveUpContrast(img)  # トーンカーブ処理
-            cv2.imwrite(imgurl, TC)
-            # 直線を削除------------------------------------------------------
-            self.StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do)
-            # ---------------------------------------------------------------
-            # ImageColorChange(URL, img)
-            return imgurl
+        # # 画像から直線を検出し、画像の傾きを調べ回転して上書き保存
+        # ILT = self.ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do)
+        # if ILT is True:
+        img = cv2.imread(imgurl)
+        # 画像リサイズ-----------------------------------------------
+        IMGsize = [3840, 3840]
+        h, w = img.shape[:2]
+        ash = IMGsize[1] / h
+        asw = IMGsize[0] / w
+        if asw < ash:
+            sizeas = (int(w * asw), int(h * asw))
         else:
-            return imgurl
+            sizeas = (int(w * ash), int(h * ash))
+        img = cv2.resize(img, dsize=sizeas)
+        cv2.imwrite(imgurl, img)
+        # ----------------------------------------------------------
+        # self.TesseOCRLotate(URL, imgurl)  # 無料OCRで回転
+        # img = cv2.imread(imgurl)
+        # TC = self.toneCurveUpContrast(img)  # トーンカーブ処理
+        # cv2.imwrite(imgurl, TC)
+        # 直線を削除------------------------------------------------------
+        # self.StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do)
+        # ---------------------------------------------------------------
+        # ImageColorChange(URL, img)
+        return imgurl
+        # else:
+        #     return imgurl
 
     def StraightLineErase(self, imgurl, disth, canth1, canth2, casize, do):
         """

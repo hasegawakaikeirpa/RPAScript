@@ -7,6 +7,7 @@ import OCRFlow as OCRF
 import toml
 from tkinter import ttk
 import CV2Setting as CV2S
+import DataGrid as DG
 
 
 class Application(tk.Frame):
@@ -76,7 +77,7 @@ class Application(tk.Frame):
         frame.pack(side=tk.TOP, pady=50, padx=10, anchor=tk.E)
         # ##############################################################################
         BW = 15  # ボタン横幅
-        BH = 2  # ボタン縦幅
+        BH = 1  # ボタン縦幅
         fonts = ("", 16)  # ボタンフォントの設定
         # ##############################################################################
         # 縦直線追加ボタン---------------------------------------------------------------
@@ -355,6 +356,7 @@ def EnterP(self, HCW, HCH, selfmother, ListBoxobj):
     """
     global tagsList
     global MaxW, MaxH
+
     FList = []
     FYokoList = []
     FTateList = []
@@ -423,7 +425,12 @@ def EnterP(self, HCW, HCH, selfmother, ListBoxobj):
             if OM[0] is True:
                 unmap(selfmother)
                 MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
+                Viw = messagebox.askokcancel("確認", "抽出内容を表示いたしますか？")
                 map(selfmother)
+                if Viw is True:
+                    ReturnBack(selfmother)
+                    csvurl = imgurl.replace(".png", ".csv")
+                    DG.Main(csvurl, Banktoml, tomltitle)
             else:
                 unmap(selfmother)
                 MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
@@ -522,6 +529,7 @@ def Main(US):
     global readcsv1, readcsv2
     global URL
     global Banktoml
+
     imgurl = US
     URL = os.getcwd()
     # imgurl = URL + r"\TKInterGUI\OCR0.png"
@@ -581,7 +589,7 @@ def Main(US):
 # ------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     URL = os.getcwd()
-    imgurl = r"D:\OCRTESTPDF\PDFTEST\PDF1_1page.png"
+    imgurl = r"D:\OCRTESTPDF\PDFTEST\tuka_1page.png"
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)
