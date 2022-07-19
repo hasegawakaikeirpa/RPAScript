@@ -487,7 +487,7 @@ def ChildFlow(
                     [dt_s, "関与先番号:" + str(Rno), str(Rn), "_法人税申告書_" + PN + "印刷処理開始"],
                     file=f,
                 )
-            # ------------------------------------------------------------------------------------------
+            # ------------------------  ------------------------------------------------------------------
             Fname = CFolURL + r"\PDF\\" + PN + ".pdf"
             SystemUp = HoujinzeiUpdate(
                 FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname
@@ -2115,7 +2115,7 @@ def HoujinzeiUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     # 顧問先情報更新ダイアログ確認------------------------------------------
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
-                        pg.press("a")
+                        pg.press("y")
                     # 新規別表追加選択-------------------------------------------------
                     SB = ImgCheck(CFolURL, r"\Houjinzei\SaiyouBeppyou.png", 0.9, 10)
                     if SB[0] is True:
@@ -2299,7 +2299,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     # 顧問先情報更新ダイアログ確認------------------------------------------
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
-                        pg.press("a")
+                        pg.press("y")
                 # --------------------------------------------------------------------
                 ImgClick(
                     CFolURL, r"\GenkaSyoukyaku\G_Insatu.png", 0.9, 10
@@ -2879,7 +2879,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     # 顧問先情報更新ダイアログ確認------------------------------------------
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
-                        pg.press("a")
+                        pg.press("y")
                 # --------------------------------------------------------------------
                 # 内訳書印刷メニューが表示されるまで待機----------------------------------
                 while (
@@ -3107,7 +3107,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     # 顧問先情報更新ダイアログ確認------------------------------------------
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
-                        pg.press("a")
+                        pg.press("y")
                 # --------------------------------------------------------------------
                 # 指示内容で処理分け----------------------------------------------------------
                 if PN == "消費税確定申告書":
