@@ -2116,6 +2116,14 @@ def HoujinzeiUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
                         pg.press("y")
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\KomonKoushinBar.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                            ImgClick(TFolURL, r"\KomonKoushinInput.png", 0.9, 10)
                     # 新規別表追加選択-------------------------------------------------
                     SB = ImgCheck(CFolURL, r"\Houjinzei\SaiyouBeppyou.png", 0.9, 10)
                     if SB[0] is True:
@@ -2300,6 +2308,14 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
                         pg.press("y")
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\KomonKoushinBar.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                            ImgClick(TFolURL, r"\KomonKoushinInput.png", 0.9, 10)
                 # --------------------------------------------------------------------
                 ImgClick(
                     CFolURL, r"\GenkaSyoukyaku\G_Insatu.png", 0.9, 10
@@ -2880,6 +2896,14 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
                         pg.press("y")
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\KomonKoushinBar.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                            ImgClick(TFolURL, r"\KomonKoushinInput.png", 0.9, 10)
                 # --------------------------------------------------------------------
                 # 内訳書印刷メニューが表示されるまで待機----------------------------------
                 while (
@@ -3108,6 +3132,14 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
                         pg.press("y")
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\KomonKoushinBar.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)
+                            ImgClick(TFolURL, r"\KomonKoushinInput.png", 0.9, 10)
                 # --------------------------------------------------------------------
                 # 指示内容で処理分け----------------------------------------------------------
                 if PN == "消費税確定申告書":
