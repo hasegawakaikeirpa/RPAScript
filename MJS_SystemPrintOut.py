@@ -609,6 +609,9 @@ def HoujinzeiUpdateSinkokuItiran(
             is None
         ):
             time.sleep(1)
+            DNI = ImgCheck(CFolURL, r"\Houjinzei\NoDataInQ.png", 0.9, 10)
+            if DNI[0] is True:
+                pg.press("y")
         # --------------------------------------------------------------------
         if PN == "申告税一覧表":
             ImgClick(CFolURL, r"\Houjinzei\DownPrint.png", 0.9, 10)
