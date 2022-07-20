@@ -105,6 +105,8 @@ def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリッ�
 def MainFlow(BatUrl, FolURL2, ImgFolName):
     # WebDriver起動バッチを管理者権限で起動---------------------------------------------------------------------------------
     logger.debug("Bat起動: debug level log")
+    MSPDFURL = FolURL2 + "/bat/MSPDFSet.bat"  # 規定プリンターをMSPDFに
+    ExeOpen(MSPDFURL)
     ExeOpen(BatUrl)
     desired_caps = {}
     desired_caps["app"] = "Root"  # Rootを指定してDriverTargetをデスクトップに
