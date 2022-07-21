@@ -421,6 +421,41 @@ def ChildFlow(
                         file=f,
                     )
                 # ------------------------------------------------------------------------------------------
+            elif SystemUp[1] == "T_Err":
+                dt_now = datetime.datetime.now()
+                dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+                WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
+                WriteExSheet = WriteEx[isnItem]
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "貸借バランスエラー" + dt_now
+                print("シート書き込み完了")
+                print(WriteEx)
+                WriteEx.save(XLSURL)
+                WriteEx.close
+                # ---------------------------------------------------------------
+                # Log---------------------------------------------------------------------------------------
+                dt_s = datetime.datetime.now()
+                dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+                logger.debug(
+                    dt_s
+                    + "_関与先番号:"
+                    + str(Rno)
+                    + ":"
+                    + str(Rn)
+                    + "_会計大将_"
+                    + PN
+                    + "貸借バランスエラーで処理終了"
+                )
+                with open(LURL, "a") as f:
+                    print(
+                        [
+                            dt_s,
+                            "関与先番号:" + str(Rno),
+                            str(Rn),
+                            "_会計大将_" + PN + "貸借バランスエラーで処理終了",
+                        ],
+                        file=f,
+                    )
+                # ------------------------------------------------------------------------------------------
             elif SystemUp[0] is False:
                 dt_now = datetime.datetime.now()
                 dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
@@ -4258,6 +4293,11 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             if KCE[0] is True:
                                 CalcErr = "Err"  # 金額エラーフラグを立てる
                                 pg.press("y")  # 金額エラー無視で印刷
+                            # 貸借エラーが表示されていないか確認
+                            CE = ImgCheck(CFolURL, r"\Houjinzei\CalcErr.png", 0.9, 10)
+                            if CE[0] is True:
+                                CalcErr = "T_Err"  # 金額エラーフラグを立てる
+                                pg.press("y")  # 金額エラー無視で印刷
                         # --------------------------------------------------------------------
                         # 申告税一覧表印刷処理----------------------------------------------------
                         FO = ImgCheckForList(
@@ -4333,6 +4373,8 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         )
                         if CalcErr == "":
                             return True, ThisNo, ThisYear, ThisMonth
+                        elif CalcErr == "T_Err":
+                            return True, CalcErr, "", ""
                         else:
                             return False, ThisNo, ThisYear, CalcErr
                     else:

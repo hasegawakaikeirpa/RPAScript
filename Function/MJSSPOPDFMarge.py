@@ -58,7 +58,11 @@ def dirCreate(Url, No, YearT):
                 FolSP = fol.split("~")
             try:
                 Serch = int(FolSP[0])
-                if Serch <= No and (Serch + 100) >= No:
+                if Serch >= 901:
+                    LSerch = 9999
+                else:
+                    LSerch = Serch + 100
+                if Serch <= No and LSerch >= No:
                     Nofol = False
                     for fd_path, sb_folder, sb_file in os.walk(Target):
                         for fol in sb_folder:
@@ -76,11 +80,17 @@ def dirCreate(Url, No, YearT):
                                             return TTarget + r"\\" + str(YearT)
                             except:
                                 print("Err")
-                    if Nofol is False:
-                        os.mkdir(Target + str(No))
-                        TTarget = Target + r"\\" + str(fol)
-                        os.mkdir(TTarget + r"\\" + str(YearT))
-                        return TTarget + r"\\" + str(YearT)
+                    try:
+                        if Nofol is False:
+                            os.mkdir(Target + str(No))
+                            TTarget = Target + r"\\" + str(fol)
+                            os.mkdir(TTarget + r"\\" + str(YearT))
+                            return TTarget + r"\\" + str(YearT)
+                    except:
+                            os.mkdir(Target + r"\\" + str(No))
+                            TTarget = Target + r"\\" + str(No)
+                            os.mkdir(TTarget + r"\\" + str(YearT))
+                            return TTarget + r"\\" + str(YearT)                        
             except:
                 return False
 
