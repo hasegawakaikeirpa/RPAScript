@@ -184,16 +184,32 @@ def MoneyCheck(MJS_data, Int, ColTxt):
 
 
 # ----------------------------------------------------------------------------
+def mainListUp(ColTxt, SerchTxt, imgurl, Roolrul, Banktoml, tomltitle):
+    MJS_data = np.genfromtxt(Roolrul, dtype=None, delimiter=",")  # 元帳CSVをnp配列に変換
+    NPC = npCreate(MJS_data, SerchTxt, ColTxt)
+    if NPC[0] is True:
+        return NPC[1]
+
+
+# ----------------------------------------------------------------------------
 def main(ColTxt, SerchTxt, imgurl, Roolrul, Banktoml, tomltitle):
     MJS_data = np.genfromtxt(Roolrul, dtype=None, delimiter=",")  # 元帳CSVをnp配列に変換
-    CC = ColumCheck(MJS_data, ColTxt)  # 元帳CSVから列名番号を検出
-    if CC[0] is True:
-        TC = TextCheck(MJS_data[:, CC[1][1]], SerchTxt)  # 検索文字列から一致率リストを作成
-        if TC[0] is True:
-            TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
+    # CC = ColumCheck(MJS_data, ColTxt)  # 元帳CSVから列名番号を検出
+    # if CC[0] is True:
+    #     TC = TextCheck(MJS_data[:, CC[1][1]], SerchTxt)  # 検索文字列から一致率リストを作成
+    #     if TC[0] is True:
+    #         TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
 
-            index = list(TCL)
-            print(MJS_data[index, :])
+    #         index = list(TCL)
+    #         print(MJS_data[index, :])
+    NPC = npCreate(MJS_data, SerchTxt, ColTxt)
+    if NPC[0] is True:
+        DC = DayCheck(NPC[1], "01/08/26", "伝票日付")
+        if DC[0] is True:
+            MC = MoneyCheck(DC[1], 5000, "金額")
+            if MC[0] is True:
+                print("############################################################")
+                print(MC[1])
 
 
 # -----------------------------------------------------------------------------------------

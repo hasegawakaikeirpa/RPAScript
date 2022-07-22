@@ -6,13 +6,16 @@ import pandas as pd
 import os
 import csv
 import toml
+import MyTable as MT
+import MyTable2 as MT2
+import MyTable3 as MT3
 import AutoJournal as AJ
-from pandastable import Table, TableModel, config
+import CSVOut as CSVO
 
 
 class DataGrid:
     def __init__(self, window_root, default_path):
-        global csvurl, Banktoml, AJurl, Roolurl, tomltitle
+        global csvurl, Banktoml, AJurl, AJSeturl, Roolurl, tomltitle
 
         # toml読込------------------------------------------------------------------------------
         self.Banktoml = Banktoml
@@ -37,48 +40,92 @@ class DataGrid:
         self.root.geometry("1400x700")  # 画面サイズの設定
         self.root.title("OCRTEXT")  # 題名
         # -------------------------------------------------------------------------------------
-        # フレーム設定--------------------------------------------------------------------------
-        self.frame2 = tk.Frame(self.root)
-        self.frame2.grid(row=0, column=0, sticky=tk.W)
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
         self.frame3 = tk.Frame(self.root)
-        self.frame3.grid(row=0, column=0)  # , sticky=tk.E)
+        self.frame3.grid(row=1, column=0, sticky=tk.W)
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
         self.frame4 = tk.Frame(self.root)
-        self.frame4.grid(row=0, column=0, sticky=tk.E)
+        self.frame4.grid(row=1, column=0)
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
-        self.frame5 = tk.Frame(self.root)
-        self.frame5.grid(row=0, column=1, sticky=tk.W)
+        self.frame6 = tk.Frame(self.root)
+        self.frame6.grid(row=1, column=0, sticky=tk.E)
+        tk.Label(self.frame6, text="選択行自動仕訳作成").grid(row=0, column=0)  # 位置指定
+        self.AJ_Btn = tk.Button(
+            self.frame6,
+            text="選択行自動仕訳作成",
+            width=20,
+            command=lambda: self.AJCalc(csvurl),
+        )
+        self.AJ_Btn.grid(row=1, column=0)  # 位置指定
+        # -------------------------------------------------------------------------------------
+        # フレーム設定--------------------------------------------------------------------------
+        self.frame5 = tk.Frame(self.root, width=650)
+        self.frame5.grid(row=1, column=1, sticky=tk.W)
         # -------------------------------------------------------------------------------------
         # ツリーフレーム設定---------------------------------------------------------------------
-
-        self.tree_frame = tk.Frame(self.root, width=650, height=400)
-        self.tree_frame.grid(row=1, column=0, sticky=tk.N + tk.S)
+        self.tree_frame = tk.Frame(self.root, width=650, height=500)
+        self.tree_frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
         # df = TableModel.getSampleData()
-        pt = Table(self.tree_frame)
-        self.table = pt.importCSV(csvurl, encoding="cp932")
+        # pt = Table(self.tree_frame)
+        pt = MT.MyTable(
+            self.tree_frame, width=650, height=500, sticky=tk.N + tk.S + tk.W + tk.E
+        )  # テーブルをサブクラス化
+        enc = CSVO.getFileEncoding(csvurl)
+        self.table = pt.importCSV(csvurl, encoding=enc)
+        self.pt = pt
         pt.show()
         # -------------------------------------------------------------------------------------
         # ツリーフレーム設定---------------------------------------------------------------------
-        self.tree2_frame = tk.Frame(self.root, width=650, height=400)
-        self.tree2_frame.grid(row=1, column=1, columnspan=2, sticky=tk.N + tk.S)
+        self.tree2_frame = tk.Frame(self.root, width=650, height=500)
+        self.tree2_frame.grid(
+            row=0, column=1, columnspan=2, sticky=tk.N + tk.S + tk.W + tk.E
+        )
         # df = TableModel.getSampleData()
-        pt2 = Table(self.tree2_frame)
-        self.table2 = pt2.importCSV(AJurl, encoding="cp932")
+        # pt2 = Table(self.tree2_frame)
+        pt2 = MT2.MyTable(
+            self.tree2_frame, width=650, height=500, sticky=tk.N + tk.S + tk.W + tk.E
+        )  # テーブルをサブクラス化
+        enc = CSVO.getFileEncoding(AJurl)
+        self.table2 = pt2.importCSV(AJurl, encoding=enc)
+        self.pt2 = pt2
         pt2.show()
         # -------------------------------------------------------------------------------------
         # ツリービューを配置
         self.treeviewEntries()
-        self.treeviewEntries2()
         # tomlListを配置
         self.tomlEntries()
 
     # -----------------------------------------------------------------------------------------
+    def AJCalc(self, csvurl):
+        global AJSeturl
+        self.FileName = csvurl
+        self.JounalFileName = AJurl
+        self.Roolurl = Roolurl
+
+        print(self.pt.startrow)
+        # self.endrow
+        # self.startcol
+        # self.endcol
+
+        AJ_List = AJ.mainListUp(
+            self.Henkan, "ガソリン代", self.JounalFileName, self.Roolurl, self.Banktoml, "JA"
+        )
+        AJDF = pd.DataFrame(AJ_List)
+        AJDF.to_csv(AJSeturl, index=False, header=False)
+        pt3 = MT3.MyTable(
+            self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
+        )  # テーブルをサブクラス化
+        enc = CSVO.getFileEncoding(AJSeturl)
+        self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
+        pt3.show()
+
+    # -----------------------------------------------------------------------------------------
     def CsvHeader(self):
-        with open(self.FileName, "r", encoding="cp932") as f:  # csv読込み(Treeview 表示用)
+        enc = CSVO.getFileEncoding(self.FileName)
+        with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
             for cells in reader:
                 # print(cells)
@@ -106,9 +153,8 @@ class DataGrid:
                 #                 c += 1
                 self.ColumnName = cells
                 break
-        with open(
-            self.JounalFileName, "r", encoding="cp932"
-        ) as f:  # csv読込み(Treeview 表示用)
+        enc = CSVO.getFileEncoding(self.JounalFileName)
+        with open(self.JounalFileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
             for cells in reader:
                 # print(cells)
@@ -202,24 +248,6 @@ class DataGrid:
         # self.updatetomlEntries()
 
     # -----------------------------------------------------------------------------------------
-    def treeviewEntries2(self):
-        # エントリーウィジェットマネージャを初期化
-        self.Entries2 = []  # Entryのインスタンス
-        self.insertEntries2 = []  # ラベルインスタンス
-        # インデックスマネージャを初期化
-        self.index2 = 0  # 最新のインデックス番号
-        self.indexes2 = []  # インデックスの並び
-        # 自動仕訳ツリービューの設定-------------------------------------------------------
-        # 自動仕訳CSV1行目を列名に設定---------------------------------------
-        r = 0
-        for ColNameItem in self.ColumnName2:
-            # ラベル＆Entryフレームへ追加----------------------------------------------
-            self.createEntry2(r, ColNameItem)  # Entryを作成配置
-            # ----------------------------------------------------------------------
-            r += 1
-        # ----------------------------------------------------------------------
-
-    # -----------------------------------------------------------------------------------------
     def treeviewEntries(self):
         """
         ツリービューを配置
@@ -230,22 +258,6 @@ class DataGrid:
         # インデックスマネージャを初期化
         self.index = 0  # 最新のインデックス番号
         self.indexes = []  # インデックスの並び
-        # OCR結果ツリービューの設定-------------------------------------------------------
-        r = 0
-        for ColNameItem in self.ColumnName:
-            # ラベル＆Entryフレームへ追加----------------------------------------------
-            self.createEntry(r, ColNameItem)  # Entryを作成配置
-            # ----------------------------------------------------------------------
-            r += 1
-        # ボタン-------------------------------------------------------------------------
-        # 確定ボタン---------------------------------------------------------------------
-        self.ebtn = tk.Button(
-            self.frame2,
-            text="確定",
-            width=20,
-            command=lambda: self.InStartVal(),
-        )
-        self.ebtn.grid(row=len(self.indexes), column=0, columnspan=2)  # 位置指定
         # URLテキストボックス-----------------------------------------------------------
         tk.Label(self.frame3, text="URL").grid(row=0, column=0)  # 位置指定
         self.Label_URL = tk.Entry(self.frame3, width=15)
@@ -258,17 +270,17 @@ class DataGrid:
         self.Label_ChangeURL.grid(row=1, column=1, columnspan=3)
         # 開始残高ボタン----------------------------------------------------------------
         tk.Label(self.frame3, text="開始残高").grid(
-            row=len(self.indexes) + 1, column=0
+            row=len(self.indexes) + 2, column=0
         )  # 位置指定
         self.ZanNametxt = tk.Entry(self.frame3, width=15)
-        self.ZanNametxt.grid(row=len(self.indexes) + 1, column=1)  # 位置指定
+        self.ZanNametxt.grid(row=len(self.indexes) + 2, column=1)  # 位置指定
         self.ebtn2 = tk.Button(
             self.frame3,
             text="再計算",
             width=20,
             command=lambda: self.ZanNamedaka(),
         )
-        self.ebtn2.grid(row=len(self.indexes) + 2, column=0, columnspan=2)  # 位置指定
+        self.ebtn2.grid(row=len(self.indexes) + 3, column=0, columnspan=2)  # 位置指定
         # ------------------------------------------------------------------------------
 
     # -----------------------------------------------------------------------------------------
@@ -287,7 +299,8 @@ class DataGrid:
             c += 1
         # ---------------------------------------------------------------------------
         # CSV読込
-        with open(self.FileName, "r", encoding="cp932") as f:  # csv読込み(Treeview 表示用)
+        enc = CSVO.getFileEncoding(self.FileName)
+        with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
             next(reader)
             CList = list(reader)
@@ -351,7 +364,8 @@ class DataGrid:
             c += 1
         # ---------------------------------------------------------------------------
         # CSV読込
-        with open(self.FileName, "r", encoding="cp932") as f:  # csv読込み(Treeview 表示用)
+        enc = CSVO.getFileEncoding(self.FileName)
+        with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
             next(reader)
             CList = list(reader)
@@ -417,188 +431,12 @@ class DataGrid:
             self.Treeview_1.delete(i)
 
     # -----------------------------------------------------------------------------------------
-    # エントリーウィジェットを再配置
-    def updateEntries(self):
-
-        # エントリーウィジェットマネージャを参照して再配置
-        for i in range(len(self.indexes)):
-            self.Entries[i].grid(column=1, row=i)
-            self.Entries[i].bind("<Return>", self.EveRecalc)
-            self.Entries[i].lift()
-            self.insertEntries[i].grid(column=0, row=i)
-
-    # -----------------------------------------------------------------------------------------
-    # エントリーウィジェットを再配置
-    def updateEntries2(self, next):
-        Lim = 8
-        # エントリーウィジェットマネージャを参照して再配置
-        if next < Lim:
-            self.Entries2[next].grid(column=1, row=next)
-            self.Entries2[next].bind("<Return>", self.EveRecalc)
-            self.Entries2[next].lift()
-            self.insertEntries2[next].grid(column=0, row=next)
-        elif next < (Lim * 2):
-            self.Entries2[next].grid(column=3, row=next - (Lim))
-            self.Entries2[next].bind("<Return>", self.EveRecalc)
-            self.Entries2[next].lift()
-            self.insertEntries2[next].grid(column=2, row=next - (Lim))
-        elif next < (Lim * 3):
-            self.Entries2[next].grid(column=5, row=next - (Lim * 2))
-            self.Entries2[next].bind("<Return>", self.EveRecalc)
-            self.Entries2[next].lift()
-            self.insertEntries2[next].grid(column=4, row=next - (Lim * 2))
-        elif next < (Lim * 4):
-            self.Entries2[next].grid(column=7, row=next - (Lim * 3))
-            self.Entries2[next].bind("<Return>", self.EveRecalc)
-            self.Entries2[next].lift()
-            self.insertEntries2[next].grid(column=6, row=next - (Lim * 3))
-
-    # -----------------------------------------------------------------------------------------
-    # エントリーウィジェットを作成して配置
-    def createEntry(self, next, ColNameItem):
-
-        # 最初のエントリーウィジェットを追加
-        self.Entries.insert(next, tk.Entry(self.frame2, width=20))
-        lb = tk.Label(self.frame2, text=ColNameItem)
-
-        lb.grid(row=next, column=0)  # 位置指定
-
-        txtxt = tk.Entry(self.frame2, width=15)
-
-        txtxt.grid(row=next, column=1)  # 位置指定
-        # ラベルを作成
-        self.insertEntries.insert(
-            next,
-            tk.Label(
-                self.frame2,
-                text=str(ColNameItem),
-            ),
-        )
-        # インデックスマネージャに登録
-        self.indexes.insert(next, self.index)
-        # 再配置
-        self.updateEntries()
-
-    # -----------------------------------------------------------------------------------------
-    # エントリーウィジェットを作成して配置
-    def createEntry2(self, next, ColNameItem):
-        Lim = 8
-        if next < Lim:
-            # 最初のエントリーウィジェットを追加
-            self.Entries2.insert(next, tk.Entry(self.frame5, width=15))
-            lb = tk.Label(self.frame5, text=ColNameItem)
-
-            lb.grid(row=next, column=0)  # 位置指定
-
-            txtxt = tk.Entry(self.frame5, width=15)
-
-            txtxt.grid(row=next, column=1)  # 位置指定
-            # ラベルを作成
-            self.insertEntries2.insert(
-                next,
-                tk.Label(
-                    self.frame5,
-                    text=str(ColNameItem),
-                ),
-            )
-            # インデックスマネージャに登録
-            self.indexes2.insert(next, self.index)
-        elif next < (Lim * 2):
-            # 最初のエントリーウィジェットを追加
-            self.Entries2.insert(next - (Lim), tk.Entry(self.frame5, width=15))
-            lb = tk.Label(self.frame5, text=ColNameItem)
-
-            lb.grid(row=next - (Lim), column=2)  # 位置指定
-
-            txtxt = tk.Entry(self.frame5, width=15)
-
-            txtxt.grid(row=next - (Lim), column=3)  # 位置指定
-            # ラベルを作成
-            self.insertEntries2.insert(
-                next,
-                tk.Label(
-                    self.frame5,
-                    text=str(ColNameItem),
-                ),
-            )
-            # インデックスマネージャに登録
-            self.indexes2.insert(next, self.index)
-        elif next < (Lim * 3):
-            # 最初のエントリーウィジェットを追加
-            self.Entries2.insert(next - (Lim * 2), tk.Entry(self.frame5, width=15))
-            lb = tk.Label(self.frame5, text=ColNameItem)
-
-            lb.grid(row=next - (Lim * 2), column=4)  # 位置指定
-
-            txtxt = tk.Entry(self.frame5, width=15)
-
-            txtxt.grid(row=next - (Lim * 2), column=5)  # 位置指定
-            # ラベルを作成
-            self.insertEntries2.insert(
-                next,
-                tk.Label(
-                    self.frame5,
-                    text=str(ColNameItem),
-                ),
-            )
-            # インデックスマネージャに登録
-            self.indexes2.insert(next, self.index)
-        elif next < (Lim * 4):
-            # 最初のエントリーウィジェットを追加
-            self.Entries2.insert(next - (Lim * 2), tk.Entry(self.frame5, width=15))
-            lb = tk.Label(self.frame5, text=ColNameItem)
-
-            lb.grid(row=next - (Lim * 3), column=6)  # 位置指定
-
-            txtxt = tk.Entry(self.frame5, width=15)
-
-            txtxt.grid(row=next - (Lim * 3), column=7)  # 位置指定
-            # ラベルを作成
-            self.insertEntries2.insert(
-                next,
-                tk.Label(
-                    self.frame5,
-                    text=str(ColNameItem),
-                ),
-            )
-            # インデックスマネージャに登録
-            self.indexes2.insert(next, self.index)
-        # 再配置
-        self.updateEntries2(next)
-
-    # -----------------------------------------------------------------------------------------
-    def on_tree_select(self, event=None):
-        global tr  # 選択行インデックス
-
-        """
-        ツリービュークリックイベント
-        """
-        # 全てのEntryを空に
-        for i in range(len(self.Entries)):
-            self.Entries[i].delete(0, tk.END)
-        # 選択行のテキスト取得
-        for item in self.Treeview_1.selection():
-            item_text = self.Treeview_1.item(item, "values")
-            tr = self.Treeview_1.index(item)  # 選択行インデックス
-        # 全てのEntryにテキスト挿入
-        for i in range(len(item_text)):
-            self.Entries[i].insert(i, item_text[i])
-
-    # -----------------------------------------------------------------------------------------
-    def on_tree_select2(self, event=None):
-        global tr  # 選択行インデックス
-
-        """
-        ツリービュー2クリックイベント
-        """
-        print("on_tree_select2_click")
-
-    # -----------------------------------------------------------------------------------------
     def InStartVal(self):
         global tr  # 選択行インデックス
 
         # CSV読込
-        with open(self.FileName, "r", encoding="cp932") as f:  # csv読込み(Treeview 表示用)
+        enc = CSVO.getFileEncoding(self.FileName)
+        with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
             next(reader)
             CList = list(reader)
@@ -643,9 +481,10 @@ def Main(US, Bk, tl):
 
 # -----------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    global csvurl, Banktoml, AJurl, Roolurl, tomltitle
+    global csvurl, Banktoml, AJurl, AJSeturl, Roolurl, tomltitle
     csvurl = r"D:\OCRTESTPDF\PDFTEST\JA_1page.csv"
-    AJurl = r"D:\OCRTESTPDF\PDFTEST\JA_1page_AutoLounal.csv"
+    AJurl = r"D:\OCRTESTPDF\PDFTEST\JA_1page_AutoJounal.csv"
+    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
     Roolurl = r"D:\PythonScript\RPAScript\TKInterGUI\Mototyou\18_仕訳日記帳.csv"
     tomltitle = "JA"
     # toml読込------------------------------------------------------------------------------
