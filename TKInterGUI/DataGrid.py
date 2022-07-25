@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+import numpy as np
 
 # from tkinter import messagebox
 import pandas as pd
@@ -52,14 +53,30 @@ class DataGrid:
         # フレーム設定--------------------------------------------------------------------------
         self.frame6 = tk.Frame(self.root)
         self.frame6.grid(row=1, column=0, sticky=tk.E)
-        tk.Label(self.frame6, text="選択行自動仕訳作成").grid(row=0, column=0)  # 位置指定
+        # MotoCyou------------------------------------------------------------------------------
+        tk.Label(self.frame6, text="元帳日付列名").grid(row=0, column=0)  # 位置指定
+        self.Moto_Day = tk.Entry(self.frame6, width=15)
+        self.Moto_Day.insert(0, "元帳日付列名")
+        self.Moto_Day.grid(row=0, column=1)
+        # ---------------------------------------------------------------------------------------
+        tk.Label(self.frame6, text="元帳金額列名").grid(row=1, column=0)  # 位置指定
+        self.Moto_Money = tk.Entry(self.frame6, width=15)
+        self.Moto_Money.insert(0, "元帳金額列名")
+        self.Moto_Money.grid(row=1, column=1)
+        # ---------------------------------------------------------------------------------------
+        tk.Label(self.frame6, text="元帳摘要列名").grid(row=2, column=0)  # 位置指定
+        self.Moto_Tekiyou = tk.Entry(self.frame6, width=15)
+        self.Moto_Tekiyou.insert(0, "元帳摘要列名")
+        self.Moto_Tekiyou.grid(row=2, column=1)
+        # ---------------------------------------------------------------------------------------
+        # 選択行自動仕訳作成ボタン----------------------------------------------------------------
         self.AJ_Btn = tk.Button(
             self.frame6,
             text="選択行自動仕訳作成",
             width=20,
             command=lambda: self.AJCalc(csvurl),
         )
-        self.AJ_Btn.grid(row=1, column=0)  # 位置指定
+        self.AJ_Btn.grid(row=3, column=0, columnspan=2)  # 位置指定
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
         self.frame5 = tk.Frame(self.root, width=650)
@@ -91,6 +108,28 @@ class DataGrid:
         enc = CSVO.getFileEncoding(AJurl)
         self.table2 = pt2.importCSV(AJurl, encoding=enc)
         self.pt2 = pt2
+        # MotoCyou------------------------------------------------------------------------------
+        enc = CSVO.getFileEncoding(Roolurl)
+        AJ_np = np.genfromtxt(
+            Roolurl, dtype=None, encoding=enc, delimiter=","
+        )  # 元帳CSVをnp配列に変換
+        AJ_Column = AJ_np[0, :]
+        A = 0
+        for AJ_Item in AJ_Column:
+            if "日付" in AJ_Item:
+                self.Moto_Day.delete(0, tk.END)
+                self.Moto_Day.insert(0, AJ_Item)
+                self.Moto_Day_No = A
+            elif "金額" in AJ_Item:
+                self.Moto_Money.delete(0, tk.END)
+                self.Moto_Money.insert(0, AJ_Item)
+                self.Moto_Money_No = A
+            elif "摘要" in AJ_Item:
+                self.Moto_Tekiyou.delete(0, tk.END)
+                self.Moto_Tekiyou.insert(0, AJ_Item)
+                self.Moto_Tekiyou_No = A
+            A += 1
+        # ---------------------------------------------------------------------------------------
         pt2.show()
         # -------------------------------------------------------------------------------------
         # ツリービューを配置
@@ -105,22 +144,71 @@ class DataGrid:
         self.JounalFileName = AJurl
         self.Roolurl = Roolurl
 
-        print(self.pt.startrow)
+        print(self.pt.startrow)  # 選択行
         # self.endrow
         # self.startcol
         # self.endcol
+        st = 0  # 行ポジション
+        for stom in self.entryList:  # Entryウィジェットリスト
+            if stom == "自動仕訳基準列名":
+                JS_var = st
+            elif stom == "日付列":
+                Day_var = st
+            elif stom == "入金列名":
+                In_var = st
+            elif stom == "出金列名":
+                Out_var = st
+            st += 1
+        # Entry要素設定-------------------------------------------------------------------
+        JS = self.tomlEntries[JS_var].get()  # 自動仕訳基準列名Entry取得
+        D = self.tomlEntries[Day_var].get()  # 日付列Entry取得
+        I = self.tomlEntries[In_var].get()  # 入金列名Entry取得
+        O = self.tomlEntries[Out_var].get()  # 出金列名Entry取得
+        # --------------------------------------------------------------------------------
+        print(self.Label_ChangeURL.get())  # toml金融機関Entry取得
+        dfs = self.pt.model.df  # グリッドをDF化
+        dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
+        # グリッド選択データの代入---------------------------------------------------------
+        FindTxt = dfsrow[JS]  # 検索文字
+        D_var = dfsrow[Day_var]  # 日付
+        I_var = dfsrow[In_var]  # 入金
+        O_var = dfsrow[Out_var]  # 出金
+        # --------------------------------------------------------------------------------
+        # ColTxt,SerchTxt,D_var,D_coltxt,M_var,M_coltxt,imgurl,Roolrul,Banktoml,tomltitle,
+        # 整数チェック---------------------------------------------------------------------
+        IC = IntCheck(I_var)
+        OC = IntCheck(O_var)
+        if IC is True and OC is True:
+            tkm = False, "", ""
+        elif IC is True:
+            tkm = True, I_var, In_var
+        elif OC is True:
+            tkm = True, O_var, Out_var
 
-        AJ_List = AJ.mainListUp(
-            self.Henkan, "ガソリン代", self.JounalFileName, self.Roolurl, self.Banktoml, "JA"
-        )
-        AJDF = pd.DataFrame(AJ_List)
-        AJDF.to_csv(AJSeturl, index=False, header=False)
-        pt3 = MT3.MyTable(
-            self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
-        )  # テーブルをサブクラス化
-        enc = CSVO.getFileEncoding(AJSeturl)
-        self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
-        pt3.show()
+        if tkm[0] is False:
+            tk.messagebox.showinfo("確認", "入金、出金双方に金額が出力されています。行を再確認してください。")
+        # --------------------------------------------------------------------------------
+        else:
+            AJ_List = AJ.main(
+                self.Moto_Tekiyou.get(),
+                FindTxt,
+                D_var,
+                self.Moto_Day.get(),
+                tkm[1],
+                self.Moto_Money_No,
+                self.JounalFileName,
+                self.Roolurl,
+                self.Banktoml,
+                self.Label_ChangeURL.get(),
+            )  # 仕訳候補を抽出
+            AJDF = pd.DataFrame(AJ_List)
+            AJDF.to_csv(AJSeturl, index=False, header=False)
+            pt3 = MT3.MyTable(
+                self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
+            )  # テーブルをサブクラス化
+            enc = CSVO.getFileEncoding(AJSeturl)
+            self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
+            pt3.show()
 
     # -----------------------------------------------------------------------------------------
     def CsvHeader(self):
@@ -189,10 +277,13 @@ class DataGrid:
         self.tomlinsertEntries = []  # ラベルインスタンス
         self.tomlindex = 0  # 最新のインデックス番号
         self.tomlindexes = []  # インデックスの並び
+        self.entryList = []  # Entryのインスタンス
+
         r = 0
         for ColNameItem in self.tomlList:
             # ラベル＆Entryフレームへ追加----------------------------------------------
             self.createtomlEntry(r, ColNameItem)  # Entryを作成配置
+            self.entryList.append(ColNameItem)
             # ----------------------------------------------------------------------
             r += 1
 
@@ -212,7 +303,7 @@ class DataGrid:
     def createtomlEntry(self, next, ColNameItem):
 
         # 最初のエントリーウィジェットを追加
-        self.tomlEntries.insert(next, tk.Entry(self.frame4, width=20))
+        # self.tomlEntries.insert(next, tk.Entry(self.frame4, width=20))
         lb = tk.Label(self.frame4, text=ColNameItem)
 
         lb.grid(row=next, column=0)  # 位置指定
@@ -234,6 +325,9 @@ class DataGrid:
             txtxt = tk.Entry(self.frame4, width=15)
             txtxt.insert(0, tom)
         txtxt.grid(row=next, column=1)  # 位置指定
+
+        self.tomlEntries.insert(next, txtxt)
+
         # ラベルを作成
         self.tomlinsertEntries.insert(
             next,
@@ -463,6 +557,16 @@ class DataGrid:
         self.ZanNameRecalc()
 
 
+# -----------------------------------------------------------------------------------------
+def IntCheck(c_var):
+    try:
+        int(c_var)
+        return True
+    except:
+        return False
+
+
+# -----------------------------------------------------------------------------------------
 def Main(US, Bk, tl):
     global csvurl, Banktoml, tomltitle
 
