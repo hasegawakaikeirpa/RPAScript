@@ -400,7 +400,8 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
             #     print("nan")
             # else:
             pyperclip.copy(xls_tx)
-            pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
+            if xls_tx != "nan":
+                pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
             pg.press("return")
             pg.write(xls_mn, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
             pg.press("return")
@@ -493,7 +494,8 @@ def OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
         #     print("nan")
         # else:
         pyperclip.copy(xls_tx)
-        pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
+        if xls_tx != "nan":
+            pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
         pg.press("return")
         pg.write(xls_mn, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
         pg.press("return")
@@ -550,7 +552,10 @@ def MainFlow(FolURL2, xls_data, KamokuCD, Lday):
     print("処理終了")
 
 
-Lday = calendar.monthrange(dt.today().year, dt.today().month - 1)
+if dt.today().day > 15:
+    Lday = calendar.monthrange(dt.today().year, dt.today().month)
+else:
+    Lday = calendar.monthrange(dt.today().year, dt.today().month - 1)
 idir = r"\\nas-sv\K_管理\A1_総務\01_総務"
 file_path = tkinter.filedialog.askopenfilename(initialdir=idir)
 # file_path = file_path.replace("\u3000","\　")
