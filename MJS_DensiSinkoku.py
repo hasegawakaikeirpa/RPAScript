@@ -874,12 +874,15 @@ def MainFlow(FolURL2):
             pg.press(["space"])
             pg.press(["down"])
             time.sleep(1)
-            SortURL = FolURL2 + "/ミロク税目分岐"
-            ZeimokuRow = SortCSVItem(SortURL, C_Zeimoku, C_Syurui)
-            for x in range(ZeimokuRow):
-                pg.press(["down"])
-            pg.press(["space"])
-            time.sleep(1)
+            try:
+                SortURL = FolURL2 + "/ミロク税目分岐"
+                ZeimokuRow = SortCSVItem(SortURL, C_Zeimoku, C_Syurui)
+                for x in range(ZeimokuRow):
+                    pg.press(["down"])
+                pg.press(["space"])
+                time.sleep(1)
+            except:
+                logger.debug("補助税目無し")    
             logger.debug("検索開始")
             # クラス要素クリック----------------------------------------------------------------------------------------------------------
             ImgClick(FolURL2, "FindOK.png", conf, LoopVal)  # 電子申告・申請タブを押す
