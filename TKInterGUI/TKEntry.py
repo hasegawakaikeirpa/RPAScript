@@ -302,8 +302,29 @@ def TxtEdit(Txt, L_txt, R_txt):
     """
 
     if "日" in Txt:
-        L_txt = L_txt.replace("-", "/").replace("_", "/").replace("\\", "/")
-        R_txt = R_txt.replace("-", "/").replace("_", "/").replace("\\", "/")
+        L_txt = (
+            L_txt.replace("-", "/")
+            .replace("_", "/")
+            .replace("\\", "/")
+            .replace(".", "")
+            .replace("|", "")
+            .replace("\\", "")
+            .replace(":", "")
+            .replace("^", "")
+            .replace("~", "")
+        )
+
+        R_txt = (
+            R_txt.replace("-", "/")
+            .replace("_", "/")
+            .replace("\\", "/")
+            .replace(".", "")
+            .replace("|", "")
+            .replace("\\", "")
+            .replace(":", "")
+            .replace("^", "")
+            .replace("~", "")
+        )
         L_txtSp = L_txt.split("/")
         R_txtSp = R_txt.split("/")
         if len(L_txtSp[0]) < 4:
