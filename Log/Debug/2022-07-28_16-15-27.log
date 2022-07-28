@@ -1,0 +1,5 @@
+[2022/07/28 16:15:27][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/07/28 16:15:27][DEBUG](MJSOpen.py:113) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/07/28 16:15:28][DEBUG](MJSOpen.py:119) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/07/28 16:15:31][DEBUG](MJSOpen.py:134) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/07/28 16:15:44][DEBUG](MJS_DensiSinkoku.py:772) MJS操作画面へ偏移 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
