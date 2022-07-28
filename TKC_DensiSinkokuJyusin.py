@@ -1040,8 +1040,11 @@ def MLChild(
             Jyusin(
                 driver, FolURL2, C_SCode, C_Name, C_Zeimoku, C_Teisyutu, CSVName, CsvKey
             )
-            for x in range(int(Pc)):
+            if CSVName == "SinseiJyusinMaster":
+                NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+            else:
                 NitijiBunki(FolURL2, conf, LoopVal)
+            for x in range(int(Pc)):
                 pg.press("pageup")
     else:
         print("送信不可")
@@ -1202,67 +1205,67 @@ def MainFlow(FolURL2, MasterTrigger, ypos_F, ypos_Plus):  # メインの処理
     pg.press("return")  # 小林常務を選択
     # FileName = "KanyoHasegawa.png"  # 担当税理士所長判定
     # # 法人税消費税処理------------------------------------------------------------------------------------------------------
-    FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
-    conf = 0.9  # 画像認識感度
-    LoopVal = 500
-    CSVName = "HoujinSyouhizeiJyusinMaster"
-    CSVChildName = "HoujinSyouhizeiJyusinChild"  # チャイルドのCSVファイル名を指定
-    List = ["HoujinSyouhizei.png", "HoujinSyouhizei2.png"]
-    if MasterTrigger != "y":
-        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
-            if ImgCheckForList(FolURL2, List, conf)[0] is True:
-                FindURL = ImgCheckForList(FolURL2, List, conf)[1]
-                ImgClick(FolURL2, FindURL, conf, LoopVal)
-            time.sleep(1)
-        # -------------------------------------------------------------------------
-        time.sleep(1)
-        # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
-        FileName = "SinkokuLoad.png"
-        conf = 0.9  # 画像認識感度
-        while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
-            time.sleep(1)
-        if NitijiBunkiTrigger == "y":
-            if (
-                CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
-            ):  # 処理が申請の場合
-                NitijiBunkiSinsei(FolURL2, conf, LoopVal)
-            else:
-                NitijiBunki(FolURL2, conf, LoopVal)
-        CSVURL = FolURL2
-        C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
-        SerchEnc = format(getFileEncoding(C_url))
-        C_Master = pd.read_csv(C_url, encoding=SerchEnc)
-        C_MasterFlag = True
-        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    else:
-        TaxAns = TaxHantei(
-            List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-        )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-        C_Master = TaxAns[0]  # マスターCSVを格納
-        C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
-        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    CsvKey = "法人税"
-    if C_MasterFlag is False:
-        print("C_Masterは空です")
-    else:
-        C_LoopRow = np.array(C_Master).shape[0]  # 配列行数取得
-        for x in range(C_LoopRow):
-            MasterLoop(
-                List,
-                FileName,
-                CSVName,
-                CSVChildName,
-                C_Master,
-                C_dfRow,
-                C_dfCol,
-                driver,
-                FolURL2,
-                CsvKey,
-                ypos_F,
-                ypos_Plus,
-            )
+    # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
+    # conf = 0.9  # 画像認識感度
+    # LoopVal = 500
+    # CSVName = "HoujinSyouhizeiJyusinMaster"
+    # CSVChildName = "HoujinSyouhizeiJyusinChild"  # チャイルドのCSVファイル名を指定
+    # List = ["HoujinSyouhizei.png", "HoujinSyouhizei2.png"]
+    # if MasterTrigger != "y":
+    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+    #         if ImgCheckForList(FolURL2, List, conf)[0] is True:
+    #             FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+    #             ImgClick(FolURL2, FindURL, conf, LoopVal)
+    #         time.sleep(1)
+    #     # -------------------------------------------------------------------------
+    #     time.sleep(1)
+    #     # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+    #     FileName = "SinkokuLoad.png"
+    #     conf = 0.9  # 画像認識感度
+    #     while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+    #         time.sleep(1)
+    #     if NitijiBunkiTrigger == "y":
+    #         if (
+    #             CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+    #         ):  # 処理が申請の場合
+    #             NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+    #         else:
+    #             NitijiBunki(FolURL2, conf, LoopVal)
+    #     CSVURL = FolURL2
+    #     C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+    #     SerchEnc = format(getFileEncoding(C_url))
+    #     C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+    #     C_MasterFlag = True
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # else:
+    #     TaxAns = TaxHantei(
+    #         List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+    #     )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+    #     C_Master = TaxAns[0]  # マスターCSVを格納
+    #     C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    # CsvKey = "法人税"
+    # if C_MasterFlag is False:
+    #     print("C_Masterは空です")
+    # else:
+    #     C_LoopRow = np.array(C_Master).shape[0]  # 配列行数取得
+    #     for x in range(C_LoopRow):
+    #         MasterLoop(
+    #             List,
+    #             FileName,
+    #             CSVName,
+    #             CSVChildName,
+    #             C_Master,
+    #             C_dfRow,
+    #             C_dfCol,
+    #             driver,
+    #             FolURL2,
+    #             CsvKey,
+    #             ypos_F,
+    #             ypos_Plus,
+    #         )
     # -----------------------------------------------------------------------------------------------------------------------
     # #所得税消費税処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
@@ -1707,11 +1710,11 @@ if ypos_FTrigger == "y":
 else:
     ypos_F = 75
 
-ypos_PlusTrigger = input("行間閾値を27から変更しますか？y/n\n")
+ypos_PlusTrigger = input("行間閾値を30から変更しますか？y/n\n")
 if ypos_PlusTrigger == "y":
     ypos_Plus = int(input("行間閾値を入力してください。\n"))
 else:
-    ypos_Plus = 25
+    ypos_Plus = 30
 
 try:
     Syoridumi = 0  # 初回起動フラグ
