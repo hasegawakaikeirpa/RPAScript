@@ -761,7 +761,7 @@ def MainFirstAction(FolURL2, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui):
 
 
 # -------------------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2):
+def MainFlow(FolURL2, NG_List):
     try:
         BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
         driver = MJSOpen.MainFlow(
@@ -807,140 +807,187 @@ def MainFlow(FolURL2):
             C_Zeimoku = str(C_dfDataRow["税目"])
             C_Syurui = str(C_dfDataRow["申告種類"])
 
-            # if not "法人" in C_Zeimoku:
-            conf = 0.9
-            LoopVal = 1
-            logger.debug("SinkokuTuuti.pngを元に処理分岐")
-            if ImgCheck(FolURL2, "SinkokuTuuti.png", conf, LoopVal)[0] is True:
-                DSEL = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
-                if DSEL[0] is True:
-                    ImgClick(FolURL2, "DensiSyomei.png", 0.9, 1)  # 電子申告・申請タブを押す
-                # 画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-                List = ["DensiSyomeiOpen.png", "DensiSyomeiOpen2.png"]
+            NG_r = 0
+            NG_Flag = False
+            for NG_r in range(len(NG_List)):
+                NG_ListRow = NG_List.iloc[NG_r]
+                NG_SCode = NG_ListRow["関与先コード"]
+                if NG_SCode == C_SCode:
+                    NG_Flag = True
+                    break
+                NG_r += 1
+            if NG_Flag is False:
+
+                conf = 0.9
+                LoopVal = 1
+                logger.debug("SinkokuTuuti.pngを元に処理分岐")
+                if ImgCheck(FolURL2, "SinkokuTuuti.png", conf, LoopVal)[0] is True:
+                    DSEL = ImgCheck(FolURL2, "DensiSyomei.png", conf, LoopVal)
+                    if DSEL[0] is True:
+                        ImgClick(FolURL2, "DensiSyomei.png", 0.9, 1)  # 電子申告・申請タブを押す
+                    # 画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                    List = ["DensiSyomeiOpen.png", "DensiSyomeiOpen2.png"]
+                    conf = 0.9  # 画像認識感度
+                    LoopVal = 10  # 検索回数
+                    while ImgCheckForList(FolURL2, List, conf, LoopVal) is True:
+                        time.sleep(1)
+                    time.sleep(1)
+                    ImgClick(FolURL2, "FindIcon.png", 0.9, 1)
+                    time.sleep(1)
+                    while (
+                        pg.locateOnScreen(
+                            FolURL2 + "/" + "JyoukenBar.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    time.sleep(1)
+                    pg.press("r")
+                # ------------------------------------------------------------------------------------------------------------------------
                 conf = 0.9  # 画像認識感度
                 LoopVal = 10  # 検索回数
-                while ImgCheckForList(FolURL2, List, conf, LoopVal) is True:
-                    time.sleep(1)
+                FileName = "Tantousya.png"
+                logger.debug("Tantousya.pngを元に処理分岐")
+                if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+                    ImgClick(FolURL2, FileName, conf, LoopVal)
+                    pg.press("Home")
+                    pg.press("return")
                 time.sleep(1)
-                ImgClick(FolURL2, "FindIcon.png", 0.9, 1)
+                # ----------------------------------------------------------------------------------------------------------------------
+                logger.debug("KCodeBox.pngにコード入力")
+                ImgClick(FolURL2, "KCodeBox.png", 0.9, 5)  # 関与先コードボックス
+                pg.write(C_SCode, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+                pg.press(["return"])
+                # クラス要素クリック----------------------------------------------------------------------------------------------------------
                 time.sleep(1)
-                while (
-                    pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9)
-                    is None
-                ):
-                    time.sleep(1)
+                logger.debug("NendoBox.pngに年度入力")
+                ImgClick(FolURL2, "NendoBox.png", conf, LoopVal)  # 電子申告・申請タブを押す
+                pg.write(C_Nendo, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+                pg.press(["return"])
+                pg.write(C_Nendo, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+                pg.press(["return"])
+                # ----------------------------------------------------------------------------------------------------------------------
+                conf = 0.9  # 画像認識感度
+                LoopVal = 10  # 検索回数
+                FileName = "ZeimokuRadio.png"
+                logger.debug("税目処理分け")
+                if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+                    pg.press(["tab"])
+                else:
+                    pg.press(["right"])
+                    pg.press(["right"])
+                    pg.press(["tab"])
                 time.sleep(1)
-                pg.press("r")
-            # ------------------------------------------------------------------------------------------------------------------------
-            conf = 0.9  # 画像認識感度
-            LoopVal = 10  # 検索回数
-            FileName = "Tantousya.png"
-            logger.debug("Tantousya.pngを元に処理分岐")
-            if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
-                ImgClick(FolURL2, FileName, conf, LoopVal)
-                pg.press("Home")
-                pg.press("return")
-            time.sleep(1)
-            # ----------------------------------------------------------------------------------------------------------------------
-            logger.debug("KCodeBox.pngにコード入力")
-            ImgClick(FolURL2, "KCodeBox.png", 0.9, 5)  # 関与先コードボックス
-            pg.write(C_SCode, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
-            pg.press(["return"])
-            # クラス要素クリック----------------------------------------------------------------------------------------------------------
-            time.sleep(1)
-            logger.debug("NendoBox.pngに年度入力")
-            ImgClick(FolURL2, "NendoBox.png", conf, LoopVal)  # 電子申告・申請タブを押す
-            pg.write(C_Nendo, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
-            pg.press(["return"])
-            pg.write(C_Nendo, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
-            pg.press(["return"])
-            # ----------------------------------------------------------------------------------------------------------------------
-            conf = 0.9  # 画像認識感度
-            LoopVal = 10  # 検索回数
-            FileName = "ZeimokuRadio.png"
-            logger.debug("税目処理分け")
-            if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
-                pg.press(["tab"])
-            else:
-                pg.press(["right"])
-                pg.press(["right"])
-                pg.press(["tab"])
-            time.sleep(1)
-            # ----------------------------------------------------------------------------------------------------------------------
-            SortURL = FolURL2 + "/ミロク税目分岐"
-            ZeimokuRow = SortCSVItem(SortURL, "Master", C_Zeimoku)
-            for x in range(ZeimokuRow):
-                pg.press(["down"])
-            pg.press(["space"])
-            pg.press(["down"])
-            time.sleep(1)
-            try:
+                # ----------------------------------------------------------------------------------------------------------------------
                 SortURL = FolURL2 + "/ミロク税目分岐"
-                ZeimokuRow = SortCSVItem(SortURL, C_Zeimoku, C_Syurui)
+                ZeimokuRow = SortCSVItem(SortURL, "Master", C_Zeimoku)
                 for x in range(ZeimokuRow):
                     pg.press(["down"])
                 pg.press(["space"])
+                pg.press(["down"])
                 time.sleep(1)
-            except:
-                logger.debug("補助税目無し")
-            logger.debug("検索開始")
-            # クラス要素クリック----------------------------------------------------------------------------------------------------------
-            ImgClick(FolURL2, "FindOK.png", conf, LoopVal)  # 電子申告・申請タブを押す
-            # ----------------------------------------------------------------------------------------------------------------------
-            time.sleep(3)
-            logger.debug("チェックボックスクリックを開始")
-            # 画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-            List = [
-                "FindCheckBox.png",
-                "FindCheckBox2.png",
-                "FindCheckBox3.png",
-                "FindCheckBox4.png",
-            ]
-            conf = 0.9  # 画像認識感度
-            LoopVal = 10  # 検索回数
-            ListCheck = ImgCheckForList(FolURL2, List, conf, LoopVal)  # 画像検索関数
-            conf = 0.9  # 画像認識感度
-            LoopVal = 10  # 検索回数
-            if ListCheck[0] is True:
-                for x in range(100):
-                    ListCheck = ImgCheckForList(FolURL2, List, conf, LoopVal)  # 画像検索関数
-                    if ListCheck[0] is True:
-                        LoopVal = 10  # 検索回数
-                        ImgClick(FolURL2, ListCheck[1], conf, LoopVal)
-                        time.sleep(1)
-                    else:
-                        time.sleep(1)
-                    if (
-                        ImgCheck(FolURL2, "FindCheckBoxNext.png", conf, LoopVal)[0]
-                        is False
-                    ):
-                        break
-                time.sleep(1)
-                pg.press("left")
-                time.sleep(1)
-                ImgClick(FolURL2, "SousinBtn.png", 0.9, 3)
-                time.sleep(3)
-                if ImgCheck(FolURL2, "Tetuduki.png", conf, LoopVal)[0] is False:
+                try:
+                    SortURL = FolURL2 + "/ミロク税目分岐"
+                    ZeimokuRow = SortCSVItem(SortURL, C_Zeimoku, C_Syurui)
+                    for x in range(ZeimokuRow):
+                        pg.press(["down"])
+                    pg.press(["space"])
                     time.sleep(1)
-                    if (
-                        ImgCheck(FolURL2, "TihouTourokuKakunin.png", conf, LoopVal)[0]
-                        is False
-                    ):
-                        # クラス要素クリック----------------------------------------------------------------------------------------------------------
+                except:
+                    logger.debug("補助税目無し")
+                logger.debug("検索開始")
+                # クラス要素クリック----------------------------------------------------------------------------------------------------------
+                ImgClick(FolURL2, "FindOK.png", conf, LoopVal)  # 電子申告・申請タブを押す
+                # ----------------------------------------------------------------------------------------------------------------------
+                time.sleep(3)
+                logger.debug("チェックボックスクリックを開始")
+                # 画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                List = [
+                    "FindCheckBox.png",
+                    "FindCheckBox2.png",
+                    "FindCheckBox3.png",
+                    "FindCheckBox4.png",
+                ]
+                conf = 0.9  # 画像認識感度
+                LoopVal = 10  # 検索回数
+                ListCheck = ImgCheckForList(FolURL2, List, conf, LoopVal)  # 画像検索関数
+                conf = 0.9  # 画像認識感度
+                LoopVal = 10  # 検索回数
+                if ListCheck[0] is True:
+                    for x in range(100):
+                        ListCheck = ImgCheckForList(
+                            FolURL2, List, conf, LoopVal
+                        )  # 画像検索関数
+                        if ListCheck[0] is True:
+                            LoopVal = 10  # 検索回数
+                            ImgClick(FolURL2, ListCheck[1], conf, LoopVal)
+                            time.sleep(1)
+                        else:
+                            time.sleep(1)
+                        if (
+                            ImgCheck(FolURL2, "FindCheckBoxNext.png", conf, LoopVal)[0]
+                            is False
+                        ):
+                            break
+                    time.sleep(1)
+                    pg.press("left")
+                    time.sleep(1)
+                    ImgClick(FolURL2, "SousinBtn.png", 0.9, 3)
+                    time.sleep(3)
+                    if ImgCheck(FolURL2, "Tetuduki.png", conf, LoopVal)[0] is False:
                         time.sleep(1)
-                        Hub = "AutomationID"
-                        ObjName = "DropDown"
-                        DriverClick(Hub, ObjName, driver)
-                        pg.press(["up", "up", "up"])
-                        pg.press("return")
-                        # クラス要素クリック----------------------------------------------------------------------------------------------------------
-                        ImgClick(FolURL2, "SetuzokuOK.png", 0.9, 5)
-                        # ----------------------------------------------------------------------------------------------------------------------
-                        time.sleep(3)
-                        MainFirstAction(
-                            FolURL2, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui
-                        )
-                        time.sleep(1)
+                        if (
+                            ImgCheck(FolURL2, "TihouTourokuKakunin.png", conf, LoopVal)[
+                                0
+                            ]
+                            is False
+                        ):
+                            # クラス要素クリック----------------------------------------------------------------------------------------------------------
+                            time.sleep(1)
+                            Hub = "AutomationID"
+                            ObjName = "DropDown"
+                            DriverClick(Hub, ObjName, driver)
+                            pg.press(["up", "up", "up"])
+                            pg.press("return")
+                            # クラス要素クリック----------------------------------------------------------------------------------------------------------
+                            ImgClick(FolURL2, "SetuzokuOK.png", 0.9, 5)
+                            # ----------------------------------------------------------------------------------------------------------------------
+                            time.sleep(3)
+                            MainFirstAction(
+                                FolURL2, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui
+                            )
+                            time.sleep(1)
+                        else:
+                            time.sleep(1)
+                            conf = 0.9  # 画像認識感度
+                            LoopVal = 10  # 検索回数
+                            if (
+                                ImgCheck(FolURL2, "Tetuduki.png", conf, LoopVal)[0]
+                                is True
+                            ):
+                                pg.press("return")
+                                time.sleep(1)
+                                pg.press("o")
+                                print("手続き未登録")
+                                time.sleep(1)
+                            else:
+                                pg.press("o")
+                                print("手続き未登録")
+                                time.sleep(1)
+                            # クラス要素クリック----------------------------------------------------------------------------------------------------------
+                            time.sleep(1)
+                            Hub = "AutomationID"
+                            ObjName = "DropDown"
+                            DriverClick(Hub, ObjName, driver)
+                            pg.press(["up", "up", "up"])
+                            pg.press("return")
+                            # クラス要素クリック----------------------------------------------------------------------------------------------------------
+                            ImgClick(FolURL2, "SetuzokuOK.png", 0.9, 5)
+                            # ----------------------------------------------------------------------------------------------------------------------
+                            logger.debug("メイン処理開始")
+                            MainFirstAction(
+                                FolURL2, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui
+                            )
                     else:
                         time.sleep(1)
                         conf = 0.9  # 画像認識感度
@@ -970,63 +1017,39 @@ def MainFlow(FolURL2):
                             FolURL2, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui
                         )
                 else:
+                    logger.debug("検索結果なしの処理開始")
+                    print("検索結果なし")
                     time.sleep(1)
+                    ImgClick(
+                        FolURL2, "DensiSyomeiXXX.png", conf, LoopVal
+                    )  # 電子申告・申請タブを押す
+                    # 画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                    List = ["DensiSyomeiOpenXXX.png", "DensiSyomeiOpenXXX2.png"]
                     conf = 0.9  # 画像認識感度
                     LoopVal = 10  # 検索回数
-                    if ImgCheck(FolURL2, "Tetuduki.png", conf, LoopVal)[0] is True:
-                        pg.press("return")
-                        time.sleep(1)
-                        pg.press("o")
-                        print("手続き未登録")
-                        time.sleep(1)
-                    else:
-                        pg.press("o")
-                        print("手続き未登録")
-                        time.sleep(1)
-                    # クラス要素クリック----------------------------------------------------------------------------------------------------------
+                    ListCheck = ImgCheckForList(FolURL2, List, conf, LoopVal)  # 画像検索関数
                     time.sleep(1)
-                    Hub = "AutomationID"
-                    ObjName = "DropDown"
-                    DriverClick(Hub, ObjName, driver)
-                    pg.press(["up", "up", "up"])
-                    pg.press("return")
-                    # クラス要素クリック----------------------------------------------------------------------------------------------------------
-                    ImgClick(FolURL2, "SetuzokuOK.png", 0.9, 5)
-                    # ----------------------------------------------------------------------------------------------------------------------
-                    logger.debug("メイン処理開始")
-                    MainFirstAction(
-                        FolURL2, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui
-                    )
-            else:
-                logger.debug("検索結果なしの処理開始")
-                print("検索結果なし")
-                time.sleep(1)
-                ImgClick(FolURL2, "DensiSyomeiXXX.png", conf, LoopVal)  # 電子申告・申請タブを押す
-                # 画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-                List = ["DensiSyomeiOpenXXX.png", "DensiSyomeiOpenXXX2.png"]
-                conf = 0.9  # 画像認識感度
-                LoopVal = 10  # 検索回数
-                ListCheck = ImgCheckForList(FolURL2, List, conf, LoopVal)  # 画像検索関数
-                time.sleep(1)
-                ImgClick(FolURL2, "DensiSyomei.png", 0.9, 1)  # 電子申告・申請タブを押す
-                # 画像が出現するまで待機してクリック------------------------------------------------------------------------------------
-                List = ["DensiSyomeiOpen.png", "DensiSyomeiOpen2.png"]
-                conf = 0.9  # 画像認識感度
-                LoopVal = 10  # 検索回数
-                while ImgCheckForList(FolURL2, List, conf, LoopVal) is True:
+                    ImgClick(FolURL2, "DensiSyomei.png", 0.9, 1)  # 電子申告・申請タブを押す
+                    # 画像が出現するまで待機してクリック------------------------------------------------------------------------------------
+                    List = ["DensiSyomeiOpen.png", "DensiSyomeiOpen2.png"]
+                    conf = 0.9  # 画像認識感度
+                    LoopVal = 10  # 検索回数
+                    while ImgCheckForList(FolURL2, List, conf, LoopVal) is True:
+                        time.sleep(1)
                     time.sleep(1)
-                time.sleep(1)
-                ImgClick(FolURL2, "FindIcon.png", 0.9, 1)
-                time.sleep(1)
-                while (
-                    pg.locateOnScreen(FolURL2 + "/" + "JyoukenBar.png", confidence=0.9)
-                    is None
-                ):
+                    ImgClick(FolURL2, "FindIcon.png", 0.9, 1)
                     time.sleep(1)
-                time.sleep(1)
-                pg.press("r")
-        # else:
-        #     print("決算なのでキャンセル")
+                    while (
+                        pg.locateOnScreen(
+                            FolURL2 + "/" + "JyoukenBar.png", confidence=0.9
+                        )
+                        is None
+                    ):
+                        time.sleep(1)
+                    time.sleep(1)
+                    pg.press("r")
+            # else:
+            #     print("決算なのでキャンセル")
     except Exception as e:
         logger.debug(e)
 
@@ -1034,8 +1057,10 @@ def MainFlow(FolURL2):
 # RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"  # 元
 FolURL2 = os.getcwd().replace("\\", "/")  # 先
+NG_url = FolURL2 + r"\RPAPhoto/Den_NGList.CSV"
+NG_List = pd.read_csv(NG_url, encoding="shiftjis")
 # --------------------------------------------------------------------------------
 try:
-    MainFlow(FolURL2)
+    MainFlow(FolURL2, NG_List)
 except:
     traceback.print_exc()

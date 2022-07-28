@@ -790,7 +790,16 @@ def NoBlue(FolURL2):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def MasterLoop(
-    List, FileName, CSVName, CSVChildName, C_Master, C_dfRow, C_dfCol, driver, FolURL2
+    List,
+    FileName,
+    CSVName,
+    CSVChildName,
+    C_Master,
+    C_dfRow,
+    C_dfCol,
+    driver,
+    FolURL2,
+    NG_List,
 ):
     NoAction = False
     # ----------------------------------------------------------------------------------------------------------------------
@@ -811,9 +820,16 @@ def MasterLoop(
             C_Sousin = C_dfDataRow["送信"]
             C_All = str(C_SCode) + str(C_Name)
         # 元ネタ列名"→行","事務所コード","関与先コード","納税者(関与先)","決算月","税目","申告区分","電子申告データ作成","事業年度／課税期間","電子署名(添付書面)","電子署名(納税者)","電子署名(税理士)","送信","申告受付日時","即時通知","受信通知","送付書","申告期限","完了目標(3日前まで)","期限内","TISC","報告書","実践報告","監査担当者"
-
-        if not C_SCode == 82:
-
+        NG_r = 0
+        NG_Flag = False
+        for NG_r in range(len(NG_List)):
+            NG_ListRow = NG_List.iloc[NG_r]
+            NG_SCode = NG_ListRow["関与先コード"]
+            if NG_SCode == C_SCode:
+                NG_Flag = True
+                break
+            NG_r += 1
+        if NG_Flag is False:
             # 申請処理----------------------------------------------------------------------------------------------------------
             conf = 0.9  # 画像認識感度
             LoopVal = 10
@@ -937,7 +953,7 @@ def MasterLoop(
 
 
 # メイン処理----------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2):
+def MainFlow(FolURL2, NG_List):
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl, FolURL2, "RPAPhoto")  # OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"  # 画像格納フォルダ
@@ -994,17 +1010,18 @@ def MainFlow(FolURL2):
     #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
     #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     #     print(C_Master)
-    #     MasterLoop(
-    #         List,
-    #         FileName,
-    #         CSVName,
-    #         CSVChildName,
-    #         C_Master,
-    #         C_dfRow,
-    #         C_dfCol,
-    #         driver,
-    #         FolURL2,
-    #     )
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     NG_List
+    # )
     # ----------------------------------------------------------------------------------------------------------------------
     # #所得税消費税処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
@@ -1048,17 +1065,18 @@ def MainFlow(FolURL2):
     #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
     #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     #     print(C_Master)
-    #     MasterLoop(
-    #         List,
-    #         FileName,
-    #         CSVName,
-    #         CSVChildName,
-    #         C_Master,
-    #         C_dfRow,
-    #         C_dfCol,
-    #         driver,
-    #         FolURL2,
-    #     )
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     NG_List
+    # )
     # -----------------------------------------------------------------------------------------------------------------------
     # 償却資産処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
@@ -1080,17 +1098,18 @@ def MainFlow(FolURL2):
     #     C_Master = C_Master.drop_duplicates(subset="関与先コード")  # 関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
     #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    #     MasterLoop(
-    #         List,
-    #         FileName,
-    #         CSVName,
-    #         CSVChildName,
-    #         C_Master,
-    #         C_dfRow,
-    #         C_dfCol,
-    #         driver,
-    #         FolURL2,
-    #     )
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     NG_List
+    # )
 
     # -----------------------------------------------------------------------------------------------------------------------
     # #贈与税処理------------------------------------------------------------------------------------------------------
@@ -1111,7 +1130,18 @@ def MainFlow(FolURL2):
     #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
     #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     NG_List
+    # )
 
     # #-----------------------------------------------------------------------------------------------------------------------
     # #相続税処理------------------------------------------------------------------------------------------------------
@@ -1132,7 +1162,18 @@ def MainFlow(FolURL2):
     #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
     #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     NG_List
+    # )
 
     # #-----------------------------------------------------------------------------------------------------------------------
     # #配当調書処理------------------------------------------------------------------------------------------------------
@@ -1153,7 +1194,18 @@ def MainFlow(FolURL2):
     #     C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]#配列行数取得
     #     C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #     MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2)
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     NG_List
+    # )
 
     # #-----------------------------------------------------------------------------------------------------------------------
     # 申請処理---------------------------------------------------------------------------------------------------------------
@@ -1187,6 +1239,7 @@ def MainFlow(FolURL2):
             C_dfCol,
             driver,
             FolURL2,
+            NG_List,
         )
     # -----------------------------------------------------------------------------------------------------------------------
 
@@ -1194,8 +1247,10 @@ def MainFlow(FolURL2):
 # RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/TKC_DensiSinkoku"  # 元
 FolURL2 = os.getcwd().replace("\\", "/")  # 先
+NG_url = FolURL2 + r"\RPAPhoto/Den_NGList.CSV"
+NG_List = pd.read_csv(NG_url, encoding="shiftjis")
 # --------------------------------------------------------------------------------
 try:
-    MainFlow(FolURL2)
+    MainFlow(FolURL2, NG_List)
 except:
     traceback.print_exc()
