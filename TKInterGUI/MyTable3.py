@@ -206,3 +206,42 @@ class MyTable(Table):
         self.gotonextCell()
         self.model.df.to_csv(self.importFilePath, index=False)
         return
+
+    # --------------------------------------------------------------------
+    def handle_left_click(self, event):
+        """Respond to a single press"""
+
+        self.clearSelected()
+        self.allrows = False
+        # which row and column is the click inside?
+        rowclicked = self.get_row_clicked(event)
+        colclicked = self.get_col_clicked(event)
+        if colclicked == None:
+            return
+        self.focus_set()
+
+        if hasattr(self, "cellentry"):
+            self.cellentry.destroy()
+        # ensure popup menus are removed if present
+        if hasattr(self, "rightmenu"):
+            self.rightmenu.destroy()
+        if hasattr(self.colheader, "rightmenu"):
+            self.colheader.rightmenu.destroy()
+
+        self.startrow = rowclicked
+        self.endrow = rowclicked
+        self.startcol = colclicked
+        self.endcol = colclicked
+        # reset multiple selection list
+        self.multiplerowlist = []
+        self.multiplerowlist.append(rowclicked)
+        if 0 <= rowclicked < self.rows and 0 <= colclicked < self.cols:
+            self.setSelectedRow(rowclicked)
+            self.setSelectedCol(colclicked)
+            self.drawSelectedRect(self.currentrow, self.currentcol)
+            self.drawSelectedRow()
+            self.rowheader.drawSelectedRows(rowclicked)
+            self.colheader.delete("rect")
+        if hasattr(self, "cellentry"):
+            self.cellentry.destroy()
+        return

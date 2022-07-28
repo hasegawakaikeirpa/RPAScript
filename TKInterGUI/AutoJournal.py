@@ -1,9 +1,10 @@
 import numpy as np
 from datetime import datetime as dt
 import WarekiHenkan as wh
-from datetime import timedelta
 
-# from tkinter import messagebox
+# from datetime import timedelta
+
+from tkinter import messagebox
 
 import os
 
@@ -26,7 +27,7 @@ def nearestList(data, value):
             lis = list(lis)  # 金額をListに
             idx = np.argmin(np.abs(np.array(lis) - value))
             print(data[idx])
-            indicesArr.append(data[idx][0])
+            indicesArr.append(data[idx])
             data.pop(idx)
         return True, indicesArr
     except:
@@ -240,7 +241,6 @@ def IntCheck(MJS_data, Int):
         M_r = MJS_data.shape[0]  # 行数
         InTotalList = []  # 完成リスト
         NoList = []  # インデックス格納用リスト
-
         for r in range(M_r):
             if r != 0:
                 # M_s = MJS_data[r].shape[0] - 1
@@ -268,6 +268,7 @@ def npCreate(MJS_data, Txt, ColTxt):
             TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
             Pac = TC[1][:, 1]  # 一致率列のみ取り出す
             Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
+            Pac = Pac.astype(int)
             MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
             MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
             index = list(TCL)  # 丸めたインデックスnparrayをリストに
@@ -287,6 +288,7 @@ def npCreate(MJS_data, Txt, ColTxt):
                 TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
                 Pac = TC[1][:, 1]  # 一致率列のみ取り出す
                 Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
+                Pac = Pac.astype(int)
                 MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
                 MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
                 index = list(TCL)  # 丸めたインデックスnparrayをリストに
@@ -347,11 +349,20 @@ def DayCheck(MJS_data, Txt, ColTxt):
 # ----------------------------------------------------------------------------
 def MoneyCheck(MJS_data, Int, ColTxt):
     try:
+        MJS_Column = MJS_data[0, :]
         int(ColTxt)
         TC = IntCheck(MJS_data[:, int(ColTxt)], Int)  # 検索文字列から一致率リストを作成
         if TC[0] is True:
-            index = TC[1]
+            Pac = np.array(TC[1])  # 一致率列のみ取り出す
+            index = list(Pac[:, 0])
+            Pac = Pac[:, 1]
+            Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
+            MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
+            MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
             MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
+            MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
+            MJS_Column[0][MJS_Column.shape[1] - 1] = "仕訳金額差額"
+            MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
             print(MJS_data)
             return True, MJS_data
         else:
@@ -361,8 +372,16 @@ def MoneyCheck(MJS_data, Int, ColTxt):
         if CC[0] is True:
             TC = IntCheck(MJS_data[:, CC[1][1]], Int)  # 検索文字列から一致率リストを作成
             if TC[0] is True:
-                index = TC[1]
+                Pac = np.array(TC[1])  # 一致率列のみ取り出す
+                index = list(Pac[:, 0])
+                Pac = Pac[:, 1]
+                Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
+                MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
+                MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
                 MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
+                MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
+                MJS_Column[0][MJS_Column.shape[1] - 1] = "仕訳金額差額"
+                MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
                 print(MJS_data)
                 return True, MJS_data
             else:
@@ -370,9 +389,21 @@ def MoneyCheck(MJS_data, Int, ColTxt):
         return False, MJS_data
 
 
+# ----------------------------------------------------------------------------
 def npTidyUp(MJS_data):
-    print(MJS_data)
-    print(MJS_data)
+    try:
+        MJS_Column = MJS_data[0, :]
+        Just = ColumCheck(MJS_data, "一致率")
+        npJust = MJS_data[1:, Just[1][1]]
+        npMJSList = MJS_data[1:, :]
+        npJust = npJust[:, 0]
+        npJust = npJust.astype(int)  # インデックスを丸めて整数に
+        index = np.argsort(npJust)[::-1]  # np配列を一致率降順ソート
+        InTotalList = npMJSList[index]  # 変数格納
+        MJS_data = np.vstack((MJS_Column, InTotalList))  # 列名リストを縦連結
+        return True, MJS_data
+    except:
+        return False, MJS_data
 
 
 # ----------------------------------------------------------------------------
@@ -384,6 +415,27 @@ def mainListUp(ColTxt, SerchTxt, imgurl, Roolrul, Banktoml, tomltitle):
 
 
 # ----------------------------------------------------------------------------
+def ColumCheckListUp(MJS_data, cstr):
+    """
+    引数列名から列番号を調べる
+    MJS_data:Numpy配列
+    cstr:検索列名
+    return bool,index
+    """
+    try:
+        indexList = []
+        MJS_data = list(MJS_data)
+        M_r = 0
+        for MJS_Item in MJS_data:
+            if MJS_Item == cstr:
+                indexList.append(M_r)
+            M_r += 1
+        return True, indexList
+    except:
+        return False, ""
+
+
+# ----------------------------------------------------------------------------
 def main(
     ColTxt,
     SerchTxt,
@@ -391,48 +443,265 @@ def main(
     D_coltxt,
     M_var,
     M_coltxt,
+    IO,
+    Kari,
+    Kashi,
     imgurl,
     Roolrul,
     Banktoml,
     tomltitle,
 ):
-    MJS_data = np.genfromtxt(Roolrul, dtype=None, delimiter=",")  # 元帳CSVをnp配列に変換
-    # CC = ColumCheck(MJS_data, ColTxt)  # 元帳CSVから列名番号を検出
-    # if CC[0] is True:
-    #     TC = TextCheck(MJS_data[:, CC[1][1]], SerchTxt)  # 検索文字列から一致率リストを作成
-    #     if TC[0] is True:
-    #         TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
+    try:
+        NGList = []
+        MJS_data = np.genfromtxt(Roolrul, dtype=None, delimiter=",")  # 元帳CSVをnp配列に変換
+        NPC = npCreate(MJS_data, SerchTxt, ColTxt)
+        if NPC[0] is True:
+            # 日付文字列データの変換------------------------------------------
+            if (
+                "." in D_var
+                or "|" in D_var
+                or "\\" in D_var
+                or ":" in D_var
+                or "^" in D_var
+                or "~" in D_var
+            ):
+                D_var = (
+                    D_var.replace(".", "")
+                    .replace("|", "")
+                    .replace("\\", "")
+                    .replace(":", "")
+                    .replace("^", "")
+                    .replace("~", "")
+                )
+            # 日付文字列データの変換------------------------------------------
+            DC = DayCheck(NPC[1], D_var, D_coltxt)
+            if DC[0] is True:
+                MC = MoneyCheck(DC[1], M_var, M_coltxt)
+                if MC[0] is True:
+                    NNPC = npTidyUp(MC[1])
+                    if NNPC[0] is True:
+                        npw = NNPC[1]
+                        npw_Column = npw[0, :]
+                        NGList.append(list(npw_Column))
+                        if IO == "入金":
+                            colT = ColumCheckListUp(npw_Column, Kari)
+                            if colT[0] is True:
+                                c_npw = list(npw)
+                                for c_r in reversed(range((len(c_npw)))):
+                                    npwItem = c_npw[c_r][colT[1]]
+                                    npwItem = npwItem[0]
+                                    if (
+                                        c_r != 0
+                                        and "現金" not in npwItem
+                                        and "預金" not in npwItem
+                                    ):
+                                        NGList.append(c_npw[c_r])
+                                        c_npw.pop(c_r)
+                                Lastap = np.array(c_npw)
+                                if len(Lastap) == 1:
+                                    MB = messagebox.askquestion(
+                                        "確認",
+                                        "自動仕訳抽出結果がありません。入出金条件不一致を表示しますか？",
+                                        icon="warning",
+                                    )
+                                    if MB == "yes":  # If関数
+                                        Lastap = np.array(NGList)
+                                        return Lastap
+                                    else:
+                                        return Lastap
+                                else:
+                                    return Lastap
+                        elif IO == "出金":
+                            colT = ColumCheckListUp(npw_Column, Kashi)
+                            if colT[0] is True:
+                                c_npw = list(npw)
+                                for c_r in reversed(range((len(c_npw)))):
+                                    npwItem = c_npw[c_r][colT[1]]
+                                    npwItem = npwItem[0]
+                                    if (
+                                        c_r != 0
+                                        and "現金" not in npwItem
+                                        and "預金" not in npwItem
+                                    ):
+                                        NGList.append(c_npw[c_r])
+                                        c_npw.pop(c_r)
+                                Lastap = np.array(c_npw)
+                                if len(Lastap) == 1:
+                                    MB = messagebox.askquestion(
+                                        "確認",
+                                        "自動仕訳抽出結果がありません。入出金条件不一致を表示しますか？",
+                                        icon="warning",
+                                    )
+                                    if MB == "yes":  # If関数
+                                        Lastap = np.array(NGList)
+                                        return Lastap
+                                    else:
+                                        return Lastap
+                                else:
+                                    return Lastap
+    except:
+        Lastap = ["エラー:抽出失敗"]
+        Lastap = np.array(Lastap)
+        return Lastap
 
-    #         index = list(TCL)
-    #         print(MJS_data[index, :])
-    NPC = npCreate(MJS_data, SerchTxt, ColTxt)
-    if NPC[0] is True:
-        DC = DayCheck(NPC[1], D_var, D_coltxt)
-        if DC[0] is True:
-            MC = MoneyCheck(DC[1], M_var, M_coltxt)
-            if MC[0] is True:
-                NNPC = npTidyUp(MC[1])
-                if NNPC[0] is True:
-                    return NNPC[1]
+
+# ----------------------------------------------------------------------------
+def AllChange(
+    ColTxt,
+    DayColName,
+    D_coltxt,
+    M_coltxt,
+    Kari,
+    Kashi,
+    csvurl,
+    FileNameenc,
+    imgurl,
+    JounalFileNameenc,
+    Roolrul,
+    Roolurlenc,
+    Banktoml,
+    tomltitle,
+    I,
+    O,
+):
+    try:
+        NGList = []
+        OCR_data = np.genfromtxt(
+            csvurl, dtype=None, delimiter=",", encoding=FileNameenc
+        )  # OCRCSVをnp配列に変換
+        MJS_data = np.genfromtxt(
+            Roolrul, dtype=None, delimiter=",", encoding=Roolurlenc
+        )  # 元帳CSVをnp配列に変換
+        l_OCR = OCR_data.shape[0]
+        l_MJS = MJS_data.shape[0]
+        for l_r in range(l_MJS):
+            ColNames = MJS_data[0, :]
+            OCRColNames = OCR_data[0, :]
+            l_c = 0
+            for ColItem in ColNames:
+                if ColTxt == ColItem:
+                    SerchTxt = MJS_data[l_r, l_c]
+                    stc = l_c
+                l_c += 1
+            l_c = 0
+            for OCRColItem in OCRColNames:
+                if I == OCRColItem:
+                    if OCR_data[l_r, l_c] != "":
+                        M_var = OCR_data[l_r, l_c]
+                        kr_c = l_c
+                        IO = "入金"
+                elif O == OCRColItem:
+                    if OCR_data[l_r, l_c] != "":
+                        M_var = OCR_data[l_r, l_c]
+                        kr_c = l_c
+                        IO = "出金"
+                elif DayColName == OCRColItem:
+                    if OCR_data[l_r, l_c] != "":
+                        D_var = OCR_data[l_r, l_c]
+                        dvc = l_c
+                l_c += 1
+            if l_r != 0:
+                NPC = npCreate(MJS_data, SerchTxt, ColTxt)
+                if NPC[0] is True:
+                    # 日付文字列データの変換------------------------------------------
+                    if (
+                        "." in D_var
+                        or "|" in D_var
+                        or "\\" in D_var
+                        or ":" in D_var
+                        or "^" in D_var
+                        or "~" in D_var
+                    ):
+                        D_var = (
+                            D_var.replace(".", "")
+                            .replace("|", "")
+                            .replace("\\", "")
+                            .replace(":", "")
+                            .replace("^", "")
+                            .replace("~", "")
+                        )
+                    # 日付文字列データの変換------------------------------------------
+                    DC = DayCheck(NPC[1], D_var, D_coltxt)
+                    if DC[0] is True:
+                        MC = MoneyCheck(DC[1], M_var, M_coltxt)
+                        if MC[0] is True:
+                            NNPC = npTidyUp(MC[1])
+                            if NNPC[0] is True:
+                                npw = NNPC[1]
+                                npw_Column = npw[0, :]
+                                NGList.append(list(npw_Column))
+                                if IO == "入金":
+                                    colT = ColumCheckListUp(npw_Column, Kari)
+                                    if colT[0] is True:
+                                        c_npw = list(npw)
+                                        for c_r in reversed(range((len(c_npw)))):
+                                            npwItem = c_npw[c_r][colT[1]]
+                                            npwItem = npwItem[0]
+                                            if (
+                                                c_r != 0
+                                                and "現金" not in npwItem
+                                                and "預金" not in npwItem
+                                            ):
+                                                NGList.append(c_npw[c_r])
+                                                c_npw.pop(c_r)
+                                        Lastap = np.array(c_npw)
+                                        if len(Lastap) == 1:
+                                            Lastap = np.array(NGList)
+                                            return Lastap
+                                        else:
+                                            return Lastap
+                                elif IO == "出金":
+                                    colT = ColumCheckListUp(npw_Column, Kashi)
+                                    if colT[0] is True:
+                                        c_npw = list(npw)
+                                        for c_r in reversed(range((len(c_npw)))):
+                                            npwItem = c_npw[c_r][colT[1]]
+                                            npwItem = npwItem[0]
+                                            if (
+                                                c_r != 0
+                                                and "現金" not in npwItem
+                                                and "預金" not in npwItem
+                                            ):
+                                                NGList.append(c_npw[c_r])
+                                                c_npw.pop(c_r)
+                                        Lastap = np.array(c_npw)
+                                        if len(Lastap) == 1:
+                                            Lastap = np.array(NGList)
+                                            return Lastap
+                                        else:
+                                            return Lastap
+    except:
+        Lastap = ["エラー:抽出失敗"]
+        Lastap = np.array(Lastap)
+        return Lastap
 
 
 # -----------------------------------------------------------------------------------------
 if __name__ == "__main__":
     global imgurl, Roolrul, Banktoml, tomltitle
-    imgurl = r"D:\OCRTESTPDF\PDFTEST\tuka_1page.csv"
+    imgurl = r"D:\OCRTESTPDF\PDFTEST\JA_1page.csv"
     Roolrul = r"D:\PythonScript\RPAScript\TKInterGUI\Mototyou\18_仕訳日記帳.csv"
-    tomltitle = "Tuka"
+    tomltitle = "JA"
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
-    MJS_data = np.genfromtxt(Roolrul, dtype=None, delimiter=",")  # 元帳CSVをnp配列に変換
-    NPC = npCreate(MJS_data, "しんきんカード", "摘要")
-    if NPC[0] is True:
-        DC = DayCheck(NPC[1], "2022/3/31", "伝票日付")
-        if DC[0] is True:
-            MC = MoneyCheck(DC[1], 14414, "金額")
-            if MC[0] is True:
-                print("############################################################")
-                print(MC[1])
+    OCR_data = np.genfromtxt(imgurl, dtype=None, delimiter=",")  # OCRCSVをnp配列に変換
+
+    ColTxt = "摘要"
+    D_coltxt = "伝票日付"
+    IO = "入金"
+    Kari = "借方科目名"
+    Kashi = "貸方科目名"
+    AllChange(
+        ColTxt,
+        D_coltxt,
+        IO,
+        Kari,
+        Kashi,
+        imgurl,
+        Roolrul,
+        Banktoml,
+        tomltitle,
+    )

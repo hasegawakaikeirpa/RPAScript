@@ -12,6 +12,7 @@ import MyTable2 as MT2
 import MyTable3 as MT3
 import AutoJournal as AJ
 import CSVOut as CSVO
+import TKEntry as tke
 
 
 class DataGrid:
@@ -29,45 +30,64 @@ class DataGrid:
         self.MoneyCol = self.Banktoml[tomltitle]["MoneyCol"]
         self.ChangeTextCol = self.Banktoml[tomltitle]["ChangeTextCol"]
         self.ColumnName = self.Banktoml[tomltitle]["ColumnName"]
+        self.HidukeColName = self.Banktoml[tomltitle]["HidukeColName"]
         self.NyuName = self.Banktoml[tomltitle]["NyuName"]
         self.SyutuName = self.Banktoml[tomltitle]["SyutuName"]
         self.ZanName = self.Banktoml[tomltitle]["ZanName"]
         self.Henkan = self.Banktoml[tomltitle]["Henkan"]
         self.ChangeText = self.Banktoml[tomltitle]["ChangeText"]
         # ------------------------------------
-        self.CsvHeader()
+        # self.CsvHeader()
         # メインウィンドウ設定-------------------------------------------------------------------
         self.root = tk.Tk()  # ウインド画面の作成
-        self.root.geometry("1400x700")  # 画面サイズの設定
+        self.root.geometry("1400x750")  # 画面サイズの設定
         self.root.title("OCRTEXT")  # 題名
         # -------------------------------------------------------------------------------------
+        # メインフレーム設定--------------------------------------------------------------------
+        self.Mframe = tk.Frame(self.root, bd=2, relief=tk.RIDGE)
+        self.Mframe.grid(row=1, column=0, sticky=tk.W)
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
-        self.frame3 = tk.Frame(self.root)
-        self.frame3.grid(row=1, column=0, sticky=tk.W)
+        self.frame3 = tk.Frame(self.Mframe, bd=2, relief=tk.RIDGE)
+        self.frame3.grid(row=0, column=0, sticky=tk.N)
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
-        self.frame4 = tk.Frame(self.root)
-        self.frame4.grid(row=1, column=0)
+        self.frame4 = tk.Frame(self.Mframe, bd=2, relief=tk.RIDGE)
+        self.frame4.grid(row=0, column=1, sticky=tk.N)
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
-        self.frame6 = tk.Frame(self.root)
-        self.frame6.grid(row=1, column=0, sticky=tk.E)
+        self.frame6 = tk.Frame(self.Mframe, bd=2, relief=tk.RIDGE)
+        self.frame6.grid(row=0, column=2, sticky=tk.N)
         # MotoCyou------------------------------------------------------------------------------
+        # フレーム設定--------------------------------------------------------------------------
+        self.frame7 = tk.Frame(self.Mframe, bd=2, relief=tk.RIDGE)
+        self.frame7.grid(row=0, column=3, sticky=tk.N)
+        self.frame7EntryList = []  # このフレームのEntryのインスタンス
+        # -------------------------------------------------------------------------------------
         tk.Label(self.frame6, text="元帳日付列名").grid(row=0, column=0)  # 位置指定
-        self.Moto_Day = tk.Entry(self.frame6, width=15)
+        self.Moto_Day = tk.Entry(self.frame6, width=10)
         self.Moto_Day.insert(0, "元帳日付列名")
         self.Moto_Day.grid(row=0, column=1)
         # ---------------------------------------------------------------------------------------
         tk.Label(self.frame6, text="元帳金額列名").grid(row=1, column=0)  # 位置指定
-        self.Moto_Money = tk.Entry(self.frame6, width=15)
+        self.Moto_Money = tk.Entry(self.frame6, width=10)
         self.Moto_Money.insert(0, "元帳金額列名")
         self.Moto_Money.grid(row=1, column=1)
         # ---------------------------------------------------------------------------------------
         tk.Label(self.frame6, text="元帳摘要列名").grid(row=2, column=0)  # 位置指定
-        self.Moto_Tekiyou = tk.Entry(self.frame6, width=15)
+        self.Moto_Tekiyou = tk.Entry(self.frame6, width=10)
         self.Moto_Tekiyou.insert(0, "元帳摘要列名")
         self.Moto_Tekiyou.grid(row=2, column=1)
+        # ---------------------------------------------------------------------------------------
+        tk.Label(self.frame6, text="元帳借方科目列名").grid(row=3, column=0)  # 位置指定
+        self.Moto_Karikata = tk.Entry(self.frame6, width=10)
+        self.Moto_Karikata.insert(0, "借方科目名")
+        self.Moto_Karikata.grid(row=3, column=1)
+        # ---------------------------------------------------------------------------------------
+        tk.Label(self.frame6, text="元帳貸方科目列名").grid(row=4, column=0)  # 位置指定
+        self.Moto_Kashikata = tk.Entry(self.frame6, width=10)
+        self.Moto_Kashikata.insert(0, "貸方科目名")
+        self.Moto_Kashikata.grid(row=4, column=1)
         # ---------------------------------------------------------------------------------------
         # 選択行自動仕訳作成ボタン----------------------------------------------------------------
         self.AJ_Btn = tk.Button(
@@ -75,8 +95,29 @@ class DataGrid:
             text="選択行自動仕訳作成",
             width=20,
             command=lambda: self.AJCalc(csvurl),
+            bg="lightblue",
         )
-        self.AJ_Btn.grid(row=3, column=0, columnspan=2)  # 位置指定
+        self.AJ_Btn.grid(row=5, column=0, columnspan=2)  # 位置指定
+        # -------------------------------------------------------------------------------------
+        # 抽出仕訳転記ボタン----------------------------------------------------------------
+        self.AJ_copy = tk.Button(
+            self.frame6,
+            text="抽出仕訳転記",
+            width=20,
+            command=lambda: self.AJ_copyCalc(csvurl),
+            bg="pink",
+        )
+        self.AJ_copy.grid(row=6, column=0, columnspan=2)  # 位置指定
+        # -------------------------------------------------------------------------------------
+        # 置換設定追加ボタン----------------------------------------------------------------
+        self.AJ_set = tk.Button(
+            self.frame7,
+            text="置換設定追加",
+            width=20,
+            command=lambda: tke.AJ_setCalc(self),
+            bg="yellow",
+        )
+        self.AJ_set.grid(row=0, column=0, columnspan=2)  # 位置指定
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
         self.frame5 = tk.Frame(self.root, width=650)
@@ -133,21 +174,161 @@ class DataGrid:
         pt2.show()
         # -------------------------------------------------------------------------------------
         # ツリービューを配置
-        self.treeviewEntries()
+        tke.treeviewEntries(self, tomltitle)
+        # ボタン追加----------------------------------------------------------------------------
+        self.AllRun = tk.Button(
+            self.frame3,
+            text="全行自動仕訳",
+            bg="lightgreen",
+            width=20,
+            command=lambda: self.AJAllCalc(csvurl),
+        )
+        self.AllRun.grid(row=4, column=0, columnspan=2)  # 位置指定
+        # -------------------------------------------------------------------------------------
         # tomlListを配置
-        self.tomlEntries()
+        tke.tomlEntries(self, tomltitle)
+        # フレーム7を配置
+        tke.Frame7Entries(self)
+
+    #############################################################################################
+    # 以下self関数
+    #############################################################################################
+    def AJ_copyCalc(self, csvurl):
+        try:
+            if self.pt3.startrow is None:
+                tk.messagebox.showinfo("確認", "抽出仕訳表のセルが選択されていません。")
+            else:
+                if self.pt.startrow is None:
+                    tk.messagebox.showinfo("確認", "OCR表のセルが選択されていません。")
+                else:
+                    # 自動仕訳保存配列の行数判定------------------------------------------
+                    d2_r = len(self.pt2.model.df)
+                    if self.pt.startrow + 1 > d2_r:
+                        # 各配列をDataFrameに------------------------------------------------
+                        dfs = self.pt.model.df  # グリッドをDF化
+                        dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
+                        dfs2 = self.pt2.model.df  # グリッドをDF化
+                        dfs3 = self.pt3.model.df  # グリッドをDF化
+                        # ------------------------------------------------------------------
+                        dfs3row = dfs3.iloc[self.pt3.startrow]  # DF行データ
+                        CF_df = tke.AJ_copyCalc_Func(dfsrow, dfs3row)  # 自動仕訳抽出
+                        CF_df = list(np.array(CF_df))  # list化
+                        C_dfColumn = np.array(dfs2.columns)  # DFColumnをnumpy配列へ
+                        dfs2 = np.array(dfs2)  # 自動仕訳保存配列をnumpy配列へ
+                        dfs2 = np.insert(
+                            dfs2, dfs2.shape[0], CF_df, axis=0
+                        )  # 末尾へデータ行追加
+                        Last_List = np.vstack((C_dfColumn, dfs2))  # 列名リストを縦連結
+                        Last_List.astype(str)  # numpy配列型変換
+                        Last_List = list(Last_List)  # numpy配列list型変換
+                        print(Last_List)
+                        # データ内のFalse,nan処理--------------------------------------------
+                        for L_r in range(len(Last_List)):
+                            if L_r == 0:  # ヘッダー行処理
+                                for L_c in range(len(Last_List[L_r])):
+                                    print(Last_List[L_r][L_c])
+                                    if "Unnamed" in Last_List[L_r][L_c]:
+                                        Last_List[L_r][L_c] = ""
+                                    elif "." in Last_List[L_r][L_c]:
+                                        S_txt = Last_List[L_r][L_c].split(".")
+                                        Last_List[L_r][L_c] = S_txt[0]
+                            else:  # ヘッダー行以外処理
+                                for L_c in range(len(Last_List[L_r])):
+                                    print(Last_List[L_r][L_c])
+                                    if bool(Last_List[L_r][L_c]) is False:
+                                        Last_List[L_r][L_c] = ""
+                                    elif (
+                                        Last_List[L_r][L_c] == Last_List[L_r][L_c]
+                                        and Last_List[L_r][L_c] is not False
+                                    ):
+                                        print("")
+                                    else:
+                                        Last_List[L_r][L_c] = ""
+                        # ------------------------------------------------------------------
+                        with open(AJurl, "wt", encoding="cp932", newline="") as fout:
+                            # ライター（書き込み者）を作成
+                            writer = csv.writer(fout)
+                            writer.writerows(Last_List)
+                        # テーブルリロード----------------------------------------------------
+                        # self.pt2.destroy
+                        # pt2 = MT2.MyTable(
+                        #     self.tree2_frame,
+                        #     width=650,
+                        #     height=500,
+                        #     sticky=tk.N + tk.S + tk.W + tk.E,
+                        # )  # テーブルをサブクラス化
+                        # enc = CSVO.getFileEncoding(AJurl)
+                        # self.table2 = pt2.importCSV(AJurl, encoding=enc)
+                        # self.pt2 = pt2
+                        self.pt2.redraw()
+                    else:
+                        # 各配列をDataFrameに------------------------------------------------
+                        dfs = self.pt.model.df  # グリッドをDF化
+                        dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
+                        dfs2 = self.pt2.model.df  # グリッドをDF化
+                        dfs3 = self.pt3.model.df  # グリッドをDF化
+                        # ------------------------------------------------------------------
+                        dfs3row = dfs3.iloc[self.pt3.startrow]  # DF行データ
+                        CF_df = tke.AJ_copyCalc_Func(dfsrow, dfs3row)  # 自動仕訳抽出
+                        CF_df = list(np.array(CF_df))  # list化
+                        C_dfColumn = np.array(dfs2.columns)  # DFColumnをnumpy配列へ
+                        dfs2 = np.array(dfs2)  # 自動仕訳保存配列をnumpy配列へ
+                        dfs2 = np.insert(
+                            dfs2, self.pt.startrow + 1, CF_df, axis=0
+                        )  # 末尾へデータ行追加
+                        Last_List = np.vstack((C_dfColumn, dfs2))  # 列名リストを縦連結
+                        Last_List.astype(str)  # numpy配列型変換
+                        Last_List = list(Last_List)  # numpy配列list型変換
+                        print(Last_List)
+                        # データ内のFalse,nan処理--------------------------------------------
+                        for L_r in range(len(Last_List)):
+                            if L_r == 0:  # ヘッダー行処理
+                                for L_c in range(len(Last_List[L_r])):
+                                    print(Last_List[L_r][L_c])
+                                    if "Unnamed" in Last_List[L_r][L_c]:
+                                        Last_List[L_r][L_c] = ""
+                                    elif "." in Last_List[L_r][L_c]:
+                                        S_txt = Last_List[L_r][L_c].split(".")
+                                        Last_List[L_r][L_c] = S_txt[0]
+                            else:  # ヘッダー行以外処理
+                                for L_c in range(len(Last_List[L_r])):
+                                    print(Last_List[L_r][L_c])
+                                    if bool(Last_List[L_r][L_c]) is False:
+                                        Last_List[L_r][L_c] = ""
+                                    elif (
+                                        Last_List[L_r][L_c] == Last_List[L_r][L_c]
+                                        and Last_List[L_r][L_c] is not False
+                                    ):
+                                        print("")
+                                    else:
+                                        Last_List[L_r][L_c] = ""
+                        # ------------------------------------------------------------------
+                        with open(AJurl, "wt", encoding="cp932", newline="") as fout:
+                            # ライター（書き込み者）を作成
+                            writer = csv.writer(fout)
+                            writer.writerows(Last_List)
+                        # テーブルリロード----------------------------------------------------
+                        # self.pt2.destroy
+                        # pt2 = MT2.MyTable(
+                        #     self.tree2_frame,
+                        #     width=650,
+                        #     height=500,
+                        #     sticky=tk.N + tk.S + tk.W + tk.E,
+                        # )  # テーブルをサブクラス化
+                        # enc = CSVO.getFileEncoding(AJurl)
+                        # self.table2 = pt2.importCSV(AJurl, encoding=enc)
+                        # self.pt2 = pt2
+                        self.pt2.redraw()
+        except:
+            tk.messagebox.showinfo("確認", "エラーです。自動仕訳実行後に抽出仕訳表のセルを選択し、実行してください。")
 
     # -----------------------------------------------------------------------------------------
-    def AJCalc(self, csvurl):
+    def AJAllCalc(self, csvurl):
         global AJSeturl
         self.FileName = csvurl
         self.JounalFileName = AJurl
         self.Roolurl = Roolurl
 
-        print(self.pt.startrow)  # 選択行
-        # self.endrow
-        # self.startcol
-        # self.endcol
         st = 0  # 行ポジション
         for stom in self.entryList:  # Entryウィジェットリスト
             if stom == "自動仕訳基準列名":
@@ -159,56 +340,119 @@ class DataGrid:
             elif stom == "出金列名":
                 Out_var = st
             st += 1
+        FileNameenc = CSVO.getFileEncoding(csvurl)
+        JounalFileNameenc = CSVO.getFileEncoding(AJurl)
+        Roolurlenc = CSVO.getFileEncoding(Roolurl)
         # Entry要素設定-------------------------------------------------------------------
         JS = self.tomlEntries[JS_var].get()  # 自動仕訳基準列名Entry取得
         D = self.tomlEntries[Day_var].get()  # 日付列Entry取得
         I = self.tomlEntries[In_var].get()  # 入金列名Entry取得
         O = self.tomlEntries[Out_var].get()  # 出金列名Entry取得
         # --------------------------------------------------------------------------------
-        print(self.Label_ChangeURL.get())  # toml金融機関Entry取得
-        dfs = self.pt.model.df  # グリッドをDF化
-        dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
-        # グリッド選択データの代入---------------------------------------------------------
-        FindTxt = dfsrow[JS]  # 検索文字
-        D_var = dfsrow[Day_var]  # 日付
-        I_var = dfsrow[In_var]  # 入金
-        O_var = dfsrow[Out_var]  # 出金
-        # --------------------------------------------------------------------------------
-        # ColTxt,SerchTxt,D_var,D_coltxt,M_var,M_coltxt,imgurl,Roolrul,Banktoml,tomltitle,
-        # 整数チェック---------------------------------------------------------------------
-        IC = IntCheck(I_var)
-        OC = IntCheck(O_var)
-        if IC is True and OC is True:
-            tkm = False, "", ""
-        elif IC is True:
-            tkm = True, I_var, In_var
-        elif OC is True:
-            tkm = True, O_var, Out_var
+        AJ_List = AJ.AllChange(
+            self.Moto_Tekiyou.get(),
+            self.HidukeColName,
+            self.Moto_Day.get(),
+            self.Moto_Money_No,
+            self.Moto_Karikata.get(),
+            self.Moto_Kashikata.get(),
+            self.FileName,
+            FileNameenc,
+            self.JounalFileName,
+            JounalFileNameenc,
+            self.Roolurl,
+            Roolurlenc,
+            self.Banktoml,
+            self.Label_ChangeURL.get(),
+            I,
+            O,
+        )  # 仕訳候補を抽出
+        AJDF = pd.DataFrame(AJ_List)
+        AJDF.to_csv(AJSeturl, index=False, header=False)
+        pt3 = MT3.MyTable(
+            self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
+        )  # テーブルをサブクラス化
+        enc = CSVO.getFileEncoding(AJSeturl)
+        self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
+        self.pt3 = pt3
+        pt3.show()
 
-        if tkm[0] is False:
-            tk.messagebox.showinfo("確認", "入金、出金双方に金額が出力されています。行を再確認してください。")
-        # --------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------
+    def AJCalc(self, csvurl):
+        global AJSeturl
+        self.FileName = csvurl
+        self.JounalFileName = AJurl
+        self.Roolurl = Roolurl
+
+        if self.pt.startrow is None:
+            tk.messagebox.showinfo("確認", "OCR表のセルが選択されていません。")
         else:
-            AJ_List = AJ.main(
-                self.Moto_Tekiyou.get(),
-                FindTxt,
-                D_var,
-                self.Moto_Day.get(),
-                tkm[1],
-                self.Moto_Money_No,
-                self.JounalFileName,
-                self.Roolurl,
-                self.Banktoml,
-                self.Label_ChangeURL.get(),
-            )  # 仕訳候補を抽出
-            AJDF = pd.DataFrame(AJ_List)
-            AJDF.to_csv(AJSeturl, index=False, header=False)
-            pt3 = MT3.MyTable(
-                self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
-            )  # テーブルをサブクラス化
-            enc = CSVO.getFileEncoding(AJSeturl)
-            self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
-            pt3.show()
+            print(self.pt.startrow)  # 選択行
+            st = 0  # 行ポジション
+            for stom in self.entryList:  # Entryウィジェットリスト
+                if stom == "自動仕訳基準列名":
+                    JS_var = st
+                elif stom == "日付列":
+                    Day_var = st
+                elif stom == "入金列名":
+                    In_var = st
+                elif stom == "出金列名":
+                    Out_var = st
+                st += 1
+            # Entry要素設定-------------------------------------------------------------------
+            JS = self.tomlEntries[JS_var].get()  # 自動仕訳基準列名Entry取得
+            D = self.tomlEntries[Day_var].get()  # 日付列Entry取得
+            I = self.tomlEntries[In_var].get()  # 入金列名Entry取得
+            O = self.tomlEntries[Out_var].get()  # 出金列名Entry取得
+            # --------------------------------------------------------------------------------
+            print(self.Label_ChangeURL.get())  # toml金融機関Entry取得
+            dfs = self.pt.model.df  # グリッドをDF化
+            dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
+            # グリッド選択データの代入---------------------------------------------------------
+            FindTxt = dfsrow[JS]  # 検索文字
+            D_var = dfsrow[Day_var]  # 日付
+            I_var = dfsrow[I]  # 入金
+            O_var = dfsrow[O]  # 出金
+            # --------------------------------------------------------------------------------
+            # ColTxt,SerchTxt,D_var,D_coltxt,M_var,M_coltxt,imgurl,Roolrul,Banktoml,tomltitle,
+            # 整数チェック---------------------------------------------------------------------
+            IC = IntCheck(I_var)
+            OC = IntCheck(O_var)
+            if IC is True and OC is True:
+                tkm = False, "", "", ""
+            elif IC is True:
+                tkm = True, I_var, In_var, "入金"
+            elif OC is True:
+                tkm = True, O_var, Out_var, "出金"
+
+            if tkm[0] is False:
+                tk.messagebox.showinfo("確認", "入金、出金双方に金額が出力されています。行を再確認してください。")
+            # --------------------------------------------------------------------------------
+            else:
+                AJ_List = AJ.main(
+                    self.Moto_Tekiyou.get(),
+                    FindTxt,
+                    D_var,
+                    self.Moto_Day.get(),
+                    tkm[1],
+                    self.Moto_Money_No,
+                    tkm[3],
+                    self.Moto_Karikata.get(),
+                    self.Moto_Kashikata.get(),
+                    self.JounalFileName,
+                    self.Roolurl,
+                    self.Banktoml,
+                    self.Label_ChangeURL.get(),
+                )  # 仕訳候補を抽出
+                AJDF = pd.DataFrame(AJ_List)
+                AJDF.to_csv(AJSeturl, index=False, header=False)
+                pt3 = MT3.MyTable(
+                    self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
+                )  # テーブルをサブクラス化
+                enc = CSVO.getFileEncoding(AJSeturl)
+                self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
+                self.pt3 = pt3
+                pt3.show()
 
     # -----------------------------------------------------------------------------------------
     def CsvHeader(self):
@@ -272,113 +516,6 @@ class DataGrid:
                 break
 
     # -----------------------------------------------------------------------------------------
-    def tomlEntries(self):
-        self.tomlEntries = []  # Entryのインスタンス
-        self.tomlinsertEntries = []  # ラベルインスタンス
-        self.tomlindex = 0  # 最新のインデックス番号
-        self.tomlindexes = []  # インデックスの並び
-        self.entryList = []  # Entryのインスタンス
-
-        r = 0
-        for ColNameItem in self.tomlList:
-            # ラベル＆Entryフレームへ追加----------------------------------------------
-            self.createtomlEntry(r, ColNameItem)  # Entryを作成配置
-            self.entryList.append(ColNameItem)
-            # ----------------------------------------------------------------------
-            r += 1
-
-    # -----------------------------------------------------------------------------------------
-    # エントリーウィジェットを再配置
-    def updatetomlEntries(self):
-
-        # エントリーウィジェットマネージャを参照して再配置
-        for i in range(len(self.tomlindexes)):
-            self.tomlEntries[i].grid(column=1, row=i)
-            self.tomlEntries[i].bind("<Return>", self.EveRecalc)
-            self.tomlEntries[i].lift()
-            self.tomlinsertEntries[i].grid(column=0, row=i)
-
-    # -----------------------------------------------------------------------------------------
-    # エントリーウィジェットを作成して配置
-    def createtomlEntry(self, next, ColNameItem):
-
-        # 最初のエントリーウィジェットを追加
-        # self.tomlEntries.insert(next, tk.Entry(self.frame4, width=20))
-        lb = tk.Label(self.frame4, text=ColNameItem)
-
-        lb.grid(row=next, column=0)  # 位置指定
-        cn = self.Banktoml["ParList"][ColNameItem]
-        tom = self.Banktoml[tomltitle][cn]
-        tomtx = ""
-        try:
-            print(type(tom).__name__)
-            if type(tom).__name__ == "list":
-                txtxt = tk.Entry(self.frame4, width=15)
-                for tomItem in tom:
-                    tomtx += "," + str(tomItem)
-                tomtx = tomtx.lstrip(",")
-                txtxt.insert(0, tomtx)
-            else:
-                txtxt = tk.Entry(self.frame4, width=15)
-                txtxt.insert(0, tom)
-        except:
-            txtxt = tk.Entry(self.frame4, width=15)
-            txtxt.insert(0, tom)
-        txtxt.grid(row=next, column=1)  # 位置指定
-
-        self.tomlEntries.insert(next, txtxt)
-
-        # ラベルを作成
-        self.tomlinsertEntries.insert(
-            next,
-            tk.Label(
-                self.frame4,
-                text=str(ColNameItem),
-            ),
-        )
-        # インデックスマネージャに登録
-        self.tomlindexes.insert(next, self.tomlindex)
-        # 再配置
-        # self.updatetomlEntries()
-
-    # -----------------------------------------------------------------------------------------
-    def treeviewEntries(self):
-        """
-        ツリービューを配置
-        """
-        # エントリーウィジェットマネージャを初期化
-        self.Entries = []  # Entryのインスタンス
-        self.insertEntries = []  # ラベルインスタンス
-        # インデックスマネージャを初期化
-        self.index = 0  # 最新のインデックス番号
-        self.indexes = []  # インデックスの並び
-        # URLテキストボックス-----------------------------------------------------------
-        tk.Label(self.frame3, text="URL").grid(row=0, column=0)  # 位置指定
-        self.Label_URL = tk.Entry(self.frame3, width=15)
-        self.Label_URL.insert(0, self.FileName)
-        self.Label_URL.grid(row=0, column=1, columnspan=3)
-        # tomlNameテキストボックス-----------------------------------------------------------
-        tk.Label(self.frame3, text="設定ファイル名").grid(row=1, column=0)  # 位置指定
-        self.Label_ChangeURL = tk.Entry(self.frame3, width=15)
-        self.Label_ChangeURL.insert(0, tomltitle)
-        self.Label_ChangeURL.grid(row=1, column=1, columnspan=3)
-        # 開始残高ボタン----------------------------------------------------------------
-        tk.Label(self.frame3, text="開始残高").grid(
-            row=len(self.indexes) + 2, column=0
-        )  # 位置指定
-        self.ZanNametxt = tk.Entry(self.frame3, width=15)
-        self.ZanNametxt.grid(row=len(self.indexes) + 2, column=1)  # 位置指定
-        self.ebtn2 = tk.Button(
-            self.frame3,
-            text="再計算",
-            width=20,
-            command=lambda: self.ZanNamedaka(),
-        )
-        self.ebtn2.grid(row=len(self.indexes) + 3, column=0, columnspan=2)  # 位置指定
-        # ------------------------------------------------------------------------------
-
-    # -----------------------------------------------------------------------------------------
-    # 以下self関数
     def EveRecalc(self, event):
         c = 0
         self.InStartVal()
@@ -440,11 +577,10 @@ class DataGrid:
             ) as f:
                 df.to_csv(f, index=False)
 
-        self.removeEntry()
-        self.treeviewEntries()
+        tke.removeEntry(self)
+        tke.treeviewEntries(self, tomltitle)
 
     # -----------------------------------------------------------------------------------------
-
     def ZanRecalc(self):
         c = 0
         # 列名一致で列番号取得----------------------------------------------------------
@@ -497,8 +633,8 @@ class DataGrid:
             df.to_csv(self.FileName, index=False, encoding="cp932")
         except:
             df.to_csv(self.FileName, index=False, encoding="utf8")
-        self.removeEntry()
-        self.treeviewEntries()
+        tke.removeEntry(self)
+        tke.treeviewEntries(self, tomltitle)
 
     # -----------------------------------------------------------------------------------------
     def Zandaka(self):
@@ -517,12 +653,6 @@ class DataGrid:
                 self.ZanNameRecalc()
             else:
                 tk.messagebox.showinfo("戻る", "アプリケーション画面に戻ります")
-
-    # -----------------------------------------------------------------------------------------
-    # エントリーウィジェットを削除
-    def removeEntry(self):
-        for i in self.Treeview_1.get_children():
-            self.Treeview_1.delete(i)
 
     # -----------------------------------------------------------------------------------------
     def InStartVal(self):
@@ -557,6 +687,9 @@ class DataGrid:
         self.ZanNameRecalc()
 
 
+#############################################################################################
+# 以下関数
+#############################################################################################
 # -----------------------------------------------------------------------------------------
 def IntCheck(c_var):
     try:
