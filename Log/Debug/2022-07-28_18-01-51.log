@@ -1,0 +1,17 @@
+[2022/07/28 18:01:51][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow c:\Users\soumu\Desktop\RPAScript\MJSOpen.py
+[2022/07/28 18:01:51][DEBUG](MJSOpen.py:113) Appiumサーバー起動: debug level log MainFlow c:\Users\soumu\Desktop\RPAScript\MJSOpen.py
+[2022/07/28 18:01:52][DEBUG](MJSOpen.py:119) MJS起動: debug level log MainFlow c:\Users\soumu\Desktop\RPAScript\MJSOpen.py
+[2022/07/28 18:01:54][DEBUG](MJSOpen.py:134) Pass入力開始: debug level log MainFlow c:\Users\soumu\Desktop\RPAScript\MJSOpen.py
+[2022/07/28 18:02:05][DEBUG](MJS_DensiSinkoku.py:772) MJS操作画面へ偏移 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:02:18][DEBUG](MJS_DensiSinkoku.py:774) CSVをDataFrameに MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:02:19][DEBUG](MJS_DensiSinkoku.py:777) FindIcon.pngをクリック MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:02:22][DEBUG](MJS_DensiSinkoku.py:780) JyoukenBar.pngを待機 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:03:21][DEBUG](MJS_DensiSinkoku.py:792) CSVループ開始 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:03:21][DEBUG](MJS_DensiSinkoku.py:800) CSV行データから値格納 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:03:21][DEBUG](MJS_DensiSinkoku.py:813) SinkokuTuuti.pngを元に処理分岐 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:03:21][DEBUG](MJS_DensiSinkoku.py:838) Tantousya.pngを元に処理分岐 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:03:24][DEBUG](MJS_DensiSinkoku.py:845) KCodeBox.pngにコード入力 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:03:27][DEBUG](MJS_DensiSinkoku.py:851) NendoBox.pngに年度入力 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:03:29][DEBUG](MJS_DensiSinkoku.py:861) 税目処理分け MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:03:36][DEBUG](MJS_DensiSinkoku.py:885) 補助税目無し MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/07/28 18:03:36][DEBUG](MJS_DensiSinkoku.py:886) 検索開始 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
