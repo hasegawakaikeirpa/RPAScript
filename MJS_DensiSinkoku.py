@@ -882,7 +882,7 @@ def MainFlow(FolURL2):
                 pg.press(["space"])
                 time.sleep(1)
             except:
-                logger.debug("補助税目無し")    
+                logger.debug("補助税目無し")
             logger.debug("検索開始")
             # クラス要素クリック----------------------------------------------------------------------------------------------------------
             ImgClick(FolURL2, "FindOK.png", conf, LoopVal)  # 電子申告・申請タブを押す

@@ -1707,11 +1707,11 @@ if ypos_FTrigger == "y":
 else:
     ypos_F = 75
 
-ypos_PlusTrigger = input("行間閾値を27から変更しますか？y/n\n")
+ypos_PlusTrigger = input("行間閾値を30から変更しますか？y/n\n")
 if ypos_PlusTrigger == "y":
     ypos_Plus = int(input("行間閾値を入力してください。\n"))
 else:
-    ypos_Plus = 25
+    ypos_Plus = 30
 
 try:
     Syoridumi = 0  # 初回起動フラグ
