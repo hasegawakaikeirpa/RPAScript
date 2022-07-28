@@ -565,7 +565,7 @@ def AllChange(
     O,
 ):
     try:
-        NGList = []
+        FinalList = []
         OCR_data = np.genfromtxt(
             csvurl, dtype=None, delimiter=",", encoding=FileNameenc
         )  # OCRCSVをnp配列に変換
@@ -573,32 +573,28 @@ def AllChange(
             Roolrul, dtype=None, delimiter=",", encoding=Roolurlenc
         )  # 元帳CSVをnp配列に変換
         l_OCR = OCR_data.shape[0]
-        l_MJS = MJS_data.shape[0]
-        for l_r in range(l_MJS):
+        for l_r in range(l_OCR):
+            NGList = []
             ColNames = MJS_data[0, :]
             OCRColNames = OCR_data[0, :]
             l_c = 0
             for ColItem in ColNames:
                 if ColTxt == ColItem:
                     SerchTxt = MJS_data[l_r, l_c]
-                    stc = l_c
                 l_c += 1
             l_c = 0
             for OCRColItem in OCRColNames:
                 if I == OCRColItem:
                     if OCR_data[l_r, l_c] != "":
                         M_var = OCR_data[l_r, l_c]
-                        kr_c = l_c
                         IO = "入金"
                 elif O == OCRColItem:
                     if OCR_data[l_r, l_c] != "":
                         M_var = OCR_data[l_r, l_c]
-                        kr_c = l_c
                         IO = "出金"
                 elif DayColName == OCRColItem:
                     if OCR_data[l_r, l_c] != "":
                         D_var = OCR_data[l_r, l_c]
-                        dvc = l_c
                 l_c += 1
             if l_r != 0:
                 NPC = npCreate(MJS_data, SerchTxt, ColTxt)
@@ -629,6 +625,8 @@ def AllChange(
                             if NNPC[0] is True:
                                 npw = NNPC[1]
                                 npw_Column = npw[0, :]
+                                if l_r == 1:
+                                    FinalList.append(list(npw_Column))
                                 NGList.append(list(npw_Column))
                                 if IO == "入金":
                                     colT = ColumCheckListUp(npw_Column, Kari)
@@ -644,12 +642,10 @@ def AllChange(
                                             ):
                                                 NGList.append(c_npw[c_r])
                                                 c_npw.pop(c_r)
-                                        Lastap = np.array(c_npw)
-                                        if len(Lastap) == 1:
-                                            Lastap = np.array(NGList)
-                                            return Lastap
+                                        if len(c_npw) == 1:
+                                            FinalList.append(NGList[1])
                                         else:
-                                            return Lastap
+                                            FinalList.append(c_npw[1])
                                 elif IO == "出金":
                                     colT = ColumCheckListUp(npw_Column, Kashi)
                                     if colT[0] is True:
@@ -664,16 +660,14 @@ def AllChange(
                                             ):
                                                 NGList.append(c_npw[c_r])
                                                 c_npw.pop(c_r)
-                                        Lastap = np.array(c_npw)
-                                        if len(Lastap) == 1:
-                                            Lastap = np.array(NGList)
-                                            return Lastap
+                                        if len(c_npw) == 1:
+                                            FinalList.append(NGList[1])
                                         else:
-                                            return Lastap
+                                            FinalList.append(c_npw[1])
+        return True, FinalList
     except:
-        Lastap = ["エラー:抽出失敗"]
-        Lastap = np.array(Lastap)
-        return Lastap
+        FinalList = ["エラー:抽出失敗"]
+        return False, FinalList
 
 
 # -----------------------------------------------------------------------------------------

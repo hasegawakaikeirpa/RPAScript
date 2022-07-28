@@ -333,7 +333,7 @@ class DataGrid:
         for stom in self.entryList:  # Entryウィジェットリスト
             if stom == "自動仕訳基準列名":
                 JS_var = st
-            elif stom == "日付列":
+            elif stom == "日付列名":
                 Day_var = st
             elif stom == "入金列名":
                 In_var = st
@@ -367,15 +367,55 @@ class DataGrid:
             I,
             O,
         )  # 仕訳候補を抽出
-        AJDF = pd.DataFrame(AJ_List)
-        AJDF.to_csv(AJSeturl, index=False, header=False)
-        pt3 = MT3.MyTable(
-            self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
-        )  # テーブルをサブクラス化
-        enc = CSVO.getFileEncoding(AJSeturl)
-        self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
-        self.pt3 = pt3
-        pt3.show()
+
+        # for OCR_LItem in OCR_List:
+
+        print(self.Frame7EntL)
+        self.Frame7EntR
+
+        # データ内のFalse,nan処理--------------------------------------------
+        if AJ_List[0] is True:
+            AJ_List = AJ_List[1]
+            OCR_List = np.array(self.FileName)
+            OCR_List = OCR_List[0, :]
+            for OCR_LItem in OCR_List:
+
+                for L_r in range(len(AJ_List)):
+                    if L_r == 0:  # ヘッダー行処理
+                        for L_c in range(len(AJ_List[L_r])):
+                            print(AJ_List[L_r][L_c])
+                            if "Unnamed" in AJ_List[L_r][L_c]:
+                                AJ_List[L_r][L_c] = ""
+                            elif "." in AJ_List[L_r][L_c]:
+                                S_txt = AJ_List[L_r][L_c].split(".")
+                                AJ_List[L_r][L_c] = S_txt[0]
+                    else:  # ヘッダー行以外処理
+                        for L_c in range(len(AJ_List[L_r])):
+                            print(AJ_List[L_r][L_c])
+                            if bool(AJ_List[L_r][L_c]) is False:
+                                AJ_List[L_r][L_c] = ""
+                            elif (
+                                AJ_List[L_r][L_c] == AJ_List[L_r][L_c]
+                                and AJ_List[L_r][L_c] is not False
+                            ):
+                                print("")
+                            else:
+                                AJ_List[L_r][L_c] = ""
+            # ------------------------------------------------------------------
+            with open(AJurl, "wt", encoding="cp932", newline="") as fout:
+                # ライター（書き込み者）を作成
+                writer = csv.writer(fout)
+                writer.writerows(AJ_List)
+
+            AJDF = pd.DataFrame(AJ_List)
+            AJDF.to_csv(AJSeturl, index=False, header=False)
+            pt3 = MT3.MyTable(
+                self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
+            )  # テーブルをサブクラス化
+            enc = CSVO.getFileEncoding(AJSeturl)
+            self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
+            self.pt3 = pt3
+            pt3.show()
 
     # -----------------------------------------------------------------------------------------
     def AJCalc(self, csvurl):
@@ -392,7 +432,7 @@ class DataGrid:
             for stom in self.entryList:  # Entryウィジェットリスト
                 if stom == "自動仕訳基準列名":
                     JS_var = st
-                elif stom == "日付列":
+                elif stom == "日付列名":
                     Day_var = st
                 elif stom == "入金列名":
                     In_var = st
@@ -410,7 +450,7 @@ class DataGrid:
             dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
             # グリッド選択データの代入---------------------------------------------------------
             FindTxt = dfsrow[JS]  # 検索文字
-            D_var = dfsrow[Day_var]  # 日付
+            D_var = dfsrow[D]  # 日付
             I_var = dfsrow[I]  # 入金
             O_var = dfsrow[O]  # 出金
             # --------------------------------------------------------------------------------
