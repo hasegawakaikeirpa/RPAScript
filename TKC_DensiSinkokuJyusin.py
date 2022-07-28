@@ -976,6 +976,8 @@ def MLChild(
     C_Zeimoku,
     C_Teisyutu,
     CsvKey,
+    ypos_F,
+    ypos_Plus,
 ):
     if (
         C_Sousin == "済" and DayCount.days <= DayC and DayCount.days >= -DayC
@@ -1008,9 +1010,9 @@ def MLChild(
         LoopVal = 10
         xpos = ImgCheck(FolURL2, FileName, conf, LoopVal)[1]  # データ指定画面のヘッダー「送信」の画像データ横軸
         ypos = (
-            ImgCheck(FolURL2, FileName, conf, LoopVal)[2] + 75
+            ImgCheck(FolURL2, FileName, conf, LoopVal)[2] + ypos_F
         )  # データ指定画面のヘッダー「送信」の画像データ縦軸に値をプラスして1行目の縦軸に
-        ypos = ypos + (ItemRowArray[0] * 30)  # ページダウンがあればその分縦軸に追加
+        ypos = ypos + (ItemRowArray[0] * ypos_Plus)  # ページダウンがあればその分縦軸に追加
         pg.click(xpos, ypos, 1, 0, "left")  # 送信「可」を選択
         time.sleep(3)  # 指定時間待機
         # 要素クリック------------------------------------------------------------------------------------------------
@@ -1058,6 +1060,8 @@ def MasterLoop(
     driver,
     FolURL2,
     CsvKey,
+    ypos_F,
+    ypos_Plus,
 ):
     Todays = dt.today()  # 今日の日付
     # ----------------------------------------------------------------------------------------------------------------------
@@ -1129,6 +1133,8 @@ def MasterLoop(
                 C_Zeimoku,
                 C_Teisyutu,
                 CsvKey,
+                ypos_F,
+                ypos_Plus,
             )
             time.sleep(1)
         else:
@@ -1151,13 +1157,15 @@ def MasterLoop(
                 C_Zeimoku,
                 C_Teisyutu,
                 CsvKey,
+                ypos_F,
+                ypos_Plus,
             )
             time.sleep(1)
         # ----------------------------------------------------------------------------------------------------------------------
 
 
 # メインの処理----------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2, MasterTrigger):  # メインの処理
+def MainFlow(FolURL2, MasterTrigger, ypos_F, ypos_Plus):  # メインの処理
     BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
     driver = OMSOpen.MainFlow(BatUrl, FolURL2, "RPAPhoto")  # OMSを起動しログイン後インスタンス化
     FolURL2 = FolURL2 + "/RPAPhoto/TKC_DensiSinkoku"  # このフローで必要な画像保存先
@@ -1194,65 +1202,67 @@ def MainFlow(FolURL2, MasterTrigger):  # メインの処理
     pg.press("return")  # 小林常務を選択
     # FileName = "KanyoHasegawa.png"  # 担当税理士所長判定
     # # 法人税消費税処理------------------------------------------------------------------------------------------------------
-    # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
-    # conf = 0.9  # 画像認識感度
-    # LoopVal = 500
-    # CSVName = "HoujinSyouhizeiJyusinMaster"
-    # CSVChildName = "HoujinSyouhizeiJyusinChild"  # チャイルドのCSVファイル名を指定
-    # List = ["HoujinSyouhizei.png", "HoujinSyouhizei2.png"]
-    # if MasterTrigger != "y":
-    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
-    #         if ImgCheckForList(FolURL2, List, conf)[0] is True:
-    #             FindURL = ImgCheckForList(FolURL2, List, conf)[1]
-    #             ImgClick(FolURL2, FindURL, conf, LoopVal)
-    #         time.sleep(1)
-    #     # -------------------------------------------------------------------------
-    #     time.sleep(1)
-    #     # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
-    #     FileName = "SinkokuLoad.png"
-    #     conf = 0.9  # 画像認識感度
-    #     while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
-    #         time.sleep(1)
-    #     if NitijiBunkiTrigger == "y":
-    #         if (
-    #             CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
-    #         ):  # 処理が申請の場合
-    #             NitijiBunkiSinsei(FolURL2, conf, LoopVal)
-    #         else:
-    #             NitijiBunki(FolURL2, conf, LoopVal)
-    #     CSVURL = FolURL2
-    #     C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
-    #     SerchEnc = format(getFileEncoding(C_url))
-    #     C_Master = pd.read_csv(C_url, encoding=SerchEnc)
-    #     C_MasterFlag = True
-    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    # else:
-    #     TaxAns = TaxHantei(
-    #         List, FolURL2, FileName, conf, LoopVal, CSVName, driver
-    #     )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
-    #     C_Master = TaxAns[0]  # マスターCSVを格納
-    #     C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
-    #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
-    #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    # CsvKey = "法人税"
-    # if C_MasterFlag is False:
-    #     print("C_Masterは空です")
-    # else:
-    #     C_LoopRow = np.array(C_Master).shape[0]  # 配列行数取得
-    #     for x in range(C_LoopRow):
-    #         MasterLoop(
-    #             List,
-    #             FileName,
-    #             CSVName,
-    #             CSVChildName,
-    #             C_Master,
-    #             C_dfRow,
-    #             C_dfCol,
-    #             driver,
-    #             FolURL2,
-    #             CsvKey,
-    #         )
+    FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
+    conf = 0.9  # 画像認識感度
+    LoopVal = 500
+    CSVName = "HoujinSyouhizeiJyusinMaster"
+    CSVChildName = "HoujinSyouhizeiJyusinChild"  # チャイルドのCSVファイル名を指定
+    List = ["HoujinSyouhizei.png", "HoujinSyouhizei2.png"]
+    if MasterTrigger != "y":
+        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+            if ImgCheckForList(FolURL2, List, conf)[0] is True:
+                FindURL = ImgCheckForList(FolURL2, List, conf)[1]
+                ImgClick(FolURL2, FindURL, conf, LoopVal)
+            time.sleep(1)
+        # -------------------------------------------------------------------------
+        time.sleep(1)
+        # 読込画面が消える(ImgCheck==False)まで待機---------------------------------
+        FileName = "SinkokuLoad.png"
+        conf = 0.9  # 画像認識感度
+        while ImgNothingCheck(FolURL2, FileName, conf, 1) is False:
+            time.sleep(1)
+        if NitijiBunkiTrigger == "y":
+            if (
+                CSVName == "SinseiJyusinMaster" or CSVName == "SinseiJyusinChild"
+            ):  # 処理が申請の場合
+                NitijiBunkiSinsei(FolURL2, conf, LoopVal)
+            else:
+                NitijiBunki(FolURL2, conf, LoopVal)
+        CSVURL = FolURL2
+        C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+        SerchEnc = format(getFileEncoding(C_url))
+        C_Master = pd.read_csv(C_url, encoding=SerchEnc)
+        C_MasterFlag = True
+        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    else:
+        TaxAns = TaxHantei(
+            List, FolURL2, FileName, conf, LoopVal, CSVName, driver
+        )  # pandasにマスターCSVぶっこみ(戻り値：配列,Boolean)
+        C_Master = TaxAns[0]  # マスターCSVを格納
+        C_MasterFlag = TaxAns[1]  # マスターCSV読込結果を格納
+        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
+    CsvKey = "法人税"
+    if C_MasterFlag is False:
+        print("C_Masterは空です")
+    else:
+        C_LoopRow = np.array(C_Master).shape[0]  # 配列行数取得
+        for x in range(C_LoopRow):
+            MasterLoop(
+                List,
+                FileName,
+                CSVName,
+                CSVChildName,
+                C_Master,
+                C_dfRow,
+                C_dfCol,
+                driver,
+                FolURL2,
+                CsvKey,
+                ypos_F,
+                ypos_Plus,
+            )
     # -----------------------------------------------------------------------------------------------------------------------
     # #所得税消費税処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
@@ -1304,7 +1314,7 @@ def MainFlow(FolURL2, MasterTrigger):  # メインの処理
     #    C_Master = C_Master.drop_duplicates(subset='関与先コード')#関与先コードをキーに重複削除
     #    C_dfRow = np.array(C_Master).shape[0]#配列行数取得
     #    C_dfCol = np.array(C_Master).shape[1]#配列列数取得
-    #    MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2,CsvKey)
+    #    MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2,CsvKey,ypos_F,ypos_Plus)
     # #-----------------------------------------------------------------------------------------------------------------------
     # #法定調書給報処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"#担当税理士小林常務判定
@@ -1354,7 +1364,7 @@ def MainFlow(FolURL2, MasterTrigger):  # メインの処理
     # else:
     #     C_LoopRow = np.array(C_Master).shape[0]#配列行数取得
     #     for x in range(C_LoopRow):
-    #         MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2,CsvKey)
+    #         MasterLoop(List,FileName,CSVName,CSVChildName,C_Master,C_dfRow,C_dfCol,driver,FolURL2,CsvKey,ypos_F,ypos_Plus)
     # #-----------------------------------------------------------------------------------------------------------------------
     # 申請処理---------------------------------------------------------------------------------------------------------------
     FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
@@ -1415,6 +1425,8 @@ def MainFlow(FolURL2, MasterTrigger):  # メインの処理
                 driver,
                 FolURL2,
                 CsvKey,
+                ypos_F,
+                ypos_Plus,
             )
     # -----------------------------------------------------------------------------------------------------------------------
     # 償却資産処理------------------------------------------------------------------------------------------------------
@@ -1465,18 +1477,20 @@ def MainFlow(FolURL2, MasterTrigger):  # メインの処理
     # else:
     #     C_LoopRow = np.array(C_Master).shape[0]  # 配列行数取得
     #     for x in range(C_LoopRow):
-    #         MasterLoop(
-    #             List,
-    #             FileName,
-    #             CSVName,
-    #             CSVChildName,
-    #             C_Master,
-    #             C_dfRow,
-    #             C_dfCol,
-    #             driver,
-    #             FolURL2,
-    #             CsvKey,
-    #         )
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     CsvKey,
+    #     ypos_F,
+    #     ypos_Plus,
+    # )
     # -----------------------------------------------------------------------------------------------------------------------
     # 贈与税処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
@@ -1528,18 +1542,20 @@ def MainFlow(FolURL2, MasterTrigger):  # メインの処理
     #     C_Master = C_Master.drop_duplicates(subset="関与先コード")  # 関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
     #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    #     MasterLoop(
-    #         List,
-    #         FileName,
-    #         CSVName,
-    #         CSVChildName,
-    #         C_Master,
-    #         C_dfRow,
-    #         C_dfCol,
-    #         driver,
-    #         FolURL2,
-    #         CsvKey,
-    #     )
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     CsvKey,
+    #     ypos_F,
+    #     ypos_Plus,
+    # )
     # -----------------------------------------------------------------------------------------------------------------------
     # 相続税処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
@@ -1591,18 +1607,20 @@ def MainFlow(FolURL2, MasterTrigger):  # メインの処理
     #     C_Master = C_Master.drop_duplicates(subset="関与先コード")  # 関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
     #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    #     MasterLoop(
-    #         List,
-    #         FileName,
-    #         CSVName,
-    #         CSVChildName,
-    #         C_Master,
-    #         C_dfRow,
-    #         C_dfCol,
-    #         driver,
-    #         FolURL2,
-    #         CsvKey,
-    #     )
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     CsvKey,
+    #     ypos_F,
+    #     ypos_Plus,
+    # )
     # # -----------------------------------------------------------------------------------------------------------------------
     # # 配当調書処理------------------------------------------------------------------------------------------------------
     # FileName = "KanyoZeirisi.png"  # 担当税理士小林常務判定
@@ -1654,18 +1672,20 @@ def MainFlow(FolURL2, MasterTrigger):  # メインの処理
     #     C_Master = C_Master.drop_duplicates(subset="関与先コード")  # 関与先コードをキーに重複削除
     #     C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
     #     C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
-    #     MasterLoop(
-    #         List,
-    #         FileName,
-    #         CSVName,
-    #         CSVChildName,
-    #         C_Master,
-    #         C_dfRow,
-    #         C_dfCol,
-    #         driver,
-    #         FolURL2,
-    #         CsvKey,
-    #     )
+    # MasterLoop(
+    #     List,
+    #     FileName,
+    #     CSVName,
+    #     CSVChildName,
+    #     C_Master,
+    #     C_dfRow,
+    #     C_dfCol,
+    #     driver,
+    #     FolURL2,
+    #     CsvKey,
+    #     ypos_F,
+    #     ypos_Plus,
+    # )
     # -----------------------------------------------------------------------------------------------------------------------
 
 
@@ -1681,8 +1701,20 @@ else:
 
 MasterTrigger = input("マスターCSVを毎回更新しますか？y/n\n")
 
+ypos_FTrigger = input("先頭行基準値を75から変更しますか？y/n\n")
+if ypos_FTrigger == "y":
+    ypos_F = int(input("先頭行基準値を入力してください。\n"))
+else:
+    ypos_F = 75
+
+ypos_PlusTrigger = input("行間閾値を27から変更しますか？y/n\n")
+if ypos_PlusTrigger == "y":
+    ypos_Plus = int(input("行間閾値を入力してください。\n"))
+else:
+    ypos_Plus = 25
+
 try:
     Syoridumi = 0  # 初回起動フラグ
-    MainFlow(FolURL2, MasterTrigger)
+    MainFlow(FolURL2, MasterTrigger, ypos_F, ypos_Plus)
 except:
     traceback.print_exc()
