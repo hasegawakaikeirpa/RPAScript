@@ -643,9 +643,9 @@ def AllChange(
                                                 NGList.append(c_npw[c_r])
                                                 c_npw.pop(c_r)
                                         if len(c_npw) == 1:
-                                            FinalList.append(NGList[1])
+                                            FinalList.append(list(NGList[1]))
                                         else:
-                                            FinalList.append(c_npw[1])
+                                            FinalList.append(list(c_npw[1]))
                                 elif IO == "出金":
                                     colT = ColumCheckListUp(npw_Column, Kashi)
                                     if colT[0] is True:
@@ -661,9 +661,9 @@ def AllChange(
                                                 NGList.append(c_npw[c_r])
                                                 c_npw.pop(c_r)
                                         if len(c_npw) == 1:
-                                            FinalList.append(NGList[1])
+                                            FinalList.append(list(NGList[1]))
                                         else:
-                                            FinalList.append(c_npw[1])
+                                            FinalList.append(list(c_npw[1]))
         return True, FinalList
     except:
         FinalList = ["エラー:抽出失敗"]

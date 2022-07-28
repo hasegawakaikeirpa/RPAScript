@@ -368,39 +368,66 @@ class DataGrid:
             O,
         )  # 仕訳候補を抽出
 
-        # for OCR_LItem in OCR_List:
-
-        print(self.Frame7EntL)
-        self.Frame7EntR
-
+        PT_ColList = list(self.pt.model.df.columns)  # OCR表の列名リスト
+        PT_List = np.array(self.pt.model.df)
+        PT_List = list(PT_List)  # OCR表の列名リスト
         # データ内のFalse,nan処理--------------------------------------------
         if AJ_List[0] is True:
             AJ_List = AJ_List[1]
-            OCR_List = np.array(self.FileName)
-            OCR_List = OCR_List[0, :]
-            for OCR_LItem in OCR_List:
-
+            # ################################################################
+            # OCR表の値を変換ルールに従って自動仕訳表に代入--------------------
+            for r in range(len(self.Frame7EntL)):
+                L_CName = self.Frame7EntL[r].get()
+                R_CName = self.Frame7EntR[r].get()
+                # 自動仕訳表の列番号検索--------------------------------------
+                PT_c = 0
+                for AJ_ListItem in AJ_List[0]:
+                    if L_CName == AJ_ListItem:
+                        L_CName_c = PT_c
+                        break
+                    PT_c += 1
+                # -----------------------------------------------------------
+                # OCR表の列番号検索-------------------------------------------
+                PT_c = 0
+                for PT_ColListItem in PT_ColList:
+                    if R_CName == PT_ColListItem:
+                        R_CName_c = PT_c
+                        break
+                    PT_c += 1
+                # -----------------------------------------------------------
                 for L_r in range(len(AJ_List)):
-                    if L_r == 0:  # ヘッダー行処理
-                        for L_c in range(len(AJ_List[L_r])):
-                            print(AJ_List[L_r][L_c])
-                            if "Unnamed" in AJ_List[L_r][L_c]:
-                                AJ_List[L_r][L_c] = ""
-                            elif "." in AJ_List[L_r][L_c]:
-                                S_txt = AJ_List[L_r][L_c].split(".")
-                                AJ_List[L_r][L_c] = S_txt[0]
-                    else:  # ヘッダー行以外処理
-                        for L_c in range(len(AJ_List[L_r])):
-                            print(AJ_List[L_r][L_c])
-                            if bool(AJ_List[L_r][L_c]) is False:
-                                AJ_List[L_r][L_c] = ""
-                            elif (
-                                AJ_List[L_r][L_c] == AJ_List[L_r][L_c]
-                                and AJ_List[L_r][L_c] is not False
-                            ):
-                                print("")
-                            else:
-                                AJ_List[L_r][L_c] = ""
+                    if L_r != 0 and L_r != len(AJ_List) - 1:  # ヘッダー行処理
+                        # try:
+                        C_Txt = tke.TxtEdit(
+                            L_CName,
+                            AJ_List[L_r][L_CName_c],
+                            PT_List[L_r][R_CName_c],
+                        )
+                        AJ_List[L_r][L_CName_c] = C_Txt[1]
+                    # except:
+                    #     print("OCR表の値を変換ルールに従って自動仕訳表に代入エラー")
+            # ################################################################
+            for L_r in range(len(AJ_List)):
+                if L_r == 0:  # ヘッダー行処理
+                    for L_c in range(len(AJ_List[L_r])):
+                        print(AJ_List[L_r][L_c])
+                        if "Unnamed" in AJ_List[L_r][L_c]:
+                            AJ_List[L_r][L_c] = ""
+                        elif "." in AJ_List[L_r][L_c]:
+                            S_txt = AJ_List[L_r][L_c].split(".")
+                            AJ_List[L_r][L_c] = S_txt[0]
+                else:  # ヘッダー行以外処理
+                    for L_c in range(len(AJ_List[L_r])):
+                        print(AJ_List[L_r][L_c])
+                        if bool(AJ_List[L_r][L_c]) is False:
+                            AJ_List[L_r][L_c] = ""
+                        elif (
+                            AJ_List[L_r][L_c] == AJ_List[L_r][L_c]
+                            and AJ_List[L_r][L_c] is not False
+                        ):
+                            print("")
+                        else:
+                            AJ_List[L_r][L_c] = ""
             # ------------------------------------------------------------------
             with open(AJurl, "wt", encoding="cp932", newline="") as fout:
                 # ライター（書き込み者）を作成
