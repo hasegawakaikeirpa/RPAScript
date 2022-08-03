@@ -158,16 +158,16 @@ def DiffListCreate(
                             GFTable[g][c - 1] = GNV[1]
 
                     # -------------------------------------------------------------------------
-            # ----------------------------------------------------------------------------
-            for g in range(GFRow):
-                for c in range(len(GFTable[g])):
-                    ChangeTxt = GFTable[g][c]
-                    result = ChangeTxt.encode("utf-8")
-                    henkan = result.decode("cp932", errors="ignore")
-                    fukugenhenkan = henkan.encode("cp932")
-                    kekkafukugen = fukugenhenkan.decode("utf-8", errors="ignore")
-                    GFTable[g][c] = kekkafukugen
-
+            # デコード＆エンコード--------------------------------------------------------------
+            # for g in range(GFRow):
+            #     for c in range(len(GFTable[g])):
+            #         ChangeTxt = GFTable[g][c]
+            #         result = ChangeTxt.encode("utf-8")
+            #         henkan = result.decode("cp932", errors="ignore")
+            #         fukugenhenkan = henkan.encode("cp932")
+            #         kekkafukugen = fukugenhenkan.decode("utf-8", errors="ignore")
+            #         GFTable[g][c] = kekkafukugen
+            # ---------------------------------------------------------------------------------
             # DataFrame作成
             DiffCheck(GFTable, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
             df = pd.DataFrame(GFTable, columns=ColList)
@@ -175,19 +175,21 @@ def DiffListCreate(
             FN = FU[len(FU) - 1].replace(".png", ".csv")
             FDir = FileURL.replace(FU[len(FU) - 1], "")
             FileName = FDir + r"\\" + FN
+            ChangeTxtUrl = FDir + r"\\ChangeTxtList.csv"
             # 変換実績リストに要素があれば保存------------------------------------------------
             if len(ChangeTxtList) > 0:
-                CTL_df = pd.DataFrame(ChangeTxtList)
-                with open(
-                    FDir + r"\\ChangeTxtList.csv",
-                    mode="w",
-                    encoding="cp932",
-                    errors="ignore",
-                    newline="",
-                ) as file:
-                    writer = csv.writer(file)
-                    writer.writerow(ChangeTxtList)
-                    CTL_df.to_csv(file, index=False)
+                if os.path.isfile(ChangeTxtUrl) is True:
+                    CTL_df = pd.DataFrame(ChangeTxtList, columns=["置換前", "置換後"])
+                    CTL_df.to_csv(
+                        ChangeTxtUrl,
+                        mode="a",
+                        header=False,
+                        index=False,
+                        encoding="cp932",
+                    )
+                else:
+                    CTL_df = pd.DataFrame(ChangeTxtList, columns=["置換前", "置換後"])
+                    CTL_df.to_csv(ChangeTxtUrl, index=False, encoding="cp932")
             # -------------------------------------------------------------------------------
             try:
                 df.to_csv(FileName, index=False, encoding="cp932")

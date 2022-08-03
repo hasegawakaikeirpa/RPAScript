@@ -3,8 +3,6 @@ import csv
 from PIL import Image, ImageTk
 from tkinter import messagebox
 import os
-
-from pyparsing import col
 import OCRFlow as OCRF
 import toml
 from tkinter import ttk
@@ -663,18 +661,15 @@ def EnterP(self, HCW, HCH, selfmother):
             if OM[0] is True:
                 unmap(selfmother)
                 MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
-                Viw = messagebox.askokcancel("確認", "抽出内容を表示いたしますか？")
+                Viw = messagebox.askokcancel(
+                    "確認", "抽出内容を表示いたしますか？\n初めにミロクから出力した仕訳CSVを指定してください。"
+                )
                 map(selfmother)
                 if Viw is True:
                     ReturnBack(selfmother)
                     csvurl = imgurl.replace(".png", ".csv")
                     DG.Main(
-                        csvurl,
-                        Banktoml,
-                        DaySet,
-                        MoneySet,
-                        ReplaceSet,
-                        ReplaceStr,
+                        csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr, SGEL
                     )
             else:
                 unmap(selfmother)

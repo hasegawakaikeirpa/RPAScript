@@ -1,5 +1,6 @@
 import tkinter as tk
-import tkinter.ttk as ttk
+
+# import tkinter.ttk as ttk
 import numpy as np
 
 # from tkinter import messagebox
@@ -17,8 +18,6 @@ import TKEntry as tke
 
 class DataGrid:
     def __init__(self, window_root, default_path):
-        global csvurl, Banktoml, AJurl, AJSeturl, Roolurl, tomltitle
-
         # toml読込------------------------------------------------------------------------------
         self.Banktoml = Banktoml
         # -----------------------------------------------------------
@@ -26,16 +25,16 @@ class DataGrid:
         self.JounalFileName = AJurl
         self.Roolurl = Roolurl
         self.tomlList = self.Banktoml["ParList"]["Name"]
-        self.HidukeColNo = self.Banktoml[tomltitle]["HidukeColNo"]
-        self.MoneyCol = self.Banktoml[tomltitle]["MoneyCol"]
-        self.ChangeTextCol = self.Banktoml[tomltitle]["ChangeTextCol"]
-        self.ColumnName = self.Banktoml[tomltitle]["ColumnName"]
-        self.HidukeColName = self.Banktoml[tomltitle]["HidukeColName"]
-        self.NyuName = self.Banktoml[tomltitle]["NyuName"]
-        self.SyutuName = self.Banktoml[tomltitle]["SyutuName"]
-        self.ZanName = self.Banktoml[tomltitle]["ZanName"]
-        self.Henkan = self.Banktoml[tomltitle]["Henkan"]
-        self.ChangeText = self.Banktoml[tomltitle]["ChangeText"]
+        self.HidukeColNo = DaySet
+        self.MoneyCol = MoneySet
+        self.ChangeTextCol = ReplaceSet
+        self.ColumnName = ColNameList
+        self.HidukeColName = "日付"
+        self.NyuName = "入金"
+        self.SyutuName = "出金"
+        self.ZanName = "残高"
+        self.Henkan = "摘要"
+        self.ChangeText = ReplaceStr
         # ------------------------------------
         # self.CsvHeader()
         # メインウィンドウ設定-------------------------------------------------------------------
@@ -174,7 +173,7 @@ class DataGrid:
         pt2.show()
         # -------------------------------------------------------------------------------------
         # ツリービューを配置
-        tke.treeviewEntries(self, tomltitle)
+        tke.treeviewEntries(self)
         # ボタン追加----------------------------------------------------------------------------
         self.AllRun = tk.Button(
             self.frame3,
@@ -186,7 +185,7 @@ class DataGrid:
         self.AllRun.grid(row=4, column=0, columnspan=2)  # 位置指定
         # -------------------------------------------------------------------------------------
         # tomlListを配置
-        tke.tomlEntries(self, tomltitle)
+        tke.tomlEntries(self)
         # フレーム7を配置
         tke.Frame7Entries(self)
 
@@ -484,7 +483,6 @@ class DataGrid:
             I_var = dfsrow[I]  # 入金
             O_var = dfsrow[O]  # 出金
             # --------------------------------------------------------------------------------
-            # ColTxt,SerchTxt,D_var,D_coltxt,M_var,M_coltxt,imgurl,Roolrul,Banktoml,tomltitle,
             # 整数チェック---------------------------------------------------------------------
             IC = IntCheck(I_var)
             OC = IntCheck(O_var)
@@ -648,7 +646,7 @@ class DataGrid:
                 df.to_csv(f, index=False)
 
         tke.removeEntry(self)
-        tke.treeviewEntries(self, tomltitle)
+        tke.treeviewEntries(self)
 
     # -----------------------------------------------------------------------------------------
     def ZanRecalc(self):
@@ -704,7 +702,7 @@ class DataGrid:
         except:
             df.to_csv(self.FileName, index=False, encoding="utf8")
         tke.removeEntry(self)
-        tke.treeviewEntries(self, tomltitle)
+        tke.treeviewEntries(self)
 
     # -----------------------------------------------------------------------------------------
     def Zandaka(self):
@@ -770,7 +768,7 @@ def IntCheck(c_var):
 
 
 # -----------------------------------------------------------------------------------------
-def Main(US, Bk, DS, MS, RS, RlS):
+def Main(US, Bk, DS, MS, RS, RlS, SGEL):
     """
     呼出構文↓
     DG.Main(
@@ -782,17 +780,36 @@ def Main(US, Bk, DS, MS, RS, RlS):
         selfmother.ReplaceStr.get(),
     )
     """
-    global csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr
+    global AJurl, AJSeturl, Roolurl
+    global csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr, ColNameList
     csvurl = US
     Banktoml = Bk
     DaySet = DS
     MoneySet = MS
     ReplaceSet = RS
     ReplaceStr = RlS
-
+    ColNameList = SGEL
+    # 自動仕訳変換条件のミロクエクスポートCSVを指定し、変換先ファイルを作成------------------
     # 　Tk MainWindow 生成
     main_window = tk.Tk()
     main_window.withdraw()
+
+    typ = [("ミロクエクスポートCSVを選択してください。", "*.csv")]
+    dir = csvurl
+    fle = tk.filedialog.askopenfilename(filetypes=typ, initialdir=dir)  # ファイル指定ダイアログ
+    Roolurl = fle
+    enc = CSVO.getFileEncoding(Roolurl)
+    Roolurldf = pd.read_csv(Roolurl, encoding=enc)
+    DelIndex = []
+    # ミロクエクスポートCSVから全行削除------------------------
+    for R_r in reversed(range(Roolurldf.shape[0] - 1)):
+        DelIndex.append(R_r)
+    Roolurldf = Roolurldf.drop(Roolurldf.index[DelIndex])
+    # --------------------------------------------------------
+    AJurl = csvurl.replace(".csv", "_AutoJounal.csv")
+    Roolurldf.to_csv(AJurl, index=False, encoding=enc)
+    # -----------------------------------------------------------------------------------
+    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
     # Viewクラス生成
     DataGrid(main_window, "./")
 
@@ -802,12 +819,20 @@ def Main(US, Bk, DS, MS, RS, RlS):
 
 # -----------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    global csvurl, Banktoml, AJurl, AJSeturl, Roolurl, tomltitle
-    csvurl = r"D:\OCRTESTPDF\PDFTEST\JA_1page.csv"
-    AJurl = r"D:\OCRTESTPDF\PDFTEST\JA_1page_AutoJounal.csv"
-    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
+    global AJurl, AJSeturl, Roolurl
+    global csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr, ColNameList
+
+    DaySet = ["1"]
+    MoneySet = ["3,4,5"]
+    ReplaceSet = ["2,3,4"]
+    ReplaceStr = ["CDカード", "マツモトトソウテン", "ザンダカショウメイショ"]
+    ColNameList = ["日付", "摘要", "出金", "入金", "残高"]
+
+    csvurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.csv"
+    AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page_AutoJounal.csv"
+    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\ChangeTxtList.csv"
     Roolurl = r"D:\PythonScript\RPAScript\TKInterGUI\Mototyou\1_仕訳日記帳.csv"
-    tomltitle = "JA"
+
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)
