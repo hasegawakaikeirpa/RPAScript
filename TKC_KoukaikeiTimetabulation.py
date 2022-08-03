@@ -709,7 +709,7 @@ def MainFlow(FolURL2):
                 #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
                 #     for x in range(TgyoumuListRow[1]):
                 #         pg.press("up")
-                # ------------------------------------------------------------------------------
+                # # ------------------------------------------------------------------------------
                 # TgyoumuListRow = CSVCheck("A8公会計作業（固定資産台帳）", TgyoumuList[1], "業務")
                 # if TgyoumuListRow[0] is True:
                 #     Tax = "A8"
@@ -739,67 +739,67 @@ def MainFlow(FolURL2):
                 #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
                 #     for x in range(TgyoumuListRow[1]):
                 #         pg.press("up")
+                # # ------------------------------------------------------------------------------
+                TgyoumuListRow = CSVCheck("A9公会計作業（財務書類）", TgyoumuList[1], "業務")
+                if TgyoumuListRow[0] is True:
+                    Tax = "A9"
+                    # GList = ["1gyou.png","1gyou2.png"]
+                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
+                    # ImgClick(FolURL2,GL[1],0.99999,1)
+                    time.sleep(1)
+                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press("down")
+                    time.sleep(1)
+                    pg.press("return")
+                    time.sleep(1)
+                    while (
+                        pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
+                        is not None
+                    ):
+                        time.sleep(1)
+                    while (
+                        pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
+                        is None
+                    ):
+                        time.sleep(1)
+                    ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
+                    time.sleep(1)
+                    KanyoScroll(FolURL2, Tax)  # 関与先毎の時間集計操作
+                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press("up")
                 # ------------------------------------------------------------------------------
-                # TgyoumuListRow = CSVCheck("A9公会計作業（財務書類）", TgyoumuList[1], "業務")
-                # if TgyoumuListRow[0] is True:
-                #     Tax = "A9"
-                #     # GList = ["1gyou.png","1gyou2.png"]
-                #     # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                #     # ImgClick(FolURL2,GL[1],0.99999,1)
-                #     time.sleep(1)
-                #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
-                #     for x in range(TgyoumuListRow[1]):
-                #         pg.press("down")
-                #     time.sleep(1)
-                #     pg.press("return")
-                #     time.sleep(1)
-                #     while (
-                #         pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
-                #         is not None
-                #     ):
-                #         time.sleep(1)
-                #     while (
-                #         pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
-                #         is None
-                #     ):
-                #         time.sleep(1)
-                #     ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
-                #     time.sleep(1)
-                #     KanyoScroll(FolURL2, Tax)  # 関与先毎の時間集計操作
-                #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
-                #     for x in range(TgyoumuListRow[1]):
-                #         pg.press("up")
-                # # ------------------------------------------------------------------------------
-                # TgyoumuListRow = CSVCheck("A10公会計作業（その他）", TgyoumuList[1], "業務")
-                # if TgyoumuListRow[0] is True:
-                #     Tax = "A10"
-                #     # GList = ["1gyou.png","1gyou2.png"]
-                #     # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                #     # ImgClick(FolURL2,GL[1],0.99999,1)
-                #     time.sleep(1)
-                #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
-                #     for x in range(TgyoumuListRow[1]):
-                #         pg.press("down")
-                #     time.sleep(1)
-                #     pg.press("return")
-                #     time.sleep(1)
-                #     while (
-                #         pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
-                #         is not None
-                #     ):
-                #         time.sleep(1)
-                #     while (
-                #         pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
-                #         is None
-                #     ):
-                #         time.sleep(1)
-                #     ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
-                #     time.sleep(1)
-                #     KanyoScroll(FolURL2, Tax)  # 関与先毎の時間集計操作
-                #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
-                #     for x in range(TgyoumuListRow[1]):
-                #         pg.press("up")
-                # # ------------------------------------------------------------------------------
+                TgyoumuListRow = CSVCheck("A10公会計作業（その他）", TgyoumuList[1], "業務")
+                if TgyoumuListRow[0] is True:
+                    Tax = "A10"
+                    # GList = ["1gyou.png","1gyou2.png"]
+                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
+                    # ImgClick(FolURL2,GL[1],0.99999,1)
+                    time.sleep(1)
+                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press("down")
+                    time.sleep(1)
+                    pg.press("return")
+                    time.sleep(1)
+                    while (
+                        pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
+                        is not None
+                    ):
+                        time.sleep(1)
+                    while (
+                        pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
+                        is None
+                    ):
+                        time.sleep(1)
+                    ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
+                    time.sleep(1)
+                    KanyoScroll(FolURL2, Tax)  # 関与先毎の時間集計操作
+                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press("up")
+                # ------------------------------------------------------------------------------
                 TgyoumuListRow = CSVCheck("A11公営作業", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
                     Tax = "A11"
