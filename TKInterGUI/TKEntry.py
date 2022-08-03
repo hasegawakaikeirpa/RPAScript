@@ -128,6 +128,7 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
         txtxt.grid(row=next + 1, column=0)  # 位置指定
         # Entrマネージャに登録
         self.Frame7EntL.insert(next, txtxt)
+        self.AJL.insert(next, AJL[next])
         # ---------------------------------------------
         lab = tk.Label(self.frame7, text="→", width=2)
         lab.grid(row=next + 1, column=1)  # 位置指定
@@ -139,6 +140,7 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
         txtxt.grid(row=next + 1, column=2)  # 位置指定
         # Entrマネージャに登録
         self.Frame7EntR.insert(next, txtxt)
+        self.AJR.insert(next, AJR[next])
         # ---------------------------------------------
         Btn = tk.Button(
             self.frame7,
@@ -157,6 +159,7 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
         txtxt.grid(row=next + 1, column=0)  # 位置指定
         # Entrマネージャに登録
         self.Frame7EntL.insert(next, txtxt)
+        self.AJL.insert(next, AJL)
         # ---------------------------------------------
         lab = tk.Label(self.frame7, text="→", width=2)
         lab.grid(row=next + 1, column=1)  # 位置指定
@@ -168,6 +171,7 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
         txtxt.grid(row=next + 1, column=2)  # 位置指定
         # Entrマネージャに登録
         self.Frame7EntR.insert(next, txtxt)
+        self.AJR.insert(next, AJR)
         # ---------------------------------------------
         Btn = tk.Button(
             self.frame7,
@@ -194,8 +198,10 @@ def Frame7Entries(self):
     self.Frame7Btns = []  # Entryのインスタンス
     self.Frame7index = 0  # 最新のインデックス番号
     self.Frame7entryList = []  # Entryのインスタンス
+    self.AJL = []  # Entryのインスタンス
+    self.AJR = []  # Entryのインスタンス
 
-    AJL = ["伝票日付", "金額", "金額"]
+    AJL = ["伝票日付", "（借）金額", "（貸）金額"]
     AJR = ["日付", "入金", "出金"]
 
     self.frame7RowList = []

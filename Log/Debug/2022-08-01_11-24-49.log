@@ -1,0 +1,35 @@
+[2022/08/01 11:24:49][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 11:24:49][DEBUG](MJSOpen.py:113) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 11:24:50][DEBUG](MJSOpen.py:119) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 11:24:51][DEBUG](MJSOpen.py:134) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 11:25:08][DEBUG](MJS_DensiSinkoku.py:772) MJS操作画面へ偏移 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:21][DEBUG](MJS_DensiSinkoku.py:774) CSVをDataFrameに MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:22][DEBUG](MJS_DensiSinkoku.py:777) FindIcon.pngをクリック MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:25][DEBUG](MJS_DensiSinkoku.py:780) JyoukenBar.pngを待機 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:26][DEBUG](MJS_DensiSinkoku.py:792) CSVループ開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:26][DEBUG](MJS_DensiSinkoku.py:800) CSV行データから値格納 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:26][DEBUG](MJS_DensiSinkoku.py:824) SinkokuTuuti.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:26][DEBUG](MJS_DensiSinkoku.py:851) Tantousya.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:29][DEBUG](MJS_DensiSinkoku.py:858) KCodeBox.pngにコード入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:31][DEBUG](MJS_DensiSinkoku.py:864) NendoBox.pngに年度入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:34][DEBUG](MJS_DensiSinkoku.py:874) 税目処理分け MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:41][DEBUG](MJS_DensiSinkoku.py:899) 検索開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:45][DEBUG](MJS_DensiSinkoku.py:904) チェックボックスクリックを開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:25:52][DEBUG](MJS_DensiSinkoku.py:1021) 検索結果なしの処理開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:26:02][DEBUG](MJS_DensiSinkoku.py:800) CSV行データから値格納 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:26:02][DEBUG](MJS_DensiSinkoku.py:824) SinkokuTuuti.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:26:02][DEBUG](MJS_DensiSinkoku.py:851) Tantousya.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:26:05][DEBUG](MJS_DensiSinkoku.py:858) KCodeBox.pngにコード入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:26:08][DEBUG](MJS_DensiSinkoku.py:864) NendoBox.pngに年度入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:26:10][DEBUG](MJS_DensiSinkoku.py:874) 税目処理分け MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:26:17][DEBUG](MJS_DensiSinkoku.py:899) 検索開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:26:22][DEBUG](MJS_DensiSinkoku.py:904) チェックボックスクリックを開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:26:48][DEBUG](MJS_DensiSinkoku.py:988) メイン処理開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:27:09][DEBUG](MJS_DensiSinkoku.py:800) CSV行データから値格納 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:27:09][DEBUG](MJS_DensiSinkoku.py:824) SinkokuTuuti.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:27:09][DEBUG](MJS_DensiSinkoku.py:851) Tantousya.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:27:12][DEBUG](MJS_DensiSinkoku.py:858) KCodeBox.pngにコード入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:27:15][DEBUG](MJS_DensiSinkoku.py:864) NendoBox.pngに年度入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:27:17][DEBUG](MJS_DensiSinkoku.py:874) 税目処理分け MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:27:24][DEBUG](MJS_DensiSinkoku.py:899) 検索開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:27:29][DEBUG](MJS_DensiSinkoku.py:904) チェックボックスクリックを開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py

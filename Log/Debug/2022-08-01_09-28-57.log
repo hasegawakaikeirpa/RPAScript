@@ -1,0 +1,10 @@
+[2022/08/01 09:28:57][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 09:28:58][DEBUG](MJSOpen.py:113) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 09:28:58][DEBUG](MJSOpen.py:119) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 09:28:59][DEBUG](MJSOpen.py:134) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 09:29:17][DEBUG](MJS_DensiSinkoku.py:772) MJS操作画面へ偏移 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 09:29:30][DEBUG](MJS_DensiSinkoku.py:774) CSVをDataFrameに MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 09:29:32][DEBUG](MJS_DensiSinkoku.py:777) FindIcon.pngをクリック MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 09:29:34][DEBUG](MJS_DensiSinkoku.py:780) JyoukenBar.pngを待機 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 09:29:35][DEBUG](MJS_DensiSinkoku.py:792) CSVループ開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 09:29:35][DEBUG](MJS_DensiSinkoku.py:800) CSV行データから値格納 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py

@@ -578,25 +578,36 @@ def AllChange(
             ColNames = MJS_data[0, :]
             OCRColNames = OCR_data[0, :]
             l_c = 0
-            for ColItem in ColNames:
-                if ColTxt == ColItem:
-                    SerchTxt = MJS_data[l_r, l_c]
-                l_c += 1
-            l_c = 0
+            # ------------------------------------------------------------------
             for OCRColItem in OCRColNames:
-                if I == OCRColItem:
+                if I == OCRColItem.replace('"', "").replace('"', ""):
                     if OCR_data[l_r, l_c] != "":
                         M_var = OCR_data[l_r, l_c]
-                        IO = "入金"
-                elif O == OCRColItem:
+                        try:
+                            M_var = int(M_var)
+                            IO = "入金"
+                        except:
+                            IO = "出金"
+                elif O == OCRColItem.replace('"', "").replace('"', ""):
                     if OCR_data[l_r, l_c] != "":
                         M_var = OCR_data[l_r, l_c]
-                        IO = "出金"
-                elif DayColName == OCRColItem:
+                        try:
+                            M_var = int(M_var)
+                            IO = "出金"
+                        except:
+                            IO = "入金"
+                elif DayColName == OCRColItem.replace('"', "").replace('"', ""):
                     if OCR_data[l_r, l_c] != "":
                         D_var = OCR_data[l_r, l_c]
+                        IO = ""
                 l_c += 1
+            # ------------------------------------------------------------------
             if l_r != 0:
+                l_c = 0
+                for ColItem in OCRColNames:
+                    if ColTxt == ColItem.replace('"', "").replace('"', ""):
+                        SerchTxt = OCR_data[l_r, l_c]
+                    l_c += 1
                 NPC = npCreate(MJS_data, SerchTxt, ColTxt)
                 if NPC[0] is True:
                     # 日付文字列データの変換------------------------------------------
@@ -624,6 +635,18 @@ def AllChange(
                             NNPC = npTidyUp(MC[1])
                             if NNPC[0] is True:
                                 npw = NNPC[1]
+                                # 末尾含め3列削除-------------------------------------
+                                np_h = npw[0, :]
+                                np_h_c = np_h.shape[0] - 1
+                                for np_hItem in reversed(np_h):
+                                    if "一致率" == np_hItem:
+                                        npw = np.delete(npw, np_h_c, 1)
+                                    elif "日付一致率" == np_hItem:
+                                        npw = np.delete(npw, np_h_c, 1)
+                                    elif "仕訳金額差額" == np_hItem:
+                                        npw = np.delete(npw, np_h_c, 1)
+                                    np_h_c -= 1
+                                # ---------------------------------------------------
                                 npw_Column = npw[0, :]
                                 if l_r == 1:
                                     FinalList.append(list(npw_Column))
