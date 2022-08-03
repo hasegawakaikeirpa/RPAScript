@@ -266,17 +266,85 @@ def SortPDF(PDFName):
 # ------------------------------------------------------------------------------------------------------------------
 def FolCre(C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui):
     Fol = str(dt.today().year) + "-" + str(dt.today().month)
-    pt = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\" + Fol + "\\送信分受信通知"
+    pt = r"\\nas-sv\B_監査etc\B2_電子ﾌｧｲﾙ\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\" + Fol
     try:
+        # ---------------------------------------------------------
         if os.path.exists(pt) is False:
             os.mkdir(pt)
-        C_Fol = pt + "\\" + str(C_SCode)
-        if os.path.exists(C_Fol) is False:
-            os.mkdir(C_Fol)
-        C_F = C_Fol + "\\" + "ミロク送信分"
-        if os.path.exists(C_F) is False:
-            os.mkdir(C_F)
-        return True, C_F
+            pt = pt + r"\\送信分受信通知"
+            if os.path.exists(pt) is False:  # 1
+                os.mkdir(pt)
+                C_Fol = pt + r"\\" + str(C_SCode)
+                if os.path.exists(C_Fol) is False:  # 2
+                    os.mkdir(C_Fol)
+                    C_F = C_Fol + r"\\" + "ミロク送信分"
+                    if os.path.exists(C_F) is False:  # 3
+                        os.mkdir(C_F)
+                        return True, C_F
+                    else:
+                        return True, C_F
+                else:
+                    C_F = C_Fol + r"\\" + "ミロク送信分"
+                    if os.path.exists(C_F) is False:  # 3
+                        os.mkdir(C_F)
+                        return True, C_F
+                    else:
+                        return True, C_F
+            else:
+                C_Fol = pt + r"\\" + str(C_SCode)
+                if os.path.exists(C_Fol) is False:  # 2
+                    os.mkdir(C_Fol)
+                    C_F = C_Fol + r"\\" + "ミロク送信分"
+                    if os.path.exists(C_F) is False:  # 3
+                        os.mkdir(C_F)
+                        return True, C_F
+                    else:
+                        return True, C_F
+                else:
+                    C_F = C_Fol + r"\\" + "ミロク送信分"
+                    if os.path.exists(C_F) is False:  # 3
+                        os.mkdir(C_F)
+                        return True, C_F
+                    else:
+                        return True, C_F
+        else:
+            pt = pt + r"\\送信分受信通知"
+            if os.path.exists(pt) is False:  # 1
+                os.mkdir(pt)
+                C_Fol = pt + r"\\" + str(C_SCode)
+                if os.path.exists(C_Fol) is False:  # 2
+                    os.mkdir(C_Fol)
+                    C_F = C_Fol + r"\\" + "ミロク送信分"
+                    if os.path.exists(C_F) is False:  # 3
+                        os.mkdir(C_F)
+                        return True, C_F
+                    else:
+                        return True, C_F
+                else:
+                    C_F = C_Fol + r"\\" + "ミロク送信分"
+                    if os.path.exists(C_F) is False:  # 3
+                        os.mkdir(C_F)
+                        return True, C_F
+                    else:
+                        return True, C_F
+            else:
+                C_Fol = pt + r"\\" + str(C_SCode)
+                if os.path.exists(C_Fol) is False:  # 2
+                    os.mkdir(C_Fol)
+                    C_F = C_Fol + r"\\" + "ミロク送信分"
+                    if os.path.exists(C_F) is False:  # 3
+                        os.mkdir(C_F)
+                        return True, C_F
+                    else:
+                        return False, ""
+                else:
+                    C_F = C_Fol + r"\\" + "ミロク送信分"
+                    if os.path.exists(C_F) is False:  # 3
+                        os.mkdir(C_F)
+                        return True, C_F
+                    else:
+                        return True, C_F
+        # ---------------------------------------------------------
     except:
         return False, ""
 
@@ -806,18 +874,19 @@ def MainFlow(FolURL2, NG_List):
             C_Nendo = str(C_dfDataRow["年度"]).replace("\\", "-")
             C_Zeimoku = str(C_dfDataRow["税目"])
             C_Syurui = str(C_dfDataRow["申告種類"])
-
+            # NG_Listとの突合---------------------------------------------------------------------------------------------------------
             NG_r = 0
             NG_Flag = False
-            for NG_r in range(len(NG_List)):
-                NG_ListRow = NG_List.iloc[NG_r]
-                NG_SCode = NG_ListRow["関与先コード"]
-                if NG_SCode == C_SCode:
-                    NG_Flag = True
-                    break
-                NG_r += 1
+            for NG_ListItem in NG_List:
+                for NG_r in range(len(NG_ListItem[1])):
+                    NG_ListRow = NG_ListItem[1].iloc[NG_r]
+                    NG_SCode = NG_ListRow["関与先コード"]
+                    if NG_SCode == C_SCode:
+                        NG_Flag = True
+                        break
+                    NG_r += 1
             if NG_Flag is False:
-
+                # --------------------------------------------------------------------------------------------------------------------
                 conf = 0.9
                 LoopVal = 1
                 logger.debug("SinkokuTuuti.pngを元に処理分岐")
@@ -1057,10 +1126,23 @@ def MainFlow(FolURL2, NG_List):
 # RPA用画像フォルダの作成---------------------------------------------------------
 FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/MJS_DensiSinkoku"  # 元
 FolURL2 = os.getcwd().replace("\\", "/")  # 先
-NG_url = FolURL2 + r"\RPAPhoto/Den_NGList.CSV"
-NG_List = pd.read_csv(NG_url, encoding="shiftjis")
-# --------------------------------------------------------------------------------
+NG_Dir = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\申請CSV"
+# ------------------------------------------------------------------------------
 try:
+    List = []
+    NG_List = []
+    for fd_path, sb_folder, sb_file in os.walk(NG_Dir):
+        if "処理済" not in sb_folder:
+            for file in os.listdir(NG_Dir):
+                if os.path.isfile(os.path.join(NG_Dir, file)):
+                    List = pd.read_csv(fd_path + r"\\" + file, encoding="shiftjis")
+                    NG_List.append([fd_path, file, List])
     MainFlow(FolURL2, NG_List)
+    for NG_ListItem in NG_List:
+        os.rename(
+            NG_ListItem[0] + r"\\" + NG_ListItem[1],
+            NG_ListItem[0] + r"\\処理済\\" + NG_ListItem[1],
+        )
+# ------------------------------------------------------------------------------
 except:
     traceback.print_exc()

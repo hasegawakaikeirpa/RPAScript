@@ -1,0 +1,18 @@
+[2022/08/01 11:21:37][DEBUG](MJSOpen.py:107) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 11:21:37][DEBUG](MJSOpen.py:113) Appiumサーバー起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 11:21:37][DEBUG](MJSOpen.py:119) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 11:21:39][DEBUG](MJSOpen.py:134) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\MJSOpen.py
+[2022/08/01 11:21:55][DEBUG](MJS_DensiSinkoku.py:772) MJS操作画面へ偏移 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:09][DEBUG](MJS_DensiSinkoku.py:774) CSVをDataFrameに MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:10][DEBUG](MJS_DensiSinkoku.py:777) FindIcon.pngをクリック MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:12][DEBUG](MJS_DensiSinkoku.py:780) JyoukenBar.pngを待機 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:13][DEBUG](MJS_DensiSinkoku.py:792) CSVループ開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:13][DEBUG](MJS_DensiSinkoku.py:800) CSV行データから値格納 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:13][DEBUG](MJS_DensiSinkoku.py:824) SinkokuTuuti.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:13][DEBUG](MJS_DensiSinkoku.py:851) Tantousya.pngを元に処理分岐 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:16][DEBUG](MJS_DensiSinkoku.py:858) KCodeBox.pngにコード入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:19][DEBUG](MJS_DensiSinkoku.py:864) NendoBox.pngに年度入力 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:21][DEBUG](MJS_DensiSinkoku.py:874) 税目処理分け MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:28][DEBUG](MJS_DensiSinkoku.py:899) 検索開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:22:33][DEBUG](MJS_DensiSinkoku.py:904) チェックボックスクリックを開始 MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py
+[2022/08/01 11:23:26][DEBUG](MJS_DensiSinkoku.py:1055) [WinError 3] 指定されたパスが見つかりません。: '\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\2022-8\\送信分受信通知' MainFlow d:\PythonScript\RPAScript\MJS_DensiSinkoku.py

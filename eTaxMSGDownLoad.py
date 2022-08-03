@@ -388,40 +388,42 @@ def RenamePDF(DownTime, MTitle, KanyoNo, KanyoName):
         else:
             print("ありません")  # フォルダーがなかった場合
     PDFfolder = glob.glob(os.getcwd().replace("\\", "/") + "/" + "*.pdf")  # フォルダーがあった場合
+    PDFSerch = False
     for PDFfolderItem in PDFfolder:
-        PDFSerch = "国税電子申告・納税システム" in PDFfolderItem
-        DTime = (
-            "{0:04}".format(tdy.year)
-            + "{0:02}".format(tdy.month)
-            + "{0:02}".format(tdy.day)
-            + " "
-            + "{0:02}".format(tdy.hour)
-            + "{0:02}".format(tdy.minute)
-            + "{0:02}".format(tdy.second)
-        )
-        PDFName = KanyoFolName + "_" + MTitle + "_" + DTime + ".pdf"
-        PDFPath = os.getcwd().replace("\\", "/") + "/" + PDFName
-        PDFPath = PDFPath.replace("/", "\\")
-
-        try:
-            if PDFSerch is True:
-                os.rename(PDFfolderItem, PDFPath)
-                MovePDFPath = ChildFol + "/" + PDFName
-                MovePDFPath = MovePDFPath.replace("/", "\\")
-                shutil.move(PDFPath, MovePDFPath)
-                OKstr = MovePDFPath + "成功"
-                OKstr = OKstr.replace("\uff0d", "-").replace("\xa0", "")
-                OKLog.append(OKstr)
-            # 'D:\\PythonScript\\国税電子申告・納税システム－SU00S100 メール詳細 (1).pdf'
-            else:
-                NGstr = MovePDFPath + "_リネーム失敗-国税電子申告・納税システムが含まれないファイル名-"
-                NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
-                NGLog.append(NGstr)
-        except:
-            traceback.print_exc()
-            NGstr = MovePDFPath + "_リネーム失敗-トレースバックエラー-"
+        if "国税電子申告・納税システム" in PDFfolderItem:
+            DTime = (
+                "{0:04}".format(tdy.year)
+                + "{0:02}".format(tdy.month)
+                + "{0:02}".format(tdy.day)
+                + " "
+                + "{0:02}".format(tdy.hour)
+                + "{0:02}".format(tdy.minute)
+                + "{0:02}".format(tdy.second)
+            )
+            PDFName = KanyoFolName + "_" + MTitle + "_" + DTime + ".pdf"
+            PDFPath = os.getcwd().replace("\\", "/") + "/" + PDFName
+            PDFPath = PDFPath.replace("/", "\\")
+            PDFSerch = True
+            break
+    try:
+        if PDFSerch is True:
+            os.rename(PDFfolderItem, PDFPath)
+            MovePDFPath = ChildFol + "/" + PDFName
+            MovePDFPath = MovePDFPath.replace("/", "\\")
+            shutil.move(PDFPath, MovePDFPath)
+            OKstr = MovePDFPath + "成功"
+            OKstr = OKstr.replace("\uff0d", "-").replace("\xa0", "")
+            OKLog.append(OKstr)
+        # 'D:\\PythonScript\\国税電子申告・納税システム－SU00S100 メール詳細 (1).pdf'
+        else:
+            NGstr = MovePDFPath + "_リネーム失敗-国税電子申告・納税システムが含まれないファイル名-"
             NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
             NGLog.append(NGstr)
+    except:
+        traceback.print_exc()
+        NGstr = MovePDFPath + "_リネーム失敗-トレースバックエラー-"
+        NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
+        NGLog.append(NGstr)
 
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -440,10 +442,12 @@ def SortPDF(DownTime, MTitle, KanyoNo, KanyoName):
     )
     PDFName = KanyoFolName + "_" + MTitle + "_" + DTime + ".pdf"
     dir_path = "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/" + CfolName + "/eTax"
+    PDFSerch = False
     for current_dir, sub_dirs, files_list in os.walk(dir_path):
         for file_name in files_list:
             foldersItem = os.path.join(current_dir, file_name)
-            PDFSerch = PDFName in foldersItem
+            if PDFName in foldersItem:
+                PDFSerch = True
             try:
                 if PDFSerch is True:
                     return True

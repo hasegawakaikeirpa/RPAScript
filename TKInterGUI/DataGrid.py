@@ -81,12 +81,12 @@ class DataGrid:
         # ---------------------------------------------------------------------------------------
         tk.Label(self.frame6, text="元帳借方科目列名").grid(row=3, column=0)  # 位置指定
         self.Moto_Karikata = tk.Entry(self.frame6, width=10)
-        self.Moto_Karikata.insert(0, "借方科目名")
+        self.Moto_Karikata.insert(0, "（借）科目名")
         self.Moto_Karikata.grid(row=3, column=1)
         # ---------------------------------------------------------------------------------------
         tk.Label(self.frame6, text="元帳貸方科目列名").grid(row=4, column=0)  # 位置指定
         self.Moto_Kashikata = tk.Entry(self.frame6, width=10)
-        self.Moto_Kashikata.insert(0, "貸方科目名")
+        self.Moto_Kashikata.insert(0, "（貸）科目名")
         self.Moto_Kashikata.grid(row=4, column=1)
         # ---------------------------------------------------------------------------------------
         # 選択行自動仕訳作成ボタン----------------------------------------------------------------
@@ -159,15 +159,15 @@ class DataGrid:
         for AJ_Item in AJ_Column:
             if "日付" in AJ_Item:
                 self.Moto_Day.delete(0, tk.END)
-                self.Moto_Day.insert(0, AJ_Item)
+                self.Moto_Day.insert(0, AJ_Item.replace("'", "").replace('"', ""))
                 self.Moto_Day_No = A
             elif "金額" in AJ_Item:
                 self.Moto_Money.delete(0, tk.END)
-                self.Moto_Money.insert(0, AJ_Item)
+                self.Moto_Money.insert(0, AJ_Item.replace("'", "").replace('"', ""))
                 self.Moto_Money_No = A
             elif "摘要" in AJ_Item:
                 self.Moto_Tekiyou.delete(0, tk.END)
-                self.Moto_Tekiyou.insert(0, AJ_Item)
+                self.Moto_Tekiyou.insert(0, AJ_Item.replace("'", "").replace('"', ""))
                 self.Moto_Tekiyou_No = A
             A += 1
         # ---------------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ class DataGrid:
                                     print(Last_List[L_r][L_c])
                                     if "Unnamed" in Last_List[L_r][L_c]:
                                         Last_List[L_r][L_c] = ""
-                                    elif "." in Last_List[L_r][L_c]:
+                                    if "." in Last_List[L_r][L_c]:
                                         S_txt = Last_List[L_r][L_c].split(".")
                                         Last_List[L_r][L_c] = S_txt[0]
                             else:  # ヘッダー行以外処理
@@ -237,7 +237,7 @@ class DataGrid:
                                     print(Last_List[L_r][L_c])
                                     if bool(Last_List[L_r][L_c]) is False:
                                         Last_List[L_r][L_c] = ""
-                                    elif (
+                                    if (
                                         Last_List[L_r][L_c] == Last_List[L_r][L_c]
                                         and Last_List[L_r][L_c] is not False
                                     ):
@@ -249,17 +249,6 @@ class DataGrid:
                             # ライター（書き込み者）を作成
                             writer = csv.writer(fout)
                             writer.writerows(Last_List)
-                        # テーブルリロード----------------------------------------------------
-                        # self.pt2.destroy
-                        # pt2 = MT2.MyTable(
-                        #     self.tree2_frame,
-                        #     width=650,
-                        #     height=500,
-                        #     sticky=tk.N + tk.S + tk.W + tk.E,
-                        # )  # テーブルをサブクラス化
-                        # enc = CSVO.getFileEncoding(AJurl)
-                        # self.table2 = pt2.importCSV(AJurl, encoding=enc)
-                        # self.pt2 = pt2
                         self.pt2.redraw()
                     else:
                         # 各配列をDataFrameに------------------------------------------------
@@ -287,7 +276,7 @@ class DataGrid:
                                     print(Last_List[L_r][L_c])
                                     if "Unnamed" in Last_List[L_r][L_c]:
                                         Last_List[L_r][L_c] = ""
-                                    elif "." in Last_List[L_r][L_c]:
+                                    if "." in Last_List[L_r][L_c]:
                                         S_txt = Last_List[L_r][L_c].split(".")
                                         Last_List[L_r][L_c] = S_txt[0]
                             else:  # ヘッダー行以外処理
@@ -295,7 +284,7 @@ class DataGrid:
                                     print(Last_List[L_r][L_c])
                                     if bool(Last_List[L_r][L_c]) is False:
                                         Last_List[L_r][L_c] = ""
-                                    elif (
+                                    if (
                                         Last_List[L_r][L_c] == Last_List[L_r][L_c]
                                         and Last_List[L_r][L_c] is not False
                                     ):
@@ -307,17 +296,6 @@ class DataGrid:
                             # ライター（書き込み者）を作成
                             writer = csv.writer(fout)
                             writer.writerows(Last_List)
-                        # テーブルリロード----------------------------------------------------
-                        # self.pt2.destroy
-                        # pt2 = MT2.MyTable(
-                        #     self.tree2_frame,
-                        #     width=650,
-                        #     height=500,
-                        #     sticky=tk.N + tk.S + tk.W + tk.E,
-                        # )  # テーブルをサブクラス化
-                        # enc = CSVO.getFileEncoding(AJurl)
-                        # self.table2 = pt2.importCSV(AJurl, encoding=enc)
-                        # self.pt2 = pt2
                         self.pt2.redraw()
         except:
             tk.messagebox.showinfo("確認", "エラーです。自動仕訳実行後に抽出仕訳表のセルを選択し、実行してください。")
@@ -350,7 +328,7 @@ class DataGrid:
         O = self.tomlEntries[Out_var].get()  # 出金列名Entry取得
         # --------------------------------------------------------------------------------
         AJ_List = AJ.AllChange(
-            self.Moto_Tekiyou.get(),
+            JS,
             self.HidukeColName,
             self.Moto_Day.get(),
             self.Moto_Money_No,
@@ -394,34 +372,68 @@ class DataGrid:
                         R_CName_c = PT_c
                         break
                     PT_c += 1
-                # -----------------------------------------------------------
+                # ---------------------------------------------------------------
                 for L_r in range(len(AJ_List)):
-                    if L_r != 0 and L_r != len(AJ_List) - 1:  # ヘッダー行処理
-                        # try:
-                        C_Txt = tke.TxtEdit(
-                            L_CName,
-                            AJ_List[L_r][L_CName_c],
-                            PT_List[L_r][R_CName_c],
-                        )
-                        AJ_List[L_r][L_CName_c] = C_Txt[1]
-                    # except:
-                    #     print("OCR表の値を変換ルールに従って自動仕訳表に代入エラー")
+                    if L_r != 0 and L_r != len(AJ_List):  # ヘッダー行処理
+                        if (R_CName == I) or (R_CName == O):
+                            # 数値確認-------------------------------------------
+                            try:
+                                Var = int(PT_List[L_r - 1][R_CName_c])
+                                C_Txt = tke.TxtEdit(
+                                    L_CName,
+                                    AJ_List[L_r][L_CName_c],
+                                    Var,
+                                )
+                                AJ_List[L_r][L_CName_c] = C_Txt[1]
+                            except:
+                                if R_CName == I:
+                                    R_CName = O
+                                elif R_CName == O:
+                                    R_CName = I
+                                # OCR表の列番号検索---------------------------
+                                PT_c = 0
+                                for PT_ColListItem in PT_ColList:
+                                    if R_CName == PT_ColListItem:
+                                        R_CName_c = PT_c
+                                        break
+                                    PT_c += 1
+                                # ----------------------------------------
+                                Var = int(PT_List[L_r - 1][R_CName_c])
+                                C_Txt = tke.TxtEdit(
+                                    L_CName,
+                                    AJ_List[L_r][L_CName_c],
+                                    Var,
+                                )
+                                AJ_List[L_r][L_CName_c] = C_Txt[1]
+                            # ---------------------------------------------------
+                        else:
+                            Var = PT_List[L_r - 1][R_CName_c]
+                            C_Txt = tke.TxtEdit(
+                                L_CName,
+                                AJ_List[L_r][L_CName_c],
+                                Var,
+                            )
+                            AJ_List[L_r][L_CName_c] = C_Txt[1]
             # ################################################################
             for L_r in range(len(AJ_List)):
                 if L_r == 0:  # ヘッダー行処理
                     for L_c in range(len(AJ_List[L_r])):
-                        print(AJ_List[L_r][L_c])
+
                         if "Unnamed" in AJ_List[L_r][L_c]:
                             AJ_List[L_r][L_c] = ""
-                        elif "." in AJ_List[L_r][L_c]:
+                        if "." in AJ_List[L_r][L_c]:
                             S_txt = AJ_List[L_r][L_c].split(".")
                             AJ_List[L_r][L_c] = S_txt[0]
+                        if AJ_List[L_r][L_c] == "False":
+                            AJ_List[L_r][L_c] = ""
                 else:  # ヘッダー行以外処理
                     for L_c in range(len(AJ_List[L_r])):
                         print(AJ_List[L_r][L_c])
                         if bool(AJ_List[L_r][L_c]) is False:
                             AJ_List[L_r][L_c] = ""
-                        elif (
+                        if AJ_List[L_r][L_c] == "False":
+                            AJ_List[L_r][L_c] = ""
+                        if (
                             AJ_List[L_r][L_c] == AJ_List[L_r][L_c]
                             and AJ_List[L_r][L_c] is not False
                         ):
@@ -433,16 +445,7 @@ class DataGrid:
                 # ライター（書き込み者）を作成
                 writer = csv.writer(fout)
                 writer.writerows(AJ_List)
-
-            AJDF = pd.DataFrame(AJ_List)
-            AJDF.to_csv(AJSeturl, index=False, header=False)
-            pt3 = MT3.MyTable(
-                self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
-            )  # テーブルをサブクラス化
-            enc = CSVO.getFileEncoding(AJSeturl)
-            self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
-            self.pt3 = pt3
-            pt3.show()
+            self.pt2.redraw()
 
     # -----------------------------------------------------------------------------------------
     def AJCalc(self, csvurl):
@@ -497,7 +500,7 @@ class DataGrid:
             # --------------------------------------------------------------------------------
             else:
                 AJ_List = AJ.main(
-                    self.Moto_Tekiyou.get(),
+                    JS,
                     FindTxt,
                     D_var,
                     self.Moto_Day.get(),
@@ -789,7 +792,7 @@ if __name__ == "__main__":
     csvurl = r"D:\OCRTESTPDF\PDFTEST\JA_1page.csv"
     AJurl = r"D:\OCRTESTPDF\PDFTEST\JA_1page_AutoJounal.csv"
     AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
-    Roolurl = r"D:\PythonScript\RPAScript\TKInterGUI\Mototyou\18_仕訳日記帳.csv"
+    Roolurl = r"D:\PythonScript\RPAScript\TKInterGUI\Mototyou\1_仕訳日記帳.csv"
     tomltitle = "JA"
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
