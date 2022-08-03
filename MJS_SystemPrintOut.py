@@ -321,7 +321,9 @@ def ChildFlow(
                 dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
                 WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
                 WriteExSheet = WriteEx[isnItem]
-                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "要消費税基本情報登録" + dt_now
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = (
+                    "要消費税基本情報登録" + dt_now
+                )
                 print("シート書き込み完了")
                 print(WriteEx)
                 WriteEx.save(XLSURL)
@@ -426,7 +428,9 @@ def ChildFlow(
                 dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
                 WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
                 WriteExSheet = WriteEx[isnItem]
-                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "貸借バランスエラー" + dt_now
+                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = (
+                    "貸借バランスエラー" + dt_now
+                )
                 print("シート書き込み完了")
                 print(WriteEx)
                 WriteEx.save(XLSURL)
@@ -559,7 +563,12 @@ def ChildFlow(
                 )
                 with open(LURL, "a") as f:
                     print(
-                        [dt_s, "関与先番号:" + str(Rno), str(Rn), "_決算内訳書_" + PN + "印刷様式未設定処理終了"],
+                        [
+                            dt_s,
+                            "関与先番号:" + str(Rno),
+                            str(Rn),
+                            "_決算内訳書_" + PN + "印刷様式未設定処理終了",
+                        ],
                         file=f,
                     )
                 # ------------------------------------------------------------------------------------------
@@ -815,9 +824,14 @@ def HoujinzeiUpdateSinkokuItiran(
             SYB = ImgCheck(CFolURL, r"\Houjinzei\SaiyouBeppyou.png", 0.9, 10)
             if SYB[0] is True:
                 time.sleep(1)
-                SBP = ImgCheckForList(CFolURL, [r"\Houjinzei\Saiyou_Btn.png",r"\Houjinzei\Saiyou_Btn2.png"], 0.9, 10)
+                SBP = ImgCheckForList(
+                    CFolURL,
+                    [r"\Houjinzei\Saiyou_Btn.png", r"\Houjinzei\Saiyou_Btn2.png"],
+                    0.9,
+                    10,
+                )
                 if SBP[0] is True:
-                    ImgClick(CFolURL, SBP[1],0.9,10)
+                    ImgClick(CFolURL, SBP[1], 0.9, 10)
                     # 確実に閉じる---------------------------------------------------------
                     HME = ImgCheck(CFolURL, r"\Houjinzei\MenuEnd.png", 0.9, 10)
                     if HME[0] is True:
@@ -843,6 +857,16 @@ def HoujinzeiUpdateSinkokuItiran(
                 while (
                     pg.locateOnScreen(
                         CFolURL + r"\Houjinzei\NoDataInQ_K.png", confidence=0.9
+                    )
+                    is not None
+                ):
+                    time.sleep(1)
+            SCB = ImgCheck(CFolURL, r"\Houjinzei\Saiyou_Check.png", 0.9, 10)
+            if DNQ[0] is True:
+                pg.press("y")
+                while (
+                    pg.locateOnScreen(
+                        CFolURL + r"\Houjinzei\Saiyou_Check.png", confidence=0.9
                     )
                     is not None
                 ):
@@ -2589,8 +2613,8 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         CFolURL, r"\GenkaSyoukyaku\01G_PrintOK.png", 0.9, 10
                     )  # 出力条件設定OKをクリック
                     # --------------------------------------------------------------------
-                    NOB = False,""
-                    NOB = ImgCheck(CFolURL,r"\GenkaSyoukyaku\G_NOB.png",0.9,10)
+                    NOB = False, ""
+                    NOB = ImgCheck(CFolURL, r"\GenkaSyoukyaku\G_NOB.png", 0.9, 10)
                     if NOB[0] is True:
                         pg.press("return")
                         # 出力条件ウィンドウが表示されるまで待機---------------------------------
@@ -2602,7 +2626,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
-                        ImgClick(CFolURL,r"\GenkaSyoukyaku\G_NOBCan.png",0.9,10)
+                        ImgClick(CFolURL, r"\GenkaSyoukyaku\G_NOBCan.png", 0.9, 10)
                         # --------------------------------------------------------------------
                     # 出力条件ウィンドウが表示されるなくなるまで待機--------------------------
                     while (
@@ -2613,7 +2637,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is not None
                     ):
                         time.sleep(1)
-                    if NOB[0] is False:                                                    
+                    if NOB[0] is False:
                         time.sleep(3)
                         # --------------------------------------------------------------------
                         ImgClick(
@@ -3199,7 +3223,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     time.sleep(1)
                 # --------------------------------------------------------------------
                 ImgClick(CFolURL, r"\Uchiwake\11U_PrintBtn.png", 0.9, 10)  # 印刷ボタンをクリック
-                PSQ = False,""
+                PSQ = False, ""
                 # 印刷設定が表示されるまで待機---------------------------------
                 while (
                     pg.locateOnScreen(
@@ -3208,7 +3232,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     is None
                 ):
                     time.sleep(1)
-                    PSQ = ImgCheck(CFolURL,r"\Houjinzei\PrintStyleQ.png",0.9,10)
+                    PSQ = ImgCheck(CFolURL, r"\Houjinzei\PrintStyleQ.png", 0.9, 10)
                     if PSQ[0] is True:
                         pg.press("return")
                         break
@@ -3300,7 +3324,9 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     # -----------------------------------
                     # 決算内訳書フラグが表示されるまで待機------------------------------------
                     while (
-                        pg.locateOnScreen(TFolURL + r"\Kessan_CFlag.png", confidence=0.9)
+                        pg.locateOnScreen(
+                            TFolURL + r"\Kessan_CFlag.png", confidence=0.9
+                        )
                         is None
                     ):
                         time.sleep(1)
@@ -3337,12 +3363,14 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     # -----------------------------------
                     # 決算内訳書フラグが表示されるまで待機------------------------------------
                     while (
-                        pg.locateOnScreen(TFolURL + r"\Kessan_CFlag.png", confidence=0.9)
+                        pg.locateOnScreen(
+                            TFolURL + r"\Kessan_CFlag.png", confidence=0.9
+                        )
                         is None
                     ):
                         time.sleep(1)
                     # ------------------------------------------------------------------
-                    return False, "印刷様式未設定", "", ""                    
+                    return False, "印刷様式未設定", "", ""
             else:
                 print("関与先なし")
                 return False, "関与先なし", "", ""
@@ -3482,7 +3510,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     )
                     if SFI[0] is True:  # 申告書・付表入力があれば
                         ImgClick(CFolURL, SFI[1], 0.9, 10)  # 申告書・付表入力アイコンをクリック
-                    KKS = False,""
+                    KKS = False, ""
                     # 申告選択ウィンドウが表示されるまで待機-------------------------------------
                     while (
                         pg.locateOnScreen(
@@ -3823,7 +3851,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
-                            SIQ = ImgCheck(CFolURL, r"\KTaisyou\SiwakeInputQ.png", 0.9, 10)
+                            SIQ = ImgCheck(
+                                CFolURL, r"\KTaisyou\SiwakeInputQ.png", 0.9, 10
+                            )
                             if SIQ[0] is True:
                                 pg.press("y")
                             # 再計算確認ウィンドウがあるか確認
@@ -3902,7 +3932,8 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         IC = 0
                         while (
                             pg.locateOnScreen(
-                                CFolURL + r"\KTaisyou\NowSyouhiPrint.png", confidence=0.9
+                                CFolURL + r"\KTaisyou\NowSyouhiPrint.png",
+                                confidence=0.9,
                             )
                             is None
                         ):
@@ -3926,7 +3957,8 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         # 印刷中が表示されなくなるまで待機---------------------------------
                         while (
                             pg.locateOnScreen(
-                                CFolURL + r"\KTaisyou\NowSyouhiPrint.png", confidence=0.9
+                                CFolURL + r"\KTaisyou\NowSyouhiPrint.png",
+                                confidence=0.9,
                             )
                             is not None
                         ):
@@ -3978,7 +4010,10 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         while (
                             ImgCheckForList(
                                 CFolURL,
-                                [r"\KTaisyou\Syouhizei.png", r"\KTaisyou\Syouhizei2.png"],
+                                [
+                                    r"\KTaisyou\Syouhizei.png",
+                                    r"\KTaisyou\Syouhizei2.png",
+                                ],
                                 0.9,
                                 10,
                             )[0]
@@ -4058,11 +4093,11 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
-                        NOD = ImgCheck(CFolURL,r"\Houjinzei\NoSinkoku.png",0.9,10)
+                        NOD = ImgCheck(CFolURL, r"\Houjinzei\NoSinkoku.png", 0.9, 10)
                         if NOD[0] is True:
                             pg.press("return")
                             break
-                    if NOD[0] is False:    
+                    if NOD[0] is False:
                         pg.press(["return", "return"])
                         # 添付書面印刷ウィンドウが表示されるまで待機---------------------------------
                         while (
@@ -4097,7 +4132,8 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         # 添付書面印刷サイズ選択が表示されるまで待機---------------------------------
                         while (
                             pg.locateOnScreen(
-                                CFolURL + r"\KTaisyou\TenpuPrintType.png", confidence=0.9
+                                CFolURL + r"\KTaisyou\TenpuPrintType.png",
+                                confidence=0.9,
                             )
                             is None
                         ):
@@ -4112,7 +4148,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                                 10,
                             )
                             if FO[0] is True:
-                                break                        
+                                break
                         if FO[0] is False:
                             A4T = ImgCheck(CFolURL, r"\KTaisyou\A4Box.png", 0.99999, 10)
                             if A4T[0] is True:
@@ -4222,7 +4258,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ):
                             time.sleep(1)
                         # --------------------------------------------------------------------
-                        pg.press("y")                
+                        pg.press("y")
                         # ------------------------------------------------------------------
                         # 会計大将フラグが表示されるまで待機------------------------------------
                         while (
@@ -4231,9 +4267,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             )
                             is None
                         ):
-                            time.sleep(1)                        
+                            time.sleep(1)
                         # ------------------------------------------------------------------
-                        return False, "出力履歴なし", "", ""     
+                        return False, "出力履歴なし", "", ""
                 elif PN == "決算報告書":
                     CalcErr = ""
                     ImgClick(
@@ -4258,7 +4294,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ImgClick(CFolURL, SSM[1], 0.9, 10)  # 01決算書アイコンをクリック
                         time.sleep(2)
                     # -------------------------------------------------------------
-                    KJJ = False,""
+                    KJJ = False, ""
                     # 01決算書ウィンドウが表示されるまで待機---------------------------
                     while (
                         pg.locateOnScreen(
@@ -4267,7 +4303,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
-                    KJJ = ImgCheck(CFolURL,r"\KTaisyou\KessanJyunjyoQ.png",0.9,10)
+                    KJJ = ImgCheck(CFolURL, r"\KTaisyou\KessanJyunjyoQ.png", 0.9, 10)
                     if KJJ[0] is True:
                         pg.press("return")
                         time.sleep(1)
@@ -4289,7 +4325,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ):
                             time.sleep(1)
                             # 金額エラーが表示されていないか確認
-                            KCE = ImgCheck(CFolURL, r"\Houjinzei\K_CalcErr.png", 0.9, 10)
+                            KCE = ImgCheck(
+                                CFolURL, r"\Houjinzei\K_CalcErr.png", 0.9, 10
+                            )
                             if KCE[0] is True:
                                 CalcErr = "Err"  # 金額エラーフラグを立てる
                                 pg.press("y")  # 金額エラー無視で印刷
@@ -4333,7 +4371,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is not None
                         ):
                             time.sleep(1)
-                            KOW = ImgCheck(CFolURL, r"\KTaisyou\K_OverWrite2.png", 0.9, 10)
+                            KOW = ImgCheck(
+                                CFolURL, r"\KTaisyou\K_OverWrite2.png", 0.9, 10
+                            )
                             if KOW[0] is True:
                                 pg.press("y")
                         # --------------------------------------------------------------------
@@ -4392,7 +4432,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ):
                             time.sleep(1)
                         # ------------------------------------------------------------------
-                        return False, "決算順序未設定","",""
+                        return False, "決算順序未設定", "", ""
                 elif PN == "株主（社員）資本変動計算書":
                     CalcErr = ""
                     ImgClick(
@@ -4695,7 +4735,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     if CalcErr == "":
                         return True, ThisNo, ThisYear, ThisMonth
                     else:
-                        return False, ThisNo, ThisYear, CalcErr           
+                        return False, ThisNo, ThisYear, CalcErr
             else:
                 print("関与先なし")
                 return False, "関与先なし", "", ""
