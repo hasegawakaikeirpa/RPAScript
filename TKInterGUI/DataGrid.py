@@ -770,12 +770,26 @@ def IntCheck(c_var):
 
 
 # -----------------------------------------------------------------------------------------
-def Main(US, Bk, tl):
-    global csvurl, Banktoml, tomltitle
-
+def Main(US, Bk, DS, MS, RS, RlS):
+    """
+    呼出構文↓
+    DG.Main(
+        csvurl,
+        Banktoml,
+        selfmother.DaySet.get(),
+        selfmother.MoneySet.get(),
+        selfmother.ReplaceSet.get(),
+        selfmother.ReplaceStr.get(),
+    )
+    """
+    global csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr
     csvurl = US
     Banktoml = Bk
-    tomltitle = tl
+    DaySet = DS
+    MoneySet = MS
+    ReplaceSet = RS
+    ReplaceStr = RlS
+
     # 　Tk MainWindow 生成
     main_window = tk.Tk()
     main_window.withdraw()

@@ -1,14 +1,11 @@
 import GCloudVision as GCV
-import re
 import os
-from dateutil.parser import parse
 import toml
 import pandas as pd
-import ImageChange as FIC
-import CV2Setting as CV2S
 import csv
 import numpy as np
 from difflib import SequenceMatcher
+from mojimoji import han_to_zen
 
 
 def getNearestValue(list, num):
@@ -26,7 +23,29 @@ def getNearestValue(list, num):
     return list[idx]
 
 
-def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
+def DiffCheck(GFTable, ColList):
+    """
+    概要: データフレームの列数にあわせて列名リスト要素数を変更
+    @param list: データ配列
+    @param num: 対象値
+    @return 対象値に最も近い値
+    """
+
+    # データフレームの列数にあわせて列名リスト要素数を変更------------------------------
+    GC_Diff = len(GFTable[0]) - len(ColList)
+    if GC_Diff < 0:
+        GC_Diff = GC_Diff * -1
+        for GC_d in range(GC_Diff):
+            ColList.pop(len(ColList) - 1)
+    else:
+        for GC_d in range(GC_Diff):
+            ColList.append("未設定" + str(GC_d + 1))
+    # ----------------------------------------------------------------------------
+
+
+def DiffListCreate(
+    FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr
+):
     """
     概要: GoogleApiで取得した内容を整形
     @param FolURL : このpyファイルのフォルダ(str)
@@ -53,13 +72,15 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
         if GF[0] is True:
             GFTable = GF[1]
             GFRow = len(GFTable)
+            GFCol = len(GFTable[0])
+            ChangeTxtList = []
             # OCR結果を整形----------------------------------------------------------------
             for g in range(GFRow):
                 if g == 21:
                     print("")
                 try:
                     # toml設定の列数以上の列を削除-----------------------------------------------
-                    lentoml = len(Banktoml[tomltitle]["ColumnName"])
+                    lentoml = len(ColList)
                     lenGT = len(GFTable[g])
                     if lentoml < lenGT:
                         for c in range(lenGT - lentoml):
@@ -67,60 +88,76 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
                     # -------------------------------------------------------------------------
                 except:
                     print("toml設定の列数以上の列を削除エラー")
-                for c in Banktoml[tomltitle]["MoneyCol"]:
-                    strs = ""
-                    ints = ""
-                    S = GFTable[g][c - 1]
-                    for y in range(len(S)):
-                        if S[y].isdecimal() is False:
-                            strs += S[y]
+                if "," in MoneySet:
+                    MoneySet = MoneySet.split(",")
+                for c in MoneySet:
+                    c = int(c)
+                    # 指定列がデータフレーム列数未満なら------------------------------------------
+                    if c <= GFCol:
+                        strs = ""
+                        ints = ""
+                        S = GFTable[g][c - 1]
+                        for y in range(len(S)):
+                            if S[y].isdecimal() is False:
+                                strs += S[y]
+                            else:
+                                ints += S[y]
+                        strs = (
+                            strs.replace(",", "")
+                            .replace("*", "")
+                            .replace("'", "")
+                            .replace(",", "")
+                            .replace("○", "")
+                            .replace("×", "")
+                            .replace("✓", "")
+                            .replace("¥", "")
+                            .replace("´", "")
+                            .replace("=", "")
+                            .replace("串", "")
+                            .replace("第", "")
+                            .replace("$", "")
+                            .replace("〒", "")
+                            .replace(".", "")
+                            .replace("|", "")
+                            .replace("-", "")
+                            .replace("･", "")
+                            .replace("!", "")
+                        )
+                        if len(strs) == 0:
+                            GFTable[g][c - 1] = ints
+                        elif len(ints) == 0:
+                            GFTable[g][c - 1] = strs
                         else:
-                            ints += S[y]
-                    strs = (
-                        strs.replace(",", "")
-                        .replace("*", "")
-                        .replace("'", "")
-                        .replace(",", "")
-                        .replace("○", "")
-                        .replace("×", "")
-                        .replace("✓", "")
-                        .replace("¥", "")
-                        .replace("´", "")
-                        .replace("=", "")
-                        .replace("串", "")
-                        .replace("第", "")
-                        .replace("$", "")
-                        .replace("〒", "")
-                        .replace(".", "")
-                        .replace("|", "")
-                        .replace("-", "")
-                        .replace("･", "")
-                        .replace("!", "")
-                    )
-                    if len(strs) == 0:
-                        GFTable[g][c - 1] = ints
-                    elif len(ints) == 0:
-                        GFTable[g][c - 1] = strs
-                    else:
-                        GFTable[g][c - 1] = strs + "::" + ints
+                            GFTable[g][c - 1] = strs + "::" + ints
+                    # -------------------------------------------------------------------------
                 # tomlから摘要変換リストを読込一致率50％を超えるものがあれば置換-----------------
-                for c in Banktoml[tomltitle]["ChangeTextCol"]:
-                    strs = ""
-                    ints = ""
-                    S = GFTable[g][c - 1]
-                    for y in range(len(S)):
-                        if S[y].isdecimal() is False:
-                            strs += S[y]
-                        else:
-                            ints += S[y]
-                    CTCount = []
-                    for CT in Banktoml[tomltitle]["ChangeText"]:
-                        src, trg = strs, CT
-                        r = SequenceMatcher(None, src, trg).ratio()
-                        CTCount.append([r, CT])
-                    GNV = getNearestValue(CTCount, 1.0)
-                    if 1.0 - GNV[0] < 0.5:
-                        GFTable[g][c - 1] = GNV[1]
+                if "," in ReplaceSet:
+                    ReplaceSet = ReplaceSet.split(",")
+                for c in ReplaceSet:
+                    c = int(c)
+                    # 指定列がデータフレーム列数未満なら------------------------------------------
+                    if c <= GFCol:
+                        strs = ""
+                        ints = ""
+                        S = GFTable[g][c - 1]
+                        for y in range(len(S)):
+                            if S[y].isdecimal() is False:
+                                strs += S[y]
+                            else:
+                                ints += S[y]
+                        CTCount = []
+                        if "," in ReplaceStr:
+                            ReplaceStr = ReplaceStr.split(",")
+                        for CT in ReplaceStr:
+                            src, trg = han_to_zen(strs.lower()), han_to_zen(CT.lower())
+                            r = SequenceMatcher(None, src, trg).ratio()
+                            CTCount.append([r, CT])
+                        GNV = getNearestValue(CTCount, 1.0)
+                        if 1.0 - GNV[0] < 0.5:
+                            ChangeTxtList.append([GFTable[g][c - 1], GNV[1]])
+                            GFTable[g][c - 1] = GNV[1]
+
+                    # -------------------------------------------------------------------------
             # ----------------------------------------------------------------------------
             for g in range(GFRow):
                 for c in range(len(GFTable[g])):
@@ -132,20 +169,26 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
                     GFTable[g][c] = kekkafukugen
 
             # DataFrame作成
-            df = pd.DataFrame(GFTable, columns=Banktoml[tomltitle]["ColumnName"])
+            DiffCheck(GFTable, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
+            df = pd.DataFrame(GFTable, columns=ColList)
             FU = FileURL.split("\\")
             FN = FU[len(FU) - 1].replace(".png", ".csv")
             FDir = FileURL.replace(FU[len(FU) - 1], "")
             FileName = FDir + r"\\" + FN
-
-            # with open(
-            #     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList.csv",
-            #     mode="w",
-            #     encoding="shiftjis",
-            #     errors="ignore",
-            #     newline="",
-            # ) as f:
-            # pandasでファイルオブジェクトに書き込む
+            # 変換実績リストに要素があれば保存------------------------------------------------
+            if len(ChangeTxtList) > 0:
+                CTL_df = pd.DataFrame(ChangeTxtList)
+                with open(
+                    FDir + r"\\ChangeTxtList.csv",
+                    mode="w",
+                    encoding="cp932",
+                    errors="ignore",
+                    newline="",
+                ) as file:
+                    writer = csv.writer(file)
+                    writer.writerow(ChangeTxtList)
+                    CTL_df.to_csv(file, index=False)
+            # -------------------------------------------------------------------------------
             try:
                 df.to_csv(FileName, index=False, encoding="cp932")
             except:
@@ -165,13 +208,15 @@ def DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle):
     #     return False, ""
 
 
-def Main(FileURL, Yoko, Tate, Banktoml, tomltitle):
+def Main(FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr):
     # # toml読込------------------------------------------------------------------------------
     # with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
     #     Banktoml = toml.load(f)
     #     print(Banktoml)
     # # -----------------------------------------------------------
-    DLC = DiffListCreate(FileURL, Yoko, Tate, Banktoml, tomltitle)
+    DLC = DiffListCreate(
+        FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr
+    )
     if DLC[0] is True:
         return DLC
     else:
