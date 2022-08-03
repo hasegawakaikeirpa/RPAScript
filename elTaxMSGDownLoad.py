@@ -532,28 +532,28 @@ def RenamePDF(DownTime, MTitle, KanyoNo, KanyoName, Hakkoumoto, Hakkou, H_row):
         PDFPath = os.getcwd().replace("\\", "/") + "/" + PDFName
         PDFPath = PDFPath.replace("/", "\\")
 
-        try:
-            if PDFSerch is True:
-                os.rename(PDFfolderItem, PDFPath)
-                MovePDFPath = ChildFol + "/" + PDFName
-                MovePDFPath = MovePDFPath.replace("/", "\\")
-                shutil.move(PDFPath, MovePDFPath)
-                logger.debug(str(MovePDFPath) + "_PDF作成成功")
-                OKstr = MovePDFPath + "成功"
-                OKstr = OKstr.replace("\uff0d", "-").replace("\xa0", "")
-                OKLog.append(OKstr)
-            # 'D:\\PythonScript\\国税電子申告・納税システム－SU00S100 メール詳細 (1).pdf'
-            else:
-                logger.debug(str(MovePDFPath) + "_リネーム失敗-メッセージ照会_お知らせが含まれないファイル名-")
-                NGstr = MovePDFPath + "_リネーム失敗-メッセージ照会_お知らせが含まれないファイル名-"
-                NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
-                NGLog.append(NGstr)
-        except:
-            traceback.print_exc()
-            logger.debug(str(MovePDFPath) + "_リネーム失敗-トレースバックエラー-")
-            NGstr = MovePDFPath + "_リネーム失敗-トレースバックエラー-"
+    try:
+        if PDFSerch is True:
+            os.rename(PDFfolderItem, PDFPath)
+            MovePDFPath = ChildFol + "/" + PDFName
+            MovePDFPath = MovePDFPath.replace("/", "\\")
+            shutil.move(PDFPath, MovePDFPath)
+            logger.debug(str(MovePDFPath) + "_PDF作成成功")
+            OKstr = MovePDFPath + "成功"
+            OKstr = OKstr.replace("\uff0d", "-").replace("\xa0", "")
+            OKLog.append(OKstr)
+        # 'D:\\PythonScript\\国税電子申告・納税システム－SU00S100 メール詳細 (1).pdf'
+        else:
+            logger.debug(str(MovePDFPath) + "_リネーム失敗-メッセージ照会_お知らせが含まれないファイル名-")
+            NGstr = MovePDFPath + "_リネーム失敗-メッセージ照会_お知らせが含まれないファイル名-"
             NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
             NGLog.append(NGstr)
+    except:
+        traceback.print_exc()
+        logger.debug(str(MovePDFPath) + "_リネーム失敗-トレースバックエラー-")
+        NGstr = MovePDFPath + "_リネーム失敗-トレースバックエラー-"
+        NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
+        NGLog.append(NGstr)
 
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
