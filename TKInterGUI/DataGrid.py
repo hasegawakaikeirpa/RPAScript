@@ -39,7 +39,7 @@ class DataGrid:
         # self.CsvHeader()
         # メインウィンドウ設定-------------------------------------------------------------------
         self.root = tk.Tk()  # ウインド画面の作成
-        self.root.geometry("1400x750")  # 画面サイズの設定
+        self.root.geometry("1500x750")  # 画面サイズの設定
         self.root.title("OCRTEXT")  # 題名
         # -------------------------------------------------------------------------------------
         # メインフレーム設定--------------------------------------------------------------------
@@ -121,6 +121,13 @@ class DataGrid:
         # フレーム設定--------------------------------------------------------------------------
         self.frame5 = tk.Frame(self.root, width=650)
         self.frame5.grid(row=1, column=1, sticky=tk.W)
+        pt3 = MT3.MyTable(
+            self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
+        )  # テーブルをサブクラス化
+        enc = CSVO.getFileEncoding(AJSeturl)
+        self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
+        self.pt3 = pt3
+        pt3.show()
         # -------------------------------------------------------------------------------------
         # ツリーフレーム設定---------------------------------------------------------------------
         self.tree_frame = tk.Frame(self.root, width=650, height=500)
@@ -183,6 +190,14 @@ class DataGrid:
             command=lambda: self.AJAllCalc(csvurl),
         )
         self.AllRun.grid(row=4, column=0, columnspan=2)  # 位置指定
+        self.CloseBtn = tk.Button(
+            self.frame3,
+            text="戻る",
+            bg="lightblue",
+            width=20,
+            command=self.ReturnBack,
+        )
+        self.CloseBtn.grid(row=5, column=0, columnspan=2)  # 位置指定
         # -------------------------------------------------------------------------------------
         # tomlListを配置
         tke.tomlEntries(self)
@@ -192,6 +207,7 @@ class DataGrid:
     #############################################################################################
     # 以下self関数
     #############################################################################################
+
     def AJ_copyCalc(self, csvurl):
         try:
             if self.pt3.startrow is None:
@@ -200,102 +216,188 @@ class DataGrid:
                 if self.pt.startrow is None:
                     tk.messagebox.showinfo("確認", "OCR表のセルが選択されていません。")
                 else:
-                    # 自動仕訳保存配列の行数判定------------------------------------------
-                    d2_r = len(self.pt2.model.df)
-                    if self.pt.startrow + 1 > d2_r:
-                        # 各配列をDataFrameに------------------------------------------------
-                        dfs = self.pt.model.df  # グリッドをDF化
-                        dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
-                        dfs2 = self.pt2.model.df  # グリッドをDF化
-                        dfs3 = self.pt3.model.df  # グリッドをDF化
-                        # ------------------------------------------------------------------
-                        dfs3row = dfs3.iloc[self.pt3.startrow]  # DF行データ
-                        CF_df = tke.AJ_copyCalc_Func(dfsrow, dfs3row)  # 自動仕訳抽出
-                        CF_df = list(np.array(CF_df))  # list化
-                        C_dfColumn = np.array(dfs2.columns)  # DFColumnをnumpy配列へ
-                        dfs2 = np.array(dfs2)  # 自動仕訳保存配列をnumpy配列へ
-                        dfs2 = np.insert(
-                            dfs2, dfs2.shape[0], CF_df, axis=0
-                        )  # 末尾へデータ行追加
-                        Last_List = np.vstack((C_dfColumn, dfs2))  # 列名リストを縦連結
-                        Last_List.astype(str)  # numpy配列型変換
-                        Last_List = list(Last_List)  # numpy配列list型変換
-                        print(Last_List)
-                        # データ内のFalse,nan処理--------------------------------------------
-                        for L_r in range(len(Last_List)):
-                            if L_r == 0:  # ヘッダー行処理
-                                for L_c in range(len(Last_List[L_r])):
-                                    print(Last_List[L_r][L_c])
-                                    if "Unnamed" in Last_List[L_r][L_c]:
-                                        Last_List[L_r][L_c] = ""
-                                    if "." in Last_List[L_r][L_c]:
-                                        S_txt = Last_List[L_r][L_c].split(".")
-                                        Last_List[L_r][L_c] = S_txt[0]
-                            else:  # ヘッダー行以外処理
-                                for L_c in range(len(Last_List[L_r])):
-                                    print(Last_List[L_r][L_c])
-                                    if bool(Last_List[L_r][L_c]) is False:
-                                        Last_List[L_r][L_c] = ""
-                                    if (
-                                        Last_List[L_r][L_c] == Last_List[L_r][L_c]
-                                        and Last_List[L_r][L_c] is not False
-                                    ):
-                                        print("")
-                                    else:
-                                        Last_List[L_r][L_c] = ""
-                        # ------------------------------------------------------------------
-                        with open(AJurl, "wt", encoding="cp932", newline="") as fout:
-                            # ライター（書き込み者）を作成
-                            writer = csv.writer(fout)
-                            writer.writerows(Last_List)
-                        self.pt2.redraw()
+                    print(self.pt.startrow)  # 選択行
+                    st = 0  # 行ポジション
+                    for stom in self.entryList:  # Entryウィジェットリスト
+                        if stom == "自動仕訳基準列名":
+                            JS_var = st
+                        elif stom == "日付列名":
+                            Day_var = st
+                        elif stom == "入金列名":
+                            In_var = st
+                        elif stom == "出金列名":
+                            Out_var = st
+                        st += 1
+                    # Entry要素設定-------------------------------------------------------------------
+                    JS = self.tomlEntries[JS_var].get()  # 自動仕訳基準列名Entry取得
+                    D = self.tomlEntries[Day_var].get()  # 日付列Entry取得
+                    I = self.tomlEntries[In_var].get()  # 入金列名Entry取得
+                    O = self.tomlEntries[Out_var].get()  # 出金列名Entry取得
+                    # --------------------------------------------------------------------------------
+                    print(self.Label_ChangeURL.get())  # toml金融機関Entry取得
+                    dfs = self.pt.model.df  # グリッドをDF化
+                    dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
+                    # グリッド選択データの代入---------------------------------------------------------
+                    FindTxt = dfsrow[JS]  # 検索文字
+                    D_var = dfsrow[D]  # 日付
+                    I_var = dfsrow[I]  # 入金
+                    O_var = dfsrow[O]  # 出金
+                    # --------------------------------------------------------------------------------
+                    # 整数チェック---------------------------------------------------------------------
+                    IC = IntCheck(I_var)
+                    OC = IntCheck(O_var)
+                    if IC is True and OC is True:
+                        tkm = False, "", "", ""
+                    elif IC is True:
+                        tkm = True, I_var, In_var, "入金"
+                    elif OC is True:
+                        tkm = True, O_var, Out_var, "出金"
+                    if tkm[0] is False:
+                        tk.messagebox.showinfo("確認", "入金、出金双方に金額が出力されています。行を再確認してください。")
+                    # --------------------------------------------------------------------------------
                     else:
-                        # 各配列をDataFrameに------------------------------------------------
-                        dfs = self.pt.model.df  # グリッドをDF化
-                        dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
-                        dfs2 = self.pt2.model.df  # グリッドをDF化
-                        dfs3 = self.pt3.model.df  # グリッドをDF化
-                        # ------------------------------------------------------------------
-                        dfs3row = dfs3.iloc[self.pt3.startrow]  # DF行データ
-                        CF_df = tke.AJ_copyCalc_Func(dfsrow, dfs3row)  # 自動仕訳抽出
-                        CF_df = list(np.array(CF_df))  # list化
-                        C_dfColumn = np.array(dfs2.columns)  # DFColumnをnumpy配列へ
-                        dfs2 = np.array(dfs2)  # 自動仕訳保存配列をnumpy配列へ
-                        dfs2 = np.insert(
-                            dfs2, self.pt.startrow + 1, CF_df, axis=0
-                        )  # 末尾へデータ行追加
-                        Last_List = np.vstack((C_dfColumn, dfs2))  # 列名リストを縦連結
-                        Last_List.astype(str)  # numpy配列型変換
-                        Last_List = list(Last_List)  # numpy配列list型変換
-                        print(Last_List)
-                        # データ内のFalse,nan処理--------------------------------------------
-                        for L_r in range(len(Last_List)):
-                            if L_r == 0:  # ヘッダー行処理
-                                for L_c in range(len(Last_List[L_r])):
-                                    print(Last_List[L_r][L_c])
-                                    if "Unnamed" in Last_List[L_r][L_c]:
-                                        Last_List[L_r][L_c] = ""
-                                    if "." in Last_List[L_r][L_c]:
-                                        S_txt = Last_List[L_r][L_c].split(".")
-                                        Last_List[L_r][L_c] = S_txt[0]
-                            else:  # ヘッダー行以外処理
-                                for L_c in range(len(Last_List[L_r])):
-                                    print(Last_List[L_r][L_c])
-                                    if bool(Last_List[L_r][L_c]) is False:
-                                        Last_List[L_r][L_c] = ""
-                                    if (
-                                        Last_List[L_r][L_c] == Last_List[L_r][L_c]
-                                        and Last_List[L_r][L_c] is not False
-                                    ):
-                                        print("")
-                                    else:
-                                        Last_List[L_r][L_c] = ""
-                        # ------------------------------------------------------------------
-                        with open(AJurl, "wt", encoding="cp932", newline="") as fout:
-                            # ライター（書き込み者）を作成
-                            writer = csv.writer(fout)
-                            writer.writerows(Last_List)
-                        self.pt2.redraw()
+                        EntR_C = 0
+                        for EntRItem in self.Frame7EntR:
+                            if tkm[3] == I:
+                                if O == EntRItem.get():
+                                    EntL_CName = self.Frame7EntL[EntR_C].get()
+                                elif I == EntRItem.get():
+                                    EntL_ChangeCName = self.Frame7EntL[EntR_C].get()
+                            elif tkm[3] == O:
+                                if I == EntRItem.get():
+                                    EntL_CName = self.Frame7EntL[EntR_C].get()
+                                elif O == EntRItem.get():
+                                    EntL_ChangeCName = self.Frame7EntL[EntR_C].get()
+                            EntR_C += 1
+                        # 自動仕訳保存配列の行数判定------------------------------------------
+                        d2_r = len(self.pt2.model.df)
+                        if self.pt.startrow > d2_r:
+                            # 各配列をDataFrameに------------------------------------------------
+                            dfs = self.pt.model.df  # グリッドをDF化
+                            dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
+                            dfs2 = self.pt2.model.df  # グリッドをDF化
+                            dfs3 = self.pt3.model.df  # グリッドをDF化
+                            # ------------------------------------------------------------------
+                            dfs3row = dfs3.iloc[self.pt3.startrow]  # DF行データ
+                            CF_df = tke.AJ_copyCalc_Func(dfsrow, dfs3row)  # 自動仕訳抽出
+                            CF_df = list(np.array(CF_df))  # list化
+                            C_dfColumn = np.array(dfs2.columns)  # DFColumnをnumpy配列へ
+                            dfs2 = np.array(dfs2)  # 自動仕訳保存配列をnumpy配列へ
+                            dfs2 = np.insert(
+                                dfs2, dfs2.shape[0], CF_df, axis=0
+                            )  # 末尾へデータ行追加
+                            Last_List = np.vstack((C_dfColumn, dfs2))  # 列名リストを縦連結
+                            Last_List.astype(str)  # numpy配列型変換
+                            Last_List = list(Last_List)  # numpy配列list型変換
+                            print(Last_List)
+                            # 入出金状況による仕訳金額確定----------------------------------------
+                            C_df_c = 0
+                            for C_dfColumnItem in C_dfColumn:
+                                if EntL_CName == C_dfColumnItem:
+                                    EntL_CNo = C_df_c
+                                elif EntL_ChangeCName == C_dfColumnItem:
+                                    EntL_ChangeCNo = C_df_c
+                                C_df_c += 1
+                            Last_List[self.pt.startrow + 1][EntL_CNo] = Last_List[
+                                self.pt.startrow + 1
+                            ][EntL_ChangeCNo]
+                            # ------------------------------------------------------------------
+                            # データ内のFalse,nan処理--------------------------------------------
+                            for L_r in range(len(Last_List)):
+                                if L_r == 0:  # ヘッダー行処理
+                                    for L_c in range(len(Last_List[L_r])):
+                                        print(Last_List[L_r][L_c])
+                                        if "Unnamed" in Last_List[L_r][L_c]:
+                                            Last_List[L_r][L_c] = ""
+                                        if "." in Last_List[L_r][L_c]:
+                                            S_txt = Last_List[L_r][L_c].split(".")
+                                            Last_List[L_r][L_c] = S_txt[0]
+                                else:  # ヘッダー行以外処理
+                                    for L_c in range(len(Last_List[L_r])):
+                                        print(Last_List[L_r][L_c])
+                                        if bool(Last_List[L_r][L_c]) is False:
+                                            Last_List[L_r][L_c] = ""
+                                        if (
+                                            Last_List[L_r][L_c] == Last_List[L_r][L_c]
+                                            and Last_List[L_r][L_c] is not False
+                                        ):
+                                            print("")
+                                        else:
+                                            Last_List[L_r][L_c] = ""
+                            # ------------------------------------------------------------------
+                            with open(
+                                AJurl, "wt", encoding="cp932", newline=""
+                            ) as fout:
+                                # ライター（書き込み者）を作成
+                                writer = csv.writer(fout)
+                                writer.writerows(Last_List)
+                            enc = CSVO.getFileEncoding(AJurl)
+                            self.pt2.importCSV(AJurl, encoding=enc)
+                            self.pt2.redraw
+                        else:
+                            # 各配列をDataFrameに------------------------------------------------
+                            dfs = self.pt.model.df  # グリッドをDF化
+                            dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
+                            dfs2 = self.pt2.model.df  # グリッドをDF化
+                            dfs3 = self.pt3.model.df  # グリッドをDF化
+                            # ------------------------------------------------------------------
+                            dfs3row = dfs3.iloc[self.pt3.startrow]  # DF行データ
+                            CF_df = tke.AJ_copyCalc_Func(dfsrow, dfs3row)  # 自動仕訳抽出
+                            CF_df = list(np.array(CF_df))  # list化
+                            C_dfColumn = np.array(dfs2.columns)  # DFColumnをnumpy配列へ
+                            dfs2 = np.array(dfs2)  # 自動仕訳保存配列をnumpy配列へ
+                            dfs2 = np.delete(dfs2, self.pt.startrow, axis=0)
+                            dfs2 = np.insert(
+                                dfs2, self.pt.startrow, CF_df, axis=0
+                            )  # 末尾へデータ行追加
+                            Last_List = np.vstack((C_dfColumn, dfs2))  # 列名リストを縦連結
+                            Last_List.astype(str)  # numpy配列型変換
+                            Last_List = list(Last_List)  # numpy配列list型変換
+                            print(Last_List)
+                            # 入出金状況による仕訳金額確定----------------------------------------
+                            C_df_c = 0
+                            for C_dfColumnItem in C_dfColumn:
+                                if EntL_CName == C_dfColumnItem:
+                                    EntL_CNo = C_df_c
+                                elif EntL_ChangeCName == C_dfColumnItem:
+                                    EntL_ChangeCNo = C_df_c
+                                C_df_c += 1
+                            Last_List[self.pt.startrow + 1][EntL_CNo] = Last_List[
+                                self.pt.startrow + 1
+                            ][EntL_ChangeCNo]
+                            # ------------------------------------------------------------------
+                            # データ内のFalse,nan処理--------------------------------------------
+                            for L_r in range(len(Last_List)):
+                                if L_r == 0:  # ヘッダー行処理
+                                    for L_c in range(len(Last_List[L_r])):
+                                        print(Last_List[L_r][L_c])
+                                        if "Unnamed" in Last_List[L_r][L_c]:
+                                            Last_List[L_r][L_c] = ""
+                                        if "." in Last_List[L_r][L_c]:
+                                            S_txt = Last_List[L_r][L_c].split(".")
+                                            Last_List[L_r][L_c] = S_txt[0]
+                                else:  # ヘッダー行以外処理
+                                    for L_c in range(len(Last_List[L_r])):
+                                        print(Last_List[L_r][L_c])
+                                        if bool(Last_List[L_r][L_c]) is False:
+                                            Last_List[L_r][L_c] = ""
+                                        if (
+                                            Last_List[L_r][L_c] == Last_List[L_r][L_c]
+                                            and Last_List[L_r][L_c] is not False
+                                        ):
+                                            print("")
+                                        else:
+                                            Last_List[L_r][L_c] = ""
+                            # ------------------------------------------------------------------
+                            with open(
+                                AJurl, "wt", encoding="cp932", newline=""
+                            ) as fout:
+                                # ライター（書き込み者）を作成
+                                writer = csv.writer(fout)
+                                writer.writerows(Last_List)
+                            enc = CSVO.getFileEncoding(AJurl)
+                            self.pt2.importCSV(AJurl, encoding=enc)
+                            self.pt2.redraw
         except:
             tk.messagebox.showinfo("確認", "エラーです。自動仕訳実行後に抽出仕訳表のセルを選択し、実行してください。")
 
@@ -373,6 +475,8 @@ class DataGrid:
                     PT_c += 1
                 # ---------------------------------------------------------------
                 for L_r in range(len(AJ_List)):
+                    if L_r == 6:
+                        print("")
                     if L_r != 0 and L_r != len(AJ_List):  # ヘッダー行処理
                         if (R_CName == I) or (R_CName == O):
                             # 数値確認-------------------------------------------
@@ -444,7 +548,9 @@ class DataGrid:
                 # ライター（書き込み者）を作成
                 writer = csv.writer(fout)
                 writer.writerows(AJ_List)
-            self.pt2.redraw()
+            enc = CSVO.getFileEncoding(AJurl)
+            self.pt2.importCSV(AJurl, encoding=enc)
+            self.pt2.redraw
 
     # -----------------------------------------------------------------------------------------
     def AJCalc(self, csvurl):
@@ -492,13 +598,12 @@ class DataGrid:
                 tkm = True, I_var, In_var, "入金"
             elif OC is True:
                 tkm = True, O_var, Out_var, "出金"
-
             if tkm[0] is False:
                 tk.messagebox.showinfo("確認", "入金、出金双方に金額が出力されています。行を再確認してください。")
             # --------------------------------------------------------------------------------
             else:
                 AJ_List = AJ.main(
-                    JS,
+                    self.Henkan,
                     FindTxt,
                     D_var,
                     self.Moto_Day.get(),
@@ -514,13 +619,9 @@ class DataGrid:
                 )  # 仕訳候補を抽出
                 AJDF = pd.DataFrame(AJ_List)
                 AJDF.to_csv(AJSeturl, index=False, header=False)
-                pt3 = MT3.MyTable(
-                    self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
-                )  # テーブルをサブクラス化
                 enc = CSVO.getFileEncoding(AJSeturl)
-                self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
-                self.pt3 = pt3
-                pt3.show()
+                self.pt3.importCSV(AJSeturl, encoding=enc)
+                self.pt3.redraw
 
     # -----------------------------------------------------------------------------------------
     def CsvHeader(self):
@@ -754,6 +855,11 @@ class DataGrid:
 
         self.ZanNameRecalc()
 
+    # ------------------------------------------------------------------------------------------
+    def ReturnBack(self):
+        self.root.destroy()
+        Master.deiconify()
+
 
 #############################################################################################
 # 以下関数
@@ -768,7 +874,7 @@ def IntCheck(c_var):
 
 
 # -----------------------------------------------------------------------------------------
-def Main(US, Bk, DS, MS, RS, RlS, SGEL):
+def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
     """
     呼出構文↓
     DG.Main(
@@ -780,8 +886,9 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL):
         selfmother.ReplaceStr.get(),
     )
     """
-    global AJurl, AJSeturl, Roolurl
+    global AJurl, AJSeturl, Roolurl, Master, main_window
     global csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr, ColNameList
+    Master = r_win
     csvurl = US
     Banktoml = Bk
     DaySet = DS
@@ -830,8 +937,8 @@ if __name__ == "__main__":
 
     csvurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.csv"
     AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page_AutoJounal.csv"
-    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\ChangeTxtList.csv"
-    Roolurl = r"D:\PythonScript\RPAScript\TKInterGUI\Mototyou\1_仕訳日記帳.csv"
+    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
+    Roolurl = r"D:\OCRTESTPDF\PDFTEST\1_仕訳日記帳.csv"
 
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:

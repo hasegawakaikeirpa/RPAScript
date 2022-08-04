@@ -4,7 +4,6 @@ from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
 import TKINTERCV2Setting as TKCV2
 from tkinter import messagebox
-import ImageChange as IC
 
 
 class ViewGUI:
@@ -539,7 +538,7 @@ class ViewGUI:
         if "[select file]" in Imgurl:
             messagebox.showinfo("確認", "画像ファイルを選択してください。")
         else:
-            TKCV2.Main(Imgurl)
+            TKCV2.Main(main_window, Imgurl)
 
     # ------------------------------------------------------------------------------------
 

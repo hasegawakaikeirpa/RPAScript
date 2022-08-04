@@ -322,47 +322,49 @@ def TxtEdit(Txt, L_txt, R_txt):
     """
     R_txtの書式をL_txtの書式と揃える
     """
+    try:
+        if "日" in Txt:
+            L_txt = (
+                L_txt.replace("-", "/")
+                .replace("_", "/")
+                .replace("\\", "/")
+                .replace(".", "/")
+                .replace("|", "")
+                .replace("\\", "")
+                .replace(":", "")
+                .replace("^", "")
+                .replace("~", "")
+            )
 
-    if "日" in Txt:
-        L_txt = (
-            L_txt.replace("-", "/")
-            .replace("_", "/")
-            .replace("\\", "/")
-            .replace(".", "/")
-            .replace("|", "")
-            .replace("\\", "")
-            .replace(":", "")
-            .replace("^", "")
-            .replace("~", "")
-        )
-
-        R_txt = (
-            R_txt.replace("-", "/")
-            .replace("_", "/")
-            .replace("\\", "/")
-            .replace(".", "/")
-            .replace("|", "")
-            .replace("\\", "")
-            .replace(":", "")
-            .replace("^", "")
-            .replace("~", "")
-        )
-        L_txtSp = L_txt.split("/")
-        R_txtSp = R_txt.split("/")
-        if len(L_txtSp[0]) < 4:
-            L_y = wh.R(int(L_txtSp[0])).to_ad()
-            L_txtSp[0] = str(L_y)
-            L_txt = "/".join(L_txtSp)
-        if len(R_txtSp[0]) < 4:
-            R_y = wh.R(int(R_txtSp[0])).to_ad()
-            R_txtSp[0] = str(R_y)
-            R_txt = "/".join(R_txtSp)
-        L_d = dt.strptime(L_txt, "%Y/%m/%d")
-        R_d = dt.strptime(R_txt, "%Y/%m/%d")
-        L_txt = str(L_d.year) + "/" + str(L_d.month) + "/" + str(L_d.day)
-        R_txt = str(R_d.year) + "/" + str(R_d.month) + "/" + str(R_d.day)
-        return L_txt, R_txt
-    else:
+            R_txt = (
+                R_txt.replace("-", "/")
+                .replace("_", "/")
+                .replace("\\", "/")
+                .replace(".", "/")
+                .replace("|", "")
+                .replace("\\", "")
+                .replace(":", "")
+                .replace("^", "")
+                .replace("~", "")
+            )
+            L_txtSp = L_txt.split("/")
+            R_txtSp = R_txt.split("/")
+            if len(L_txtSp[0]) < 4:
+                L_y = wh.R(int(L_txtSp[0])).to_ad()
+                L_txtSp[0] = str(L_y)
+                L_txt = "/".join(L_txtSp)
+            if len(R_txtSp[0]) < 4:
+                R_y = wh.R(int(R_txtSp[0])).to_ad()
+                R_txtSp[0] = str(R_y)
+                R_txt = "/".join(R_txtSp)
+            L_d = dt.strptime(L_txt, "%Y/%m/%d")
+            R_d = dt.strptime(R_txt, "%Y/%m/%d")
+            L_txt = str(L_d.year) + "/" + str(L_d.month) + "/" + str(L_d.day)
+            R_txt = str(R_d.year) + "/" + str(R_d.month) + "/" + str(R_d.day)
+            return L_txt, R_txt
+        else:
+            return L_txt, R_txt
+    except:
         return L_txt, R_txt
 
 
@@ -371,15 +373,23 @@ def AJ_copyCalc_Func(dfsrow, dfs3row):
     """
     自動仕訳候補OCR結果
     """
-    for E_r in range(len(g_Frame7EntL)):
-        L_txt = g_Frame7EntL[E_r].get()
-        R_txt = g_Frame7EntR[E_r].get()
-        if dfsrow[R_txt] != dfsrow[R_txt]:
-            print("nan")
-        else:
-            Txt = TxtEdit(L_txt, dfs3row[L_txt], dfsrow[R_txt])
-            dfs3row[L_txt] = Txt[1]
-    del dfs3row["一致率"]
-    del dfs3row["仕訳金額差額"]
-    del dfs3row["日付一致率"]
-    return dfs3row
+    try:
+        for E_r in range(len(g_Frame7EntL)):
+            L_txt = g_Frame7EntL[E_r].get()
+            R_txt = g_Frame7EntR[E_r].get()
+            if dfsrow[R_txt] != dfsrow[R_txt]:
+                print("nan")
+            else:
+                Txt = TxtEdit(L_txt, dfs3row[L_txt], dfsrow[R_txt])
+                dfs3row[L_txt] = Txt[1]
+        df_c = dfs3row.index
+        for dfs3rowItem in df_c:
+            if dfs3rowItem == "一致率":
+                del dfs3row["一致率"]
+            if dfs3rowItem == "仕訳金額差額":
+                del dfs3row["仕訳金額差額"]
+            if dfs3rowItem == "日付一致率":
+                del dfs3row["日付一致率"]
+        return dfs3row
+    except:
+        return dfs3row

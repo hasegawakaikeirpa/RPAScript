@@ -393,9 +393,18 @@ class Application(tk.Frame):
 
 # 以下関数######################################################################################
 # ---------------------------------------------------------------------------------------------
+def ReturnNext(self):
+    self.top.withdraw()
+    self.master.withdraw()
+    # Master.deiconify()
+    # root.destroy()
+
+
+# ---------------------------------------------------------------------------------------------
 def ReturnBack(self):
     self.top.destroy()
     self.master.destroy()
+    Master.deiconify()
     # root.destroy()
 
 
@@ -666,10 +675,17 @@ def EnterP(self, HCW, HCH, selfmother):
                 )
                 map(selfmother)
                 if Viw is True:
-                    ReturnBack(selfmother)
+                    ReturnNext(selfmother)
                     csvurl = imgurl.replace(".png", ".csv")
                     DG.Main(
-                        csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr, SGEL
+                        csvurl,
+                        Banktoml,
+                        DaySet,
+                        MoneySet,
+                        ReplaceSet,
+                        ReplaceStr,
+                        SGEL,
+                        selfmother.master,
                     )
             else:
                 unmap(selfmother)
@@ -761,14 +777,15 @@ def drag1(event):
     y1 = y2
 
 
-def Main(US):
-    global imgurl
+def Main(MUI, US):
+    global Master, imgurl
     global readcsv1, readcsv2
     global URL
     global Banktoml
-
+    Master = MUI
     imgurl = US
     URL = os.getcwd()
+    Master.withdraw()
     # imgurl = URL + r"\TKInterGUI\OCR0.png"
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
