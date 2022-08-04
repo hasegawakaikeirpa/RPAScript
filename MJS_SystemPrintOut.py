@@ -2561,7 +2561,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     GSUM = ImgCheck(TFolURL, r"\G_SyoukyakuUpMsg.png", 0.9, 10)
                     if GSUM[0] is True:
                         ImgClick(TFolURL, r"\G_SyoukyakuUpMsgCansel.png", 0.9, 10)
-                    # 顧問先情報更新ダイアログ確認------------------------------------------
+                    # 顧問先情報更新ダイアログ確認-----------------------------------------
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
                         pg.press("y")
@@ -2573,6 +2573,10 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ):
                             time.sleep(1)
                         ImgClick(TFolURL, r"\KomonKoushinInput.png", 0.9, 10)
+                    # 参照表示確認ダイアログ確認------------------------------------------
+                    KK = ImgCheck(TFolURL, r"\KSansyouQ.png", 0.9, 10)
+                    if KK[0] is True:
+                        pg.press("return")
                 # --------------------------------------------------------------------
                 ImgClick(
                     CFolURL, r"\GenkaSyoukyaku\G_Insatu.png", 0.9, 10
