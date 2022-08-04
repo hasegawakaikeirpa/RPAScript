@@ -1,10 +1,9 @@
 import tkinter as tk
 from datetime import datetime as dt
 import WarekiHenkan as wh
-import AutoJournal as AJ
 
 # -----------------------------------------------------------------------------------------
-def tomlEntries(self, tomltitle):
+def tomlEntries(self):  # , tomltitle):
     self.tomlEntries = []  # Entryのインスタンス
     self.tomlinsertEntries = []  # ラベルインスタンス
     self.tomlindex = 0  # 最新のインデックス番号
@@ -14,7 +13,7 @@ def tomlEntries(self, tomltitle):
     r = 0
     for ColNameItem in self.tomlList:
         # ラベル＆Entryフレームへ追加----------------------------------------------
-        createtomlEntry(self, r, ColNameItem, tomltitle)  # Entryを作成配置
+        createtomlEntry(self, r, ColNameItem)  # , tomltitle)  # Entryを作成配置
         self.entryList.append(ColNameItem)
         # ----------------------------------------------------------------------
         r += 1
@@ -34,16 +33,32 @@ def updatetomlEntries(self):
 
 # -----------------------------------------------------------------------------------------
 # エントリーウィジェットを作成して配置
-def createtomlEntry(self, next, ColNameItem, tomltitle):
+def createtomlEntry(self, next, ColNameItem):  # , tomltitle):
 
     # 最初のエントリーウィジェットを追加
     # self.tomlEntries.insert(next, tk.Entry(self.frame4, width=20))
     lb = tk.Label(self.frame4, text=ColNameItem)
-
     lb.grid(row=next, column=0)  # 位置指定
-    cn = self.Banktoml["ParList"][ColNameItem]
-    tom = self.Banktoml[tomltitle][cn]
+    # ラベル名からself変数を取得---------------------------------------
+    if ColNameItem == "日付列":
+        tom = self.HidukeColNo
+    elif ColNameItem == "金額列":
+        tom = self.MoneyCol
+    elif ColNameItem == "変換対象列":
+        tom = self.ChangeTextCol
+    elif ColNameItem == "日付列名":
+        tom = self.HidukeColName
+    elif ColNameItem == "入金列名":
+        tom = self.NyuName
+    elif ColNameItem == "出金列名":
+        tom = self.SyutuName
+    elif ColNameItem == "残高列名":
+        tom = self.ZanName
+    elif ColNameItem == "自動仕訳基準列名":
+        tom = self.Henkan
+    # ---------------------------------------------------------------
     tomtx = ""
+    # self変数がリストの場合文字列に変換-------------------------------
     try:
         print(type(tom).__name__)
         if type(tom).__name__ == "list":
@@ -58,6 +73,7 @@ def createtomlEntry(self, next, ColNameItem, tomltitle):
     except:
         txtxt = tk.Entry(self.frame4, width=10)
         txtxt.insert(0, tom)
+    # ---------------------------------------------------------------
     txtxt.grid(row=next, column=1)  # 位置指定
 
     self.tomlEntries.insert(next, txtxt)
@@ -77,7 +93,7 @@ def createtomlEntry(self, next, ColNameItem, tomltitle):
 
 
 # -----------------------------------------------------------------------------------------
-def treeviewEntries(self, tomltitle):
+def treeviewEntries(self):  # , tomltitle):
     """
     ツリービューを配置
     """
@@ -95,7 +111,7 @@ def treeviewEntries(self, tomltitle):
     # tomlNameテキストボックス-----------------------------------------------------------
     tk.Label(self.frame3, text="設定ファイル名").grid(row=1, column=0)  # 位置指定
     self.Label_ChangeURL = tk.Entry(self.frame3, width=10)
-    self.Label_ChangeURL.insert(0, tomltitle)
+    # self.Label_ChangeURL.insert(0, tomltitle)
     self.Label_ChangeURL.grid(row=1, column=1, columnspan=3)
     # 開始残高ボタン----------------------------------------------------------------
     tk.Label(self.frame3, text="開始残高").grid(row=len(self.indexes) + 2, column=0)  # 位置指定
@@ -312,7 +328,7 @@ def TxtEdit(Txt, L_txt, R_txt):
             L_txt.replace("-", "/")
             .replace("_", "/")
             .replace("\\", "/")
-            .replace(".", "")
+            .replace(".", "/")
             .replace("|", "")
             .replace("\\", "")
             .replace(":", "")
@@ -324,7 +340,7 @@ def TxtEdit(Txt, L_txt, R_txt):
             R_txt.replace("-", "/")
             .replace("_", "/")
             .replace("\\", "/")
-            .replace(".", "")
+            .replace(".", "/")
             .replace("|", "")
             .replace("\\", "")
             .replace(":", "")

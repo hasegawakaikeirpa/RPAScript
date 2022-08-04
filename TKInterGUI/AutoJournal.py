@@ -221,6 +221,26 @@ def ChangeD_Txt(Txt):
                 D_str = TxtSP[0] + "/" + TxtSP[1] + "/" + TxtSP[2]
             else:
                 print("西暦")
+        elif "." in Txt:
+            TxtSP = Txt.split(".")
+            T_Nen = len(TxtSP[0])
+            if T_Nen <= 2:
+                print("和暦")
+                D_str = (
+                    "令和"
+                    + str(TxtSP[0])
+                    + "年"
+                    + str(TxtSP[1])
+                    + "月"
+                    + str(TxtSP[2])
+                    + "日"
+                )
+                D_str = wh.SeirekiSTRDate(D_str)
+            elif T_Nen <= 4:
+                print("西暦")
+                D_str = TxtSP[0] + "/" + TxtSP[1] + "/" + TxtSP[2]
+            else:
+                print("西暦")
         return True, D_str
     except:
         return False, ""
@@ -620,7 +640,7 @@ def AllChange(
                         or "~" in D_var
                     ):
                         D_var = (
-                            D_var.replace(".", "")
+                            D_var.replace(".", "/")
                             .replace("|", "")
                             .replace("\\", "")
                             .replace(":", "")
@@ -687,6 +707,42 @@ def AllChange(
                                             FinalList.append(list(NGList[1]))
                                         else:
                                             FinalList.append(list(c_npw[1]))
+                            else:
+                                print("NoNNPC")
+                                DammyList = []
+                                for ColNamesItem in ColNames:
+                                    DammyList.append(ColNamesItem + "自動仕訳候補なし")
+                                FinalList.append(DammyList)
+                        else:
+                            print("NoMC")
+                            DammyList = []
+                            for ColNamesItem in ColNames:
+                                DammyList.append(ColNamesItem + "自動仕訳候補なし")
+                            FinalList.append(DammyList)
+                    else:
+                        print("NoDC")
+                        DammyList = []
+                        for ColNamesItem in ColNames:
+                            DammyList.append(ColNamesItem + "自動仕訳候補なし")
+                        FinalList.append(DammyList)
+                else:
+                    print("NoNPC")
+                    DC = DayCheck(NPC[1], D_var, D_coltxt)
+                    if DC[0] is True:
+                        DammyList = []
+                        for ColNamesItem in ColNames:
+                            if ColNamesItem == D_coltxt:
+                                DCRow = DC[1]
+                                D_c = 0
+                                for DCRowItem in DCRow[0]:
+                                    if D_coltxt == DCRowItem:
+                                        print(DCRow[1][D_c])
+                                        DammyList.append(DCRow[1][D_c])
+                                        break
+                                    D_c += 1
+                            else:
+                                DammyList.append(ColNamesItem + "自動仕訳候補なし")
+                        FinalList.append(DammyList)
         return True, FinalList
     except:
         FinalList = ["エラー:抽出失敗"]

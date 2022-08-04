@@ -4,15 +4,11 @@ import io
 import os
 from google.cloud import vision
 from google.oauth2 import service_account
-from PIL import Image, ImageDraw, ImageOps
+from PIL import Image, ImageDraw
 import pandas as pd
 import numpy as np
 from collections import OrderedDict
-from dateutil.parser import parse
-import cv2
-import matplotlib.pyplot as plt
-import ImageChange as FIC
-import csv
+
 
 # loggerインポート
 from logging import getLogger
