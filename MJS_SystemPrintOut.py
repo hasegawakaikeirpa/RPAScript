@@ -3449,6 +3449,17 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ):
                             time.sleep(1)
                         ImgClick(TFolURL, r"\KomonKoushinInput.png", 0.9, 10)
+                    # マスター再計算ダイアログ確認------------------------------------------
+                    MR = ImgCheck(TFolURL, r"\MasterRecalcQ.png", 0.9, 10)
+                    if MR[0] is True:
+                        pg.press("y")
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\MasterRecalcQ.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)               
                 # --------------------------------------------------------------------
                 # 指示内容で処理分け----------------------------------------------------------
                 if PN == "消費税確定申告書":
