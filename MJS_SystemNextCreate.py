@@ -242,12 +242,16 @@ def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリッ�
 # ------------------------------------------------------------------------------------------------------------------
 def NameSearch(NameDF, Rno):
     try:
-        Nr = len(NameDF)
-        for Nrx in range(Nr):
-            NameDFRow = NameDF.iloc[Nrx]
-            print(NameDFRow["コード"])
-            if Rno == NameDFRow["コード"]:
-                return NameDFRow["顧問先名称"]
+        NameDFColumn = np.array(NameDF.columns)
+        NameDF = np.array(NameDF)
+        NC = np.where(NameDFColumn=="コード")
+        KC = np.where(NameDFColumn=="顧問先名称")
+        NameDFIndex = NameDF[:,NC]
+        NR = np.where(NameDFIndex==Rno)
+        N_L = NameDF[NR,KC]
+        N_L = str(N_L[0]).replace("[","").replace("]","").replace("'","").replace('"',"")
+        print(N_L)
+        return N_L
     except:
         return "NameErr"
 
