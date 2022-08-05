@@ -950,7 +950,6 @@ def HoujinzeiUpdateSinkokuItiran(
             pg.press("return")
             time.sleep(1)
             ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-            time.sleep(2)
             # 印刷中が表示されるまで待機---------------------------------
             IC = 0
             while (
@@ -1921,7 +1920,6 @@ def HoujinzeiUpdateBeppyou(
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-        time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
         IC = 0
         while (
@@ -2138,7 +2136,6 @@ def HoujinzeiUpdateGaikyou(
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-        time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
         IC = 0
         while (
@@ -3280,7 +3277,6 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         if FO[0] is True:
                             pg.press("y")
                     # --------------------------------------------------------------------
-                    time.sleep(1)
                     #  印刷中が表示されるまで待機-------------------------------------------
                     IC = 0
                     while (
@@ -3946,7 +3942,6 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         time.sleep(1)
                         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-                        time.sleep(2)
                         # 印刷中が表示されるまで待機---------------------------------
                         IC = 0
                         while (
@@ -4203,7 +4198,6 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         time.sleep(1)
                         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-                        time.sleep(2)
                         # 印刷中が表示されるまで待機---------------------------------
                         IC = 0
                         while (

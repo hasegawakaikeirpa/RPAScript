@@ -97,6 +97,7 @@ def dirCreate(Url, No, YearT):
 
 def dirMarge(Line, PDFUrl, SerchURL, PDFDir, Title, No, YearT):
     # １つのPDFファイルにまとめる
+    Title = Title.replace(r"\\","").replace("u3000"," ")
     PR = len(PDFDir)
     merger = PyPDF2.PdfFileMerger()
     for LineR in Line:
