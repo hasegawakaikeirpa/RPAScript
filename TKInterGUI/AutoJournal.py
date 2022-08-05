@@ -494,8 +494,8 @@ def ColumCheckListUp(MJS_data, cstr):
 
 # ----------------------------------------------------------------------------
 def main(
-    ColTxt,
     SerchTxt,
+    ColName,
     D_var,
     D_coltxt,
     M_var,
@@ -511,7 +511,7 @@ def main(
     try:
         NGList = []
         MJS_data = np.genfromtxt(Roolrul, dtype=None, delimiter=",")  # 元帳CSVをnp配列に変換
-        NPC = npCreate(MJS_data, SerchTxt, ColTxt, "NOALL")
+        NPC = npCreate(MJS_data, SerchTxt, ColName, "NOALL")
         if NPC[0] is True:
             # 日付文字列データの変換------------------------------------------
             if (
@@ -697,6 +697,7 @@ def main(
 # ----------------------------------------------------------------------------
 def AllChange(
     ColTxt,
+    ColName,
     DayColName,
     D_coltxt,
     M_coltxt,
@@ -757,7 +758,7 @@ def AllChange(
                     if ColTxt == ColItem.replace('"', "").replace('"', ""):
                         SerchTxt = OCR_data[l_r, l_c]
                     l_c += 1
-                NPC = npCreate(MJS_data, SerchTxt, ColTxt, "ALL")
+                NPC = npCreate(MJS_data, SerchTxt, ColName, "ALL")
                 if NPC[0] is True:
                     # 日付文字列データの変換------------------------------------------
                     if (

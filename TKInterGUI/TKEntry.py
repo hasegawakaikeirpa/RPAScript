@@ -121,9 +121,12 @@ def treeviewEntries(self):  # , tomltitle):
         self.frame3,
         text="再計算",
         width=20,
+        bg="LemonChiffon",
         command=lambda: self.ZanNamedaka(),
     )
-    self.ebtn2.grid(row=len(self.indexes) + 3, column=0, columnspan=2)  # 位置指定
+    self.ebtn2.grid(
+        row=len(self.indexes) + 3, column=0, columnspan=2, sticky=tk.W + tk.E
+    )  # 位置指定
     # ------------------------------------------------------------------------------
 
 
@@ -137,6 +140,11 @@ def removeEntry(self):
 # -----------------------------------------------------------------------------------------
 # エントリーウィジェットを作成して配置
 def Frame7createtomlEntry(self, next, AJL, AJR):
+    try:
+        self.Setting_Btn.destroy()
+    except:
+        print("ボタン無")
+
     if type(AJL) == list:
         # ---------------------------------------------
         txtxt = tk.Entry(self.frame7, width=10)
@@ -164,7 +172,7 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
             width=5,
         )
         Btn.bind("<Button-1>", AJ_EntDelete)
-        Btn.grid(row=next + 1, column=3)
+        Btn.grid(row=next + 1, column=3, sticky=tk.W + tk.E)
         # Entrマネージャに登録
         self.Frame7Btns.insert(next, Btn)
         # ---------------------------------------------
@@ -195,7 +203,7 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
             width=5,
         )
         Btn.bind("<Button-1>", AJ_EntDelete)
-        Btn.grid(row=next + 1, column=3)
+        Btn.grid(row=next + 1, column=3, sticky=tk.W + tk.E)
         # Entrマネージャに登録
         self.Frame7Btns.insert(next, Btn)
         # ---------------------------------------------
@@ -226,6 +234,20 @@ def Frame7Entries(self):
         Frame7createtomlEntry(self, r, AJL, AJR)  # Entryを作成配置
         # self.Frame7entryList.append(ColNameItem)
         # ----------------------------------------------------------------------
+    # 詳細設定ボタン--------------------------------
+    self.Setting_Btn = tk.Button(
+        self.frame7,
+        text="詳細設定",
+        width=20,
+        command=lambda: self.ChangeFrame("詳細設定"),
+        bg="BlueViolet",
+    )
+    self.Setting_Btn.grid(
+        row=len(self.Frame7EntL) + 1,
+        column=0,
+        columnspan=4,
+        sticky=tk.W + tk.E,
+    )  # 位置指定
     g_Frame7EntL = self.Frame7EntL
     g_Frame7EntR = self.Frame7EntR
     g_Frame7Labels = self.Frame7Labels
@@ -260,6 +282,20 @@ def AJ_setCalc(self):
                     )  # Entryを作成配置
                     # self.Frame7entryList.append([dfs_c_Name, dfs3_c_Name])
                     # ----------------------------------------------------------------------
+                    # 詳細設定ボタン--------------------------------
+                    self.Setting_Btn = tk.Button(
+                        self.frame7,
+                        text="詳細設定",
+                        width=20,
+                        command=lambda: self.ChangeFrame("詳細設定"),
+                        bg="BlueViolet",
+                    )
+                    self.Setting_Btn.grid(
+                        row=len(self.Frame7EntL) + 1,
+                        column=0,
+                        columnspan=4,
+                        sticky=tk.W + tk.E,
+                    )  # 位置指定
         except:
             tk.messagebox.showinfo("確認", "抽出仕訳表のセルが選択されていません。変換先の列のセルを選択して下さい。")
 

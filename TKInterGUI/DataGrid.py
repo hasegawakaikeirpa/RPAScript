@@ -1,6 +1,6 @@
 import tkinter as tk
 
-# import tkinter.ttk as ttk
+import tkinter.ttk as ttk
 import numpy as np
 
 # from tkinter import messagebox
@@ -14,13 +14,14 @@ import MyTable3 as MT3
 import AutoJournal as AJ
 import CSVOut as CSVO
 import TKEntry as tke
+import ScrollableFrame as SF
 
 
 class DataGrid:
     def __init__(self, window_root, default_path):
         # toml読込------------------------------------------------------------------------------
         self.Banktoml = Banktoml
-        # -----------------------------------------------------------
+        # -------------------------------------------------------------------------------------
         self.FileName = csvurl
         self.JounalFileName = AJurl
         self.Roolurl = Roolurl
@@ -35,32 +36,82 @@ class DataGrid:
         self.ZanName = "残高"
         self.Henkan = "摘要"
         self.ChangeText = ReplaceStr
-        # ------------------------------------
-        # self.CsvHeader()
         # メインウィンドウ設定-------------------------------------------------------------------
         self.root = tk.Tk()  # ウインド画面の作成
-        self.root.geometry("1500x750")  # 画面サイズの設定
+        self.root.geometry("1500x750+0+0")  # 画面サイズの設定
         self.root.title("OCRTEXT")  # 題名
         # -------------------------------------------------------------------------------------
-        # メインフレーム設定--------------------------------------------------------------------
-        self.Mframe = tk.Frame(self.root, bd=2, relief=tk.RIDGE)
-        self.Mframe.grid(row=1, column=0, sticky=tk.W)
+        # 統合フレーム
+        self.Main_Frame = tk.Frame(self.root, bd=2, relief=tk.RIDGE)
+        # self.Main_Frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+        self.Main_Frame.pack(expand=True)
+        ########################################################################################
+        # ツリーフレーム設定---------------------------------------------------------------------
+        self.OCR_frame = tk.Frame(
+            self.Main_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+        )  # 親フレーム
+        self.OCR_frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+        self.tree_frame = tk.Frame(self.OCR_frame, width=650, height=400)  # 子フレーム
+        tk.Label(self.OCR_frame, text="OCR抽出結果表").grid(
+            row=0, column=0, sticky=tk.N + tk.W
+        )  # 位置指定
+        self.tree_frame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+        # df = TableModel.getSampleData()
+        # pt = Table(self.tree_frame)
+        pt = MT.MyTable(
+            self.tree_frame, width=650, height=400, sticky=tk.N + tk.S + tk.W + tk.E
+        )  # テーブルをサブクラス化
+        enc = CSVO.getFileEncoding(csvurl)
+        self.table = pt.importCSV(csvurl, encoding=enc)
+        self.pt = pt
+        pt.show()
+        # -------------------------------------------------------------------------------------
+        ########################################################################################
+        ########################################################################################
+        # ツリーフレーム設定---------------------------------------------------------------------
+        self.Jounal = tk.Frame(
+            self.Main_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+        )  # 親フレーム
+        self.Jounal.grid(row=0, column=1, sticky=tk.N + tk.S + tk.W + tk.E)
+        self.tree2_frame = tk.Frame(self.Jounal, width=650, height=400)
+        tk.Label(self.Jounal, text="作成仕訳表").grid(row=0, column=0, sticky=tk.W)  # 位置指定
+        self.tree2_frame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+        # df = TableModel.getSampleData()
+        # pt2 = Table(self.tree2_frame)
+        pt2 = MT2.MyTable(
+            self.tree2_frame, width=650, height=400, sticky=tk.N + tk.S + tk.W + tk.E
+        )  # テーブルをサブクラス化
+        enc = CSVO.getFileEncoding(AJurl)
+        self.table2 = pt2.importCSV(AJurl, encoding=enc)
+        self.pt2 = pt2
+        pt2.show()
+        # -------------------------------------------------------------------------------------
+        ########################################################################################
+        ########################################################################################
+        # 設定メインフレーム設定--------------------------------------------------------------------
+        self.Mframe = SF.ScrollableFrameDG(self.Main_Frame)
+        self.Mframe.grid(
+            row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E
+        )  # , ipadx=500, ipady=100)
+        tk.Label(self.Mframe.scrollable_frame, text="設定").grid(
+            row=0, column=0, sticky=tk.N + tk.W
+        )  # 位置指定
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
-        self.frame3 = tk.Frame(self.Mframe, bd=2, relief=tk.RIDGE)
-        self.frame3.grid(row=0, column=0, sticky=tk.N)
+        self.frame3 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
+        self.frame3.grid(row=1, column=0, sticky=tk.N + tk.S)
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
-        self.frame4 = tk.Frame(self.Mframe, bd=2, relief=tk.RIDGE)
-        self.frame4.grid(row=0, column=1, sticky=tk.N)
+        self.frame4 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
+        self.frame4.grid(row=1, column=1, sticky=tk.N + tk.S)
         # -------------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
-        self.frame6 = tk.Frame(self.Mframe, bd=2, relief=tk.RIDGE)
-        self.frame6.grid(row=0, column=2, sticky=tk.N)
+        self.frame6 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
+        self.frame6.grid(row=1, column=2, sticky=tk.N + tk.S)
         # MotoCyou------------------------------------------------------------------------------
         # フレーム設定--------------------------------------------------------------------------
-        self.frame7 = tk.Frame(self.Mframe, bd=2, relief=tk.RIDGE)
-        self.frame7.grid(row=0, column=3, sticky=tk.N)
+        self.frame7 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
+        self.frame7.grid(row=1, column=3, sticky=tk.N + tk.S)
         self.frame7EntryList = []  # このフレームのEntryのインスタンス
         # -------------------------------------------------------------------------------------
         tk.Label(self.frame6, text="元帳日付列名").grid(row=0, column=0)  # 位置指定
@@ -91,12 +142,12 @@ class DataGrid:
         # 選択行自動仕訳作成ボタン----------------------------------------------------------------
         self.AJ_Btn = tk.Button(
             self.frame6,
-            text="選択行自動仕訳作成",
+            text="選択行仕訳予想検索",
             width=20,
             command=lambda: self.AJCalc(csvurl),
             bg="lightblue",
         )
-        self.AJ_Btn.grid(row=5, column=0, columnspan=2)  # 位置指定
+        self.AJ_Btn.grid(row=5, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
         # -------------------------------------------------------------------------------------
         # 抽出仕訳転記ボタン----------------------------------------------------------------
         self.AJ_copy = tk.Button(
@@ -106,55 +157,70 @@ class DataGrid:
             command=lambda: self.AJ_copyCalc(csvurl),
             bg="pink",
         )
-        self.AJ_copy.grid(row=6, column=0, columnspan=2)  # 位置指定
+        self.AJ_copy.grid(row=6, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
         # -------------------------------------------------------------------------------------
-        # 置換設定追加ボタン----------------------------------------------------------------
+        # 元帳表示ボタン----------------------------------------------------------------
+        self.AJ_copy = tk.Button(
+            self.frame6,
+            text="元帳表示",
+            width=20,
+            command=lambda: self.ReadM(Roolurl),
+            bg="SeaGreen4",
+        )
+        self.AJ_copy.grid(row=7, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+        # -------------------------------------------------------------------------------------
+        # 置換設定追加ボタン--------------------------------------------------------------------
         self.AJ_set = tk.Button(
             self.frame7,
             text="置換設定追加",
             width=20,
             command=lambda: tke.AJ_setCalc(self),
-            bg="yellow",
+            bg="Coral",
         )
-        self.AJ_set.grid(row=0, column=0, columnspan=2)  # 位置指定
+        self.AJ_set.grid(row=0, column=0, columnspan=4, sticky=tk.W + tk.E)  # 位置指定
         # -------------------------------------------------------------------------------------
+        self.Mframe.scrollbar_y.grid_forget()  # スクロールバー削除
+        # スクロールバー再作成--------------------------------------------------
+        self.Mframe.scrollbar_y = ttk.Scrollbar(
+            self.Mframe.scrollable_frame,
+            orient="vertical",
+            command=self.Mframe.canvas.yview,
+        )
+        # ---------------------------------------------------------------------
+        self.Mframe.scrollbar_y.grid(row=0, rowspan=3, column=4, sticky=tk.S + tk.N)
+        self.Mframe.canvas.configure(yscrollcommand=self.Mframe.scrollbar_y.set)
+        self.Mframe.scrollbar_x.grid_forget()  # スクロールバー削除
+        # スクロールバー再作成--------------------------------------------------
+        self.Mframe.scrollbar_x = ttk.Scrollbar(
+            self.Mframe.scrollable_frame,
+            orient="horizontal",
+            command=self.Mframe.canvas.xview,
+        )
+        # ---------------------------------------------------------------------
+        self.Mframe.scrollbar_x.grid(row=2, column=0, columnspan=4, sticky=tk.E + tk.W)
+        self.Mframe.canvas.configure(xscrollcommand=self.Mframe.scrollbar_x.set)
+        ########################################################################################
+        ########################################################################################
         # フレーム設定--------------------------------------------------------------------------
-        self.frame5 = tk.Frame(self.root, width=650)
-        self.frame5.grid(row=1, column=1, sticky=tk.W)
+        self.Predict_frame = tk.Frame(
+            self.Main_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+        )  # 親フレーム
+        self.Predict_frame.grid(row=1, column=1, sticky=tk.N + tk.S + tk.W + tk.E)
+        self.frame5 = tk.Frame(self.Predict_frame, width=650, height=400)
+        tk.Label(self.Predict_frame, text="仕訳予想結果").grid(
+            row=0, column=0, sticky=tk.W
+        )  # 位置指定
+        self.frame5.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
         pt3 = MT3.MyTable(
-            self.frame5, width=650, height=100, sticky=tk.N + tk.S + tk.W + tk.E
+            self.frame5, width=650, height=150, sticky=tk.N + tk.S + tk.W + tk.E
         )  # テーブルをサブクラス化
         enc = CSVO.getFileEncoding(AJSeturl)
         self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
         self.pt3 = pt3
         pt3.show()
         # -------------------------------------------------------------------------------------
-        # ツリーフレーム設定---------------------------------------------------------------------
-        self.tree_frame = tk.Frame(self.root, width=650, height=500)
-        self.tree_frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
-        # df = TableModel.getSampleData()
-        # pt = Table(self.tree_frame)
-        pt = MT.MyTable(
-            self.tree_frame, width=650, height=500, sticky=tk.N + tk.S + tk.W + tk.E
-        )  # テーブルをサブクラス化
-        enc = CSVO.getFileEncoding(csvurl)
-        self.table = pt.importCSV(csvurl, encoding=enc)
-        self.pt = pt
-        pt.show()
-        # -------------------------------------------------------------------------------------
-        # ツリーフレーム設定---------------------------------------------------------------------
-        self.tree2_frame = tk.Frame(self.root, width=650, height=500)
-        self.tree2_frame.grid(
-            row=0, column=1, columnspan=2, sticky=tk.N + tk.S + tk.W + tk.E
-        )
-        # df = TableModel.getSampleData()
-        # pt2 = Table(self.tree2_frame)
-        pt2 = MT2.MyTable(
-            self.tree2_frame, width=650, height=500, sticky=tk.N + tk.S + tk.W + tk.E
-        )  # テーブルをサブクラス化
-        enc = CSVO.getFileEncoding(AJurl)
-        self.table2 = pt2.importCSV(AJurl, encoding=enc)
-        self.pt2 = pt2
+        ########################################################################################
+        ########################################################################################
         # MotoCyou------------------------------------------------------------------------------
         enc = CSVO.getFileEncoding(Roolurl)
         AJ_np = np.genfromtxt(
@@ -177,27 +243,25 @@ class DataGrid:
                 self.Moto_Tekiyou_No = A
             A += 1
         # ---------------------------------------------------------------------------------------
-        pt2.show()
-        # -------------------------------------------------------------------------------------
         # ツリービューを配置
         tke.treeviewEntries(self)
         # ボタン追加----------------------------------------------------------------------------
         self.AllRun = tk.Button(
             self.frame3,
             text="全行自動仕訳",
-            bg="lightgreen",
+            bg="LavenderBlush",
             width=20,
             command=lambda: self.AJAllCalc(csvurl),
         )
-        self.AllRun.grid(row=4, column=0, columnspan=2)  # 位置指定
+        self.AllRun.grid(row=4, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
         self.CloseBtn = tk.Button(
             self.frame3,
             text="戻る",
-            bg="lightblue",
+            bg="gray80",
             width=20,
             command=self.ReturnBack,
         )
-        self.CloseBtn.grid(row=5, column=0, columnspan=2)  # 位置指定
+        self.CloseBtn.grid(row=5, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
         # -------------------------------------------------------------------------------------
         # tomlListを配置
         tke.tomlEntries(self)
@@ -207,7 +271,20 @@ class DataGrid:
     #############################################################################################
     # 以下self関数
     #############################################################################################
+    def ReadM(self, URL):
+        try:
+            enc = CSVO.getFileEncoding(URL)
+            self.pt3.importCSV(URL, encoding=enc)
+            self.pt3.redraw
+        except:
+            tk.messagebox.showinfo("確認", "元帳の出力に失敗しました。\n参照先のURLが正しいか確認してください。")
 
+    # -------------------------------------------------------------------------------------
+    def ChangeFrame(self, Case):
+        if Case == "詳細設定":
+            self.Main_Frame.redraw()
+
+    # -------------------------------------------------------------------------------------
     def AJ_copyCalc(self, csvurl):
         try:
             if self.pt3.startrow is None:
@@ -428,129 +505,142 @@ class DataGrid:
         I = self.tomlEntries[In_var].get()  # 入金列名Entry取得
         O = self.tomlEntries[Out_var].get()  # 出金列名Entry取得
         # --------------------------------------------------------------------------------
-        AJ_List = AJ.AllChange(
-            JS,
-            self.HidukeColName,
-            self.Moto_Day.get(),
-            self.Moto_Money_No,
-            self.Moto_Karikata.get(),
-            self.Moto_Kashikata.get(),
-            self.FileName,
-            FileNameenc,
-            self.JounalFileName,
-            JounalFileNameenc,
-            self.Roolurl,
-            Roolurlenc,
-            self.Banktoml,
-            self.Label_ChangeURL.get(),
-            I,
-            O,
-        )  # 仕訳候補を抽出
+        Messagebox = tk.messagebox.askquestion(
+            "再計算",
+            "OCR結果の["
+            + str(JS)
+            + "]列と\nミロク元帳の["
+            + str(self.Moto_Tekiyou.get())
+            + "]列を条件に仕訳検索を行いますか？",
+            icon="warning",
+        )
+        if Messagebox == "yes":  # If関数
+            AJ_List = AJ.AllChange(
+                JS,
+                self.Moto_Tekiyou.get(),
+                self.HidukeColName,
+                self.Moto_Day.get(),
+                self.Moto_Money_No,
+                self.Moto_Karikata.get(),
+                self.Moto_Kashikata.get(),
+                self.FileName,
+                FileNameenc,
+                self.JounalFileName,
+                JounalFileNameenc,
+                self.Roolurl,
+                Roolurlenc,
+                self.Banktoml,
+                self.Label_ChangeURL.get(),
+                I,
+                O,
+            )  # 仕訳候補を抽出
 
-        PT_ColList = list(self.pt.model.df.columns)  # OCR表の列名リスト
-        PT_List = np.array(self.pt.model.df)
-        PT_List = list(PT_List)  # OCR表の列名リスト
-        # データ内のFalse,nan処理--------------------------------------------
-        if AJ_List[0] is True:
-            AJ_List = AJ_List[1]
-            # ################################################################
-            # OCR表の値を変換ルールに従って自動仕訳表に代入--------------------
-            for r in range(len(self.Frame7EntL)):
-                L_CName = self.Frame7EntL[r].get()
-                R_CName = self.Frame7EntR[r].get()
-                # 自動仕訳表の列番号検索--------------------------------------
-                PT_c = 0
-                for AJ_ListItem in AJ_List[0]:
-                    if L_CName == AJ_ListItem:
-                        L_CName_c = PT_c
-                        break
-                    PT_c += 1
-                # -----------------------------------------------------------
-                # OCR表の列番号検索-------------------------------------------
-                PT_c = 0
-                for PT_ColListItem in PT_ColList:
-                    if R_CName == PT_ColListItem:
-                        R_CName_c = PT_c
-                        break
-                    PT_c += 1
-                # ---------------------------------------------------------------
-                for L_r in range(len(AJ_List)):
-                    if L_r == 6:
-                        print("")
-                    if L_r != 0 and L_r != len(AJ_List):  # ヘッダー行処理
-                        if (R_CName == I) or (R_CName == O):
-                            # 数値確認-------------------------------------------
-                            try:
-                                Var = int(PT_List[L_r - 1][R_CName_c])
-                                C_Txt = tke.TxtEdit(
-                                    L_CName,
-                                    AJ_List[L_r][L_CName_c],
-                                    Var,
-                                )
-                                AJ_List[L_r][L_CName_c] = C_Txt[1]
-                            except:
-                                if R_CName == I:
-                                    R_CName = O
-                                elif R_CName == O:
-                                    R_CName = I
-                                # OCR表の列番号検索---------------------------
-                                PT_c = 0
-                                for PT_ColListItem in PT_ColList:
-                                    if R_CName == PT_ColListItem:
-                                        R_CName_c = PT_c
-                                        break
-                                    PT_c += 1
-                                # ----------------------------------------
-                                Var = int(PT_List[L_r - 1][R_CName_c])
-                                C_Txt = tke.TxtEdit(
-                                    L_CName,
-                                    AJ_List[L_r][L_CName_c],
-                                    Var,
-                                )
-                                AJ_List[L_r][L_CName_c] = C_Txt[1]
-                            # ---------------------------------------------------
-                        else:
-                            Var = PT_List[L_r - 1][R_CName_c]
-                            C_Txt = tke.TxtEdit(
-                                L_CName,
-                                AJ_List[L_r][L_CName_c],
-                                Var,
-                            )
-                            AJ_List[L_r][L_CName_c] = C_Txt[1]
-            # ################################################################
-            for L_r in range(len(AJ_List)):
-                if L_r == 0:  # ヘッダー行処理
-                    for L_c in range(len(AJ_List[L_r])):
-
-                        if "Unnamed" in AJ_List[L_r][L_c]:
-                            AJ_List[L_r][L_c] = ""
-                        if "." in AJ_List[L_r][L_c]:
-                            S_txt = AJ_List[L_r][L_c].split(".")
-                            AJ_List[L_r][L_c] = S_txt[0]
-                        if AJ_List[L_r][L_c] == "False":
-                            AJ_List[L_r][L_c] = ""
-                else:  # ヘッダー行以外処理
-                    for L_c in range(len(AJ_List[L_r])):
-                        print(AJ_List[L_r][L_c])
-                        if bool(AJ_List[L_r][L_c]) is False:
-                            AJ_List[L_r][L_c] = ""
-                        if AJ_List[L_r][L_c] == "False":
-                            AJ_List[L_r][L_c] = ""
-                        if (
-                            AJ_List[L_r][L_c] == AJ_List[L_r][L_c]
-                            and AJ_List[L_r][L_c] is not False
-                        ):
+            PT_ColList = list(self.pt.model.df.columns)  # OCR表の列名リスト
+            PT_List = np.array(self.pt.model.df)
+            PT_List = list(PT_List)  # OCR表の列名リスト
+            # データ内のFalse,nan処理--------------------------------------------
+            if AJ_List[0] is True:
+                AJ_List = AJ_List[1]
+                # ################################################################
+                # OCR表の値を変換ルールに従って自動仕訳表に代入--------------------
+                for r in range(len(self.Frame7EntL)):
+                    L_CName = self.Frame7EntL[r].get()
+                    R_CName = self.Frame7EntR[r].get()
+                    # 自動仕訳表の列番号検索--------------------------------------
+                    PT_c = 0
+                    for AJ_ListItem in AJ_List[0]:
+                        if L_CName == AJ_ListItem:
+                            L_CName_c = PT_c
+                            break
+                        PT_c += 1
+                    # -----------------------------------------------------------
+                    # OCR表の列番号検索-------------------------------------------
+                    PT_c = 0
+                    for PT_ColListItem in PT_ColList:
+                        if R_CName == PT_ColListItem:
+                            R_CName_c = PT_c
+                            break
+                        PT_c += 1
+                    # ---------------------------------------------------------------
+                    for L_r in range(len(AJ_List)):
+                        if L_r == 6:
                             print("")
-                        else:
-                            AJ_List[L_r][L_c] = ""
-            # ------------------------------------------------------------------
-            with open(AJurl, "wt", encoding="cp932", newline="") as fout:
-                # ライター（書き込み者）を作成
-                writer = csv.writer(fout)
-                writer.writerows(AJ_List)
-            enc = CSVO.getFileEncoding(AJurl)
-            self.pt2.importCSV(AJurl, encoding=enc)
-            self.pt2.redraw
+                        if L_r != 0 and L_r != len(AJ_List):  # ヘッダー行処理
+                            if (R_CName == I) or (R_CName == O):
+                                # 数値確認-------------------------------------------
+                                try:
+                                    Var = int(PT_List[L_r - 1][R_CName_c])
+                                    C_Txt = tke.TxtEdit(
+                                        L_CName,
+                                        AJ_List[L_r][L_CName_c],
+                                        Var,
+                                    )
+                                    AJ_List[L_r][L_CName_c] = C_Txt[1]
+                                except:
+                                    if R_CName == I:
+                                        R_CName = O
+                                    elif R_CName == O:
+                                        R_CName = I
+                                    # OCR表の列番号検索---------------------------
+                                    PT_c = 0
+                                    for PT_ColListItem in PT_ColList:
+                                        if R_CName == PT_ColListItem:
+                                            R_CName_c = PT_c
+                                            break
+                                        PT_c += 1
+                                    # ----------------------------------------
+                                    Var = int(PT_List[L_r - 1][R_CName_c])
+                                    C_Txt = tke.TxtEdit(
+                                        L_CName,
+                                        AJ_List[L_r][L_CName_c],
+                                        Var,
+                                    )
+                                    AJ_List[L_r][L_CName_c] = C_Txt[1]
+                                # ---------------------------------------------------
+                            else:
+                                Var = PT_List[L_r - 1][R_CName_c]
+                                C_Txt = tke.TxtEdit(
+                                    L_CName,
+                                    AJ_List[L_r][L_CName_c],
+                                    Var,
+                                )
+                                AJ_List[L_r][L_CName_c] = C_Txt[1]
+                # ################################################################
+                for L_r in range(len(AJ_List)):
+                    if L_r == 0:  # ヘッダー行処理
+                        for L_c in range(len(AJ_List[L_r])):
+
+                            if "Unnamed" in AJ_List[L_r][L_c]:
+                                AJ_List[L_r][L_c] = ""
+                            if "." in AJ_List[L_r][L_c]:
+                                S_txt = AJ_List[L_r][L_c].split(".")
+                                AJ_List[L_r][L_c] = S_txt[0]
+                            if AJ_List[L_r][L_c] == "False":
+                                AJ_List[L_r][L_c] = ""
+                    else:  # ヘッダー行以外処理
+                        for L_c in range(len(AJ_List[L_r])):
+                            print(AJ_List[L_r][L_c])
+                            if bool(AJ_List[L_r][L_c]) is False:
+                                AJ_List[L_r][L_c] = ""
+                            if AJ_List[L_r][L_c] == "False":
+                                AJ_List[L_r][L_c] = ""
+                            if (
+                                AJ_List[L_r][L_c] == AJ_List[L_r][L_c]
+                                and AJ_List[L_r][L_c] is not False
+                            ):
+                                print("")
+                            else:
+                                AJ_List[L_r][L_c] = ""
+                # ------------------------------------------------------------------
+                with open(AJurl, "wt", encoding="cp932", newline="") as fout:
+                    # ライター（書き込み者）を作成
+                    writer = csv.writer(fout)
+                    writer.writerows(AJ_List)
+                enc = CSVO.getFileEncoding(AJurl)
+                self.pt2.importCSV(AJurl, encoding=enc)
+                self.pt2.redraw
+            else:
+                tk.messagebox.showinfo("戻る", "アプリケーション画面に戻ります")
 
     # -----------------------------------------------------------------------------------------
     def AJCalc(self, csvurl):
@@ -603,8 +693,8 @@ class DataGrid:
             # --------------------------------------------------------------------------------
             else:
                 AJ_List = AJ.main(
-                    self.Henkan,
                     FindTxt,
+                    self.Moto_Tekiyou.get(),
                     D_var,
                     self.Moto_Day.get(),
                     tkm[1],
@@ -629,58 +719,12 @@ class DataGrid:
         with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
             for cells in reader:
-                # print(cells)
-                # c = 0
-                # p = 1
-                # for cellsItem in cells:
-                #     if cellsItem == "":
-                #         cells[c] = str(p)
-                #         p += 1
-                #         c += 1
-                #     else:
-                #         c += 1
-                # for cr in range(len(cells)):
-                #     p = 2
-                #     CC = cells.count(cells[cr])
-                #     if CC > 1:
-                #         c = 0
-                #         for cellsItem in cells:
-                #             if cells[cr] == cellsItem:
-                #                 if cr != c:
-                #                     cells[c + 1] = cells[cr] + str(p)
-                #                     c += 1
-                #                     p += 1
-                #             else:
-                #                 c += 1
                 self.ColumnName = cells
                 break
         enc = CSVO.getFileEncoding(self.JounalFileName)
         with open(self.JounalFileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
             for cells in reader:
-                # print(cells)
-                # c = 0
-                # p = 1
-                # for cellsItem in cells:
-                #     if cellsItem == "":
-                #         cells[c] = str(p)
-                #         p += 1
-                #         c += 1
-                #     else:
-                #         c += 1
-                # for cr in range(len(cells)):
-                #     p = 2
-                #     CC = cells.count(cells[cr])
-                #     if CC > 1:
-                #         c = 0
-                #         for cellsItem in cells:
-                #             if cells[cr] == cellsItem:
-                #                 if cr != c:
-                #                     cells[c + 1] = cells[cr] + str(p)
-                #                     c += 1
-                #                     p += 1
-                #             else:
-                #                 c += 1
                 self.ColumnName2 = cells
                 break
 
