@@ -964,14 +964,6 @@ def HoujinzeiUpdateSinkokuItiran(
                 FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
                 if FO[0] is True:
                     pg.press("y")
-                    while (
-                        pg.locateOnScreen(
-                            CFolURL + r"\Houjinzei\NowPrint.png",
-                            confidence=0.9,
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
             # --------------------------------------------------------------------
             # 印刷中が表示されなくなるまで待機---------------------------------
             while (
