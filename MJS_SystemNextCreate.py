@@ -1872,10 +1872,10 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                 pg.hotkey("ctrl", "c")
                 ThisYear = pyperclip.paste()
                 # -----------------------------------
-                pg.press("return")
+                pg.press("return")                                                  
                 # 表示された申告種類を取得---------------
                 if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()
+                    windll.user32.EmptyClipboard()                  
                     windll.user32.CloseClipboard()
                 pg.hotkey("ctrl", "c")
                 ThisMonth = pyperclip.paste()
@@ -1919,7 +1919,60 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                             10,
                         )
                         ImgClick(TFolURL, CDB[1], 0.9, 10)  # 顧問先情報取込ボタンをクリック
+                    # 自治体情報変更ダイアログが表示されたら
+                    THI = ImgCheck(
+                        TFolURL,
+                        r"THI.png",
+                        0.9,
+                        10,
+                    )
+                    if THI[0] is True:
+                        pg.press("return")
                 # --------------------------------------------------------------------
+                ImgClick(TFolURL, r"\KojinKihon.png", 0.9, 10)  # 個人基本情報のアイコンをクリック              
+                SQ = ImgCheck(TFolURL, r"SansyouQ.png", 0.9, 10)
+                if SQ[0] is True:
+                    pg.press("n")
+                    time.sleep(1)
+                    pg.press("y")
+                    time.sleep(1)
+                # 顧問先情報取り込みアイコンが表示されるまで待機--------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\DataInIcon.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)         
+                ImgClick(TFolURL, r"\DataInIcon.png", 0.9, 10)  # 顧問先情報取り込みアイコンをクリック
+                while (
+                    pg.locateOnScreen(TFolURL + r"\DataInOK.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                ImgClick(TFolURL, r"\DataInOK.png", 0.9, 10)  #取り込むボタンをクリック
+                # 自治体情報変更ダイアログが表示されたら
+                THI = ImgCheck(
+                    TFolURL,
+                    r"THI.png",
+                    0.9,
+                    10,
+                )
+                if THI[0] is True:
+                    pg.press("return")
+                    time.sleep(1)
+                    pg.press("return")
+                    time.sleep(1)
+                time.sleep(1)
+                pg.keyDown("alt")
+                pg.press("x")
+                pg.keyUp("alt")
+                time.sleep(1)
+                pg.press("y")
+                # 一括更新のアイコンが表示されるまで待機------------------------------------
+                while (
+                    pg.locateOnScreen(TFolURL + r"\SyotokuKousin.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
                 ImgClick(TFolURL, r"\SyotokuKousin.png", 0.9, 10)  # 一括更新のアイコンをクリック
                 # 所得税メニューが表示されるまで待機------------------------------------
                 while (
@@ -1928,31 +1981,26 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                 ):
                     time.sleep(1)
                 # --------------------------------------------------------------------
-                # チェックボックス直前までTAB------------------------------------
+                while ImgCheckForList(TFolURL,[r"IkkatuFind.png",r"IkkatuFind2.png"],0.9,10)[0] is False:
+                    time.sleep(1)     
+                # 検索メニューが表示されるまでループ------------------------------------
                 while (
-                    pg.locateOnScreen(TFolURL + r"\SyotokuZenken.png", confidence=0.9)
+                    pg.locateOnScreen(TFolURL + r"\Find.png", confidence=0.9)
                     is None
                 ):
-                    pg.press("tab")
-                # --------------------------------------------------------------------
-                pg.press("tab")
-                pg.press("space")
-                # チェックマークが表示されるまで待機-------------------------------------
-                while (
-                    ImgCheckForList(
-                        TFolURL,
-                        [
-                            r"IkkatuCheck.png",
-                            r"ZaisanCheck.png",
-                            r"NendCheck.png",
-                            r"HouteiCheck.png",
-                        ],
-                        0.9,
-                        10,
-                    )[0]
-                    is False
-                ):
                     time.sleep(1)
+                    pg.press("return")
+                    time.sleep(1)
+                    pg.keyDown("alt")
+                    pg.press("s")
+                    pg.keyUp("alt")                    
+                time.sleep(3)
+                pyperclip.copy(str(ExRow["関与先番号"]))
+                pg.hotkey("ctrl", "v")
+                pg.press(["return","return"])
+                time.sleep(1)
+                pg.press("space")
+                time.sleep(1)
                 # --------------------------------------------------------------------
                 SNC = ImgCheck(TFolURL, r"SyotokuNoCalc.png", 0.9, 10)
                 if SNC[0] is True:
