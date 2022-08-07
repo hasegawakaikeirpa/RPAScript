@@ -104,28 +104,67 @@ def treeviewEntries(self):  # , tomltitle):
     self.index = 0  # 最新のインデックス番号
     self.indexes = []  # インデックスの並び
     # URLテキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="URL").grid(row=0, column=0)  # 位置指定
+    tk.Label(self.frame3, text="OCRURL").grid(row=0, column=0)  # 位置指定
     self.Label_URL = tk.Entry(self.frame3, width=10)
     self.Label_URL.insert(0, self.FileName)
     self.Label_URL.grid(row=0, column=1, columnspan=3)
-    # tomlNameテキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="設定ファイル名").grid(row=1, column=0)  # 位置指定
+    # 出力先テキストボックス-----------------------------------------------------------
+    tk.Label(self.frame3, text="出力先URL").grid(row=1, column=0)  # 位置指定
+    self.Label_OutURL = tk.Entry(self.frame3, width=10)
+    self.Label_OutURL.insert(0, self.JounalFileName)
+    self.Label_OutURL.grid(row=1, column=1, columnspan=3)
+    # 元帳URLテキストボックス-----------------------------------------------------------
+    tk.Label(self.frame3, text="元帳URL").grid(row=2, column=0)  # 位置指定
     self.Label_ChangeURL = tk.Entry(self.frame3, width=10)
-    # self.Label_ChangeURL.insert(0, tomltitle)
-    self.Label_ChangeURL.grid(row=1, column=1, columnspan=3)
-    # 開始残高ボタン----------------------------------------------------------------
-    tk.Label(self.frame3, text="開始残高").grid(row=len(self.indexes) + 2, column=0)  # 位置指定
-    self.ZanNametxt = tk.Entry(self.frame3, width=10)
-    self.ZanNametxt.grid(row=len(self.indexes) + 2, column=1)  # 位置指定
-    self.ebtn2 = tk.Button(
+    self.Label_ChangeURL.insert(0, self.Roolurl)
+    self.Label_ChangeURL.grid(row=2, column=1, columnspan=3)
+    # URL指定ボタン-------------------------------------------------------------
+    self.URL_In = tk.Button(
         self.frame3,
-        text="再計算",
+        text="OCR抽出結果CSV選択",
         width=20,
         bg="LemonChiffon",
-        command=lambda: self.ZanNamedaka(),
+        command=self.OCR_Open,
     )
-    self.ebtn2.grid(
-        row=len(self.indexes) + 3, column=0, columnspan=2, sticky=tk.W + tk.E
+    self.URL_In.grid(row=3, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+    self.URL_In2 = tk.Button(
+        self.frame3,
+        text="出力先CSV選択",
+        width=20,
+        bg="Honeydew",
+        command=self.Out_Open,
+    )
+    self.URL_In2.grid(row=4, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+    self.URL_In3 = tk.Button(
+        self.frame3,
+        text="元帳CSV選択",
+        width=20,
+        bg="AntiqueWhite",
+        command=self.Moto_Open,
+    )
+    self.URL_In3.grid(row=5, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+    # テキスト変換ルール設定ボタン----------------------------------------------------
+    self.Txt_C = tk.Button(
+        self.frame3,
+        text="テキスト変換ルール設定",
+        bg="LightSkyBlue",
+        width=20,
+        command=self.Txt_ChangeSetOpen,
+    )
+    self.Txt_C.grid(
+        row=len(self.indexes) + 6, column=0, columnspan=2, sticky=tk.W + tk.E
+    )  # 位置指定
+    # ------------------------------------------------------------------------------
+    # 戻るボタン--------------------------------------------------------------------
+    self.CloseBtn = tk.Button(
+        self.frame3,
+        text="戻る",
+        bg="gray80",
+        width=20,
+        command=self.ReturnBack,
+    )
+    self.CloseBtn.grid(
+        row=len(self.indexes) + 7, column=0, columnspan=2, sticky=tk.W + tk.E
     )  # 位置指定
     # ------------------------------------------------------------------------------
 
@@ -240,7 +279,7 @@ def Frame7Entries(self):
         text="詳細設定",
         width=20,
         command=lambda: self.ChangeFrame("詳細設定"),
-        bg="BlueViolet",
+        bg="Thistle",
     )
     self.Setting_Btn.grid(
         row=len(self.Frame7EntL) + 1,

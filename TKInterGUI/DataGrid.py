@@ -1,6 +1,4 @@
 import tkinter as tk
-
-import tkinter.ttk as ttk
 import numpy as np
 
 # from tkinter import messagebox
@@ -8,13 +6,11 @@ import pandas as pd
 import os
 import csv
 import toml
-import MyTable as MT
-import MyTable2 as MT2
-import MyTable3 as MT3
 import AutoJournal as AJ
 import CSVOut as CSVO
 import TKEntry as tke
-import ScrollableFrame as SF
+
+import Frame.DGFrame as DGF
 
 
 class DataGrid:
@@ -25,6 +21,8 @@ class DataGrid:
         self.FileName = csvurl
         self.JounalFileName = AJurl
         self.Roolurl = Roolurl
+        self.AJSeturl = AJSeturl
+        self.ChangeTxtURL = ChangeTxtURL
         self.tomlList = self.Banktoml["ParList"]["Name"]
         self.HidukeColNo = DaySet
         self.MoneyCol = MoneySet
@@ -45,179 +43,17 @@ class DataGrid:
         self.Main_Frame = tk.Frame(self.root, bd=2, relief=tk.RIDGE)
         # self.Main_Frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
         self.Main_Frame.pack(expand=True)
+        self.Sub_Frame = tk.Frame(self.root, bd=2, relief=tk.RIDGE)
+        # self.Main_Frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+        self.Sub_Frame.pack(expand=True)
+        self.Sub_Frame.pack_forget()
         ########################################################################################
-        # ツリーフレーム設定---------------------------------------------------------------------
-        self.OCR_frame = tk.Frame(
-            self.Main_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
-        )  # 親フレーム
-        self.OCR_frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
-        self.tree_frame = tk.Frame(self.OCR_frame, width=650, height=400)  # 子フレーム
-        tk.Label(self.OCR_frame, text="OCR抽出結果表").grid(
-            row=0, column=0, sticky=tk.N + tk.W
-        )  # 位置指定
-        self.tree_frame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
-        # df = TableModel.getSampleData()
-        # pt = Table(self.tree_frame)
-        pt = MT.MyTable(
-            self.tree_frame, width=650, height=400, sticky=tk.N + tk.S + tk.W + tk.E
-        )  # テーブルをサブクラス化
-        enc = CSVO.getFileEncoding(csvurl)
-        self.table = pt.importCSV(csvurl, encoding=enc)
-        self.pt = pt
-        pt.show()
-        # -------------------------------------------------------------------------------------
-        ########################################################################################
-        ########################################################################################
-        # ツリーフレーム設定---------------------------------------------------------------------
-        self.Jounal = tk.Frame(
-            self.Main_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
-        )  # 親フレーム
-        self.Jounal.grid(row=0, column=1, sticky=tk.N + tk.S + tk.W + tk.E)
-        self.tree2_frame = tk.Frame(self.Jounal, width=650, height=400)
-        tk.Label(self.Jounal, text="作成仕訳表").grid(row=0, column=0, sticky=tk.W)  # 位置指定
-        self.tree2_frame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
-        # df = TableModel.getSampleData()
-        # pt2 = Table(self.tree2_frame)
-        pt2 = MT2.MyTable(
-            self.tree2_frame, width=650, height=400, sticky=tk.N + tk.S + tk.W + tk.E
-        )  # テーブルをサブクラス化
-        enc = CSVO.getFileEncoding(AJurl)
-        self.table2 = pt2.importCSV(AJurl, encoding=enc)
-        self.pt2 = pt2
-        pt2.show()
-        # -------------------------------------------------------------------------------------
-        ########################################################################################
-        ########################################################################################
-        # 設定メインフレーム設定--------------------------------------------------------------------
-        self.Mframe = SF.ScrollableFrameDG(self.Main_Frame)
-        self.Mframe.grid(
-            row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E
-        )  # , ipadx=500, ipady=100)
-        tk.Label(self.Mframe.scrollable_frame, text="設定").grid(
-            row=0, column=0, sticky=tk.N + tk.W
-        )  # 位置指定
-        # -------------------------------------------------------------------------------------
-        # フレーム設定--------------------------------------------------------------------------
-        self.frame3 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-        self.frame3.grid(row=1, column=0, sticky=tk.N + tk.S)
-        # -------------------------------------------------------------------------------------
-        # フレーム設定--------------------------------------------------------------------------
-        self.frame4 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-        self.frame4.grid(row=1, column=1, sticky=tk.N + tk.S)
-        # -------------------------------------------------------------------------------------
-        # フレーム設定--------------------------------------------------------------------------
-        self.frame6 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-        self.frame6.grid(row=1, column=2, sticky=tk.N + tk.S)
-        # MotoCyou------------------------------------------------------------------------------
-        # フレーム設定--------------------------------------------------------------------------
-        self.frame7 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-        self.frame7.grid(row=1, column=3, sticky=tk.N + tk.S)
-        self.frame7EntryList = []  # このフレームのEntryのインスタンス
-        # -------------------------------------------------------------------------------------
-        tk.Label(self.frame6, text="元帳日付列名").grid(row=0, column=0)  # 位置指定
-        self.Moto_Day = tk.Entry(self.frame6, width=10)
-        self.Moto_Day.insert(0, "元帳日付列名")
-        self.Moto_Day.grid(row=0, column=1)
-        # ---------------------------------------------------------------------------------------
-        tk.Label(self.frame6, text="元帳金額列名").grid(row=1, column=0)  # 位置指定
-        self.Moto_Money = tk.Entry(self.frame6, width=10)
-        self.Moto_Money.insert(0, "元帳金額列名")
-        self.Moto_Money.grid(row=1, column=1)
-        # ---------------------------------------------------------------------------------------
-        tk.Label(self.frame6, text="元帳摘要列名").grid(row=2, column=0)  # 位置指定
-        self.Moto_Tekiyou = tk.Entry(self.frame6, width=10)
-        self.Moto_Tekiyou.insert(0, "元帳摘要列名")
-        self.Moto_Tekiyou.grid(row=2, column=1)
-        # ---------------------------------------------------------------------------------------
-        tk.Label(self.frame6, text="元帳借方科目列名").grid(row=3, column=0)  # 位置指定
-        self.Moto_Karikata = tk.Entry(self.frame6, width=10)
-        self.Moto_Karikata.insert(0, "（借）科目名")
-        self.Moto_Karikata.grid(row=3, column=1)
-        # ---------------------------------------------------------------------------------------
-        tk.Label(self.frame6, text="元帳貸方科目列名").grid(row=4, column=0)  # 位置指定
-        self.Moto_Kashikata = tk.Entry(self.frame6, width=10)
-        self.Moto_Kashikata.insert(0, "（貸）科目名")
-        self.Moto_Kashikata.grid(row=4, column=1)
-        # ---------------------------------------------------------------------------------------
-        # 選択行自動仕訳作成ボタン----------------------------------------------------------------
-        self.AJ_Btn = tk.Button(
-            self.frame6,
-            text="選択行仕訳予想検索",
-            width=20,
-            command=lambda: self.AJCalc(csvurl),
-            bg="lightblue",
-        )
-        self.AJ_Btn.grid(row=5, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
-        # -------------------------------------------------------------------------------------
-        # 抽出仕訳転記ボタン----------------------------------------------------------------
-        self.AJ_copy = tk.Button(
-            self.frame6,
-            text="抽出仕訳転記",
-            width=20,
-            command=lambda: self.AJ_copyCalc(csvurl),
-            bg="pink",
-        )
-        self.AJ_copy.grid(row=6, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
-        # -------------------------------------------------------------------------------------
-        # 元帳表示ボタン----------------------------------------------------------------
-        self.AJ_copy = tk.Button(
-            self.frame6,
-            text="元帳表示",
-            width=20,
-            command=lambda: self.ReadM(Roolurl),
-            bg="SeaGreen4",
-        )
-        self.AJ_copy.grid(row=7, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
-        # -------------------------------------------------------------------------------------
-        # 置換設定追加ボタン--------------------------------------------------------------------
-        self.AJ_set = tk.Button(
-            self.frame7,
-            text="置換設定追加",
-            width=20,
-            command=lambda: tke.AJ_setCalc(self),
-            bg="Coral",
-        )
-        self.AJ_set.grid(row=0, column=0, columnspan=4, sticky=tk.W + tk.E)  # 位置指定
-        # -------------------------------------------------------------------------------------
-        self.Mframe.scrollbar_y.grid_forget()  # スクロールバー削除
-        # スクロールバー再作成--------------------------------------------------
-        self.Mframe.scrollbar_y = ttk.Scrollbar(
-            self.Mframe.scrollable_frame,
-            orient="vertical",
-            command=self.Mframe.canvas.yview,
-        )
-        # ---------------------------------------------------------------------
-        self.Mframe.scrollbar_y.grid(row=0, rowspan=3, column=4, sticky=tk.S + tk.N)
-        self.Mframe.canvas.configure(yscrollcommand=self.Mframe.scrollbar_y.set)
-        self.Mframe.scrollbar_x.grid_forget()  # スクロールバー削除
-        # スクロールバー再作成--------------------------------------------------
-        self.Mframe.scrollbar_x = ttk.Scrollbar(
-            self.Mframe.scrollable_frame,
-            orient="horizontal",
-            command=self.Mframe.canvas.xview,
-        )
-        # ---------------------------------------------------------------------
-        self.Mframe.scrollbar_x.grid(row=2, column=0, columnspan=4, sticky=tk.E + tk.W)
-        self.Mframe.canvas.configure(xscrollcommand=self.Mframe.scrollbar_x.set)
-        ########################################################################################
-        ########################################################################################
-        # フレーム設定--------------------------------------------------------------------------
-        self.Predict_frame = tk.Frame(
-            self.Main_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
-        )  # 親フレーム
-        self.Predict_frame.grid(row=1, column=1, sticky=tk.N + tk.S + tk.W + tk.E)
-        self.frame5 = tk.Frame(self.Predict_frame, width=650, height=400)
-        tk.Label(self.Predict_frame, text="仕訳予想結果").grid(
-            row=0, column=0, sticky=tk.W
-        )  # 位置指定
-        self.frame5.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
-        pt3 = MT3.MyTable(
-            self.frame5, width=650, height=150, sticky=tk.N + tk.S + tk.W + tk.E
-        )  # テーブルをサブクラス化
-        enc = CSVO.getFileEncoding(AJSeturl)
-        self.table3 = pt3.importCSV(AJSeturl, encoding=enc)
-        self.pt3 = pt3
-        pt3.show()
+        # フレーム設定---------------------------------------------------------------------
+        DGF.create_Frame(self)  # OCR表フレーム
+        DGF.create_Frame2(self)  # 出力表フレーム
+        DGF.create_SettingFrame(self)  # 設定メインフレーム
+        DGF.create_Frame3(self)  # 元帳(仕訳候補)フレーム
+        DGF.create_Frame4(self)  # サブフレーム(変換ルール表示)
         # -------------------------------------------------------------------------------------
         ########################################################################################
         ########################################################################################
@@ -245,23 +81,6 @@ class DataGrid:
         # ---------------------------------------------------------------------------------------
         # ツリービューを配置
         tke.treeviewEntries(self)
-        # ボタン追加----------------------------------------------------------------------------
-        self.AllRun = tk.Button(
-            self.frame3,
-            text="全行自動仕訳",
-            bg="LavenderBlush",
-            width=20,
-            command=lambda: self.AJAllCalc(csvurl),
-        )
-        self.AllRun.grid(row=4, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
-        self.CloseBtn = tk.Button(
-            self.frame3,
-            text="戻る",
-            bg="gray80",
-            width=20,
-            command=self.ReturnBack,
-        )
-        self.CloseBtn.grid(row=5, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
         # -------------------------------------------------------------------------------------
         # tomlListを配置
         tke.tomlEntries(self)
@@ -271,6 +90,92 @@ class DataGrid:
     #############################################################################################
     # 以下self関数
     #############################################################################################
+    def Sub_RowInsert(self):
+        try:
+            pt4df = self.pt4.model.df
+            pt4c = list(pt4df.columns)
+            NullList = []
+            InList = []
+            for N_c in range(len(pt4c)):
+                NullList.append("")
+            InList.append(NullList)
+            InList = pd.DataFrame(InList, columns=pt4c)
+            pt4df = pt4df.append(InList)
+            pt4df.to_csv(self.ChangeTxtURL, index=False)
+            enc = CSVO.getFileEncoding(self.ChangeTxtURL)
+            self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+            self.pt4.redraw
+        except:
+            tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
+
+    # -------------------------------------------------------------------------------------
+    def Sub_ReturnBack(self):
+        try:
+            self.Sub_Frame.pack_forget()
+            self.Main_Frame.pack(expand=True)
+        except:
+            tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
+
+    # -------------------------------------------------------------------------------------
+    def Txt_ChangeSetOpen(self):
+        try:
+            self.Main_Frame.pack_forget()
+            self.Sub_Frame.pack(expand=True)
+        except:
+            tk.messagebox.showinfo("確認", "テキスト変換ルール設定の起動に失敗しました。\nSEまでお問い合わせください。")
+
+    # -------------------------------------------------------------------------------------
+    def Out_Open(self):
+        try:
+            typ = [("自動仕訳出力先CSVを選択してください。", "*.csv")]
+            dir = csvurl
+            fle = tk.filedialog.askopenfilename(
+                filetypes=typ, initialdir=dir
+            )  # ファイル指定ダイアログ
+            enc = CSVO.getFileEncoding(fle)
+            self.pt2.importCSV(fle, encoding=enc)
+            self.pt2.redraw
+            self.JounalFileName = fle
+            self.Label_OutURL.delete(0, tk.END)
+            self.Label_OutURL.insert(0, self.JounalFileName)
+        except:
+            tk.messagebox.showinfo("確認", "OCR抽出結果CSVの出力に失敗しました。\n参照先のURLが正しいか確認してください。")
+
+    # -------------------------------------------------------------------------------------
+    def Moto_Open(self):
+        try:
+            typ = [("元帳CSVを選択してください。", "*.csv")]
+            dir = csvurl
+            fle = tk.filedialog.askopenfilename(
+                filetypes=typ, initialdir=dir
+            )  # ファイル指定ダイアログ
+            enc = CSVO.getFileEncoding(fle)
+            self.pt3.importCSV(fle, encoding=enc)
+            self.pt3.redraw
+            self.Roolurl = fle
+            self.Label_ChangeURL.delete(0, tk.END)
+            self.Label_ChangeURL.insert(0, self.Roolurl)
+        except:
+            tk.messagebox.showinfo("確認", "OCR抽出結果CSVの出力に失敗しました。\n参照先のURLが正しいか確認してください。")
+
+    # -------------------------------------------------------------------------------------
+    def OCR_Open(self):
+        try:
+            typ = [("OCR抽出結果CSVを選択してください。", "*.csv")]
+            dir = csvurl
+            fle = tk.filedialog.askopenfilename(
+                filetypes=typ, initialdir=dir
+            )  # ファイル指定ダイアログ
+            enc = CSVO.getFileEncoding(fle)
+            self.pt.importCSV(fle, encoding=enc)
+            self.pt.redraw
+            self.FileName = fle
+            self.Label_URL.delete(0, tk.END)
+            self.Label_URL.insert(0, self.FileName)
+        except:
+            tk.messagebox.showinfo("確認", "OCR抽出結果CSVの出力に失敗しました。\n参照先のURLが正しいか確認してください。")
+
+    # -------------------------------------------------------------------------------------
     def ReadM(self, URL):
         try:
             enc = CSVO.getFileEncoding(URL)
@@ -282,7 +187,8 @@ class DataGrid:
     # -------------------------------------------------------------------------------------
     def ChangeFrame(self, Case):
         if Case == "詳細設定":
-            self.Main_Frame.redraw()
+            tk.messagebox.showinfo("確認", "現在開発中です。")
+            # self.Main_Frame.pack_forget()
 
     # -------------------------------------------------------------------------------------
     def AJ_copyCalc(self, csvurl):
@@ -728,177 +634,6 @@ class DataGrid:
                 self.ColumnName2 = cells
                 break
 
-    # -----------------------------------------------------------------------------------------
-    def EveRecalc(self, event):
-        c = 0
-        self.InStartVal()
-        # 列名一致で列番号取得----------------------------------------------------------
-        for ColNameItem in self.ColumnName:
-            if ColNameItem == self.NyuName:
-                NyuCol = c
-            elif ColNameItem == self.SyutuName:
-                SyutuCol = c
-            elif ColNameItem == self.ZanName:
-                ZanCol = c
-            c += 1
-        # ---------------------------------------------------------------------------
-        # CSV読込
-        enc = CSVO.getFileEncoding(self.FileName)
-        with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
-            reader = csv.reader(f, delimiter=",", quotechar='"')
-            next(reader)
-            CList = list(reader)
-        # 残高再計算-----------------------------------------------------------------
-        c = 0
-        clr = len(CList)
-        print(CList[0][ZanCol])
-        zanstr = self.ZanNametxt.get()
-        if zanstr == "":
-            zanstr = CList[0][ZanCol]
-        else:
-            CList[0][ZanCol] = zanstr
-        for r in range(clr):
-            if not r == clr - 1:
-                try:
-                    if r == 0:
-                        Zanint = int(zanstr)
-                    else:
-                        Zanint = int(CList[r][ZanCol])
-                except:
-                    Zanint = 0
-                try:
-                    Nyuint = int(CList[r + 1][NyuCol])
-                except:
-                    Nyuint = 0
-                try:
-                    Syutuint = int(CList[r + 1][SyutuCol])
-                except:
-                    Syutuint = 0
-
-                NZan = Zanint + Nyuint - Syutuint
-                CList[r + 1][ZanCol] = str(NZan)
-        df = pd.DataFrame(CList, columns=self.ColumnName)
-        try:
-            df.to_csv(self.FileName, index=False, encoding="cp932")
-        except:
-            with open(
-                self.FileName,
-                mode="w",
-                encoding="cp932",
-                errors="ignore",
-                newline="",
-            ) as f:
-                df.to_csv(f, index=False)
-
-        tke.removeEntry(self)
-        tke.treeviewEntries(self)
-
-    # -----------------------------------------------------------------------------------------
-    def ZanRecalc(self):
-        c = 0
-        # 列名一致で列番号取得----------------------------------------------------------
-        for ColNameItem in self.ColumnName:
-            if ColNameItem == self.NyuName:
-                NyuCol = c
-            elif ColNameItem == self.SyutuName:
-                SyutuCol = c
-            elif ColNameItem == self.ZanName:
-                ZanCol = c
-            c += 1
-        # ---------------------------------------------------------------------------
-        # CSV読込
-        enc = CSVO.getFileEncoding(self.FileName)
-        with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
-            reader = csv.reader(f, delimiter=",", quotechar='"')
-            next(reader)
-            CList = list(reader)
-        # 残高再計算-----------------------------------------------------------------
-        c = 0
-        clr = len(CList)
-        print(CList[0][ZanCol])
-        zanstr = self.ZanNametxt.get()
-        if zanstr == "":
-            zanstr = CList[0][ZanCol]
-        else:
-            CList[0][ZanCol] = zanstr
-        for r in range(clr):
-            if not r == clr - 1:
-                try:
-                    if r == 0:
-                        Zanint = int(zanstr)
-                    else:
-                        Zanint = int(CList[r][ZanCol])
-                except:
-                    Zanint = 0
-                try:
-                    Nyuint = int(CList[r + 1][NyuCol])
-                except:
-                    Nyuint = 0
-                try:
-                    Syutuint = int(CList[r + 1][SyutuCol])
-                except:
-                    Syutuint = 0
-
-                NZan = Zanint + Nyuint - Syutuint
-                CList[r + 1][ZanCol] = str(NZan)
-        df = pd.DataFrame(CList, columns=self.ColumnName)
-        try:
-            df.to_csv(self.FileName, index=False, encoding="cp932")
-        except:
-            df.to_csv(self.FileName, index=False, encoding="utf8")
-        tke.removeEntry(self)
-        tke.treeviewEntries(self)
-
-    # -----------------------------------------------------------------------------------------
-    def Zandaka(self):
-        zanstr = self.ZanNametxt.get()
-        if zanstr == "":
-            Messagebox = tk.messagebox.askquestion("再計算", "残高を再計算しますか？", icon="warning")
-            if Messagebox == "yes":  # If関数
-                self.ZanNameRecalc()
-            else:
-                tk.messagebox.showinfo("戻る", "アプリケーション画面に戻ります")
-        else:
-            Messagebox = tk.messagebox.askquestion(
-                "開始残高登録", "開始残高を登録し再計算しますか？", icon="warning"
-            )
-            if Messagebox == "yes":  # If関数
-                self.ZanNameRecalc()
-            else:
-                tk.messagebox.showinfo("戻る", "アプリケーション画面に戻ります")
-
-    # -----------------------------------------------------------------------------------------
-    def InStartVal(self):
-        global tr  # 選択行インデックス
-
-        # CSV読込
-        enc = CSVO.getFileEncoding(self.FileName)
-        with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
-            reader = csv.reader(f, delimiter=",", quotechar='"')
-            next(reader)
-            CList = list(reader)
-
-        c = 0
-        for ColNameItem in self.ColumnName:
-            print(CList[tr][c])
-            print(self.Entries[c].get())
-            CList[tr][c] = str(self.Entries[c].get())
-            c += 1
-        df = pd.DataFrame(CList, columns=self.ColumnName)
-        try:
-            df.to_csv(self.FileName, index=False, encoding="cp932")
-        except:
-            with open(
-                self.FileName,
-                mode="w",
-                encoding="cp932",
-                errors="ignore",
-                newline="",
-            ) as f:
-                df.to_csv(f, index=False)
-
-        self.ZanNameRecalc()
-
     # ------------------------------------------------------------------------------------------
     def ReturnBack(self):
         self.root.destroy()
@@ -930,7 +665,7 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
         selfmother.ReplaceStr.get(),
     )
     """
-    global AJurl, AJSeturl, Roolurl, Master, main_window
+    global AJurl, AJSeturl, Roolurl, ChangeTxtURL, Master, main_window
     global csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr, ColNameList
     Master = r_win
     csvurl = US
@@ -945,14 +680,14 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
     main_window = tk.Tk()
     main_window.withdraw()
 
-    typ = [("ミロクエクスポートCSVを選択してください。", "*.csv")]
+    typ = [("ミロク元帳CSVを選択してください。", "*.csv")]
     dir = csvurl
     fle = tk.filedialog.askopenfilename(filetypes=typ, initialdir=dir)  # ファイル指定ダイアログ
     Roolurl = fle
     enc = CSVO.getFileEncoding(Roolurl)
     Roolurldf = pd.read_csv(Roolurl, encoding=enc)
     DelIndex = []
-    # ミロクエクスポートCSVから全行削除------------------------
+    # ミロク元帳CSVから全行削除------------------------
     for R_r in reversed(range(Roolurldf.shape[0] - 1)):
         DelIndex.append(R_r)
     Roolurldf = Roolurldf.drop(Roolurldf.index[DelIndex])
@@ -961,6 +696,10 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
     Roolurldf.to_csv(AJurl, index=False, encoding=enc)
     # -----------------------------------------------------------------------------------
     AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
+    typ = [("テキスト変換ルールCSVを選択してください。", "*.csv")]
+    dir = csvurl
+    fle = tk.filedialog.askopenfilename(filetypes=typ, initialdir=dir)  # ファイル指定ダイアログ
+    ChangeTxtURL = fle
     # Viewクラス生成
     DataGrid(main_window, "./")
 
@@ -970,7 +709,7 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
 
 # -----------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    global AJurl, AJSeturl, Roolurl
+    global AJurl, AJSeturl, Roolurl, ChangeTxtURL
     global csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr, ColNameList
 
     DaySet = ["1"]
@@ -983,7 +722,7 @@ if __name__ == "__main__":
     AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page_AutoJounal.csv"
     AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
     Roolurl = r"D:\OCRTESTPDF\PDFTEST\1_仕訳日記帳.csv"
-
+    ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\ChangeTxtList.csv"
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)
