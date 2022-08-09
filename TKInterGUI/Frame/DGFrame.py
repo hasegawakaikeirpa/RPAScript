@@ -83,16 +83,20 @@ def create_SettingFrame(self):
     self.frame3.grid(row=1, column=0, sticky=tk.N + tk.S)
     # -------------------------------------------------------------------------------------
     # フレーム設定--------------------------------------------------------------------------
+    self.ChangeFrame = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
+    self.ChangeFrame.grid(row=1, column=1, sticky=tk.N + tk.S)
+    # -------------------------------------------------------------------------------------
+    # フレーム設定--------------------------------------------------------------------------
     self.frame4 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-    self.frame4.grid(row=1, column=1, sticky=tk.N + tk.S)
+    self.frame4.grid(row=1, column=2, sticky=tk.N + tk.S)
     # -------------------------------------------------------------------------------------
     # フレーム設定--------------------------------------------------------------------------
     self.frame6 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-    self.frame6.grid(row=1, column=2, sticky=tk.N + tk.S)
+    self.frame6.grid(row=1, column=3, sticky=tk.N + tk.S)
     # MotoCyou------------------------------------------------------------------------------
     # フレーム設定--------------------------------------------------------------------------
     self.frame7 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-    self.frame7.grid(row=1, column=3, sticky=tk.N + tk.S)
+    self.frame7.grid(row=1, column=4, sticky=tk.N + tk.S)
     self.frame7EntryList = []  # このフレームのEntryのインスタンス
     # -------------------------------------------------------------------------------------
     tk.Label(self.frame6, text="元帳日付列名").grid(row=0, column=0)  # 位置指定
@@ -177,7 +181,7 @@ def create_SettingFrame(self):
         command=self.Mframe.canvas.yview,
     )
     # ---------------------------------------------------------------------
-    self.Mframe.scrollbar_y.grid(row=0, rowspan=3, column=4, sticky=tk.S + tk.N)
+    self.Mframe.scrollbar_y.grid(row=0, rowspan=3, column=5, sticky=tk.S + tk.N)
     self.Mframe.canvas.configure(yscrollcommand=self.Mframe.scrollbar_y.set)
     self.Mframe.scrollbar_x.grid_forget()  # スクロールバー削除
     # スクロールバー再作成--------------------------------------------------
@@ -187,22 +191,47 @@ def create_SettingFrame(self):
         command=self.Mframe.canvas.xview,
     )
     # ---------------------------------------------------------------------
-    self.Mframe.scrollbar_x.grid(row=2, column=0, columnspan=4, sticky=tk.E + tk.W)
+    self.Mframe.scrollbar_x.grid(row=2, column=0, columnspan=5, sticky=tk.E + tk.W)
     self.Mframe.canvas.configure(xscrollcommand=self.Mframe.scrollbar_x.set)
 
 
 # ####################################################################################################
 # サブフレーム#########################################################################################
 def create_Frame4(self):
+
+    self.AJsetOCRFrame = tk.Frame(
+        self.Sub_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+    )  # 親フレーム
+    self.AJsetOCRFrame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+    self.AJsetOCRFrameSub_Frame = tk.Frame(self.AJsetOCRFrame, width=650, height=400)
+    tk.Label(self.AJsetOCRFrame, text="OCR抽出結果表").grid(
+        row=0, column=0, sticky=tk.W
+    )  # 位置指定
+    self.AJsetOCRFrameSub_Frame.grid(
+        row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
+    )
+    pt5 = MT.MyTable4(
+        self.AJsetOCRFrameSub_Frame,
+        width=650,
+        height=150,
+        sticky=tk.N + tk.S + tk.W + tk.E,
+    )  # テーブルをサブクラス化
+    enc = CSVO.getFileEncoding(self.FileName)
+    self.table5 = pt5.importCSV(self.FileName, encoding=enc)
+    self.pt5 = pt5
+    pt5.show()
+
     self.AJsetFrame = tk.Frame(
         self.Sub_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
     )  # 親フレーム
-    self.AJsetFrame.grid(row=1, column=1, sticky=tk.N + tk.S + tk.W + tk.E)
+    self.AJsetFrame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     self.AJsetSub_Frame = tk.Frame(self.AJsetFrame, width=650, height=400)
     tk.Label(self.AJsetFrame, text="テキスト変換ルール").grid(
         row=0, column=0, sticky=tk.W
     )  # 位置指定
-    self.AJsetSub_Frame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+    self.AJsetSub_Frame.grid(
+        row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
+    )
     pt4 = MT.MyTable4(
         self.AJsetSub_Frame, width=650, height=150, sticky=tk.N + tk.S + tk.W + tk.E
     )  # テーブルをサブクラス化
@@ -219,6 +248,33 @@ def create_Frame4(self):
         command=self.Sub_RowInsert,
     )
     self.Sub_RowInsert.grid(row=2, column=0, sticky=tk.W)  # 位置指定
+    # 列追加ボタン--------------------------------------------------------------------
+    self.Sub_ColumnInsert = tk.Button(
+        self.AJsetFrame,
+        text="列追加",
+        bg="Lightblue",
+        width=20,
+        command=self.Sub_ColumnInsert,
+    )
+    self.Sub_ColumnInsert.grid(row=2, column=1)  # 位置指定
+    # 行削除ボタン--------------------------------------------------------------------
+    self.Sub_RowDelete = tk.Button(
+        self.AJsetFrame,
+        text="行削除",
+        bg="darkorange",
+        width=20,
+        command=self.Sub_RowDelete,
+    )
+    self.Sub_RowDelete.grid(row=2, column=2)  # 位置指定
+    # 列削除ボタン--------------------------------------------------------------------
+    self.Sub_ColumnDelete = tk.Button(
+        self.AJsetFrame,
+        text="列削除",
+        bg="darkgreen",
+        width=20,
+        command=self.Sub_ColumnDelete,
+    )
+    self.Sub_ColumnDelete.grid(row=2, column=3)  # 位置指定
     # 戻るボタン--------------------------------------------------------------------
     self.Sub_CloseBtn = tk.Button(
         self.AJsetFrame,
@@ -227,4 +283,9 @@ def create_Frame4(self):
         width=20,
         command=self.Sub_ReturnBack,
     )
-    self.Sub_CloseBtn.grid(row=2, column=1, sticky=tk.W)  # 位置指定
+    self.Sub_CloseBtn.grid(row=2, column=4, sticky=tk.E)  # 位置指定
+    # メニューフレーム作成-----------------------------------------------------------
+    self.AJsetMenuFrame = tk.Frame(
+        self.Sub_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+    )  # 親フレーム
+    self.AJsetMenuFrame.grid(row=2, column=0, sticky=tk.N + tk.S + tk.W + tk.E)

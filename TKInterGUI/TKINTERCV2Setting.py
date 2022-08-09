@@ -232,6 +232,9 @@ class Application(tk.Frame):
 
     # 以下self関数###################################################################################
     def InportIMG(self):
+        """
+        下ウィンドウに画像をリサイズして配置
+        """
         global TKimg
         global imgurl
         global CW, CH
@@ -247,23 +250,34 @@ class Application(tk.Frame):
 
     # ---------------------------------------------------------------------------------------------
     def unmap(self, event):
+        """
+        上下ウィンドウ連携処理(上を隠す)
+        """
         self.top.withdraw()
 
     # ---------------------------------------------------------------------------------------------
     def map(self, event):
+        """
+        上下ウィンドウ連携処理(上を表示)
+        """
         self.lift()
         self.top.wm_deiconify()
         self.top.attributes("-topmost", True)
 
     # ---------------------------------------------------------------------------------------------
     def change(self, event):
+        """
+        上下ウィンドウ連携処理(ウィンドウサイズ変更)
+        """
         x, y = self.back.winfo_rootx(), self.back.winfo_rooty()
         w, h = self.winfo_width(), self.winfo_height()
         self.top.geometry(f"{w}x{h}+{x}+{y}")
 
-    # エントリーウィジェットを追加するボタンのようなラベルをクリック
     # -------------------------------------------------------------------------------------
     def insertEntry_click(self, event, id):
+        """
+        列名設定項目追加ボタン処理
+        """
         # 追加する位置
         next = self.indexes.index(id) + 1
         self.index = self.index + 1
@@ -271,8 +285,10 @@ class Application(tk.Frame):
         self.createEntry(next, bar_x=False)
 
     # -------------------------------------------------------------------------------------
-    # エントリーウィジェットを削除するボタンのようなラベルをクリック
     def removeEntry_click(self, event, id):
+        """
+        列名設定項目削除ボタン処理
+        """
         id = 0
         for SRI in self.removeEntries:
             if SRI == event.widget:
@@ -294,8 +310,10 @@ class Application(tk.Frame):
         self.updateEntries()
 
     # -------------------------------------------------------------------------------------
-    # エントリーウィジェットを再配置
     def updateEntries(self, bar_x=True, bar_y=True):
+        """
+        列名設定項目を再配置
+        """
         # エントリーウィジェットマネージャを参照して再配置
         for i in range(len(self.indexes)):
             self.Entries[i].grid(column=0, row=i)
@@ -339,8 +357,10 @@ class Application(tk.Frame):
             self.SF.canvas.configure(xscrollcommand=self.SF.scrollbar_x.set)
 
     # -------------------------------------------------------------------------------------
-    # エントリーウィジェットを作成して配置
     def createEntry(self, next, bar_x=True, bar_y=True):
+        """
+        列名設定項目を作成して再配置
+        """
         # 最初のエントリーウィジェットを追加
         self.Entries.insert(next, tk.Entry(self.SF.scrollable_frame, width=35))
         # エントリーウィジェットを追加するボタンのようなラベルを作成
@@ -377,8 +397,10 @@ class Application(tk.Frame):
         self.updateEntries(bar_x=False)
 
     # -------------------------------------------------------------------------------------
-    # テキストを取得するボタンを押す
     def GetEntryTextButton_click(self):
+        """
+        列名設定項目取得関数
+        """
         GetEntry = []
 
         # 全てのエントリーウィジェットの内容を配列化
@@ -394,6 +416,9 @@ class Application(tk.Frame):
 # 以下関数######################################################################################
 # ---------------------------------------------------------------------------------------------
 def ReturnNext(self):
+    """
+    次UI起動
+    """
     self.top.withdraw()
     self.master.withdraw()
     # Master.deiconify()
@@ -402,6 +427,9 @@ def ReturnNext(self):
 
 # ---------------------------------------------------------------------------------------------
 def ReturnBack(self):
+    """
+    前UI起動
+    """
     self.top.destroy()
     self.master.destroy()
     Master.deiconify()
@@ -410,6 +438,9 @@ def ReturnBack(self):
 
 # ---------------------------------------------------------------------------------------------
 def NewLineCreate(self, selfC, HCW, HCH):
+    """
+    新規直線描画ボタン処理
+    """
     global tagsList
     # メッセージボックス（OK・キャンセル）
     unmap(self)
@@ -461,6 +492,9 @@ def tomlListCreate(self):
 
 # ---------------------------------------------------------------------------------------------
 def LoadImg(Wwidth, Wheight):
+    """
+    画像ファイル読込
+    """
     global MaxW, MaxH
     global imgurl
     # 画像の読込#####################################################################
@@ -479,7 +513,7 @@ def LoadImg(Wwidth, Wheight):
 # ---------------------------------------------------------------------------------------------
 def StLine(canvastop, CW, CH):
     """
-    縦の直線描画
+    縦直線追加ボタン処理
     """
     TName = "Line" + str(len(tagsList) + 1)
     canvastop.create_line(CW - 50, 0, CW - 50, CH, tags=TName, fill="#FF0000")
@@ -493,7 +527,7 @@ def StLine(canvastop, CW, CH):
 # ---------------------------------------------------------------------------------------------
 def StWLine(canvastop, CW, CH):
     """
-    横の直線描画
+    横直線追加ボタン処理
     """
     TName = "Line" + str(len(tagsList) + 1)
     canvastop.create_line(0, CH - 50, CW, CH - 50, tags=TName, fill="#00FF40")
@@ -506,7 +540,9 @@ def StWLine(canvastop, CW, CH):
 
 # ---------------------------------------------------------------------------------------------
 def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
-
+    """
+    透過キャンバス(上ウィンドウ)に罫線描画処理
+    """
     # .create_line(Ⅹ座標（始点）, Ｙ座標（始点）,Ⅹ座標（終点）, Ｙ座標（終点）)
     global tagsList
     BtagsList = []
@@ -552,6 +588,9 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
 
 # ---------------------------------------------------------------------------------------------
 def listintCheck(list):
+    """
+    条件テキストボックスの文字列に","があるか判定
+    """
     for listItem in list:
         try:
             int(listItem)
@@ -746,6 +785,9 @@ def AllLineDelete(self):
 # 円、矩形、直線を描画＆ドラッグできるようにする【tkinter】
 # https://irohaplat.com/python-tkinter-line-rectangle-oval-drag-and-drop-sample/
 def click1(event):
+    """
+    縦直線描画処理(画面クリック)
+    """
     # https://office54.net/python/tkinter/tkinter-bind-event#section2
     global x1
     global y1
@@ -762,6 +804,9 @@ def click1(event):
 
 # ---------------------------------------------------------------------------------------------
 def drag1(event):
+    """
+    縦直線移動処理(ドラッグ)
+    """
     # https://office54.net/python/tkinter/tkinter-bind-event#section2
     global x1
     global y1
@@ -778,6 +823,9 @@ def drag1(event):
 
 
 def Main(MUI, US):
+    """
+    呼出関数
+    """
     global Master, imgurl
     global readcsv1, readcsv2
     global URL

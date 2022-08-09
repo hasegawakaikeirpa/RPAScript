@@ -24,6 +24,9 @@ class DataGrid:
         self.AJSeturl = AJSeturl
         self.ChangeTxtURL = ChangeTxtURL
         self.tomlList = self.Banktoml["ParList"]["Name"]
+        enc = CSVO.getFileEncoding(self.ChangeTxtURL)
+        pt4df = pd.read_csv(self.ChangeTxtURL, encoding=enc)
+        self.ChangeTxtColumns = list(pt4df.columns)
         self.HidukeColNo = DaySet
         self.MoneyCol = MoneySet
         self.ChangeTextCol = ReplaceSet
@@ -82,6 +85,8 @@ class DataGrid:
         # ツリービューを配置
         tke.treeviewEntries(self)
         # -------------------------------------------------------------------------------------
+        # テキスト変換設定フレームを配置(サブメニューにもコピー配置)
+        tke.FrameChangeEntries(self)
         # tomlListを配置
         tke.tomlEntries(self)
         # フレーム7を配置
@@ -90,7 +95,104 @@ class DataGrid:
     #############################################################################################
     # 以下self関数
     #############################################################################################
+    def Sub_ColumnDelete(self):
+        """
+        DGFrame.py
+        ↓
+        def create_Frame4(self)
+        ↓
+        self.Sub_RowInsert
+        bind関数
+        """
+        try:
+            if self.pt4.startcol is None:  # 選択列
+                tk.messagebox.showinfo("確認", "テキスト変換ルール表のセルが選択されていません。")
+            else:
+                pt4df = self.pt4.model.df
+                pt4c = list(pt4df.columns)
+                pt4c.pop(self.pt4.startcol)
+                NullList = []
+                for N_c in range(len(pt4df)):
+                    NullList.append("")
+                pt4df = np.array(pt4df)
+                pt4df = np.delete(pt4df, self.pt4.startcol, axis=1)  # 列の削除
+                pt4df = pd.DataFrame(pt4df, columns=pt4c)
+                pt4df.to_csv(self.ChangeTxtURL, index=False)
+                enc = CSVO.getFileEncoding(self.ChangeTxtURL)
+                self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+                self.pt4.redraw
+        except:
+            tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
+
+    # -------------------------------------------------------------------------------------
+    def Sub_RowDelete(self):
+        """
+        DGFrame.py
+        ↓
+        def create_Frame4(self)
+        ↓
+        self.Sub_RowInsert
+        bind関数
+        """
+        try:
+            if self.pt4.startrow is None:  # 選択行
+                tk.messagebox.showinfo("確認", "テキスト変換ルール表のセルが選択されていません。")
+            else:
+                pt4df = self.pt4.model.df
+                pt4c = list(pt4df.columns)
+                pt4df = np.array(self.pt4.model.df)
+                pt4df = np.delete(pt4df, self.pt4.startrow, axis=0)  # 行の削除
+                pt4df = pd.DataFrame(pt4df, columns=pt4c)
+                pt4df.to_csv(self.ChangeTxtURL, index=False)
+                enc = CSVO.getFileEncoding(self.ChangeTxtURL)
+                self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+                self.pt4.redraw
+        except:
+            tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
+
+    # -------------------------------------------------------------------------------------
+
+    def Sub_ColumnInsert(self):
+        """
+        DGFrame.py
+        ↓
+        def create_Frame4(self)
+        ↓
+        self.Sub_RowInsert
+        bind関数
+        """
+        try:
+            pt4df = self.pt4.model.df
+            pt4c = list(pt4df.columns)
+            o_count = 0
+            for pt4cItem in pt4c:
+                if "OCRテキスト" in pt4cItem:
+                    o_count += 1
+            c_no = int(np.where(np.array(pt4c) == "元帳テキスト")[0])
+            pt4c.insert(c_no, "OCRテキスト" + str(o_count + 1))
+            NullList = []
+            for N_c in range(len(pt4df)):
+                NullList.append("")
+            pt4df = np.array(pt4df)
+            pt4df = np.insert(pt4df, c_no, NullList, axis=1)  # 列の挿入
+            pt4df = pd.DataFrame(pt4df, columns=pt4c)
+            pt4df.to_csv(self.ChangeTxtURL, index=False)
+            enc = CSVO.getFileEncoding(self.ChangeTxtURL)
+            self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+            self.pt4.redraw
+        except:
+            tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
+
+    # -------------------------------------------------------------------------------------
     def Sub_RowInsert(self):
+        """
+        DGFrame.py
+        ↓
+        def create_Frame4(self)
+        ↓
+        self.Sub_RowInsert
+        bind関数
+        """
         try:
             pt4df = self.pt4.model.df
             pt4c = list(pt4df.columns)
@@ -110,22 +212,70 @@ class DataGrid:
 
     # -------------------------------------------------------------------------------------
     def Sub_ReturnBack(self):
+        """
+        DGFrame.py
+        ↓
+        def create_Frame4(self)
+        ↓
+        self.Sub_CloseBtn
+        bind関数
+        """
         try:
             self.Sub_Frame.pack_forget()
+            self.GetTxt_ChangeEntry(1)
             self.Main_Frame.pack(expand=True)
         except:
             tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
 
     # -------------------------------------------------------------------------------------
     def Txt_ChangeSetOpen(self):
+        """
+        TKEntry.py
+        ↓
+        def treeviewEntries(self)
+        ↓
+        self.Txt_C
+        bind関数
+        """
         try:
             self.Main_Frame.pack_forget()
+            self.GetTxt_ChangeEntry(0)
             self.Sub_Frame.pack(expand=True)
         except:
             tk.messagebox.showinfo("確認", "テキスト変換ルール設定の起動に失敗しました。\nSEまでお問い合わせください。")
 
     # -------------------------------------------------------------------------------------
+    def GetTxt_ChangeEntry(self, Flag):
+        """
+        列名設定項目取得関数
+        """
+        TxtList = []
+        # 全てのエントリーウィジェットの内容を配列化
+        if Flag == 0:
+            for i in range(len(self.ChangeTxtindexes)):
+                InTxt = self.ChangeTxtEntries[i].get()
+                TxtList.append(InTxt)
+                self.Sub_ChangeTxtEntries[i].delete(0, tk.END)
+                self.Sub_ChangeTxtEntries[i].insert(0, InTxt)
+        else:
+            for i in range(len(self.ChangeTxtindexes)):
+                InTxt = self.Sub_ChangeTxtEntries[i].get()
+                TxtList.append(InTxt)
+                self.ChangeTxtEntries[i].delete(0, tk.END)
+                self.ChangeTxtEntries[i].insert(0, InTxt)
+        # コンソールに表示
+        return TxtList
+
+    # -------------------------------------------------------------------------------------
     def Out_Open(self):
+        """
+        TKEntry.py
+        ↓
+        def treeviewEntries(self)
+        ↓
+        self.URL_In2
+        bind関数
+        """
         try:
             typ = [("自動仕訳出力先CSVを選択してください。", "*.csv")]
             dir = csvurl
@@ -143,6 +293,14 @@ class DataGrid:
 
     # -------------------------------------------------------------------------------------
     def Moto_Open(self):
+        """
+        TKEntry.py
+        ↓
+        def treeviewEntries(self)
+        ↓
+        self.URL_In3
+        bind関数
+        """
         try:
             typ = [("元帳CSVを選択してください。", "*.csv")]
             dir = csvurl
@@ -160,6 +318,14 @@ class DataGrid:
 
     # -------------------------------------------------------------------------------------
     def OCR_Open(self):
+        """
+        TKEntry.py
+        ↓
+        def treeviewEntries(self)
+        ↓
+        self.OCR_Open
+        bind関数
+        """
         try:
             typ = [("OCR抽出結果CSVを選択してください。", "*.csv")]
             dir = csvurl
@@ -177,6 +343,14 @@ class DataGrid:
 
     # -------------------------------------------------------------------------------------
     def ReadM(self, URL):
+        """
+        DGFrame.py
+        ↓
+        def create_SettingFrame(self)
+        ↓
+        self.AJ_copy
+        bind関数
+        """
         try:
             enc = CSVO.getFileEncoding(URL)
             self.pt3.importCSV(URL, encoding=enc)
@@ -186,12 +360,29 @@ class DataGrid:
 
     # -------------------------------------------------------------------------------------
     def ChangeFrame(self, Case):
+        """
+        TKEntry.py
+        ↓
+        def Frame7Entries(self)
+        ↓
+        self.Setting_Btn
+        bind関数
+        """
+
         if Case == "詳細設定":
             tk.messagebox.showinfo("確認", "現在開発中です。")
             # self.Main_Frame.pack_forget()
 
     # -------------------------------------------------------------------------------------
     def AJ_copyCalc(self, csvurl):
+        """
+        DGFrame.py
+        ↓
+        def create_SettingFrame(self)
+        ↓
+        self.AJ_copy
+        bind関数
+        """
         try:
             if self.pt3.startrow is None:
                 tk.messagebox.showinfo("確認", "抽出仕訳表のセルが選択されていません。")
@@ -199,6 +390,7 @@ class DataGrid:
                 if self.pt.startrow is None:
                     tk.messagebox.showinfo("確認", "OCR表のセルが選択されていません。")
                 else:
+                    SetList = self.GetTxt_ChangeEntry(0)
                     print(self.pt.startrow)  # 選択行
                     st = 0  # 行ポジション
                     for stom in self.entryList:  # Entryウィジェットリスト
@@ -262,7 +454,9 @@ class DataGrid:
                             dfs3 = self.pt3.model.df  # グリッドをDF化
                             # ------------------------------------------------------------------
                             dfs3row = dfs3.iloc[self.pt3.startrow]  # DF行データ
-                            CF_df = tke.AJ_copyCalc_Func(dfsrow, dfs3row)  # 自動仕訳抽出
+                            CF_df = tke.AJ_copyCalc_Func(
+                                SetList, dfsrow, dfs3row, self.ChangeTxtURL
+                            )  # 自動仕訳抽出
                             CF_df = list(np.array(CF_df))  # list化
                             C_dfColumn = np.array(dfs2.columns)  # DFColumnをnumpy配列へ
                             dfs2 = np.array(dfs2)  # 自動仕訳保存配列をnumpy配列へ
@@ -325,7 +519,9 @@ class DataGrid:
                             dfs3 = self.pt3.model.df  # グリッドをDF化
                             # ------------------------------------------------------------------
                             dfs3row = dfs3.iloc[self.pt3.startrow]  # DF行データ
-                            CF_df = tke.AJ_copyCalc_Func(dfsrow, dfs3row)  # 自動仕訳抽出
+                            CF_df = tke.AJ_copyCalc_Func(
+                                SetList, dfsrow, dfs3row, self.ChangeTxtURL
+                            )  # 自動仕訳抽出
                             CF_df = list(np.array(CF_df))  # list化
                             C_dfColumn = np.array(dfs2.columns)  # DFColumnをnumpy配列へ
                             dfs2 = np.array(dfs2)  # 自動仕訳保存配列をnumpy配列へ
@@ -386,11 +582,20 @@ class DataGrid:
 
     # -----------------------------------------------------------------------------------------
     def AJAllCalc(self, csvurl):
+        """
+        全行自動仕訳処理
+        DGFrame.py
+        ↓
+        def create_SettingFrame(self)
+        ↓
+        self.AllRun
+        bind関数
+        """
         global AJSeturl
-        self.FileName = csvurl
+        self.FileName = csvurl  # OCR表
         self.JounalFileName = AJurl
-        self.Roolurl = Roolurl
-
+        self.Roolurl = Roolurl  # テキスト置換ルール代入
+        SetList = self.GetTxt_ChangeEntry(0)  # テキスト置換ルール代入
         st = 0  # 行ポジション
         for stom in self.entryList:  # Entryウィジェットリスト
             if stom == "自動仕訳基準列名":
@@ -405,6 +610,7 @@ class DataGrid:
         FileNameenc = CSVO.getFileEncoding(csvurl)
         JounalFileNameenc = CSVO.getFileEncoding(AJurl)
         Roolurlenc = CSVO.getFileEncoding(Roolurl)
+        ChangeTxtURLenc = CSVO.getFileEncoding(self.ChangeTxtURL)
         # Entry要素設定-------------------------------------------------------------------
         JS = self.tomlEntries[JS_var].get()  # 自動仕訳基準列名Entry取得
         D = self.tomlEntries[Day_var].get()  # 日付列Entry取得
@@ -422,6 +628,7 @@ class DataGrid:
         )
         if Messagebox == "yes":  # If関数
             AJ_List = AJ.AllChange(
+                SetList,
                 JS,
                 self.Moto_Tekiyou.get(),
                 self.HidukeColName,
@@ -437,6 +644,8 @@ class DataGrid:
                 Roolurlenc,
                 self.Banktoml,
                 self.Label_ChangeURL.get(),
+                self.ChangeTxtURL,
+                ChangeTxtURLenc,
                 I,
                 O,
             )  # 仕訳候補を抽出
@@ -468,6 +677,7 @@ class DataGrid:
                             break
                         PT_c += 1
                     # ---------------------------------------------------------------
+                    # ヘッダー行処理##################################################
                     for L_r in range(len(AJ_List)):
                         if L_r == 6:
                             print("")
@@ -550,6 +760,14 @@ class DataGrid:
 
     # -----------------------------------------------------------------------------------------
     def AJCalc(self, csvurl):
+        """
+        DGFrame.py
+        ↓
+        def create_SettingFrame(self)
+        ↓
+        self.AJ_Btn
+        bind関数
+        """
         global AJSeturl
         self.FileName = csvurl
         self.JounalFileName = AJurl
@@ -621,6 +839,14 @@ class DataGrid:
 
     # -----------------------------------------------------------------------------------------
     def CsvHeader(self):
+        """
+        DGFrame.py
+        ↓
+        def create_SettingFrame(self)
+        ↓
+        self.AJ_Btn
+        bind関数
+        """
         enc = CSVO.getFileEncoding(self.FileName)
         with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
@@ -636,6 +862,15 @@ class DataGrid:
 
     # ------------------------------------------------------------------------------------------
     def ReturnBack(self):
+        """
+        treeviewEntries.py
+        ↓
+        def create_SettingFrame(self)
+        ↓
+        self.CloseBtn
+        bind関数
+        """
+
         self.root.destroy()
         Master.deiconify()
 
@@ -645,6 +880,9 @@ class DataGrid:
 #############################################################################################
 # -----------------------------------------------------------------------------------------
 def IntCheck(c_var):
+    """
+    整数判定
+    """
     try:
         int(c_var)
         return True

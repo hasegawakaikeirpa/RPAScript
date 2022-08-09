@@ -392,6 +392,87 @@ def Frame7removeEntry(self):
         i.grid_forget()
 
 
+# -----------------------------------------------------------------------------------------
+def FrameChangeEntries(self):  # , tomltitle):
+    self.ChangeTxtEntries = []  # Entryのインスタンス
+    self.ChangeTxtinsertEntries = []  # ラベルインスタンス
+    self.ChangeTxtindex = 0  # 最新のインデックス番号
+    self.ChangeTxtindexes = []  # インデックスの並び
+    self.ChangeTxtentryList = []  # Entryのインスタンス
+
+    self.Sub_ChangeTxtEntries = []  # Entryのインスタンス
+    self.Sub_ChangeTxtinsertEntries = []  # ラベルインスタンス
+    self.Sub_ChangeTxtindex = 0  # 最新のインデックス番号
+    self.Sub_ChangeTxtindexes = []  # インデックスの並び
+    self.Sub_ChangeTxtentryList = []  # Entryのインスタンス
+
+    r = 0
+    for ColNameItem in self.ChangeTxtColumns:
+        # ラベル＆Entryフレームへ追加----------------------------------------------
+        createFrameChangeEntry(self, r, ColNameItem)  # , tomltitle)  # Entryを作成配置
+        self.ChangeTxtentryList.append(ColNameItem)
+        self.Sub_ChangeTxtentryList.append(ColNameItem)
+        # ----------------------------------------------------------------------
+        r += 1
+
+
+# -----------------------------------------------------------------------------------------
+# エントリーウィジェットを再配置
+def updateFrameChangeEntries(self):
+
+    # エントリーウィジェットマネージャを参照して再配置
+    for i in range(len(self.ChangeTxtindexes)):
+        self.ChangeTxtEntries[i].grid(column=1, row=i)
+        self.ChangeTxtEntries[i].bind("<Return>", self.EveRecalc)
+        self.ChangeTxtEntries[i].lift()
+        self.ChangeTxtinsertEntries[i].grid(column=0, row=i)
+
+        self.Sub_ChangeTxtEntries[i].grid(column=1, row=i)
+        self.Sub_ChangeTxtEntries[i].bind("<Return>", self.EveRecalc)
+        self.Sub_ChangeTxtEntries[i].lift()
+        self.Sub_ChangeTxtinsertEntries[i].grid(column=0, row=i)
+
+
+# -----------------------------------------------------------------------------------------
+# エントリーウィジェットを作成して配置
+def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
+    lb = tk.Label(self.ChangeFrame, text=ColNameItem + "対象列名")
+    lb.grid(row=next, column=0)  # 位置指定
+    lb = tk.Label(self.AJsetMenuFrame, text=ColNameItem + "対象列名")
+    lb.grid(row=next, column=0)  # 位置指定
+    # ラベル名からself変数を取得---------------------------------------
+    # ---------------------------------------------------------------
+    txtxt = tk.Entry(self.ChangeFrame, width=10)
+    txtxt.insert(0, self.ColumnName[next])
+    txtxt.grid(row=next, column=1)  # 位置指定
+    self.ChangeTxtEntries.insert(next, txtxt)
+    # ---------------------------------------------------------------
+    txtxt = tk.Entry(self.AJsetMenuFrame, width=10)
+    txtxt.insert(0, self.ColumnName[next])
+    txtxt.grid(row=next, column=1)  # 位置指定
+    self.Sub_ChangeTxtEntries.insert(next, txtxt)
+    # ラベルを作成----------------------------------------------------
+    self.ChangeTxtinsertEntries.insert(
+        next,
+        tk.Label(
+            self.ChangeFrame,
+            text=str(ColNameItem),
+        ),
+    )
+    # インデックスマネージャに登録
+    self.ChangeTxtindexes.insert(next, self.ChangeTxtindex)
+    # ラベルを作成----------------------------------------------------
+    self.Sub_ChangeTxtinsertEntries.insert(
+        next,
+        tk.Label(
+            self.AJsetMenuFrame,
+            text=str(ColNameItem),
+        ),
+    )
+    # インデックスマネージャに登録
+    self.Sub_ChangeTxtindexes.insert(next, self.ChangeTxtindex)
+
+
 # ----------------------------------------------------------------------------
 def TxtEdit(Txt, L_txt, R_txt):
     """
@@ -434,8 +515,20 @@ def TxtEdit(Txt, L_txt, R_txt):
                 R_txt = "/".join(R_txtSp)
             L_d = dt.strptime(L_txt, "%Y/%m/%d")
             R_d = dt.strptime(R_txt, "%Y/%m/%d")
-            L_txt = str(L_d.year) + "/" + str(L_d.month) + "/" + str(L_d.day)
-            R_txt = str(R_d.year) + "/" + str(R_d.month) + "/" + str(R_d.day)
+            L_txt = (
+                str(L_d.year)
+                + "/"
+                + "{0:02}".format(str(L_d.month))
+                + "/"
+                + "{0:02}".format(str(L_d.day))
+            )
+            R_txt = (
+                str(R_d.year)
+                + "/"
+                + "{0:02}".format(str(R_d.month))
+                + "/"
+                + "{0:02}".format(str(R_d.day))
+            )
             return L_txt, R_txt
         else:
             return L_txt, R_txt
@@ -444,7 +537,7 @@ def TxtEdit(Txt, L_txt, R_txt):
 
 
 # ----------------------------------------------------------------------------
-def AJ_copyCalc_Func(dfsrow, dfs3row):
+def AJ_copyCalc_Func(SetList, dfsrow, dfs3row, ChangeTxtURL):
     """
     自動仕訳候補OCR結果
     """

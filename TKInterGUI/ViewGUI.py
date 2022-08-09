@@ -263,11 +263,17 @@ class ViewGUI:
     # Event Callback----------------------------------------------------------------------
     # イベントハンドラ
     def event_handler(self, event):
+        """
+        Exposeイベントに関数設定
+        """
         # print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         set_pos = self.combo_file.current()
         self.control.DrawImage("Map", set_pos=set_pos)
 
     def event_menu(self):
+        """
+        SubMenu起動ボタン関数
+        """
         # menu作成######################################################################
         self.menuwin = tk.Toplevel()  # サブWindow作成
         self.menuwin.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
@@ -319,6 +325,9 @@ class ViewGUI:
     # ##############################################################################
 
     def Resize(self, Resizewidth, Resizeheight):
+        """
+        リサイズ処理(未使用2022/08/08時点)
+        """
         set_pos = self.combo_file.current()
 
         try:
@@ -330,12 +339,18 @@ class ViewGUI:
             print("Resize起動")
 
     def menubutton1_click(self):
+        """
+        サブメニュー内線抽出自動回転ボタン処理
+        """
         set_pos = self.combo_file.current()
         msg = messagebox.askokcancel("確認", "線抽出自動回転を適用しますか？")
         if msg is True:
             self.control.MenuFuncRun("LineLotate", "", set_pos=set_pos)
 
     def menubutton2_click(self, textbox1):
+        """
+        サブメニュー内ノイズ除去ボタン処理
+        """
         set_pos = self.combo_file.current()
         try:
             noisepar = int(textbox1.get())
@@ -355,16 +370,25 @@ class ViewGUI:
             msg = messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
 
     def menubutton3_click(self, textbox2):
+        """
+        サブメニュー内線形削除ボタン処理
+        """
         set_pos = self.combo_file.current()
         msg = messagebox.askokcancel("確認", "線形削除を適用しますか？(undoで戻せません)")
         if msg is True:
             self.control.MenuFuncRun("LineDelete", textbox2, set_pos=set_pos)
 
     def button_LeftLotate(self, event=None):
+        """
+        左回転ボタン処理
+        """
         cmd = "rotateFree-" + str(1)
         self.control.EditImage(cmd)
 
     def button_RightLotate(self, event=None):
+        """
+        右回転ボタン処理
+        """
         cmd = "rotateFree-" + str(-1)
         self.control.EditImage(cmd)
 

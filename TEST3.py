@@ -1,246 +1,122 @@
-# モジュールインポート
-import pyautogui as pg
-import time
-import MJSOpen
-
-# pandasインポート
-import pandas as pd
-
-# 配列計算関数numpyインポート
 import numpy as np
-
-# osインポート
-import os
-
-# datetimeインポート
-
-# 例外処理判定の為のtracebackインポート
-import traceback
-
-# pandas(pd)で関与先データCSVを取得
-import pyautogui
-import pyperclip  # クリップボードへのコピーで使用
-import Function.ExcelFileAction as EFA
-
-import datetime
-import openpyxl
-
-from ctypes import windll
-
-# ----------------------------------------------------------------------------------------------------------------------
-def ImgCheck(FolURL2, FileName, conf, LoopVal):  # 画像があればTrueを返す関数
-    ImgURL = FolURL2 + "/" + FileName
-    for x in range(LoopVal):
-        try:
-            p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
-            x, y = pyautogui.center(p)
-            return True, x, y
-        except:
-            Flag = 0
-    if Flag == 0:
-        return False, "", ""
+import Function.CSVOut as CSVO
+import TKInterGUI.AutoJournal as AJ
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-def ImgNothingCheck(FolURL2, FileName, conf, LoopVal):  # 画像がなければTrueを返す
-    ImgURL = FolURL2 + "/" + FileName
-    for x in range(LoopVal):
-        try:
-            p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
-            x, y = pyautogui.center(p)
-            return False
-        except:
-            Flag = 0
-    if Flag == 0:
-        return True
+def RensouTextCheck(OCR_data, MJS_data, ChangeTxt_data, SetList, l_r):
+    """
+    テキストから曖昧一致抽出し元帳の摘要テキストに変換
+    MJS_data:Numpy配列
+    Txt:検索テキスト
+    return bool,np.array(一致率表)
+    """
+    OCR_Column = OCR_data[0, :]
+    ChangeTxt_Column = ChangeTxt_data[0, :]
+    s_c = 0
+    InTotalListFlag = False
+    for SetListItem in SetList:
+        if s_c != len(SetList) - 1:
+            M_c = int(np.where(OCR_Column == SetListItem)[0])
+            C_r = ChangeTxt_data.shape[0]  # 行数
+            InTotalList = []  # 完成リスト
+            OCR_Txt = (
+                str(OCR_data[l_r][M_c]).replace("['", "").replace("']", "")
+            )  # 検索対象(OCR列)の文字列
+            if s_c == 0:
+                F_txt = OCR_Txt
+            for r in range(C_r):
+                if r != 0:
+                    Txt = (
+                        str(ChangeTxt_data[r][s_c]).replace("['", "").replace("']", "")
+                    )
+                    if Txt != "" and OCR_Txt != "":
+                        lTxt = len(Txt)  # 文字数
+                        # NoList = []  # インデックス格納用リスト
+                        InList = []  # 一致パラメータ格納リスト
+                        # 検索文字列を一文字ずつ対象に含まれるかチェック--------------------
+                        for T in range(lTxt):  # 現在のインデックスを格納
+                            if Txt[T] in OCR_Txt:
+                                InList.append(1)  # 含まれる場合
+                            else:
+                                InList.append(0)  # 含まれない場合
+                        # ---------------------------------------------------------------
+                        if sum(InList) != 0:  # 一致パラメータ合計値が0以外なら
+                            InTotalListFlag = True
+                            InList.append(
+                                round((sum(InList) / len(InList)) * 100, 1)
+                            )  # 一致率を計算し格納
+                            # NoList.append(
+                            #     [r, InList[len(InList) - 1]]
+                            # )  # インデックス格納と一致パラメータ格納リストを結合
+                            InTotalList.append([r, InList[len(InList) - 1]])  # 完成リストに格納
+            if len(InTotalList) != 0:
+                InTotalList = np.array(InTotalList)  # np配列に変換
+                print(InTotalList.shape[1])
+                rep = np.where(InTotalList[:, InTotalList.shape[1] - 1] > 80)
+                InTotalList = InTotalList[rep]
+                index = np.argsort(InTotalList[:, InTotalList.shape[1] - 1], axis=0)[
+                    ::-1
+                ]  # np配列を一致率降順ソート
+                InTotalList = InTotalList[index]  # 変数格納
+                InTotalList = InTotalList[:, 0]
+                InTotalList = InTotalList.astype(int)
+                InTotalList = ChangeTxt_data[InTotalList]
+                print(InTotalList)
+                ChangeTxt_data = np.vstack([ChangeTxt_Column, InTotalList])
+                print(ChangeTxt_data)
+            s_c += 1
+    if ChangeTxt_data.shape[0] != 1 and InTotalListFlag is True:
+        Txt = ChangeTxt_data[1][len(ChangeTxt_Column) - 1]
+        return Txt
+    else:
+        return F_txt
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-def ImgCheckForList(FolURL2, List, conf, LoopVal):  # リスト内の画像があればTrueと画像名を返す
-    for x in range(LoopVal):
-        for ListItem in List:
-            ImgURL = FolURL2 + "/" + ListItem
-            try:
-                p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
-                x, y = pyautogui.center(p)
-                return True, ListItem
-                break
-            except:
-                Flag = 0
-    if Flag == 0:
-        return False, ""
+csvurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.csv"
+AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page_AutoJounal.csv"
+AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
+Roolurl = r"D:\OCRTESTPDF\PDFTEST\1_仕訳日記帳.csv"
+ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\ChangeTxtList.csv"
+
+FileNameenc = CSVO.getFileEncoding(csvurl)
+JounalFileNameenc = CSVO.getFileEncoding(AJurl)
+Roolurlenc = CSVO.getFileEncoding(Roolurl)
+ChangeTxtURLenc = CSVO.getFileEncoding(ChangeTxtURL)
+
+OCR_data = np.genfromtxt(
+    csvurl, dtype=None, encoding=FileNameenc, delimiter=","
+)  # 元帳CSVをnp配列に変換
+MJS_data = np.genfromtxt(
+    Roolurl, dtype=None, encoding=Roolurlenc, delimiter=","
+)  # 元帳CSVをnp配列に変換
+ChangeTxt_data = np.genfromtxt(
+    ChangeTxtURL, dtype=None, encoding=ChangeTxtURLenc, delimiter=","
+)  # 元帳CSVをnp配列に変換
+
+SetList = ["摘要", "出金", "入金", "摘要"]
+l_r = 3
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリックしてx,y軸を返す
-    ImgURL = FolURL2 + "/" + FileName
-    for x in range(10):
-        if (
-            ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True
-        ):  # OMSメニューの年調起動ボタンを判定して初期処理分け
-            # 正常待機後処理
-            for y in range(10):
-                try:
-                    p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
-                    x, y = pyautogui.center(p)
-                    pyautogui.click(x, y)
-                    time.sleep(1)
-                    return x, y
-                except:
-                    print("失敗")
+SerchTxt = RensouTextCheck(
+    OCR_data,
+    MJS_data,
+    ChangeTxt_data,
+    SetList,
+    l_r,
+)
+
+NPC = AJ.npCreate(MJS_data, SerchTxt, "摘要", "ALL")
+
+if NPC[0] is True:
+    N_Arr = NPC[1]
+    N_clen = len(N_Arr[0]) - 1
+    N_C = np.count_nonzero(N_Arr[:, N_clen] == "100", axis=0)
+    print(N_C)
+    if N_C >= 2:
+        ind = np.where(N_Arr[:, N_clen] == "100")
+        print(N_Arr[ind])
+        Hukugou = np.where(N_Arr[ind] == "複合")
+        if len(Hukugou) != 0:
+            print("複合")
         else:
-            # 異常待機後処理
-            print("要素取得に失敗しました。")
-
-
-# RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = os.getcwd().replace("\\", "/")  # 先
-TFolURL = FolURL + r"\RPAPhoto\MJS_SystemNextCreate"  # 先
-XLSDir = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\一括更新申請"
-LURL = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\一括更新申請\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
-
-def KomonUpdate(TFolURL,ExRow):
-
-    # 関与先コード入力ボックスをクリック------------------------------------
-    ImgClick(TFolURL, r"\Komonsaki_Icon.png", 0.9, 10)
-    while (
-        pg.locateOnScreen(TFolURL + r"\Komonsaki_Open.png", confidence=0.9)
-        is None
-    ):
-        time.sleep(1)
-
-    p = pyautogui.locateOnScreen(TFolURL + r"\Komonsaki_CodeTxt.png", confidence=0.9)
-    x, y = pyautogui.center(p)
-    pyautogui.click(x + 100, y)
-    pg.press("delete")
-    pyperclip.copy(str(ExRow["関与先番号"]))
-    pg.hotkey("ctrl", "v")
-    pg.press(["return", "return"])
-
-    time.sleep(1)
-
-    p = pyautogui.locateOnScreen(TFolURL + r"\RensaouMeisyou.png", confidence=0.9)
-    x, y = pyautogui.center(p)
-    pyautogui.click(x + 100, y)
-    pg.press("up")
-    pg.press("down")
-    pg.press("delete")
-    pyperclip.copy(str(ExRow["関与先番号"]))
-    pg.hotkey("ctrl", "v")
-    pg.press(["return", "return"])
-
-    pg.keyDown("alt")
-    pg.press("u")
-    pg.keyUp("alt")
-
-    time.sleep(1)
-
-    pg.keyDown("alt")
-    pg.press("x")
-    pg.keyUp("alt")
-
-    while (
-        pg.locateOnScreen(TFolURL + r"\SyonaiKanri.png", confidence=0.9)
-        is None
-    ):
-        time.sleep(1)
-
-    pg.keyDown("alt")
-    pg.press("f4")
-    pg.keyUp("alt")
-    time.sleep(1)
-
-
-# -----------------------------------------------------------------------
-
-
-ImgClick(TFolURL, r"\PrintOutTab.png", 0.9, 10)  # 2印刷タブクリック
-# 6月次締めが表示されるまで待機--------------------------
-while (
-    pg.locateOnScreen(TFolURL + r"\SimeIcon.png", confidence=0.9)
-    is None
-):
-    time.sleep(1)
-ImgClick(TFolURL, r"\SimeIcon.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
-while (
-    pg.locateOnScreen(TFolURL + r"\GetujiIcon.png", confidence=0.9)
-    is None
-):
-    time.sleep(1)
-ImgClick(TFolURL, r"\GetujiIcon.png", 0.9, 10)  # 月次処理アイコンをクリック
-# 月次確定済みか判定して処理分け-------------------------------------------------------
-# 月次処理解除-----------------------------------------------------------------------
-KUL = ImgCheck(TFolURL, r"\KakuteUnLock.png", 0.9, 10)  # 月次処理解除アイコンを検索
-if KUL[0] is True:
-    ImgClick(TFolURL, r"\KakuteUnLock.png", 0.9, 10)  # 月次処理アイコンをクリック
-    time.sleep(2)
-    pg.press("y")
-    while (
-        pg.locateOnScreen(TFolURL + r"\GetusjiKakutei.png", confidence=0.9)
-        is None
-    ):
-        time.sleep(1)
-    pg.press("return")
-    time.sleep(1)
-# ---------------------------------------------------------------------------------
-pg.keyDown("alt")
-pg.press("x")
-pg.keyUp("alt")
-while (
-    pg.locateOnScreen(TFolURL + r"\M_Sonota.png", confidence=0.9)
-    is None
-):
-    time.sleep(1)
-ImgClick(TFolURL, r"\D_TourokuTAB.png", 0.9, 10)  # 6導入・登録タブクリック
-# 会社基本情報アイコンが表示されるまで待機--------------------------------------
-while (
-    pg.locateOnScreen(TFolURL + r"\CamIcon.png", confidence=0.9)
-    is None
-):
-    time.sleep(1)      
-ImgClick(TFolURL, r"\CamIcon.png", 0.9, 10)  # 会社基本情報アイコンをクリック
-# 顧問先情報取り込みアイコンが表示されるまで待機--------------------------------
-while (
-    pg.locateOnScreen(TFolURL + r"\DataInIcon.png", confidence=0.9)
-    is None
-):
-    time.sleep(1)         
-ImgClick(TFolURL, r"\DataInIcon.png", 0.9, 10)  # 顧問先情報取り込みアイコンをクリック
-while (
-    pg.locateOnScreen(TFolURL + r"\DataInOK.png", confidence=0.9)
-    is None
-):
-    time.sleep(1)
-ImgClick(TFolURL, r"\DataInOK.png", 0.9, 10)  #取り込むボタンをクリック
-time.sleep(1)
-pg.keyDown("alt")
-pg.press("x")
-pg.keyUp("alt")
-time.sleep(1)
-# --------------------------------------------------------------------------------
-ImgClick(TFolURL, r"\PrintOutTab.png", 0.9, 10)  # 2印刷タブクリック
-# 6月次締めが表示されるまで待機--------------------------
-while (
-    pg.locateOnScreen(TFolURL + r"\AfterGetujiKakutei.png", confidence=0.9)
-    is None
-):
-    time.sleep(1)
-ImgClick(TFolURL, r"\AfterGetujiKakutei.png", 0.9, 10)  # 2印刷タブクリック
-# 月次確定--------------------------------------------------------------------------
-KL = ImgCheck(TFolURL, r"\KakuteiLock.png", 0.9, 10)  # 月次処理確定アイコンを検索
-if KL[0] is True:
-    ImgClick(TFolURL, r"\KakuteiLock.png", 0.9, 10)  # 月次処理確定アイコンをクリック
-    time.sleep(1)
-    pg.press("y")
-    while (
-        pg.locateOnScreen(TFolURL + r"\KessanKQ.png", confidence=0.9)
-        is None
-    ):
-        time.sleep(1)
-    pg.press("y")
-    while (
-        pg.locateOnScreen(TFolURL + r"\GetusjiKakutei.png", confidence=0.9)
-        is None
-    ):
-        time.sleep(1)
-    pg.press("return")
+            print("not複合")
