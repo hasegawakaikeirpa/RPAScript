@@ -243,12 +243,16 @@ def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリッ�
 # ------------------------------------------------------------------------------------------------------------------
 def NameSearch(NameDF, Rno):
     try:
-        Nr = len(NameDF)
-        for Nrx in range(Nr):
-            NameDFRow = NameDF.iloc[Nrx]
-            print(NameDFRow["コード"])
-            if Rno == NameDFRow["コード"]:
-                return NameDFRow["顧問先名称"]
+        NameDFColumn = np.array(NameDF.columns)
+        NameDF = np.array(NameDF)
+        NC = np.where(NameDFColumn=="コード")
+        KC = np.where(NameDFColumn=="顧問先名称")
+        NameDFIndex = NameDF[:,NC]
+        NR = np.where(NameDFIndex==Rno)
+        N_L = NameDF[NR,KC]
+        N_L = str(N_L[0]).replace("[","").replace("]","").replace("'","").replace('"',"")
+        print(N_L)
+        return N_L
     except:
         return "NameErr"
 
@@ -946,7 +950,6 @@ def HoujinzeiUpdateSinkokuItiran(
             pg.press("return")
             time.sleep(1)
             ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-            time.sleep(2)
             # 印刷中が表示されるまで待機---------------------------------
             IC = 0
             while (
@@ -961,14 +964,6 @@ def HoujinzeiUpdateSinkokuItiran(
                 FO = ImgCheck(CFolURL, r"\Houjinzei\FileOver.png", 0.9, 10)
                 if FO[0] is True:
                     pg.press("y")
-                    while (
-                        pg.locateOnScreen(
-                            CFolURL + r"\Houjinzei\NowPrint.png",
-                            confidence=0.9,
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
             # --------------------------------------------------------------------
             # 印刷中が表示されなくなるまで待機---------------------------------
             while (
@@ -1917,7 +1912,6 @@ def HoujinzeiUpdateBeppyou(
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-        time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
         IC = 0
         while (
@@ -2134,7 +2128,6 @@ def HoujinzeiUpdateGaikyou(
         pg.press("return")
         time.sleep(1)
         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-        time.sleep(2)
         # 印刷中が表示されるまで待機---------------------------------
         IC = 0
         while (
@@ -2561,7 +2554,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     GSUM = ImgCheck(TFolURL, r"\G_SyoukyakuUpMsg.png", 0.9, 10)
                     if GSUM[0] is True:
                         ImgClick(TFolURL, r"\G_SyoukyakuUpMsgCansel.png", 0.9, 10)
-                    # 顧問先情報更新ダイアログ確認------------------------------------------
+                    # 顧問先情報更新ダイアログ確認-----------------------------------------
                     KK = ImgCheck(TFolURL, r"\KomonKoushin.png", 0.9, 10)
                     if KK[0] is True:
                         pg.press("y")
@@ -2573,6 +2566,10 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ):
                             time.sleep(1)
                         ImgClick(TFolURL, r"\KomonKoushinInput.png", 0.9, 10)
+                    # 参照表示確認ダイアログ確認------------------------------------------
+                    KK = ImgCheck(TFolURL, r"\KSansyouQ.png", 0.9, 10)
+                    if KK[0] is True:
+                        pg.press("return")
                 # --------------------------------------------------------------------
                 ImgClick(
                     CFolURL, r"\GenkaSyoukyaku\G_Insatu.png", 0.9, 10
@@ -3272,7 +3269,6 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         if FO[0] is True:
                             pg.press("y")
                     # --------------------------------------------------------------------
-                    time.sleep(1)
                     #  印刷中が表示されるまで待機-------------------------------------------
                     IC = 0
                     while (
@@ -3477,6 +3473,17 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         ):
                             time.sleep(1)
                         ImgClick(TFolURL, r"\KomonKoushinInput.png", 0.9, 10)
+                    # マスター再計算ダイアログ確認------------------------------------------
+                    MR = ImgCheck(TFolURL, r"\MasterRecalcQ.png", 0.9, 10)
+                    if MR[0] is True:
+                        pg.press("y")
+                        while (
+                            pg.locateOnScreen(
+                                TFolURL + r"\MasterRecalcQ.png", confidence=0.9
+                            )
+                            is None
+                        ):
+                            time.sleep(1)               
                 # --------------------------------------------------------------------
                 # 指示内容で処理分け----------------------------------------------------------
                 if PN == "消費税確定申告書":
@@ -3927,7 +3934,6 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         time.sleep(1)
                         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-                        time.sleep(2)
                         # 印刷中が表示されるまで待機---------------------------------
                         IC = 0
                         while (
@@ -4184,7 +4190,6 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         time.sleep(1)
                         ImgClick(CFolURL, r"\Houjinzei\PrintOut.png", 0.9, 10)
-                        time.sleep(2)
                         # 印刷中が表示されるまで待機---------------------------------
                         IC = 0
                         while (

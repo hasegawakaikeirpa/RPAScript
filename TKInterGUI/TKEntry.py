@@ -104,26 +104,68 @@ def treeviewEntries(self):  # , tomltitle):
     self.index = 0  # 最新のインデックス番号
     self.indexes = []  # インデックスの並び
     # URLテキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="URL").grid(row=0, column=0)  # 位置指定
+    tk.Label(self.frame3, text="OCRURL").grid(row=0, column=0)  # 位置指定
     self.Label_URL = tk.Entry(self.frame3, width=10)
     self.Label_URL.insert(0, self.FileName)
     self.Label_URL.grid(row=0, column=1, columnspan=3)
-    # tomlNameテキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="設定ファイル名").grid(row=1, column=0)  # 位置指定
+    # 出力先テキストボックス-----------------------------------------------------------
+    tk.Label(self.frame3, text="出力先URL").grid(row=1, column=0)  # 位置指定
+    self.Label_OutURL = tk.Entry(self.frame3, width=10)
+    self.Label_OutURL.insert(0, self.JounalFileName)
+    self.Label_OutURL.grid(row=1, column=1, columnspan=3)
+    # 元帳URLテキストボックス-----------------------------------------------------------
+    tk.Label(self.frame3, text="元帳URL").grid(row=2, column=0)  # 位置指定
     self.Label_ChangeURL = tk.Entry(self.frame3, width=10)
-    # self.Label_ChangeURL.insert(0, tomltitle)
-    self.Label_ChangeURL.grid(row=1, column=1, columnspan=3)
-    # 開始残高ボタン----------------------------------------------------------------
-    tk.Label(self.frame3, text="開始残高").grid(row=len(self.indexes) + 2, column=0)  # 位置指定
-    self.ZanNametxt = tk.Entry(self.frame3, width=10)
-    self.ZanNametxt.grid(row=len(self.indexes) + 2, column=1)  # 位置指定
-    self.ebtn2 = tk.Button(
+    self.Label_ChangeURL.insert(0, self.Roolurl)
+    self.Label_ChangeURL.grid(row=2, column=1, columnspan=3)
+    # URL指定ボタン-------------------------------------------------------------
+    self.URL_In = tk.Button(
         self.frame3,
-        text="再計算",
+        text="OCR抽出結果CSV選択",
         width=20,
-        command=lambda: self.ZanNamedaka(),
+        bg="LemonChiffon",
+        command=self.OCR_Open,
     )
-    self.ebtn2.grid(row=len(self.indexes) + 3, column=0, columnspan=2)  # 位置指定
+    self.URL_In.grid(row=3, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+    self.URL_In2 = tk.Button(
+        self.frame3,
+        text="出力先CSV選択",
+        width=20,
+        bg="Honeydew",
+        command=self.Out_Open,
+    )
+    self.URL_In2.grid(row=4, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+    self.URL_In3 = tk.Button(
+        self.frame3,
+        text="元帳CSV選択",
+        width=20,
+        bg="AntiqueWhite",
+        command=self.Moto_Open,
+    )
+    self.URL_In3.grid(row=5, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+    # テキスト変換ルール設定ボタン----------------------------------------------------
+    self.Txt_C = tk.Button(
+        self.frame3,
+        text="テキスト変換ルール設定",
+        bg="LightSkyBlue",
+        width=20,
+        command=self.Txt_ChangeSetOpen,
+    )
+    self.Txt_C.grid(
+        row=len(self.indexes) + 6, column=0, columnspan=2, sticky=tk.W + tk.E
+    )  # 位置指定
+    # ------------------------------------------------------------------------------
+    # 戻るボタン--------------------------------------------------------------------
+    self.CloseBtn = tk.Button(
+        self.frame3,
+        text="戻る",
+        bg="gray80",
+        width=20,
+        command=self.ReturnBack,
+    )
+    self.CloseBtn.grid(
+        row=len(self.indexes) + 7, column=0, columnspan=2, sticky=tk.W + tk.E
+    )  # 位置指定
     # ------------------------------------------------------------------------------
 
 
@@ -137,6 +179,11 @@ def removeEntry(self):
 # -----------------------------------------------------------------------------------------
 # エントリーウィジェットを作成して配置
 def Frame7createtomlEntry(self, next, AJL, AJR):
+    try:
+        self.Setting_Btn.destroy()
+    except:
+        print("ボタン無")
+
     if type(AJL) == list:
         # ---------------------------------------------
         txtxt = tk.Entry(self.frame7, width=10)
@@ -164,7 +211,7 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
             width=5,
         )
         Btn.bind("<Button-1>", AJ_EntDelete)
-        Btn.grid(row=next + 1, column=3)
+        Btn.grid(row=next + 1, column=3, sticky=tk.W + tk.E)
         # Entrマネージャに登録
         self.Frame7Btns.insert(next, Btn)
         # ---------------------------------------------
@@ -195,7 +242,7 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
             width=5,
         )
         Btn.bind("<Button-1>", AJ_EntDelete)
-        Btn.grid(row=next + 1, column=3)
+        Btn.grid(row=next + 1, column=3, sticky=tk.W + tk.E)
         # Entrマネージャに登録
         self.Frame7Btns.insert(next, Btn)
         # ---------------------------------------------
@@ -226,6 +273,20 @@ def Frame7Entries(self):
         Frame7createtomlEntry(self, r, AJL, AJR)  # Entryを作成配置
         # self.Frame7entryList.append(ColNameItem)
         # ----------------------------------------------------------------------
+    # 詳細設定ボタン--------------------------------
+    self.Setting_Btn = tk.Button(
+        self.frame7,
+        text="詳細設定",
+        width=20,
+        command=lambda: self.ChangeFrame("詳細設定"),
+        bg="Thistle",
+    )
+    self.Setting_Btn.grid(
+        row=len(self.Frame7EntL) + 1,
+        column=0,
+        columnspan=4,
+        sticky=tk.W + tk.E,
+    )  # 位置指定
     g_Frame7EntL = self.Frame7EntL
     g_Frame7EntR = self.Frame7EntR
     g_Frame7Labels = self.Frame7Labels
@@ -260,6 +321,20 @@ def AJ_setCalc(self):
                     )  # Entryを作成配置
                     # self.Frame7entryList.append([dfs_c_Name, dfs3_c_Name])
                     # ----------------------------------------------------------------------
+                    # 詳細設定ボタン--------------------------------
+                    self.Setting_Btn = tk.Button(
+                        self.frame7,
+                        text="詳細設定",
+                        width=20,
+                        command=lambda: self.ChangeFrame("詳細設定"),
+                        bg="BlueViolet",
+                    )
+                    self.Setting_Btn.grid(
+                        row=len(self.Frame7EntL) + 1,
+                        column=0,
+                        columnspan=4,
+                        sticky=tk.W + tk.E,
+                    )  # 位置指定
         except:
             tk.messagebox.showinfo("確認", "抽出仕訳表のセルが選択されていません。変換先の列のセルを選択して下さい。")
 
@@ -317,69 +392,172 @@ def Frame7removeEntry(self):
         i.grid_forget()
 
 
+# -----------------------------------------------------------------------------------------
+def FrameChangeEntries(self):  # , tomltitle):
+    self.ChangeTxtEntries = []  # Entryのインスタンス
+    self.ChangeTxtinsertEntries = []  # ラベルインスタンス
+    self.ChangeTxtindex = 0  # 最新のインデックス番号
+    self.ChangeTxtindexes = []  # インデックスの並び
+    self.ChangeTxtentryList = []  # Entryのインスタンス
+
+    self.Sub_ChangeTxtEntries = []  # Entryのインスタンス
+    self.Sub_ChangeTxtinsertEntries = []  # ラベルインスタンス
+    self.Sub_ChangeTxtindex = 0  # 最新のインデックス番号
+    self.Sub_ChangeTxtindexes = []  # インデックスの並び
+    self.Sub_ChangeTxtentryList = []  # Entryのインスタンス
+
+    r = 0
+    for ColNameItem in self.ChangeTxtColumns:
+        # ラベル＆Entryフレームへ追加----------------------------------------------
+        createFrameChangeEntry(self, r, ColNameItem)  # , tomltitle)  # Entryを作成配置
+        self.ChangeTxtentryList.append(ColNameItem)
+        self.Sub_ChangeTxtentryList.append(ColNameItem)
+        # ----------------------------------------------------------------------
+        r += 1
+
+
+# -----------------------------------------------------------------------------------------
+# エントリーウィジェットを再配置
+def updateFrameChangeEntries(self):
+
+    # エントリーウィジェットマネージャを参照して再配置
+    for i in range(len(self.ChangeTxtindexes)):
+        self.ChangeTxtEntries[i].grid(column=1, row=i)
+        self.ChangeTxtEntries[i].bind("<Return>", self.EveRecalc)
+        self.ChangeTxtEntries[i].lift()
+        self.ChangeTxtinsertEntries[i].grid(column=0, row=i)
+
+        self.Sub_ChangeTxtEntries[i].grid(column=1, row=i)
+        self.Sub_ChangeTxtEntries[i].bind("<Return>", self.EveRecalc)
+        self.Sub_ChangeTxtEntries[i].lift()
+        self.Sub_ChangeTxtinsertEntries[i].grid(column=0, row=i)
+
+
+# -----------------------------------------------------------------------------------------
+# エントリーウィジェットを作成して配置
+def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
+    lb = tk.Label(self.ChangeFrame, text=ColNameItem + "対象列名")
+    lb.grid(row=next, column=0)  # 位置指定
+    lb = tk.Label(self.AJsetMenuFrame, text=ColNameItem + "対象列名")
+    lb.grid(row=next, column=0)  # 位置指定
+    # ラベル名からself変数を取得---------------------------------------
+    # ---------------------------------------------------------------
+    txtxt = tk.Entry(self.ChangeFrame, width=10)
+    txtxt.insert(0, self.ColumnName[next])
+    txtxt.grid(row=next, column=1)  # 位置指定
+    self.ChangeTxtEntries.insert(next, txtxt)
+    # ---------------------------------------------------------------
+    txtxt = tk.Entry(self.AJsetMenuFrame, width=10)
+    txtxt.insert(0, self.ColumnName[next])
+    txtxt.grid(row=next, column=1)  # 位置指定
+    self.Sub_ChangeTxtEntries.insert(next, txtxt)
+    # ラベルを作成----------------------------------------------------
+    self.ChangeTxtinsertEntries.insert(
+        next,
+        tk.Label(
+            self.ChangeFrame,
+            text=str(ColNameItem),
+        ),
+    )
+    # インデックスマネージャに登録
+    self.ChangeTxtindexes.insert(next, self.ChangeTxtindex)
+    # ラベルを作成----------------------------------------------------
+    self.Sub_ChangeTxtinsertEntries.insert(
+        next,
+        tk.Label(
+            self.AJsetMenuFrame,
+            text=str(ColNameItem),
+        ),
+    )
+    # インデックスマネージャに登録
+    self.Sub_ChangeTxtindexes.insert(next, self.ChangeTxtindex)
+
+
 # ----------------------------------------------------------------------------
 def TxtEdit(Txt, L_txt, R_txt):
     """
     R_txtの書式をL_txtの書式と揃える
     """
+    try:
+        if "日" in Txt:
+            L_txt = (
+                L_txt.replace("-", "/")
+                .replace("_", "/")
+                .replace("\\", "/")
+                .replace(".", "/")
+                .replace("|", "")
+                .replace("\\", "")
+                .replace(":", "")
+                .replace("^", "")
+                .replace("~", "")
+            )
 
-    if "日" in Txt:
-        L_txt = (
-            L_txt.replace("-", "/")
-            .replace("_", "/")
-            .replace("\\", "/")
-            .replace(".", "/")
-            .replace("|", "")
-            .replace("\\", "")
-            .replace(":", "")
-            .replace("^", "")
-            .replace("~", "")
-        )
-
-        R_txt = (
-            R_txt.replace("-", "/")
-            .replace("_", "/")
-            .replace("\\", "/")
-            .replace(".", "/")
-            .replace("|", "")
-            .replace("\\", "")
-            .replace(":", "")
-            .replace("^", "")
-            .replace("~", "")
-        )
-        L_txtSp = L_txt.split("/")
-        R_txtSp = R_txt.split("/")
-        if len(L_txtSp[0]) < 4:
-            L_y = wh.R(int(L_txtSp[0])).to_ad()
-            L_txtSp[0] = str(L_y)
-            L_txt = "/".join(L_txtSp)
-        if len(R_txtSp[0]) < 4:
-            R_y = wh.R(int(R_txtSp[0])).to_ad()
-            R_txtSp[0] = str(R_y)
-            R_txt = "/".join(R_txtSp)
-        L_d = dt.strptime(L_txt, "%Y/%m/%d")
-        R_d = dt.strptime(R_txt, "%Y/%m/%d")
-        L_txt = str(L_d.year) + "/" + str(L_d.month) + "/" + str(L_d.day)
-        R_txt = str(R_d.year) + "/" + str(R_d.month) + "/" + str(R_d.day)
-        return L_txt, R_txt
-    else:
+            R_txt = (
+                R_txt.replace("-", "/")
+                .replace("_", "/")
+                .replace("\\", "/")
+                .replace(".", "/")
+                .replace("|", "")
+                .replace("\\", "")
+                .replace(":", "")
+                .replace("^", "")
+                .replace("~", "")
+            )
+            L_txtSp = L_txt.split("/")
+            R_txtSp = R_txt.split("/")
+            if len(L_txtSp[0]) < 4:
+                L_y = wh.R(int(L_txtSp[0])).to_ad()
+                L_txtSp[0] = str(L_y)
+                L_txt = "/".join(L_txtSp)
+            if len(R_txtSp[0]) < 4:
+                R_y = wh.R(int(R_txtSp[0])).to_ad()
+                R_txtSp[0] = str(R_y)
+                R_txt = "/".join(R_txtSp)
+            L_d = dt.strptime(L_txt, "%Y/%m/%d")
+            R_d = dt.strptime(R_txt, "%Y/%m/%d")
+            L_txt = (
+                str(L_d.year)
+                + "/"
+                + "{0:02}".format(str(L_d.month))
+                + "/"
+                + "{0:02}".format(str(L_d.day))
+            )
+            R_txt = (
+                str(R_d.year)
+                + "/"
+                + "{0:02}".format(str(R_d.month))
+                + "/"
+                + "{0:02}".format(str(R_d.day))
+            )
+            return L_txt, R_txt
+        else:
+            return L_txt, R_txt
+    except:
         return L_txt, R_txt
 
 
 # ----------------------------------------------------------------------------
-def AJ_copyCalc_Func(dfsrow, dfs3row):
+def AJ_copyCalc_Func(SetList, dfsrow, dfs3row, ChangeTxtURL):
     """
     自動仕訳候補OCR結果
     """
-    for E_r in range(len(g_Frame7EntL)):
-        L_txt = g_Frame7EntL[E_r].get()
-        R_txt = g_Frame7EntR[E_r].get()
-        if dfsrow[R_txt] != dfsrow[R_txt]:
-            print("nan")
-        else:
-            Txt = TxtEdit(L_txt, dfs3row[L_txt], dfsrow[R_txt])
-            dfs3row[L_txt] = Txt[1]
-    del dfs3row["一致率"]
-    del dfs3row["仕訳金額差額"]
-    del dfs3row["日付一致率"]
-    return dfs3row
+    try:
+        for E_r in range(len(g_Frame7EntL)):
+            L_txt = g_Frame7EntL[E_r].get()
+            R_txt = g_Frame7EntR[E_r].get()
+            if dfsrow[R_txt] != dfsrow[R_txt]:
+                print("nan")
+            else:
+                Txt = TxtEdit(L_txt, dfs3row[L_txt], dfsrow[R_txt])
+                dfs3row[L_txt] = Txt[1]
+        df_c = dfs3row.index
+        for dfs3rowItem in df_c:
+            if dfs3rowItem == "一致率":
+                del dfs3row["一致率"]
+            if dfs3rowItem == "仕訳金額差額":
+                del dfs3row["仕訳金額差額"]
+            if dfs3rowItem == "日付一致率":
+                del dfs3row["日付一致率"]
+        return dfs3row
+    except:
+        return dfs3row

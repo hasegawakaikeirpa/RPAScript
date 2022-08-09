@@ -6,6 +6,7 @@ import mojimoji
 import unicodedata
 import WarekiHenkan as WK
 import datetime
+import re
 from pdfminer.high_level import extract_text
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
@@ -67,7 +68,8 @@ def dirCreate(Url, No, YearT):
                     for fd_path, sb_folder, sb_file in os.walk(Target):
                         for fol in sb_folder:
                             try:
-                                if int(fol) == No:
+                                fol = re.findall(r"\d+", fol)[0]
+                                if int(str(fol)) == No:
                                     print("フォルダ有")
                                     TTarget = Target + r"\\" + fol
                                     for fd_path, sb_folder, sb_file in os.walk(TTarget):
@@ -97,6 +99,7 @@ def dirCreate(Url, No, YearT):
 
 def dirMarge(Line, PDFUrl, SerchURL, PDFDir, Title, No, YearT):
     # １つのPDFファイルにまとめる
+    Title = Title.replace(r"\\","").replace("\\u3000"," ")
     PR = len(PDFDir)
     merger = PyPDF2.PdfFileMerger()
     for LineR in Line:
