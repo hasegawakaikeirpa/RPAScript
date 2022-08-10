@@ -310,31 +310,10 @@ def npCreate(MJS_data, Txt, ColTxt, stALL):
     np.arrayで返す
     """
     try:
-        MJS_Column = MJS_data[0, :]
-        int(ColTxt)
-        TC = TextCheck(MJS_data[:, int(ColTxt)], Txt, stALL)  # 検索文字列から一致率リストを作成
-        if TC[0] is True:
-            TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
-            Pac = TC[1][:, 1]  # 一致率列のみ取り出す
-            Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
-            Pac = Pac.astype(int)
-            MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
-            MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
-            index = list(TCL)  # 丸めたインデックスnparrayをリストに
-            MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
-            MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
-            MJS_Column[0][MJS_Column.shape[1] - 1] = "一致率"
-            MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
-            print(MJS_data)
-            return True, MJS_data
-        elif TC[0] == "yes" and stALL != "ALL":
-            return True, MJS_data
-        else:
-            return False, MJS_data
-    except:
-        CC = ColumCheck(MJS_data, ColTxt)  # 元帳CSVから列名番号を検出
-        if CC[0] is True:
-            TC = TextCheck(MJS_data[:, CC[1][1]], Txt, stALL)  # 検索文字列から一致率リストを作成
+        try:
+            MJS_Column = MJS_data[0, :]
+            int(ColTxt)
+            TC = TextCheck(MJS_data[:, int(ColTxt)], Txt, stALL)  # 検索文字列から一致率リストを作成
             if TC[0] is True:
                 TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
                 Pac = TC[1][:, 1]  # 一致率列のみ取り出す
@@ -353,7 +332,38 @@ def npCreate(MJS_data, Txt, ColTxt, stALL):
                 return True, MJS_data
             else:
                 return False, MJS_data
-        else:
+        except:
+            print("npCreate上処理エラー")
+            return False, MJS_data
+    except:
+        try:
+            CC = ColumCheck(MJS_data, ColTxt)  # 元帳CSVから列名番号を検出
+            if CC[0] is True:
+                TC = TextCheck(MJS_data[:, CC[1][1]], Txt, stALL)  # 検索文字列から一致率リストを作成
+                if TC[0] is True:
+                    TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
+                    Pac = TC[1][:, 1]  # 一致率列のみ取り出す
+                    Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
+                    Pac = Pac.astype(int)
+                    MJS_Column = MJS_Column.reshape(
+                        -1, MJS_Column.shape[0]
+                    )  # 列名リストを多次元に変換
+                    MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
+                    index = list(TCL)  # 丸めたインデックスnparrayをリストに
+                    MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
+                    MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
+                    MJS_Column[0][MJS_Column.shape[1] - 1] = "一致率"
+                    MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
+                    print(MJS_data)
+                    return True, MJS_data
+                elif TC[0] == "yes" and stALL != "ALL":
+                    return True, MJS_data
+                else:
+                    return False, MJS_data
+            else:
+                return False, MJS_data
+        except:
+            print("npCreate下処理エラー")
             return False, MJS_data
 
 
@@ -364,30 +374,10 @@ def DayCheck(MJS_data, Txt, ColTxt, stALL):
     引数2の日付間の日数を計算しnp.arrayで返す
     """
     try:
-        MJS_Column = MJS_data[0, :]
-        int(ColTxt)
-        TC = TextDateCheck(MJS_data[:, int(ColTxt)], Txt, stALL)  # 検索文字列から一致率リストを作成
-        if TC[0] is True:
-            TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
-            Pac = TC[1][:, 1]  # 一致率列のみ取り出す
-            Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
-            MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
-            MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
-            index = list(TCL)  # 丸めたインデックスnparrayをリストに
-            MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
-            MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
-            MJS_Column[0][MJS_Column.shape[1] - 1] = "日付一致率"
-            MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
-            print(MJS_data)
-            return True, MJS_data
-        elif TC[0] == "yes" and stALL != "ALL":
-            return True, MJS_data
-        else:
-            return False, MJS_data
-    except:
-        CC = ColumCheck(MJS_data, ColTxt)  # 元帳CSVから列名番号を検出
-        if CC[0] is True:
-            TC = TextDateCheck(MJS_data[:, CC[1][1]], Txt, stALL)  # 検索文字列から一致率リストを作成
+        try:
+            MJS_Column = MJS_data[0, :]
+            int(ColTxt)
+            TC = TextDateCheck(MJS_data[:, int(ColTxt)], Txt, stALL)  # 検索文字列から一致率リストを作成
             if TC[0] is True:
                 TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
                 Pac = TC[1][:, 1]  # 一致率列のみ取り出す
@@ -405,7 +395,39 @@ def DayCheck(MJS_data, Txt, ColTxt, stALL):
                 return True, MJS_data
             else:
                 return False, MJS_data
-        else:
+        except:
+            print("DayCheck上処理エラー")
+            return False, MJS_data
+    except:
+        try:
+            CC = ColumCheck(MJS_data, ColTxt)  # 元帳CSVから列名番号を検出
+            if CC[0] is True:
+                TC = TextDateCheck(
+                    MJS_data[:, CC[1][1]], Txt, stALL
+                )  # 検索文字列から一致率リストを作成
+                if TC[0] is True:
+                    TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
+                    Pac = TC[1][:, 1]  # 一致率列のみ取り出す
+                    Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
+                    MJS_Column = MJS_Column.reshape(
+                        -1, MJS_Column.shape[0]
+                    )  # 列名リストを多次元に変換
+                    MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
+                    index = list(TCL)  # 丸めたインデックスnparrayをリストに
+                    MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
+                    MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
+                    MJS_Column[0][MJS_Column.shape[1] - 1] = "日付一致率"
+                    MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
+                    print(MJS_data)
+                    return True, MJS_data
+                elif TC[0] == "yes" and stALL != "ALL":
+                    return True, MJS_data
+                else:
+                    return False, MJS_data
+            else:
+                return False, MJS_data
+        except:
+            print("DayCheck下処理エラー")
             return False, MJS_data
 
 
@@ -416,6 +438,7 @@ def MoneyCheck(MJS_data, Int, ColTxt, stALL):
     引数2の金額の差額を計算しnp.arrayで返す
     """
     try:
+
         MJS_Column = MJS_data[0, :]
         int(ColTxt)
         TC = IntCheck(MJS_data[:, int(ColTxt)], Int)  # 検索文字列から一致率リストを作成
@@ -479,6 +502,7 @@ def npTidyUp(MJS_data):
         MJS_data = np.vstack((MJS_Column, InTotalList))  # 列名リストを縦連結
         return True, MJS_data
     except:
+        print("npTidyUpエラー")
         return False, MJS_data
 
 
@@ -508,7 +532,51 @@ def ColumCheckListUp(MJS_data, cstr):
             M_r += 1
         return True, indexList
     except:
+        print("ColumCheckListUpエラー")
         return False, ""
+
+
+# ----------------------------------------------------------------------------
+def ForInReversed(MJS_data, npw, NGList, colT):
+    """
+    引数列名から列番号を調べる
+    MJS_data:Numpy配列
+    cstr:検索列名
+    return bool,index
+    """
+    try:
+        c_npw = list(npw)
+        for c_r in reversed(range((len(c_npw)))):
+            npwItem = c_npw[c_r][colT[1]]
+            npwItem = npwItem[0]
+            if c_r != 0 and "現金" not in npwItem and "預金" not in npwItem:
+                NGList.append(c_npw[c_r])
+                c_npw.pop(c_r)
+        Lastap = np.array(c_npw)
+        if len(Lastap) == 1:
+            MB = messagebox.askquestion(
+                "確認",
+                "自動仕訳抽出結果がありません。入出金条件不一致を表示しますか？",
+                icon="warning",
+            )
+            if MB == "yes":  # If関数
+                MB = messagebox.askquestion(
+                    "確認",
+                    "はい=入出金条件不一致表示\nいいえ=元帳全体表示",
+                    icon="warning",
+                )
+                if MB == "yes":  # If関数
+                    Lastap = np.array(NGList)
+                    return Lastap
+                else:
+                    return MJS_data
+            else:
+                return Lastap
+        else:
+            return Lastap
+    except:
+        print("ForInReversedエラー")
+        return "エラー"
 
 
 # ----------------------------------------------------------------------------
@@ -563,38 +631,38 @@ def main(
                             colT = ColumCheckListUp(npw_Column, Kari)
                             if colT[0] is True:
                                 c_npw = list(npw)
-                                for c_r in reversed(range((len(c_npw)))):
-                                    npwItem = c_npw[c_r][colT[1]]
-                                    npwItem = npwItem[0]
-                                    if (
-                                        c_r != 0
-                                        and "現金" not in npwItem
-                                        and "預金" not in npwItem
-                                    ):
-                                        NGList.append(c_npw[c_r])
-                                        c_npw.pop(c_r)
-                                Lastap = np.array(c_npw)
-                                if len(Lastap) == 1:
-                                    MB = messagebox.askquestion(
-                                        "確認",
-                                        "自動仕訳抽出結果がありません。入出金条件不一致を表示しますか？",
-                                        icon="warning",
-                                    )
-                                    if MB == "yes":  # If関数
-                                        MB = messagebox.askquestion(
-                                            "確認",
-                                            "はい=入出金条件不一致表示\nいいえ=元帳全体表示",
-                                            icon="warning",
-                                        )
-                                        if MB == "yes":  # If関数
-                                            Lastap = np.array(NGList)
-                                            return Lastap
-                                        else:
-                                            return MJS_data
-                                    else:
-                                        return Lastap
-                                else:
-                                    return Lastap
+                                # for c_r in reversed(range((len(c_npw)))):
+                                #     npwItem = c_npw[c_r][colT[1]]
+                                #     npwItem = npwItem[0]
+                                #     if (
+                                #         c_r != 0
+                                #         and "現金" not in npwItem
+                                #         and "預金" not in npwItem
+                                #     ):
+                                #         NGList.append(c_npw[c_r])
+                                #         c_npw.pop(c_r)
+                                # Lastap = np.array(c_npw)
+                                # if len(Lastap) == 1:
+                                #     MB = messagebox.askquestion(
+                                #         "確認",
+                                #         "自動仕訳抽出結果がありません。入出金条件不一致を表示しますか？",
+                                #         icon="warning",
+                                #     )
+                                #     if MB == "yes":  # If関数
+                                #         MB = messagebox.askquestion(
+                                #             "確認",
+                                #             "はい=入出金条件不一致表示\nいいえ=元帳全体表示",
+                                #             icon="warning",
+                                #         )
+                                #         if MB == "yes":  # If関数
+                                #             Lastap = np.array(NGList)
+                                #             return Lastap
+                                #         else:
+                                #             return MJS_data
+                                #     else:
+                                #         return Lastap
+                                # else:
+                                #     return Lastap
                         elif IO == "出金":
                             colT = ColumCheckListUp(npw_Column, Kashi)
                             if colT[0] is True:
