@@ -310,30 +310,26 @@ def npCreate(MJS_data, Txt, ColTxt, stALL):
     np.arrayで返す
     """
     try:
-        try:
-            MJS_Column = MJS_data[0, :]
-            int(ColTxt)
-            TC = TextCheck(MJS_data[:, int(ColTxt)], Txt, stALL)  # 検索文字列から一致率リストを作成
-            if TC[0] is True:
-                TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
-                Pac = TC[1][:, 1]  # 一致率列のみ取り出す
-                Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
-                Pac = Pac.astype(int)
-                MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
-                MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
-                index = list(TCL)  # 丸めたインデックスnparrayをリストに
-                MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
-                MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
-                MJS_Column[0][MJS_Column.shape[1] - 1] = "一致率"
-                MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
-                print(MJS_data)
-                return True, MJS_data
-            elif TC[0] == "yes" and stALL != "ALL":
-                return True, MJS_data
-            else:
-                return False, MJS_data
-        except:
-            print("npCreate上処理エラー")
+        MJS_Column = MJS_data[0, :]
+        int(ColTxt)
+        TC = TextCheck(MJS_data[:, int(ColTxt)], Txt, stALL)  # 検索文字列から一致率リストを作成
+        if TC[0] is True:
+            TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
+            Pac = TC[1][:, 1]  # 一致率列のみ取り出す
+            Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
+            Pac = Pac.astype(int)
+            MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
+            MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
+            index = list(TCL)  # 丸めたインデックスnparrayをリストに
+            MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
+            MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
+            MJS_Column[0][MJS_Column.shape[1] - 1] = "一致率"
+            MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
+            print(MJS_data)
+            return True, MJS_data
+        elif TC[0] == "yes" and stALL != "ALL":
+            return True, MJS_data
+        else:
             return False, MJS_data
     except:
         try:
@@ -374,29 +370,25 @@ def DayCheck(MJS_data, Txt, ColTxt, stALL):
     引数2の日付間の日数を計算しnp.arrayで返す
     """
     try:
-        try:
-            MJS_Column = MJS_data[0, :]
-            int(ColTxt)
-            TC = TextDateCheck(MJS_data[:, int(ColTxt)], Txt, stALL)  # 検索文字列から一致率リストを作成
-            if TC[0] is True:
-                TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
-                Pac = TC[1][:, 1]  # 一致率列のみ取り出す
-                Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
-                MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
-                MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
-                index = list(TCL)  # 丸めたインデックスnparrayをリストに
-                MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
-                MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
-                MJS_Column[0][MJS_Column.shape[1] - 1] = "日付一致率"
-                MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
-                print(MJS_data)
-                return True, MJS_data
-            elif TC[0] == "yes" and stALL != "ALL":
-                return True, MJS_data
-            else:
-                return False, MJS_data
-        except:
-            print("DayCheck上処理エラー")
+        MJS_Column = MJS_data[0, :]
+        int(ColTxt)
+        TC = TextDateCheck(MJS_data[:, int(ColTxt)], Txt, stALL)  # 検索文字列から一致率リストを作成
+        if TC[0] is True:
+            TCL = np.floor(TC[1][:, 0]).astype(int)  # インデックスを丸めて整数に
+            Pac = TC[1][:, 1]  # 一致率列のみ取り出す
+            Pac = Pac.reshape(Pac.shape[0], -1)  # 一致率リストを多次元に変換
+            MJS_Column = MJS_Column.reshape(-1, MJS_Column.shape[0])  # 列名リストを多次元に変換
+            MJS_Column = np.insert(MJS_Column, MJS_Column.shape[1], "", axis=1)
+            index = list(TCL)  # 丸めたインデックスnparrayをリストに
+            MJS_data = MJS_data[index, :]  # インデックス一致のリスト作成
+            MJS_data = np.hstack((MJS_data, Pac))  # 一致率リストを横連結
+            MJS_Column[0][MJS_Column.shape[1] - 1] = "日付一致率"
+            MJS_data = np.vstack((MJS_Column, MJS_data))  # 列名リストを縦連結
+            print(MJS_data)
+            return True, MJS_data
+        elif TC[0] == "yes" and stALL != "ALL":
+            return True, MJS_data
+        else:
             return False, MJS_data
     except:
         try:
@@ -438,7 +430,6 @@ def MoneyCheck(MJS_data, Int, ColTxt, stALL):
     引数2の金額の差額を計算しnp.arrayで返す
     """
     try:
-
         MJS_Column = MJS_data[0, :]
         int(ColTxt)
         TC = IntCheck(MJS_data[:, int(ColTxt)], Int)  # 検索文字列から一致率リストを作成

@@ -198,7 +198,8 @@ def create_SettingFrame(self):
 # ####################################################################################################
 # サブフレーム#########################################################################################
 def create_Frame4(self):
-
+    # ------------------------------------------------------------------------------
+    # 左側メニュー
     self.AJsetOCRFrame = tk.Frame(
         self.Sub_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
     )  # 親フレーム
@@ -220,11 +221,33 @@ def create_Frame4(self):
     self.table5 = pt5.importCSV(self.FileName, encoding=enc)
     self.pt5 = pt5
     pt5.show()
-
+    # ------------------------------------------------------------------------------
+    self.AJsetRoolFrame = tk.Frame(
+        self.Sub_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+    )  # 親フレーム
+    self.AJsetRoolFrame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+    self.AJsetOCRFrameSub_Frame2 = tk.Frame(self.AJsetRoolFrame, width=650, height=400)
+    tk.Label(self.AJsetRoolFrame, text="ミロク元帳").grid(
+        row=0, column=0, sticky=tk.W
+    )  # 位置指定
+    self.AJsetOCRFrameSub_Frame2.grid(
+        row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
+    )
+    pt6 = MT.MyTable5(
+        self.AJsetOCRFrameSub_Frame2,
+        width=650,
+        height=150,
+        sticky=tk.N + tk.S + tk.W + tk.E,
+    )  # テーブルをサブクラス化
+    enc = CSVO.getFileEncoding(self.Roolurl)
+    self.table6 = pt6.importCSV(self.Roolurl, encoding=enc)
+    self.pt6 = pt6
+    pt6.show()
+    # ------------------------------------------------------------------------------
     self.AJsetFrame = tk.Frame(
         self.Sub_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
     )  # 親フレーム
-    self.AJsetFrame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+    self.AJsetFrame.grid(row=2, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     self.AJsetSub_Frame = tk.Frame(self.AJsetFrame, width=650, height=400)
     tk.Label(self.AJsetFrame, text="テキスト変換ルール").grid(
         row=0, column=0, sticky=tk.W
@@ -232,7 +255,7 @@ def create_Frame4(self):
     self.AJsetSub_Frame.grid(
         row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
     )
-    pt4 = MT.MyTable4(
+    pt4 = MT.MyTable6(
         self.AJsetSub_Frame, width=650, height=150, sticky=tk.N + tk.S + tk.W + tk.E
     )  # テーブルをサブクラス化
     enc = CSVO.getFileEncoding(self.ChangeTxtURL)
@@ -247,7 +270,7 @@ def create_Frame4(self):
         width=20,
         command=self.Sub_RowInsert,
     )
-    self.Sub_RowInsert.grid(row=2, column=0, sticky=tk.W)  # 位置指定
+    self.Sub_RowInsert.grid(row=3, column=0, sticky=tk.W)  # 位置指定
     # 列追加ボタン--------------------------------------------------------------------
     self.Sub_ColumnInsert = tk.Button(
         self.AJsetFrame,
@@ -256,7 +279,7 @@ def create_Frame4(self):
         width=20,
         command=self.Sub_ColumnInsert,
     )
-    self.Sub_ColumnInsert.grid(row=2, column=1)  # 位置指定
+    self.Sub_ColumnInsert.grid(row=3, column=1)  # 位置指定
     # 行削除ボタン--------------------------------------------------------------------
     self.Sub_RowDelete = tk.Button(
         self.AJsetFrame,
@@ -265,7 +288,7 @@ def create_Frame4(self):
         width=20,
         command=self.Sub_RowDelete,
     )
-    self.Sub_RowDelete.grid(row=2, column=2)  # 位置指定
+    self.Sub_RowDelete.grid(row=3, column=2)  # 位置指定
     # 列削除ボタン--------------------------------------------------------------------
     self.Sub_ColumnDelete = tk.Button(
         self.AJsetFrame,
@@ -274,7 +297,7 @@ def create_Frame4(self):
         width=20,
         command=self.Sub_ColumnDelete,
     )
-    self.Sub_ColumnDelete.grid(row=2, column=3)  # 位置指定
+    self.Sub_ColumnDelete.grid(row=3, column=3)  # 位置指定
     # 戻るボタン--------------------------------------------------------------------
     self.Sub_CloseBtn = tk.Button(
         self.AJsetFrame,
@@ -283,9 +306,24 @@ def create_Frame4(self):
         width=20,
         command=self.Sub_ReturnBack,
     )
-    self.Sub_CloseBtn.grid(row=2, column=4, sticky=tk.E)  # 位置指定
+    self.Sub_CloseBtn.grid(row=3, column=4, sticky=tk.E)  # 位置指定
     # メニューフレーム作成-----------------------------------------------------------
-    self.AJsetMenuFrame = tk.Frame(
-        self.Sub_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+    # 右側メニュー
+    self.AJM = tk.Frame(
+        self.Sub_Frame,
+        width=650,
+        height=400,
+        bd=2,
+        relief=tk.RIDGE,
     )  # 親フレーム
-    self.AJsetMenuFrame.grid(row=2, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+    self.AJM.grid(row=0, column=1, rowspan=4, sticky=tk.N + tk.S + tk.W + tk.E)
+
+    self.AJsetMenuFrame = tk.Frame(
+        self.AJM,
+        width=650,
+        height=400,
+        bd=2,
+        relief=tk.RIDGE,
+    )  # 親フレーム
+    tk.Label(self.AJM, text="仕訳候補判定基準列設定").grid(row=0, column=0, sticky=tk.N)  # 位置指定
+    self.AJsetMenuFrame.grid(row=1, column=0)

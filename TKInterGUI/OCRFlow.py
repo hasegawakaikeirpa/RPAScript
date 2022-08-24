@@ -6,6 +6,7 @@ import csv
 import numpy as np
 from difflib import SequenceMatcher
 from mojimoji import han_to_zen
+import CSVOut as CSVO
 
 
 def getNearestValue(list, num):
@@ -176,23 +177,25 @@ def DiffListCreate(
             FDir = FileURL.replace(FU[len(FU) - 1], "")
             FileName = FDir + r"\\" + FN
             ChangeTxtUrl = FDir + r"\\ChangeTxtList.csv"
+            enc = CSVO.getFileEncoding(ChangeTxtUrl)  # 摘要変換ルールエンコード
             # 変換実績リストに要素があれば保存------------------------------------------------
             if len(ChangeTxtList) > 0:
                 if os.path.isfile(ChangeTxtUrl) is True:
-                    CTL_df = pd.DataFrame(ChangeTxtList, columns=["置換前", "置換後"])
+                    CTL_df = pd.DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
                     CTL_df.to_csv(
                         ChangeTxtUrl,
                         mode="a",
                         header=False,
                         index=False,
-                        encoding="cp932",
+                        encoding=enc,
                     )
                 else:
-                    CTL_df = pd.DataFrame(ChangeTxtList, columns=["置換前", "置換後"])
-                    CTL_df.to_csv(ChangeTxtUrl, index=False, encoding="cp932")
+                    CTL_df = pd.DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
+                    CTL_df.to_csv(ChangeTxtUrl, index=False, encoding=enc)
             # -------------------------------------------------------------------------------
+            enc = CSVO.getFileEncoding(FileName)  # 摘要変換ルールエンコード
             try:
-                df.to_csv(FileName, index=False, encoding="cp932")
+                df.to_csv(FileName, index=False, encoding=enc)
             except:
                 with open(
                     FileName,

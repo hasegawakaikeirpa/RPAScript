@@ -9,7 +9,7 @@ import toml
 import AutoJournal as AJ
 import CSVOut as CSVO
 import TKEntry as tke
-
+import re
 import Frame.DGFrame as DGF
 
 
@@ -18,25 +18,25 @@ class DataGrid:
         # toml読込------------------------------------------------------------------------------
         self.Banktoml = Banktoml
         # -------------------------------------------------------------------------------------
-        self.FileName = csvurl
-        self.JounalFileName = AJurl
-        self.Roolurl = Roolurl
-        self.AJSeturl = AJSeturl
-        self.ChangeTxtURL = ChangeTxtURL
-        self.tomlList = self.Banktoml["ParList"]["Name"]
-        enc = CSVO.getFileEncoding(self.ChangeTxtURL)
-        pt4df = pd.read_csv(self.ChangeTxtURL, encoding=enc)
-        self.ChangeTxtColumns = list(pt4df.columns)
-        self.HidukeColNo = DaySet
-        self.MoneyCol = MoneySet
-        self.ChangeTextCol = ReplaceSet
-        self.ColumnName = ColNameList
-        self.HidukeColName = "日付"
-        self.NyuName = "入金"
-        self.SyutuName = "出金"
-        self.ZanName = "残高"
-        self.Henkan = "摘要"
-        self.ChangeText = ReplaceStr
+        self.FileName = csvurl  # OCR結果CSVURL
+        self.JounalFileName = AJurl  # 自動仕訳出力先CSVURL
+        self.Roolurl = Roolurl  # ミロク元帳CSVURL
+        self.AJSeturl = AJSeturl  # 仕訳候補表示用CSVURL
+        self.ChangeTxtURL = ChangeTxtURL  # 摘要変換ルールCSVURL
+        self.tomlList = self.Banktoml["ParList"]["Name"]  # tomlリスト値
+        enc = CSVO.getFileEncoding(self.ChangeTxtURL)  # 摘要変換ルールエンコード
+        pt4df = pd.read_csv(self.ChangeTxtURL, encoding=enc)  # 摘要変換ルール読込
+        self.ChangeTxtColumns = list(pt4df.columns)  # 摘要変換ルール列名
+        self.HidukeColNo = DaySet  # OCR結果日付列番
+        self.MoneyCol = MoneySet  # OCR結果金額列番
+        self.ChangeTextCol = ReplaceSet  # OCR結果変換対象列番
+        self.ColumnName = ColNameList  # OCR結果列名リスト(OCR出力列名)
+        self.HidukeColName = "日付"  # OCR結果列名
+        self.NyuName = "入金"  # OCR結果列名
+        self.SyutuName = "出金"  # OCR結果列名
+        self.ZanName = "残高"  # OCR結果列名
+        self.Henkan = "摘要"  # OCR結果列名
+        self.ChangeText = ReplaceStr  # 自動仕訳変換候補
         # メインウィンドウ設定-------------------------------------------------------------------
         self.root = tk.Tk()  # ウインド画面の作成
         self.root.geometry("1500x750+0+0")  # 画面サイズの設定
@@ -110,17 +110,25 @@ class DataGrid:
             else:
                 pt4df = self.pt4.model.df
                 pt4c = list(pt4df.columns)
-                pt4c.pop(self.pt4.startcol)
-                NullList = []
-                for N_c in range(len(pt4df)):
-                    NullList.append("")
+                startcol = re.sub(r"[^0-9]", "", pt4c[self.pt4.startcol])
+                DelIndex = []
+                for pt4cNo in reversed(range(len(pt4c))):
+                    if str(startcol) in pt4c[pt4cNo]:
+                        pt4c.pop(pt4cNo)
+                        DelIndex.append(pt4cNo)
                 pt4df = np.array(pt4df)
-                pt4df = np.delete(pt4df, self.pt4.startcol, axis=1)  # 列の削除
+                for DelIndexItem in DelIndex:
+                    pt4df = np.delete(pt4df, DelIndexItem, axis=1)  # 列の削除
                 pt4df = pd.DataFrame(pt4df, columns=pt4c)
                 pt4df.to_csv(self.ChangeTxtURL, index=False)
                 enc = CSVO.getFileEncoding(self.ChangeTxtURL)
                 self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
                 self.pt4.redraw
+
+                self.ColumnName = pt4c
+                self.ChangeTxtColumns = pt4c
+                tke.FrameChangeremoveEntry(self)
+                tke.FrameChangeEntries(self)
         except:
             tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
 
@@ -165,21 +173,72 @@ class DataGrid:
             pt4df = self.pt4.model.df
             pt4c = list(pt4df.columns)
             o_count = 0
+            DelIndex = []
             for pt4cItem in pt4c:
                 if "OCRテキスト" in pt4cItem:
                     o_count += 1
-            c_no = int(np.where(np.array(pt4c) == "元帳テキスト")[0])
-            pt4c.insert(c_no, "OCRテキスト" + str(o_count + 1))
-            NullList = []
-            for N_c in range(len(pt4df)):
-                NullList.append("")
-            pt4df = np.array(pt4df)
-            pt4df = np.insert(pt4df, c_no, NullList, axis=1)  # 列の挿入
-            pt4df = pd.DataFrame(pt4df, columns=pt4c)
-            pt4df.to_csv(self.ChangeTxtURL, index=False)
-            enc = CSVO.getFileEncoding(self.ChangeTxtURL)
-            self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
-            self.pt4.redraw
+                    DelIndex.append(re.sub(r"[^0-9]", "", pt4cItem))
+            print(max(DelIndex))
+
+            if str(o_count) not in DelIndex:
+                O_c = "0"
+                # 連番チェック---------------------------------------------------------------
+                for DelIndexItem in DelIndex:
+                    if DelIndexItem != "":
+                        if int(DelIndexItem) + 1 not in DelIndex:
+                            O_No = str(int(DelIndexItem) + 1)
+                            O_c = str(int(DelIndexItem))
+                            break
+                # --------------------------------------------------------------------------
+                if O_c != "0":
+                    c_no = int(np.where(np.array(pt4c) == "元帳テキスト" + O_c)[0])
+                else:
+                    c_no = int(np.where(np.array(pt4c) == "元帳テキスト")[0])
+                    O_No = "2"
+                pt4c.insert(c_no + 1, "OCRテキスト" + O_No)
+                pt4c.insert(c_no + 2, "元帳テキスト" + O_No)
+                NullList = []
+                for N_c in range(len(pt4df)):
+                    NullList.append("")
+                pt4df = np.array(pt4df)
+                pt4df = np.insert(pt4df, c_no + 1, NullList, axis=1)  # 列の挿入
+                pt4df = np.insert(pt4df, c_no + 2, NullList, axis=1)  # 列の挿入
+
+                self.ColumnName = pt4c
+                self.ChangeTxtColumns = pt4c
+
+                pt4df = pd.DataFrame(pt4df, columns=pt4c)
+                pt4df.to_csv(self.ChangeTxtURL, index=False)
+                enc = CSVO.getFileEncoding(self.ChangeTxtURL)
+                self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+                self.pt4.redraw
+                # テキスト変換設定フレームを配置(サブメニューにもコピー配置)
+                tke.FrameChangeremoveEntry(self)
+                tke.FrameChangeEntries(self)
+
+            else:
+                c_no = int(np.where(np.array(pt4c) == "元帳テキスト" + str(o_count))[0])
+                pt4c.insert(c_no + 1, "OCRテキスト" + str(o_count + 1))
+                pt4c.insert(c_no + 2, "元帳テキスト" + str(o_count + 1))
+                NullList = []
+                for N_c in range(len(pt4df)):
+                    NullList.append("")
+                pt4df = np.array(pt4df)
+                pt4df = np.insert(pt4df, c_no + 1, NullList, axis=1)  # 列の挿入
+                pt4df = np.insert(pt4df, c_no + 2, NullList, axis=1)  # 列の挿入
+
+                self.ColumnName = pt4c
+                self.ChangeTxtColumns = pt4c
+
+                pt4df = pd.DataFrame(pt4df, columns=pt4c)
+                pt4df.to_csv(self.ChangeTxtURL, index=False)
+                enc = CSVO.getFileEncoding(self.ChangeTxtURL)
+                self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+                self.pt4.redraw
+                # テキスト変換設定フレームを配置(サブメニューにもコピー配置)
+                tke.FrameChangeremoveEntry(self)
+                tke.FrameChangeEntries(self)
+
         except:
             tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
 
@@ -912,7 +971,7 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
     MoneySet = MS
     ReplaceSet = RS
     ReplaceStr = RlS
-    ColNameList = SGEL
+    # ColNameList = SGEL  # OCR出力列名
     # 自動仕訳変換条件のミロクエクスポートCSVを指定し、変換先ファイルを作成------------------
     # 　Tk MainWindow 生成
     main_window = tk.Tk()
@@ -938,6 +997,12 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
     dir = csvurl
     fle = tk.filedialog.askopenfilename(filetypes=typ, initialdir=dir)  # ファイル指定ダイアログ
     ChangeTxtURL = fle
+    enc = CSVO.getFileEncoding(ChangeTxtURL)  # 摘要変換ルールエンコード
+    ColNameList_np = np.genfromtxt(
+        ChangeTxtURL, dtype=None, encoding=enc, delimiter=","
+    )  # 元帳CSVをnp配列に変換
+    ColNameList = ColNameList_np[0, :]
+    ColNameList = list(ColNameList)
     # Viewクラス生成
     DataGrid(main_window, "./")
 
@@ -954,13 +1019,20 @@ if __name__ == "__main__":
     MoneySet = ["3,4,5"]
     ReplaceSet = ["2,3,4"]
     ReplaceStr = ["CDカード", "マツモトトソウテン", "ザンダカショウメイショ"]
-    ColNameList = ["日付", "摘要", "出金", "入金", "残高"]
-
+    # ColNameList = ["日付", "摘要", "出金", "入金", "残高"]  # OCR出力列名
+    # ColNameList = ["日付", "摘要", "入金", "摘要", "出金", "摘要"]  # OCR出力列名
     csvurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.csv"
     AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page_AutoJounal.csv"
     AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
     Roolurl = r"D:\OCRTESTPDF\PDFTEST\1_仕訳日記帳.csv"
     ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\ChangeTxtList.csv"
+
+    enc = CSVO.getFileEncoding(ChangeTxtURL)  # 摘要変換ルールエンコード
+    ColNameList_np = np.genfromtxt(
+        ChangeTxtURL, dtype=None, encoding=enc, delimiter=","
+    )  # 元帳CSVをnp配列に変換
+    ColNameList = ColNameList_np[0, :]
+    ColNameList = list(ColNameList)
     # toml読込------------------------------------------------------------------------------
     with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)

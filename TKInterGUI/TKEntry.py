@@ -393,27 +393,52 @@ def Frame7removeEntry(self):
 
 
 # -----------------------------------------------------------------------------------------
+def FrameChangeremoveEntry(self):
+    """
+    エントリーウィジェットを削除
+    """
+    # Btn_n = self.widget
+    for i in self.ChangeTxtEntries:
+        i.grid_forget()
+        i.destroy()
+    for i in self.Sub_ChangeTxtEntries:
+        i.grid_forget()
+        i.destroy()
+    for i in self.ChangeLabelEntries:
+        i.grid_forget()
+        i.destroy()
+    for i in self.Sub_ChangeLabelEntries:
+        i.grid_forget()
+        i.destroy()
+
+
+# -----------------------------------------------------------------------------------------
 def FrameChangeEntries(self):  # , tomltitle):
     self.ChangeTxtEntries = []  # Entryのインスタンス
     self.ChangeTxtinsertEntries = []  # ラベルインスタンス
     self.ChangeTxtindex = 0  # 最新のインデックス番号
     self.ChangeTxtindexes = []  # インデックスの並び
     self.ChangeTxtentryList = []  # Entryのインスタンス
+    self.ChangeLabelEntries = []  # Entryのインスタンス
 
     self.Sub_ChangeTxtEntries = []  # Entryのインスタンス
     self.Sub_ChangeTxtinsertEntries = []  # ラベルインスタンス
     self.Sub_ChangeTxtindex = 0  # 最新のインデックス番号
     self.Sub_ChangeTxtindexes = []  # インデックスの並び
     self.Sub_ChangeTxtentryList = []  # Entryのインスタンス
+    self.Sub_ChangeLabelEntries = []  # Entryのインスタンス
 
     r = 0
-    for ColNameItem in self.ChangeTxtColumns:
-        # ラベル＆Entryフレームへ追加----------------------------------------------
-        createFrameChangeEntry(self, r, ColNameItem)  # , tomltitle)  # Entryを作成配置
-        self.ChangeTxtentryList.append(ColNameItem)
-        self.Sub_ChangeTxtentryList.append(ColNameItem)
-        # ----------------------------------------------------------------------
-        r += 1
+    if len(self.ColumnName) == len(self.ChangeTxtColumns):
+        for ColNameItem in self.ChangeTxtColumns:
+            # ラベル＆Entryフレームへ追加----------------------------------------------
+            createFrameChangeEntry(self, r, ColNameItem)  # , tomltitle)  # Entryを作成配置
+            self.ChangeTxtentryList.append(ColNameItem)
+            self.Sub_ChangeTxtentryList.append(ColNameItem)
+            # ----------------------------------------------------------------------
+            r += 1
+    else:
+        tk.messagebox.showinfo("確認", "変換リストの列数と一致しません。")
 
 
 # -----------------------------------------------------------------------------------------
@@ -438,17 +463,33 @@ def updateFrameChangeEntries(self):
 def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
     lb = tk.Label(self.ChangeFrame, text=ColNameItem + "対象列名")
     lb.grid(row=next, column=0)  # 位置指定
+    self.ChangeLabelEntries.insert(next, lb)
     lb = tk.Label(self.AJsetMenuFrame, text=ColNameItem + "対象列名")
     lb.grid(row=next, column=0)  # 位置指定
+    self.Sub_ChangeLabelEntries.insert(next, lb)
     # ラベル名からself変数を取得---------------------------------------
     # ---------------------------------------------------------------
     txtxt = tk.Entry(self.ChangeFrame, width=10)
-    txtxt.insert(0, self.ColumnName[next])
+
+    if "OCRテキスト" in self.ColumnName[next]:
+        lis = list(self.pt.colheader.columnlabels)
+        txtxt.insert(0, lis[next])
+    else:
+        lis = list(self.pt3.colheader.columnlabels)
+        txtxt.insert(0, lis[next])
+
     txtxt.grid(row=next, column=1)  # 位置指定
     self.ChangeTxtEntries.insert(next, txtxt)
     # ---------------------------------------------------------------
     txtxt = tk.Entry(self.AJsetMenuFrame, width=10)
-    txtxt.insert(0, self.ColumnName[next])
+
+    if "OCRテキスト" in self.ColumnName[next]:
+        lis = list(self.pt.colheader.columnlabels)
+        txtxt.insert(0, lis[next])
+    else:
+        lis = list(self.pt3.colheader.columnlabels)
+        txtxt.insert(0, lis[next])
+
     txtxt.grid(row=next, column=1)  # 位置指定
     self.Sub_ChangeTxtEntries.insert(next, txtxt)
     # ラベルを作成----------------------------------------------------

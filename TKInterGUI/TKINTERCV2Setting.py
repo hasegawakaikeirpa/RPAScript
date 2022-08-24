@@ -82,7 +82,7 @@ class Application(tk.Frame):
         # 行数表示テキスト
         tk.Label(Tframe, text="元帳日付列名").grid(row=1, column=0)  # 位置指定
         self.LimitCol = tk.Entry(Tframe, width=30)
-        self.LimitCol.insert(0, "元帳日付列名")
+        self.LimitCol.insert(0, "伝票日付")
         self.LimitCol.grid(row=1, column=1)
         #################################################################################
         # 列名設定フレーム################################################################
@@ -610,7 +610,7 @@ def EnterP(self, HCW, HCH, selfmother):
     FList = []
     FYokoList = []
     FTateList = []
-    SGEL = selfmother.GetEntryTextButton_click()
+    SGEL = selfmother.GetEntryTextButton_click()  # OCR出力列名
     # 条件テキストボックスの値格納---------------------------
     DaySet = selfmother.DaySet.get()
     MoneySet = selfmother.MoneySet.get()
