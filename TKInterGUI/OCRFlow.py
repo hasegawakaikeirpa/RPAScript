@@ -147,16 +147,19 @@ def DiffListCreate(
                             else:
                                 ints += S[y]
                         CTCount = []
-                        if "," in ReplaceStr:
-                            ReplaceStr = ReplaceStr.split(",")
-                        for CT in ReplaceStr:
-                            src, trg = han_to_zen(strs.lower()), han_to_zen(CT.lower())
-                            r = SequenceMatcher(None, src, trg).ratio()
-                            CTCount.append([r, CT])
-                        GNV = getNearestValue(CTCount, 1.0)
-                        if 1.0 - GNV[0] < 0.5:
-                            ChangeTxtList.append([GFTable[g][c - 1], GNV[1]])
-                            GFTable[g][c - 1] = GNV[1]
+                        if len(ReplaceStr) != 0:
+                            if "," in ReplaceStr:
+                                ReplaceStr = ReplaceStr.split(",")
+                            for CT in ReplaceStr:
+                                src, trg = han_to_zen(strs.lower()), han_to_zen(
+                                    CT.lower()
+                                )
+                                r = SequenceMatcher(None, src, trg).ratio()
+                                CTCount.append([r, CT])
+                            GNV = getNearestValue(CTCount, 1.0)
+                            if 1.0 - GNV[0] < 0.5:
+                                ChangeTxtList.append([GFTable[g][c - 1], GNV[1]])
+                                GFTable[g][c - 1] = GNV[1]
 
                     # -------------------------------------------------------------------------
             # デコード＆エンコード--------------------------------------------------------------
@@ -177,23 +180,30 @@ def DiffListCreate(
             FDir = FileURL.replace(FU[len(FU) - 1], "")
             FileName = FDir + r"\\" + FN
             ChangeTxtUrl = FDir + r"\\ChangeTxtList.csv"
-            enc = CSVO.getFileEncoding(ChangeTxtUrl)  # 摘要変換ルールエンコード
+            if os.path.isfile(ChangeTxtUrl) is True:
+                enc = CSVO.getFileEncoding(ChangeTxtUrl)  # 摘要変換ルールエンコード
+            else:
+                enc = "cp932"
+
             # 変換実績リストに要素があれば保存------------------------------------------------
-            if len(ChangeTxtList) > 0:
-                if os.path.isfile(ChangeTxtUrl) is True:
-                    CTL_df = pd.DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
-                    CTL_df.to_csv(
-                        ChangeTxtUrl,
-                        mode="a",
-                        header=False,
-                        index=False,
-                        encoding=enc,
-                    )
-                else:
-                    CTL_df = pd.DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
-                    CTL_df.to_csv(ChangeTxtUrl, index=False, encoding=enc)
+            # if len(ChangeTxtList) > 0:
+            #     if os.path.isfile(ChangeTxtUrl) is True:
+            #         CTL_df = pd.DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
+            #         CTL_df.to_csv(
+            #             ChangeTxtUrl,
+            #             mode="a",
+            #             header=False,
+            #             index=False,
+            #             encoding=enc,
+            #         )
+            #     else:
+            #         CTL_df = pd.DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
+            #         CTL_df.to_csv(ChangeTxtUrl, index=False, encoding=enc)
             # -------------------------------------------------------------------------------
-            enc = CSVO.getFileEncoding(FileName)  # 摘要変換ルールエンコード
+            if os.path.isfile(FileName) is True:
+                enc = CSVO.getFileEncoding(FileName)  # 摘要変換ルールエンコード
+            else:
+                enc = "cp932"
             try:
                 df.to_csv(FileName, index=False, encoding=enc)
             except:

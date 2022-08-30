@@ -1,3 +1,4 @@
+from msilib.schema import ListBox
 import tkinter as tk
 from datetime import datetime as dt
 import WarekiHenkan as wh
@@ -437,6 +438,21 @@ def FrameChangeEntries(self):  # , tomltitle):
             self.Sub_ChangeTxtentryList.append(ColNameItem)
             # ----------------------------------------------------------------------
             r += 1
+
+        # lb = tk.Label(self.ChangeFrame, text="数値置換対象テキスト")
+        # lb.grid(row=len(self.ChangeTxtindexes) + 1, column=0)  # 位置指定
+        # txtxt = tk.Entry(self.ChangeFrame, width=20)
+        # txtxt.insert(0, "月分")
+        # txtxt.grid(row=len(self.ChangeTxtindexes) + 1, column=1)  # 位置指定
+        # self.ReplaceKey = txtxt
+
+        # lb = tk.Label(self.AJsetMenuFrame, text="数値置換対象テキスト")
+        # lb.grid(row=len(self.ChangeTxtindexes) + 1, column=0)  # 位置指定
+        # txtxt = tk.Entry(self.AJsetMenuFrame, width=20)
+        # txtxt.insert(0, "月分")
+        # txtxt.grid(row=len(self.ChangeTxtindexes) + 1, column=1)  # 位置指定
+        # self.SubReplaceKey = txtxt
+
     else:
         tk.messagebox.showinfo("確認", "変換リストの列数と一致しません。")
 
@@ -448,12 +464,12 @@ def updateFrameChangeEntries(self):
     # エントリーウィジェットマネージャを参照して再配置
     for i in range(len(self.ChangeTxtindexes)):
         self.ChangeTxtEntries[i].grid(column=1, row=i)
-        self.ChangeTxtEntries[i].bind("<Return>", self.EveRecalc)
+        # self.ChangeTxtEntries[i].bind("<Return>", self.EveRecalc)
         self.ChangeTxtEntries[i].lift()
         self.ChangeTxtinsertEntries[i].grid(column=0, row=i)
 
         self.Sub_ChangeTxtEntries[i].grid(column=1, row=i)
-        self.Sub_ChangeTxtEntries[i].bind("<Return>", self.EveRecalc)
+        # self.Sub_ChangeTxtEntries[i].bind("<Return>", self.EveRecalc)
         self.Sub_ChangeTxtEntries[i].lift()
         self.Sub_ChangeTxtinsertEntries[i].grid(column=0, row=i)
 
@@ -461,6 +477,8 @@ def updateFrameChangeEntries(self):
 # -----------------------------------------------------------------------------------------
 # エントリーウィジェットを作成して配置
 def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
+    global L_List, E_List, L_List_Sub, E_List_Sub
+
     lb = tk.Label(self.ChangeFrame, text=ColNameItem + "対象列名")
     lb.grid(row=next, column=0)  # 位置指定
     self.ChangeLabelEntries.insert(next, lb)
@@ -469,27 +487,35 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
     self.Sub_ChangeLabelEntries.insert(next, lb)
     # ラベル名からself変数を取得---------------------------------------
     # ---------------------------------------------------------------
-    txtxt = tk.Entry(self.ChangeFrame, width=10)
+    txtxt = tk.Entry(self.ChangeFrame, width=20)
 
     if "OCRテキスト" in self.ColumnName[next]:
-        lis = list(self.pt.colheader.columnlabels)
+        # lis = list(self.pt.colheader.columnlabels)
+        lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
         txtxt.insert(0, lis[next])
     else:
-        lis = list(self.pt3.colheader.columnlabels)
+        # lis = list(self.pt3.colheader.columnlabels)
+        lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
         txtxt.insert(0, lis[next])
-
+    # コールバック---------------------------------------------------
+    txtxt.bind("<Key>", RetuenTabFunction)
+    # ---------------------------------------------------------------
     txtxt.grid(row=next, column=1)  # 位置指定
     self.ChangeTxtEntries.insert(next, txtxt)
     # ---------------------------------------------------------------
-    txtxt = tk.Entry(self.AJsetMenuFrame, width=10)
+    txtxt = tk.Entry(self.AJsetMenuFrame, width=20)
 
     if "OCRテキスト" in self.ColumnName[next]:
-        lis = list(self.pt.colheader.columnlabels)
+        # lis = list(self.pt.colheader.columnlabels)
+        lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
         txtxt.insert(0, lis[next])
     else:
-        lis = list(self.pt3.colheader.columnlabels)
+        # lis = list(self.pt3.colheader.columnlabels)
+        lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
         txtxt.insert(0, lis[next])
-
+    # コールバック---------------------------------------------------
+    txtxt.bind("<Key>", RetuenTabFunction)
+    # ---------------------------------------------------------------
     txtxt.grid(row=next, column=1)  # 位置指定
     self.Sub_ChangeTxtEntries.insert(next, txtxt)
     # ラベルを作成----------------------------------------------------
@@ -512,6 +538,102 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
     )
     # インデックスマネージャに登録
     self.Sub_ChangeTxtindexes.insert(next, self.ChangeTxtindex)
+
+    # グローバル変数に代入
+    L_List = self.ChangeLabelEntries
+    E_List = self.ChangeTxtEntries
+    L_List_Sub = self.Sub_ChangeLabelEntries
+    E_List_Sub = self.Sub_ChangeTxtEntries
+
+
+# ----------------------------------------------------------------------------
+def RetuenTabFunction(self):
+    global L_List, E_List, L_List_Sub, E_List_Sub
+
+    WidN = self.widget
+
+    if self.keysym == "Return":
+        # エンター処理###############################
+        i = 0
+        for ListItem in E_List:
+            if ListItem == WidN:
+                if i == len(E_List) - 1:
+                    E_List[0].focus_set()
+                else:
+                    E_List[i + 1].focus_set()
+                break
+            i += 1
+
+        i = 0
+        for ListItem in E_List_Sub:
+            if ListItem == WidN:
+                if i == len(E_List_Sub) - 1:
+                    E_List_Sub[0].focus_set()
+                else:
+                    E_List_Sub[i + 1].focus_set()
+                break
+            i += 1
+    elif self.keysym == "Up":
+        # Up処理###############################
+        i = 0
+        for ListItem in E_List:
+            if ListItem == WidN:
+                if i != 0:
+                    E_List[i - 1].focus_set()
+                    break
+            i += 1
+
+        i = 0
+        for ListItem in E_List_Sub:
+            if ListItem == WidN:
+                if i != 0:
+                    E_List_Sub[i - 1].focus_set()
+                    break
+            i += 1
+    elif self.keysym == "Down":
+        # Down処理###############################
+        i = 0
+        for ListItem in E_List:
+            if ListItem == WidN:
+                if i != len(E_List) - 1:
+                    E_List[i + 1].focus_set()
+                    break
+            i += 1
+
+        i = 0
+        for ListItem in E_List_Sub:
+            if ListItem == WidN:
+                if i != len(E_List) - 1:
+                    E_List_Sub[i + 1].focus_set()
+                    break
+            i += 1
+
+
+# ----------------------------------------------------------------------------
+def AJ_copyCalc_Func(SetList, dfsrow, dfs3row, ChangeTxtURL):
+    """
+    自動仕訳候補OCR結果
+    """
+    try:
+        for E_r in range(len(g_Frame7EntL)):
+            L_txt = g_Frame7EntL[E_r].get()
+            R_txt = g_Frame7EntR[E_r].get()
+            if dfsrow[R_txt] != dfsrow[R_txt]:
+                print("nan")
+            else:
+                Txt = TxtEdit(L_txt, dfs3row[L_txt], dfsrow[R_txt])
+                dfs3row[L_txt] = Txt[1]
+        df_c = dfs3row.index
+        for dfs3rowItem in df_c:
+            if dfs3rowItem == "一致率":
+                del dfs3row["一致率"]
+            if dfs3rowItem == "仕訳金額差額":
+                del dfs3row["仕訳金額差額"]
+            if dfs3rowItem == "日付一致率":
+                del dfs3row["日付一致率"]
+        return dfs3row
+    except:
+        return dfs3row
 
 
 # ----------------------------------------------------------------------------
@@ -575,30 +697,3 @@ def TxtEdit(Txt, L_txt, R_txt):
             return L_txt, R_txt
     except:
         return L_txt, R_txt
-
-
-# ----------------------------------------------------------------------------
-def AJ_copyCalc_Func(SetList, dfsrow, dfs3row, ChangeTxtURL):
-    """
-    自動仕訳候補OCR結果
-    """
-    try:
-        for E_r in range(len(g_Frame7EntL)):
-            L_txt = g_Frame7EntL[E_r].get()
-            R_txt = g_Frame7EntR[E_r].get()
-            if dfsrow[R_txt] != dfsrow[R_txt]:
-                print("nan")
-            else:
-                Txt = TxtEdit(L_txt, dfs3row[L_txt], dfsrow[R_txt])
-                dfs3row[L_txt] = Txt[1]
-        df_c = dfs3row.index
-        for dfs3rowItem in df_c:
-            if dfs3rowItem == "一致率":
-                del dfs3row["一致率"]
-            if dfs3rowItem == "仕訳金額差額":
-                del dfs3row["仕訳金額差額"]
-            if dfs3rowItem == "日付一致率":
-                del dfs3row["日付一致率"]
-        return dfs3row
-    except:
-        return dfs3row

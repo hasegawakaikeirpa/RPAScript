@@ -80,24 +80,28 @@ def create_SettingFrame(self):
     # -------------------------------------------------------------------------------------
     # フレーム設定--------------------------------------------------------------------------
     self.frame3 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-    self.frame3.grid(row=1, column=0, sticky=tk.N + tk.S)
+    self.frame3.grid(row=2, column=0, sticky=tk.N + tk.S)
     # -------------------------------------------------------------------------------------
     # フレーム設定--------------------------------------------------------------------------
     self.ChangeFrame = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-    self.ChangeFrame.grid(row=1, column=1, sticky=tk.N + tk.S)
+    self.ChangeFrame.grid(row=2, column=1, sticky=tk.N + tk.S)
     # -------------------------------------------------------------------------------------
     # フレーム設定--------------------------------------------------------------------------
     self.frame4 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-    self.frame4.grid(row=1, column=2, sticky=tk.N + tk.S)
+    self.frame4.grid(row=2, column=2, sticky=tk.N + tk.S)
     # -------------------------------------------------------------------------------------
     # フレーム設定--------------------------------------------------------------------------
     self.frame6 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-    self.frame6.grid(row=1, column=3, sticky=tk.N + tk.S)
+    self.frame6.grid(row=2, column=3, sticky=tk.N + tk.S)
     # MotoCyou------------------------------------------------------------------------------
     # フレーム設定--------------------------------------------------------------------------
     self.frame7 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
-    self.frame7.grid(row=1, column=4, sticky=tk.N + tk.S)
+    self.frame7.grid(row=2, column=4, sticky=tk.N + tk.S)
     self.frame7EntryList = []  # このフレームのEntryのインスタンス
+    # フレーム設定--------------------------------------------------------------------------
+    self.frame8 = tk.Frame(self.Mframe.scrollable_frame, bd=2, relief=tk.RIDGE)
+    self.frame8.grid(row=2, column=5, sticky=tk.N + tk.S)
+    self.frame8EntryList = []  # このフレームのEntryのインスタンス
     # -------------------------------------------------------------------------------------
     tk.Label(self.frame6, text="元帳日付列名").grid(row=0, column=0)  # 位置指定
     self.Moto_Day = tk.Entry(self.frame6, width=10)
@@ -173,26 +177,194 @@ def create_SettingFrame(self):
     )
     self.AJ_set.grid(row=0, column=0, columnspan=4, sticky=tk.W + tk.E)  # 位置指定
     # -------------------------------------------------------------------------------------
-    self.Mframe.scrollbar_y.grid_forget()  # スクロールバー削除
-    # スクロールバー再作成--------------------------------------------------
-    self.Mframe.scrollbar_y = ttk.Scrollbar(
-        self.Mframe.scrollable_frame,
-        orient="vertical",
-        command=self.Mframe.canvas.yview,
+
+    # 列名設定フレーム################################################################
+    tk.Label(self.frame8, text="摘要置換設定").grid(row=1, column=0)  # フレームテキスト
+    self.SF = SF.ScrollableFrame(self.frame8, bar_x=False)
+    self.SF.grid(sticky=tk.W + tk.E)  # , ipadx=500, ipady=100)
+    # エントリーウィジェットマネージャを初期化
+    self.RepLEntries = []  # エントリーウィジェットのインスタンス
+    self.RepREntries = []  # エントリーウィジェットのインスタンス
+    self.RepinsertEntries = []  # 追加するボタンのようなラベル
+    self.RepremoveEntries = []  # 削除するボタンのようなラベル
+    # こちらはインデックスマネージャ。ウィジェットの数や並び方を管理
+    self.Repindex = 0  # 最新のインデックス番号
+    self.Repindexes = []  # インデックスの並び
+    # self.createEntry(0, bar_x=False)
+    # 摘要置換設定作成
+    RepcreateEntry(self, 0, bar_x=False)
+    #################################################################################
+
+
+# ----------------------------------------------------------------------------
+def RepcreateEntry(self, next, bar_x=True, bar_y=True):
+    """
+    列名設定項目を作成して再配置
+    """
+    global L_List, E_List
+    # 最初のエントリーウィジェットを追加
+    self.RepLEntries.insert(next, tk.Entry(self.SF.scrollable_frame, width=10))
+    # 最初のエントリーウィジェットを追加
+    self.RepREntries.insert(next, tk.Entry(self.SF.scrollable_frame, width=10))
+    # エントリーウィジェットを追加するボタンのようなラベルを作成
+    self.RepinsertEntries.insert(
+        next,
+        tk.Label(
+            self.SF.scrollable_frame,
+            text="+",
+            fg="#33ff33",
+            font=("Arial Black", 20),
+        ),
     )
-    # ---------------------------------------------------------------------
-    self.Mframe.scrollbar_y.grid(row=0, rowspan=3, column=5, sticky=tk.S + tk.N)
-    self.Mframe.canvas.configure(yscrollcommand=self.Mframe.scrollbar_y.set)
-    self.Mframe.scrollbar_x.grid_forget()  # スクロールバー削除
-    # スクロールバー再作成--------------------------------------------------
-    self.Mframe.scrollbar_x = ttk.Scrollbar(
-        self.Mframe.scrollable_frame,
-        orient="horizontal",
-        command=self.Mframe.canvas.xview,
+    # エントリーウィジェットを削除するボタンのようなラベルを作成（初期の段階では表示しない）
+    self.RepremoveEntries.insert(
+        next,
+        tk.Label(
+            self.SF.scrollable_frame,
+            text="−",
+            fg="#ff3333",
+            font=("Arial Black", 20),
+        ),
     )
-    # ---------------------------------------------------------------------
-    self.Mframe.scrollbar_x.grid(row=2, column=0, columnspan=5, sticky=tk.E + tk.W)
-    self.Mframe.canvas.configure(xscrollcommand=self.Mframe.scrollbar_x.set)
+    # 追加するボタンのようなラベルにクリックイベントを設定
+    self.RepinsertEntries[next].bind(
+        "<1>", lambda event, id=self.Repindex: RepinsertEntry_click(self, event, id)
+    )
+    # 削除するボタンのようなラベルにクリックイベントを設定
+    self.RepremoveEntries[next].bind(
+        "<1>", lambda event, id=self.Repindex: RepremoveEntry_click(self, event, id)
+    )
+    # インデックスマネージャに登録
+    self.Repindexes.insert(next, self.Repindex)
+    # 再配置
+    RepupdateEntries(self, bar_x=False)
+    L_List = self.RepLEntries
+    E_List = self.RepREntries
+
+
+# -------------------------------------------------------------------------------------
+def RepinsertEntry_click(self, event, id):
+    """
+    列名設定項目追加ボタン処理
+    """
+    # 追加する位置
+    next = self.Repindexes.index(id) + 1
+    self.Repindex = self.Repindex + 1
+    # エントリーウィジェットを作成して配置
+    RepcreateEntry(self, next, bar_x=False)
+
+
+# -------------------------------------------------------------------------------------
+def RepremoveEntry_click(self, event, id):
+    """
+    列名設定項目削除ボタン処理
+    """
+    global L_List, E_List
+    id = 0
+    for SRI in self.RepremoveEntries:
+        if SRI == event.widget:
+            break
+        id += 1
+    # 削除する位置
+    # current = self.indexes.index(id)
+    current = id
+    # エントリーウィジェットと追加・削除ボタンのようなラベルを削除
+    self.RepLEntries[current].destroy()
+    self.RepREntries[current].destroy()
+    self.RepinsertEntries[current].destroy()
+    self.RepremoveEntries[current].destroy()
+    # エントリーウィジェットマネージャから削除
+    self.RepLEntries.pop(current)
+    self.RepREntries.pop(current)
+    self.RepinsertEntries.pop(current)
+    self.RepremoveEntries.pop(current)
+    self.Repindexes.pop(current)
+    # 再配置
+    RepupdateEntries(self)
+    L_List = self.RepLEntries
+    E_List = self.RepREntries
+
+
+# -------------------------------------------------------------------------------------
+def RepupdateEntries(self, bar_x=True, bar_y=True):
+    """
+    列名設定項目を再配置
+    """
+    # エントリーウィジェットマネージャを参照して再配置
+    for i in range(len(self.Repindexes)):
+        self.RepLEntries[i].grid(column=0, row=i)
+        self.RepLEntries[i].bind("<MouseWheel>", self.SF.mouse_y_scroll)
+        self.RepLEntries[i].bind("<Key>", RepRetuenTabFunction)
+        self.RepLEntries[i].lift()
+
+        self.RepREntries[i].grid(column=1, row=i)
+        self.RepREntries[i].bind("<MouseWheel>", self.SF.mouse_y_scroll)
+        self.RepREntries[i].bind("<Key>", RepRetuenTabFunction)
+        self.RepREntries[i].lift()
+
+        self.RepinsertEntries[i].grid(column=2, row=i)
+        self.RepinsertEntries[i].bind("<MouseWheel>", self.SF.mouse_y_scroll)
+        self.RepremoveEntries[i].grid(column=3, row=i)
+        self.RepremoveEntries[i].bind("<MouseWheel>", self.SF.mouse_y_scroll)
+    # 1つしかないときは削除ボタンのようなラベルを表示しない
+    if len(self.Repindexes) == 1:
+        self.RepremoveEntries[0].grid_forget()
+    if bar_y:  # スクロールバー縦
+        self.SF.scrollbar_y.grid_forget()  # スクロールバー削除
+        # スクロールバー再作成--------------------------------------------------
+        self.SF.scrollbar_y = ttk.Scrollbar(
+            self.SF.scrollable_frame,
+            orient="vertical",
+            command=self.SF.canvas.yview,
+        )
+        # ---------------------------------------------------------------------
+        if len(self.Repindexes) == 1:
+            self.SF.scrollbar_y.grid(row=0, column=4, sticky=tk.S + tk.N)
+        else:
+            self.SF.scrollbar_y.grid(
+                row=0, rowspan=len(self.Repindexes), column=4, sticky=tk.S + tk.N
+            )
+        self.SF.canvas.configure(yscrollcommand=self.SF.scrollbar_y.set)
+    if bar_x:  # スクロールバー横
+        self.SF.scrollbar_x.grid_forget()  # スクロールバー削除
+        # スクロールバー再作成--------------------------------------------------
+        self.SF.scrollbar_x = ttk.Scrollbar(
+            self.SF.scrollable_frame,
+            orient="horizontal",
+            command=self.SF.canvas.xview,
+        )
+        # ---------------------------------------------------------------------
+        self.SF.scrollbar_x.grid(
+            row=len(self.Repindexes), column=0, columnspan=4, sticky=tk.E + tk.W
+        )
+        self.SF.canvas.configure(xscrollcommand=self.SF.scrollbar_x.set)
+
+
+# ----------------------------------------------------------------------------
+def RepRetuenTabFunction(self):
+    global L_List, E_List
+    WidN = self.widget
+    if self.keysym == "Return":
+        # エンター処理###############################
+        i = 0
+        for ListItem in E_List:
+            if ListItem == WidN:
+                if i == len(E_List) - 1:
+                    L_List[0].focus_set()
+                else:
+                    L_List[i + 1].focus_set()
+                break
+            i += 1
+
+        i = 0
+        for ListItem in L_List:
+            if ListItem == WidN:
+                if i == len(L_List) - 1:
+                    E_List[0].focus_set()
+                else:
+                    E_List[i + 1].focus_set()
+                break
+            i += 1
 
 
 # ####################################################################################################
@@ -327,3 +499,26 @@ def create_Frame4(self):
     )  # 親フレーム
     tk.Label(self.AJM, text="仕訳候補判定基準列設定").grid(row=0, column=0, sticky=tk.N)  # 位置指定
     self.AJsetMenuFrame.grid(row=1, column=0)
+
+
+def s_bar_Reset(self):
+    self.Mframe.scrollbar_y.grid_forget()  # スクロールバー削除
+    # スクロールバー再作成--------------------------------------------------
+    self.Mframe.scrollbar_y = ttk.Scrollbar(
+        self.Mframe.scrollable_frame,
+        orient="vertical",
+        command=self.Mframe.canvas.yview,
+    )
+    # ---------------------------------------------------------------------
+    self.Mframe.scrollbar_y.grid(row=0, rowspan=4, column=6, sticky=tk.S + tk.N)
+    self.Mframe.canvas.configure(yscrollcommand=self.Mframe.scrollbar_y.set)
+    self.Mframe.scrollbar_x.grid_forget()  # スクロールバー削除
+    # スクロールバー再作成--------------------------------------------------
+    self.Mframe.scrollbar_x = ttk.Scrollbar(
+        self.Mframe.scrollable_frame,
+        orient="horizontal",
+        command=self.Mframe.canvas.xview,
+    )
+    # ---------------------------------------------------------------------
+    self.Mframe.scrollbar_x.grid(row=1, column=0, columnspan=6, sticky=tk.E + tk.W)
+    self.Mframe.canvas.configure(xscrollcommand=self.Mframe.scrollbar_x.set)
