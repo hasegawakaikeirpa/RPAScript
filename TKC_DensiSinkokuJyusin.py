@@ -1858,11 +1858,11 @@ else:
 
 MasterTrigger = input("マスターCSVを毎回更新しますか？y/n\n")
 
-ypos_FTrigger = input("先頭行基準値を75から変更しますか？y/n\n")
+ypos_FTrigger = input("先頭行基準値を70から変更しますか？y/n\n")
 if ypos_FTrigger == "y":
     ypos_F = int(input("先頭行基準値を入力してください。\n"))
 else:
-    ypos_F = 75
+    ypos_F = 70
 
 ypos_PlusTrigger = input("行間閾値を25から変更しますか？y/n\n")
 if ypos_PlusTrigger == "y":
