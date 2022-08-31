@@ -243,6 +243,19 @@ def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+def npDip(C_Master):
+    try:
+        C_Col = C_Master.columns
+        C_np = np.array(C_Master)
+        ind = np.unique(C_np[:, 2], return_index=True)
+        ind = np.sort(ind[1])
+        C_np = C_np[ind]
+        return pd.DataFrame(C_np, columns=C_Col)
+    except:
+        return C_Master
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 def main():
     ret = getFileEncoding("sjis.csv")
     print("sjis.csv Encoding={0}".format(ret))
@@ -701,34 +714,34 @@ def TaxHantei(
             NitijiBunki(FolURL2, conf, LoopVal)
     # ##################################################################################################################
     # CSVOUT処理--------------------------------------------------------------------------------------------------------
-    FileName = "NoCsvOutPut.png"
-    conf = 0.9  # 画像認識感度
-    time.sleep(1)
-    CSVURL = FolURL2
-    C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
-    SerchEnc = format(getFileEncoding(C_url))
-    C_Array = pd.read_csv(C_url, encoding=SerchEnc)
-    return C_Array, True
-    # if ImgNothingCheck(FolURL2, FileName, conf, 10) is True:
-    #     FileName = "CsvOutPut.png"
-    #     conf = 0.9  # 画像認識感度
-    #     if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
-    #         ImgClick(FolURL2, FileName, conf, LoopVal)
-    #         time.sleep(1)
-    #         CSVURL = FolURL2
-    #         CSVOutPut(
-    #             CSVURL, CSVName, driver, FolURL2
-    #         )  # ######################################################################################################
-    #         C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
-    #         SerchEnc = format(getFileEncoding(C_url))
-    #         C_Array = pd.read_csv(C_url, encoding=SerchEnc)
-    #         return C_Array, True
-    #     else:
-    #         print("ChildCSV無")
-    #         return [], False
-    # else:
-    #     print("ChildCSV無")
-    #     return [], False
+    # FileName = "NoCsvOutPut.png"
+    # conf = 0.9  # 画像認識感度
+    # time.sleep(1)
+    # CSVURL = FolURL2
+    # C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+    # SerchEnc = format(getFileEncoding(C_url))
+    # C_Array = pd.read_csv(C_url, encoding=SerchEnc)
+    # return C_Array, True
+    if ImgNothingCheck(FolURL2, FileName, conf, 10) is True:
+        FileName = "CsvOutPut.png"
+        conf = 0.9  # 画像認識感度
+        if ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True:
+            ImgClick(FolURL2, FileName, conf, LoopVal)
+            time.sleep(1)
+            CSVURL = FolURL2
+            CSVOutPut(
+                CSVURL, CSVName, driver, FolURL2
+            )  # ######################################################################################################
+            C_url = CSVURL.replace("\\", "/") + "/" + CSVName + ".CSV"
+            SerchEnc = format(getFileEncoding(C_url))
+            C_Array = pd.read_csv(C_url, encoding=SerchEnc)
+            return C_Array, True
+        else:
+            print("ChildCSV無")
+            return [], False
+    else:
+        print("ChildCSV無")
+        return [], False
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -1339,6 +1352,9 @@ def MainFlow(FolURL2, MasterTrigger, ypos_F, ypos_Plus, NG_List):  # メイン�
     if C_MasterFlag is False:
         print("C_Masterは空です")
     else:
+        C_Master = npDip(C_Master)  # 関与先コードで重複削除
+        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
         C_LoopRow = np.array(C_Master).shape[0]  # 配列行数取得
         for x in range(C_LoopRow):
             MasterLoop(
@@ -1469,6 +1485,9 @@ def MainFlow(FolURL2, MasterTrigger, ypos_F, ypos_Plus, NG_List):  # メイン�
     # if C_MasterFlag is False:
     #     print("C_Masterは空です")
     # else:
+    # C_Master = npDip(C_Master) # 関与先コードで重複削除
+    # C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    # C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     #     C_LoopRow = np.array(C_Master).shape[0]#配列行数取得
     #     for x in range(C_LoopRow):
     #         MasterLoop(
@@ -1533,6 +1552,9 @@ def MainFlow(FolURL2, MasterTrigger, ypos_F, ypos_Plus, NG_List):  # メイン�
     if C_MasterFlag is False:  # マスターCSVが空だったら～
         print("C_Masterは空です")
     else:
+        C_Master = npDip(C_Master)  # 関与先コードで重複削除
+        C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+        C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
         C_LoopRow = np.array(C_Master).shape[0]  # マスターCSV行数取得
         for x in range(C_LoopRow):  # マスターCSV行数分取得ループ実行
             MasterLoop(
@@ -1597,6 +1619,9 @@ def MainFlow(FolURL2, MasterTrigger, ypos_F, ypos_Plus, NG_List):  # メイン�
     # if C_MasterFlag is False:  # マスターCSVが空だったら～
     #     print("C_Masterは空です")
     # else:
+    # C_Master = npDip(C_Master) # 関与先コードで重複削除
+    # C_dfRow = np.array(C_Master).shape[0]  # 配列行数取得
+    # C_dfCol = np.array(C_Master).shape[1]  # 配列列数取得
     #     C_LoopRow = np.array(C_Master).shape[0]  # 配列行数取得
     #     for x in range(C_LoopRow):
     #         MasterLoop(
