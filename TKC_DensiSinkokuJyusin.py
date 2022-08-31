@@ -889,6 +889,8 @@ def Jyusin(driver, FolURL2, C_SCode, C_Name, C_Zeimoku, C_Teisyutu, CSVName, Csv
                                     + str(Cyou)
                                     + ".pdf"
                                 )
+                            FileURL = FileURL.replace("\\\\", "\\")
+                            FileURL = "\\" + FileURL
                             pyperclip.copy(FileURL)
                             pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
                             pg.press(["return"])
@@ -948,6 +950,8 @@ def Jyusin(driver, FolURL2, C_SCode, C_Name, C_Zeimoku, C_Teisyutu, CSVName, Csv
                                     + str(Cyou)
                                     + ".pdf"
                                 )
+                            FileURL = FileURL.replace("\\\\", "\\")
+                            FileURL = "\\" + FileURL
                             pyperclip.copy(FileURL)
                             pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
                             pg.press(["return"])
@@ -1012,7 +1016,8 @@ def Jyusin(driver, FolURL2, C_SCode, C_Name, C_Zeimoku, C_Teisyutu, CSVName, Csv
                         + C_Teisyutu
                         + ".pdf"
                     )
-
+                FileURL = FileURL.replace("\\\\", "\\")
+                FileURL = "\\" + FileURL
                 pyperclip.copy(FileURL)
                 pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
                 pg.press(["return"])
