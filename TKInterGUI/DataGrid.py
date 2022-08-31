@@ -1059,10 +1059,71 @@ class DataGrid:
                                                     R_CName_c = PT_c
                                                     break
                                                 PT_c += 1
-                                            # ----------------------------------------
-                                            Var = int(
-                                                PT_List[self.pt.startrow][R_CName_c]
-                                            )
+                                            # --------------------------------------------------------
+                                            if tkm[3] == "入金" and R_CName_c != (
+                                                Out_var - 1
+                                            ):
+                                                Var = int(
+                                                    PT_List[self.pt.startrow][R_CName_c]
+                                                )
+                                                AJtxt = AJ_List[0]
+                                                # 複合仕訳の金額割合摘要関数
+                                                AJ.MoneyCalc(
+                                                    0,
+                                                    AJ_List,
+                                                    AJtxt,
+                                                    R_CName,
+                                                    L_CName,
+                                                    L_CName_c,
+                                                    Var,
+                                                )
+                                            elif tkm[3] == "出金" and R_CName_c != (
+                                                In_var - 1
+                                            ):
+                                                Var = int(
+                                                    PT_List[self.pt.startrow][R_CName_c]
+                                                )
+                                                AJtxt = AJ_List[0]
+                                                # 複合仕訳の金額割合摘要関数
+                                                AJ.MoneyCalc(
+                                                    0,
+                                                    AJ_List,
+                                                    AJtxt,
+                                                    R_CName,
+                                                    L_CName,
+                                                    L_CName_c,
+                                                    Var,
+                                                )
+                                            elif tkm[3] == "入金" and R_CName_c == (
+                                                Out_var - 1
+                                            ):
+                                                print("入金スキップ")
+                                            elif tkm[3] == "出金" and R_CName_c == (
+                                                In_var - 1
+                                            ):
+                                                print("出金スキップ")
+                                            else:
+                                                Var = int(
+                                                    PT_List[self.pt.startrow][R_CName_c]
+                                                )
+                                                AJtxt = AJ_List[0]
+                                                # 複合仕訳の金額割合摘要関数
+                                                AJ.MoneyCalc(
+                                                    0,
+                                                    AJ_List,
+                                                    AJtxt,
+                                                    R_CName,
+                                                    L_CName,
+                                                    L_CName_c,
+                                                    Var,
+                                                )
+                                            # --------------------------------------------------------
+                                    else:
+                                        # --------------------------------------------------------
+                                        if tkm[3] == "入金" and R_CName_c != (
+                                            Out_var - 1
+                                        ):
+                                            Var = PT_List[self.pt.startrow][R_CName_c]
                                             AJtxt = AJ_List[0]
                                             # 複合仕訳の金額割合摘要関数
                                             AJ.MoneyCalc(
@@ -1074,32 +1135,77 @@ class DataGrid:
                                                 L_CName_c,
                                                 Var,
                                             )
-                                        # ---------------------------------------------------
-                                    else:
-                                        Var = PT_List[self.pt.startrow][R_CName_c]
-                                        AJtxt = AJ_List[0]
-                                        # 複合仕訳の金額割合摘要関数
-                                        AJ.MoneyCalc(
-                                            0,
-                                            AJ_List,
-                                            AJtxt,
-                                            R_CName,
-                                            L_CName,
-                                            L_CName_c,
-                                            Var,
-                                        )
+                                        elif tkm[3] == "出金" and R_CName_c != (
+                                            In_var - 1
+                                        ):
+                                            Var = PT_List[self.pt.startrow][R_CName_c]
+                                            AJtxt = AJ_List[0]
+                                            # 複合仕訳の金額割合摘要関数
+                                            AJ.MoneyCalc(
+                                                0,
+                                                AJ_List,
+                                                AJtxt,
+                                                R_CName,
+                                                L_CName,
+                                                L_CName_c,
+                                                Var,
+                                            )
+                                        elif tkm[3] == "入金" and R_CName_c == (
+                                            Out_var - 1
+                                        ):
+                                            print("入金スキップ")
+                                        elif tkm[3] == "出金" and R_CName_c == (
+                                            In_var - 1
+                                        ):
+                                            print("出金スキップ")
+                                        else:
+                                            Var = PT_List[self.pt.startrow][R_CName_c]
+                                            AJtxt = AJ_List[0]
+                                            # 複合仕訳の金額割合摘要関数
+                                            AJ.MoneyCalc(
+                                                0,
+                                                AJ_List,
+                                                AJtxt,
+                                                R_CName,
+                                                L_CName,
+                                                L_CName_c,
+                                                Var,
+                                            )
                                 else:
                                     # ########################################################
                                     # 一次元一行の仕訳#########################################
                                     # ########################################################
                                     AJ_List = AJnp
-                                    Var = PT_List[self.pt.startrow][R_CName_c]
-                                    C_Txt = AJ.TxtEdit(
-                                        L_CName,
-                                        Var,
-                                        Var,
-                                    )
-                                    AJ_List[0][L_CName_c] = C_Txt[1]
+                                    # --------------------------------------------------------
+                                    if tkm[3] == "入金" and R_CName_c != (Out_var - 1):
+                                        Var = PT_List[self.pt.startrow][R_CName_c]
+                                        C_Txt = AJ.TxtEdit(
+                                            L_CName,
+                                            Var,
+                                            Var,
+                                        )
+                                        AJ_List[0][L_CName_c] = C_Txt[1]
+                                    elif tkm[3] == "出金" and R_CName_c != (In_var - 1):
+                                        Var = PT_List[self.pt.startrow][R_CName_c]
+                                        C_Txt = AJ.TxtEdit(
+                                            L_CName,
+                                            Var,
+                                            Var,
+                                        )
+                                        AJ_List[0][L_CName_c] = C_Txt[1]
+                                    elif tkm[3] == "入金" and R_CName_c == (Out_var - 1):
+                                        print("入金スキップ")
+                                    elif tkm[3] == "出金" and R_CName_c == (In_var - 1):
+                                        print("出金スキップ")
+                                    else:
+                                        Var = PT_List[self.pt.startrow][R_CName_c]
+                                        C_Txt = AJ.TxtEdit(
+                                            L_CName,
+                                            Var,
+                                            Var,
+                                        )
+                                        AJ_List[0][L_CName_c] = C_Txt[1]
+                                    # --------------------------------------------------------
                             # ################################################################
                             # 適正次元に処理し、リスト化
                             FinalList = []

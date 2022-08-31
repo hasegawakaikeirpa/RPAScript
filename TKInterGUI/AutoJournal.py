@@ -673,8 +673,8 @@ def IOsplitFlow(
         if IO == "入金":
             OCR_h_c = np.where(OCR_h == IO)
             OCR_h_c = OCR_h_c[0]
-            OCR_h_c = OCR_h_c[0]
-            M = OCR_data_Row[OCR_h_c[0]]
+            OCR_h_c = int(OCR_h_c[0])
+            M = OCR_data_Row[OCR_h_c]
             # ミロクデータから入金列を抽出
             colT = ColumCheckListUp(npw_Column, Kari)
             if colT[0] is True:
@@ -715,7 +715,7 @@ def IOsplitFlow(
         elif IO == "出金":
             OCR_h_c = np.where(OCR_h == IO)
             OCR_h_c = OCR_h_c[0]
-            OCR_h_c = OCR_h_c[0]
+            OCR_h_c = int(OCR_h_c[0])
             M = OCR_data_Row[OCR_h_c]
             # ミロクデータから出金列を抽出
             colT = ColumCheckListUp(npw_Column, Kashi)
@@ -747,7 +747,7 @@ def IOsplitFlow(
                     else:
                         IOList.append(list(NGList[1]))
                         return True, IOList
-                elif len(c_npw) == 2:
+                elif len(c_npw) >= 2:
                     GNV = getNearestValue(npw[1:, M_coltxt], M)
                     TS = npw[1:, :]
                     TS = TS[GNV]
@@ -889,6 +889,7 @@ def main(
                                     FinalList.append(F_row)
                             else:
                                 FinalListColumns.append(list(N_Arr[N_r]))
+
             # 一致率100%の仕訳が同日に複数あるか判定-----------------------------------
             # ヘッダーとリストに仕訳番号列を挿入---------------------------------------
             FinalList = np.array(FinalList)
@@ -905,6 +906,9 @@ def main(
             N_C = np.count_nonzero(SortNp >= SortVar, axis=0)
             if N_C == 1:  # 指定一致率以上が1件なら##########################################
                 ind = np.where(SortNp >= SortVar)  # インデックス取得
+                FinalList = FinalList[ind]
+                ind = np.where(SortNp == max(SortNp))  # インデックス取得
+                FinalList = FinalList[ind]
                 FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
                 FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
                 Nind = NPFLOW(
@@ -957,6 +961,9 @@ def main(
                     TotalFinalList.append(DammyList)
             elif N_C > 1:  # 指定一致率以上が1件以上なら##########################################
                 ind = np.where(SortNp >= SortVar)  # インデックス取得
+                FinalList = FinalList[ind]
+                ind = np.where(SortNp == max(SortNp))  # インデックス取得
+                FinalList = FinalList[ind]
                 FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
                 FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
                 Nind = NPFLOW(
@@ -1017,191 +1024,6 @@ def main(
         return True, ColNames, TotalFinalList
     except:
         return False, "", ""
-
-    # try:
-    #     NGList = []
-    #     MJS_data = np.genfromtxt(Roolrul, dtype=None, delimiter=",")  # 元帳CSVをnp配列に変換
-    #     NPC = npCreate(MJS_data, SerchTxt, ColName, "NOALL")
-    #     if NPC[0] is True:
-    #         # 日付文字列データの変換------------------------------------------
-    #         if (
-    #             "." in D_var
-    #             or "|" in D_var
-    #             or "\\" in D_var
-    #             or ":" in D_var
-    #             or "^" in D_var
-    #             or "~" in D_var
-    #         ):
-    #             D_var = (
-    #                 D_var.replace(".", "/")
-    #                 .replace("|", "")
-    #                 .replace("\\", "")
-    #                 .replace(":", "")
-    #                 .replace("^", "")
-    #                 .replace("~", "")
-    #             )
-    #         # 日付文字列データの変換------------------------------------------
-    #         DC = DayCheck(NPC[1], D_var, D_coltxt, "NoALL")
-    #         if DC[0] is True:
-    #             MC = MoneyCheck(DC[1], M_var, M_coltxt, "NoALL")
-    #             if MC[0] is True:
-    #                 NNPC = npTidyUp(MC[1])
-    #                 if NNPC[0] is True:
-    #                     npw = NNPC[1]
-    #                     npw_Column = npw[0, :]
-    #                     NGList.append(list(npw_Column))
-    #                     if IO == "入金":
-    #                         colT = ColumCheckListUp(npw_Column, Kari)
-    #                         if colT[0] is True:
-    #                             c_npw = list(npw)
-    #                             # for c_r in reversed(range((len(c_npw)))):
-    #                             #     npwItem = c_npw[c_r][colT[1]]
-    #                             #     npwItem = npwItem[0]
-    #                             #     if (
-    #                             #         c_r != 0
-    #                             #         and "現金" not in npwItem
-    #                             #         and "預金" not in npwItem
-    #                             #     ):
-    #                             #         NGList.append(c_npw[c_r])
-    #                             #         c_npw.pop(c_r)
-    #                             # Lastap = np.array(c_npw)
-    #                             # if len(Lastap) == 1:
-    #                             #     MB = messagebox.askquestion(
-    #                             #         "確認",
-    #                             #         "自動仕訳抽出結果がありません。入出金条件不一致を表示しますか？",
-    #                             #         icon="warning",
-    #                             #     )
-    #                             #     if MB == "yes":  # If関数
-    #                             #         MB = messagebox.askquestion(
-    #                             #             "確認",
-    #                             #             "はい=入出金条件不一致表示\nいいえ=元帳全体表示",
-    #                             #             icon="warning",
-    #                             #         )
-    #                             #         if MB == "yes":  # If関数
-    #                             #             Lastap = np.array(NGList)
-    #                             #             return Lastap
-    #                             #         else:
-    #                             #             return MJS_data
-    #                             #     else:
-    #                             #         return Lastap
-    #                             # else:
-    #                             #     return Lastap
-    #                     elif IO == "出金":
-    #                         colT = ColumCheckListUp(npw_Column, Kashi)
-    #                         if colT[0] is True:
-    #                             c_npw = list(npw)
-    #                             for c_r in reversed(range((len(c_npw)))):
-    #                                 npwItem = c_npw[c_r][colT[1]]
-    #                                 npwItem = npwItem[0]
-    #                                 if (
-    #                                     c_r != 0
-    #                                     and "現金" not in npwItem
-    #                                     and "預金" not in npwItem
-    #                                 ):
-    #                                     NGList.append(c_npw[c_r])
-    #                                     c_npw.pop(c_r)
-    #                             Lastap = np.array(c_npw)
-    #                             if len(Lastap) == 1:
-    #                                 MB = messagebox.askquestion(
-    #                                     "確認",
-    #                                     "自動仕訳抽出結果がありません。入出金条件不一致を表示しますか？",
-    #                                     icon="warning",
-    #                                 )
-    #                                 if MB == "yes":  # If関数
-    #                                     MB = messagebox.askquestion(
-    #                                         "確認",
-    #                                         "はい=入出金条件不一致表示\nいいえ=元帳全体表示",
-    #                                         icon="warning",
-    #                                     )
-    #                                     if MB == "yes":  # If関数
-    #                                         Lastap = np.array(NGList)
-    #                                         return Lastap
-    #                                     else:
-    #                                         return MJS_data
-    #                                 else:
-    #                                     return Lastap
-    #                             else:
-    #                                 return Lastap
-    #                 else:
-    #                     npw = NNPC[1]
-    #                     npw_Column = npw[0, :]
-    #                     NGList.append(list(npw_Column))
-    #                     if IO == "入金":
-    #                         colT = ColumCheckListUp(npw_Column, Kari)
-    #                         if colT[0] is True:
-    #                             c_npw = list(npw)
-    #                             for c_r in reversed(range((len(c_npw)))):
-    #                                 npwItem = c_npw[c_r][colT[1]]
-    #                                 npwItem = npwItem[0]
-    #                                 if (
-    #                                     c_r != 0
-    #                                     and "現金" not in npwItem
-    #                                     and "預金" not in npwItem
-    #                                 ):
-    #                                     NGList.append(c_npw[c_r])
-    #                                     c_npw.pop(c_r)
-    #                             Lastap = np.array(c_npw)
-    #                             if len(Lastap) == 1:
-    #                                 MB = messagebox.askquestion(
-    #                                     "確認",
-    #                                     "自動仕訳抽出結果がありません。入出金条件不一致を表示しますか？",
-    #                                     icon="warning",
-    #                                 )
-    #                                 if MB == "yes":  # If関数
-    #                                     MB = messagebox.askquestion(
-    #                                         "確認",
-    #                                         "はい=入出金条件不一致表示\nいいえ=元帳全体表示",
-    #                                         icon="warning",
-    #                                     )
-    #                                     if MB == "yes":  # If関数
-    #                                         Lastap = np.array(NGList)
-    #                                         return Lastap
-    #                                     else:
-    #                                         return MJS_data
-    #                                 else:
-    #                                     return Lastap
-    #                             else:
-    #                                 return Lastap
-    #                     elif IO == "出金":
-    #                         colT = ColumCheckListUp(npw_Column, Kashi)
-    #                         if colT[0] is True:
-    #                             c_npw = list(npw)
-    #                             for c_r in reversed(range((len(c_npw)))):
-    #                                 npwItem = c_npw[c_r][colT[1]]
-    #                                 npwItem = npwItem[0]
-    #                                 if (
-    #                                     c_r != 0
-    #                                     and "現金" not in npwItem
-    #                                     and "預金" not in npwItem
-    #                                 ):
-    #                                     NGList.append(c_npw[c_r])
-    #                                     c_npw.pop(c_r)
-    #                             Lastap = np.array(c_npw)
-    #                             if len(Lastap) == 1:
-    #                                 MB = messagebox.askquestion(
-    #                                     "確認",
-    #                                     "自動仕訳抽出結果がありません。入出金条件不一致を表示しますか？",
-    #                                     icon="warning",
-    #                                 )
-    #                                 if MB == "yes":  # If関数
-    #                                     MB = messagebox.askquestion(
-    #                                         "確認",
-    #                                         "はい=入出金条件不一致表示\nいいえ=元帳全体表示",
-    #                                         icon="warning",
-    #                                     )
-    #                                     if MB == "yes":  # If関数
-    #                                         Lastap = np.array(NGList)
-    #                                         return Lastap
-    #                                     else:
-    #                                         return MJS_data
-    #                                 else:
-    #                                     return Lastap
-    #                             else:
-    #                                 return Lastap
-    # except:
-    #     Lastap = ["エラー:抽出失敗"]
-    #     Lastap = np.array(Lastap)
-    #     return Lastap
 
 
 # ----------------------------------------------------------------------------
