@@ -660,13 +660,21 @@ def TxtDayChange(D_var):
 
 
 # ----------------------------------------------------------------------------
-def IOsplitFlow(IO, npw_Column, Kari, Kashi, npw, NGList, N_C):
+def IOsplitFlow(
+    OCR_data, OCR_data_Row, IO, npw_Column, Kari, Kashi, npw, NGList, N_C, M_coltxt
+):
     """
     借貸方の科目名から現預金処理なのか判定
     """
     try:
         IOList = []
+        OCR_h = OCR_data[0, :]
+
         if IO == "入金":
+            OCR_h_c = np.where(OCR_h == IO)
+            OCR_h_c = OCR_h_c[0]
+            OCR_h_c = OCR_h_c[0]
+            M = OCR_data_Row[OCR_h_c[0]]
             # ミロクデータから入金列を抽出
             colT = ColumCheckListUp(npw_Column, Kari)
             if colT[0] is True:
@@ -697,9 +705,18 @@ def IOsplitFlow(IO, npw_Column, Kari, Kashi, npw, NGList, N_C):
                     else:
                         IOList.append(list(NGList[1]))
                         return True, IOList
+                elif len(c_npw) == 2:
+                    GNV = getNearestValue(npw[1:, M_coltxt], M)
+                    TS = npw[1:, :]
+                    TS = TS[GNV]
+                    return True, TS
                 else:
                     return False, NGList
         elif IO == "出金":
+            OCR_h_c = np.where(OCR_h == IO)
+            OCR_h_c = OCR_h_c[0]
+            OCR_h_c = OCR_h_c[0]
+            M = OCR_data_Row[OCR_h_c]
             # ミロクデータから出金列を抽出
             colT = ColumCheckListUp(npw_Column, Kashi)
             if colT[0] is True:
@@ -730,13 +747,38 @@ def IOsplitFlow(IO, npw_Column, Kari, Kashi, npw, NGList, N_C):
                     else:
                         IOList.append(list(NGList[1]))
                         return True, IOList
+                elif len(c_npw) == 2:
+                    GNV = getNearestValue(npw[1:, M_coltxt], M)
+                    TS = npw[1:, :]
+                    TS = TS[GNV]
+                    return True, TS
                 else:
                     return False, NGList
     except:
         return False
 
 
-# ----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------
+def getNearestValue(list, num):
+    """
+    概要: リストからある値に最も近い値を返却する関数
+    @param list: データ配列
+    @param num: 対象値
+    @return 対象値に最も近い値
+    """
+
+    # リスト要素と対象値の差分を計算し最小値のインデックスを取得
+    try:
+        num = int(num)
+        array = np.asarray(list)
+        array = array.astype(int)
+        idx = (np.abs(array - num)).argmin()
+        return idx
+    except:
+        return ""
+
+
+# -----------------------------------------------------------------------------------------
 def main(
     ptpos,
     ColName,
@@ -888,6 +930,8 @@ def main(
                         np_h = Nind[1][0, :]
                         # 入出金での処理分け
                         IOS = IOsplitFlow(
+                            OCR_data,
+                            OCR_data_Row,
                             Nind[2],
                             np_h,
                             Kari,
@@ -895,6 +939,7 @@ def main(
                             Nind[1],
                             NGList,
                             N_C,
+                            M_coltxt,
                         )
                         if IOS[0] is True:
                             TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
@@ -938,6 +983,8 @@ def main(
                         np_h = Nind[1][0, :]
                         # 入出金での処理分け
                         IOS = IOsplitFlow(
+                            OCR_data,
+                            OCR_data_Row,
                             Nind[2],
                             np_h,
                             Kari,
@@ -945,6 +992,7 @@ def main(
                             Nind[1],
                             NGList,
                             N_C,
+                            M_coltxt,
                         )
                         if IOS[0] is True:
                             TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
@@ -1245,6 +1293,7 @@ def AllChange(
                                         FinalList.append(F_row)
                                 else:
                                     FinalListColumns.append(list(N_Arr[N_r]))
+
                     else:
                         # 検索文字列が変換表から変換しない場合
                         SerchTxt = SerchTxt[1]
@@ -1265,6 +1314,7 @@ def AllChange(
                                         FinalList.append(F_row)
                                 else:
                                     FinalListColumns.append(list(N_Arr[N_r]))
+
                 # 一致率100%の仕訳が同日に複数あるか判定-----------------------------------
                 # ヘッダーとリストに仕訳番号列を挿入---------------------------------------
                 FinalList = np.array(FinalList)
@@ -1281,6 +1331,9 @@ def AllChange(
                 N_C = np.count_nonzero(SortNp >= SortVar, axis=0)
                 if N_C == 1:  # 指定一致率以上が1件なら##########################################
                     ind = np.where(SortNp >= SortVar)  # インデックス取得
+                    FinalList = FinalList[ind]
+                    ind = np.where(SortNp == max(SortNp))  # インデックス取得
+                    FinalList = FinalList[ind]
                     FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
                     FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
                     Nind = NPFLOW(
@@ -1306,6 +1359,8 @@ def AllChange(
                             np_h = Nind[1][0, :]
                             # 入出金での処理分け
                             IOS = IOsplitFlow(
+                                OCR_data,
+                                OCR_data_Row,
                                 Nind[2],
                                 np_h,
                                 Kari,
@@ -1313,6 +1368,7 @@ def AllChange(
                                 Nind[1],
                                 NGList,
                                 N_C,
+                                M_coltxt,
                             )
                             if IOS[0] is True:
                                 TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
@@ -1332,6 +1388,9 @@ def AllChange(
                     N_C > 1
                 ):  # 指定一致率以上が1件以上なら##########################################
                     ind = np.where(SortNp >= SortVar)  # インデックス取得
+                    FinalList = FinalList[ind]
+                    ind = np.where(SortNp == max(SortNp))  # インデックス取得
+                    FinalList = FinalList[ind]
                     FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
                     FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
                     Nind = NPFLOW(
@@ -1358,6 +1417,8 @@ def AllChange(
                             np_h = Nind[1][0, :]
                             # 入出金での処理分け
                             IOS = IOsplitFlow(
+                                OCR_data,
+                                OCR_data_Row,
                                 Nind[2],
                                 np_h,
                                 Kari,
@@ -1365,6 +1426,7 @@ def AllChange(
                                 Nind[1],
                                 NGList,
                                 N_C,
+                                M_coltxt,
                             )
                             if IOS[0] is True:
                                 TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
@@ -1595,6 +1657,38 @@ def NPFLOW(
 
 
 # ----------------------------------------------------------------------------
+def NPS_Sort(
+    FL,
+    TotalFinalList,
+    FinalList,
+):
+    try:
+        np_h = FinalList[0, :]
+        # 末尾含め3列削除-------------------------------------
+        np_h_c = np_h.shape[0] - 1
+        for np_hItem in reversed(np_h):
+            if "一致率" == np_hItem and FL == np_hItem:
+                F_List = FinalList[1:, np_h_c]
+                break
+            elif "日付一致率" == np_hItem and FL == np_hItem:
+                F_List = FinalList[1:, np_h_c]
+                break
+            elif "仕訳金額差額" == np_hItem and FL == np_hItem:
+                F_List = FinalList[1:, np_h_c]
+                break
+            np_h_c -= 1
+        # ---------------------------------------------------
+        F_List = np.where(F_List == max(F_List))
+        FinalList = FinalList[1:, :]
+        FinalList = FinalList[F_List]
+        FinalList = np.vstack((np_h, FinalList))
+        TotalFinalList = FinalList
+        return True, TotalFinalList
+    except:
+        return False, ""
+
+
+# ----------------------------------------------------------------------------
 def NPS_FLOW(
     HukugouKey,
     TotalFinalList,
@@ -1606,14 +1700,29 @@ def NPS_FLOW(
         np_h_c = np_h.shape[0] - 1
         for np_hItem in reversed(np_h):
             if "一致率" == np_hItem:
-                FinalList = np.delete(FinalList, np_h_c, 1)
-                np_h = np.delete(np_h, np_h_c, 0)
+                FinalList = NPS_Sort("一致率", TotalFinalList, FinalList)
+                if FinalList[0] is True:
+                    FinalList = FinalList[1]
+                    FinalList = np.delete(FinalList, np_h_c, 1)
+                    np_h = np.delete(np_h, np_h_c, 0)
+                else:
+                    print("一致率ソートで失敗")
             elif "日付一致率" == np_hItem:
-                FinalList = np.delete(FinalList, np_h_c, 1)
-                np_h = np.delete(np_h, np_h_c, 0)
+                FinalList = NPS_Sort("日付一致率", TotalFinalList, FinalList)
+                if FinalList[0] is True:
+                    FinalList = FinalList[1]
+                    FinalList = np.delete(FinalList, np_h_c, 1)
+                    np_h = np.delete(np_h, np_h_c, 0)
+                else:
+                    print("日付一致率ソートで失敗")
             elif "仕訳金額差額" == np_hItem:
-                FinalList = np.delete(FinalList, np_h_c, 1)
-                np_h = np.delete(np_h, np_h_c, 0)
+                FinalList = NPS_Sort("仕訳金額差額", TotalFinalList, FinalList)
+                if FinalList[0] is True:
+                    FinalList = FinalList[1]
+                    FinalList = np.delete(FinalList, np_h_c, 1)
+                    np_h = np.delete(np_h, np_h_c, 0)
+                else:
+                    print("仕訳金額差額ソートで失敗")
             np_h_c -= 1
         # ---------------------------------------------------
         TotalFinalList = FinalList
