@@ -97,7 +97,7 @@ class Application(tk.Frame):
         self.index = 0  # 最新のインデックス番号
         self.indexes = []  # インデックスの並び
         # self.createEntry(0, bar_x=False)
-        self.ColList = ["日付", "摘要", "出金", "入金", "残高"]
+        self.ColList = ["日付"]
         i = 0
         for ColListItem in self.ColList:
             self.createEntry(i, bar_x=False)
@@ -116,19 +116,19 @@ class Application(tk.Frame):
         # テキストボックスの作成と配置
         tk.Label(Setframe, text="日付列番号").grid(row=0, column=0)  # 位置指定
         self.DaySet = tk.Entry(Setframe, width=30)
-        self.DaySet.insert(0, "1")
+        self.DaySet.insert(0, "")
         self.DaySet.grid(row=0, column=1)
         tk.Label(Setframe, text="金額表示列番号").grid(row=1, column=0)  # 位置指定
         self.MoneySet = tk.Entry(Setframe, width=30)
-        self.MoneySet.insert(0, "3,4,5")
+        self.MoneySet.insert(0, "")
         self.MoneySet.grid(row=1, column=1)
         tk.Label(Setframe, text="置換対象列番号").grid(row=2, column=0)  # 位置指定
         self.ReplaceSet = tk.Entry(Setframe, width=30)
-        self.ReplaceSet.insert(0, "2,3,4")
+        self.ReplaceSet.insert(0, "")
         self.ReplaceSet.grid(row=2, column=1)
         tk.Label(Setframe, text="置換対象文字列").grid(row=3, column=0)  # 位置指定
         self.ReplaceStr = tk.Entry(Setframe, width=30)
-        self.ReplaceStr.insert(0, "CDカード,マツモトトソウテン,ザンダカショウメイショ")
+        self.ReplaceStr.insert(0, "")
         self.ReplaceStr.grid(row=3, column=1)
         #################################################################################
         # サイドメニュー内ボタンフレーム###################################################
@@ -279,7 +279,14 @@ class Application(tk.Frame):
         列名設定項目追加ボタン処理
         """
         # 追加する位置
-        next = self.indexes.index(id) + 1
+        wn = event.widget
+        si_r = 0
+        for si in self.insertEntries:
+            if si == wn:
+                break
+            si_r += 1
+        # next = self.indexes.index(id) + 1
+        next = si_r + 1
         self.index = self.index + 1
         # エントリーウィジェットを作成して配置
         self.createEntry(next, bar_x=False)
@@ -516,7 +523,16 @@ def StLine(canvastop, CW, CH):
     縦直線追加ボタン処理
     """
     TName = "Line" + str(len(tagsList) + 1)
-    canvastop.create_line(CW - 50, 0, CW - 50, CH, tags=TName, fill="#FF0000")
+    canvastop.create_line(
+        CW - 50,
+        0,
+        CW - 50,
+        CH,
+        tags=TName,
+        width=5,
+        fill="#FF0000",
+        activefill="#DBDD6F",
+    )
     canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
     canvastop.tag_bind(TName, "<B1-Motion>", drag1)
     BSS = [0, 0, 0, 0]
@@ -530,7 +546,16 @@ def StWLine(canvastop, CW, CH):
     横直線追加ボタン処理
     """
     TName = "Line" + str(len(tagsList) + 1)
-    canvastop.create_line(0, CH - 50, CW, CH - 50, tags=TName, fill="#00FF40")
+    canvastop.create_line(
+        0,
+        CH - 50,
+        CW,
+        CH - 50,
+        tags=TName,
+        width=5,
+        fill="#00FF40",
+        activefill="#DBDD6F",
+    )
     canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
     canvastop.tag_bind(TName, "<B1-Motion>", drag1)
     TSS = [TName, 0, CH - 50, CW, CH - 50, "Tate"]
@@ -555,7 +580,16 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
         ripar2 = readcsv1Item[2] * HCW  # * CHh
         ripar3 = readcsv1Item[3] * HCH  # * CWw
         TName = "Line" + str(ri)
-        canvas.create_line(ripar0, ripar1, ripar2, ripar3, tags=TName, fill="#FF0000")
+        canvas.create_line(
+            ripar0,
+            ripar1,
+            ripar2,
+            ripar3,
+            tags=TName,
+            width=5,
+            fill="#FF0000",
+            activefill="#DBDD6F",
+        )
         canvas.tag_bind(TName, "<ButtonPress-1>", click1)
         canvas.tag_bind(TName, "<B1-Motion>", drag1)
         canvas.place(x=0, y=0)
@@ -567,7 +601,16 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
         ripar2 = readcsv2Item[2] * HCW  # * CHh
         ripar3 = readcsv2Item[3] * HCH  # * CWw
         TName = "Line" + str(ri)
-        canvas.create_line(ripar0, ripar1, ripar2, ripar3, tags=TName, fill="#00FF40")
+        canvas.create_line(
+            ripar0,
+            ripar1,
+            ripar2,
+            ripar3,
+            tags=TName,
+            width=5,
+            fill="#00FF40",
+            activefill="#DBDD6F",
+        )
         canvas.tag_bind(TName, "<ButtonPress-1>", click1)
         canvas.tag_bind(TName, "<B1-Motion>", drag1)
         canvas.place(x=0, y=0)

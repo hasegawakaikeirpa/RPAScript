@@ -52,7 +52,7 @@ class DataGrid:
         self.Sub_Frame.pack_forget()
         ########################################################################################
         # フレーム設定---------------------------------------------------------------------
-        DGF.create_Frame(self)  # OCR表フレーム
+        DGF.create_Frame(self)  # OCR抽出結果表フレーム
         DGF.create_Frame2(self)  # 出力表フレーム
         DGF.create_SettingFrame(self)  # 設定メインフレーム
         DGF.create_Frame3(self)  # 元帳(仕訳候補)フレーム
@@ -462,64 +462,62 @@ class DataGrid:
             # self.Main_Frame.pack_forget()
 
     # -------------------------------------------------------------------------------------
-    def AJ_copyCalc(self, csvurl):
+    def AJ_copyCalc(self):
         """
-        DGFrame.py
-        ↓
-        def create_SettingFrame(self)
-        ↓
-        self.AJ_copy
-        bind関数
+        仕訳候補の転記
         """
         try:
             if self.pt3.startrow is None:
-                tk.messagebox.showinfo("確認", "抽出仕訳表のセルが選択されていません。")
+                if len(self.pt3.model.df) == 0:
+                    tk.messagebox.showinfo("確認", "仕訳予想結果のセルが選択されていません。")
+                else:
+                    self.AJ_copyCalc_Sub()
+                    # if SAJ is False:
+                    #     tk.messagebox.showinfo("確認", "詳細不明エラーです。")
             else:
                 if self.pt2.startrow is None:
-                    tk.messagebox.showinfo("確認", "作成仕訳表のセルが選択されていません。")
-                else:
-                    pt2Col = np.array(self.pt2.model.df.columns)
-                    pt2arr = np.array(self.pt2.model.df)
-                    pt3arr = np.array(self.pt3.model.df)
-                    pt3List = []
-                    if self.pt3.startrow != self.pt3.endrow:
-                        for s_e_r in range(self.pt3.startrow, self.pt3.endrow + 1):
-                            if s_e_r != self.pt3.endrow + 1:
-                                pt3List.append(list(pt3arr[s_e_r]))
-                        pt3List = np.array(pt3List)
-                        pt2arr = np.insert(
-                            pt2arr, self.pt2.startrow + 1, pt3List, axis=0
-                        )
-                        FinalList = np.vstack((pt2Col, pt2arr))
-                        FinalList = list(FinalList)
-                        # ------------------------------------------------------------------
-                        enc = CSVO.getFileEncoding(AJurl)
-                        with open(AJurl, "wt", encoding=enc, newline="") as fout:
-                            # ライター（書き込み者）を作成
-                            writer = csv.writer(fout)
-                            writer.writerows(FinalList)
-
-                        self.pt2.importCSV(AJurl, encoding=enc)
-                        self.pt2.redraw
+                    if len(self.pt2.model.df) == 0:
+                        self.pt2.startrow = 0
+                        self.AJ_copyCalc_Sub()
                     else:
-                        pt3List.append(list(pt3arr[self.pt3.startrow]))
-                        pt3List = np.array(pt3List)
-                        pt2arr = np.insert(
-                            pt2arr, self.pt2.startrow + 1, pt3List, axis=0
-                        )
-                        FinalList = np.vstack((pt2Col, pt2arr))
-                        FinalList = list(FinalList)
-                        # ------------------------------------------------------------------
-                        enc = CSVO.getFileEncoding(AJurl)
-                        with open(AJurl, "wt", encoding=enc, newline="") as fout:
-                            # ライター（書き込み者）を作成
-                            writer = csv.writer(fout)
-                            writer.writerows(FinalList)
-
-                        self.pt2.importCSV(AJurl, encoding=enc)
-                        self.pt2.redraw
+                        tk.messagebox.showinfo("確認", "作成仕訳表の挿入位置が選択されていません。")
+                else:
+                    self.AJ_copyCalc_Sub()
+                    # if SAJ is False:
+                    #     tk.messagebox.showinfo("確認", "詳細不明エラーです。")
         except:
-            tk.messagebox.showinfo("確認", "エラーです。自動仕訳実行後に抽出仕訳表のセルを選択し、実行してください。")
+            tk.messagebox.showinfo("確認", "エラーです。自動仕訳実行後に仕訳予想結果のセルを選択し、実行してください。")
+
+    # -------------------------------------------------------------------------------------
+    def AJ_copyCalc_Sub(self):
+        """
+        仕訳候補の転記(Sub)
+        """
+        try:
+            pt2Col = np.array(self.pt2.model.df.columns)
+            pt2arr = np.array(self.pt2.model.df)
+            pt3arr = np.array(self.pt3.model.df)
+            pt3List = []
+            for s_e_r in self.pt3.rowrange:
+                pt3List.append(list(pt3arr[s_e_r]))
+            pt3List = np.array(pt3List)
+            if pt2arr.shape[0] == 0:
+                pt2arr = pt3arr
+            else:
+                pt2arr = np.insert(pt2arr, self.pt2.startrow, pt3List, axis=0)
+            FinalList = np.vstack((pt2Col, pt2arr))
+            FinalList = list(FinalList)
+            # ------------------------------------------------------------------
+            enc = CSVO.getFileEncoding(self.JounalFileName)
+            with open(self.JounalFileName, "wt", encoding=enc, newline="") as fout:
+                # ライター（書き込み者）を作成
+                writer = csv.writer(fout)
+                writer.writerows(FinalList)
+            self.pt2.importCSV(self.JounalFileName, encoding=enc)
+            self.pt2.redraw
+            return True
+        except:
+            return False
 
     # -----------------------------------------------------------------------------------------
     def AJAllCalc(self, csvurl):
@@ -533,7 +531,7 @@ class DataGrid:
         bind関数
         """
         global AJSeturl
-        self.FileName = csvurl  # OCR表
+        self.FileName = csvurl  # OCR抽出結果表
         self.JounalFileName = AJurl
         self.Roolurl = Roolurl  # テキスト置換ルール代入
         # SetList = self.GetTxt_ChangeEntry(0)  # テキスト置換ルール代入
@@ -605,15 +603,15 @@ class DataGrid:
                 MJSList,
             )  # 仕訳候補を抽出
 
-            PT_ColList = list(self.pt.model.df.columns)  # OCR表の列名リスト
+            PT_ColList = list(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
             PT_List = np.array(self.pt.model.df)
-            PT_List = list(PT_List)  # OCR表の列名リスト
+            PT_List = list(PT_List)  # OCR抽出結果表の列名リスト
             # データ内のFalse,nan処理--------------------------------------------
             if AJ_List[0] is True:
                 AJ_Column = AJ_List[1]
                 AJ_List = AJ_List[2]
                 # ################################################################
-                # OCR表の値を変換ルールに従って自動仕訳表に代入--------------------
+                # OCR抽出結果表の値を変換ルールに従って自動仕訳表に代入--------------------
                 for r in range(len(self.Frame7EntL)):
                     L_CName = self.Frame7EntL[r].get()
                     R_CName = self.Frame7EntR[r].get()
@@ -625,7 +623,7 @@ class DataGrid:
                             break
                         PT_c += 1
                     # -----------------------------------------------------------
-                    # OCR表の列番号検索-------------------------------------------
+                    # OCR抽出結果表の列番号検索-------------------------------------------
                     PT_c = 0
                     for PT_ColListItem in PT_ColList:
                         if R_CName == PT_ColListItem:
@@ -659,7 +657,7 @@ class DataGrid:
                                         R_CName = O
                                     elif R_CName == O:
                                         R_CName = I
-                                    # OCR表の列番号検索---------------------------
+                                    # OCR抽出結果表の列番号検索---------------------------
                                     PT_c = 0
                                     for PT_ColListItem in PT_ColList:
                                         if R_CName == PT_ColListItem:
@@ -712,7 +710,7 @@ class DataGrid:
                                         R_CName = O
                                     elif R_CName == O:
                                         R_CName = I
-                                    # OCR表の列番号検索---------------------------
+                                    # OCR抽出結果表の列番号検索---------------------------
                                     PT_c = 0
                                     for PT_ColListItem in PT_ColList:
                                         if R_CName == PT_ColListItem:
@@ -826,7 +824,7 @@ class DataGrid:
         self.Roolurl = Roolurl
 
         if self.pt.startrow is None:
-            tk.messagebox.showinfo("確認", "OCR表のセルが選択されていません。")
+            tk.messagebox.showinfo("確認", "OCR抽出結果表のセルが選択されていません。")
         else:
             # SetList = self.GetTxt_ChangeEntry(0)  # テキスト置換ルール代入
             st = 0  # 行ポジション
@@ -924,9 +922,9 @@ class DataGrid:
                         MJSList,
                     )  # 仕訳候補を抽出
 
-                    PT_ColList = list(self.pt.model.df.columns)  # OCR表の列名リスト
+                    PT_ColList = list(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
                     PT_List = np.array(self.pt.model.df)
-                    PT_List = list(PT_List)  # OCR表の列名リスト
+                    PT_List = list(PT_List)  # OCR抽出結果表の列名リスト
                     # データ内のFalse,nan処理--------------------------------------------
                     if AJ_List[0] is True:
                         AJ_Column = AJ_List[1]
@@ -945,7 +943,7 @@ class DataGrid:
                                 break
                         # ################################################################
                         if CalcFlag is True:
-                            # OCR表の値を変換ルールに従って自動仕訳表に代入--------------------
+                            # OCR抽出結果表の値を変換ルールに従って自動仕訳表に代入--------------------
                             for r in range(len(self.Frame7EntL)):
                                 L_CName = self.Frame7EntL[r].get()
                                 R_CName = self.Frame7EntR[r].get()
@@ -957,7 +955,7 @@ class DataGrid:
                                         break
                                     PT_c += 1
                                 # -----------------------------------------------------------
-                                # OCR表の列番号検索-------------------------------------------
+                                # OCR抽出結果表の列番号検索-------------------------------------------
                                 PT_c = 0
                                 for PT_ColListItem in PT_ColList:
                                     if R_CName == PT_ColListItem:
@@ -996,7 +994,7 @@ class DataGrid:
                                                 R_CName = O
                                             elif R_CName == O:
                                                 R_CName = I
-                                            # OCR表の列番号検索---------------------------
+                                            # OCR抽出結果表の列番号検索---------------------------
                                             PT_c = 0
                                             for PT_ColListItem in PT_ColList:
                                                 if R_CName == PT_ColListItem:
@@ -1052,7 +1050,7 @@ class DataGrid:
                                                 R_CName = O
                                             elif R_CName == O:
                                                 R_CName = I
-                                            # OCR表の列番号検索---------------------------
+                                            # OCR抽出結果表の列番号検索---------------------------
                                             PT_c = 0
                                             for PT_ColListItem in PT_ColList:
                                                 if R_CName == PT_ColListItem:

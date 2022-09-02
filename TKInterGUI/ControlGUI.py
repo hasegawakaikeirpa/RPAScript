@@ -95,8 +95,8 @@ class ControlGUI:
             self.model.DrawImage(fname, self.canvas, "None")
         return self.file_pos, self.model
 
-    def pdf_image(self, pdf_file, fmtt, dpi):
-        mpd = self.model.pdf_image(pdf_file, fmtt, dpi)
+    def pdf_image(self, pdf_file, fmtt, dpi, PBAR):
+        mpd = self.model.pdf_image(pdf_file, fmtt, dpi, PBAR)
         if mpd is True:
             return True
         else:

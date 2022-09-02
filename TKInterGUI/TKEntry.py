@@ -5,6 +5,9 @@ import WarekiHenkan as wh
 
 # -----------------------------------------------------------------------------------------
 def tomlEntries(self):  # , tomltitle):
+    """
+    概要: tomlファイルのインポート
+    """
     self.tomlEntries = []  # Entryのインスタンス
     self.tomlinsertEntries = []  # ラベルインスタンス
     self.tomlindex = 0  # 最新のインデックス番号
@@ -23,7 +26,9 @@ def tomlEntries(self):  # , tomltitle):
 # -----------------------------------------------------------------------------------------
 # エントリーウィジェットを再配置
 def updatetomlEntries(self):
-
+    """
+    概要: toml要素の再配置
+    """
     # エントリーウィジェットマネージャを参照して再配置
     for i in range(len(self.tomlindexes)):
         self.tomlEntries[i].grid(column=1, row=i)
@@ -35,7 +40,9 @@ def updatetomlEntries(self):
 # -----------------------------------------------------------------------------------------
 # エントリーウィジェットを作成して配置
 def createtomlEntry(self, next, ColNameItem):  # , tomltitle):
-
+    """
+    概要: toml要素の作成
+    """
     # 最初のエントリーウィジェットを追加
     # self.tomlEntries.insert(next, tk.Entry(self.frame4, width=20))
     lb = tk.Label(self.frame4, text=ColNameItem)
@@ -96,7 +103,7 @@ def createtomlEntry(self, next, ColNameItem):  # , tomltitle):
 # -----------------------------------------------------------------------------------------
 def treeviewEntries(self):  # , tomltitle):
     """
-    ツリービューを配置
+    URL指定ツリービューを配置
     """
     # エントリーウィジェットマネージャを初期化
     self.Entries = []  # Entryのインスタンス
@@ -171,15 +178,19 @@ def treeviewEntries(self):  # , tomltitle):
 
 
 # -----------------------------------------------------------------------------------------
-# エントリーウィジェットを削除
 def removeEntry(self):
+    """
+    エントリーウィジェットを削除
+    """
     for i in self.Treeview_1.get_children():
         self.Treeview_1.delete(i)
 
 
 # -----------------------------------------------------------------------------------------
-# エントリーウィジェットを作成して配置
 def Frame7createtomlEntry(self, next, AJL, AJR):
+    """
+    列対応表の要素作成
+    """
     try:
         self.Setting_Btn.destroy()
     except:
@@ -251,6 +262,9 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
 
 # -----------------------------------------------------------------------------------------
 def Frame7Entries(self):
+    """
+    列対応表の作成
+    """
     global g_Frame7EntL
     global g_Frame7EntR
     global g_Frame7Labels
@@ -296,6 +310,9 @@ def Frame7Entries(self):
 
 # -----------------------------------------------------------------------------------------
 def AJ_setCalc(self):
+    """
+    自動仕訳候補の転記
+    """
     if self.pt.startcol is None:
         tk.messagebox.showinfo("確認", "OCR表のセルが選択されていません。変換元の列のセルを選択して下さい。")
     else:
@@ -342,6 +359,9 @@ def AJ_setCalc(self):
 
 # -----------------------------------------------------------------------------------------
 def AJ_EntDelete(self):
+    """
+    列対応表の削除
+    """
     Frame7removeEntry(self)
     wid_n = self.widget
     for g_r in range(len(g_Frame7EntL)):
@@ -355,28 +375,9 @@ def AJ_EntDelete(self):
 
 
 # -----------------------------------------------------------------------------------------
-def Frame7updatetomlEntries(self):
-    """
-    エントリーウィジェットを再配置
-    """
-    # エントリーウィジェットマネージャを参照して再配置
-    for i in range(len(g_Frame7EntL)):
-        g_Frame7EntL[i].grid(row=i + 1, column=0)
-    for i in range(len(g_Frame7EntR)):
-        g_Frame7EntR[i].grid(row=i + 1, column=2)
-    for i in range(len(g_Frame7Labels)):
-        g_Frame7Labels[i].grid(row=i + 1, column=1)
-    for i in range(len(g_Frame7Btns)):
-        g_Frame7Btns[i].grid(row=i + 1, column=3)
-        g_Frame7Btns[i].bind("<Button-1>", AJ_EntDelete)
-    # -----------------------------------------------------------------------------------------
-    # エントリーウィジェットを削除
-
-
-# -----------------------------------------------------------------------------------------
 def Frame7removeEntry(self):
     """
-    エントリーウィジェットを削除
+    列対応表の全削除
     """
     # Btn_n = self.widget
     for i in g_Frame7EntL:
@@ -391,6 +392,23 @@ def Frame7removeEntry(self):
     for i in g_Frame7Btns:
         # i.destroy()
         i.grid_forget()
+
+
+# -----------------------------------------------------------------------------------------
+def Frame7updatetomlEntries(self):
+    """
+    列対応表の再配置
+    """
+    # エントリーウィジェットマネージャを参照して再配置
+    for i in range(len(g_Frame7EntL)):
+        g_Frame7EntL[i].grid(row=i + 1, column=0)
+    for i in range(len(g_Frame7EntR)):
+        g_Frame7EntR[i].grid(row=i + 1, column=2)
+    for i in range(len(g_Frame7Labels)):
+        g_Frame7Labels[i].grid(row=i + 1, column=1)
+    for i in range(len(g_Frame7Btns)):
+        g_Frame7Btns[i].grid(row=i + 1, column=3)
+        g_Frame7Btns[i].bind("<Button-1>", AJ_EntDelete)
 
 
 # -----------------------------------------------------------------------------------------
@@ -415,6 +433,9 @@ def FrameChangeremoveEntry(self):
 
 # -----------------------------------------------------------------------------------------
 def FrameChangeEntries(self):  # , tomltitle):
+    """
+    エントリーウィジェットを削除
+    """
     self.ChangeTxtEntries = []  # Entryのインスタンス
     self.ChangeTxtinsertEntries = []  # ラベルインスタンス
     self.ChangeTxtindex = 0  # 最新のインデックス番号

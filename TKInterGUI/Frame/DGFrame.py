@@ -152,7 +152,7 @@ def create_SettingFrame(self):
         self.frame6,
         text="抽出仕訳転記",
         width=20,
-        command=lambda: self.AJ_copyCalc(self.FileName),
+        command=lambda: self.AJ_copyCalc(),
         bg="pink",
     )
     self.AJ_copy.grid(row=7, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定

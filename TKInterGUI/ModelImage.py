@@ -104,7 +104,7 @@ class ModelImage:
             np_img = np_img[sy : sy + ch, sx : sx + cw, :]
 
         elif "clip_Erace" in command:
-            img = cv2.imread(self.original_img.filename)
+            img = imread(self.original_img.filename)
             img = cv2.rectangle(
                 img,
                 (args["sx"], args["sy"]),
@@ -112,7 +112,7 @@ class ModelImage:
                 (255, 255, 255),
                 thickness=-1,
             )
-            cv2.imwrite(self.original_img.filename, img)
+            imwrite(self.original_img.filename, img)
             np_img = np.array(img)
 
         return Image.fromarray(np_img)
@@ -227,7 +227,7 @@ class ModelImage:
         @return 傾き値リスト(np配列)
         """
         try:
-            img = cv2.imread(imgurl)
+            img = imread(imgurl)
             # 回転-----------------------------------------------------------------------
             # StraightLineDetectionで最後の一つになるまで絞りだしたピクセル連続線から
             # 角度をmathアークタンジェントで計算し、degreesでラジアン→℃変換後画像を回転
@@ -257,9 +257,9 @@ class ModelImage:
 
         Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
         Inv_img.save(imgurl)  # 白黒反転保存(PIL)
-        img = cv2.imread(imgurl)  # 白黒反転画像(cv2)
+        img = imread(imgurl)  # 白黒反転画像(cv2)
         CleanUp_img = self.NoiseRemoval(img, ksize)  # ノイズ除去(cv2)
-        cv2.imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
+        imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
         Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
         Inv_img.save(imgurl)  # 白黒反転保存(PIL)
         Inv_img = Image.open(imgurl)
@@ -278,7 +278,7 @@ class ModelImage:
         @return 傾き値リスト(np配列)
         """
         try:
-            img = cv2.imread(imgurl)
+            img = imread(imgurl)
             size = img.shape  # 画像のサイズ x,y
             Pix = int(size[0] / 100)  # 検出ピクセル数
             LCheck = False  # ライン検出フラグ
@@ -337,7 +337,7 @@ class ModelImage:
         @param dom: Trueなら線分をマージして出力する(boolean)
         @return boolean,検出ラインピクセル値配列,ライン描画後画像のcvインスタンス
         """
-        colorimg = cv2.imread(fileImage, cv2.IMREAD_COLOR)  # 元画像
+        colorimg = imread(fileImage, cv2.IMREAD_COLOR)  # 元画像
         if colorimg is None:
             return False, "", ""
         image = cv2.cvtColor(colorimg.copy(), cv2.COLOR_BGR2GRAY)
@@ -388,7 +388,7 @@ class ModelImage:
         Open_img = cv2.medianBlur(Open_img, ksize)
         return Open_img
 
-    def pdf_image(self, pdf_file, fmtt, dpi):
+    def pdf_image(self, pdf_file, fmtt, dpi, PBAR):
         """
         概要: popplerでPDFを指定した画像形式に変換
         @param pdf_file : PDFURL(str)
@@ -414,16 +414,24 @@ class ModelImage:
             casize = 3
             do = True
             # ############################################################
+            PBAR._target.step(10)
             # PDFをImage に変換(pdf2imageの関数)
             pages = convert_from_path(pdf_path, dpi, poppler_path=pppath)
+            PS = 40
+            PS_x = 50 / len(pages)
+            PBAR._target.step(PS)
+
             # 画像ファイルを１ページずつ保存
             for i, page in enumerate(pages):
                 file_name = FileKey + "_" + str(i + 1) + "page." + fmtt
                 image_path = image_dir + r"/" + file_name
                 page.save(image_path, fmtt)
                 self.PDFChange(image_dir, image_path, disth, canth1, canth2, casize, do)
+                PBAR._target.step(PS_x)
+            PBAR._target.master.destroy()
             return True
         except:
+            PBAR._target.master.destroy()
             return False
 
     def PDFChange(self, URL, imgurl, disth, canth1, canth2, casize, do):
@@ -440,15 +448,15 @@ class ModelImage:
         """
         Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
         Inv_img.save(imgurl)  # 白黒反転保存(PIL)
-        img = cv2.imread(imgurl)  # 白黒反転画像(cv2)
+        img = imread(imgurl)  # 白黒反転画像(cv2)
         CleanUp_img = self.NoiseRemoval(img, 7)  # ノイズ除去(cv2)
-        cv2.imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
+        imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
         Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
         Inv_img.save(imgurl)  # 白黒反転保存(PIL)
         # # 画像から直線を検出し、画像の傾きを調べ回転して上書き保存
         # ILT = self.ImageLotate(URL, imgurl, disth, canth1, canth2, casize, do)
         # if ILT is True:
-        img = cv2.imread(imgurl)
+        img = imread(imgurl)
         # 画像リサイズ-----------------------------------------------
         IMGsize = [3840, 3840]
         h, w = img.shape[:2]
@@ -459,12 +467,12 @@ class ModelImage:
         else:
             sizeas = (int(w * ash), int(h * ash))
         img = cv2.resize(img, dsize=sizeas)
-        cv2.imwrite(imgurl, img)
+        imwrite(imgurl, img)
         # ----------------------------------------------------------
         # self.TesseOCRLotate(URL, imgurl)  # 無料OCRで回転
-        # img = cv2.imread(imgurl)
+        # img = imread(imgurl)
         # TC = self.toneCurveUpContrast(img)  # トーンカーブ処理
-        # cv2.imwrite(imgurl, TC)
+        # imwrite(imgurl, TC)
         # 直線を削除------------------------------------------------------
         # self.StraightLineErase(URL, imgurl, disth, canth1, canth2, casize, do)
         # ---------------------------------------------------------------
@@ -486,7 +494,7 @@ class ModelImage:
         @return 傾き値リスト(np配列)
         """
         try:
-            img = cv2.imread(imgurl)
+            img = imread(imgurl)
             size = img.shape  # 画像のサイズ 横,縦
             Pix = int(size[0] / 50)  # 検出ピクセル数
             LineWidth = int((size[0] / 2000))
@@ -546,10 +554,36 @@ class ModelImage:
                     #     img, (UpY, UpX), (LoY, LoX), (255, 255, 255), LineWidth
                     # )
                     draw.line([(UpY, UpX), (LoY, LoX)], fill="White", width=LineWidth)
-            # cv2.imwrite(URL + r"\NoLine.png", no_lines_img)
+            # imwrite(URL + r"\NoLine.png", no_lines_img)
             # 画像の表示
             img.save(imgurl)
             # img.show()
             return img
         except:
             return False
+
+
+def imread(filename, flags=cv2.IMREAD_COLOR, dtype=np.uint8):
+    try:
+        n = np.fromfile(filename, dtype)
+        img = cv2.imdecode(n, flags)
+        return img
+    except Exception as e:
+        print(e)
+        return None
+
+
+def imwrite(filename, img, params=None):
+    try:
+        ext = os.path.splitext(filename)[1]
+        result, n = cv2.imencode(ext, img, params)
+
+        if result:
+            with open(filename, mode="w+b") as f:
+                n.tofile(f)
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(e)
+        return False

@@ -48,17 +48,29 @@ def DiffListCreate(
     FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr
 ):
     """
-    概要: GoogleApiで取得した内容を整形
-    @param FolURL : このpyファイルのフォルダ(str)
-    @param OCRList : 画像フォルダURL(str)
-    @param KCode : 受信通知取得失敗リストから取得した関与先コード(str)
-    @param PDFDir : 受信通知取得失敗リストから取得したPDFURL(str)
-    @param PDFPageTxt : 受信通知取得失敗リストから取得したPDFのページ番号(str)
-    @return : bool
-    @return : 変換後画像から取得して抽出したカラムリスト(list)
-    @return : 変換後画像から取得して抽出した値のリスト(list)
+    概要: GoogleVisionApiを実行し、結果をCSV化
+    @param FileURL : 画像URL(str)
+    @param Yoko : 横軸リスト
+    @param Tate : 縦軸リスト
+    @param Banktoml : toml設定ファイルURL(str)
+    @param ColList : 日付列番号リスト(list)
+    @param MoneySet : 金額表示列番号リスト(list)
+    @param ReplaceSet : 置換対象列番号のリスト(list)
+    @param ReplaceStr : 置換対象文字列のリスト(list)
+    @return : bool,CSVURL(str)
     """
+
     # try:
+    dic = {
+        "FileURL": FileURL,
+        "Yoko": Yoko,
+        "Tate": Tate,
+        "Banktoml": Banktoml,
+        "ColList": ColList,
+        "MoneySet": MoneySet,
+        "ReplaceSet": ReplaceSet,
+        "ReplaceStr": ReplaceStr,
+    }
     # ####################################################################################
     readcsv1 = Yoko
     readcsv2 = Tate
@@ -224,6 +236,18 @@ def DiffListCreate(
 
 
 def Main(FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr):
+    """
+    概要: 呼出関数
+    @param FileURL : 画像URL(str)
+    @param Yoko : 横軸リスト
+    @param Tate : 縦軸リスト
+    @param Banktoml : toml設定ファイルURL(str)
+    @param ColList : 日付列番号リスト(list)
+    @param MoneySet : 金額表示列番号リスト(list)
+    @param ReplaceSet : 置換対象列番号のリスト(list)
+    @param ReplaceStr : 置換対象文字列のリスト(list)
+    @return : bool,CSVURL(str)
+    """
     # # toml読込------------------------------------------------------------------------------
     # with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
     #     Banktoml = toml.load(f)

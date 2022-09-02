@@ -231,93 +231,18 @@ def ChangeList(dflist, Fname):
         return False, ""
 
 
-def Dfchange(YDicList, KeyX, KeyY, XYList, YList, strList, near, LabelX, Label, Flag):
-    try:
-        strs = ""  # テキスト代入変数
-        YD = len(YList)
-        # Y軸リストを閾値(near)で統一し置換(行を揃える)----------------------------------
-        for YDN in range(YD):
-            if not YDN == YD - 1:
-                key = YList[YDN]
-                for YDNN in range(YD):
-                    key2 = YList[YDNN]
-                    Sa = key - key2
-                    if Sa < 0:
-                        if Sa >= (near * -1):
-                            YList[YDNN] = key
-                    else:
-                        if Sa <= near:
-                            YList[YDNN] = key
-        # ---------------------------------------------------------------------------
-        Ys = 0
-        # 行を揃えたY軸リストを元にXYListを作成-----------------------------------------
-        for YListItem in YList:
-            XYList[Ys][3] = YListItem
-            Ys += 1
-        # ---------------------------------------------------------------------------
-        dfXYList = pd.DataFrame(XYList)  # XYListをデータフレーム化
-        dfXYList.columns = ["No", "テキスト", "X軸", "Y軸"]  # XYListデータフレームのヘッダー設定
-        # XYListデータフレームの並び替え(行の順番)--------------------------------------
-        npXYList = ChangeList(dfXYList, "Y軸")  # pram1:リスト,pram2:str"Y軸"
-        # ---------------------------------------------------------------------------
-        if npXYList[0] is True:
-            dfnp = list(npXYList[1])  # 並び替えたDFをList化(高速化の為)
-            # CSVDF = pd.DataFrame(dfnp)
-            # CSVDF.to_csv(
-            #     r"D:\PythonScript\RPAScript\RPAPhoto\PDFeTaxReadForList\XYList.csv",
-            #     encoding="cp932",
-            # )
-        dfRow = len(dfnp)
-        # 並び替えたListにループ処理---------------------------------------------------
-        for lb in range(dfRow):
-            # if lb == 460:
-            #     print(460)
-            btxt = dfnp[lb][1]
-            bjsonX = dfnp[lb][2]  # 現在の文字の横軸
-            bjsonY = dfnp[lb][3]  # 現在の文字の縦軸
-            if not lb == dfRow - 1:
-                NextbjsonX = dfnp[lb + 1][2]  # 次の文字の横軸
-                NextbjsonY = dfnp[lb + 1][3]  # 次の文字の縦軸
-                diffparX = NextbjsonX - bjsonX  # 次の文字との横軸間隔
-                diffparY = NextbjsonY - bjsonY  # 次の文字との縦軸間隔
-                if diffparX > KeyX:  # 次の文字との横軸間隔が指定値以上なら
-                    strs = strs + btxt
-                    strList.append(strs)
-                    strs = ""
-                elif diffparY > KeyY:  # 次の文字との縦軸間隔が指定値以上なら
-                    strs = strs + btxt
-                    if Flag == "eltax" and len(strList) == 0:
-                        strList.append("発行元::" + strs)
-                    else:
-                        strList.append(strs)
-                    strs = ""
-                else:
-                    if diffparX > LabelX:  # 次の文字との横軸間隔がラベル指定値以上なら
-                        strs = strs + btxt
-                        if Flag == "eltax" and len(strList) == 2:
-                            strList.append("発行元部署::" + strs)
-                            strs = ""
-                        elif Flag == "eltax" and "発行日時::" in strs:
-                            strList.append(strs)
-                            strs = ""
-                        else:
-                            strs = strs + Label
-                    else:
-                        strs = strs + btxt
-            else:  # 最終行の処理
-                strs = strs + btxt
-                strList.append(strs)
-                strs = ""
-        return True, strList
-    except:
-        return False, ""
-
-
 def DfTuuchou(
     XYList,
     YokoList,
     TateList,
 ):
+    """
+    概要: OCR結果の文字位置調整
+    @param XYList: OCR結果データ
+    @param YokoList: 横直線のピクセル値配列
+    @param TateList: 縦直線のピクセル値配列
+    @return 並び替え後の配列
+    """
     try:
         strs = ""  # テキスト代入変数
         strList = []
@@ -426,18 +351,15 @@ def DfTuuchou(
         return False, ""
 
 
-def COLArraySearch(COLArray, LC, bjsonY):
-    try:
-        for LCC in range(LC):
-            if COLArray[LCC][0] <= bjsonY and COLArray[LCC + 1][0] >= bjsonY:
-                return LCC
-    except:
-        return ""
-
-
 def Bankrentxtver(filein, YokoList, TateList):  # 自作関数一文字づつの軸間を指定値を元に切り分け文章作成
+    """
+    概要: OCR呼出関数
+    @param filein: 画像ファイル
+    @param YokoList: 横直線のピクセル値配列
+    @param TateList: 縦直線のピクセル値配列
+    @return bool,並び替え後の配列
+    """
     try:
-
         # cmap = os.getcwd() + r"\TKInterGUI\cmapchange.csv"
         # cmapdata = np.loadtxt(
         #     cmap,  # 読み込みたいファイルのパス
@@ -484,121 +406,6 @@ def Bankrentxtver(filein, YokoList, TateList):  # 自作関数一文字づつの
             else:
                 logger.debug("rentxtver(OCR結果を整形eTax以外)失敗: debug level log")
                 return False, "Dfchangeエラー"
-        else:  # Vision取得が空なら
-            logger.debug("rentxtver(OCR結果を整形)失敗Vision取得が空: debug level log")
-            return False, "Vision取得が空"
-    except Exception as e:
-        logger.debug("rentxtver(OCR結果を整形)失敗Exception: debug level log")
-        return False, e
-
-
-def rentxtver(
-    filein, KeyX, KeyY, LabelX, etaxKeyX, etaxKeyY, etaxLabelX, Label, near, Flag
-):  # 自作関数一文字づつの軸間を指定値を元に切り分け文章作成
-    try:
-        bounds = get_document_bounds(
-            filein, FeatureType.PARA, Flag
-        )  # Vision結果を一文字とverticesに分けリスト格納
-        Flag = bounds[2]
-        bounds = bounds[1]
-        if not len(bounds) == 0:
-            lbound = len(bounds)
-            strList = []
-            XYList = []  # テキストの位置情報格納リスト
-            YList = []
-            for lb in range(lbound):
-                btxt = bounds[lb][0]
-                bjson = bounds[lb][1].vertices
-                bjsonX = bjson[0].x  # 現在の文字の横軸
-                bjsonY = bjson[0].y  # 現在の文字の縦軸
-                XYList.append([lb, btxt, bjsonX, bjsonY])
-                YList.append(bjsonY)
-            YDicList = list(OrderedDict.fromkeys(YList))  # 抽出リストの重複削除
-            if Flag == "etax":  # OCRでeTaxと判定されたら
-                Xd = len(XYList) - 1  # XYList最終行インデックス
-                # XYListで600より上の情報を削除---------------------------------
-                for XYListItem in reversed(XYList):  # XYListで600より上の情報を削除
-                    if XYListItem[3] <= 600 or XYListItem[3] >= 5500:
-                        XYList.pop(Xd)
-                    Xd -= 1
-                # -------------------------------------------------------------
-                YList = []  # Y軸のリストを初期化
-                Xd = len(XYList)  # XYList要素数分
-                # 600より上の情報を削除したXYListからY軸のリストを作成-------------
-                for lb in range(Xd):
-                    bjsonY = XYList[lb][3]  # 現在の文字の縦軸
-                    YList.append(bjsonY)
-                # -------------------------------------------------------------
-                DC = Dfchange(
-                    YDicList,
-                    etaxKeyX,
-                    etaxKeyY,
-                    XYList,
-                    YList,
-                    strList,
-                    near,
-                    etaxLabelX,
-                    Label,
-                    Flag,
-                )
-                if DC[0] is True:
-                    logger.debug("rentxtver(OCR結果を整形eTax)成功: debug level log")
-                    return True, DC[1]
-                else:
-                    logger.debug("rentxtver(OCR結果を整形eTax)失敗: debug level log")
-                    return False, "eTaxDfchangeエラー"
-            elif Flag == "eltax":  # OCRでelTaxと判定されたら
-                Xd = len(XYList) - 1  # XYList最終行インデックス
-                # XYListで600より上の情報を削除---------------------------------
-                for XYListItem in reversed(XYList):  # XYListで600より上の情報を削除
-                    if XYListItem[3] <= 600 or XYListItem[3] >= 5500:
-                        XYList.pop(Xd)
-                    Xd -= 1
-                # -------------------------------------------------------------
-                YList = []  # Y軸のリストを初期化
-                Xd = len(XYList)  # XYList要素数分
-                # 600より上の情報を削除したXYListからY軸のリストを作成-------------
-                for lb in range(Xd):
-                    bjsonY = XYList[lb][3]  # 現在の文字の縦軸
-                    YList.append(bjsonY)
-                # -------------------------------------------------------------
-                DC = Dfchange(
-                    YDicList,
-                    etaxKeyX,
-                    etaxKeyY,
-                    XYList,
-                    YList,
-                    strList,
-                    near,
-                    etaxLabelX,
-                    Label,
-                    Flag,
-                )
-                if DC[0] is True:
-                    logger.debug("rentxtver(OCR結果を整形eTax)成功: debug level log")
-                    return True, DC[1]
-                else:
-                    logger.debug("rentxtver(OCR結果を整形eTax)失敗: debug level log")
-                    return False, "eTaxDfchangeエラー"
-            else:  # OCRでeTax以外なら
-                DC = Dfchange(
-                    YDicList,
-                    KeyX,
-                    KeyY,
-                    XYList,
-                    YList,
-                    strList,
-                    near,
-                    LabelX,
-                    Label,
-                    Flag,
-                )
-                if DC[0] is True:
-                    logger.debug("rentxtver(OCR結果を整形eTax以外)成功: debug level log")
-                    return True, DC[1]
-                else:
-                    logger.debug("rentxtver(OCR結果を整形eTax以外)失敗: debug level log")
-                    return False, "eTaxじゃないDfchangeエラー"
         else:  # Vision取得が空なら
             logger.debug("rentxtver(OCR結果を整形)失敗Vision取得が空: debug level log")
             return False, "Vision取得が空"

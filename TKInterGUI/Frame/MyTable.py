@@ -1,7 +1,9 @@
-import tkinter as tk
-from tkinter import *
-from pandastable import Table, TableModel, config
-import DataGrid as DG
+# import tkinter as tk
+# from tkinter import *
+# from pandastable import Table, TableModel, config
+from pandastable import Table, TableModel
+
+# import DataGrid as DG
 import pandas as pd
 import os
 

@@ -1,12 +1,20 @@
 import sys
+import ProgressBar as PB
 import tkinter as tk
 from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
 import TKINTERCV2Setting as TKCV2
 from tkinter import messagebox
 
+# プログレスバーの起動
+# PBAR = PB.ProgressBar(tk.Tk())
+
 
 class ViewGUI:
+    """
+    概要: TKinterメインWindowクラス
+    """
+
     def __init__(self, window_root, default_path):
         global Sval  # スライダー初期値
         Sval = 0  # スライダー初期値
@@ -434,9 +442,13 @@ class ViewGUI:
         set_pos = self.combo_file.current()
         FN = self.control.get_file("set", set_pos=set_pos)
         if ".PDF" in FN or ".pdf" in FN:
-            msg = messagebox.askokcancel("確認", "PDFが選択されています。PNGに変換しますか？")
+            msg = messagebox.askokcancel(
+                "確認", "PDFが選択されています。PNGに変換しますか？\n10ページ以上の処理は処理時間が長時間になる可能性があります。"
+            )
             if msg is True:
-                spd = self.control.pdf_image(FN, "png", 600)
+                # プログレスバーの起動
+                PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
+                spd = self.control.pdf_image(FN, "png", 600, PBAR)
                 if spd is True:
                     msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
                 else:

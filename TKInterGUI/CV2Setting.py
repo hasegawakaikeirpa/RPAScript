@@ -1,10 +1,16 @@
 import cv2
+import os
+import numpy as np
 import csv
 from tkinter import messagebox
 from tkinter import ttk, filedialog
 
 
 class mouse_event_handler:
+    """
+    概要: マウスイベントクラス
+    """
+
     def __init__(self):
         self.Tpoints = []
         self.Ypoints = []
@@ -31,6 +37,10 @@ class mouse_event_handler:
 
 
 class CanvasOval:
+    """
+    概要: キャンバスクラス
+    """
+
     canvas = None
 
     def __init__(self, x0, y0, x1, y1, **key):
@@ -48,6 +58,42 @@ class CanvasOval:
         self.y = event.y
 
 
+def imread(filename, flags=cv2.IMREAD_COLOR, dtype=np.uint8):
+    """
+    概要: cv2imread代替関数(日本語対応)
+    @param filename: ファイルURL
+    @return cv2画像インスタンス
+    """
+    try:
+        n = np.fromfile(filename, dtype)
+        img = cv2.imdecode(n, flags)
+        return img
+    except Exception as e:
+        print(e)
+        return None
+
+
+def imwrite(filename, img, params=None):
+    """
+    概要: cv2imwrite代替関数(日本語対応)
+    @param filename: ファイルURL
+    @return bool
+    """
+    try:
+        ext = os.path.splitext(filename)[1]
+        result, n = cv2.imencode(ext, img, params)
+
+        if result:
+            with open(filename, mode="w+b") as f:
+                n.tofile(f)
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(e)
+        return False
+
+
 def straightlinesetting(imgurl):
     """
     概要: CV2で直線を描画し、縦軸と横軸リストを返す
@@ -57,7 +103,7 @@ def straightlinesetting(imgurl):
     try:
         m = mouse_event_handler()
         # 画像の読み込み
-        img = cv2.imread(imgurl, 1)
+        img = imread(imgurl, 1)
         height, width = img.shape[:2]
         widPar = 1480 / width
         heiPar = 750 / height
@@ -109,13 +155,13 @@ def straightlinesetting(imgurl):
         if msg is True:
             save_path = filedialog.asksaveasfilename(initialdir=imgurl)
             img = cv2.resize(img, (width, height))
-            cv2.imwrite(save_path, img)
+            imwrite(save_path, img)
             cv2.destroyAllWindows()
             return True, "直線削除", "直線削除"
         else:
             cv2.destroyAllWindows()
             return True, YP, TP
-        # cv2.imwrite(imgurl, img)
+        # imwrite(imgurl, img)
     except:
         return False, "m.Ypoints", "m.Tpoints"
 
