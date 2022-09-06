@@ -1,9 +1,14 @@
-import GCloudVision as GCV
+# import GCloudVision as GCV
+from GCloudVision import Bankrentxtver
 import os
 import toml
-import pandas as pd
+
+# import pandas as pd
+from pandas import DataFrame
 import csv
-import numpy as np
+
+# import numpy as np
+from numpy import asarray
 from difflib import SequenceMatcher
 from mojimoji import han_to_zen
 import CSVOut as CSVO
@@ -18,9 +23,9 @@ def getNearestValue(list, num):
     """
 
     # リスト要素と対象値の差分を計算し最小値のインデックスを取得
-    array = np.asarray(list)
-    array = np.asarray(array[:, 0], dtype="float64")
-    idx = (np.abs(array - num)).argmin()
+    array = asarray(list)
+    array = asarray(array[:, 0], dtype="float64")
+    idx = (abs(array - num)).argmin()
     return list[idx]
 
 
@@ -77,7 +82,7 @@ def DiffListCreate(
     COLArray = True, readcsv1, readcsv2
     # ####################################################################################
     if COLArray[0] is True:
-        GF = GCV.Bankrentxtver(
+        GF = Bankrentxtver(
             FileURL,
             COLArray[1],
             COLArray[2],
@@ -186,12 +191,12 @@ def DiffListCreate(
             # ---------------------------------------------------------------------------------
             # DataFrame作成
             DiffCheck(GFTable, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
-            df = pd.DataFrame(GFTable, columns=ColList)
+            df = DataFrame(GFTable, columns=ColList)
             FU = FileURL.split("\\")
             FN = FU[len(FU) - 1].replace(".png", ".csv")
             FDir = FileURL.replace(FU[len(FU) - 1], "")
             FileName = FDir + r"\\" + FN
-            ChangeTxtUrl = FDir + r"\\ChangeTxtList.csv"
+            ChangeTxtUrl = FDir + r"\\OCRChangeList.csv"
             if os.path.isfile(ChangeTxtUrl) is True:
                 enc = CSVO.getFileEncoding(ChangeTxtUrl)  # 摘要変換ルールエンコード
             else:
@@ -200,7 +205,7 @@ def DiffListCreate(
             # 変換実績リストに要素があれば保存------------------------------------------------
             # if len(ChangeTxtList) > 0:
             #     if os.path.isfile(ChangeTxtUrl) is True:
-            #         CTL_df = pd.DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
+            #         CTL_df = DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
             #         CTL_df.to_csv(
             #             ChangeTxtUrl,
             #             mode="a",
@@ -209,7 +214,7 @@ def DiffListCreate(
             #             encoding=enc,
             #         )
             #     else:
-            #         CTL_df = pd.DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
+            #         CTL_df = DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
             #         CTL_df.to_csv(ChangeTxtUrl, index=False, encoding=enc)
             # -------------------------------------------------------------------------------
             if os.path.isfile(FileName) is True:

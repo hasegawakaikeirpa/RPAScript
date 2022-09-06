@@ -1,11 +1,14 @@
 # import tkinter as tk
-# from tkinter import *
+from tkinter import *
+
 # from pandastable import Table, TableModel, config
+
 from pandastable import Table, TableModel
 
 # import DataGrid as DG
 import pandas as pd
 import os
+from CSVOut import getFileEncoding
 
 
 class MyTable(Table):
@@ -207,7 +210,8 @@ class MyTable(Table):
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        self.model.df.to_csv(self.importFilePath, index=False)
+        enc = getFileEncoding(self.importFilePath)
+        self.model.df.to_csv(self.importFilePath, index=False, encoding=enc)
         return
 
     # --------------------------------------------------------------------
@@ -451,7 +455,8 @@ class MyTable2(Table):
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        self.model.df.to_csv(self.importFilePath, index=False)
+        enc = getFileEncoding(self.importFilePath)
+        self.model.df.to_csv(self.importFilePath, index=False, encoding=enc)
         return
 
     # --------------------------------------------------------------------
@@ -693,7 +698,8 @@ class MyTable3(Table):
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        self.model.df.to_csv(self.importFilePath, index=False)
+        enc = getFileEncoding(self.importFilePath)
+        self.model.df.to_csv(self.importFilePath, index=False, encoding=enc)
         return
 
     # --------------------------------------------------------------------
@@ -935,7 +941,8 @@ class MyTable4(Table):
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        self.model.df.to_csv(self.importFilePath, index=False)
+        enc = getFileEncoding(self.importFilePath)
+        self.model.df.to_csv(self.importFilePath, index=False, encoding=enc)
         return
 
     # --------------------------------------------------------------------
@@ -1177,7 +1184,8 @@ class MyTable5(Table):
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        self.model.df.to_csv(self.importFilePath, index=False)
+        enc = getFileEncoding(self.importFilePath)
+        self.model.df.to_csv(self.importFilePath, index=False, encoding=enc)
         return
 
     # --------------------------------------------------------------------
@@ -1419,7 +1427,8 @@ class MyTable6(Table):
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        self.model.df.to_csv(self.importFilePath, index=False)
+        enc = getFileEncoding(self.importFilePath)
+        self.model.df.to_csv(self.importFilePath, index=False, encoding=enc)
         return
 
     # --------------------------------------------------------------------

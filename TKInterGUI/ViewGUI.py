@@ -3,7 +3,9 @@ import ProgressBar as PB
 import tkinter as tk
 from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
-import TKINTERCV2Setting as TKCV2
+
+# import TKINTERCV2Setting as TKCV2
+from TKINTERCV2Setting import Main
 from tkinter import messagebox
 
 # プログレスバーの起動
@@ -567,6 +569,11 @@ class ViewGUI:
         OCROpenボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        typ = [("tomlファイル", "*.toml")]
+        self.tomlPath = filedialog.askopenfilename(
+            filetypes=typ, initialdir=self.dir_path
+        )
+
         FDir = self.entry_dir.get()
         FN = self.combo_file.get()
         Imgurl = FDir + r"\\" + FN
@@ -574,7 +581,7 @@ class ViewGUI:
         if "[select file]" in Imgurl:
             messagebox.showinfo("確認", "画像ファイルを選択してください。")
         else:
-            TKCV2.Main(main_window, Imgurl)
+            Main(main_window, Imgurl, self.tomlPath)
 
     # ------------------------------------------------------------------------------------
 

@@ -26,6 +26,9 @@ def create_Frame(self):
     enc = CSVO.getFileEncoding(self.FileName)
     self.table = pt.importCSV(self.FileName, encoding=enc)
     self.pt = pt
+    # DF型変換------------------------------
+    PandasAstype(self.pt.model.df)
+    # --------------------------------------
     pt.show()
 
 
@@ -46,6 +49,9 @@ def create_Frame2(self):
     enc = CSVO.getFileEncoding(self.JounalFileName)
     self.table2 = pt2.importCSV(self.JounalFileName, encoding=enc)
     self.pt2 = pt2
+    # DF型変換------------------------------
+    PandasAstype(self.pt2.model.df)
+    # --------------------------------------
     pt2.show()
 
 
@@ -65,6 +71,9 @@ def create_Frame3(self):
     enc = CSVO.getFileEncoding(self.AJSeturl)
     self.table3 = pt3.importCSV(self.AJSeturl, encoding=enc)
     self.pt3 = pt3
+    # DF型変換------------------------------
+    PandasAstype(self.pt3.model.df)
+    # --------------------------------------
     pt3.show()
 
 
@@ -392,6 +401,9 @@ def create_Frame4(self):
     enc = CSVO.getFileEncoding(self.FileName)
     self.table5 = pt5.importCSV(self.FileName, encoding=enc)
     self.pt5 = pt5
+    # DF型変換------------------------------
+    PandasAstype(self.pt5.model.df)
+    # --------------------------------------
     pt5.show()
     # ------------------------------------------------------------------------------
     self.AJsetRoolFrame = tk.Frame(
@@ -414,6 +426,9 @@ def create_Frame4(self):
     enc = CSVO.getFileEncoding(self.Roolurl)
     self.table6 = pt6.importCSV(self.Roolurl, encoding=enc)
     self.pt6 = pt6
+    # DF型変換------------------------------
+    PandasAstype(self.pt6.model.df)
+    # --------------------------------------
     pt6.show()
     # ------------------------------------------------------------------------------
     self.AJsetFrame = tk.Frame(
@@ -433,6 +448,9 @@ def create_Frame4(self):
     enc = CSVO.getFileEncoding(self.ChangeTxtURL)
     self.table4 = pt4.importCSV(self.ChangeTxtURL, encoding=enc)
     self.pt4 = pt4
+    # DF型変換------------------------------
+    PandasAstype(self.pt4.model.df)
+    # --------------------------------------
     pt4.show()
     # 行追加ボタン--------------------------------------------------------------------
     self.Sub_RowInsert = tk.Button(
@@ -522,3 +540,21 @@ def s_bar_Reset(self):
     # ---------------------------------------------------------------------
     self.Mframe.scrollbar_x.grid(row=1, column=0, columnspan=6, sticky=tk.E + tk.W)
     self.Mframe.canvas.configure(xscrollcommand=self.Mframe.scrollbar_x.set)
+
+
+def PandasAstype(P_df):
+    """
+    Pandasデータフレーム型変換
+    """
+    # DF型変換------------------------------
+    ptc = P_df.columns
+    for ptcItem in ptc:
+        ptc_n = P_df[ptcItem].dtype
+        if "float" == ptc_n.name:
+            P_df[ptcItem].astype(int)
+        elif "float64" == ptc_n.name:
+            P_df[ptcItem] = P_df[ptcItem].fillna(0)
+            P_df[ptcItem] = P_df[ptcItem].astype(int)
+            P_df[ptcItem] = P_df[ptcItem].astype(str)
+            P_df[ptcItem] = P_df[ptcItem].replace("0", "")
+    # --------------------------------------

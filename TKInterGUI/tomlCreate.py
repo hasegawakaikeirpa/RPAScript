@@ -34,15 +34,12 @@ def create_toml_sample(self, path: str):
     self.tomlu.dump_toml(toml_data, path)
 
 
-def dump_toml(self, toml_dict: dict, path: str):
+def dump_toml(toml_dict, path):
     """
     tomlで読み込んだ辞書をtomlファイルに出力する
-    Args:
-        dict:   tomlで読み込んだ辞書
-        str:    保存先ファイル名
     """
     try:
         with open(path, "wb") as configfile:
             tomli_w.dump(toml_dict, configfile)
-    except exception as e:
-        print(e)
+    except:
+        print("Err")

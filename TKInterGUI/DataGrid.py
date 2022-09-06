@@ -125,8 +125,10 @@ class DataGrid:
                 pt4df.to_csv(self.ChangeTxtURL, index=False)
                 enc = CSVO.getFileEncoding(self.ChangeTxtURL)
                 self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+                # DF型変換------------------------------
+                PandasAstype(self.pt4.model.df)
+                # --------------------------------------
                 self.pt4.redraw
-
                 self.ColumnName = pt4c
                 self.ChangeTxtColumns = pt4c
                 tke.FrameChangeremoveEntry(self)
@@ -156,6 +158,9 @@ class DataGrid:
                 pt4df.to_csv(self.ChangeTxtURL, index=False)
                 enc = CSVO.getFileEncoding(self.ChangeTxtURL)
                 self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+                # DF型変換------------------------------
+                PandasAstype(self.pt4.model.df)
+                # --------------------------------------
                 self.pt4.redraw
         except:
             tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
@@ -213,6 +218,9 @@ class DataGrid:
                 pt4df.to_csv(self.ChangeTxtURL, index=False)
                 enc = CSVO.getFileEncoding(self.ChangeTxtURL)
                 self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+                # DF型変換------------------------------
+                PandasAstype(self.pt4.model.df)
+                # --------------------------------------
                 self.pt4.redraw
                 # テキスト変換設定フレームを配置(サブメニューにもコピー配置)
                 tke.FrameChangeremoveEntry(self)
@@ -236,6 +244,9 @@ class DataGrid:
                 pt4df.to_csv(self.ChangeTxtURL, index=False)
                 enc = CSVO.getFileEncoding(self.ChangeTxtURL)
                 self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+                # DF型変換------------------------------
+                PandasAstype(self.pt4.model.df)
+                # --------------------------------------
                 self.pt4.redraw
                 # テキスト変換設定フレームを配置(サブメニューにもコピー配置)
                 tke.FrameChangeremoveEntry(self)
@@ -267,6 +278,9 @@ class DataGrid:
             pt4df.to_csv(self.ChangeTxtURL, index=False)
             enc = CSVO.getFileEncoding(self.ChangeTxtURL)
             self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt4.model.df)
+            # --------------------------------------
             self.pt4.redraw
         except:
             tk.messagebox.showinfo("確認", "メイン画面への復帰に失敗しました。\nSEまでお問い合わせください。")
@@ -285,14 +299,23 @@ class DataGrid:
             # ------------------------------------------------------------------------------
             enc = CSVO.getFileEncoding(self.JounalFileName)
             self.pt2.importCSV(self.JounalFileName, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt2.model.df)
+            # --------------------------------------
             self.pt2.redraw
             # ------------------------------------------------------------------------------
             enc = CSVO.getFileEncoding(self.FileName)
             self.pt.importCSV(self.FileName, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt.model.df)
+            # --------------------------------------
             self.pt.redraw
             # ------------------------------------------------------------------------------
             enc = CSVO.getFileEncoding(self.AJSeturl)
             self.pt3.importCSV(self.AJSeturl, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt3.model.df)
+            # --------------------------------------
             self.pt3.redraw
             # ------------------------------------------------------------------------------
             self.Sub_Frame.pack_forget()
@@ -315,14 +338,23 @@ class DataGrid:
             # ------------------------------------------------------------------------------
             enc = CSVO.getFileEncoding(self.ChangeTxtURL)
             self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt4.model.df)
+            # --------------------------------------
             self.pt4.redraw
             # ------------------------------------------------------------------------------
             enc = CSVO.getFileEncoding(self.FileName)
             self.pt5.importCSV(self.FileName, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt5.model.df)
+            # --------------------------------------
             self.pt5.redraw
             # ------------------------------------------------------------------------------
             enc = CSVO.getFileEncoding(self.Roolurl)
             self.pt6.importCSV(self.Roolurl, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt6.model.df)
+            # --------------------------------------
             self.pt6.redraw
             # ------------------------------------------------------------------------------
             self.Main_Frame.pack_forget()
@@ -372,6 +404,9 @@ class DataGrid:
             )  # ファイル指定ダイアログ
             enc = CSVO.getFileEncoding(fle)
             self.pt2.importCSV(fle, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt2.model.df)
+            # --------------------------------------
             self.pt2.redraw
             self.JounalFileName = fle
             self.Label_OutURL.delete(0, tk.END)
@@ -397,6 +432,9 @@ class DataGrid:
             )  # ファイル指定ダイアログ
             enc = CSVO.getFileEncoding(fle)
             self.pt3.importCSV(fle, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt3.model.df)
+            # --------------------------------------
             self.pt3.redraw
             self.Roolurl = fle
             self.Label_ChangeURL.delete(0, tk.END)
@@ -422,6 +460,9 @@ class DataGrid:
             )  # ファイル指定ダイアログ
             enc = CSVO.getFileEncoding(fle)
             self.pt.importCSV(fle, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt.model.df)
+            # --------------------------------------
             self.pt.redraw
             self.FileName = fle
             self.Label_URL.delete(0, tk.END)
@@ -442,6 +483,9 @@ class DataGrid:
         try:
             enc = CSVO.getFileEncoding(URL)
             self.pt3.importCSV(URL, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt3.model.df)
+            # --------------------------------------
             self.pt3.redraw
         except:
             tk.messagebox.showinfo("確認", "元帳の出力に失敗しました。\n参照先のURLが正しいか確認してください。")
@@ -514,6 +558,9 @@ class DataGrid:
                 writer = csv.writer(fout)
                 writer.writerows(FinalList)
             self.pt2.importCSV(self.JounalFileName, encoding=enc)
+            # DF型変換------------------------------
+            PandasAstype(self.pt2.model.df)
+            # --------------------------------------
             self.pt2.redraw
             return True
         except:
@@ -531,301 +578,12 @@ class DataGrid:
         bind関数
         """
         global AJSeturl
-        self.FileName = csvurl  # OCR抽出結果表
-        self.JounalFileName = AJurl
-        self.Roolurl = Roolurl  # テキスト置換ルール代入
-        # SetList = self.GetTxt_ChangeEntry(0)  # テキスト置換ルール代入
-        st = 0  # 行ポジション
-        for stom in self.entryList:  # Entryウィジェットリスト
-            if stom == "自動仕訳基準列名":
-                JS_var = st
-            elif stom == "日付列名":
-                Day_var = st
-            elif stom == "入金列名":
-                In_var = st
-            elif stom == "出金列名":
-                Out_var = st
-            st += 1
-        FileNameenc = CSVO.getFileEncoding(csvurl)
-        # JounalFileNameenc = CSVO.getFileEncoding(AJurl)
-        Roolurlenc = CSVO.getFileEncoding(Roolurl)
-        ChangeTxtURLenc = CSVO.getFileEncoding(self.ChangeTxtURL)
-        # Entry要素設定-------------------------------------------------------------------
-        JS = self.tomlEntries[JS_var].get()  # 自動仕訳基準列名Entry取得
-        D = self.tomlEntries[Day_var].get()  # 日付列Entry取得
-        I = self.tomlEntries[In_var].get()  # 入金列名Entry取得
-        O = self.tomlEntries[Out_var].get()  # 出金列名Entry取得
-        # --------------------------------------------------------------------------------
-        # 自動仕訳判定条件の集計-----------------------------------------------------------
-        CTE = 0
-        OJ = 1
-        MJ = 1
-        OCRList = []
-        MJSList = []
-        OCRms = []
-        MJSms = []
-        for CTEItem in self.ChangeTxtEntries:
-            ms = CTEItem.get()
-            if np.mod(CTE, 2) == 0:
-                OCRList.append(ms)
-                OCRms.append("条件" + str(OJ) + ":" + ms)
-                OJ += 1
-            else:
-                MJSList.append(ms)
-                MJSms.append("条件" + str(MJ) + ":" + ms)
-                MJ += 1
-            CTE += 1
-        OCRTxt = ",".join(OCRms)
-        MJSTxt = ",".join(MJSms)
-        Messagebox = tk.messagebox.askquestion(
-            "再計算",
-            "OCR結果の[" + OCRTxt + "]列と\nミロク元帳の[" + MJSTxt + "]列を\n条件に仕訳検索を行いますか？",
-            icon="warning",
-        )
-        # --------------------------------------------------------------------------------
-        if Messagebox == "yes":  # If関数
-            AJ_List = AJ.AllChange(
-                self.Moto_Tekiyou.get(),
-                self.HidukeColName,
-                self.Moto_Day.get(),
-                self.Moto_Money_No,
-                self.Moto_Karikata.get(),
-                self.Moto_Kashikata.get(),
-                self.FileName,
-                FileNameenc,
-                self.Roolurl,
-                Roolurlenc,
-                self.ChangeTxtURL,
-                ChangeTxtURLenc,
-                I,
-                O,
-                OCRList,
-                MJSList,
-            )  # 仕訳候補を抽出
 
-            PT_ColList = list(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
-            PT_List = np.array(self.pt.model.df)
-            PT_List = list(PT_List)  # OCR抽出結果表の列名リスト
-            # データ内のFalse,nan処理--------------------------------------------
-            if AJ_List[0] is True:
-                AJ_Column = AJ_List[1]
-                AJ_List = AJ_List[2]
-                # ################################################################
-                # OCR抽出結果表の値を変換ルールに従って自動仕訳表に代入--------------------
-                for r in range(len(self.Frame7EntL)):
-                    L_CName = self.Frame7EntL[r].get()
-                    R_CName = self.Frame7EntR[r].get()
-                    # 自動仕訳表の列番号検索--------------------------------------
-                    PT_c = 0
-                    for AJ_ListItem in AJ_Column:
-                        if L_CName == AJ_ListItem:
-                            L_CName_c = PT_c
-                            break
-                        PT_c += 1
-                    # -----------------------------------------------------------
-                    # OCR抽出結果表の列番号検索-------------------------------------------
-                    PT_c = 0
-                    for PT_ColListItem in PT_ColList:
-                        if R_CName == PT_ColListItem:
-                            R_CName_c = PT_c
-                            break
-                        PT_c += 1
-                    # ---------------------------------------------------------------
-                    # ヘッダー行処理##################################################
-                    for L_r in range(len(AJ_List)):
-                        AJnp = np.array(AJ_List[L_r])
-                        lenAJ = len(AJ_List[L_r])  # 次元数確認
-                        RowElement = AJnp.ndim  # 次元数確認
-                        if RowElement == 2 and lenAJ == 1:
-                            # ########################################################
-                            # 一行の仕訳###############################################
-                            # ########################################################
-                            if (R_CName == I) or (R_CName == O):
-                                # 数値確認-------------------------------------------
-                                try:
-                                    Var = int(PT_List[L_r][R_CName_c])
-                                    AJtxt = AJ_List[L_r]
-                                    AJtxt = AJtxt[0][L_CName_c]
-                                    C_Txt = AJ.TxtEdit(
-                                        L_CName,
-                                        AJtxt,
-                                        Var,
-                                    )
-                                    AJ_List[L_r][0][L_CName_c] = C_Txt[1]
-                                except:
-                                    if R_CName == I:
-                                        R_CName = O
-                                    elif R_CName == O:
-                                        R_CName = I
-                                    # OCR抽出結果表の列番号検索---------------------------
-                                    PT_c = 0
-                                    for PT_ColListItem in PT_ColList:
-                                        if R_CName == PT_ColListItem:
-                                            R_CName_c = PT_c
-                                            break
-                                        PT_c += 1
-                                    # ----------------------------------------
-                                    Var = int(PT_List[L_r][R_CName_c])
-                                    AJtxt = AJ_List[L_r]
-                                    AJtxt = AJtxt[0][L_CName_c]
-                                    C_Txt = AJ.TxtEdit(
-                                        L_CName,
-                                        AJtxt,
-                                        Var,
-                                    )
-                                    AJ_List[L_r][0][L_CName_c] = C_Txt[1]
-                                # ---------------------------------------------------
-                            else:
-                                Var = PT_List[L_r][R_CName_c]
-                                AJtxt = AJ_List[L_r]
-                                AJtxt = AJtxt[0][L_CName_c]
-                                C_Txt = AJ.TxtEdit(
-                                    L_CName,
-                                    AJtxt,
-                                    Var,
-                                )
-                                AJ_List[L_r][0][L_CName_c] = C_Txt[1]
-                        elif RowElement == 2 and lenAJ != 1:
-                            # ########################################################
-                            # 複数行の仕訳#############################################
-                            # ########################################################
-                            # 複合仕訳の金額計算
-                            if (R_CName == I) or (R_CName == O):
-                                # 数値確認-------------------------------------------
-                                try:
-                                    Var = int(PT_List[L_r][R_CName_c])
-                                    AJtxt = AJ_List[L_r]
-                                    # 複合仕訳の金額割合摘要関数
-                                    AJ.MoneyCalc(
-                                        L_r,
-                                        AJ_List,
-                                        AJtxt,
-                                        R_CName,
-                                        L_CName,
-                                        L_CName_c,
-                                        Var,
-                                    )
-                                except:
-                                    if R_CName == I:
-                                        R_CName = O
-                                    elif R_CName == O:
-                                        R_CName = I
-                                    # OCR抽出結果表の列番号検索---------------------------
-                                    PT_c = 0
-                                    for PT_ColListItem in PT_ColList:
-                                        if R_CName == PT_ColListItem:
-                                            R_CName_c = PT_c
-                                            break
-                                        PT_c += 1
-                                    # ----------------------------------------
-                                    Var = int(PT_List[L_r][R_CName_c])
-                                    AJtxt = AJ_List[L_r]
-                                    # 複合仕訳の金額割合摘要関数
-                                    AJ.MoneyCalc(
-                                        L_r,
-                                        AJ_List,
-                                        AJtxt,
-                                        R_CName,
-                                        L_CName,
-                                        L_CName_c,
-                                        Var,
-                                    )
-                                # ---------------------------------------------------
-                            else:
-                                Var = PT_List[L_r][R_CName_c]
-                                AJtxt = AJ_List[L_r]
-                                # 複合仕訳の金額割合摘要関数
-                                AJ.MoneyCalc(
-                                    L_r,
-                                    AJ_List,
-                                    AJtxt,
-                                    R_CName,
-                                    L_CName,
-                                    L_CName_c,
-                                    Var,
-                                )
-                        else:
-                            # ########################################################
-                            # 一次元一行の仕訳#########################################
-                            # ########################################################
-                            Var = PT_List[L_r][R_CName_c]
-                            C_Txt = AJ.TxtEdit(
-                                L_CName,
-                                Var,
-                                Var,
-                            )
-                            AJ_List[L_r][L_CName_c] = C_Txt[1]
-                # ################################################################
-                # 適正次元に処理し、リスト化
-                FinalList = []
-                for L_r in range(len(AJ_List)):
-                    AJnp = np.array(AJ_List[L_r])
-                    lenAJ = len(AJ_List[L_r])  # 次元数確認
-                    RowElement = AJnp.ndim  # 次元数確認
-                    if RowElement == 2 and lenAJ == 1:
-                        A_Row = list(AJ_List[L_r][0])
-                        FinalList.append(A_Row)
-                    elif RowElement == 2 and lenAJ != 1:
-                        for lenAJ_r in range(lenAJ):
-                            A_Row = AJ_List[L_r][lenAJ_r]
-                            A_Row = list(A_Row)
-                            FinalList.append(A_Row)
-                    else:
-                        A_Row = list(AJ_List[L_r])
-                        FinalList.append(A_Row)
-                # ################################################################
-                FinalList = np.array(FinalList)
-                FinalList = np.vstack((AJ_Column, FinalList))  # ヘッダーと結合
-                FinalList = list(FinalList)
-                # ################################################################
-                PiriDel(FinalList)
-                # 月分等の置換変更処理
-                for i in range(len(self.RepLEntries)):
-                    ReplaceKey = self.RepLEntries[i].get()
-                    Repstr = self.RepREntries[i].get()
-                    lenFL = len(FinalList)
-                    for F_r in range(lenFL):
-                        if F_r != 0:
-                            FL_Row = FinalList[F_r]
-                            for F_c in range(len(FL_Row)):
-                                FL_Var = FinalList[F_r][F_c]
-                                if ReplaceKey in FL_Var:
-                                    try:
-                                        FSTR = str(FinalList[F_r][F_c])
-                                        FinalList[F_r][F_c] = FSTR.replace(
-                                            ReplaceKey, Repstr
-                                        )
-                                    except:
-                                        print("置換変更無し")
-                # ------------------------------------------------------------------
-                with open(AJurl, "wt", encoding="cp932", newline="") as fout:
-                    # ライター（書き込み者）を作成
-                    writer = csv.writer(fout)
-                    writer.writerows(FinalList)
-                enc = CSVO.getFileEncoding(AJurl)
-                self.pt2.importCSV(AJurl, encoding=enc)
-                self.pt2.redraw
-            else:
-                tk.messagebox.showinfo("戻る", "アプリケーション画面に戻ります")
-
-    # -----------------------------------------------------------------------------------------
-    def AJCalc(self, csvurl):
-        """
-        DGFrame.py
-        ↓
-        def create_SettingFrame(self)
-        ↓
-        self.AJ_Btn
-        bind関数
-        """
-        global AJSeturl
-        self.FileName = csvurl
-        self.JounalFileName = AJurl
-        self.Roolurl = Roolurl
-
-        if self.pt.startrow is None:
-            tk.messagebox.showinfo("確認", "OCR抽出結果表のセルが選択されていません。")
-        else:
+        try:
+            sv = int(self.SortVar.get())
+            self.FileName = csvurl  # OCR抽出結果表
+            self.JounalFileName = AJurl
+            self.Roolurl = Roolurl  # テキスト置換ルール代入
             # SetList = self.GetTxt_ChangeEntry(0)  # テキスト置換ルール代入
             st = 0  # 行ポジション
             for stom in self.entryList:  # Entryウィジェットリスト
@@ -871,149 +629,72 @@ class DataGrid:
             MJSTxt = ",".join(MJSms)
             Messagebox = tk.messagebox.askquestion(
                 "再計算",
-                "OCR結果の["
-                + OCRTxt
-                + "]列と\nミロク元帳の["
-                + MJSTxt
-                + "]列を\n条件に[単一]の仕訳検索を行いますか？",
+                "OCR結果の[" + OCRTxt + "]列と\nミロク元帳の[" + MJSTxt + "]列を\n条件に仕訳検索を行いますか？",
                 icon="warning",
             )
             # --------------------------------------------------------------------------------
             if Messagebox == "yes":  # If関数
-                print(self.Label_ChangeURL.get())  # toml金融機関Entry取得
-                dfs = self.pt.model.df  # グリッドをDF化
-                dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
-                # グリッド選択データの代入---------------------------------------------------------
-                FindTxt = dfsrow[JS]  # 検索文字
-                D_var = dfsrow[D]  # 日付
-                I_var = dfsrow[I]  # 入金
-                O_var = dfsrow[O]  # 出金
-                # --------------------------------------------------------------------------------
-                # 整数チェック---------------------------------------------------------------------
-                IC = IntCheck(I_var)
-                OC = IntCheck(O_var)
-                if IC is True and OC is True:
-                    tkm = False, "", "", ""
-                elif IC is True:
-                    tkm = True, I_var, In_var, "入金"
-                elif OC is True:
-                    tkm = True, O_var, Out_var, "出金"
-                if tkm[0] is False:
-                    tk.messagebox.showinfo("確認", "入金、出金双方に金額が出力されています。行を再確認してください。")
-                # --------------------------------------------------------------------------------
-                else:
-                    AJ_List = AJ.main(
-                        self.pt.startrow,
-                        self.Moto_Tekiyou.get(),
-                        self.HidukeColName,
-                        self.Moto_Day.get(),
-                        self.Moto_Money_No,
-                        self.Moto_Karikata.get(),
-                        self.Moto_Kashikata.get(),
-                        self.FileName,
-                        FileNameenc,
-                        self.Roolurl,
-                        Roolurlenc,
-                        self.ChangeTxtURL,
-                        ChangeTxtURLenc,
-                        I,
-                        O,
-                        OCRList,
-                        MJSList,
-                    )  # 仕訳候補を抽出
+                AJ_List = AJ.AllChange(
+                    self.Moto_Tekiyou.get(),
+                    self.HidukeColName,
+                    self.Moto_Day.get(),
+                    self.Moto_Money_No,
+                    self.Moto_Karikata.get(),
+                    self.Moto_Kashikata.get(),
+                    self.FileName,
+                    FileNameenc,
+                    self.Roolurl,
+                    Roolurlenc,
+                    self.ChangeTxtURL,
+                    ChangeTxtURLenc,
+                    I,
+                    O,
+                    OCRList,
+                    MJSList,
+                    sv,
+                )  # 仕訳候補を抽出
 
-                    PT_ColList = list(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
-                    PT_List = np.array(self.pt.model.df)
-                    PT_List = list(PT_List)  # OCR抽出結果表の列名リスト
-                    # データ内のFalse,nan処理--------------------------------------------
-                    if AJ_List[0] is True:
-                        AJ_Column = AJ_List[1]
-                        AJ_List = AJ_List[2]
-                        CalcFlag = True
-                        # 取得リストの次元調整############################################
-                        BJnp = np.array(AJ_List)
-                        RowElement = BJnp.ndim  # 次元数確認
-                        while RowElement > 1:
-                            BJnp = np.array(BJnp[0])
-                            RowElement = BJnp.ndim  # 次元数確認
-                        lenAJ = len(BJnp)  # 次元数確認
-                        for BJ_ListItem in BJnp:
-                            if "自動仕訳候補なし" in BJ_ListItem:
-                                CalcFlag = False
+                PT_ColList = list(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
+                PT_List = np.array(self.pt.model.df)
+                PT_List = list(PT_List)  # OCR抽出結果表の列名リスト
+                # データ内のFalse,nan処理--------------------------------------------
+                if AJ_List[0] is True:
+                    AJ_Column = AJ_List[1]
+                    AJ_List = AJ_List[2]
+                    # ################################################################
+                    # OCR抽出結果表の値を変換ルールに従って自動仕訳表に代入--------------------
+                    for r in range(len(self.Frame7EntL)):
+                        L_CName = self.Frame7EntL[r].get()
+                        R_CName = self.Frame7EntR[r].get()
+                        # 自動仕訳表の列番号検索--------------------------------------
+                        PT_c = 0
+                        for AJ_ListItem in AJ_Column:
+                            if L_CName == AJ_ListItem:
+                                L_CName_c = PT_c
                                 break
-                        # ################################################################
-                        if CalcFlag is True:
-                            # OCR抽出結果表の値を変換ルールに従って自動仕訳表に代入--------------------
-                            for r in range(len(self.Frame7EntL)):
-                                L_CName = self.Frame7EntL[r].get()
-                                R_CName = self.Frame7EntR[r].get()
-                                # 自動仕訳表の列番号検索--------------------------------------
-                                PT_c = 0
-                                for AJ_ListItem in AJ_Column:
-                                    if L_CName == AJ_ListItem:
-                                        L_CName_c = PT_c
-                                        break
-                                    PT_c += 1
-                                # -----------------------------------------------------------
-                                # OCR抽出結果表の列番号検索-------------------------------------------
-                                PT_c = 0
-                                for PT_ColListItem in PT_ColList:
-                                    if R_CName == PT_ColListItem:
-                                        R_CName_c = PT_c
-                                        break
-                                    PT_c += 1
-                                # ---------------------------------------------------------------
-                                L_r = self.pt.startrow + 1
-                                # 取得リストの次元調整############################################
-                                AJnp = np.array(AJ_List)
-                                RowElement = AJnp.ndim  # 次元数確認
-                                while RowElement > 2:
-                                    AJnp = np.array(AJnp[0])
-                                    RowElement = AJnp.ndim  # 次元数確認
-                                lenAJ = len(AJnp)  # 次元数確認
-                                # ###############################################################
-                                if RowElement == 1 and lenAJ == 1:
-                                    # ########################################################
-                                    # 一行の仕訳###############################################
-                                    # ########################################################
-                                    AJ_List = AJnp
-                                    if (R_CName == I) or (R_CName == O):
-                                        # 数値確認-------------------------------------------
-                                        try:
-                                            Var = int(PT_List[L_r][R_CName_c])
-                                            AJtxt = AJ_List[L_r]
-                                            AJtxt = AJtxt[0][L_CName_c]
-                                            C_Txt = AJ.TxtEdit(
-                                                L_CName,
-                                                AJtxt,
-                                                Var,
-                                            )
-                                            AJ_List[L_r][0][L_CName_c] = C_Txt[1]
-                                        except:
-                                            if R_CName == I:
-                                                R_CName = O
-                                            elif R_CName == O:
-                                                R_CName = I
-                                            # OCR抽出結果表の列番号検索---------------------------
-                                            PT_c = 0
-                                            for PT_ColListItem in PT_ColList:
-                                                if R_CName == PT_ColListItem:
-                                                    R_CName_c = PT_c
-                                                    break
-                                                PT_c += 1
-                                            # ----------------------------------------
-                                            Var = int(PT_List[L_r][R_CName_c])
-                                            AJtxt = AJ_List[L_r]
-                                            AJtxt = AJtxt[0][L_CName_c]
-                                            C_Txt = AJ.TxtEdit(
-                                                L_CName,
-                                                AJtxt,
-                                                Var,
-                                            )
-                                            AJ_List[L_r][0][L_CName_c] = C_Txt[1]
-                                        # ---------------------------------------------------
-                                    else:
-                                        Var = PT_List[L_r][R_CName_c]
+                            PT_c += 1
+                        # -----------------------------------------------------------
+                        # OCR抽出結果表の列番号検索-------------------------------------------
+                        PT_c = 0
+                        for PT_ColListItem in PT_ColList:
+                            if R_CName == PT_ColListItem:
+                                R_CName_c = PT_c
+                                break
+                            PT_c += 1
+                        # ---------------------------------------------------------------
+                        # ヘッダー行処理##################################################
+                        for L_r in range(len(AJ_List)):
+                            AJnp = np.array(AJ_List[L_r])
+                            lenAJ = len(AJ_List[L_r])  # 次元数確認
+                            RowElement = AJnp.ndim  # 次元数確認
+                            if RowElement == 2 and lenAJ == 1:
+                                # ########################################################
+                                # 一行の仕訳###############################################
+                                # ########################################################
+                                if (R_CName == I) or (R_CName == O):
+                                    # 数値確認-------------------------------------------
+                                    try:
+                                        Var = int(PT_List[L_r][R_CName_c])
                                         AJtxt = AJ_List[L_r]
                                         AJtxt = AJtxt[0][L_CName_c]
                                         C_Txt = AJ.TxtEdit(
@@ -1022,45 +703,409 @@ class DataGrid:
                                             Var,
                                         )
                                         AJ_List[L_r][0][L_CName_c] = C_Txt[1]
-                                elif RowElement == 2 and lenAJ != 1:
-                                    # ########################################################
-                                    # 複数行の仕訳#############################################
-                                    # ########################################################
-                                    # AJ_List = list(AJnp)
-                                    # 複合仕訳の金額計算
-                                    if (R_CName == I) or (R_CName == O):
-                                        # 数値確認-------------------------------------------
+                                    except:
+                                        if R_CName == I:
+                                            R_CName = O
+                                        elif R_CName == O:
+                                            R_CName = I
+                                        # OCR抽出結果表の列番号検索---------------------------
+                                        PT_c = 0
+                                        for PT_ColListItem in PT_ColList:
+                                            if R_CName == PT_ColListItem:
+                                                R_CName_c = PT_c
+                                                break
+                                            PT_c += 1
+                                        # ----------------------------------------
+                                        Var = int(PT_List[L_r][R_CName_c])
+                                        AJtxt = AJ_List[L_r]
+                                        AJtxt = AJtxt[0][L_CName_c]
+                                        C_Txt = AJ.TxtEdit(
+                                            L_CName,
+                                            AJtxt,
+                                            Var,
+                                        )
+                                        AJ_List[L_r][0][L_CName_c] = C_Txt[1]
+                                    # ---------------------------------------------------
+                                else:
+                                    Var = PT_List[L_r][R_CName_c]
+                                    AJtxt = AJ_List[L_r]
+                                    AJtxt = AJtxt[0][L_CName_c]
+                                    C_Txt = AJ.TxtEdit(
+                                        L_CName,
+                                        AJtxt,
+                                        Var,
+                                    )
+                                    AJ_List[L_r][0][L_CName_c] = C_Txt[1]
+                            elif RowElement == 2 and lenAJ != 1:
+                                # ########################################################
+                                # 複数行の仕訳#############################################
+                                # ########################################################
+                                # 複合仕訳の金額計算
+                                if (R_CName == I) or (R_CName == O):
+                                    # 数値確認-------------------------------------------
+                                    try:
+                                        Var = int(PT_List[L_r][R_CName_c])
+                                        AJtxt = AJ_List[L_r]
+                                        # 複合仕訳の金額割合摘要関数
+                                        AJ.MoneyCalc(
+                                            L_r,
+                                            AJ_List,
+                                            AJtxt,
+                                            R_CName,
+                                            L_CName,
+                                            L_CName_c,
+                                            Var,
+                                        )
+                                    except:
+                                        if R_CName == I:
+                                            R_CName = O
+                                        elif R_CName == O:
+                                            R_CName = I
+                                        # OCR抽出結果表の列番号検索---------------------------
+                                        PT_c = 0
+                                        for PT_ColListItem in PT_ColList:
+                                            if R_CName == PT_ColListItem:
+                                                R_CName_c = PT_c
+                                                break
+                                            PT_c += 1
+                                        # ----------------------------------------
+                                        Var = int(PT_List[L_r][R_CName_c])
+                                        AJtxt = AJ_List[L_r]
+                                        # 複合仕訳の金額割合摘要関数
+                                        AJ.MoneyCalc(
+                                            L_r,
+                                            AJ_List,
+                                            AJtxt,
+                                            R_CName,
+                                            L_CName,
+                                            L_CName_c,
+                                            Var,
+                                        )
+                                    # ---------------------------------------------------
+                                else:
+                                    Var = PT_List[L_r][R_CName_c]
+                                    AJtxt = AJ_List[L_r]
+                                    # 複合仕訳の金額割合摘要関数
+                                    AJ.MoneyCalc(
+                                        L_r,
+                                        AJ_List,
+                                        AJtxt,
+                                        R_CName,
+                                        L_CName,
+                                        L_CName_c,
+                                        Var,
+                                    )
+                            else:
+                                # ########################################################
+                                # 一次元一行の仕訳#########################################
+                                # ########################################################
+                                Var = PT_List[L_r][R_CName_c]
+                                C_Txt = AJ.TxtEdit(
+                                    L_CName,
+                                    Var,
+                                    Var,
+                                )
+                                AJ_List[L_r][L_CName_c] = C_Txt[1]
+                    # ################################################################
+                    # 適正次元に処理し、リスト化
+                    FinalList = []
+                    for L_r in range(len(AJ_List)):
+                        AJnp = np.array(AJ_List[L_r])
+                        lenAJ = len(AJ_List[L_r])  # 次元数確認
+                        RowElement = AJnp.ndim  # 次元数確認
+                        if RowElement == 2 and lenAJ == 1:
+                            A_Row = list(AJ_List[L_r][0])
+                            FinalList.append(A_Row)
+                        elif RowElement == 2 and lenAJ != 1:
+                            for lenAJ_r in range(lenAJ):
+                                A_Row = AJ_List[L_r][lenAJ_r]
+                                A_Row = list(A_Row)
+                                FinalList.append(A_Row)
+                        else:
+                            A_Row = list(AJ_List[L_r])
+                            FinalList.append(A_Row)
+                    # ################################################################
+                    FinalList = np.array(FinalList)
+                    FinalList = np.vstack((AJ_Column, FinalList))  # ヘッダーと結合
+                    FinalList = list(FinalList)
+                    # ################################################################
+                    PiriDel(FinalList)
+                    # 月分等の置換変更処理
+                    for i in range(len(self.RepLEntries)):
+                        ReplaceKey = self.RepLEntries[i].get()
+                        Repstr = self.RepREntries[i].get()
+                        lenFL = len(FinalList)
+                        for F_r in range(lenFL):
+                            if F_r != 0:
+                                FL_Row = FinalList[F_r]
+                                for F_c in range(len(FL_Row)):
+                                    FL_Var = FinalList[F_r][F_c]
+                                    if ReplaceKey in FL_Var:
                                         try:
-                                            Var = int(
-                                                PT_List[self.pt.startrow][R_CName_c]
-                                            )
-                                            AJtxt = AJ_List[0]
-                                            # 複合仕訳の金額割合摘要関数
-                                            AJ.MoneyCalc(
-                                                0,
-                                                AJ_List,
-                                                AJtxt,
-                                                R_CName,
-                                                L_CName,
-                                                L_CName_c,
-                                                Var,
+                                            FSTR = str(FinalList[F_r][F_c])
+                                            FinalList[F_r][F_c] = FSTR.replace(
+                                                ReplaceKey, Repstr
                                             )
                                         except:
-                                            if R_CName == I:
-                                                R_CName = O
-                                            elif R_CName == O:
-                                                R_CName = I
-                                            # OCR抽出結果表の列番号検索---------------------------
-                                            PT_c = 0
-                                            for PT_ColListItem in PT_ColList:
-                                                if R_CName == PT_ColListItem:
-                                                    R_CName_c = PT_c
-                                                    break
-                                                PT_c += 1
-                                            # --------------------------------------------------------
-                                            if tkm[3] == "入金" and R_CName_c != (
-                                                Out_var - 1
-                                            ):
+                                            print("置換変更無し")
+                    # ------------------------------------------------------------------
+                    with open(AJurl, "wt", encoding="cp932", newline="") as fout:
+                        # ライター（書き込み者）を作成
+                        writer = csv.writer(fout)
+                        writer.writerows(FinalList)
+                    enc = CSVO.getFileEncoding(AJurl)
+                    self.pt2.importCSV(AJurl, encoding=enc)
+                    # DF型変換------------------------------
+                    PandasAstype(self.pt2.model.df)
+                    # --------------------------------------
+                    self.pt2.redraw
+                else:
+                    tk.messagebox.showinfo("戻る", "アプリケーション画面に戻ります")
+        except:
+            tk.messagebox.showinfo("確認", "仕訳一致率に数値以外が入っています。")
+
+    # -----------------------------------------------------------------------------------------
+    def AJCalc(self, csvurl):
+        """
+        DGFrame.py
+        ↓
+        def create_SettingFrame(self)
+        ↓
+        self.AJ_Btn
+        bind関数
+        """
+        global AJSeturl
+
+        try:
+            sv = int(self.SortVar.get())
+            self.FileName = csvurl
+            self.JounalFileName = AJurl
+            self.Roolurl = Roolurl
+
+            if self.pt.startrow is None:
+                tk.messagebox.showinfo("確認", "OCR抽出結果表のセルが選択されていません。")
+            else:
+                Moto_Tekiyou = self.Moto_Tekiyou.get()
+                Moto_Day = self.Moto_Day.get()
+                Moto_Karikata = self.Moto_Karikata.get()
+                Moto_Kashikata = self.Moto_Kashikata.get()
+                st = 0  # 行ポジション
+                for stom in self.entryList:  # Entryウィジェットリスト
+                    if stom == "自動仕訳基準列名":
+                        JS_var = st
+                    elif stom == "日付列名":
+                        Day_var = st
+                    elif stom == "入金列名":
+                        In_var = st
+                    elif stom == "出金列名":
+                        Out_var = st
+                    st += 1
+                FileNameenc = CSVO.getFileEncoding(csvurl)
+                # JounalFileNameenc = CSVO.getFileEncoding(AJurl)
+                Roolurlenc = CSVO.getFileEncoding(Roolurl)
+                ChangeTxtURLenc = CSVO.getFileEncoding(self.ChangeTxtURL)
+                # Entry要素設定-------------------------------------------------------------------
+                JS = self.tomlEntries[JS_var].get()  # 自動仕訳基準列名Entry取得
+                D = self.tomlEntries[Day_var].get()  # 日付列Entry取得
+                I = self.tomlEntries[In_var].get()  # 入金列名Entry取得
+                O = self.tomlEntries[Out_var].get()  # 出金列名Entry取得
+                # --------------------------------------------------------------------------------
+                # 自動仕訳判定条件の集計-----------------------------------------------------------
+                CTE = 0
+                OJ = 1
+                MJ = 1
+                OCRList = []
+                MJSList = []
+                OCRms = []
+                MJSms = []
+                for CTEItem in self.ChangeTxtEntries:
+                    ms = CTEItem.get()
+                    if np.mod(CTE, 2) == 0:
+                        OCRList.append(ms)
+                        OCRms.append("条件" + str(OJ) + ":" + ms)
+                        OJ += 1
+                    else:
+                        MJSList.append(ms)
+                        MJSms.append("条件" + str(MJ) + ":" + ms)
+                        MJ += 1
+                    CTE += 1
+                OCRTxt = ",".join(OCRms)
+                MJSTxt = ",".join(MJSms)
+                Messagebox = tk.messagebox.askquestion(
+                    "再計算",
+                    "OCR結果の["
+                    + OCRTxt
+                    + "]列と\nミロク元帳の["
+                    + MJSTxt
+                    + "]列を\n条件に[単一]の仕訳検索を行いますか？",
+                    icon="warning",
+                )
+                # --------------------------------------------------------------------------------
+                if Messagebox == "yes":  # If関数
+                    print(self.Label_ChangeURL.get())  # toml金融機関Entry取得
+                    dfs = self.pt.model.df  # グリッドをDF化
+                    dfsrow = dfs.iloc[self.pt.startrow]  # DF行データ
+                    # グリッド選択データの代入---------------------------------------------------------
+                    # FindTxt = dfsrow[JS]  # 検索文字
+                    # D_var = dfsrow[D]  # 日付
+                    I_var = dfsrow[I]  # 入金
+                    O_var = dfsrow[O]  # 出金
+                    # --------------------------------------------------------------------------------
+                    # 整数チェック---------------------------------------------------------------------
+                    IC = IntCheck(I_var)
+                    OC = IntCheck(O_var)
+                    if IC is True and OC is True:
+                        tkm = False, "", "", ""
+                    elif IC is True:
+                        tkm = True, I_var, In_var, "入金"
+                    elif OC is True:
+                        tkm = True, O_var, Out_var, "出金"
+                    if tkm[0] is False:
+                        tk.messagebox.showinfo("確認", "入金、出金双方に金額が出力されています。行を再確認してください。")
+                    # --------------------------------------------------------------------------------
+                    else:
+                        for r in range(len(self.AJR)):
+                            if tkm[3] == "入金":
+                                if self.AJR[r] == "出金":
+                                    AJ_Key = self.AJL[r]
+                                # elif self.AJR[r] == "入金":
+                                #     AJ_RefKey = self.AJL[r]
+                            elif tkm[3] == "出金":
+                                if self.AJR[r] == "入金":
+                                    AJ_Key = self.AJL[r]
+                                # elif self.AJR[r] == "出金":
+                                #     AJ_RefKey = self.AJL[r]
+
+                        AJ_List = AJ.main(
+                            self.pt.startrow,
+                            Moto_Tekiyou,
+                            self.HidukeColName,
+                            Moto_Day,
+                            self.Moto_Money_No,
+                            Moto_Karikata,
+                            Moto_Kashikata,
+                            self.FileName,
+                            FileNameenc,
+                            self.Roolurl,
+                            Roolurlenc,
+                            self.ChangeTxtURL,
+                            ChangeTxtURLenc,
+                            I,
+                            O,
+                            OCRList,
+                            MJSList,
+                            sv,
+                        )  # 仕訳候補を抽出
+
+                        PT_ColList = list(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
+                        PT_List = np.array(self.pt.model.df)
+                        PT_List = list(PT_List)  # OCR抽出結果表の列名リスト
+                        # データ内のFalse,nan処理--------------------------------------------
+                        if AJ_List[0] is True:
+                            AJ_Column = AJ_List[1]
+                            AJ_List = AJ_List[2]
+                            CalcFlag = True
+                            # 取得リストの次元調整############################################
+                            BJnp = np.array(AJ_List)
+                            RowElement = BJnp.ndim  # 次元数確認
+                            while RowElement > 1:
+                                BJnp = np.array(BJnp[0])
+                                RowElement = BJnp.ndim  # 次元数確認
+                            lenAJ = len(BJnp)  # 次元数確認
+                            for BJ_ListItem in BJnp:
+                                if "自動仕訳候補なし" in BJ_ListItem:
+                                    CalcFlag = False
+                                    break
+                            # ################################################################
+                            if CalcFlag is True:
+                                # OCR抽出結果表の値を変換ルールに従って自動仕訳表に代入--------------------
+                                for r in range(len(self.Frame7EntL)):
+                                    L_CName = self.Frame7EntL[r].get()
+                                    R_CName = self.Frame7EntR[r].get()
+                                    # 自動仕訳表の列番号検索--------------------------------------
+                                    PT_c = 0
+                                    for AJ_ListItem in AJ_Column:
+                                        if L_CName == AJ_ListItem:
+                                            L_CName_c = PT_c
+                                            break
+                                        PT_c += 1
+                                    # -----------------------------------------------------------
+                                    # OCR抽出結果表の列番号検索-------------------------------------------
+                                    PT_c = 0
+                                    for PT_ColListItem in PT_ColList:
+                                        if R_CName == PT_ColListItem:
+                                            R_CName_c = PT_c
+                                            break
+                                        PT_c += 1
+                                    # ---------------------------------------------------------------
+                                    L_r = self.pt.startrow + 1
+                                    # 取得リストの次元調整############################################
+                                    AJnp = np.array(AJ_List)
+                                    RowElement = AJnp.ndim  # 次元数確認
+                                    while RowElement > 2:
+                                        AJnp = np.array(AJnp[0])
+                                        RowElement = AJnp.ndim  # 次元数確認
+                                    lenAJ = len(AJnp)  # 次元数確認
+                                    # ###############################################################
+                                    if RowElement == 1 and lenAJ == 1:
+                                        # ########################################################
+                                        # 一行の仕訳###############################################
+                                        # ########################################################
+                                        AJ_List = AJnp
+                                        if (R_CName == I) or (R_CName == O):
+                                            # 数値確認-------------------------------------------
+                                            try:
+                                                Var = int(PT_List[L_r][R_CName_c])
+                                                AJtxt = AJ_List[L_r]
+                                                AJtxt = AJtxt[0][L_CName_c]
+                                                C_Txt = AJ.TxtEdit(
+                                                    L_CName,
+                                                    AJtxt,
+                                                    Var,
+                                                )
+                                                AJ_List[L_r][0][L_CName_c] = C_Txt[1]
+                                            except:
+                                                if R_CName == I:
+                                                    R_CName = O
+                                                elif R_CName == O:
+                                                    R_CName = I
+                                                # OCR抽出結果表の列番号検索---------------------------
+                                                PT_c = 0
+                                                for PT_ColListItem in PT_ColList:
+                                                    if R_CName == PT_ColListItem:
+                                                        R_CName_c = PT_c
+                                                        break
+                                                    PT_c += 1
+                                                # ----------------------------------------
+                                                Var = int(PT_List[L_r][R_CName_c])
+                                                AJtxt = AJ_List[L_r]
+                                                AJtxt = AJtxt[0][L_CName_c]
+                                                C_Txt = AJ.TxtEdit(
+                                                    L_CName,
+                                                    AJtxt,
+                                                    Var,
+                                                )
+                                                AJ_List[L_r][0][L_CName_c] = C_Txt[1]
+                                            # ---------------------------------------------------
+                                        else:
+                                            Var = PT_List[L_r][R_CName_c]
+                                            AJtxt = AJ_List[L_r]
+                                            AJtxt = AJtxt[0][L_CName_c]
+                                            C_Txt = AJ.TxtEdit(
+                                                L_CName,
+                                                AJtxt,
+                                                Var,
+                                            )
+                                            AJ_List[L_r][0][L_CName_c] = C_Txt[1]
+                                    elif RowElement == 2 and lenAJ != 1:
+                                        # ########################################################
+                                        # 複数行の仕訳#############################################
+                                        # ########################################################
+                                        # AJ_List = list(AJnp)
+                                        # 複合仕訳の金額計算
+                                        if (R_CName == I) or (R_CName == O):
+                                            # 数値確認-------------------------------------------
+                                            try:
                                                 Var = int(
                                                     PT_List[self.pt.startrow][R_CName_c]
                                                 )
@@ -1075,12 +1120,108 @@ class DataGrid:
                                                     L_CName_c,
                                                     Var,
                                                 )
+                                            except:
+                                                if R_CName == I:
+                                                    R_CName = O
+                                                elif R_CName == O:
+                                                    R_CName = I
+                                                # OCR抽出結果表の列番号検索---------------------------
+                                                PT_c = 0
+                                                for PT_ColListItem in PT_ColList:
+                                                    if R_CName == PT_ColListItem:
+                                                        R_CName_c = PT_c
+                                                        break
+                                                    PT_c += 1
+                                                # --------------------------------------------------------
+                                                if tkm[3] == "入金" and R_CName_c != (
+                                                    Out_var - 1
+                                                ):
+                                                    Var = int(
+                                                        PT_List[self.pt.startrow][
+                                                            R_CName_c
+                                                        ]
+                                                    )
+                                                    AJtxt = AJ_List[0]
+                                                    # 複合仕訳の金額割合摘要関数
+                                                    AJ.MoneyCalc(
+                                                        0,
+                                                        AJ_List,
+                                                        AJtxt,
+                                                        R_CName,
+                                                        L_CName,
+                                                        L_CName_c,
+                                                        Var,
+                                                    )
+                                                elif tkm[3] == "出金" and R_CName_c != (
+                                                    In_var - 1
+                                                ):
+                                                    Var = int(
+                                                        PT_List[self.pt.startrow][
+                                                            R_CName_c
+                                                        ]
+                                                    )
+                                                    AJtxt = AJ_List[0]
+                                                    # 複合仕訳の金額割合摘要関数
+                                                    AJ.MoneyCalc(
+                                                        0,
+                                                        AJ_List,
+                                                        AJtxt,
+                                                        R_CName,
+                                                        L_CName,
+                                                        L_CName_c,
+                                                        Var,
+                                                    )
+                                                elif tkm[3] == "入金" and R_CName_c == (
+                                                    Out_var - 1
+                                                ):
+                                                    print("入金スキップ")
+                                                elif tkm[3] == "出金" and R_CName_c == (
+                                                    In_var - 1
+                                                ):
+                                                    print("出金スキップ")
+                                                else:
+                                                    Var = int(
+                                                        PT_List[self.pt.startrow][
+                                                            R_CName_c
+                                                        ]
+                                                    )
+                                                    AJtxt = AJ_List[0]
+                                                    # 複合仕訳の金額割合摘要関数
+                                                    AJ.MoneyCalc(
+                                                        0,
+                                                        AJ_List,
+                                                        AJtxt,
+                                                        R_CName,
+                                                        L_CName,
+                                                        L_CName_c,
+                                                        Var,
+                                                    )
+                                                # --------------------------------------------------------
+                                        else:
+                                            # --------------------------------------------------------
+                                            if tkm[3] == "入金" and R_CName_c != (
+                                                Out_var - 1
+                                            ):
+                                                Var = PT_List[self.pt.startrow][
+                                                    R_CName_c
+                                                ]
+                                                AJtxt = AJ_List[0]
+                                                # 複合仕訳の金額割合摘要関数
+                                                AJ.MoneyCalc(
+                                                    0,
+                                                    AJ_List,
+                                                    AJtxt,
+                                                    R_CName,
+                                                    L_CName,
+                                                    L_CName_c,
+                                                    Var,
+                                                )
                                             elif tkm[3] == "出金" and R_CName_c != (
                                                 In_var - 1
                                             ):
-                                                Var = int(
-                                                    PT_List[self.pt.startrow][R_CName_c]
-                                                )
+                                                Var = PT_List[self.pt.startrow][
+                                                    R_CName_c
+                                                ]
                                                 AJtxt = AJ_List[0]
                                                 # 複合仕訳の金額割合摘要関数
                                                 AJ.MoneyCalc(
@@ -1101,9 +1242,9 @@ class DataGrid:
                                             ):
                                                 print("出金スキップ")
                                             else:
-                                                Var = int(
-                                                    PT_List[self.pt.startrow][R_CName_c]
-                                                )
+                                                Var = PT_List[self.pt.startrow][
+                                                    R_CName_c
+                                                ]
                                                 AJtxt = AJ_List[0]
                                                 # 複合仕訳の金額割合摘要関数
                                                 AJ.MoneyCalc(
@@ -1115,147 +1256,105 @@ class DataGrid:
                                                     L_CName_c,
                                                     Var,
                                                 )
-                                            # --------------------------------------------------------
                                     else:
+                                        # ########################################################
+                                        # 一次元一行の仕訳#########################################
+                                        # ########################################################
+                                        AJ_List = AJnp
                                         # --------------------------------------------------------
-                                        if tkm[3] == "入金" and R_CName_c != (
-                                            Out_var - 1
-                                        ):
+                                        if tkm[3] == "入金":
                                             Var = PT_List[self.pt.startrow][R_CName_c]
-                                            AJtxt = AJ_List[0]
-                                            # 複合仕訳の金額割合摘要関数
-                                            AJ.MoneyCalc(
-                                                0,
-                                                AJ_List,
-                                                AJtxt,
-                                                R_CName,
+                                            C_Txt = AJ.TxtEdit(
                                                 L_CName,
-                                                L_CName_c,
+                                                Var,
                                                 Var,
                                             )
-                                        elif tkm[3] == "出金" and R_CName_c != (
-                                            In_var - 1
-                                        ):
+                                            if L_CName == AJ_Key:
+                                                AJ_List[0][L_CName_c] = I_var
+                                            else:
+                                                AJ_List[0][L_CName_c] = C_Txt[1]
+                                        elif tkm[3] == "出金":
                                             Var = PT_List[self.pt.startrow][R_CName_c]
-                                            AJtxt = AJ_List[0]
-                                            # 複合仕訳の金額割合摘要関数
-                                            AJ.MoneyCalc(
-                                                0,
-                                                AJ_List,
-                                                AJtxt,
-                                                R_CName,
+                                            C_Txt = AJ.TxtEdit(
                                                 L_CName,
-                                                L_CName_c,
+                                                Var,
                                                 Var,
                                             )
-                                        elif tkm[3] == "入金" and R_CName_c == (
-                                            Out_var - 1
-                                        ):
-                                            print("入金スキップ")
-                                        elif tkm[3] == "出金" and R_CName_c == (
-                                            In_var - 1
-                                        ):
-                                            print("出金スキップ")
+                                            if L_CName == AJ_Key:
+                                                AJ_List[0][L_CName_c] = O_var
+                                            else:
+                                                AJ_List[0][L_CName_c] = C_Txt[1]
                                         else:
                                             Var = PT_List[self.pt.startrow][R_CName_c]
-                                            AJtxt = AJ_List[0]
-                                            # 複合仕訳の金額割合摘要関数
-                                            AJ.MoneyCalc(
-                                                0,
-                                                AJ_List,
-                                                AJtxt,
-                                                R_CName,
+                                            C_Txt = AJ.TxtEdit(
                                                 L_CName,
-                                                L_CName_c,
+                                                Var,
                                                 Var,
                                             )
-                                else:
-                                    # ########################################################
-                                    # 一次元一行の仕訳#########################################
-                                    # ########################################################
-                                    AJ_List = AJnp
-                                    # --------------------------------------------------------
-                                    if tkm[3] == "入金" and R_CName_c != (Out_var - 1):
-                                        Var = PT_List[self.pt.startrow][R_CName_c]
-                                        C_Txt = AJ.TxtEdit(
-                                            L_CName,
-                                            Var,
-                                            Var,
-                                        )
-                                        AJ_List[0][L_CName_c] = C_Txt[1]
-                                    elif tkm[3] == "出金" and R_CName_c != (In_var - 1):
-                                        Var = PT_List[self.pt.startrow][R_CName_c]
-                                        C_Txt = AJ.TxtEdit(
-                                            L_CName,
-                                            Var,
-                                            Var,
-                                        )
-                                        AJ_List[0][L_CName_c] = C_Txt[1]
-                                    elif tkm[3] == "入金" and R_CName_c == (Out_var - 1):
-                                        print("入金スキップ")
-                                    elif tkm[3] == "出金" and R_CName_c == (In_var - 1):
-                                        print("出金スキップ")
-                                    else:
-                                        Var = PT_List[self.pt.startrow][R_CName_c]
-                                        C_Txt = AJ.TxtEdit(
-                                            L_CName,
-                                            Var,
-                                            Var,
-                                        )
-                                        AJ_List[0][L_CName_c] = C_Txt[1]
-                                    # --------------------------------------------------------
-                            # ################################################################
-                            # 適正次元に処理し、リスト化
-                            FinalList = []
-                            for L_r in range(len(AJ_List)):
-                                AJnp = np.array(AJ_List[L_r])
-                                lenAJ = len(AJ_List[L_r])  # 次元数確認
-                                RowElement = AJnp.ndim  # 次元数確認
-                                if RowElement == 2 and lenAJ == 1:
-                                    A_Row = list(AJ_List[L_r][0])
-                                    FinalList.append(A_Row)
-                                elif RowElement == 2 and lenAJ != 1:
-                                    for lenAJ_r in range(lenAJ):
-                                        A_Row = AJ_List[L_r][lenAJ_r]
-                                        A_Row = list(A_Row)
+                                            AJ_List[0][L_CName_c] = C_Txt[1]
+                                        # --------------------------------------------------------
+                                # ################################################################
+                                # 適正次元に処理し、リスト化
+                                FinalList = []
+                                for L_r in range(len(AJ_List)):
+                                    AJnp = np.array(AJ_List[L_r])
+                                    lenAJ = len(AJ_List[L_r])  # 次元数確認
+                                    RowElement = AJnp.ndim  # 次元数確認
+                                    if RowElement == 2 and lenAJ == 1:
+                                        A_Row = list(AJ_List[L_r][0])
                                         FinalList.append(A_Row)
-                                else:
-                                    A_Row = list(AJ_List[L_r])
-                                    FinalList.append(A_Row)
-                            # ################################################################
-                            FinalList = np.array(FinalList)
-                            FinalList = np.vstack((AJ_Column, FinalList))  # ヘッダーと結合
-                            FinalList = list(FinalList)
-                            # ################################################################
-                            PiriDel(FinalList)
-                            # 月分等の置換変更処理
-                            for i in range(len(self.RepLEntries)):
-                                ReplaceKey = self.RepLEntries[i].get()
-                                Repstr = self.RepREntries[i].get()
-                                lenFL = len(FinalList)
-                                for F_r in range(lenFL):
-                                    if F_r != 0:
-                                        FL_Row = FinalList[F_r]
-                                        for F_c in range(len(FL_Row)):
-                                            FL_Var = FinalList[F_r][F_c]
-                                            if ReplaceKey in FL_Var:
-                                                try:
-                                                    FSTR = str(FinalList[F_r][F_c])
-                                                    FinalList[F_r][F_c] = FSTR.replace(
-                                                        ReplaceKey, Repstr
-                                                    )
-                                                except:
-                                                    print("置換変更無し")
-                            # ------------------------------------------------------------------
-                            AJDF = pd.DataFrame(FinalList)
-                            AJDF.to_csv(AJSeturl, index=False, header=False)
-                            enc = CSVO.getFileEncoding(AJSeturl)
-                            self.pt3.importCSV(AJSeturl, encoding=enc)
-                            self.pt3.redraw
+                                    elif RowElement == 2 and lenAJ != 1:
+                                        for lenAJ_r in range(lenAJ):
+                                            A_Row = AJ_List[L_r][lenAJ_r]
+                                            A_Row = list(A_Row)
+                                            FinalList.append(A_Row)
+                                    else:
+                                        A_Row = list(AJ_List[L_r])
+                                        FinalList.append(A_Row)
+                                # ################################################################
+                                FinalList = np.array(FinalList)
+                                FinalList = np.vstack((AJ_Column, FinalList))  # ヘッダーと結合
+                                FinalList = list(FinalList)
+                                # ################################################################
+                                PiriDel(FinalList)
+                                # 月分等の置換変更処理
+                                for i in range(len(self.RepLEntries)):
+                                    ReplaceKey = self.RepLEntries[i].get()
+                                    Repstr = self.RepREntries[i].get()
+                                    lenFL = len(FinalList)
+                                    for F_r in range(lenFL):
+                                        if F_r != 0:
+                                            FL_Row = FinalList[F_r]
+                                            for F_c in range(len(FL_Row)):
+                                                FL_Var = FinalList[F_r][F_c]
+                                                if ReplaceKey in FL_Var:
+                                                    try:
+                                                        FSTR = str(FinalList[F_r][F_c])
+                                                        FinalList[F_r][
+                                                            F_c
+                                                        ] = FSTR.replace(
+                                                            ReplaceKey, Repstr
+                                                        )
+                                                    except:
+                                                        print("置換変更無し")
+                                # ------------------------------------------------------------------
+                                AJDF = pd.DataFrame(FinalList)
+                                AJDF.to_csv(AJSeturl, index=False, header=False)
+                                enc = CSVO.getFileEncoding(AJSeturl)
+                                self.pt3.importCSV(AJSeturl, encoding=enc)
+                                # DF型変換------------------------------
+                                PandasAstype(self.pt3.model.df)
+                                # --------------------------------------
+                                self.pt3.redraw
                         else:
                             tk.messagebox.showinfo("確認", "仕訳検索結果がありません。\n元帳全行表示を行います。")
                             self.pt3.importCSV(self.Roolurl, encoding=Roolurlenc)
+                            # DF型変換------------------------------
+                            PandasAstype(self.pt3.model.df)
+                            # --------------------------------------
                             self.pt3.redraw
+        except:
+            tk.messagebox.showinfo("確認", "仕訳一致率に数値以外が入っています。")
 
     # -----------------------------------------------------------------------------------------
     def CsvHeader(self):
@@ -1300,6 +1399,25 @@ class DataGrid:
 #############################################################################################
 # 以下関数
 #############################################################################################
+def PandasAstype(P_df):
+    """
+    Pandasデータフレーム型変換
+    """
+    # DF型変換------------------------------
+    ptc = P_df.columns
+    for ptcItem in ptc:
+        ptc_n = P_df[ptcItem].dtype
+        if "float" == ptc_n.name:
+            P_df[ptcItem].astype(int)
+        elif "float64" == ptc_n.name:
+            P_df[ptcItem] = P_df[ptcItem].fillna(0)
+            P_df[ptcItem] = P_df[ptcItem].astype(int)
+            P_df[ptcItem] = P_df[ptcItem].astype(str)
+            P_df[ptcItem] = P_df[ptcItem].replace("0", "")
+    # --------------------------------------
+
+
+# -----------------------------------------------------------------------------------------
 def PiriDel(FinalList):
     """
     CSVファイル最終調整
@@ -1426,8 +1544,8 @@ if __name__ == "__main__":
     ReplaceStr = ["CDカード", "マツモトトソウテン", "ザンダカショウメイショ"]
     # ColNameList = ["日付", "摘要", "出金", "入金", "残高"]  # OCR出力列名
     # ColNameList = ["日付", "摘要", "入金", "摘要", "出金", "摘要"]  # OCR出力列名
-    csvurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_2page.csv"
-    AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_2page_AutoJounal.csv"
+    csvurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.csv"
+    AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page_AutoJounal.csv"
     AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
     Roolurl = r"D:\OCRTESTPDF\PDFTEST\1_仕訳日記帳.csv"
     ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\ChangeTxtList.csv"
@@ -1439,7 +1557,7 @@ if __name__ == "__main__":
     ColNameList = ColNameList_np[0, :]
     ColNameList = list(ColNameList)
     # toml読込------------------------------------------------------------------------------
-    with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
+    with open(r"D:\OCRTESTPDF\PDFTEST/Setting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------

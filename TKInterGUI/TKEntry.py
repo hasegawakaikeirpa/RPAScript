@@ -1,4 +1,4 @@
-from msilib.schema import ListBox
+# from msilib.schema import ListBox
 import tkinter as tk
 from datetime import datetime as dt
 import WarekiHenkan as wh
@@ -111,21 +111,27 @@ def treeviewEntries(self):  # , tomltitle):
     # インデックスマネージャを初期化
     self.index = 0  # 最新のインデックス番号
     self.indexes = []  # インデックスの並び
+
     # URLテキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="OCRURL").grid(row=0, column=0)  # 位置指定
+    tk.Label(self.frame3, text="仕訳一致率").grid(row=0, column=0)  # 位置指定
+    self.SortVar = tk.Entry(self.frame3, width=10)
+    self.SortVar.insert(0, 50)
+    self.SortVar.grid(row=0, column=1, columnspan=3)
+    # URLテキストボックス-----------------------------------------------------------
+    tk.Label(self.frame3, text="OCRURL").grid(row=1, column=0)  # 位置指定
     self.Label_URL = tk.Entry(self.frame3, width=10)
     self.Label_URL.insert(0, self.FileName)
-    self.Label_URL.grid(row=0, column=1, columnspan=3)
+    self.Label_URL.grid(row=1, column=1, columnspan=3)
     # 出力先テキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="出力先URL").grid(row=1, column=0)  # 位置指定
+    tk.Label(self.frame3, text="出力先URL").grid(row=2, column=0)  # 位置指定
     self.Label_OutURL = tk.Entry(self.frame3, width=10)
     self.Label_OutURL.insert(0, self.JounalFileName)
-    self.Label_OutURL.grid(row=1, column=1, columnspan=3)
+    self.Label_OutURL.grid(row=2, column=1, columnspan=3)
     # 元帳URLテキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="元帳URL").grid(row=2, column=0)  # 位置指定
+    tk.Label(self.frame3, text="元帳URL").grid(row=3, column=0)  # 位置指定
     self.Label_ChangeURL = tk.Entry(self.frame3, width=10)
     self.Label_ChangeURL.insert(0, self.Roolurl)
-    self.Label_ChangeURL.grid(row=2, column=1, columnspan=3)
+    self.Label_ChangeURL.grid(row=3, column=1, columnspan=3)
     # URL指定ボタン-------------------------------------------------------------
     self.URL_In = tk.Button(
         self.frame3,
@@ -134,7 +140,7 @@ def treeviewEntries(self):  # , tomltitle):
         bg="LemonChiffon",
         command=self.OCR_Open,
     )
-    self.URL_In.grid(row=3, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+    self.URL_In.grid(row=4, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
     self.URL_In2 = tk.Button(
         self.frame3,
         text="出力先CSV選択",
@@ -142,7 +148,7 @@ def treeviewEntries(self):  # , tomltitle):
         bg="Honeydew",
         command=self.Out_Open,
     )
-    self.URL_In2.grid(row=4, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+    self.URL_In2.grid(row=5, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
     self.URL_In3 = tk.Button(
         self.frame3,
         text="元帳CSV選択",
@@ -150,7 +156,7 @@ def treeviewEntries(self):  # , tomltitle):
         bg="AntiqueWhite",
         command=self.Moto_Open,
     )
-    self.URL_In3.grid(row=5, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
+    self.URL_In3.grid(row=6, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
     # テキスト変換ルール設定ボタン----------------------------------------------------
     self.Txt_C = tk.Button(
         self.frame3,
@@ -160,7 +166,7 @@ def treeviewEntries(self):  # , tomltitle):
         command=self.Txt_ChangeSetOpen,
     )
     self.Txt_C.grid(
-        row=len(self.indexes) + 6, column=0, columnspan=2, sticky=tk.W + tk.E
+        row=len(self.indexes) + 7, column=0, columnspan=2, sticky=tk.W + tk.E
     )  # 位置指定
     # ------------------------------------------------------------------------------
     # 戻るボタン--------------------------------------------------------------------
@@ -172,7 +178,7 @@ def treeviewEntries(self):  # , tomltitle):
         command=self.ReturnBack,
     )
     self.CloseBtn.grid(
-        row=len(self.indexes) + 7, column=0, columnspan=2, sticky=tk.W + tk.E
+        row=len(self.indexes) + 8, column=0, columnspan=2, sticky=tk.W + tk.E
     )  # 位置指定
     # ------------------------------------------------------------------------------
 
@@ -459,20 +465,30 @@ def FrameChangeEntries(self):  # , tomltitle):
             self.Sub_ChangeTxtentryList.append(ColNameItem)
             # ----------------------------------------------------------------------
             r += 1
-
-        # lb = tk.Label(self.ChangeFrame, text="数値置換対象テキスト")
-        # lb.grid(row=len(self.ChangeTxtindexes) + 1, column=0)  # 位置指定
-        # txtxt = tk.Entry(self.ChangeFrame, width=20)
+        # self.ChangeFrame_Sub = tk.Frame(self.ChangeFrame)
+        # lb = tk.Label(self.ChangeFrame_Sub, text="検出率")
+        # lb.grid(row=0, column=0)  # 位置指定
+        # txtxt = tk.Entry(self.ChangeFrame_Sub, width=20)
         # txtxt.insert(0, "月分")
-        # txtxt.grid(row=len(self.ChangeTxtindexes) + 1, column=1)  # 位置指定
-        # self.ReplaceKey = txtxt
+        # txtxt.grid(row=0, column=1)  # 位置指定
 
-        # lb = tk.Label(self.AJsetMenuFrame, text="数値置換対象テキスト")
-        # lb.grid(row=len(self.ChangeTxtindexes) + 1, column=0)  # 位置指定
-        # txtxt = tk.Entry(self.AJsetMenuFrame, width=20)
+        # self.ChangeFrame_Sub.grid(
+        #     row=len(self.ChangeTxtEntries) + 1, columnspan=3
+        # )  # 位置指定
+
+        # self.ParVal = txtxt
+        # self.AJChangeFrame_Sub = tk.Frame(self.AJsetMenuFrame)
+        # lb = tk.Label(self.AJChangeFrame_Sub, text="検出率")
+        # lb.grid(row=0, column=0)  # 位置指定
+        # txtxt = tk.Entry(self.AJChangeFrame_Sub, width=20)
         # txtxt.insert(0, "月分")
-        # txtxt.grid(row=len(self.ChangeTxtindexes) + 1, column=1)  # 位置指定
-        # self.SubReplaceKey = txtxt
+        # txtxt.grid(row=0, column=1)  # 位置指定
+
+        # self.AJChangeFrame_Sub.grid(
+        #     row=len(self.ChangeTxtEntries) + 1, columnspan=3
+        # )  # 位置指定
+
+        # self.SubParVal = txtxt
 
     else:
         tk.messagebox.showinfo("確認", "変換リストの列数と一致しません。")

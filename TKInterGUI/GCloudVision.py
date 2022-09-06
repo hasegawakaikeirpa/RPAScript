@@ -1,13 +1,17 @@
-﻿import argparse
+﻿# import argparse
+from argparse import ArgumentParser
 from enum import Enum
 import io
 import os
 from google.cloud import vision
 from google.oauth2 import service_account
 from PIL import Image, ImageDraw
-import pandas as pd
+
+# import pandas as pd
+from pandas import DataFrame
 import numpy as np
-from collections import OrderedDict
+
+# from collections import OrderedDict
 
 
 # loggerインポート
@@ -248,7 +252,7 @@ def DfTuuchou(
         strList = []
         FstrList = []
         # ---------------------------------------------------------------------------
-        dfXYList = pd.DataFrame(XYList)  # XYListをデータフレーム化
+        dfXYList = DataFrame(XYList)  # XYListをデータフレーム化
         dfXYList.columns = ["No", "テキスト", "X軸", "Y軸"]  # XYListデータフレームのヘッダー設定
         # XYListデータフレームの並び替え(行の順番)--------------------------------------
         npXYList = ChangeList(dfXYList, "Y軸")  # pram1:リスト,pram2:str"Y軸"
@@ -415,7 +419,7 @@ def Bankrentxtver(filein, YokoList, TateList):  # 自作関数一文字づつの
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument("detect_file", help="The image for text detection.")
     parser.add_argument("-out_file", help="Optional output file", default=0)
     args = parser.parse_args()

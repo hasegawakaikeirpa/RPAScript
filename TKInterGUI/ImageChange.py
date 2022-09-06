@@ -1,4 +1,4 @@
-﻿from PIL import Image, ImageOps
+﻿from PIL import Image, ImageOps, ImageDraw
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 import math
 import pyocr
 import os
-
-from PIL import Image, ImageDraw
 from pathlib import Path
 from pdf2image import convert_from_path
 

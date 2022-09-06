@@ -1,9 +1,13 @@
 import cv2
 import os
+
 import numpy as np
+
+# from numpy import fromfile, uint8
 import csv
-from tkinter import messagebox
-from tkinter import ttk, filedialog
+from tkinter import messagebox, filedialog
+
+# from tkinter import ttk, filedialog
 
 
 class mouse_event_handler:

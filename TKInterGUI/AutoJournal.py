@@ -797,6 +797,7 @@ def main(
     O,
     OCRList,
     MJSList,
+    SortVar,
 ):
 
     try:
@@ -804,7 +805,7 @@ def main(
         OCR表全体から摘要欄一致仕訳を抽出
         """
         ############################################################################
-        SortVar = 50  # 一致率
+        # SortVar = 50  # 一致率
         ############################################################################
         HukugouKey = "複合"  # 複合仕訳の諸口勘定名
 
@@ -907,8 +908,9 @@ def main(
             if N_C == 1:  # 指定一致率以上が1件なら##########################################
                 ind = np.where(SortNp >= SortVar)  # インデックス取得
                 FinalList = FinalList[ind]
+                SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
+                SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
                 ind = np.where(SortNp == max(SortNp))  # インデックス取得
-                FinalList = FinalList[ind]
                 FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
                 FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
                 Nind = NPFLOW(
@@ -962,8 +964,9 @@ def main(
             elif N_C > 1:  # 指定一致率以上が1件以上なら##########################################
                 ind = np.where(SortNp >= SortVar)  # インデックス取得
                 FinalList = FinalList[ind]
+                SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
+                SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
                 ind = np.where(SortNp == max(SortNp))  # インデックス取得
-                FinalList = FinalList[ind]
                 FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
                 FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
                 Nind = NPFLOW(
@@ -1044,13 +1047,14 @@ def AllChange(
     O,
     OCRList,
     MJSList,
+    SortVar,
 ):
     try:
         """
         OCR表全体から摘要欄一致仕訳を抽出
         """
         ############################################################################
-        SortVar = 50  # 一致率
+        # SortVar = 50  # 一致率
         ############################################################################
         HukugouKey = "複合"  # 複合仕訳の諸口勘定名
 
@@ -1154,8 +1158,9 @@ def AllChange(
                 if N_C == 1:  # 指定一致率以上が1件なら##########################################
                     ind = np.where(SortNp >= SortVar)  # インデックス取得
                     FinalList = FinalList[ind]
+                    SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
+                    SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
                     ind = np.where(SortNp == max(SortNp))  # インデックス取得
-                    FinalList = FinalList[ind]
                     FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
                     FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
                     Nind = NPFLOW(
@@ -1211,8 +1216,9 @@ def AllChange(
                 ):  # 指定一致率以上が1件以上なら##########################################
                     ind = np.where(SortNp >= SortVar)  # インデックス取得
                     FinalList = FinalList[ind]
+                    SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
+                    SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
                     ind = np.where(SortNp == max(SortNp))  # インデックス取得
-                    FinalList = FinalList[ind]
                     FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
                     FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
                     Nind = NPFLOW(

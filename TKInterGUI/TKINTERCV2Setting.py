@@ -1,14 +1,21 @@
 import tkinter as tk
 import csv
 from PIL import Image, ImageTk
-from tkinter import messagebox
+from tkinter import END, messagebox
 import os
+
 import OCRFlow as OCRF
+
+# from OCRFlow import Main
 import toml
 from tkinter import ttk
-import CV2Setting as CV2S
+
+# import CV2Setting as CV2S
+from CV2Setting import straightlinesetting
 import DataGrid as DG
 import ScrollableFrame as SF
+import tomlCreate as toml_c
+from tkinter import filedialog
 
 ###################################################################################################
 class Application(tk.Frame):
@@ -16,7 +23,9 @@ class Application(tk.Frame):
         global TKimg  # 画像オブジェクト用グローバル変数
         global txt
         global CW, CH
-
+        global Banktoml
+        global Entries
+        global tomlEntries
         # Windowの初期設定を行う。
         super().__init__(master)
         # Windowの画面サイズを設定する。
@@ -81,9 +90,28 @@ class Application(tk.Frame):
         txt.grid(row=0, column=1)
         # 行数表示テキスト
         tk.Label(Tframe, text="元帳日付列名").grid(row=1, column=0)  # 位置指定
-        self.LimitCol = tk.Entry(Tframe, width=30)
+        self.LimitCol = tk.Entry(Tframe, width=30, bg="ghostwhite")
         self.LimitCol.insert(0, "伝票日付")
         self.LimitCol.grid(row=1, column=1)
+        # 行数表示テキスト
+        tk.Label(Tframe, text="設定ファイル").grid(row=2, column=0)  # 位置指定
+        self.tomlurl = tk.Entry(Tframe, width=30, bg="ghostwhite")
+        self.tomlurl.insert(0, tomlurl)
+        self.tomlurl.grid(row=2, column=1)
+        # 行数表示テキスト
+        # 設定ファイル変更ボタン--------------------------------------------------------
+        self.tomlbutton = tk.Button(
+            # self.top,
+            Tframe,
+            text="設定ファイル変更",
+            fg="White",
+            command=self.ChangeToml,
+            bg="gray",
+            font=1,
+            width=23,
+            height=1,
+        )  # ボタン作成
+        self.tomlbutton.grid(row=3, column=0, columnspan=2, sticky=tk.N)
         #################################################################################
         # 列名設定フレーム################################################################
         tk.Label(frame0, text="出力列名設定").grid(row=1, column=0)  # フレームテキスト
@@ -97,7 +125,7 @@ class Application(tk.Frame):
         self.index = 0  # 最新のインデックス番号
         self.indexes = []  # インデックスの並び
         # self.createEntry(0, bar_x=False)
-        self.ColList = ["日付"]
+        self.ColList = Banktoml["ColList"]["List"]
         i = 0
         for ColListItem in self.ColList:
             self.createEntry(i, bar_x=False)
@@ -113,22 +141,39 @@ class Application(tk.Frame):
             bd=2,
         )
         Setframe.grid(sticky=tk.W + tk.E)
+        tomlEntries = []
         # テキストボックスの作成と配置
         tk.Label(Setframe, text="日付列番号").grid(row=0, column=0)  # 位置指定
-        self.DaySet = tk.Entry(Setframe, width=30)
-        self.DaySet.insert(0, "")
+        self.DaySet = tk.Entry(Setframe, width=30, bg="ghostwhite")
+        tomlEntries.append(self.DaySet)
+        self.TomlInsert(self.DaySet, Banktoml["Setframe"]["DaySetList"])
+        # self.DaySet.insert(0, Banktoml["Setframe"]["DaySetList"])
+        self.DaySet.bind("<Return>", tomlreturn)
+        self.DaySet.bind("<Tab>", tomlreturn)
         self.DaySet.grid(row=0, column=1)
         tk.Label(Setframe, text="金額表示列番号").grid(row=1, column=0)  # 位置指定
-        self.MoneySet = tk.Entry(Setframe, width=30)
-        self.MoneySet.insert(0, "")
+        self.MoneySet = tk.Entry(Setframe, width=30, bg="ghostwhite")
+        tomlEntries.append(self.MoneySet)
+        self.TomlInsert(self.MoneySet, Banktoml["Setframe"]["MoneySet"])
+        # self.MoneySet.insert(0, Banktoml["Setframe"]["MoneySet"])
+        self.MoneySet.bind("<Return>", tomlreturn)
+        self.MoneySet.bind("<Tab>", tomlreturn)
         self.MoneySet.grid(row=1, column=1)
         tk.Label(Setframe, text="置換対象列番号").grid(row=2, column=0)  # 位置指定
-        self.ReplaceSet = tk.Entry(Setframe, width=30)
-        self.ReplaceSet.insert(0, "")
+        self.ReplaceSet = tk.Entry(Setframe, width=30, bg="ghostwhite")
+        tomlEntries.append(self.ReplaceSet)
+        self.TomlInsert(self.ReplaceSet, Banktoml["Setframe"]["ReplaceSet"])
+        # self.ReplaceSet.insert(0, Banktoml["Setframe"]["ReplaceSet"])
+        self.ReplaceSet.bind("<Return>", tomlreturn)
+        self.ReplaceSet.bind("<Tab>", tomlreturn)
         self.ReplaceSet.grid(row=2, column=1)
         tk.Label(Setframe, text="置換対象文字列").grid(row=3, column=0)  # 位置指定
-        self.ReplaceStr = tk.Entry(Setframe, width=30)
-        self.ReplaceStr.insert(0, "")
+        self.ReplaceStr = tk.Entry(Setframe, width=30, bg="ghostwhite")
+        tomlEntries.append(self.ReplaceStr)
+        self.TomlInsert(self.ReplaceStr, Banktoml["Setframe"]["ReplaceStr"])
+        # self.ReplaceStr.insert(0, Banktoml["Setframe"]["ReplaceStr"])
+        self.ReplaceStr.bind("<Return>", tomlreturn)
+        self.ReplaceStr.bind("<Tab>", tomlreturn)
         self.ReplaceStr.grid(row=3, column=1)
         #################################################################################
         # サイドメニュー内ボタンフレーム###################################################
@@ -229,8 +274,39 @@ class Application(tk.Frame):
         # 画像の配置#####################################################################
         self.InportIMG()
         # ##############################################################################
+        Entries = self.Entries
 
     # 以下self関数###################################################################################
+    # ---------------------------------------------------------------------------------------------
+    def ChangeToml(self):
+        """
+        tomlリストを変更
+        """
+        try:
+            typ = [("tomlファイル", "*.toml")]
+            self.top.withdraw()
+            tomlurl = filedialog.askopenfilename(filetypes=typ)
+            if tomlurl != "":
+                self.master.destroy()
+                self.top.destroy()
+                messagebox.showinfo("設定ファイル再読込", "設定ファイルを再読み込みします。")
+                Main(Master, imgurl, tomlurl)
+                print("toml変更")
+            else:
+                messagebox.showinfo("確認", "設定ファイルを指定してください。")
+                self.top.deiconify()
+        except:
+            self.top.deiconify()
+
+    # ---------------------------------------------------------------------------------------------
+    def TomlInsert(self, Ent, List):
+        """
+        tomlリストをTKentryに挿入
+        """
+        l = ",".join(List)
+        Ent.insert(0, l)
+
+    # ---------------------------------------------------------------------------------------------
     def InportIMG(self):
         """
         下ウィンドウに画像をリサイズして配置
@@ -278,6 +354,7 @@ class Application(tk.Frame):
         """
         列名設定項目追加ボタン処理
         """
+        global Entries
         # 追加する位置
         wn = event.widget
         si_r = 0
@@ -290,12 +367,15 @@ class Application(tk.Frame):
         self.index = self.index + 1
         # エントリーウィジェットを作成して配置
         self.createEntry(next, bar_x=False)
+        Entries = self.Entries
+        ColumnTomlIn(self)
 
     # -------------------------------------------------------------------------------------
     def removeEntry_click(self, event, id):
         """
         列名設定項目削除ボタン処理
         """
+        global Entries
         id = 0
         for SRI in self.removeEntries:
             if SRI == event.widget:
@@ -313,11 +393,14 @@ class Application(tk.Frame):
         self.insertEntries.pop(current)
         self.removeEntries.pop(current)
         self.indexes.pop(current)
+
+        Entries = self.Entries
         # 再配置
         self.updateEntries()
+        ColumnTomlIn(self)
 
     # -------------------------------------------------------------------------------------
-    def updateEntries(self, bar_x=True, bar_y=True):
+    def updateEntries(self, bar_x=False, bar_y=True):
         """
         列名設定項目を再配置
         """
@@ -325,6 +408,8 @@ class Application(tk.Frame):
         for i in range(len(self.indexes)):
             self.Entries[i].grid(column=0, row=i)
             self.Entries[i].bind("<MouseWheel>", self.SF.mouse_y_scroll)
+            self.Entries[i].bind("<Return>", ColumnTomlIn)
+            self.Entries[i].bind("<Tab>", ColumnTomlIn)
             self.Entries[i].lift()
             self.insertEntries[i].grid(column=1, row=i)
             self.insertEntries[i].bind("<MouseWheel>", self.SF.mouse_y_scroll)
@@ -364,12 +449,14 @@ class Application(tk.Frame):
             self.SF.canvas.configure(xscrollcommand=self.SF.scrollbar_x.set)
 
     # -------------------------------------------------------------------------------------
-    def createEntry(self, next, bar_x=True, bar_y=True):
+    def createEntry(self, next, bar_x=False, bar_y=True):
         """
         列名設定項目を作成して再配置
         """
         # 最初のエントリーウィジェットを追加
-        self.Entries.insert(next, tk.Entry(self.SF.scrollable_frame, width=35))
+        self.Entries.insert(
+            next, tk.Entry(self.SF.scrollable_frame, width=35, bg="ghostwhite")
+        )
         # エントリーウィジェットを追加するボタンのようなラベルを作成
         self.insertEntries.insert(
             next,
@@ -419,8 +506,70 @@ class Application(tk.Frame):
 
     # -------------------------------------------------------------------------------------
 
+    # 以下関数######################################################################################
 
-# 以下関数######################################################################################
+
+def ColumnTomlIn(self):
+    """
+    toml列名設定の更新
+    """
+    global Entries
+    try:
+        TEntries = []
+        for item in Entries:
+            TEntries.append(item.get())
+        Banktoml["ColList"]["List"] = TEntries
+        toml_c.dump_toml(Banktoml, tomlurl)
+    except:
+        print("")
+
+
+# ---------------------------------------------------------------------------------------------
+def tomlreturn(self):
+    """
+    toml変換設定の更新
+    """
+    global tomlEntries
+
+    # ----------------------------------------------------------
+    DaySet = tomlEntries[0].get()
+    if "," not in DaySet:
+        l = []
+        l.append(DaySet)
+        Banktoml["Setframe"]["DaySetList"] = l
+    else:
+        l = DaySet.split(",")
+        Banktoml["Setframe"]["DaySetList"] = l
+    # ----------------------------------------------------------
+    MoneySet = tomlEntries[1].get()
+    if "," not in MoneySet:
+        l = []
+        l.append(MoneySet)
+        Banktoml["Setframe"]["MoneySet"] = l
+    else:
+        l = MoneySet.split(",")
+        Banktoml["Setframe"]["MoneySet"] = l
+    # ----------------------------------------------------------
+    ReplaceSet = tomlEntries[2].get()
+    if "," not in ReplaceSet:
+        l = []
+        l.append(ReplaceSet)
+        Banktoml["Setframe"]["ReplaceSet"] = l
+    else:
+        l = ReplaceSet.split(",")
+        Banktoml["Setframe"]["ReplaceSet"] = l
+    # ----------------------------------------------------------
+    ReplaceStr = tomlEntries[3].get()
+    if "," not in ReplaceStr:
+        l = []
+        l.append(ReplaceStr)
+        Banktoml["Setframe"]["ReplaceStr"] = l
+    else:
+        l = ReplaceStr.split(",")
+        Banktoml["Setframe"]["ReplaceStr"] = l
+    toml_c.dump_toml(Banktoml, tomlurl)
+
+
 # ---------------------------------------------------------------------------------------------
 def ReturnNext(self):
     """
@@ -453,7 +602,7 @@ def NewLineCreate(self, selfC, HCW, HCH):
     unmap(self)
     MSG = messagebox.askokcancel("確認", "新たに直線を描画しますか？")
     if MSG is True:
-        SLS = CV2S.straightlinesetting(imgurl)
+        SLS = straightlinesetting(imgurl)
         if SLS[0] is True:
             ####################################################################################
             with open(
@@ -663,18 +812,29 @@ def EnterP(self, HCW, HCH, selfmother):
     # 条件テキストボックスのリスト化---------------------------
     if "," in DaySet:
         DaySet = DaySet.split(",")
+    elif " " in DaySet:
+        DaySet = DaySet.split(" ")
     else:
         DaySet = list(DaySet)
+    # --------------------------------------------------------
     if "," in MoneySet:
         MoneySet = MoneySet.split(",")
+    elif " " in MoneySet:
+        MoneySet = MoneySet.split(" ")
     else:
         MoneySet = list(MoneySet)
+    # --------------------------------------------------------
     if "," in ReplaceSet:
         ReplaceSet = ReplaceSet.split(",")
+    elif " " in ReplaceSet:
+        ReplaceSet = ReplaceSet.split(" ")
     else:
         ReplaceSet = list(ReplaceSet)
+    # --------------------------------------------------------
     if "," in ReplaceStr:
         ReplaceStr = ReplaceStr.split(",")
+    elif " " in ReplaceStr:
+        ReplaceStr = ReplaceStr.split(" ")
     else:
         ReplaceStr = list(ReplaceStr)
     # ------------------------------------------------------
@@ -865,21 +1025,22 @@ def drag1(event):
     y1 = y2
 
 
-def Main(MUI, US):
+def Main(MUI, US, turl):
     """
     呼出関数
     """
     global Master, imgurl
     global readcsv1, readcsv2
     global URL
-    global Banktoml
+    global Banktoml, tomlurl
     Master = MUI
     imgurl = US
     URL = os.getcwd()
     Master.withdraw()
+    tomlurl = turl
     # imgurl = URL + r"\TKInterGUI\OCR0.png"
     # toml読込------------------------------------------------------------------------------
-    with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
+    with open(turl, encoding="utf-8") as f:
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
@@ -933,10 +1094,12 @@ def Main(MUI, US):
 
 # ------------------------------------------------------------------------------------------
 if __name__ == "__main__":
+    global Banktoml, tomlurl
     URL = os.getcwd()
     imgurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.png"
+    tomlurl = r"D:\OCRTESTPDF\PDFTEST\Setting.toml"
     # toml読込------------------------------------------------------------------------------
-    with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
+    with open(tomlurl, encoding="utf-8") as f:
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
