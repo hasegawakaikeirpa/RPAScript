@@ -2,7 +2,6 @@
 import pyautogui as pg
 import time
 
-from sqlalchemy import true
 import OMSOpen
 
 # pandasインポート
@@ -501,7 +500,7 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
             KArr = KanyosakibetuList[1]
             KArrRow = np.array(KArr).shape[0]  # 配列行数取得
             for y in range(KArrRow):
-                if y < KArrRow - 1:
+                if y < KArrRow - 1 and y >= 11:
                     KArrRowData = KArr.iloc[y, :]
                     KArrName = KArrRowData["関与先"]
                     KArrListRow = CSVCheck(KArrName, KArr, "関与先")
@@ -570,6 +569,15 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                                                 time.sleep(1)
                                                 pg.press("f10")
                                                 time.sleep(1)
+                                                while (
+                                                    pg.locateOnScreen(
+                                                        FolURL2 + "/TantoubetuFlag.png",
+                                                        confidence=0.9,
+                                                    )
+                                                    is None
+                                                ):
+                                                    time.sleep(1)
+                                                time.sleep(1)
                                                 ImgClick(
                                                     FolURL2,
                                                     "1gyouUnderArrow.png",
@@ -587,6 +595,12 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                                 ):
                                     time.sleep(1)
                                 time.sleep(1)
+                                ImgClick(
+                                    FolURL2,
+                                    "TantoubetuFlag.png",
+                                    0.9,
+                                    5,
+                                )
                                 pg.press("f10")
                                 time.sleep(1)
                                 # while (
@@ -698,8 +712,7 @@ def MainFlow(FolURL2):
                 #         is not None
                 #     ):
                 #         time.sleep(1)
-                #     while (
-                #         pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
+                #     while (TANTOUBETU                #         pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
                 #         is None
                 #     ):
                 #         time.sleep(1)
