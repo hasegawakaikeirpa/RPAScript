@@ -3,7 +3,8 @@ import numpy as np
 
 # from tkinter import messagebox
 import pandas as pd
-import os
+
+# import os
 import csv
 import toml
 import AutoJournal as AJ
@@ -1063,7 +1064,10 @@ class DataGrid:
                                                     AJtxt,
                                                     Var,
                                                 )
-                                                AJ_List[L_r][0][L_CName_c] = C_Txt[1]
+                                                if L_CName == AJ_Key:
+                                                    AJ_List[0][L_CName_c] = I_var
+                                                else:
+                                                    AJ_List[0][L_CName_c] = C_Txt[1]
                                             except:
                                                 if R_CName == I:
                                                     R_CName = O
@@ -1085,7 +1089,10 @@ class DataGrid:
                                                     AJtxt,
                                                     Var,
                                                 )
-                                                AJ_List[L_r][0][L_CName_c] = C_Txt[1]
+                                                if L_CName == AJ_Key:
+                                                    AJ_List[0][L_CName_c] = I_var
+                                                else:
+                                                    AJ_List[0][L_CName_c] = C_Txt[1]
                                             # ---------------------------------------------------
                                         else:
                                             Var = PT_List[L_r][R_CName_c]
@@ -1096,7 +1103,10 @@ class DataGrid:
                                                 AJtxt,
                                                 Var,
                                             )
-                                            AJ_List[L_r][0][L_CName_c] = C_Txt[1]
+                                            if L_CName == AJ_Key:
+                                                AJ_List[0][L_CName_c] = I_var
+                                            else:
+                                                AJ_List[0][L_CName_c] = C_Txt[1]
                                     elif RowElement == 2 and lenAJ != 1:
                                         # ########################################################
                                         # 複数行の仕訳#############################################
@@ -1544,8 +1554,8 @@ if __name__ == "__main__":
     ReplaceStr = ["CDカード", "マツモトトソウテン", "ザンダカショウメイショ"]
     # ColNameList = ["日付", "摘要", "出金", "入金", "残高"]  # OCR出力列名
     # ColNameList = ["日付", "摘要", "入金", "摘要", "出金", "摘要"]  # OCR出力列名
-    csvurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.csv"
-    AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page_AutoJounal.csv"
+    csvurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_2page_133316.csv"
+    AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_2page_133316_AutoJounal.csv"
     AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
     Roolurl = r"D:\OCRTESTPDF\PDFTEST\1_仕訳日記帳.csv"
     ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\ChangeTxtList.csv"

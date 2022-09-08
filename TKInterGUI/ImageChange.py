@@ -5,7 +5,9 @@ import matplotlib.pyplot as plt
 
 # from numba import jit
 import math
-import pyocr
+from pyocr import get_available_tools, builders
+
+# import pyocr
 import os
 from pathlib import Path
 from pdf2image import convert_from_path
@@ -424,7 +426,8 @@ def TesseOCRLotate(URL, fileurl):
         os.environ["PATH"] = os.environ["PATH"] + path
 
         # pyocrへ利用するOCRエンジンをTesseractに指定する。
-        tools = pyocr.get_available_tools()
+        # tools = pyocr.get_available_tools()
+        tools = get_available_tools()
         tool = tools[0]
 
         # OCR対象の画像ファイルを読み込む
@@ -465,7 +468,8 @@ def TesseOCRLotate(URL, fileurl):
         # 画像から文字を読み込む
         lf = 0
         for lotateFilesItem in lotateFiles:
-            builder = pyocr.builders.TextBuilder(tesseract_layout=6)
+            # builder = pyocr.builders.TextBuilder(tesseract_layout=6)
+            builder = builders.TextBuilder(tesseract_layout=6)
             img = Image.open(lotateFilesItem)
             text = tool.image_to_string(img, lang="jpn", builder=builder)
             TC = 0

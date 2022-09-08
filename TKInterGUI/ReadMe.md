@@ -8,8 +8,8 @@
 #### ウィンドウ
 
 * [ViewGUI.py(開始ウィンドウ)](#ViewGUI.py(開始ウィンドウ))
-* [TKINTERCV2Setting.py(OCR読取ウィンドウ)](#TKINTERCV2Setting.py(OCR読取ウィンドウ))(#TKINTERCV2Setting.py)
-* DataGrid.py(読取後仕訳表示ウィンドウ)
+* [TKINTERCV2Setting.py(OCR読取ウィンドウ)](#TKINTERCV2Setting.py(OCR読取ウィンドウ))
+* [DataGrid.py(読取後仕訳表示ウィンドウ)](#DataGrid.py(読取後仕訳表示ウィンドウ))
 
 #### ウィンドウ補助
 
@@ -17,10 +17,10 @@
 * ModelImage.py(ViewGUI.pyサブ)
 * *CSVOut.py(DataGrid.pyサブ)
 * OCRFlow.py(TKINTERCV2Setting.pyサブ)
-*  Frame
-    * DGFrame.py(DataGrid.pyサブ)
-    * MyTable.py(DataGrid.pyサブ)
-    * __pycache(pyファイルキャッシュ)__
+* Frame
+  * DGFrame.py(DataGrid.pyサブ)
+  * MyTable.py(DataGrid.pyサブ)
+  * __pycache(pyファイルキャッシュ)__
 
 #### 関数
 * AutoJournal copy.py(自動変換スクリプト)
@@ -50,36 +50,30 @@
 #### 一致率の最も高い仕訳を抽出し、自動で仕訳インポートファイルを作成。
 <br>
 
-## ViewGUI.py(開始ウィンドウ)
+## ViewGUI.py(開始ウィンドウ) <a id="ViewGUI.py(開始ウィンドウ)"></a>
+![](imgs/2022-09-07_09h13_32.png)
 
-## TKINTERCV2Setting.py(OCR読取ウィンドウ)
+[詳細](ViewGUI.md)
+#### 機能 <a id="機能"></a>
 
-### ・使用モジュール
-#### from appium import webdriver : Appium-Python-Client==1.3.0
-#### <補足>RPAライブラリ：クラス要素へのアクション
-<br>
+    画像編集ウィンドウ
+    PDF→PNG変換や、トリミング等
+    PDFファイルからOCR読取ができる画像ファイルを作成する。
 
-#### import subprocess : Python3.7.8
-#### <補足>組込関数：プログラム起動
-<br>
+## TKINTERCV2Setting.py(OCR読取ウィンドウ) <a id="TKINTERCV2Setting.py(OCR読取ウィンドウ)"></a>
+![](imgs/2022-09-07_11h27_08.png)
 
-#### import pyautogui as pg : PyAutoGUI==0.9.53
-#### <補足>RPAライブラリ：画像要素へのアクション,キー・マウスアクション等
-<br>
+[詳細](TKINTERCV2Setting.md)
+#### 機能 <a id="機能"></a>
 
-#### import time : Python3.7.8
-#### <補足>組込関数：待機処理
-<br>
+    OCR読取ウィンドウ軸設定や、出力列・変換対象列の設定
+    下部ウィンドウに表示された画像に対し、
+    上部ウィンドウで線を描画し、表形式としてOCR結果を出力する。
 
-#### import os : Python3.7.8
-#### <補足>組込関数：ファイルチェック・作成,フォルダチェック・作成
-<br>
+## DataGrid.py(読取後仕訳表示ウィンドウ) <a id="DataGrid.py(読取後仕訳表示ウィンドウ)"></a>
+![](imgs/2022-09-07_16h52_38.png)
 
-### ・各スクリプト
+[詳細](DataGrid.md)
+#### 機能 <a id="機能"></a>
 
-#### MainFlow(BatUrl, FolURL2, ImgFolName)
-#### <機能>メイン処理
-#### <引数1>BatUrl：elTax(PCDESKWEB版)のURL(str)
-#### <引数2>FolURL2 ：保存場所の親ディレクトリ(str)
-#### <引数3>ImgFolName：未定
-
+    OCR結果に対して仕訳履歴から指定条件に一致する仕訳を抽出

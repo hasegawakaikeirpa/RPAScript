@@ -1,21 +1,24 @@
 import tkinter as tk
 import csv
 from PIL import Image, ImageTk
-from tkinter import END, messagebox
+
+# from tkinter import END, messagebox
 import os
 
 import OCRFlow as OCRF
 
 # from OCRFlow import Main
 import toml
-from tkinter import ttk
+
+# from tkinter import ttk
 
 # import CV2Setting as CV2S
 from CV2Setting import straightlinesetting
 import DataGrid as DG
 import ScrollableFrame as SF
 import tomlCreate as toml_c
-from tkinter import filedialog
+
+# from tkinter import filedialog
 
 ###################################################################################################
 class Application(tk.Frame):
@@ -285,15 +288,15 @@ class Application(tk.Frame):
         try:
             typ = [("tomlファイル", "*.toml")]
             self.top.withdraw()
-            tomlurl = filedialog.askopenfilename(filetypes=typ)
+            tomlurl = tk.filedialog.askopenfilename(filetypes=typ)
             if tomlurl != "":
                 self.master.destroy()
                 self.top.destroy()
-                messagebox.showinfo("設定ファイル再読込", "設定ファイルを再読み込みします。")
+                tk.messagebox.showinfo("設定ファイル再読込", "設定ファイルを再読み込みします。")
                 Main(Master, imgurl, tomlurl)
                 print("toml変更")
             else:
-                messagebox.showinfo("確認", "設定ファイルを指定してください。")
+                tk.messagebox.showinfo("確認", "設定ファイルを指定してください。")
                 self.top.deiconify()
         except:
             self.top.deiconify()
@@ -421,7 +424,7 @@ class Application(tk.Frame):
         if bar_y:  # スクロールバー縦
             self.SF.scrollbar_y.grid_forget()  # スクロールバー削除
             # スクロールバー再作成--------------------------------------------------
-            self.SF.scrollbar_y = ttk.Scrollbar(
+            self.SF.scrollbar_y = tk.ttk.Scrollbar(
                 self.SF.scrollable_frame,
                 orient="vertical",
                 command=self.SF.canvas.yview,
@@ -437,7 +440,7 @@ class Application(tk.Frame):
         if bar_x:  # スクロールバー横
             self.SF.scrollbar_x.grid_forget()  # スクロールバー削除
             # スクロールバー再作成--------------------------------------------------
-            self.SF.scrollbar_x = ttk.Scrollbar(
+            self.SF.scrollbar_x = tk.ttk.Scrollbar(
                 self.SF.scrollable_frame,
                 orient="horizontal",
                 command=self.SF.canvas.xview,
@@ -600,7 +603,7 @@ def NewLineCreate(self, selfC, HCW, HCH):
     global tagsList
     # メッセージボックス（OK・キャンセル）
     unmap(self)
-    MSG = messagebox.askokcancel("確認", "新たに直線を描画しますか？")
+    MSG = tk.messagebox.askokcancel("確認", "新たに直線を描画しますか？")
     if MSG is True:
         SLS = straightlinesetting(imgurl)
         if SLS[0] is True:
@@ -625,7 +628,7 @@ def NewLineCreate(self, selfC, HCW, HCH):
             Gra(selfC, SLS[1], SLS[2], HCW, HCH)  # 透過キャンバスに罫線描画
             map(self)
         else:
-            MSG = messagebox.showinfo(
+            MSG = tk.messagebox.showinfo(
                 "直線描画失敗", "直線描画に失敗しました。画像ファイル名に日本語が混じっている可能性があります。"
             )
             map(self)
@@ -641,7 +644,7 @@ def tomlListCreate(self):
     module = Banktoml["DataList"]["Datas"]
     var = tk.StringVar(value=module)
     listbox = tk.Listbox(self, listvariable=var, selectmode="multiple", height=6)
-    scrollbar = ttk.Scrollbar(self, orient="vertical", command=listbox.yview)
+    scrollbar = tk.ttk.Scrollbar(self, orient="vertical", command=listbox.yview)
     listbox["yscrollcommand"] = scrollbar.set
     return listbox, scrollbar
 
@@ -840,11 +843,11 @@ def EnterP(self, HCW, HCH, selfmother):
     # ------------------------------------------------------
     # 条件テキストボックスの内容で処理分け-------------------------------------------------------------------
     if listintCheck(DaySet) is False:
-        messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
+        tk.messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
     elif listintCheck(MoneySet) is False:
-        messagebox.showinfo("エラー", "金額表示列番号が不正です。数値以外を指定していないか確認してください。")
+        tk.messagebox.showinfo("エラー", "金額表示列番号が不正です。数値以外を指定していないか確認してください。")
     elif listintCheck(ReplaceSet) is False:
-        messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
+        tk.messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
     else:
         for tagsListItem in tagsList:
             BB = self.bbox(tagsListItem[0][0])
@@ -879,7 +882,7 @@ def EnterP(self, HCW, HCH, selfmother):
             print(FSS)
         # メッセージボックス（OK・キャンセル）
         unmap(selfmother)
-        MSG = messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
+        MSG = tk.messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
         if MSG is True:
             map(selfmother)
             ####################################################################################
@@ -911,8 +914,8 @@ def EnterP(self, HCW, HCH, selfmother):
             )
             if OM[0] is True:
                 unmap(selfmother)
-                MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
-                Viw = messagebox.askokcancel(
+                MSG = tk.messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
+                Viw = tk.messagebox.askokcancel(
                     "確認", "抽出内容を表示いたしますか？\n初めにミロクから出力した仕訳CSVを指定してください。"
                 )
                 map(selfmother)
@@ -931,20 +934,26 @@ def EnterP(self, HCW, HCH, selfmother):
                     )
             else:
                 unmap(selfmother)
-                MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
+                MSG = tk.messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
                 map(selfmother)
         else:
-            messagebox.showinfo("中断", "処理を中断します。")
+            tk.messagebox.showinfo("中断", "処理を中断します。")
             map(selfmother)
 
 
 # ---------------------------------------------------------------------------------------------
 def unmap(self):
+    """
+    最上部ウィンドウを非表示
+    """
     self.top.withdraw()
 
 
 # ---------------------------------------------------------------------------------------------
 def map(self):
+    """
+    self.topを最上部へ
+    """
     self.lift()
     self.top.wm_deiconify()
     self.top.attributes("-topmost", True)
@@ -952,6 +961,9 @@ def map(self):
 
 # ---------------------------------------------------------------------------------------------
 def change(self):
+    """
+    最上部ウィンドウのサイズ同期
+    """
     x, y = self.back.winfo_rootx(), self.back.winfo_rooty()
     w, h = self.winfo_width(), self.winfo_height()
     self.top.geometry(f"{w}x{h}+{x}+{y}")

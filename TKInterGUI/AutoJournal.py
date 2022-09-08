@@ -711,7 +711,11 @@ def IOsplitFlow(
                     TS = TS[GNV]
                     return True, TS
                 else:
-                    return False, NGList
+                    if len(NGList) == 0:
+                        TS = npw[1, :]
+                        return True, TS
+                    else:
+                        return False, NGList
         elif IO == "出金":
             OCR_h_c = np.where(OCR_h == IO)
             OCR_h_c = OCR_h_c[0]
@@ -753,7 +757,11 @@ def IOsplitFlow(
                     TS = TS[GNV]
                     return True, TS
                 else:
-                    return False, NGList
+                    if len(NGList) == 0:
+                        TS = npw[1, :]
+                        return True, TS
+                    else:
+                        return False, NGList
     except:
         return False
 
@@ -1497,19 +1505,23 @@ def NPS_Sort(
         for np_hItem in reversed(np_h):
             if "一致率" == np_hItem and FL == np_hItem:
                 F_List = FinalList[1:, np_h_c]
+                F_List = np.where(F_List == max(F_List))
+                FinalList = FinalList[1:, :]
+                FinalList = FinalList[F_List]
+                FinalList = np.vstack((np_h, FinalList))
                 break
             elif "日付一致率" == np_hItem and FL == np_hItem:
                 F_List = FinalList[1:, np_h_c]
+                FinalList = FinalList[1:, :]
+                FinalList = np.vstack((np_h, FinalList))
                 break
             elif "仕訳金額差額" == np_hItem and FL == np_hItem:
                 F_List = FinalList[1:, np_h_c]
+                FinalList = FinalList[1:, :]
+                FinalList = np.vstack((np_h, FinalList))
                 break
             np_h_c -= 1
         # ---------------------------------------------------
-        F_List = np.where(F_List == max(F_List))
-        FinalList = FinalList[1:, :]
-        FinalList = FinalList[F_List]
-        FinalList = np.vstack((np_h, FinalList))
         TotalFinalList = FinalList
         return True, TotalFinalList
     except:

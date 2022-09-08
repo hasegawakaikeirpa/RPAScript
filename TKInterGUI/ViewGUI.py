@@ -1,12 +1,14 @@
 import sys
 import ProgressBar as PB
 import tkinter as tk
-from tkinter import ttk, filedialog
+
+# from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
 
 # import TKINTERCV2Setting as TKCV2
 from TKINTERCV2Setting import Main
-from tkinter import messagebox
+
+# from tkinter import messagebox
 
 # プログレスバーの起動
 # PBAR = PB.ProgressBar(tk.Tk())
@@ -34,7 +36,7 @@ class ViewGUI:
         self.window_root.geometry("1480x750")  # 横,縦
         NWINSize = ["1480", "750"]  # 横,縦
         # 　メインウィンドウタイトル
-        self.window_root.title("GUI Image Editor v0.90")
+        self.window_root.title("OCR自動仕訳 Ver:0.9")
         # self.window_root.bind("<Button-1>", self.ChangeWSize)
         # サブウィンドウ
         # フォルダ・ファイル選択
@@ -65,17 +67,17 @@ class ViewGUI:
         label_s2_blk1 = tk.Label(self.window_sub_ctrl2, text="")
         label_s3_blk1 = tk.Label(self.window_sub_ctrl3, text="")
         label_s3_blk2 = tk.Label(self.window_sub_ctrl3, text="")
-        label_target = tk.Label(self.window_sub_ctrl1, text="[Files]")
-        label_rotate = tk.Label(self.window_sub_ctrl2, text="[Rotate]")
-        label_flip = tk.Label(self.window_sub_ctrl2, text="[Flip]")
-        label_clip = tk.Label(self.window_sub_ctrl2, text="[Clip]")
-        label_run = tk.Label(self.window_sub_ctrl4, text="[Final Edit]")
-        label_Line = tk.Label(self.window_sub_ctrl4, text="[Line Edit]")
+        label_target = tk.Label(self.window_sub_ctrl1, text="[ファイル]")
+        label_rotate = tk.Label(self.window_sub_ctrl2, text="[画像回転]")
+        label_flip = tk.Label(self.window_sub_ctrl2, text="[反転]")
+        label_clip = tk.Label(self.window_sub_ctrl2, text="[トリミング・削除]")
+        label_run = tk.Label(self.window_sub_ctrl4, text="[編集確定]")
+        label_Line = tk.Label(self.window_sub_ctrl4, text="[サブメニュー]")
 
         # フォルダ選択ボタン生成
         self.button_setdir = tk.Button(
             self.window_sub_ctrl1,
-            text="Set Folder",
+            text="フォルダ選択",
             width=10,
             command=self.event_set_folder,
         )
@@ -85,7 +87,7 @@ class ViewGUI:
         )
         self.str_dir.set(self.dir_path)
         # コンボBOX生成
-        self.combo_file = ttk.Combobox(
+        self.combo_file = tk.ttk.Combobox(
             self.window_sub_ctrl1,
             text="combo_file",
             value=self.file_list,
@@ -98,45 +100,51 @@ class ViewGUI:
 
         # 　切替ボタン生成
         button_next = tk.Button(
-            self.window_sub_ctrl3, text=">>Next", width=10, command=self.event_next
+            self.window_sub_ctrl3, text=">>次画像", width=10, command=self.event_next
         )
         button_prev = tk.Button(
-            self.window_sub_ctrl3, text="Prev<<", width=10, command=self.event_prev
+            self.window_sub_ctrl3, text="前画像<<", width=10, command=self.event_prev
         )
 
         # クリップボタン生成
         button_clip_start = tk.Button(
-            self.window_sub_ctrl2, text="Try", width=5, command=self.event_clip_try
+            self.window_sub_ctrl2, text="選択開始", width=10, command=self.event_clip_try
         )
         button_clip_done = tk.Button(
-            self.window_sub_ctrl2, text="Done", width=5, command=self.event_clip_done
+            self.window_sub_ctrl2,
+            text="範囲トリミング",
+            width=10,
+            command=self.event_clip_done,
         )
         button_clip_Erace = tk.Button(
-            self.window_sub_ctrl2, text="Erace", width=5, command=self.event_clip_Erace
+            self.window_sub_ctrl2,
+            text="範囲削除",
+            width=10,
+            command=self.event_clip_Erace,
         )
 
         # Save/Undoボタン生成
         button_Oversave = tk.Button(
             self.window_sub_ctrl4,
-            text="OverSave",
+            text="上書保存",
             width=10,
             command=self.event_Oversave,
         )
         button_save = tk.Button(
-            self.window_sub_ctrl4, text="Save", width=5, command=self.event_save
+            self.window_sub_ctrl4, text="別名保存", width=10, command=self.event_save
         )
         button_undo = tk.Button(
-            self.window_sub_ctrl4, text="Undo", width=5, command=self.event_undo
+            self.window_sub_ctrl4, text="編集取消", width=10, command=self.event_undo
         )
 
         # LineOCR起動ボタン生成
         button_LinOCR = tk.Button(
-            self.window_sub_ctrl4, text="LinOCR_Open", width=10, command=self.LinOCROpen
+            self.window_sub_ctrl4, text="OCR起動", width=10, command=self.LinOCROpen
         )
 
         # SubMenu起動ボタン生成
         button_SubMenu = tk.Button(
-            self.window_sub_ctrl4, text="SubMenu", width=10, command=self.event_menu
+            self.window_sub_ctrl4, text="サブメニュー", width=10, command=self.event_menu
         )
 
         # ラジオボタン生成
@@ -187,14 +195,14 @@ class ViewGUI:
         # 右回転ボタン生成
         button_RightLotate = tk.Button(
             self.window_sub_ctrl2,
-            text="RightLotate",
+            text="右回転",
             width=10,
             command=self.button_RightLotate,
         )
         # 左回転ボタン生成
         button_LeftLotate = tk.Button(
             self.window_sub_ctrl2,
-            text="LeftLotate",
+            text="左回転",
             width=10,
             command=self.button_LeftLotate,
         )
@@ -342,7 +350,7 @@ class ViewGUI:
 
         try:
             ReList = [int(Resizewidth.get()), int(Resizeheight.get())]
-            msg = messagebox.askokcancel("確認", "リサイズを行いますか？")
+            msg = tk.messagebox.askokcancel("確認", "リサイズを行いますか？")
             if msg is True:
                 self.control.MenuFuncRun("Resize", ReList, set_pos=set_pos)
         except:
@@ -353,7 +361,7 @@ class ViewGUI:
         サブメニュー内線抽出自動回転ボタン処理
         """
         set_pos = self.combo_file.current()
-        msg = messagebox.askokcancel("確認", "線抽出自動回転を適用しますか？")
+        msg = tk.messagebox.askokcancel("確認", "線抽出自動回転を適用しますか？")
         if msg is True:
             self.control.MenuFuncRun("LineLotate", "", set_pos=set_pos)
 
@@ -365,9 +373,9 @@ class ViewGUI:
         try:
             noisepar = int(textbox1.get())
             if noisepar % 2 == 0:
-                msg = messagebox.showinfo("確認", "ノイズ除去値は奇数で入力してください。")
+                msg = tk.messagebox.showinfo("確認", "ノイズ除去値は奇数で入力してください。")
             else:
-                msg = messagebox.askokcancel(
+                msg = tk.messagebox.askokcancel(
                     "確認", "ノイズ除去を除去値" + textbox1.get() + "で適用しますか？"
                 )
                 if msg is True:
@@ -377,14 +385,14 @@ class ViewGUI:
                         set_pos=set_pos,
                     )
         except:
-            msg = messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
+            msg = tk.messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
 
     def menubutton3_click(self, textbox2):
         """
         サブメニュー内線形削除ボタン処理
         """
         set_pos = self.combo_file.current()
-        msg = messagebox.askokcancel("確認", "線形削除を適用しますか？(undoで戻せません)")
+        msg = tk.messagebox.askokcancel("確認", "線形削除を適用しますか？(undoで戻せません)")
         if msg is True:
             self.control.MenuFuncRun("LineDelete", textbox2, set_pos=set_pos)
 
@@ -420,7 +428,7 @@ class ViewGUI:
         フォルダー選択ボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        self.dir_path = filedialog.askdirectory(
+        self.dir_path = tk.filedialog.askdirectory(
             initialdir=self.dir_path, mustexist=True
         )
         self.str_dir.set(self.dir_path)
@@ -444,7 +452,7 @@ class ViewGUI:
         set_pos = self.combo_file.current()
         FN = self.control.get_file("set", set_pos=set_pos)
         if ".PDF" in FN or ".pdf" in FN:
-            msg = messagebox.askokcancel(
+            msg = tk.messagebox.askokcancel(
                 "確認", "PDFが選択されています。PNGに変換しますか？\n10ページ以上の処理は処理時間が長時間になる可能性があります。"
             )
             if msg is True:
@@ -452,9 +460,9 @@ class ViewGUI:
                 PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
                 spd = self.control.pdf_image(FN, "png", 600, PBAR)
                 if spd is True:
-                    msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
+                    msg = tk.messagebox.askokcancel("確認", "PNG変換完了しました。")
                 else:
-                    msg = messagebox.askokcancel("確認", "PNG変換に失敗しました。")
+                    msg = tk.messagebox.askokcancel("確認", "PNG変換に失敗しました。")
         else:
             self.control.DrawImage("set", set_pos=set_pos)
 
@@ -570,7 +578,7 @@ class ViewGUI:
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         typ = [("tomlファイル", "*.toml")]
-        self.tomlPath = filedialog.askopenfilename(
+        self.tomlPath = tk.filedialog.askopenfilename(
             filetypes=typ, initialdir=self.dir_path
         )
 
@@ -579,7 +587,7 @@ class ViewGUI:
         Imgurl = FDir + r"\\" + FN
         Imgurl = Imgurl.replace("/", r"\\")
         if "[select file]" in Imgurl:
-            messagebox.showinfo("確認", "画像ファイルを選択してください。")
+            tk.messagebox.showinfo("確認", "画像ファイルを選択してください。")
         else:
             Main(main_window, Imgurl, self.tomlPath)
 
