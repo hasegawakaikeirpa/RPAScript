@@ -244,12 +244,18 @@ def NameSearch(NameDF, Rno):
     try:
         NameDFColumn = np.array(NameDF.columns)
         NameDF = np.array(NameDF)
-        NC = np.where(NameDFColumn=="コード")
-        KC = np.where(NameDFColumn=="顧問先名称")
-        NameDFIndex = NameDF[:,NC]
-        NR = np.where(NameDFIndex==Rno)
-        N_L = NameDF[NR,KC]
-        N_L = str(N_L[0]).replace("[","").replace("]","").replace("'","").replace('"',"")
+        NC = np.where(NameDFColumn == "コード")
+        KC = np.where(NameDFColumn == "顧問先名称")
+        NameDFIndex = NameDF[:, NC]
+        NR = np.where(NameDFIndex == Rno)
+        N_L = NameDF[NR, KC]
+        N_L = (
+            str(N_L[0])
+            .replace("[", "")
+            .replace("]", "")
+            .replace("'", "")
+            .replace('"', "")
+        )
         print(N_L)
         return N_L
     except:
@@ -257,14 +263,11 @@ def NameSearch(NameDF, Rno):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-def KomonUpdate(TFolURL,ExRow):
+def KomonUpdate(TFolURL, ExRow):
 
     # 関与先コード入力ボックスをクリック------------------------------------
     ImgClick(TFolURL, r"\Komonsaki_Icon.png", 0.9, 10)
-    while (
-        pg.locateOnScreen(TFolURL + r"\Komonsaki_Open.png", confidence=0.9)
-        is None
-    ):
+    while pg.locateOnScreen(TFolURL + r"\Komonsaki_Open.png", confidence=0.9) is None:
         time.sleep(1)
 
     p = pyautogui.locateOnScreen(TFolURL + r"\Komonsaki_CodeTxt.png", confidence=0.9)
@@ -297,10 +300,7 @@ def KomonUpdate(TFolURL,ExRow):
     pg.press("x")
     pg.keyUp("alt")
 
-    while (
-        pg.locateOnScreen(TFolURL + r"\SyonaiKanri.png", confidence=0.9)
-        is None
-    ):
+    while pg.locateOnScreen(TFolURL + r"\SyonaiKanri.png", confidence=0.9) is None:
         time.sleep(1)
 
     pg.keyDown("alt")
@@ -677,7 +677,9 @@ def ChildFlow(
             # Log---------------------------------------------------------------------------------------
             dt_s = datetime.datetime.now()
             dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_年末調整更新次年度あり処理終了")
+            logger.debug(
+                dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_年末調整更新次年度あり処理終了"
+            )
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "年末調整更新次年度あり処理終了"], file=f)
             # ------------------------------------------------------------------------------------------
@@ -776,6 +778,9 @@ def HouteiUpdate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(1)
             # ------------------------------------------------------------------
             # 関与先コード入力ボックスをクリック------------------------------------
+            while pg.locateOnScreen(TFolURL + r"\K_NoBox.png", confidence=0.9) is None:
+                time.sleep(1)
+            time.sleep(1)
             ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
             while (
                 pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
@@ -845,7 +850,7 @@ def HouteiUpdate(FolURL, TFolURL, ExRow, driver):
                 # --------------------------------------------------------------------
                 ImgClick(TFolURL, r"\Siharaisya.png", 0.9, 10)  # 支払者基本情報をクリック
                 time.sleep(1)
-                SAN = ImgCheck(TFolURL, r"\SansyouOK.png", 0.9, 50) # 参照表示ダイアログを確認
+                SAN = ImgCheck(TFolURL, r"\SansyouOK.png", 0.9, 50)  # 参照表示ダイアログを確認
                 if SAN[0] is True:
                     time.sleep(1)
                     ImgClick(TFolURL, r"\DataInNo.png", 0.9, 50)
@@ -860,7 +865,7 @@ def HouteiUpdate(FolURL, TFolURL, ExRow, driver):
                     pg.locateOnScreen(TFolURL + r"\DataInIcon.png", confidence=0.9)
                     is None
                 ):
-                    time.sleep(1)         
+                    time.sleep(1)
                 ImgClick(TFolURL, r"\DataInIcon.png", 0.9, 10)  # 顧問先情報取り込みアイコンをクリック
                 # 取り込むボタンが表示されるまで待機--------------------------------
                 while (
@@ -868,7 +873,7 @@ def HouteiUpdate(FolURL, TFolURL, ExRow, driver):
                     is None
                 ):
                     time.sleep(1)
-                ImgClick(TFolURL, r"\DataInIcon2.png", 0.9, 10)  #取り込むボタンをクリック
+                ImgClick(TFolURL, r"\DataInIcon2.png", 0.9, 10)  # 取り込むボタンをクリック
                 time.sleep(1)
                 pg.keyDown("alt")
                 pg.press("x")
@@ -880,7 +885,9 @@ def HouteiUpdate(FolURL, TFolURL, ExRow, driver):
                     is None
                 ):
                     time.sleep(1)
-                    SKE = ImgCheck(TFolURL, r"\SiharaiKihonEnd.png", 0.9, 10)  # 終了ダイアログ確認
+                    SKE = ImgCheck(
+                        TFolURL, r"\SiharaiKihonEnd.png", 0.9, 10
+                    )  # 終了ダイアログ確認
                     if SKE[0] is True:
                         pg.press("y")
                 ImgClick(TFolURL, r"\HouteiKousin.png", 0.9, 10)  # 法定調書更新をクリック
@@ -1065,6 +1072,9 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(1)
             # ------------------------------------------------------------------
             # 関与先コード入力ボックスをクリック------------------------------------
+            while pg.locateOnScreen(TFolURL + r"\K_NoBox.png", confidence=0.9) is None:
+                time.sleep(1)
+            time.sleep(1)
             ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
             while (
                 pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
@@ -1133,10 +1143,6 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                         ImgClick(TFolURL, CDB[1], 0.9, 10)  # 顧問先情報取込ボタンをクリック
                 # --------------------------------------------------------------------
 
-
-
-
-
                 ImgClick(TFolURL, r"\NencyouTopMenu.png", 0.9, 10)  # 印刷更新タブをクリック
                 time.sleep(1)
                 ImgClick(TFolURL, r"\NenjiKakutei.png", 0.9, 10)  # 年長確定処理ボタンをクリック
@@ -1147,10 +1153,12 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                 ):
                     time.sleep(1)
                 time.sleep(1)
-                NK = ImgCheck(TFolURL, r"\NencyouKubun.png", 0.99999, 10)  # 年調チェックボックスをクリック      
+                NK = ImgCheck(
+                    TFolURL, r"\NencyouKubun.png", 0.99999, 10
+                )  # 年調チェックボックスをクリック
                 if NK[0] is True:
                     ImgClick(TFolURL, r"\NencyouKubun.png", 0.99999, 10)  # ＯＫアイコンをクリック
-                time.sleep(1)        
+                time.sleep(1)
                 ImgClick(TFolURL, r"\NencyouOK.png", 0.9, 10)  # ＯＫアイコンをクリック
                 time.sleep(1)
                 pg.press("y")
@@ -1168,14 +1176,14 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                     pg.locateOnScreen(TFolURL + r"\DataInIcon.png", confidence=0.9)
                     is None
                 ):
-                    time.sleep(1)         
+                    time.sleep(1)
                 ImgClick(TFolURL, r"\DataInIcon.png", 0.9, 10)  # 顧問先情報取り込みアイコンをクリック
                 # 更新確認ダイアログが表示されるまで待機--------------------------------
                 while (
                     pg.locateOnScreen(TFolURL + r"\KousinKakunin.png", confidence=0.9)
                     is None
                 ):
-                    time.sleep(1) 
+                    time.sleep(1)
                 pg.press("y")
                 # 更新完了ダイアログが表示されるまで待機--------------------------------
                 while (
@@ -1190,7 +1198,7 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                     is None
                 ):
                     time.sleep(1)
-                ImgClick(TFolURL, r"\DataInOK.png", 0.9, 10)  #取り込むボタンをクリック
+                ImgClick(TFolURL, r"\DataInOK.png", 0.9, 10)  # 取り込むボタンをクリック
                 time.sleep(1)
                 pg.keyDown("alt")
                 pg.press("x")
@@ -1211,9 +1219,6 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(1)
                 # --------------------------------------------------------------------
                 time.sleep(1)
-
-
-
 
                 # 年調更新をクリック---------------------------------------------------
                 ImgClick(TFolURL, r"\NencyouKousin.png", 0.9, 10)
@@ -1301,7 +1306,7 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                             ErrStr = "NoData"
                             break
                     if ErrStr != "NoData":
-                       # --------------------------------------------------------------------
+                        # --------------------------------------------------------------------
                         pg.press("return")
                         # チェックマークが表示されなくなるまで待機-------------------------------
                         while (
@@ -1322,7 +1327,9 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                         # --------------------------------------------------------------------
                         # 処理終了ウィンドウが表示されるまで待機----------------------------------
                         while (
-                            pg.locateOnScreen(TFolURL + r"\NencyouEnd.png", confidence=0.9)
+                            pg.locateOnScreen(
+                                TFolURL + r"\NencyouEnd.png", confidence=0.9
+                            )
                             is None
                         ):
                             time.sleep(1)
@@ -1351,7 +1358,9 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                         # -----------------------------------
                         # 年調フラグが表示されるまで待機-------------------------------------
                         while (
-                            pg.locateOnScreen(TFolURL + r"\NencyouFlag.png", confidence=0.9)
+                            pg.locateOnScreen(
+                                TFolURL + r"\NencyouFlag.png", confidence=0.9
+                            )
                             is None
                         ):
                             time.sleep(1)
@@ -1380,7 +1389,9 @@ def NencyouUpdate(FolURL, TFolURL, ExRow, driver):
                         # -----------------------------------
                         # 年調フラグが表示されるまで待機-------------------------------------
                         while (
-                            pg.locateOnScreen(TFolURL + r"\NencyouFlag.png", confidence=0.9)
+                            pg.locateOnScreen(
+                                TFolURL + r"\NencyouFlag.png", confidence=0.9
+                            )
                             is None
                         ):
                             time.sleep(1)
@@ -1462,6 +1473,9 @@ def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(1)
             # ------------------------------------------------------------------
             # 関与先コード入力ボックスをクリック------------------------------------
+            while pg.locateOnScreen(TFolURL + r"\K_NoBox.png", confidence=0.9) is None:
+                time.sleep(1)
+            time.sleep(1)
             ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
             while (
                 pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
@@ -1717,9 +1731,7 @@ def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
                         return True, ThisNo, ThisYear, ThisMonth
                     else:
                         # --------------------------------------------------------------------
-                        DD = ImgCheck(
-                            TFolURL, r"\DoubleDataQ.png", 0.9, 10
-                        )
+                        DD = ImgCheck(TFolURL, r"\DoubleDataQ.png", 0.9, 10)
                         if DD[0] is True:
                             pg.press("return")
                             time.sleep(1)
@@ -1811,6 +1823,9 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(1)
             # ------------------------------------------------------------------
             # 関与先コード入力ボックスをクリック------------------------------------
+            while pg.locateOnScreen(TFolURL + r"\K_NoBox.png", confidence=0.9) is None:
+                time.sleep(1)
+            time.sleep(1)
             ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
             while (
                 pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
@@ -1872,18 +1887,17 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                 pg.hotkey("ctrl", "c")
                 ThisYear = pyperclip.paste()
                 # -----------------------------------
-                pg.press("return")                                                  
+                pg.press("return")
                 # 表示された申告種類を取得---------------
                 if windll.user32.OpenClipboard(None):
-                    windll.user32.EmptyClipboard()                  
+                    windll.user32.EmptyClipboard()
                     windll.user32.CloseClipboard()
                 pg.hotkey("ctrl", "c")
                 ThisMonth = pyperclip.paste()
                 pg.press("return")
                 # -----------------------------------
             # 他システムとメニューが違う-------------------------------------------------------
-            if str(
-                ExRow["関与先番号"]) == ThisNo:
+            if str(ExRow["関与先番号"]) == ThisNo:
                 print("関与先あり")
                 pg.press(["return", "return", "return"])
                 # 所得税メニューが表示されるまで待機------------------------------------
@@ -1929,7 +1943,7 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                     if THI[0] is True:
                         pg.press("return")
                 # --------------------------------------------------------------------
-                ImgClick(TFolURL, r"\KojinKihon.png", 0.9, 10)  # 個人基本情報のアイコンをクリック              
+                ImgClick(TFolURL, r"\KojinKihon.png", 0.9, 10)  # 個人基本情報のアイコンをクリック
                 SQ = ImgCheck(TFolURL, r"SansyouQ.png", 0.9, 10)
                 if SQ[0] is True:
                     pg.press("n")
@@ -1941,14 +1955,14 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                     pg.locateOnScreen(TFolURL + r"\DataInIcon.png", confidence=0.9)
                     is None
                 ):
-                    time.sleep(1)         
+                    time.sleep(1)
                 ImgClick(TFolURL, r"\DataInIcon.png", 0.9, 10)  # 顧問先情報取り込みアイコンをクリック
                 while (
                     pg.locateOnScreen(TFolURL + r"\DataInOK.png", confidence=0.9)
                     is None
                 ):
                     time.sleep(1)
-                ImgClick(TFolURL, r"\DataInOK.png", 0.9, 10)  #取り込むボタンをクリック
+                ImgClick(TFolURL, r"\DataInOK.png", 0.9, 10)  # 取り込むボタンをクリック
                 # 自治体情報変更ダイアログが表示されたら
                 THI = ImgCheck(
                     TFolURL,
@@ -1981,23 +1995,25 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                 ):
                     time.sleep(1)
                 # --------------------------------------------------------------------
-                while ImgCheckForList(TFolURL,[r"IkkatuFind.png",r"IkkatuFind2.png"],0.9,10)[0] is False:
-                    time.sleep(1)     
-                # 検索メニューが表示されるまでループ------------------------------------
                 while (
-                    pg.locateOnScreen(TFolURL + r"\Find.png", confidence=0.9)
-                    is None
+                    ImgCheckForList(
+                        TFolURL, [r"IkkatuFind.png", r"IkkatuFind2.png"], 0.9, 10
+                    )[0]
+                    is False
                 ):
+                    time.sleep(1)
+                # 検索メニューが表示されるまでループ------------------------------------
+                while pg.locateOnScreen(TFolURL + r"\Find.png", confidence=0.9) is None:
                     time.sleep(1)
                     pg.press("return")
                     time.sleep(1)
                     pg.keyDown("alt")
                     pg.press("s")
-                    pg.keyUp("alt")                    
+                    pg.keyUp("alt")
                 time.sleep(3)
                 pyperclip.copy(str(ExRow["関与先番号"]))
                 pg.hotkey("ctrl", "v")
-                pg.press(["return","return"])
+                pg.press(["return", "return"])
                 time.sleep(1)
                 pg.press("space")
                 time.sleep(1)
@@ -2122,6 +2138,9 @@ def HoujinzeiUpdate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(1)
             # ------------------------------------------------------------------
             # 関与先コード入力ボックスをクリック------------------------------------
+            while pg.locateOnScreen(TFolURL + r"\K_NoBox.png", confidence=0.9) is None:
+                time.sleep(1)
+            time.sleep(1)
             ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
             while (
                 pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
@@ -2459,6 +2478,9 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(1)
             # ------------------------------------------------------------------
             # 関与先コード入力ボックスをクリック------------------------------------
+            while pg.locateOnScreen(TFolURL + r"\K_NoBox.png", confidence=0.9) is None:
+                time.sleep(1)
+            time.sleep(1)
             ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
             while (
                 pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
@@ -2661,12 +2683,16 @@ def KessanUpDate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(1)
             # ------------------------------------------------------------------
             # 関与先コード入力ボックスをクリック------------------------------------
+            while pg.locateOnScreen(TFolURL + r"\K_NoBox.png", confidence=0.9) is None:
+                time.sleep(1)
+            time.sleep(1)
             ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
             while (
                 pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
                 is None
             ):
                 time.sleep(1)
+            time.sleep(1)
             pg.write(str(ExRow["関与先番号"]))
             pg.press(["return", "return", "return"])
             # 入力した関与先コードを取得------------
@@ -2872,6 +2898,9 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(1)
             # ------------------------------------------------------------------
             # 関与先コード入力ボックスをクリック------------------------------------
+            while pg.locateOnScreen(TFolURL + r"\K_NoBox.png", confidence=0.9) is None:
+                time.sleep(1)
+            time.sleep(1)
             ImgClick(TFolURL, r"\K_NoBox.png", 0.9, 10)
             while (
                 pg.locateOnScreen(TFolURL + r"\K_AfterNoBox.png", confidence=0.9)
@@ -2966,7 +2995,9 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                     time.sleep(2)
                     pg.press("y")
                     while (
-                        pg.locateOnScreen(TFolURL + r"\GetusjiKakutei.png", confidence=0.9)
+                        pg.locateOnScreen(
+                            TFolURL + r"\GetusjiKakutei.png", confidence=0.9
+                        )
                         is None
                     ):
                         time.sleep(1)
@@ -2985,24 +3016,23 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                 ImgClick(TFolURL, r"\D_TourokuTAB.png", 0.9, 10)  # 6導入・登録タブクリック
                 # 会社基本情報アイコンが表示されるまで待機--------------------------------------
                 while (
-                    pg.locateOnScreen(TFolURL + r"\CamIcon.png", confidence=0.9)
-                    is None
+                    pg.locateOnScreen(TFolURL + r"\CamIcon.png", confidence=0.9) is None
                 ):
-                    time.sleep(1)      
+                    time.sleep(1)
                 ImgClick(TFolURL, r"\CamIcon.png", 0.9, 10)  # 会社基本情報アイコンをクリック
                 # 顧問先情報取り込みアイコンが表示されるまで待機--------------------------------
                 while (
                     pg.locateOnScreen(TFolURL + r"\DataInIcon.png", confidence=0.9)
                     is None
                 ):
-                    time.sleep(1)         
+                    time.sleep(1)
                 ImgClick(TFolURL, r"\DataInIcon.png", 0.9, 10)  # 顧問先情報取り込みアイコンをクリック
                 while (
                     pg.locateOnScreen(TFolURL + r"\DataInOK.png", confidence=0.9)
                     is None
                 ):
                     time.sleep(1)
-                ImgClick(TFolURL, r"\DataInOK.png", 0.9, 10)  #取り込むボタンをクリック
+                ImgClick(TFolURL, r"\DataInOK.png", 0.9, 10)  # 取り込むボタンをクリック
                 time.sleep(1)
                 pg.keyDown("alt")
                 pg.press("x")
@@ -3013,11 +3043,17 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                 # マスター更新------------------------------------------------------------------------
                 ImgClick(TFolURL, r"\MasterUp.png", 0.9, 10)  # マスター更新をクリック
                 while (
-                    pg.locateOnScreen(TFolURL + r"\MasterUpStart.png", confidence=0.9)
-                    is None
+                    ImgCheckForList(
+                        TFolURL, [r"MasterUpStart.png", r"MasterUpStart2.png"], 0.9, 10
+                    )[0]
+                    is True
                 ):
                     time.sleep(1)
-                    ImgClick(TFolURL, r"\MasterUpStart.png", 0.9, 10)  # マスター更新開始をクリック
+                    TL = ImgCheckForList(
+                        TFolURL, [r"MasterUpStart.png", r"MasterUpStart2.png"], 0.9, 10
+                    )
+                    ImgClick(TFolURL, TL[1], 0.9, 10)  # マスター更新開始をクリック
+                    break
                 time.sleep(1)
                 pg.press("y")
                 time.sleep(1)
@@ -3025,11 +3061,13 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                 time.sleep(1)
                 pg.keyDown("alt")
                 pg.press("x")
-                pg.keyUp("alt")          
+                pg.keyUp("alt")
                 # 月次確定--------------------------------------------------------------------------
                 # 月次確定アイコンが表示されるまで待機--------------------------
                 while (
-                    pg.locateOnScreen(TFolURL + r"\AfterGetujiKakutei.png", confidence=0.9)
+                    pg.locateOnScreen(
+                        TFolURL + r"\AfterGetujiKakutei.png", confidence=0.9
+                    )
                     is None
                 ):
                     time.sleep(1)
@@ -3037,10 +3075,14 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                 KL = ImgCheck(TFolURL, r"\KakuteiLock.png", 0.9, 10)  # 月次処理確定アイコンを検索
                 if KL[0] is True:
                     while (
-                        pg.locateOnScreen(TFolURL + r"\KakuteiKaijyo.png", confidence=0.99999)
+                        pg.locateOnScreen(
+                            TFolURL + r"\KakuteiKaijyo.png", confidence=0.99999
+                        )
                         is not None
                     ):
-                        ImgClick(TFolURL, r"\KakuteiKaijyo.png", 0.99999, 10)  # 月次未確定チェックボックスをクリック
+                        ImgClick(
+                            TFolURL, r"\KakuteiKaijyo.png", 0.99999, 10
+                        )  # 月次未確定チェックボックスをクリック
                         time.sleep(1)
                     ImgClick(TFolURL, r"\KakuteiLock.png", 0.9, 10)  # 月次処理確定アイコンをクリック
                     time.sleep(1)
@@ -3052,7 +3094,9 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                         time.sleep(1)
                     pg.press("y")
                     while (
-                        pg.locateOnScreen(TFolURL + r"\GetusjiKakutei.png", confidence=0.9)
+                        pg.locateOnScreen(
+                            TFolURL + r"\GetusjiKakutei.png", confidence=0.9
+                        )
                         is None
                     ):
                         time.sleep(1)
@@ -3075,7 +3119,7 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                     pg.locateOnScreen(TFolURL + r"\IkkatuOpenFlag.png", confidence=0.9)
                     is None
                 ):
-                    time.sleep(1)                
+                    time.sleep(1)
                     # UW = ImgCheck(TFolURL, r"\Underwindow.png", 0.9, 10)
                     # if UW[0] is True:
                     #     ImgClick(TFolURL, r"\Underwindow.png", 0.9, 10)
@@ -3084,8 +3128,13 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                     #         ImgClick(TFolURL, r"\Underwindow2.png", 0.9, 10)
                 # --------------------------------------------------------------------
                 ImgClick(TFolURL, r"\IkkatuOpenFlag.png", 0.9, 10)  # 一括更新メニューのアイコンをクリック
-                while ImgCheckForList(TFolURL,[r"IkkatuFind.png",r"IkkatuFind2.png"],0.9,10)[0] is False:
-                    time.sleep(1)     
+                while (
+                    ImgCheckForList(
+                        TFolURL, [r"IkkatuFind.png", r"IkkatuFind2.png"], 0.9, 10
+                    )[0]
+                    is False
+                ):
+                    time.sleep(1)
                 FC = ImgCheckForList(
                     TFolURL,
                     [
@@ -3255,7 +3304,7 @@ def OpenSystem(FolURL, TFolURL, NameDF, ExRow, Ex, ExrcHeader, isnItem, driver):
                                     Rno = ExRow["関与先番号"]
                                     Rn = NameSearch(NameDF, Rno)
                                     Rn = Rn.replace("\u3000", "")
-                                    KomonUpdate(TFolURL,ExRow) # 顧問先情報更新
+                                    KomonUpdate(TFolURL, ExRow)  # 顧問先情報更新
                                     logger.debug(
                                         dt_s
                                         + "_関与先番号:"
@@ -3301,7 +3350,7 @@ def OpenSystem(FolURL, TFolURL, NameDF, ExRow, Ex, ExrcHeader, isnItem, driver):
                                     Rno = ExRow["関与先番号"]
                                     Rn = NameSearch(NameDF, Rno)
                                     Rn = Rn.replace("\u3000", "")
-                                    KomonUpdate(TFolURL,ExRow) # 顧問先情報更新
+                                    KomonUpdate(TFolURL, ExRow)  # 顧問先情報更新
                                     logger.debug(
                                         dt_s
                                         + "_関与先番号:"

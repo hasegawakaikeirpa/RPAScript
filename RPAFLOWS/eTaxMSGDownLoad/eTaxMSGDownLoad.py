@@ -193,37 +193,41 @@ def ParGet(H_driver, H_MSG_rowItem, H_MSG_row):
         H_result = H_driver.page_source.split(
             "goDetail", H_MSG_row
         )  # ページソースからgoDetail区切りをテーブル行数分行う
-        H_result = H_result[H_MSG_rowItem + 1].split(
-            ">"
-        )  # goDetail区切り配列からループ回数に応じたJavaScript引数を抽出
-        H_OnClickPar = (
-            H_result[00]
-            .replace("(", "")
-            .replace("/", "")
-            .replace(")", "")
-            .replace('"', "")
-        )  # JavaScript引数を置換して成型
-        H_driver.execute_script(
-            "javascript:goDetail({})".format(H_OnClickPar)
-        )  # 抽出したJavaScript引数を利用して実行
-        WebDriverWait(H_driver, 30).until(
-            EC.presence_of_all_elements_located
-        )  # 要素が読み込まれるまで最大30秒待つ
-        H_driver.switch_to.window(H_driver.window_handles[1])  # 開いたタブに移動する
-        # -----------------------------------------ページ内条件分岐---------------------------------------------
-        H_Title = H_driver.find_element_by_xpath(
-            "/html/body/div[1]/div[2]/h2[1]"
-        ).text  # 先頭H2タイトル取得
-        return (
-            H_Title,
-            H_MSG_TableItem1,
-            H_MSG_TableItem2,
-            H_MSG_TableItem3,
-            H_MSG_TableItem4,
-            H_MSG_TableItem5,
-            H_MSG_TableItem6,
-            H_MSG_TableItem7,
-        )
+        try:
+            H_result = H_result[H_MSG_rowItem + 1].split(
+                ">"
+            )  # goDetail区切り配列からループ回数に応じたJavaScript引数を抽出
+            H_OnClickPar = (
+                H_result[00]
+                .replace("(", "")
+                .replace("/", "")
+                .replace(")", "")
+                .replace('"', "")
+            )  # JavaScript引数を置換して成型
+            H_driver.execute_script(
+                "javascript:goDetail({})".format(H_OnClickPar)
+            )  # 抽出したJavaScript引数を利用して実行
+            WebDriverWait(H_driver, 30).until(
+                EC.presence_of_all_elements_located
+            )  # 要素が読み込まれるまで最大30秒待つ
+            H_driver.switch_to.window(H_driver.window_handles[1])  # 開いたタブに移動する
+            # -----------------------------------------ページ内条件分岐---------------------------------------------
+            H_Title = H_driver.find_element_by_xpath(
+                "/html/body/div[1]/div[2]/h2[1]"
+            ).text  # 先頭H2タイトル取得
+            return (
+                H_Title,
+                H_MSG_TableItem1,
+                H_MSG_TableItem2,
+                H_MSG_TableItem3,
+                H_MSG_TableItem4,
+                H_MSG_TableItem5,
+                H_MSG_TableItem6,
+                H_MSG_TableItem7,
+            )
+        except:
+            # 鍵付きのMSGBOXしかない場合
+            print("")
 
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -475,56 +479,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
         H_L_Row = H_Lo[1]  # WEBテーブル行数
         for H_MSG_rowItem in range(H_L_Row):  # WEBテーブル行数分ループ
             H_Parameters = ParGet(H_L_D, H_MSG_rowItem, H_L_Row)  # WEBテーブルから要素取得
-            H_P1 = H_Parameters[0]
-            H_P2 = H_Parameters[1]
-            H_P5 = H_Parameters[4]
-            SPDF = SortPDF(H_P2, H_P5, H_SCode, H_TKCName)
-            Hurikae = "振替納税のお知らせ" in H_P5
-            if SPDF is False or SPDF is None or Hurikae is True:
-                PrintIFS(H_P1, H_LogAnsOBJ)  # メッセージボックスの内容に応じて処理分け
-                RenamePDF(H_P2, H_P5, H_SCode, H_TKCName)  # PDF保存先フォルダー作成後リネーム&移動
-                if H_MSG_rowItem == H_L_Row - 1:
-                    H_LogAnsOBJ.quit()
-                    time.sleep(1)
-                else:
-                    H_LogAnsOBJ.switch_to.window(
-                        H_LogAnsOBJ.window_handles[0]
-                    )  # タブ移動する
-                    WebDriverWait(H_LogAnsOBJ, 30).until(
-                        EC.presence_of_all_elements_located
-                    )  # 要素が読み込まれるまで最大30秒待つ
-            else:
-                H_LogAnsOBJ.close()
-                time.sleep(1)
-                if H_MSG_rowItem == H_L_Row - 1:
-                    H_LogAnsOBJ.quit()
-                    time.sleep(2)
-                else:
-                    H_LogAnsOBJ.switch_to.window(
-                        H_LogAnsOBJ.window_handles[0]
-                    )  # タブ移動する
-                    WebDriverWait(H_LogAnsOBJ, 30).until(
-                        EC.presence_of_all_elements_located
-                    )  # 要素が読み込まれるまで最大30秒待つ
-    elif H_LogMSGAns == "認証エラー":
-        H_LogAnsOBJ.quit()
-        time.sleep(1)
-        LogAns = eTaxWebCrawler(
-            str(math.floor(H_First)),
-            H_SecondP,
-            os.getcwd().replace("\\", "/"),
-            H_SCode,
-            H_TKCName,
-        )  # Nanではない場合
-        H_LogAns = LogAns[0]  # ログオン後のH1テキストを代入
-        H_LogAnsOBJ = LogAns[1]  # ログオン後のWEBドライバーを代入
-        H_LogMSGAns = LogReturn(H_LogAns, H_LogAnsOBJ)  # ログオン後のH1テキストをで処理分けしWEBテーブルページへ
-        if not H_LogMSGAns == "表示するメッセージはありません。" and not H_LogMSGAns == "認証エラー":
-            H_Lo = LogOnOuter(H_LogAnsOBJ)  # WEBテーブル取得
-            H_L_D = H_Lo[0]  # WEBテーブルページ
-            H_L_Row = H_Lo[1]  # WEBテーブル行数
-            for H_MSG_rowItem in range(H_L_Row):  # WEBテーブル行数分ループ
-                H_Parameters = ParGet(H_L_D, H_MSG_rowItem, H_L_Row)  # WEBテーブルから要素取得
+            if H_Parameters is not None:
                 H_P1 = H_Parameters[0]
                 H_P2 = H_Parameters[1]
                 H_P5 = H_Parameters[4]
@@ -548,7 +503,7 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
                     time.sleep(1)
                     if H_MSG_rowItem == H_L_Row - 1:
                         H_LogAnsOBJ.quit()
-                        time.sleep(1)
+                        time.sleep(2)
                     else:
                         H_LogAnsOBJ.switch_to.window(
                             H_LogAnsOBJ.window_handles[0]
@@ -556,9 +511,72 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
                         WebDriverWait(H_LogAnsOBJ, 30).until(
                             EC.presence_of_all_elements_located
                         )  # 要素が読み込まれるまで最大30秒待つ
-        elif H_LogMSGAns == "認証エラー":
-            H_LogAnsOBJ.quit()
+            else:
+                H_LogAnsOBJ.quit()
+                time.sleep(2)
+    elif H_LogMSGAns == "認証エラー":
+        H_LogAnsOBJ.quit()
+        if H_SecondP == H_SecondP:
+            print("nan")
             time.sleep(1)
+            LogAns = eTaxWebCrawler(
+                str(math.floor(H_First)),
+                H_SecondP,
+                os.getcwd().replace("\\", "/"),
+                H_SCode,
+                H_TKCName,
+            )  # Nanではない場合
+            H_LogAns = LogAns[0]  # ログオン後のH1テキストを代入
+            H_LogAnsOBJ = LogAns[1]  # ログオン後のWEBドライバーを代入
+            H_LogMSGAns = LogReturn(
+                H_LogAns, H_LogAnsOBJ
+            )  # ログオン後のH1テキストをで処理分けしWEBテーブルページへ
+            if not H_LogMSGAns == "表示するメッセージはありません。" and not H_LogMSGAns == "認証エラー":
+                H_Lo = LogOnOuter(H_LogAnsOBJ)  # WEBテーブル取得
+                H_L_D = H_Lo[0]  # WEBテーブルページ
+                H_L_Row = H_Lo[1]  # WEBテーブル行数
+                for H_MSG_rowItem in range(H_L_Row):  # WEBテーブル行数分ループ
+                    H_Parameters = ParGet(
+                        H_L_D, H_MSG_rowItem, H_L_Row
+                    )  # WEBテーブルから要素取得
+                    H_P1 = H_Parameters[0]
+                    H_P2 = H_Parameters[1]
+                    H_P5 = H_Parameters[4]
+                    SPDF = SortPDF(H_P2, H_P5, H_SCode, H_TKCName)
+                    Hurikae = "振替納税のお知らせ" in H_P5
+                    if SPDF is False or SPDF is None or Hurikae is True:
+                        PrintIFS(H_P1, H_LogAnsOBJ)  # メッセージボックスの内容に応じて処理分け
+                        RenamePDF(
+                            H_P2, H_P5, H_SCode, H_TKCName
+                        )  # PDF保存先フォルダー作成後リネーム&移動
+                        if H_MSG_rowItem == H_L_Row - 1:
+                            H_LogAnsOBJ.quit()
+                            time.sleep(1)
+                        else:
+                            H_LogAnsOBJ.switch_to.window(
+                                H_LogAnsOBJ.window_handles[0]
+                            )  # タブ移動する
+                            WebDriverWait(H_LogAnsOBJ, 30).until(
+                                EC.presence_of_all_elements_located
+                            )  # 要素が読み込まれるまで最大30秒待つ
+                    else:
+                        H_LogAnsOBJ.close()
+                        time.sleep(1)
+                        if H_MSG_rowItem == H_L_Row - 1:
+                            H_LogAnsOBJ.quit()
+                            time.sleep(1)
+                        else:
+                            H_LogAnsOBJ.switch_to.window(
+                                H_LogAnsOBJ.window_handles[0]
+                            )  # タブ移動する
+                            WebDriverWait(H_LogAnsOBJ, 30).until(
+                                EC.presence_of_all_elements_located
+                            )  # 要素が読み込まれるまで最大30秒待つ
+            elif H_LogMSGAns == "認証エラー":
+                H_LogAnsOBJ.quit()
+                time.sleep(1)
+        else:
+            print("H_SecondP:nan")
     elif H_LogMSGAns == "認証エラー":
         print(H_SCode + "_" + H_TKCName + "_" + "暗証番号の変更")
     else:
@@ -578,7 +596,7 @@ OKLog = []
 NGLog = []
 for x in range(H_dfRow):
     try:
-        if x >= 1000:
+        if x >= 0:
             # 関与先DB配列をループして識別番号とPassを取得
             H_dfDataRow = H_df.loc[x]
             H_SCode = H_dfDataRow["SyanaiCode"]
