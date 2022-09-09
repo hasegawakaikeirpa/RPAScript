@@ -316,24 +316,20 @@ def MysqlDiffUp(MTB, CTB, UDRow):  # 元TB名,履歴TB名,更新行データ
             ColRow = ColRow + 1  # カラムリストのRowIndex加算
         FColList = str(ColList)  # SQL文用列名リストの作成
         FColList = FColList.replace("'", "")  # 不要なのでシングルコーテーション削除
+        UD_vc_KnrCd = UDRow["vc_KnrCd"].replace("  ", "").replace(" ", "")
         sql = (
             "INSERT INTO "
             + CTB
             + " SELECT * FROM "
             + MTB
             + " WHERE vc_KnrCd='"
-            + UDRow["vc_KnrCd"].replace("  ", "").replace(" ", "")
+            + UD_vc_KnrCd
             + "'"
         )  # 変更対象を履歴DBにコピー
         MySQLAct(
             "ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql
         )  # 引数8=親TB名,引数9=履歴数列名
-        sql = (
-            "SELECT * FROM "
-            + MTB
-            + " WHERE vc_KnrCd="
-            + UDRow["vc_KnrCd"].replace("  ", "").replace(" ", "")
-        )  # 変更対象を履歴DBにコピー
+        sql = "SELECT * FROM " + MTB + " WHERE vc_KnrCd=" + UD_vc_KnrCd  # 変更対象を履歴DBにコピー
         # -------------------------------------------------------------------------------------------------------------------------------------------------------
         # マスターテーブルを差分更新--------------------------------------------------------------------------------------------------------------------------------
         SQLData = MySQLHeaderTo_df(
@@ -402,6 +398,277 @@ def MysqlDiffUp(MTB, CTB, UDRow):  # 元TB名,履歴TB名,更新行データ
 
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def ChangeTKCData(ColN, ParList, UDRowItem, TB):  # 列名,列名リスト,行データ,テーブル名
+    # データ型に合わせて値を変更する。
+    try:
+        ColP = MysqlColumnCheck(
+            "ws77", "SYSTEM", "SYSTEM", 3306, "kanyodb", "utf8", TB, ColN
+        )
+        if ColP[0] is True:
+            SQLColP = ColP[1]
+            TypeItem = str(type(UDRowItem))
+            # データ型に合わせて値を変更----------------------------------------------------------------
+            if "datetime" in SQLColP:
+                if UDRowItem is None:  # Timestamp('2022-03-09 00:00:00')
+                    FDATE = datetime.datetime.now()
+                    FDATE = str(FDATE.strftime("%Y-%m-%d %H:%M:%S"))
+                    # FDATE = "Timestamp('" + FDATE + "')"
+                    ParList.append(FDATE)
+                else:
+                    if ColN == "dt_UpdtDT":
+                        FDATE = datetime.datetime.now()
+                        FDATE = str(FDATE.strftime("%Y-%m-%d %H:%M:%S"))
+                        # FDATE = "Timestamp('" + FDATE + "')"
+                        ParList.append(FDATE)
+                    else:
+                        ParList.append(UDRowItem)
+            elif "char" in SQLColP:
+                if UDRowItem == " ":
+                    ParList.append("")
+                elif UDRowItem == "　":
+                    ParList.append("")
+                elif UDRowItem == "  ":
+                    ParList.append("")
+                elif UDRowItem == "":
+                    ParList.append("")
+                elif UDRowItem == "":
+                    ParList.append("")
+                elif ColN == "TKCJimusyoCode":
+                    ParList.append(format(int(UDRowItem), "05"))
+                elif ColN == "TKCKanyoCode":
+                    ParList.append(format(int(UDRowItem), "03"))
+                elif ColN == "SyanaiCode":
+                    ParList.append(UDRowItem.replace("  ", "").replace(" ", ""))
+                elif "int" in TypeItem:  # int判定で処理分け
+                    ParList.append(
+                        str(int(UDRowItem))
+                        .replace("\u3000", "  ")
+                        .replace("\u200b", " ")
+                    )
+                elif "float" in TypeItem:  # float判定で処理分け
+                    if np.isnan(UDRowItem):  # nan判定で処理分け
+                        ParList.append("")
+                    else:
+                        ParList.append(
+                            str(int(UDRowItem))
+                            .replace("\u3000", "  ")
+                            .replace("\u200b", " ")
+                            .replace(".0", "")
+                        )
+                else:
+                    ParList.append(
+                        str(UDRowItem).replace("\u3000", "  ").replace("\u200b", " ")
+                    )
+
+            elif "int" in SQLColP:
+                if UDRowItem == " ":
+                    ParList.append("")
+                elif UDRowItem == "　":
+                    ParList.append("")
+                elif UDRowItem == "  ":
+                    ParList.append("")
+                elif ColN == "TKCJimusyoCode":
+                    ParList.append(format(int(UDRowItem), "05"))
+                elif ColN == "TKCKanyoCode":
+                    ParList.append(format(int(UDRowItem), "03"))
+                elif ColN == "SyanaiCode":
+                    ParList.append(str(int(UDRowItem)))
+                elif "int" in TypeItem:  # int判定で処理分け
+                    ParList.append(
+                        str(int(UDRowItem))
+                        .replace("\u3000", "  ")
+                        .replace("\u200b", " ")
+                    )
+                elif "float" in TypeItem:  # float判定で処理分け
+                    if np.isnan(UDRowItem):  # nan判定で処理分け
+                        ParList.append("")
+                    else:
+                        ParList.append(
+                            str(int(UDRowItem))
+                            .replace("\u3000", "  ")
+                            .replace("\u200b", " ")
+                            .replace(".0", "")
+                        )
+                else:
+                    ParList.append(int(UDRowItem))
+            else:
+                if UDRowItem == " ":
+                    ParList.append("")
+                elif UDRowItem == "　":
+                    ParList.append("")
+                elif UDRowItem == "  ":
+                    ParList.append("")
+                elif ColN == "TKCJimusyoCode":
+                    ParList.append(format(int(UDRowItem), "05"))
+                elif ColN == "TKCKanyoCode":
+                    ParList.append(format(int(UDRowItem), "03"))
+                elif ColN == "SyanaiCode":
+                    ParList.append(str(int(UDRowItem)))
+                elif "int" in TypeItem:  # int判定で処理分け
+                    ParList.append(
+                        str(int(UDRowItem))
+                        .replace("\u3000", "  ")
+                        .replace("\u200b", " ")
+                    )
+                elif "float" in TypeItem:  # float判定で処理分け
+                    if np.isnan(UDRowItem):  # nan判定で処理分け
+                        ParList.append("")
+                    else:
+                        ParList.append(
+                            str(int(UDRowItem))
+                            .replace("\u3000", "  ")
+                            .replace("\u200b", " ")
+                            .replace(".0", "")
+                        )
+                else:
+                    ParList.append(UDRowItem)
+            logger.debug(
+                "ChangeTKCData(引数で渡したTBのカラムに応じたデータ型に合わせて値を変更する。)完了: debug level log"
+            )
+            return ParList
+        else:
+            logger.debug(
+                "ChangeTKCData(引数で渡したTBのカラムに応じたデータ型に合わせて値を変更する。)テーブルカラム取得失敗: debug level log"
+            )
+            print("テーブルカラム取得失敗")
+            return False
+    except:
+        logger.debug(
+            "ChangeTKCData(引数で渡したTBのカラムに応じたデータ型に合わせて値を変更する。)exceptエラー: debug level log"
+        )
+        print("exceptエラー")
+        return False
+
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def MysqlTKCCSVDiffUp(MTB, CTB, DFCol, UDRow):  # 元TB名,履歴TB名,更新行データ
+    """
+    Heidi関与先DB更新用
+    """
+    try:
+        # 履歴テーブルにコピー-------------------------------------------------------------------------------------------------------------------------------------
+        sql = "SELECT * FROM " + MTB  # SELECT分を代入
+        # DFCol = MysqlColumnPic(
+        #     "ws77", "SYSTEM", "SYSTEM", 3306, "kanyodb", "utf8", MTB
+        # )[
+        #     1
+        # ]  # 関数でTB列情報取得
+        ColList = []  # データ型変帝の為のカラムリストを作成
+        ParList = []  # SQL結合用に行データ格納用のリスト作成
+        for DFColItem in DFCol:  # Rowデータのデータ型に併せて値を変更
+            ColList.append(DFColItem)  # DFから列名のみ抽出
+        ColRow = 0  # カラムリストのRowIndex初期化
+        for UDRowItem in UDRow:  # 行データひとつずつループ
+            ColN = ColList[ColRow]  # カラムリストから列名取得
+            ChangeTKCData(ColN, ParList, UDRowItem, MTB)  # 列名,行データ格納用のリスト,行データ要素,TB名
+            ColRow = ColRow + 1  # カラムリストのRowIndex加算
+        FColList = str(ColList)  # SQL文用列名リストの作成
+        FColList = FColList.replace("'", "")  # 不要なのでシングルコーテーション削除
+        UD_SyanaiCode = str(int(UDRow["SyanaiCode"]))
+
+        sql = (
+            "INSERT INTO "
+            + CTB
+            + " SELECT * FROM "
+            + MTB
+            + " WHERE SyanaiCode='"
+            + UD_SyanaiCode
+            + "'"
+        )  # 変更対象を履歴DBにコピー
+        MySQLAct(
+            "ws77", "SYSTEM", "SYSTEM", 3306, "kanyodb", "utf8", sql
+        )  # 引数8=親TB名,引数9=履歴数列名
+        sql = (
+            "SELECT * FROM " + MTB + " WHERE SyanaiCode=" + UD_SyanaiCode
+        )  # 変更対象を履歴DBにコピー
+        # -------------------------------------------------------------------------------------------------------------------------------------------------------
+        # マスターテーブルを差分更新--------------------------------------------------------------------------------------------------------------------------------
+        SQLData = MySQLHeaderTo_df(
+            "ws77", "SYSTEM", "SYSTEM", 3306, "kanyodb", "utf8", sql
+        )[
+            1
+        ]  # マスターの最新レコードをDF化
+        SQLDataRow = np.array(SQLData).shape[0]  # DF行数取得
+        if SQLDataRow == 1:
+            SQLDataSingle = SQLData.iloc[0, :]  # DF行データ取得
+            ColRow = 0  # カラムリストのRowIndex初期化
+            for ColListItem in ColList:  # 行データひとつずつループ
+                ColN = ColList[ColRow]  # カラムリストから列名取得
+                SQLPar = SQLDataSingle[ColN]
+                ParName = ParList[ColRow]
+                if SQLPar == ParName:
+                    sql = ""
+                else:
+                    DataType = type(ParList[ColRow])  # 値の型検出
+                    if ParList[ColRow] == "":
+                        sql = (
+                            "UPDATE "
+                            + MTB
+                            + " SET "
+                            + ColN
+                            + "=''"
+                            + " WHERE SyanaiCode='"
+                            + UD_SyanaiCode
+                            + "'"
+                        )  # 変更対象を履歴DBにコピー
+                    else:
+                        if "str" in str(DataType):
+                            sql = (
+                                "UPDATE "
+                                + MTB
+                                + " SET "
+                                + ColN
+                                + "='"
+                                + str(ParList[ColRow])
+                                + "' WHERE SyanaiCode='"
+                                + UD_SyanaiCode
+                                + "'"
+                            )  # 変更対象を履歴DBにコピー
+                        else:
+                            sql = (
+                                "UPDATE "
+                                + MTB
+                                + " SET "
+                                + ColN
+                                + "="
+                                + str(ParList[ColRow])
+                                + " WHERE SyanaiCode='"
+                                + UD_SyanaiCode
+                                + "'"
+                            )  # 変更対象を履歴DBにコピー
+                    sql = sql.replace("[", "").replace("]", "")
+                    MySQLAct(
+                        "ws77", "SYSTEM", "SYSTEM", 3306, "kanyodb", "utf8", sql
+                    )  # 引数8=親TB名,引数9=履歴数列名
+                    sql = ""
+                ColRow = ColRow + 1
+            return True
+        else:
+            print("マスターに重複があります。")
+            return False
+    except:
+        return False
+
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+if __name__ == "__main__":
+    sql = "SELECT * FROM kanyodb"  # SELECT分を代入
+    # KFM = MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "test_db", "utf8", sql)[
+    #     1
+    # ]  # 関数でクエリ結果をDF化
+
+    KFM = pd.read_csv(r"D:\DBOUT.CSV", encoding="cp932")
+    DFCol = KFM.columns
+    DFCol = list(DFCol)
+    KFMRow = np.array(KFM).shape[0]  # DF行数取得
+    for x in range(KFMRow):  # DF分ループ
+        KFMData = KFM.iloc[x, :]  # DF行データ取得
+        ITB = "kanyodb_copy"  # テーブル名を代入
+        ColRow = 0
+        MysqlTKCCSVDiffUp("kanyodb", ITB, DFCol, KFMData)  # 元TB名,履歴TB名,更新行データ
+
 # MysqlDiffUp(MTB,CTB,UDRow):の使い方↓
 
 # sql = 'SELECT * FROM m_kfmsmail'#SELECT分を代入
