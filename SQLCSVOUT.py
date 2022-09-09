@@ -6,6 +6,15 @@ import logging.config
 logging.config.fileConfig(r"LogConf\logging_debugDBOut.conf")
 logger = logging.getLogger(__name__)
 # ----------------------------------------------------------------------------------------------------------------------
+# Heidi関与先DBをCSVアウト-----------------------------------------------------------
+sql = "SELECT * FROM kanyodb"
+URL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\ALLDataBase\Heidi関与先DB.csv"
+URL = URL.replace("\\", "/")
+
+SQDF = SQ.MySQLHeaderTo_df("ws77", "SYSTEM", "SYSTEM", 3306, "kanyodb", "utf8", sql)[1]
+SQDF.to_csv(URL, index=False)
+logger.debug("関与先データベースをCSVアウト完了: debug level log")
+# 社員情報をCSVアウト----------------------------------------------------------------
 # 関与先データベースをCSVアウト-------------------------------------------------------
 sql = "SELECT * FROM m_kkanyo"
 URL = r"\\nas-sv\A_共通\A8_ｼｽﾃﾑ資料\RPA\ALLDataBase\m_kkanyo.csv"
