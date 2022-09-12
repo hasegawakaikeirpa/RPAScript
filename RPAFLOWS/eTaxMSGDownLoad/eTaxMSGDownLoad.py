@@ -586,50 +586,40 @@ def LoginLoop(H_SCode, H_TKCName, H_First, H_FirstP, H_SecondP):
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 # pandas(pd)で関与先データCSVを取得
-H_url = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/Heidi関与先DB.csv"
-H_df = pd.read_csv(H_url, encoding="utf-8")
-H_forCount = 0
-# テストケース
-H_dfRow = np.array(H_df).shape[0]  # 配列行数取得
-H_dfCol = np.array(H_df).shape[1]  # 配列列数取得
-OKLog = []
-NGLog = []
-for x in range(H_dfRow):
-    try:
-        if x >= 0:
-            # 関与先DB配列をループして識別番号とPassを取得
-            H_dfDataRow = H_df.loc[x]
-            H_SCode = H_dfDataRow["SyanaiCode"]
-            try:
-                H_TKCName = H_dfDataRow["TKCName"].replace("\u3000", " ")  # 空白\u3000を置換
-            except:
-                H_TKCName = H_dfDataRow["TKCName"]
-            H_MSikibetu = H_dfDataRow["MirokuKokuzeiUserCode"]
-            H_TSikibetu = H_dfDataRow["TKCKokuzeiUserCode"]
-            try:
-                H_ePass = H_dfDataRow["etaxPass"].replace("\u3000", " ")  # 空白\u3000を置換
-            except:
-                H_ePass = H_dfDataRow["etaxPass"]
-            try:
-                H_elPass = H_dfDataRow["eltaxPass"].replace(
-                    "\u3000", " "
-                )  # 空白\u3000を置換
-            except:
-                H_elPass = H_dfDataRow["eltaxPass"]
+if __name__ == "__main__":
+    H_url = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/Heidi関与先DB.csv"
+    H_df = pd.read_csv(H_url, encoding="utf-8")
+    H_forCount = 0
+    # テストケース
+    H_dfRow = np.array(H_df).shape[0]  # 配列行数取得
+    H_dfCol = np.array(H_df).shape[1]  # 配列列数取得
+    OKLog = []
+    NGLog = []
+    for x in range(H_dfRow):
+        try:
+            if x >= 0:
+                # 関与先DB配列をループして識別番号とPassを取得
+                H_dfDataRow = H_df.loc[x]
+                H_SCode = H_dfDataRow["SyanaiCode"]
+                try:
+                    H_TKCName = H_dfDataRow["TKCName"].replace("\u3000", " ")  # 空白\u3000を置換
+                except:
+                    H_TKCName = H_dfDataRow["TKCName"]
+                H_MSikibetu = H_dfDataRow["MirokuKokuzeiUserCode"]
+                H_TSikibetu = H_dfDataRow["TKCKokuzeiUserCode"]
+                try:
+                    H_ePass = H_dfDataRow["etaxPass"].replace("\u3000", " ")  # 空白\u3000を置換
+                except:
+                    H_ePass = H_dfDataRow["etaxPass"]
+                try:
+                    H_elPass = H_dfDataRow["eltaxPass"].replace(
+                        "\u3000", " "
+                    )  # 空白\u3000を置換
+                except:
+                    H_elPass = H_dfDataRow["eltaxPass"]
 
-            if H_MSikibetu == H_MSikibetu:  # 自身比較のNan判定
-                if H_ePass == H_ePass:  # 自身比較のNan判定
-                    LoginLoop(H_SCode, H_TKCName, H_MSikibetu, H_ePass, H_elPass)
-                    pd.DataFrame(OKLog).to_csv(
-                        "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
-                        encoding="shift-jis",
-                    )
-                    pd.DataFrame(NGLog).to_csv(
-                        "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
-                        encoding="shift-jis",
-                    )
-                else:
-                    if H_elPass == H_elPass:  # 自身比較のNan判定
+                if H_MSikibetu == H_MSikibetu:  # 自身比較のNan判定
+                    if H_ePass == H_ePass:  # 自身比較のNan判定
                         LoginLoop(H_SCode, H_TKCName, H_MSikibetu, H_ePass, H_elPass)
                         pd.DataFrame(OKLog).to_csv(
                             "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
@@ -639,19 +629,19 @@ for x in range(H_dfRow):
                             "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
                             encoding="shift-jis",
                         )
-            elif H_TSikibetu == H_TSikibetu:
-                if H_ePass == H_ePass:  # 自身比較のNan判定
-                    LoginLoop(H_SCode, H_TKCName, H_TSikibetu, H_ePass, H_elPass)
-                    pd.DataFrame(OKLog).to_csv(
-                        "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
-                        encoding="shift-jis",
-                    )
-                    pd.DataFrame(NGLog).to_csv(
-                        "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
-                        encoding="shift-jis",
-                    )
-                else:
-                    if H_elPass == H_elPass:  # 自身比較のNan判定
+                    else:
+                        if H_elPass == H_elPass:  # 自身比較のNan判定
+                            LoginLoop(H_SCode, H_TKCName, H_MSikibetu, H_ePass, H_elPass)
+                            pd.DataFrame(OKLog).to_csv(
+                                "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
+                                encoding="shift-jis",
+                            )
+                            pd.DataFrame(NGLog).to_csv(
+                                "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
+                                encoding="shift-jis",
+                            )
+                elif H_TSikibetu == H_TSikibetu:
+                    if H_ePass == H_ePass:  # 自身比較のNan判定
                         LoginLoop(H_SCode, H_TKCName, H_TSikibetu, H_ePass, H_elPass)
                         pd.DataFrame(OKLog).to_csv(
                             "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
@@ -662,37 +652,48 @@ for x in range(H_dfRow):
                             encoding="shift-jis",
                         )
                     else:
-                        print("NoPassWord")
-                        NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "パスワードエラー"
-                        NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
-                        NGLog.append(NGstr)
-                        pd.DataFrame(NGLog).to_csv(
-                            "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
-                            encoding="shift-jis",
-                        )
-            else:
-                NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "エラー"
-                NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
+                        if H_elPass == H_elPass:  # 自身比較のNan判定
+                            LoginLoop(H_SCode, H_TKCName, H_TSikibetu, H_ePass, H_elPass)
+                            pd.DataFrame(OKLog).to_csv(
+                                "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyOKLog.csv",
+                                encoding="shift-jis",
+                            )
+                            pd.DataFrame(NGLog).to_csv(
+                                "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
+                                encoding="shift-jis",
+                            )
+                        else:
+                            print("NoPassWord")
+                            NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "パスワードエラー"
+                            NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
+                            NGLog.append(NGstr)
+                            pd.DataFrame(NGLog).to_csv(
+                                "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
+                                encoding="shift-jis",
+                            )
+                else:
+                    NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "エラー"
+                    NGstr = NGstr.replace("\uff0d", "-").replace("\xa0", "")
+                    NGLog.append(NGstr)
+                    pd.DataFrame(NGLog).to_csv(
+                        "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
+                        encoding="shift-jis",
+                    )
+        except:
+            traceback.print_exc()
+            try:
+                NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "exceptエラー"
+                NGstr = (
+                    NGstr.replace("\uff0d", "-")
+                    .replace("\xa0", "")
+                    .replace("\u71c1", "")
+                    .replace("\u9348", "")
+                    .replace("\u9ad9", "")
+                )
                 NGLog.append(NGstr)
                 pd.DataFrame(NGLog).to_csv(
                     "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
                     encoding="shift-jis",
                 )
-    except:
-        traceback.print_exc()
-        try:
-            NGstr = str(H_SCode) + "_" + H_TKCName + "_" + "exceptエラー"
-            NGstr = (
-                NGstr.replace("\uff0d", "-")
-                .replace("\xa0", "")
-                .replace("\u71c1", "")
-                .replace("\u9348", "")
-                .replace("\u9ad9", "")
-            )
-            NGLog.append(NGstr)
-            pd.DataFrame(NGLog).to_csv(
-                "//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/PyNGLog.csv",
-                encoding="shift-jis",
-            )
-        except:
-            print("どうしようもないがな！")
+            except:
+                print("どうしようもないがな！")
