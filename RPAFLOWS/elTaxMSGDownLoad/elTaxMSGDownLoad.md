@@ -19,6 +19,10 @@
 #### ・Python高速計算ライブラリ
 <br>
 
+#### import math
+#### ・Python数学関数ライブラリ
+<br>
+
 #### import time
 #### ・Python時間操作ライブラリ
 <br>
