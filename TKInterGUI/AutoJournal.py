@@ -661,7 +661,7 @@ def TxtDayChange(D_var):
 
 # ----------------------------------------------------------------------------
 def IOsplitFlow(
-    OCR_data, OCR_data_Row, IO, npw_Column, Kari, Kashi, npw, NGList, N_C, M_coltxt
+    OCR_data, OCR_data_Row, IO, npw_Column, Kari, Kashi, npw, NGList, N_C, M_coltxt, Sin
 ):
     """
     借貸方の科目名から現預金処理なのか判定
@@ -706,13 +706,19 @@ def IOsplitFlow(
                         IOList.append(list(NGList[1]))
                         return True, IOList
                 elif len(c_npw) == 2:
-                    GNV = getNearestValue(npw[1:, M_coltxt], M)
-                    TS = npw[1:, :]
-                    TS = TS[GNV]
+                    if Sin == "単一":
+                        TS = npw[1:, :]
+                    else:
+                        GNV = getNearestValue(npw[1:, M_coltxt], M)
+                        TS = npw[1:, :]
+                        TS = TS[GNV]
                     return True, TS
                 else:
                     if len(NGList) == 0:
-                        TS = npw[1, :]
+                        if Sin == "単一":
+                            TS = npw[1:, :]
+                        else:
+                            TS = npw[1, :]
                         return True, TS
                     else:
                         return False, NGList
@@ -752,13 +758,19 @@ def IOsplitFlow(
                         IOList.append(list(NGList[1]))
                         return True, IOList
                 elif len(c_npw) >= 2:
-                    GNV = getNearestValue(npw[1:, M_coltxt], M)
-                    TS = npw[1:, :]
-                    TS = TS[GNV]
+                    if Sin == "単一":
+                        TS = npw[1:, :]
+                    else:
+                        GNV = getNearestValue(npw[1:, M_coltxt], M)
+                        TS = npw[1:, :]
+                        TS = TS[GNV]
                     return True, TS
                 else:
                     if len(NGList) == 0:
-                        TS = npw[1, :]
+                        if Sin == "単一":
+                            TS = npw[1:, :]
+                        else:
+                            TS = npw[1, :]
                         return True, TS
                     else:
                         return False, NGList
@@ -918,9 +930,10 @@ def main(
                 FinalList = FinalList[ind]
                 SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
                 SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
-                ind = np.where(SortNp == max(SortNp))  # インデックス取得
+                # ind = np.where(SortNp == max(SortNp))  # インデックス取得
                 FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
-                FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
+                # FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
+                FinalList = np.vstack((FinalListColumns, FinalList))  # ヘッダーと結合
                 Nind = NPFLOW(
                     HukugouKey,
                     TotalFinalList,
@@ -932,6 +945,7 @@ def main(
                     M_coltxt,
                     I,
                     O,
+                    "単一",
                 )
                 if Nind[0] is True:
                     # 複合仕訳の判定----------------------------
@@ -954,6 +968,7 @@ def main(
                             NGList,
                             N_C,
                             M_coltxt,
+                            "単一",
                         )
                         if IOS[0] is True:
                             TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
@@ -974,9 +989,10 @@ def main(
                 FinalList = FinalList[ind]
                 SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
                 SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
-                ind = np.where(SortNp == max(SortNp))  # インデックス取得
+                # ind = np.where(SortNp == max(SortNp))  # インデックス取得
                 FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
-                FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
+                # FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
+                FinalList = np.vstack((FinalListColumns, FinalList))  # ヘッダーと結合
                 Nind = NPFLOW(
                     HukugouKey,
                     TotalFinalList,
@@ -988,6 +1004,7 @@ def main(
                     M_coltxt,
                     I,
                     O,
+                    "単一",
                 )
                 if Nind[0] is True:
                     # 複合仕訳の判定----------------------------
@@ -1011,6 +1028,7 @@ def main(
                             NGList,
                             N_C,
                             M_coltxt,
+                            "単一",
                         )
                         if IOS[0] is True:
                             TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
@@ -1092,198 +1110,214 @@ def AllChange(
                 print(OCR_data_Row)
                 print("##########################################################")
                 print("##########################################################")
-                # 自動仕訳判定列設定をループ----------------------------------------
-                for OCR_r in range(len(OCRList)):
-                    ColNo = int(np.where(OCRColNames == OCRList[OCR_r])[0])
-                    txt = OCR_data_Row[ColNo]
-                    # 自動仕訳判定の処理番号から隣の列番号を計算-----------------
-                    if OCR_r == 0:
-                        OCR_c = OCR_r
-                        U_c = 1
-                    else:
-                        OCR_c = OCR_c + 2
-                        U_c = OCR_c + 1
-                    # ---------------------------------------------------------
-                    # 検索文字列を変換表と突合し変換
-                    SerchTxt = RensouTextCheck(ChangeTxt_data, txt, OCR_c, U_c)
-                    if SerchTxt[0] is True:
-                        # 検索文字列が変換表から変換した場合
-                        SerchTxt = SerchTxt[1]
-                        # 元帳テキスト列名を取得
-                        ColName = MJSList[OCR_r]
-                        NPC = npCreate(MJS_data, SerchTxt, ColName, "ALL")
-                        if NPC[0] is True:
-                            # 一致率100%の仕訳が同日に複数あるか判定-----------------------------------
+                NodataF = True
+                # OCR行に値があるか調べる
+                for OCR_data_RowItem in OCR_data_Row:
+                    if OCR_data_RowItem != "":
+                        NodataF = False
+                if NodataF is False:
+                    # 自動仕訳判定列設定をループ----------------------------------------
+                    for OCR_r in range(len(OCRList)):
+                        ColNo = int(np.where(OCRColNames == OCRList[OCR_r])[0])
+                        txt = OCR_data_Row[ColNo]
+                        # 自動仕訳判定の処理番号から隣の列番号を計算-----------------
+                        if OCR_r == 0:
+                            OCR_c = OCR_r
+                            U_c = 1
+                        else:
+                            OCR_c = OCR_c + 2
+                            U_c = OCR_c + 1
+                        # ---------------------------------------------------------
+                        # 検索文字列を変換表と突合し変換
+                        SerchTxt = RensouTextCheck(ChangeTxt_data, txt, OCR_c, U_c)
+                        if SerchTxt[0] is True:
+                            # 検索文字列が変換表から変換した場合
+                            SerchTxt = SerchTxt[1]
+                            # 元帳テキスト列名を取得
+                            ColName = MJSList[OCR_r]
+                            NPC = npCreate(MJS_data, SerchTxt, ColName, "ALL")
+                            if NPC[0] is True:
+                                # 一致率100%の仕訳が同日に複数あるか判定-----------------------------------
 
-                            # ヘッダーとリストに仕訳番号列を挿入---------------------------------------
-                            N_Arr = NPC[1]
-                            # -----------------------------------------------------------------------
-                            for N_r in range(len(N_Arr)):
-                                if N_r != 0:
-                                    F_row = list(N_Arr[N_r])
-                                    F_row.append(True)
-                                    DS = DiplicateSearch(FinalList, F_row)  # 重複判定
-                                    if DS is False:
-                                        FinalList.append(F_row)
-                                else:
-                                    FinalListColumns.append(list(N_Arr[N_r]))
+                                # ヘッダーとリストに仕訳番号列を挿入---------------------------------------
+                                N_Arr = NPC[1]
+                                # -----------------------------------------------------------------------
+                                for N_r in range(len(N_Arr)):
+                                    if N_r != 0:
+                                        F_row = list(N_Arr[N_r])
+                                        F_row.append(True)
+                                        DS = DiplicateSearch(FinalList, F_row)  # 重複判定
+                                        if DS is False:
+                                            FinalList.append(F_row)
+                                    else:
+                                        FinalListColumns.append(list(N_Arr[N_r]))
 
-                    else:
-                        # 検索文字列が変換表から変換しない場合
-                        SerchTxt = SerchTxt[1]
-                        # 元帳テキスト列名を取得
-                        ColName = MJSList[OCR_r]
-                        NPC = npCreate(MJS_data, SerchTxt, ColName, "ALL")
-                        if NPC[0] is True:
-                            # 一致率100%の仕訳が同日に複数あるか判定-----------------------------------
-                            # ヘッダーとリストに仕訳番号列を挿入---------------------------------------
-                            N_Arr = NPC[1]
-                            # -----------------------------------------------------------------------
-                            for N_r in range(len(N_Arr)):
-                                if N_r != 0:
-                                    F_row = list(N_Arr[N_r])
-                                    F_row.append(False)
-                                    DS = DiplicateSearch(FinalList, F_row)  # 重複判定
-                                    if DS is False:
-                                        FinalList.append(F_row)
-                                else:
-                                    FinalListColumns.append(list(N_Arr[N_r]))
+                        else:
+                            # 検索文字列が変換表から変換しない場合
+                            SerchTxt = SerchTxt[1]
+                            # 元帳テキスト列名を取得
+                            ColName = MJSList[OCR_r]
+                            NPC = npCreate(MJS_data, SerchTxt, ColName, "ALL")
+                            if NPC[0] is True:
+                                # 一致率100%の仕訳が同日に複数あるか判定-----------------------------------
+                                # ヘッダーとリストに仕訳番号列を挿入---------------------------------------
+                                N_Arr = NPC[1]
+                                # -----------------------------------------------------------------------
+                                for N_r in range(len(N_Arr)):
+                                    if N_r != 0:
+                                        F_row = list(N_Arr[N_r])
+                                        F_row.append(False)
+                                        DS = DiplicateSearch(FinalList, F_row)  # 重複判定
+                                        if DS is False:
+                                            FinalList.append(F_row)
+                                    else:
+                                        FinalListColumns.append(list(N_Arr[N_r]))
 
-                # 一致率100%の仕訳が同日に複数あるか判定-----------------------------------
-                # ヘッダーとリストに仕訳番号列を挿入---------------------------------------
-                FinalList = np.array(FinalList)
-                BoolList = np.array(FinalList[:, FinalList.shape[1] - 1])
-                Boolind = np.where(BoolList == "True")  # インデックス取得
-                if Boolind[0].shape[0] != 0:
-                    FinalList = FinalList[Boolind]
-                FinalList = FinalList[:, 0 : FinalList.shape[1] - 1]  # Bool列削除
-                # -----------------------------------------------------------------------
-                N_clen = len(FinalList[0]) - 1  # 集計リストの要素数
-                SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
-                SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
-                # 抽出リスト内の指定一致率以上のデータ数を計算
-                N_C = np.count_nonzero(SortNp >= SortVar, axis=0)
-                if N_C == 1:  # 指定一致率以上が1件なら##########################################
-                    ind = np.where(SortNp >= SortVar)  # インデックス取得
-                    FinalList = FinalList[ind]
+                    # 一致率100%の仕訳が同日に複数あるか判定-----------------------------------
+                    # ヘッダーとリストに仕訳番号列を挿入---------------------------------------
+                    FinalList = np.array(FinalList)
+                    BoolList = np.array(FinalList[:, FinalList.shape[1] - 1])
+                    Boolind = np.where(BoolList == "True")  # インデックス取得
+                    if Boolind[0].shape[0] != 0:
+                        FinalList = FinalList[Boolind]
+                    FinalList = FinalList[:, 0 : FinalList.shape[1] - 1]  # Bool列削除
+                    # -----------------------------------------------------------------------
+                    N_clen = len(FinalList[0]) - 1  # 集計リストの要素数
                     SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
                     SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
-                    ind = np.where(SortNp == max(SortNp))  # インデックス取得
-                    FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
-                    FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
-                    Nind = NPFLOW(
-                        HukugouKey,
-                        TotalFinalList,
-                        FinalList,
-                        OCRColNames,
-                        D_coltxt,
-                        DayColName,
-                        OCR_data_Row,
-                        M_coltxt,
-                        I,
-                        O,
-                    )
-                    if Nind[0] is True:
-                        # 複合仕訳の判定----------------------------
-                        Hukugou = CheckHukugou(HukugouKey, Nind[1])
-                        # -----------------------------------------
-                        if Hukugou is True:
-                            TFList = Nind[1][1 : Nind[1].shape[0], :]  # ヘッダーを取り除く
-                            TotalFinalList.append(TFList)  # 入出金での処理分け後格納
-                        else:
-                            np_h = Nind[1][0, :]
-                            # 入出金での処理分け
-                            IOS = IOsplitFlow(
-                                OCR_data,
-                                OCR_data_Row,
-                                Nind[2],
-                                np_h,
-                                Kari,
-                                Kashi,
-                                Nind[1],
-                                NGList,
-                                N_C,
-                                M_coltxt,
-                            )
-                            if IOS[0] is True:
-                                TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
+                    # 抽出リスト内の指定一致率以上のデータ数を計算
+                    N_C = np.count_nonzero(SortNp >= SortVar, axis=0)
+                    if (
+                        N_C == 1
+                    ):  # 指定一致率以上が1件なら##########################################
+                        ind = np.where(SortNp >= SortVar)  # インデックス取得
+                        FinalList = FinalList[ind]
+                        SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
+                        SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
+                        ind = np.where(SortNp == max(SortNp))  # インデックス取得
+                        FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
+                        FinalList = np.vstack(
+                            (FinalListColumns, FinalList[ind])
+                        )  # ヘッダーと結合
+                        Nind = NPFLOW(
+                            HukugouKey,
+                            TotalFinalList,
+                            FinalList,
+                            OCRColNames,
+                            D_coltxt,
+                            DayColName,
+                            OCR_data_Row,
+                            M_coltxt,
+                            I,
+                            O,
+                            "複合",
+                        )
+                        if Nind[0] is True:
+                            # 複合仕訳の判定----------------------------
+                            Hukugou = CheckHukugou(HukugouKey, Nind[1])
+                            # -----------------------------------------
+                            if Hukugou is True:
+                                TFList = Nind[1][1 : Nind[1].shape[0], :]  # ヘッダーを取り除く
+                                TotalFinalList.append(TFList)  # 入出金での処理分け後格納
                             else:
-                                print("Err")
-                                # DammyList = []
-                                # for ColNamesItem in ColNames:
-                                #     DammyList.append(ColNamesItem + "自動仕訳候補なし")
-                                # TotalFinalList.append(DammyList)
+                                np_h = Nind[1][0, :]
+                                # 入出金での処理分け
+                                IOS = IOsplitFlow(
+                                    OCR_data,
+                                    OCR_data_Row,
+                                    Nind[2],
+                                    np_h,
+                                    Kari,
+                                    Kashi,
+                                    Nind[1],
+                                    NGList,
+                                    N_C,
+                                    M_coltxt,
+                                    "複合",
+                                )
+                                if IOS[0] is True:
+                                    TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
+                                else:
+                                    print("Err")
+                                    # DammyList = []
+                                    # for ColNamesItem in ColNames:
+                                    #     DammyList.append(ColNamesItem + "自動仕訳候補なし")
+                                    # TotalFinalList.append(DammyList)
+                        else:
+                            print("Err")
+                            DammyList = []
+                            for ColNamesItem in ColNames:
+                                DammyList.append(ColNamesItem + "自動仕訳候補なし")
+                            TotalFinalList.append(DammyList)
+                    elif (
+                        N_C > 1
+                    ):  # 指定一致率以上が1件以上なら##########################################
+                        ind = np.where(SortNp >= SortVar)  # インデックス取得
+                        FinalList = FinalList[ind]
+                        SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
+                        SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
+                        ind = np.where(SortNp == max(SortNp))  # インデックス取得
+                        FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
+                        FinalList = np.vstack(
+                            (FinalListColumns, FinalList[ind])
+                        )  # ヘッダーと結合
+                        Nind = NPFLOW(
+                            HukugouKey,
+                            TotalFinalList,
+                            FinalList,
+                            OCRColNames,
+                            D_coltxt,
+                            DayColName,
+                            OCR_data_Row,
+                            M_coltxt,
+                            I,
+                            O,
+                            "複合",
+                        )
+                        if Nind[0] is True:
+                            # 複合仕訳の判定----------------------------
+                            Hukugou = CheckHukugou(HukugouKey, Nind[1])
+                            # -----------------------------------------
+                            if Hukugou is True:
+                                TFList = Nind[1][1 : Nind[1].shape[0], :]  # ヘッダーを取り除く
+                                TotalFinalList.append(TFList)  # 入出金での処理分け後格納
+                            else:
+                                N_C = 1
+                                np_h = Nind[1][0, :]
+                                # 入出金での処理分け
+                                IOS = IOsplitFlow(
+                                    OCR_data,
+                                    OCR_data_Row,
+                                    Nind[2],
+                                    np_h,
+                                    Kari,
+                                    Kashi,
+                                    Nind[1],
+                                    NGList,
+                                    N_C,
+                                    M_coltxt,
+                                    "複合",
+                                )
+                                if IOS[0] is True:
+                                    TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
+                                else:
+                                    print("Err")
+                                    # DammyList = []
+                                    # for ColNamesItem in ColNames:
+                                    #     DammyList.append(ColNamesItem + "自動仕訳候補なし")
+                                    # TotalFinalList.append(DammyList)
+                        else:
+                            print("Err")
+                            DammyList = []
+                            for ColNamesItem in ColNames:
+                                DammyList.append(ColNamesItem + "自動仕訳候補なし")
+                            TotalFinalList.append(DammyList)
                     else:
                         print("Err")
                         DammyList = []
                         for ColNamesItem in ColNames:
                             DammyList.append(ColNamesItem + "自動仕訳候補なし")
                         TotalFinalList.append(DammyList)
-                elif (
-                    N_C > 1
-                ):  # 指定一致率以上が1件以上なら##########################################
-                    ind = np.where(SortNp >= SortVar)  # インデックス取得
-                    FinalList = FinalList[ind]
-                    SortNp = FinalList[:, N_clen]  # 集計リストの一致率列をスライス
-                    SortNp = SortNp.astype(int)  # 一致率列リストをint型変換
-                    ind = np.where(SortNp == max(SortNp))  # インデックス取得
-                    FinalListColumns = np.array(FinalListColumns[0])  # ヘッダースライス
-                    FinalList = np.vstack((FinalListColumns, FinalList[ind]))  # ヘッダーと結合
-                    Nind = NPFLOW(
-                        HukugouKey,
-                        TotalFinalList,
-                        FinalList,
-                        OCRColNames,
-                        D_coltxt,
-                        DayColName,
-                        OCR_data_Row,
-                        M_coltxt,
-                        I,
-                        O,
-                    )
-                    if Nind[0] is True:
-                        # 複合仕訳の判定----------------------------
-                        Hukugou = CheckHukugou(HukugouKey, Nind[1])
-                        # -----------------------------------------
-                        if Hukugou is True:
-                            TFList = Nind[1][1 : Nind[1].shape[0], :]  # ヘッダーを取り除く
-                            TotalFinalList.append(TFList)  # 入出金での処理分け後格納
-                        else:
-                            N_C = 1
-                            np_h = Nind[1][0, :]
-                            # 入出金での処理分け
-                            IOS = IOsplitFlow(
-                                OCR_data,
-                                OCR_data_Row,
-                                Nind[2],
-                                np_h,
-                                Kari,
-                                Kashi,
-                                Nind[1],
-                                NGList,
-                                N_C,
-                                M_coltxt,
-                            )
-                            if IOS[0] is True:
-                                TotalFinalList.append(IOS[1])  # 入出金での処理分け後格納
-                            else:
-                                print("Err")
-                                # DammyList = []
-                                # for ColNamesItem in ColNames:
-                                #     DammyList.append(ColNamesItem + "自動仕訳候補なし")
-                                # TotalFinalList.append(DammyList)
-                    else:
-                        print("Err")
-                        DammyList = []
-                        for ColNamesItem in ColNames:
-                            DammyList.append(ColNamesItem + "自動仕訳候補なし")
-                        TotalFinalList.append(DammyList)
-                else:
-                    print("Err")
-                    DammyList = []
-                    for ColNamesItem in ColNames:
-                        DammyList.append(ColNamesItem + "自動仕訳候補なし")
-                    TotalFinalList.append(DammyList)
         return True, ColNames, TotalFinalList
     except:
         return False, "", ""
@@ -1447,6 +1481,7 @@ def NPFLOW(
     M_coltxt,
     I,
     O,
+    Sin,
 ):
     """
     摘要欄一致仕訳リストへの処理
@@ -1486,6 +1521,7 @@ def NPFLOW(
                 HukugouKey,
                 TotalFinalList,
                 MC[1],
+                Sin,
             )
             return Nind[0], Nind[1], IO
     except:
@@ -1497,6 +1533,7 @@ def NPS_Sort(
     FL,
     TotalFinalList,
     FinalList,
+    Sin,
 ):
     try:
         np_h = FinalList[0, :]
@@ -1505,9 +1542,12 @@ def NPS_Sort(
         for np_hItem in reversed(np_h):
             if "一致率" == np_hItem and FL == np_hItem:
                 F_List = FinalList[1:, np_h_c]
-                F_List = np.where(F_List == max(F_List))
-                FinalList = FinalList[1:, :]
-                FinalList = FinalList[F_List]
+                if Sin != "単一":
+                    F_List = np.where(F_List == max(F_List))
+                    FinalList = FinalList[1:, :]
+                    FinalList = FinalList[F_List]
+                else:
+                    FinalList = FinalList[1:, :]
                 FinalList = np.vstack((np_h, FinalList))
                 break
             elif "日付一致率" == np_hItem and FL == np_hItem:
@@ -1533,6 +1573,7 @@ def NPS_FLOW(
     HukugouKey,
     TotalFinalList,
     FinalList,
+    Sin,
 ):
     try:
         np_h = FinalList[0, :]
@@ -1540,7 +1581,7 @@ def NPS_FLOW(
         np_h_c = np_h.shape[0] - 1
         for np_hItem in reversed(np_h):
             if "一致率" == np_hItem:
-                FinalList = NPS_Sort("一致率", TotalFinalList, FinalList)
+                FinalList = NPS_Sort("一致率", TotalFinalList, FinalList, Sin)
                 if FinalList[0] is True:
                     FinalList = FinalList[1]
                     FinalList = np.delete(FinalList, np_h_c, 1)
@@ -1548,7 +1589,7 @@ def NPS_FLOW(
                 else:
                     print("一致率ソートで失敗")
             elif "日付一致率" == np_hItem:
-                FinalList = NPS_Sort("日付一致率", TotalFinalList, FinalList)
+                FinalList = NPS_Sort("日付一致率", TotalFinalList, FinalList, Sin)
                 if FinalList[0] is True:
                     FinalList = FinalList[1]
                     FinalList = np.delete(FinalList, np_h_c, 1)
@@ -1556,7 +1597,7 @@ def NPS_FLOW(
                 else:
                     print("日付一致率ソートで失敗")
             elif "仕訳金額差額" == np_hItem:
-                FinalList = NPS_Sort("仕訳金額差額", TotalFinalList, FinalList)
+                FinalList = NPS_Sort("仕訳金額差額", TotalFinalList, FinalList, Sin)
                 if FinalList[0] is True:
                     FinalList = FinalList[1]
                     FinalList = np.delete(FinalList, np_h_c, 1)

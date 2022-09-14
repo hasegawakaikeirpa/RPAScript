@@ -449,7 +449,7 @@ class ModelImage:
         Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
         Inv_img.save(imgurl)  # 白黒反転保存(PIL)
         img = imread(imgurl)  # 白黒反転画像(cv2)
-        CleanUp_img = self.NoiseRemoval(img, 7)  # ノイズ除去(cv2)
+        CleanUp_img = self.NoiseRemoval(img, 3)  # ノイズ除去(cv2)
         imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
         Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
         Inv_img.save(imgurl)  # 白黒反転保存(PIL)

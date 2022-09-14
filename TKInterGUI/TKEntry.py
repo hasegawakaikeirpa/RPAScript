@@ -527,13 +527,15 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
     txtxt = tk.Entry(self.ChangeFrame, width=20)
 
     if "OCRテキスト" in self.ColumnName[next]:
-        # lis = list(self.pt.colheader.columnlabels)
-        lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
+        lis = list(self.pt.colheader.columnlabels)
         txtxt.insert(0, lis[next])
+        # lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
+        # txtxt.insert(0, "摘要")
     else:
         # lis = list(self.pt3.colheader.columnlabels)
-        lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
-        txtxt.insert(0, lis[next])
+        # txtxt.insert(0, lis[next])
+        # lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
+        txtxt.insert(0, "摘要")
     # コールバック---------------------------------------------------
     txtxt.bind("<Key>", RetuenTabFunction)
     # ---------------------------------------------------------------
@@ -543,13 +545,15 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
     txtxt = tk.Entry(self.AJsetMenuFrame, width=20)
 
     if "OCRテキスト" in self.ColumnName[next]:
-        # lis = list(self.pt.colheader.columnlabels)
-        lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
+        lis = list(self.pt.colheader.columnlabels)
         txtxt.insert(0, lis[next])
+        # lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
+        # txtxt.insert(0, "摘要")
     else:
         # lis = list(self.pt3.colheader.columnlabels)
-        lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
-        txtxt.insert(0, lis[next])
+        # txtxt.insert(0, lis[next])
+        # lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
+        txtxt.insert(0, "摘要")
     # コールバック---------------------------------------------------
     txtxt.bind("<Key>", RetuenTabFunction)
     # ---------------------------------------------------------------

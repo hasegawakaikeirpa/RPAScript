@@ -539,12 +539,18 @@ class DataGrid:
         仕訳候補の転記(Sub)
         """
         try:
+            self.NyuName  # 入金列名
+            self.SyutuName  # 出金列名
+            # OCR結果の列名検索で金額のみ入っている列を特定する
             pt2Col = np.array(self.pt2.model.df.columns)
             pt2arr = np.array(self.pt2.model.df)
             pt3arr = np.array(self.pt3.model.df)
             pt3List = []
-            for s_e_r in self.pt3.rowrange:
-                pt3List.append(list(pt3arr[s_e_r]))
+            if self.pt3.startrow == self.pt3.endrow:
+                pt3List.append(list(pt3arr[self.pt3.startrow]))
+            else:
+                for s_e_r in range(self.pt3.startrow, self.pt3.endrow):
+                    pt3List.append(list(pt3arr[s_e_r]))
             pt3List = np.array(pt3List)
             if pt2arr.shape[0] == 0:
                 pt2arr = pt3arr
@@ -1525,7 +1531,7 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
     AJurl = csvurl.replace(".csv", "_AutoJounal.csv")
     Roolurldf.to_csv(AJurl, index=False, encoding=enc)
     # -----------------------------------------------------------------------------------
-    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
+    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\1869\AJSet.csv"
     typ = [("テキスト変換ルールCSVを選択してください。", "*.csv")]
     dir = csvurl
     fle = tk.filedialog.askopenfilename(filetypes=typ, initialdir=dir)  # ファイル指定ダイアログ
@@ -1554,11 +1560,11 @@ if __name__ == "__main__":
     ReplaceStr = ["CDカード", "マツモトトソウテン", "ザンダカショウメイショ"]
     # ColNameList = ["日付", "摘要", "出金", "入金", "残高"]  # OCR出力列名
     # ColNameList = ["日付", "摘要", "入金", "摘要", "出金", "摘要"]  # OCR出力列名
-    csvurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_2page_133316.csv"
-    AJurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_2page_133316_AutoJounal.csv"
-    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\AJSet.csv"
-    Roolurl = r"D:\OCRTESTPDF\PDFTEST\1_仕訳日記帳.csv"
-    ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\ChangeTxtList.csv"
+    csvurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_10page.csv"
+    AJurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_10page_AutoJounal.csv"
+    AJSeturl = r"D:\OCRTESTPDF\PDFTEST\1869\AJSet.csv"
+    Roolurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_仕訳日記帳.csv"
+    ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\1869\1869ChangeTxtList.csv"
 
     enc = CSVO.getFileEncoding(ChangeTxtURL)  # 摘要変換ルールエンコード
     ColNameList_np = np.genfromtxt(
@@ -1567,7 +1573,7 @@ if __name__ == "__main__":
     ColNameList = ColNameList_np[0, :]
     ColNameList = list(ColNameList)
     # toml読込------------------------------------------------------------------------------
-    with open(r"D:\OCRTESTPDF\PDFTEST/Setting.toml", encoding="utf-8") as f:
+    with open(r"D:\OCRTESTPDF\PDFTEST\1869\Setting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
