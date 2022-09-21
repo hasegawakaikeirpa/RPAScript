@@ -82,11 +82,14 @@ def DiffListCreate(
     COLArray = True, readcsv1, readcsv2
     # ####################################################################################
     if COLArray[0] is True:
+        print("Bankrentxtver起動")
         GF = Bankrentxtver(
             FileURL,
             COLArray[1],
             COLArray[2],
         )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
+        print("Bankrentxtver完了")
+        print(GF[0])
         if GF[0] is True:
             GFTable = GF[1]
             GFRow = len(GFTable)
@@ -189,6 +192,7 @@ def DiffListCreate(
             #         kekkafukugen = fukugenhenkan.decode("utf-8", errors="ignore")
             #         GFTable[g][c] = kekkafukugen
             # ---------------------------------------------------------------------------------
+            print("GoogleAPI完了")
             # DataFrame作成
             DiffCheck(GFTable, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
             df = DataFrame(GFTable, columns=ColList)
@@ -222,8 +226,10 @@ def DiffListCreate(
             else:
                 enc = "cp932"
             try:
+                print("dfto_csv開始")
                 df.to_csv(FileName, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC)
             except:
+                print("dfto_csvエラー後開始")
                 with open(
                     FileName,
                     mode="w",
@@ -269,14 +275,14 @@ def Main(FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceSt
 
 if __name__ == "__main__":
     # toml読込------------------------------------------------------------------------------
-    with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
+    with open(os.getcwd() + r"/BankSetting.toml", encoding="utf-8") as f:
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
     URL = os.getcwd()
     readcsv1 = []
     with open(
-        URL + r"\TKInterGUI\StraightListYoko.csv",
+        URL + r"\StraightListYoko.csv",
         "r",
         newline="",
     ) as inputfile:
@@ -291,7 +297,7 @@ if __name__ == "__main__":
                 readcsv1.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
     readcsv2 = []
     with open(
-        URL + r"\TKInterGUI\StraightListTate.csv",
+        URL + r"\StraightListTate.csv",
         "r",
         newline="",
     ) as inputfile:

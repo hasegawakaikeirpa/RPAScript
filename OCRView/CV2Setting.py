@@ -155,16 +155,16 @@ def straightlinesetting(imgurl):
         TP = sorted(TpList, key=lambda x: x[1])
         YP = sorted(YpList, key=lambda x: x[0])
 
-        msg = messagebox.askokcancel("確認", "画像を保存しますか？(直線削除の際は保存してください。)")
-        if msg is True:
-            save_path = filedialog.asksaveasfilename(initialdir=imgurl)
-            img = cv2.resize(img, (width, height))
-            imwrite(save_path, img)
-            cv2.destroyAllWindows()
-            return True, "直線削除", "直線削除"
-        else:
-            cv2.destroyAllWindows()
-            return True, YP, TP
+        # msg = messagebox.askokcancel("確認", "画像を保存しますか？(直線削除の際は保存してください。)")
+        # if msg is True:
+        #     save_path = filedialog.asksaveasfilename(initialdir=imgurl)
+        #     img = cv2.resize(img, (width, height))
+        #     imwrite(save_path, img)
+        #     cv2.destroyAllWindows()
+        #     return True, "直線削除", "直線削除"
+        # else:
+        cv2.destroyAllWindows()
+        return True, YP, TP
         # imwrite(imgurl, img)
     except:
         return False, "m.Ypoints", "m.Tpoints"

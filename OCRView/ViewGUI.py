@@ -1,6 +1,7 @@
 import sys
 import ProgressBar as PB
 import tkinter as tk
+import os
 
 # from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
@@ -20,6 +21,9 @@ class ViewGUI:
     """
 
     def __init__(self, window_root, default_path):
+        print("#########################################################")
+        print(os.getcwd())
+        print("#########################################################")
         global Sval  # スライダー初期値
         Sval = 0  # スライダー初期値
         # Controller Class生成
@@ -36,20 +40,28 @@ class ViewGUI:
         self.window_root.geometry("1480x750")  # 横,縦
         NWINSize = ["1480", "750"]  # 横,縦
         # 　メインウィンドウタイトル
-        self.window_root.title("OCR自動仕訳 Ver:0.9")
+        self.window_root.title("OCR読取 Ver:0.9")
         # self.window_root.bind("<Button-1>", self.ChangeWSize)
         # サブウィンドウ
         # フォルダ・ファイル選択
-        self.window_sub_ctrl1 = tk.Frame(self.window_root, height=300, width=300)
+        self.window_sub_ctrl1 = tk.Frame(
+            self.window_root, bd=2, relief=tk.RAISED, height=300, width=300
+        )
         # 画像加工
-        self.window_sub_ctrl2 = tk.Frame(self.window_root, height=300, width=300)
+        self.window_sub_ctrl2 = tk.Frame(
+            self.window_root, bd=2, relief=tk.RAISED, height=300, width=300
+        )
         # プレビュー
-        self.window_sub_ctrl3 = tk.Frame(self.window_root, height=50, width=400)
+        # self.window_sub_ctrl3 = tk.Frame(self.window_root, height=50, width=400)
         # 画像加工2
-        self.window_sub_ctrl4 = tk.Frame(self.window_root, height=50, width=400)
+        self.window_sub_ctrl4 = tk.Frame(
+            self.window_root, bd=2, relief=tk.RAISED, height=50, width=400
+        )
         # キャンバス
-        FCW = int(int(NWINSize[0]) * 0.4)
-        FCH = int(int(NWINSize[1]) * 0.4)
+        # FCW = int(int(NWINSize[0]) * 0.4)
+        FCH = int(int(NWINSize[1]) * 0.65)
+        FCW = int(int(NWINSize[0]))
+        # FCH = int(int(NWINSize[1]))
         self.window_sub_FrameCanvas = tk.Frame(self.window_root, height=FCH, width=FCW)
         self.window_sub_canvas = tk.Canvas(
             self.window_root, height=FCH, width=FCW, bg="gray"
@@ -64,9 +76,6 @@ class ViewGUI:
 
         # GUIウィジェット・イベント登録
         # ラベル
-        label_s2_blk1 = tk.Label(self.window_sub_ctrl2, text="")
-        label_s3_blk1 = tk.Label(self.window_sub_ctrl3, text="")
-        label_s3_blk2 = tk.Label(self.window_sub_ctrl3, text="")
         label_target = tk.Label(self.window_sub_ctrl1, text="[ファイル]")
         label_rotate = tk.Label(self.window_sub_ctrl2, text="[画像回転]")
         label_flip = tk.Label(self.window_sub_ctrl2, text="[反転]")
@@ -100,10 +109,10 @@ class ViewGUI:
 
         # 　切替ボタン生成
         button_next = tk.Button(
-            self.window_sub_ctrl3, text=">>次画像", width=10, command=self.event_next
+            self.window_sub_ctrl1, text=">>次画像", width=10, command=self.event_next
         )
         button_prev = tk.Button(
-            self.window_sub_ctrl3, text="前画像<<", width=10, command=self.event_prev
+            self.window_sub_ctrl1, text="前画像<<", width=10, command=self.event_prev
         )
 
         # クリップボタン生成
@@ -217,23 +226,28 @@ class ViewGUI:
 
         # ウィジェット配置
         # キャンバスを配置
-        self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
+        # self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
+        self.window_sub_canvas.grid(row=0, columnspan=6, sticky=tk.NSEW)
         # プレビューを配置
-        self.window_sub_ctrl3.pack(side=tk.LEFT, fill="both", expand=True)
+        # self.window_sub_ctrl3.pack(side=tk.LEFT, fill="both", expand=True)
         # フォルダー・ファイル選択を配置
-        self.window_sub_ctrl1.pack(side=tk.LEFT, fill="both", expand=True)
+        # self.window_sub_ctrl1.pack(side=tk.LEFT, padx=100, fill="both", expand=True)
+        self.window_sub_ctrl1.grid(row=1, column=0, sticky=tk.NSEW)
         # 画像編集1を配置
-        self.window_sub_ctrl2.pack(side=tk.LEFT, fill="both", expand=True)
+        # self.window_sub_ctrl2.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
+        self.window_sub_ctrl2.grid(row=1, column=1, sticky=tk.NSEW)
         # 画像編集2を配置
-        self.window_sub_ctrl4.pack(side=tk.LEFT, fill="both", expand=True)
+        # self.window_sub_ctrl4.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
+        self.window_sub_ctrl4.grid(row=1, column=2, sticky=tk.NSEW)
         # window_sub_ctrl1---------------------------------------------------
         self.button_setdir.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        self.entry_dir.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
-        label_target.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
-        self.combo_file.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
+        button_prev.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+        button_next.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
+        self.entry_dir.grid(row=2, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W)
+        label_target.grid(row=3, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W)
+        self.combo_file.grid(row=4, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # window_sub_ctrl2---------------------------------------------------
-        label_s2_blk1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
         label_rotate.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
         radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
         radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
@@ -260,10 +274,10 @@ class ViewGUI:
         button_SubMenu.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # window_sub_ctrl3---------------------------------------------------
-        label_s3_blk1.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.EW)
-        button_prev.grid(row=1, column=3, padx=5, pady=5, sticky=tk.E)
-        label_s3_blk2.grid(row=1, column=4, columnspan=2, padx=5, pady=5, sticky=tk.EW)
-        button_next.grid(row=1, column=6, padx=5, pady=5, sticky=tk.W)
+        # label_s3_blk1.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.EW)
+        # button_prev.grid(row=1, column=3, padx=5, pady=5, sticky=tk.E)
+        # label_s3_blk2.grid(row=1, column=4, columnspan=2, padx=5, pady=5, sticky=tk.EW)
+        # button_next.grid(row=1, column=6, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # Exposeイベントbind
         for event_type in tk.EventType.__members__.keys():
@@ -554,7 +568,8 @@ class ViewGUI:
         Saveボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        self.control.SaveImage()
+        self.Newfilename = tk.filedialog.asksaveasfilename()
+        self.control.SaveImage(self.Newfilename)
 
     def event_Oversave(self):
         """

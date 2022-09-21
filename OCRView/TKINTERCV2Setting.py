@@ -1,6 +1,7 @@
 import tkinter as tk
 import csv
 from PIL import Image, ImageTk
+import subprocess
 
 # from tkinter import END, messagebox
 import os
@@ -44,6 +45,8 @@ class Application(tk.Frame):
         CW, CH, HCW, HCH, TKimg = IR[0], IR[1], IR[2], IR[3], IR[4]
         # ##############################################################################
         self.top = tk.Toplevel()  # サブWindow作成
+        self.top.bind("<Motion>", self.change)  # 透過ウィンドウにクリック関数bind
+        self.master.bind("<Motion>", self.change)
         self.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
         # self.top.overrideredirect(True)  # ウィンドウのタイトル部分を消去
         self.top.geometry("1480x750+0+0")  # トップWindow表示位置指定
@@ -198,7 +201,7 @@ class Application(tk.Frame):
             text="縦直線追加",
             fg="White",
             command=lambda: StLine(self.top.forward, CW, CH),
-            bg="red",
+            bg="tomato",
             font=fonts,
             width=BW,
             height=BH,
@@ -211,7 +214,7 @@ class Application(tk.Frame):
             text="横直線追加",
             fg="White",
             command=lambda: StWLine(self.top.forward, CW, CH),
-            bg="green",
+            bg="seagreen3",
             font=fonts,
             width=BW,
             height=BH,
@@ -224,7 +227,7 @@ class Application(tk.Frame):
             text="新規直線描画",
             fg="White",
             command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
-            bg="Purple",
+            bg="mediumPurple",
             font=fonts,
             width=BW,
             height=BH,
@@ -237,7 +240,7 @@ class Application(tk.Frame):
             text="確定",
             fg="White",
             command=lambda: EnterP(self.top.forward, HCW, HCH, self),
-            bg="blue",
+            bg="steelblue3",
             font=fonts,
             width=BW,
             height=BH,
@@ -250,7 +253,7 @@ class Application(tk.Frame):
             text="削除",
             fg="White",
             command=lambda: LineDelete(self.top.forward),
-            bg="gray",
+            bg="Orange",
             font=fonts,
             width=BW,
             height=BH,
@@ -263,7 +266,7 @@ class Application(tk.Frame):
             text="戻る",
             fg="White",
             command=lambda: ReturnBack(self),
-            bg="Orange",
+            bg="gray",
             font=fonts,
             width=BW,
             height=BH,
@@ -347,9 +350,8 @@ class Application(tk.Frame):
         """
         上下ウィンドウ連携処理(ウィンドウサイズ変更)
         """
-        x, y = self.back.winfo_rootx(), self.back.winfo_rooty()
-        w, h = self.winfo_width(), self.winfo_height()
-        self.top.geometry(f"{w}x{h}+{x}+{y}")
+        top_geometry = self.top.geometry()
+        self.master.geometry(top_geometry)
 
     # -------------------------------------------------------------------------------------
     def insertEntry_click(self, event, id):
@@ -608,14 +610,14 @@ def NewLineCreate(self, selfC, HCW, HCH):
         if SLS[0] is True:
             ####################################################################################
             with open(
-                URL + r"\TKInterGUI\StraightListYoko.csv",
+                URL + r"\StraightListYoko.csv",
                 "w",
                 newline="",
             ) as file:
                 writer = csv.writer(file)
                 writer.writerow(SLS[1])
             with open(
-                URL + r"\TKInterGUI\StraightListTate.csv",
+                URL + r"\StraightListTate.csv",
                 "w",
                 newline="",
             ) as file:
@@ -881,46 +883,51 @@ def EnterP(self, HCW, HCH, selfmother):
             print(FSS)
         # メッセージボックス（OK・キャンセル）
         unmap(selfmother)
-        MSG = tk.messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
-        if MSG is True:
-            map(selfmother)
-            ####################################################################################
-            with open(
-                URL + r"\TKInterGUI\StraightListYoko.csv",
-                "w",
-                newline="",
-            ) as file:
-                writer = csv.writer(file)
-                writer.writerow(FYokoList)
-            with open(
-                URL + r"\TKInterGUI\StraightListTate.csv",
-                "w",
-                newline="",
-            ) as file:
-                writer = csv.writer(file)
-                writer.writerow(FTateList)
-            ####################################################################################
-            print("csv保存完了")
-            OM = OCRF.Main(
-                imgurl,
-                FYokoList,
-                FTateList,
-                Banktoml,
-                SGEL,
-                MoneySet,
-                ReplaceSet,
-                ReplaceStr,
-            )
-            if OM[0] is True:
-                unmap(selfmother)
-                MSG = tk.messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
+        if len(FYokoList) == len(SGEL):
+            MSG = tk.messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
+            if MSG is True:
                 map(selfmother)
+                ####################################################################################
+                with open(
+                    URL + r"\StraightListYoko.csv",
+                    "w",
+                    newline="",
+                ) as file:
+                    writer = csv.writer(file)
+                    writer.writerow(FYokoList)
+                with open(
+                    URL + r"\StraightListTate.csv",
+                    "w",
+                    newline="",
+                ) as file:
+                    writer = csv.writer(file)
+                    writer.writerow(FTateList)
+                ####################################################################################
+                print("csv保存完了")
+                OM = OCRF.Main(
+                    imgurl,
+                    FYokoList,
+                    FTateList,
+                    Banktoml,
+                    SGEL,
+                    MoneySet,
+                    ReplaceSet,
+                    ReplaceStr,
+                )
+                if OM[0] is True:
+                    unmap(selfmother)
+                    MSG = tk.messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
+                    subprocess.Popen(["start", str(OM[1])], shell=True)
+                    map(selfmother)
+                else:
+                    unmap(selfmother)
+                    MSG = tk.messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
+                    map(selfmother)
             else:
-                unmap(selfmother)
-                MSG = tk.messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
+                tk.messagebox.showinfo("中断", "処理を中断します。")
                 map(selfmother)
         else:
-            tk.messagebox.showinfo("中断", "処理を中断します。")
+            tk.messagebox.showinfo("確認", "縦軸数と設定列名の数が一致しません。再確認してください。")
             map(selfmother)
 
 
@@ -940,16 +947,6 @@ def map(self):
     self.lift()
     self.top.wm_deiconify()
     self.top.attributes("-topmost", True)
-
-
-# ---------------------------------------------------------------------------------------------
-def change(self):
-    """
-    最上部ウィンドウのサイズ同期
-    """
-    x, y = self.back.winfo_rootx(), self.back.winfo_rooty()
-    w, h = self.winfo_width(), self.winfo_height()
-    self.top.geometry(f"{w}x{h}+{x}+{y}")
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1029,7 +1026,7 @@ def Main(MUI, US, turl):
     global URL
     global Banktoml, tomlurl
     Master = MUI
-    imgurl = US
+    imgurl = US.replace(r"\\\\", r"\\")
     URL = os.getcwd()
     Master.withdraw()
     tomlurl = turl
@@ -1042,7 +1039,7 @@ def Main(MUI, US, turl):
     try:
         readcsv1 = []
         with open(
-            URL + r"\TKInterGUI\StraightListYoko.csv",
+            URL + r"\StraightListYoko.csv",
             "r",
             newline="",
         ) as inputfile:
@@ -1059,7 +1056,7 @@ def Main(MUI, US, turl):
                     )
         readcsv2 = []
         with open(
-            URL + r"\TKInterGUI\StraightListTate.csv",
+            URL + r"\StraightListTate.csv",
             "r",
             newline="",
         ) as inputfile:

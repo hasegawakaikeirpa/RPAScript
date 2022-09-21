@@ -106,6 +106,7 @@ def get_document_bounds_BANK(image_file, feature):
     try:
         """GoovleVisionAPIでOCR"""
         logger.debug("get_document_bounds(GoogleVisionAPI)開始: debug level log")
+        print("GoogleVisionAPI開始")
         credentials = service_account.Credentials.from_service_account_file(
             os.getcwd() + "/key.json"
         )  # GAPIキーのURL
@@ -121,7 +122,7 @@ def get_document_bounds_BANK(image_file, feature):
 
         response = client.document_text_detection(image=image)
         document = response.full_text_annotation
-
+        print("GoogleVisionAPIclient接続完了")
         # Collect specified feature bounds by enumerating all document features
         for page in document.pages:
             for block in page.blocks:
@@ -371,10 +372,11 @@ def Bankrentxtver(filein, YokoList, TateList):  # 自作関数一文字づつの
         #     skiprows=0,  # 先頭の何行を無視するか（指定した行数までは読み込まない）
         #     usecols=(0, 1, 2, 3),  # 読み込みたい列番号
         # )
-
+        print("get_document_bounds_BANK開始")
         bounds = get_document_bounds_BANK(
             filein, FeatureType.PARA
         )  # Vision結果を一文字とverticesに分けリスト格納
+
         bounds = bounds[1]
         if not len(bounds) == 0:
             lbound = len(bounds)
@@ -399,21 +401,27 @@ def Bankrentxtver(filein, YokoList, TateList):  # 自作関数一文字づつの
             # ) as f:
             #     # pandasでファイルオブジェクトに書き込む
             #     df.to_csv(f, index=False)
+            print("DfTuuchou開始")
             DC = DfTuuchou(
                 XYList,
                 YokoList,
                 TateList,
             )
+            print("DfTuuchou完了")
             if DC[0] is True:
                 logger.debug("rentxtver(OCR結果を整形eTax以外)成功: debug level log")
+                print("rentxtver(OCR結果を整形eTax以外)成功")
                 return True, DC[1]
             else:
                 logger.debug("rentxtver(OCR結果を整形eTax以外)失敗: debug level log")
+                print("rentxtver(OCR結果を整形eTax以外)失敗")
                 return False, "Dfchangeエラー"
         else:  # Vision取得が空なら
             logger.debug("rentxtver(OCR結果を整形)失敗Vision取得が空: debug level log")
+            print("rentxtver(OCR結果を整形)失敗Vision取得が空")
             return False, "Vision取得が空"
     except Exception as e:
+        print("rentxtver(OCR結果を整形)失敗Exception")
         logger.debug("rentxtver(OCR結果を整形)失敗Exception: debug level log")
         return False, e
 

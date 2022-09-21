@@ -247,11 +247,11 @@ class ControlGUI:
         fname = self.get_file("current")
         self.model.DrawImage(fname, self.canvas, command, args=args)
 
-    def SaveImage(self):
+    def SaveImage(self, fname):
         """
         画像ファイル名日付追加保存
         """
-        fname = self.get_file("current")
+
         self.model.SaveImage(fname)
 
     def OverSaveImage(self):

@@ -196,13 +196,9 @@ class ModelImage:
 
     def SaveImage(self, fname):
 
-        if self.edit_img != None:
-            name, ext = os.path.splitext(fname)
-            dt = datetime.now()
-            fpath = name + "_" + dt.strftime("%H%M%S") + ".png"
-
-            self.edit_img.save(fpath)
-            print("Saved: {}".format(fpath))
+        fpath = fname
+        self.edit_img.save(fpath)
+        print("Saved: {}".format(fpath))
 
     def OverSaveImage(self, fname):
 
