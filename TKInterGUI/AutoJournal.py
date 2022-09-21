@@ -3,8 +3,9 @@ from datetime import datetime as dt
 import WarekiHenkan as wh
 
 # from datetime import timedelta
-
+from pandas import read_csv
 from tkinter import messagebox
+from io import StringIO
 
 import os
 
@@ -68,6 +69,7 @@ def TextCheck(MJS_data, Txt, stALL):
         for r in range(M_r):
             if r != 0:
                 M_Txt = MJS_data[r][0]  # 検索対象の文字列
+                M_Txt = str(M_Txt)
                 NoList = []  # インデックス格納用リスト
                 InList = []  # 一致パラメータ格納リスト
                 NoList.append(r)  # 現在のインデックスを格納
@@ -203,7 +205,7 @@ def ChangeD_Txt(Txt):
                 D_str = wh.SeirekiSTRDate(D_str)
             elif T_Nen <= 4:
                 print("西暦")
-                D_str = TxtSP[0] + "/" + TxtSP[1] + "/" + TxtSP[2]
+                D_str = TxtSP[0] + "/" + TxtSP[1].zfill(2) + "/" + TxtSP[2].zfill(2)
             else:
                 print("西暦")
         elif "/" in Txt:
@@ -223,7 +225,7 @@ def ChangeD_Txt(Txt):
                 D_str = wh.SeirekiSTRDate(D_str)
             elif T_Nen <= 4:
                 print("西暦")
-                D_str = TxtSP[0] + "/" + TxtSP[1] + "/" + TxtSP[2]
+                D_str = TxtSP[0] + "/" + TxtSP[1].zfill(2) + "/" + TxtSP[2].zfill(2)
             else:
                 print("西暦")
         elif "_" in Txt:
@@ -243,7 +245,7 @@ def ChangeD_Txt(Txt):
                 D_str = wh.SeirekiSTRDate(D_str)
             elif T_Nen <= 4:
                 print("西暦")
-                D_str = TxtSP[0] + "/" + TxtSP[1] + "/" + TxtSP[2]
+                D_str = TxtSP[0] + "/" + TxtSP[1].zfill(2) + "/" + TxtSP[2].zfill(2)
             else:
                 print("西暦")
         elif "." in Txt:
@@ -263,7 +265,7 @@ def ChangeD_Txt(Txt):
                 D_str = wh.SeirekiSTRDate(D_str)
             elif T_Nen <= 4:
                 print("西暦")
-                D_str = TxtSP[0] + "/" + TxtSP[1] + "/" + TxtSP[2]
+                D_str = TxtSP[0] + "/" + TxtSP[1].zfill(2) + "/" + TxtSP[2].zfill(2)
             else:
                 print("西暦")
         return True, D_str
@@ -424,7 +426,7 @@ def DayCheck(MJS_data, Txt, ColTxt, stALL):
 
 
 # ----------------------------------------------------------------------------
-def MoneyCheck(MJS_data, Int, ColTxt, stALL):
+def MoneyCheck(MJS_data, Int, ColTxt, KashiColTxt, stALL):
     """
     引数1データの引数3列の金額データから
     引数2の金額の差額を計算しnp.arrayで返す
@@ -540,9 +542,11 @@ def ForInReversed(MJS_data, npw, NGList, colT):
         for c_r in reversed(range((len(c_npw)))):
             npwItem = c_npw[c_r][colT[1]]
             npwItem = npwItem[0]
+            # 集計科目を抽出------------------------------------------------
             if c_r != 0 and "現金" not in npwItem and "預金" not in npwItem:
                 NGList.append(c_npw[c_r])
                 c_npw.pop(c_r)
+            # -------------------------------------------------------------
         Lastap = np.array(c_npw)
         if len(Lastap) == 1:
             MB = messagebox.askquestion(
@@ -578,6 +582,7 @@ def RensouTextCheck(ChangeTxt_data, OCR_Txt, OCR_c, U_c):
     Txt:検索テキスト
     return bool,np.array(一致率表)
     """
+    OCR_Txt = str(OCR_Txt)
     ChangeTxt_Column = ChangeTxt_data[0, :]  # 文字列変換表の列名
     InTotalListFlag = False  # 抽出結果フラグ
     C_r = ChangeTxt_data.shape[0]
@@ -661,7 +666,18 @@ def TxtDayChange(D_var):
 
 # ----------------------------------------------------------------------------
 def IOsplitFlow(
-    OCR_data, OCR_data_Row, IO, npw_Column, Kari, Kashi, npw, NGList, N_C, M_coltxt, Sin
+    OCR_data,
+    OCR_data_Row,
+    IO,
+    npw_Column,
+    Kari,
+    Kashi,
+    npw,
+    NGList,
+    N_C,
+    karikingaku,
+    kashikingaku,
+    Sin,
 ):
     """
     借貸方の科目名から現預金処理なのか判定
@@ -684,6 +700,7 @@ def IOsplitFlow(
                     npwItem = c_npw[c_r][colT[1]]
                     c_np_Row = c_npw[c_r]
                     npwItem = npwItem[0]
+                    # 集計科目を抽出------------------------------------------------
                     if c_r != 0 and "現金" not in npwItem and "預金" not in npwItem:
                         c_np_Bool = False
                         for c_np_RowItem in c_np_Row:
@@ -695,6 +712,7 @@ def IOsplitFlow(
                             c_npw.pop(c_r)
                     elif c_r == 0:
                         c_npw.pop(c_r)
+                    # ------------------------------------------------------------
                 if len(c_npw) == 1:
                     if N_C == 1:
                         IOList.append(list(c_npw[0]))
@@ -705,11 +723,11 @@ def IOsplitFlow(
                     else:
                         IOList.append(list(NGList[1]))
                         return True, IOList
-                elif len(c_npw) == 2:
+                elif len(c_npw) >= 2:
                     if Sin == "単一":
                         TS = npw[1:, :]
                     else:
-                        GNV = getNearestValue(npw[1:, M_coltxt], M)
+                        GNV = getNearestValue(npw[1:, karikingaku], M)
                         TS = npw[1:, :]
                         TS = TS[GNV]
                     return True, TS
@@ -731,11 +749,12 @@ def IOsplitFlow(
             colT = ColumCheckListUp(npw_Column, Kashi)
             if colT[0] is True:
                 c_npw = list(npw)
-                # ミロクデータの入金列に現預金処理なのか判定
+                # ミロクデータの入金列に現預金処理判定
                 for c_r in reversed(range((len(c_npw)))):
                     npwItem = c_npw[c_r][colT[1]]
                     c_np_Row = c_npw[c_r]
                     npwItem = npwItem[0]
+                    # 集計科目を抽出------------------------------------------------
                     if c_r != 0 and "現金" not in npwItem and "預金" not in npwItem:
                         c_np_Bool = False
                         for c_np_RowItem in c_np_Row:
@@ -747,6 +766,7 @@ def IOsplitFlow(
                             c_npw.pop(c_r)
                     elif c_r == 0:
                         c_npw.pop(c_r)
+                    # ------------------------------------------------------------
                 if len(c_npw) == 1:
                     if N_C == 1:
                         IOList.append(list(c_npw[0]))
@@ -761,7 +781,7 @@ def IOsplitFlow(
                     if Sin == "単一":
                         TS = npw[1:, :]
                     else:
-                        GNV = getNearestValue(npw[1:, M_coltxt], M)
+                        GNV = getNearestValue(npw[1:, karikingaku], M)
                         TS = npw[1:, :]
                         TS = TS[GNV]
                     return True, TS
@@ -804,7 +824,8 @@ def main(
     ColName,
     DayColName,
     D_coltxt,
-    M_coltxt,
+    karikingaku,
+    kashikingaku,
     Kari,
     Kashi,
     csvurl,
@@ -818,6 +839,7 @@ def main(
     OCRList,
     MJSList,
     SortVar,
+    MJS_data,
 ):
 
     try:
@@ -828,20 +850,14 @@ def main(
         # SortVar = 50  # 一致率
         ############################################################################
         HukugouKey = "複合"  # 複合仕訳の諸口勘定名
-
         TotalFinalList = []
-
-        OCR_data = np.genfromtxt(
-            csvurl, dtype=None, delimiter=",", encoding=FileNameenc
-        )  # OCRCSVをnp配列に変換
-        MJS_data = np.genfromtxt(
-            Roolrul, dtype=None, delimiter=",", encoding=Roolurlenc
-        )  # 元帳CSVをnp配列に変換
-        ChangeTxt_data = np.genfromtxt(
-            ChangeTxtURL, dtype=None, delimiter=",", encoding=ChangeTxtURLenc
-        )  # 元帳CSVをnp配列に変換
+        OCR_data = BeforeNGFT(csvurl, FileNameenc)
+        # ColNames = MJS_data[0, :]  # MJSデータ列名
+        ColNames = np.array(MJS_data.columns)  # MJSデータ列名
+        MJS_data = np.array(MJS_data)
+        MJS_data = np.vstack((ColNames, MJS_data))
+        ChangeTxt_data = BeforeNGFT(ChangeTxtURL, ChangeTxtURLenc)
         l_OCR = OCR_data.shape[0]
-        ColNames = MJS_data[0, :]  # MJSデータ列名
         OCRColNames = OCR_data[0, :]  # OCRデータ列名
         # OCRデータをループ処理---------------------------------------------------
         l_r = ptpos + 1
@@ -857,7 +873,11 @@ def main(
             print("##########################################################")
             # 自動仕訳判定列設定をループ----------------------------------------
             for OCR_r in range(len(OCRList)):
-                ColNo = int(np.where(OCRColNames == OCRList[OCR_r])[0])
+                try:
+                    ColNo = int(np.where(OCRColNames == OCRList[OCR_r])[0])
+                except:
+                    messagebox.showinfo("戻る", "OCR列名設定とOCR列名が一致しません。")
+                    return
                 txt = OCR_data_Row[ColNo]
                 # 自動仕訳判定の処理番号から隣の列番号を計算-----------------
                 if OCR_r == 0:
@@ -940,9 +960,10 @@ def main(
                     FinalList,
                     OCRColNames,
                     D_coltxt,
-                    DayColName,
+                    DayColName.get(),
                     OCR_data_Row,
-                    M_coltxt,
+                    karikingaku,
+                    kashikingaku,
                     I,
                     O,
                     "単一",
@@ -967,7 +988,8 @@ def main(
                             Nind[1],
                             NGList,
                             N_C,
-                            M_coltxt,
+                            karikingaku,
+                            kashikingaku,
                             "単一",
                         )
                         if IOS[0] is True:
@@ -999,9 +1021,10 @@ def main(
                     FinalList,
                     OCRColNames,
                     D_coltxt,
-                    DayColName,
+                    DayColName.get(),
                     OCR_data_Row,
-                    M_coltxt,
+                    karikingaku,
+                    kashikingaku,
                     I,
                     O,
                     "単一",
@@ -1027,7 +1050,8 @@ def main(
                             Nind[1],
                             NGList,
                             N_C,
-                            M_coltxt,
+                            karikingaku,
+                            kashikingaku,
                             "単一",
                         )
                         if IOS[0] is True:
@@ -1060,7 +1084,8 @@ def AllChange(
     ColName,
     DayColName,
     D_coltxt,
-    M_coltxt,
+    karikingaku,
+    kashikingaku,
     Kari,
     Kashi,
     csvurl,
@@ -1074,6 +1099,8 @@ def AllChange(
     OCRList,
     MJSList,
     SortVar,
+    MJS_data,
+    PB,
 ):
     try:
         """
@@ -1083,21 +1110,16 @@ def AllChange(
         # SortVar = 50  # 一致率
         ############################################################################
         HukugouKey = "複合"  # 複合仕訳の諸口勘定名
-
         TotalFinalList = []
-
-        OCR_data = np.genfromtxt(
-            csvurl, dtype=None, delimiter=",", encoding=FileNameenc
-        )  # OCRCSVをnp配列に変換
-        MJS_data = np.genfromtxt(
-            Roolrul, dtype=None, delimiter=",", encoding=Roolurlenc
-        )  # 元帳CSVをnp配列に変換
-        ChangeTxt_data = np.genfromtxt(
-            ChangeTxtURL, dtype=None, delimiter=",", encoding=ChangeTxtURLenc
-        )  # 元帳CSVをnp配列に変換
+        OCR_data = BeforeNGFT(csvurl, FileNameenc)
+        # ColNames = MJS_data[0, :]  # MJSデータ列名
+        ColNames = np.array(MJS_data.columns)  # MJSデータ列名
+        MJS_data = np.array(MJS_data)
+        MJS_data = np.vstack((ColNames, MJS_data))
+        ChangeTxt_data = BeforeNGFT(ChangeTxtURL, ChangeTxtURLenc)
         l_OCR = OCR_data.shape[0]
-        ColNames = MJS_data[0, :]  # MJSデータ列名
         OCRColNames = OCR_data[0, :]  # OCRデータ列名
+        PB_c = 40 / l_OCR  # プログレスカウント
         # OCRデータをループ処理---------------------------------------------------
         for l_r in range(l_OCR):
             NGList = []
@@ -1118,7 +1140,11 @@ def AllChange(
                 if NodataF is False:
                     # 自動仕訳判定列設定をループ----------------------------------------
                     for OCR_r in range(len(OCRList)):
-                        ColNo = int(np.where(OCRColNames == OCRList[OCR_r])[0])
+                        try:
+                            ColNo = int(np.where(OCRColNames == OCRList[OCR_r])[0])
+                        except:
+                            messagebox.showinfo("戻る", "OCR列名設定とOCR列名が一致しません。")
+                            return
                         txt = OCR_data_Row[ColNo]
                         # 自動仕訳判定の処理番号から隣の列番号を計算-----------------
                         if OCR_r == 0:
@@ -1205,9 +1231,10 @@ def AllChange(
                             FinalList,
                             OCRColNames,
                             D_coltxt,
-                            DayColName,
+                            DayColName.get(),
                             OCR_data_Row,
-                            M_coltxt,
+                            karikingaku,
+                            kashikingaku,
                             I,
                             O,
                             "複合",
@@ -1232,7 +1259,8 @@ def AllChange(
                                     Nind[1],
                                     NGList,
                                     N_C,
-                                    M_coltxt,
+                                    karikingaku,
+                                    kashikingaku,
                                     "複合",
                                 )
                                 if IOS[0] is True:
@@ -1267,9 +1295,10 @@ def AllChange(
                             FinalList,
                             OCRColNames,
                             D_coltxt,
-                            DayColName,
+                            DayColName.get(),
                             OCR_data_Row,
-                            M_coltxt,
+                            karikingaku,
+                            kashikingaku,
                             I,
                             O,
                             "複合",
@@ -1295,7 +1324,8 @@ def AllChange(
                                     Nind[1],
                                     NGList,
                                     N_C,
-                                    M_coltxt,
+                                    karikingaku,
+                                    kashikingaku,
                                     "複合",
                                 )
                                 if IOS[0] is True:
@@ -1318,6 +1348,7 @@ def AllChange(
                         for ColNamesItem in ColNames:
                             DammyList.append(ColNamesItem + "自動仕訳候補なし")
                         TotalFinalList.append(DammyList)
+            PB._target.step(PB_c)  # プログレスバー更新
         return True, ColNames, TotalFinalList
     except:
         return False, "", ""
@@ -1478,7 +1509,8 @@ def NPFLOW(
     D_coltxt,
     DayColName,
     OCR_data_Row,
-    M_coltxt,
+    karikingaku,
+    kashikingaku,
     I,
     O,
     Sin,
@@ -1515,7 +1547,7 @@ def NPFLOW(
                             IO = "入金"
                 l_c += 1
             # ------------------------------------------------------------------
-            MC = MoneyCheck(DC[1], M_var, M_coltxt, "ALL")
+            MC = MoneyCheck(DC[1], M_var, karikingaku, kashikingaku, "ALL")
             print(MC[0])
             Nind = NPS_FLOW(
                 HukugouKey,
@@ -1619,6 +1651,21 @@ def NPS_FLOW(
         return True, TotalFinalList
     except:
         return False, ""
+
+
+# -----------------------------------------------------------------------------------------
+def BeforeNGFT(url, enc):
+    try:
+        file = open(url, "r", encoding=enc)
+        file_data = file.read()
+        file.close()
+        prc = read_csv(StringIO(file_data), quotechar='"', skipinitialspace=True)
+        pdHeaders = prc.columns
+        prcList = np.array(prc)
+        ReturnList = np.vstack((pdHeaders, prcList))  # ヘッダーと結合
+        return ReturnList
+    except:
+        return ""
 
 
 # ----------------------------------------------------------------------------

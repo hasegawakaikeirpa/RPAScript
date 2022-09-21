@@ -2,18 +2,22 @@
 import tkinter as tk
 from datetime import datetime as dt
 import WarekiHenkan as wh
+import tomlCreate as toml_c
 
 # -----------------------------------------------------------------------------------------
 def tomlEntries(self):  # , tomltitle):
     """
     概要: tomlファイルのインポート
     """
+    global Banktoml, tomlParList, tomlurl
     self.tomlEntries = []  # Entryのインスタンス
     self.tomlinsertEntries = []  # ラベルインスタンス
     self.tomlindex = 0  # 最新のインデックス番号
     self.tomlindexes = []  # インデックスの並び
     self.entryList = []  # Entryのインスタンス
-
+    Banktoml = self.Banktoml
+    tomlParList = self.tomlParList
+    tomlurl = self.BanktomlUrl
     r = 0
     for ColNameItem in self.tomlList:
         # ラベル＆Entryフレームへ追加----------------------------------------------
@@ -43,28 +47,93 @@ def createtomlEntry(self, next, ColNameItem):  # , tomltitle):
     """
     概要: toml要素の作成
     """
+    global HidukeColNo, MoneyCol, ChangeTextCol, HidukeColName, NyuName
+    global SyutuName, ZanName, Henkan, Hani
     # 最初のエントリーウィジェットを追加
     # self.tomlEntries.insert(next, tk.Entry(self.frame4, width=20))
     lb = tk.Label(self.frame4, text=ColNameItem)
     lb.grid(row=next, column=0)  # 位置指定
     # ラベル名からself変数を取得---------------------------------------
     if ColNameItem == "日付列":
-        tom = self.HidukeColNo
+        Par = self.tomlParList[ColNameItem]
+        tom = Par
+        self.HidukeColNo = tomEntry(self, next, tom)
+        self.HidukeColNo._name = "日付列"
+        HidukeColNo = self.HidukeColNo
+
     elif ColNameItem == "金額列":
-        tom = self.MoneyCol
+        Par = self.tomlParList[ColNameItem]
+        tom = Par
+        self.MoneyCol = tomEntry(self, next, tom)
+        self.MoneyCol._name = "金額列"
+        MoneyCol = self.MoneyCol
+
     elif ColNameItem == "変換対象列":
-        tom = self.ChangeTextCol
+        Par = self.tomlParList[ColNameItem]
+        tom = Par
+        self.ChangeTextCol = tomEntry(self, next, tom)
+        self.ChangeTextCol._name = "変換対象列"
+        ChangeTextCol = self.ChangeTextCol
+
     elif ColNameItem == "日付列名":
-        tom = self.HidukeColName
+        Par = self.tomlParList[ColNameItem]
+        tom = Par
+        self.HidukeColName = tomEntry(self, next, tom)
+        self.HidukeColName._name = "日付列名"
+        HidukeColName = self.HidukeColName
+
     elif ColNameItem == "入金列名":
-        tom = self.NyuName
+        Par = self.tomlParList[ColNameItem]
+        tom = Par
+        self.NyuName = tomEntry(self, next, tom)
+        self.NyuName._name = "入金列名"
+        NyuName = self.NyuName
+
     elif ColNameItem == "出金列名":
-        tom = self.SyutuName
+        Par = self.tomlParList[ColNameItem]
+        tom = Par
+        self.SyutuName = tomEntry(self, next, tom)
+        self.SyutuName._name = "出金列名"
+        SyutuName = self.SyutuName
+
     elif ColNameItem == "残高列名":
-        tom = self.ZanName
+        Par = self.tomlParList[ColNameItem]
+        tom = Par
+        self.ZanName = tomEntry(self, next, tom)
+        self.ZanName._name = "残高列名"
+        ZanName = self.ZanName
+
     elif ColNameItem == "自動仕訳基準列名":
-        tom = self.Henkan
+        Par = self.tomlParList[ColNameItem]
+        tom = Par
+        self.Henkan = tomEntry(self, next, tom)
+        self.Henkan._name = "自動仕訳基準列名"
+        Henkan = self.Henkan
+
+    elif ColNameItem == "自動仕訳検索範囲月":
+        Par = self.tomlParList[ColNameItem]
+        tom = Par
+        self.Hani = tomEntry(self, next, tom)
+        self.Hani._name = "自動仕訳検索範囲月"
+        Hani = self.Hani
     # ---------------------------------------------------------------
+    # ラベルを作成
+    self.tomlinsertEntries.insert(
+        next,
+        tk.Label(
+            self.frame4,
+            text=str(ColNameItem),
+        ),
+    )
+    # インデックスマネージャに登録
+    self.tomlindexes.insert(next, self.tomlindex)
+    # 再配置
+    # self.updatetomlEntries()
+
+
+# -----------------------------------------------------------------------------------------
+# エントリーウィジェットを作成して配置
+def tomEntry(self, next, tom):
     tomtx = ""
     # self変数がリストの場合文字列に変換-------------------------------
     try:
@@ -83,21 +152,60 @@ def createtomlEntry(self, next, ColNameItem):  # , tomltitle):
         txtxt.insert(0, tom)
     # ---------------------------------------------------------------
     txtxt.grid(row=next, column=1)  # 位置指定
-
+    txtxt.bind("<Return>", tomlreturn)
     self.tomlEntries.insert(next, txtxt)
+    return txtxt
 
-    # ラベルを作成
-    self.tomlinsertEntries.insert(
-        next,
-        tk.Label(
-            self.frame4,
-            text=str(ColNameItem),
-        ),
-    )
-    # インデックスマネージャに登録
-    self.tomlindexes.insert(next, self.tomlindex)
-    # 再配置
-    # self.updatetomlEntries()
+
+# -----------------------------------------------------------------------------------------
+def tomlreturn(self):
+    """
+    toml変換設定の更新
+    """
+    ParListName = self.widget._name
+    if ParListName == "日付列":
+        ParTxt = HidukeColNo.get()
+        tomlreturn_sub(ParListName, ParTxt)
+    elif ParListName == "金額列":
+        ParTxt = MoneyCol.get()
+        tomlreturn_sub(ParListName, ParTxt)
+    elif ParListName == "変換対象列":
+        ParTxt = ChangeTextCol.get()
+        tomlreturn_sub(ParListName, ParTxt)
+    elif ParListName == "日付列名":
+        ParTxt = HidukeColName.get()
+        tomlreturn_sub(ParListName, ParTxt)
+    elif ParListName == "入金列名":
+        ParTxt = NyuName.get()
+        tomlreturn_sub(ParListName, ParTxt)
+    elif ParListName == "出金列名":
+        ParTxt = SyutuName.get()
+        tomlreturn_sub(ParListName, ParTxt)
+    elif ParListName == "残高列名":
+        ParTxt = ZanName.get()
+        tomlreturn_sub(ParListName, ParTxt)
+    elif ParListName == "自動仕訳基準列名":
+        ParTxt = Henkan.get()
+        tomlreturn_sub(ParListName, ParTxt)
+    elif ParListName == "自動仕訳検索範囲月":
+        ParTxt = Hani.get()
+        tomlreturn_sub(ParListName, ParTxt)
+
+    toml_c.dump_toml(Banktoml, tomlurl)
+
+
+# -----------------------------------------------------------------------------------------
+def tomlreturn_sub(ParListName, ParTxt):
+    """
+    toml変換設定の更新確定
+    """
+    if "," not in ParTxt:
+        l = []
+        l.append(ParTxt)
+        Banktoml["ParList"][ParListName] = l
+    else:
+        l = ParTxt.split(",")
+        Banktoml["ParList"][ParListName] = l
 
 
 # -----------------------------------------------------------------------------------------

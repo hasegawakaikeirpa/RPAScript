@@ -51,7 +51,7 @@ class Application(tk.Frame):
         # 透過キャンバスフレーム##########################################################
         self.topFrame = tk.Frame(
             self.top,
-            bg="White",
+            bg="snow",
             height=CH,
             width=CW,
             relief=tk.GROOVE,
@@ -69,7 +69,7 @@ class Application(tk.Frame):
         # サイドメニューフレーム##########################################################
         frame0 = tk.Frame(
             self.top,
-            bg="white",
+            bg="snow",
             width=5,
             bd=2,
             relief=tk.GROOVE,
@@ -81,7 +81,7 @@ class Application(tk.Frame):
         # サイドメニュー内フレーム########################################################
         Tframe = tk.Frame(
             frame0,
-            bg="white",
+            bg="snow",
             bd=2,
             relief=tk.GROOVE,
         )
@@ -93,12 +93,12 @@ class Application(tk.Frame):
         txt.grid(row=0, column=1)
         # 行数表示テキスト
         tk.Label(Tframe, text="元帳日付列名").grid(row=1, column=0)  # 位置指定
-        self.LimitCol = tk.Entry(Tframe, width=30, bg="ghostwhite")
+        self.LimitCol = tk.Entry(Tframe, width=30, bg="snow")
         self.LimitCol.insert(0, "伝票日付")
         self.LimitCol.grid(row=1, column=1)
         # 行数表示テキスト
         tk.Label(Tframe, text="設定ファイル").grid(row=2, column=0)  # 位置指定
-        self.tomlurl = tk.Entry(Tframe, width=30, bg="ghostwhite")
+        self.tomlurl = tk.Entry(Tframe, width=30, bg="snow")
         self.tomlurl.insert(0, tomlurl)
         self.tomlurl.grid(row=2, column=1)
         # 行数表示テキスト
@@ -147,7 +147,7 @@ class Application(tk.Frame):
         tomlEntries = []
         # テキストボックスの作成と配置
         tk.Label(Setframe, text="日付列番号").grid(row=0, column=0)  # 位置指定
-        self.DaySet = tk.Entry(Setframe, width=30, bg="ghostwhite")
+        self.DaySet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.DaySet)
         self.TomlInsert(self.DaySet, Banktoml["Setframe"]["DaySetList"])
         # self.DaySet.insert(0, Banktoml["Setframe"]["DaySetList"])
@@ -155,7 +155,7 @@ class Application(tk.Frame):
         self.DaySet.bind("<Tab>", tomlreturn)
         self.DaySet.grid(row=0, column=1)
         tk.Label(Setframe, text="金額表示列番号").grid(row=1, column=0)  # 位置指定
-        self.MoneySet = tk.Entry(Setframe, width=30, bg="ghostwhite")
+        self.MoneySet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.MoneySet)
         self.TomlInsert(self.MoneySet, Banktoml["Setframe"]["MoneySet"])
         # self.MoneySet.insert(0, Banktoml["Setframe"]["MoneySet"])
@@ -163,7 +163,7 @@ class Application(tk.Frame):
         self.MoneySet.bind("<Tab>", tomlreturn)
         self.MoneySet.grid(row=1, column=1)
         tk.Label(Setframe, text="置換対象列番号").grid(row=2, column=0)  # 位置指定
-        self.ReplaceSet = tk.Entry(Setframe, width=30, bg="ghostwhite")
+        self.ReplaceSet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.ReplaceSet)
         self.TomlInsert(self.ReplaceSet, Banktoml["Setframe"]["ReplaceSet"])
         # self.ReplaceSet.insert(0, Banktoml["Setframe"]["ReplaceSet"])
@@ -171,7 +171,7 @@ class Application(tk.Frame):
         self.ReplaceSet.bind("<Tab>", tomlreturn)
         self.ReplaceSet.grid(row=2, column=1)
         tk.Label(Setframe, text="置換対象文字列").grid(row=3, column=0)  # 位置指定
-        self.ReplaceStr = tk.Entry(Setframe, width=30, bg="ghostwhite")
+        self.ReplaceStr = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.ReplaceStr)
         self.TomlInsert(self.ReplaceStr, Banktoml["Setframe"]["ReplaceStr"])
         # self.ReplaceStr.insert(0, Banktoml["Setframe"]["ReplaceStr"])
@@ -458,7 +458,7 @@ class Application(tk.Frame):
         """
         # 最初のエントリーウィジェットを追加
         self.Entries.insert(
-            next, tk.Entry(self.SF.scrollable_frame, width=35, bg="ghostwhite")
+            next, tk.Entry(self.SF.scrollable_frame, width=35, bg="snow")
         )
         # エントリーウィジェットを追加するボタンのようなラベルを作成
         self.insertEntries.insert(
@@ -925,6 +925,7 @@ def EnterP(self, HCW, HCH, selfmother):
                     DG.Main(
                         csvurl,
                         Banktoml,
+                        self.tomlurl,
                         DaySet,
                         MoneySet,
                         ReplaceSet,

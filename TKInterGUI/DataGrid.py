@@ -3,6 +3,8 @@ import numpy as np
 
 # from tkinter import messagebox
 import pandas as pd
+from io import StringIO
+from csv import QUOTE_NONNUMERIC
 
 # import os
 import csv
@@ -12,11 +14,15 @@ import CSVOut as CSVO
 import TKEntry as tke
 import re
 import Frame.DGFrame as DGF
+from datetime import date
+from dateutil.relativedelta import relativedelta
+import ProgressBar as PB
 
 
 class DataGrid:
     def __init__(self, window_root, default_path):
         # toml読込------------------------------------------------------------------------------
+        self.BanktomlUrl = BanktomlUrl
         self.Banktoml = Banktoml
         # -------------------------------------------------------------------------------------
         self.FileName = csvurl  # OCR結果CSVURL
@@ -25,18 +31,14 @@ class DataGrid:
         self.AJSeturl = AJSeturl  # 仕訳候補表示用CSVURL
         self.ChangeTxtURL = ChangeTxtURL  # 摘要変換ルールCSVURL
         self.tomlList = self.Banktoml["ParList"]["Name"]  # tomlリスト値
+        self.tomlParList = self.Banktoml["ParList"]
         enc = CSVO.getFileEncoding(self.ChangeTxtURL)  # 摘要変換ルールエンコード
         pt4df = pd.read_csv(self.ChangeTxtURL, encoding=enc)  # 摘要変換ルール読込
         self.ChangeTxtColumns = list(pt4df.columns)  # 摘要変換ルール列名
-        self.HidukeColNo = DaySet  # OCR結果日付列番
+        self.DaySet = DaySet  # OCR結果日付列番
         self.MoneyCol = MoneySet  # OCR結果金額列番
         self.ChangeTextCol = ReplaceSet  # OCR結果変換対象列番
         self.ColumnName = ColNameList  # OCR結果列名リスト(OCR出力列名)
-        self.HidukeColName = "日付"  # OCR結果列名
-        self.NyuName = "入金"  # OCR結果列名
-        self.SyutuName = "出金"  # OCR結果列名
-        self.ZanName = "残高"  # OCR結果列名
-        self.Henkan = "摘要"  # OCR結果列名
         self.ChangeText = ReplaceStr  # 自動仕訳変換候補
         # メインウィンドウ設定-------------------------------------------------------------------
         self.root = tk.Tk()  # ウインド画面の作成
@@ -45,10 +47,8 @@ class DataGrid:
         # -------------------------------------------------------------------------------------
         # 統合フレーム
         self.Main_Frame = tk.Frame(self.root, bd=2, relief=tk.RIDGE)
-        # self.Main_Frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
         self.Main_Frame.pack(expand=True)
         self.Sub_Frame = tk.Frame(self.root, bd=2, relief=tk.RIDGE)
-        # self.Main_Frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
         self.Sub_Frame.pack(expand=True)
         self.Sub_Frame.pack_forget()
         ########################################################################################
@@ -60,23 +60,26 @@ class DataGrid:
         DGF.create_Frame4(self)  # サブフレーム(変換ルール表示)
         # -------------------------------------------------------------------------------------
         ########################################################################################
-        ########################################################################################
-        # MotoCyou------------------------------------------------------------------------------
         enc = CSVO.getFileEncoding(Roolurl)
-        AJ_np = np.genfromtxt(
-            Roolurl, dtype=None, encoding=enc, delimiter=","
-        )  # 元帳CSVをnp配列に変換
+        AJ_np = BeforeNGFT(Roolurl, enc)
         AJ_Column = AJ_np[0, :]
         A = 0
+        # ミロク元帳の列名から元帳列名設定を抽出--------------------------------------------
         for AJ_Item in AJ_Column:
             if "日付" in AJ_Item:
                 self.Moto_Day.delete(0, tk.END)
                 self.Moto_Day.insert(0, AJ_Item.replace("'", "").replace('"', ""))
                 self.Moto_Day_No = A
-            elif "金額" in AJ_Item:
-                self.Moto_Money.delete(0, tk.END)
-                self.Moto_Money.insert(0, AJ_Item.replace("'", "").replace('"', ""))
-                self.Moto_Money_No = A
+            elif "金額" in AJ_Item and "借" in AJ_Item:
+                self.Moto_KariMoney.delete(0, tk.END)
+                self.Moto_KariMoney.insert(0, AJ_Item.replace("'", "").replace('"', ""))
+                self.Moto_KariMoney_No = A
+            elif "金額" in AJ_Item and "貸" in AJ_Item:
+                self.Moto_KashiMoney.delete(0, tk.END)
+                self.Moto_KashiMoney.insert(
+                    0, AJ_Item.replace("'", "").replace('"', "")
+                )
+                self.Moto_KashiMoney_No = A
             elif "摘要" in AJ_Item:
                 self.Moto_Tekiyou.delete(0, tk.END)
                 self.Moto_Tekiyou.insert(0, AJ_Item.replace("'", "").replace('"', ""))
@@ -123,7 +126,7 @@ class DataGrid:
                 for DelIndexItem in DelIndex:
                     pt4df = np.delete(pt4df, DelIndexItem, axis=1)  # 列の削除
                 pt4df = pd.DataFrame(pt4df, columns=pt4c)
-                pt4df.to_csv(self.ChangeTxtURL, index=False)
+                pt4df.to_csv(self.ChangeTxtURL, index=False, quoting=QUOTE_NONNUMERIC)
                 enc = CSVO.getFileEncoding(self.ChangeTxtURL)
                 self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
                 # DF型変換------------------------------
@@ -156,7 +159,7 @@ class DataGrid:
                 pt4df = np.array(self.pt4.model.df)
                 pt4df = np.delete(pt4df, self.pt4.startrow, axis=0)  # 行の削除
                 pt4df = pd.DataFrame(pt4df, columns=pt4c)
-                pt4df.to_csv(self.ChangeTxtURL, index=False)
+                pt4df.to_csv(self.ChangeTxtURL, index=False, quoting=QUOTE_NONNUMERIC)
                 enc = CSVO.getFileEncoding(self.ChangeTxtURL)
                 self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
                 # DF型変換------------------------------
@@ -216,7 +219,7 @@ class DataGrid:
                 self.ChangeTxtColumns = pt4c
 
                 pt4df = pd.DataFrame(pt4df, columns=pt4c)
-                pt4df.to_csv(self.ChangeTxtURL, index=False)
+                pt4df.to_csv(self.ChangeTxtURL, index=False, quoting=QUOTE_NONNUMERIC)
                 enc = CSVO.getFileEncoding(self.ChangeTxtURL)
                 self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
                 # DF型変換------------------------------
@@ -276,7 +279,7 @@ class DataGrid:
             InList.append(NullList)
             InList = pd.DataFrame(InList, columns=pt4c)
             pt4df = pt4df.append(InList)
-            pt4df.to_csv(self.ChangeTxtURL, index=False)
+            pt4df.to_csv(self.ChangeTxtURL, index=False, quoting=QUOTE_NONNUMERIC)
             enc = CSVO.getFileEncoding(self.ChangeTxtURL)
             self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
             # DF型変換------------------------------
@@ -298,15 +301,15 @@ class DataGrid:
         """
         try:
             # ------------------------------------------------------------------------------
-            enc = CSVO.getFileEncoding(self.JounalFileName)
-            self.pt2.importCSV(self.JounalFileName, encoding=enc)
+            enc = CSVO.getFileEncoding(self.JounalFileName)  # 自動仕訳出力先CSVURL
+            self.pt2.importCSV(self.JounalFileName, encoding=enc)  # 自動仕訳出力先CSVURL
             # DF型変換------------------------------
             PandasAstype(self.pt2.model.df)
             # --------------------------------------
             self.pt2.redraw
             # ------------------------------------------------------------------------------
-            enc = CSVO.getFileEncoding(self.FileName)
-            self.pt.importCSV(self.FileName, encoding=enc)
+            enc = CSVO.getFileEncoding(self.FileName)  # OCR結果CSVURL
+            self.pt.importCSV(self.FileName, encoding=enc)  # OCR結果CSVURL
             # DF型変換------------------------------
             PandasAstype(self.pt.model.df)
             # --------------------------------------
@@ -344,15 +347,15 @@ class DataGrid:
             # --------------------------------------
             self.pt4.redraw
             # ------------------------------------------------------------------------------
-            enc = CSVO.getFileEncoding(self.FileName)
-            self.pt5.importCSV(self.FileName, encoding=enc)
+            enc = CSVO.getFileEncoding(self.FileName)  # OCR結果CSVURL
+            self.pt5.importCSV(self.FileName, encoding=enc)  # OCR結果CSVURL
             # DF型変換------------------------------
             PandasAstype(self.pt5.model.df)
             # --------------------------------------
             self.pt5.redraw
             # ------------------------------------------------------------------------------
-            enc = CSVO.getFileEncoding(self.Roolurl)
-            self.pt6.importCSV(self.Roolurl, encoding=enc)
+            enc = CSVO.getFileEncoding(self.Roolurl)  # ミロク元帳CSVURL
+            self.pt6.importCSV(self.Roolurl, encoding=enc)  # ミロク元帳CSVURL
             # DF型変換------------------------------
             PandasAstype(self.pt6.model.df)
             # --------------------------------------
@@ -383,8 +386,6 @@ class DataGrid:
                 TxtList.append(InTxt)
                 self.ChangeTxtEntries[i].delete(0, tk.END)
                 self.ChangeTxtEntries[i].insert(0, InTxt)
-        # コンソールに表示
-
         return TxtList
 
     # -------------------------------------------------------------------------------------
@@ -409,9 +410,9 @@ class DataGrid:
             PandasAstype(self.pt2.model.df)
             # --------------------------------------
             self.pt2.redraw
-            self.JounalFileName = fle
+            self.JounalFileName = fle  # 自動仕訳出力先CSVURL
             self.Label_OutURL.delete(0, tk.END)
-            self.Label_OutURL.insert(0, self.JounalFileName)
+            self.Label_OutURL.insert(0, self.JounalFileName)  # 自動仕訳出力先CSVURL
         except:
             tk.messagebox.showinfo("確認", "OCR抽出結果CSVの出力に失敗しました。\n参照先のURLが正しいか確認してください。")
 
@@ -437,9 +438,9 @@ class DataGrid:
             PandasAstype(self.pt3.model.df)
             # --------------------------------------
             self.pt3.redraw
-            self.Roolurl = fle
+            self.Roolurl = fle  # ミロク元帳CSVURL
             self.Label_ChangeURL.delete(0, tk.END)
-            self.Label_ChangeURL.insert(0, self.Roolurl)
+            self.Label_ChangeURL.insert(0, self.Roolurl)  # ミロク元帳CSVURL
         except:
             tk.messagebox.showinfo("確認", "OCR抽出結果CSVの出力に失敗しました。\n参照先のURLが正しいか確認してください。")
 
@@ -465,9 +466,9 @@ class DataGrid:
             PandasAstype(self.pt.model.df)
             # --------------------------------------
             self.pt.redraw
-            self.FileName = fle
+            self.FileName = fle  # OCR結果CSVURL
             self.Label_URL.delete(0, tk.END)
-            self.Label_URL.insert(0, self.FileName)
+            self.Label_URL.insert(0, self.FileName)  # OCR結果CSVURL
         except:
             tk.messagebox.showinfo("確認", "OCR抽出結果CSVの出力に失敗しました。\n参照先のURLが正しいか確認してください。")
 
@@ -517,8 +518,6 @@ class DataGrid:
                     tk.messagebox.showinfo("確認", "仕訳予想結果のセルが選択されていません。")
                 else:
                     self.AJ_copyCalc_Sub()
-                    # if SAJ is False:
-                    #     tk.messagebox.showinfo("確認", "詳細不明エラーです。")
             else:
                 if self.pt2.startrow is None:
                     if len(self.pt2.model.df) == 0:
@@ -528,8 +527,6 @@ class DataGrid:
                         tk.messagebox.showinfo("確認", "作成仕訳表の挿入位置が選択されていません。")
                 else:
                     self.AJ_copyCalc_Sub()
-                    # if SAJ is False:
-                    #     tk.messagebox.showinfo("確認", "詳細不明エラーです。")
         except:
             tk.messagebox.showinfo("確認", "エラーです。自動仕訳実行後に仕訳予想結果のセルを選択し、実行してください。")
 
@@ -539,18 +536,101 @@ class DataGrid:
         仕訳候補の転記(Sub)
         """
         try:
-            self.NyuName  # 入金列名
+            self.HidukeColNo  # 日付列番号
+            HidukeColNostr = str(self.HidukeColNo).replace("['", "").replace("']", "")
+            self.HidukeColName  # 日付列名
+            self.AJL  # インポート用変換列名
+            self.AJR  # OCR表変換列名
             self.SyutuName  # 出金列名
+            # -----------------------------------------------------------
             # OCR結果の列名検索で金額のみ入っている列を特定する
+            ptCol = np.array(self.pt.model.df.columns)
+            ptarr = np.array(self.pt.model.df)
+            # -----------------------------------------------------------
             pt2Col = np.array(self.pt2.model.df.columns)
             pt2arr = np.array(self.pt2.model.df)
+            # -----------------------------------------------------------
+            pt3Col = np.array(self.pt3.model.df.columns)
             pt3arr = np.array(self.pt3.model.df)
             pt3List = []
+            # -----------------------------------------------------------
             if self.pt3.startrow == self.pt3.endrow:
+                AJRNo = 0
+                Money = ""
+                for AJRItem in self.AJR:
+                    # OCR表の金額列調査-----------------------
+                    ptwhere = np.where(AJRItem == ptCol)
+                    ptwherestr = str(ptwhere[0][0] + 1)
+                    C_Val = ptarr[self.pt.startrow, ptwhere]
+                    C_Val = C_Val[0][0]
+                    IC = IntCheck(C_Val)
+                    if IC is True:
+                        Money = C_Val
+                for AJRItem in self.AJR:
+                    # OCR表の金額列調査-----------------------
+                    ptwhere = np.where(AJRItem == ptCol)
+                    ptwherestr = str(ptwhere[0][0] + 1)
+                    C_Val = ptarr[self.pt.startrow, ptwhere]
+                    C_Val = C_Val[0][0]
+                    IC = IntCheck(C_Val)
+                    # 日付列と金額列への処理-----------------------------
+                    if ptwherestr == HidukeColNostr:
+                        # 日付列として指定した処理の場合
+                        AJLItem = self.AJL[AJRNo]
+                        pt3where = np.where(AJLItem == pt3Col)
+                        AJC = AJ.ChangeD_Txt(C_Val)  # 日付文字列の変換
+                        if AJC[0] is True:
+                            C_Val = AJC[1]
+                            pt3arr[self.pt3.startrow, pt3where] = C_Val
+                    elif IC is True:
+                        pt3where = np.where(self.AJL[AJRNo] == pt3Col)
+                        pt3arr[self.pt3.startrow, pt3where] = Money
+                    elif IC is False:
+                        pt3where = np.where(self.AJL[AJRNo] == pt3Col)
+                        pt3arr[self.pt3.startrow, pt3where] = Money
+                    # --------------------------------------------------
+                    AJRNo += 1
+                Money = ""
                 pt3List.append(list(pt3arr[self.pt3.startrow]))
             else:
-                for s_e_r in range(self.pt3.startrow, self.pt3.endrow):
-                    pt3List.append(list(pt3arr[s_e_r]))
+                for s_e_r in range(self.pt3.startrow, self.pt3.endrow + 1):
+                    AJRNo = 0
+                    Money = ""
+                    for AJRItem in self.AJR:
+                        # OCR表の金額列調査-----------------------
+                        ptwhere = np.where(AJRItem == ptCol)
+                        ptwherestr = str(ptwhere[0][0] + 1)
+                        C_Val = ptarr[self.pt.startrow, ptwhere]
+                        C_Val = C_Val[0][0]
+                        IC = IntCheck(C_Val)
+                        if IC is True:
+                            Money = C_Val
+                    for AJRItem in self.AJR:
+                        # OCR表の金額列調査-----------------------
+                        ptwhere = np.where(AJRItem == ptCol)
+                        ptwherestr = str(ptwhere[0][0] + 1)
+                        C_Val = ptarr[self.pt.startrow, ptwhere]
+                        C_Val = C_Val[0][0]
+                        IC = IntCheck(C_Val)
+                        # 日付列と金額列への処理-----------------------------
+                        if ptwherestr == HidukeColNostr:
+                            # 日付列として指定した処理の場合
+                            AJLItem = self.AJL[AJRNo]
+                            pt3where = np.where(AJLItem == pt3Col)
+                            AJC = AJ.ChangeD_Txt(C_Val)  # 日付文字列の変換
+                            if AJC[0] is True:
+                                C_Val = AJC[1]
+                                pt3arr[s_e_r, pt3where] = C_Val
+                        elif IC is True:
+                            pt3where = np.where(self.AJL[AJRNo] == pt3Col)
+                            pt3arr[s_e_r, pt3where] = Money
+                        elif IC is False:
+                            pt3where = np.where(self.AJL[AJRNo] == pt3Col)
+                            pt3arr[s_e_r, pt3where] = Money
+                        # --------------------------------------------------
+                        AJRNo += 1
+                    Money = ""
+                    pt3List.append(list(pt3arr[self.pt3.startrow]))
             pt3List = np.array(pt3List)
             if pt2arr.shape[0] == 0:
                 pt2arr = pt3arr
@@ -559,12 +639,14 @@ class DataGrid:
             FinalList = np.vstack((pt2Col, pt2arr))
             FinalList = list(FinalList)
             # ------------------------------------------------------------------
-            enc = CSVO.getFileEncoding(self.JounalFileName)
-            with open(self.JounalFileName, "wt", encoding=enc, newline="") as fout:
+            enc = CSVO.getFileEncoding(self.JounalFileName)  # 自動仕訳出力先CSVURL
+            with open(
+                self.JounalFileName, "wt", encoding=enc, newline=""
+            ) as fout:  # 自動仕訳出力先CSVURL
                 # ライター（書き込み者）を作成
                 writer = csv.writer(fout)
                 writer.writerows(FinalList)
-            self.pt2.importCSV(self.JounalFileName, encoding=enc)
+            self.pt2.importCSV(self.JounalFileName, encoding=enc)  # 自動仕訳出力先CSVURL
             # DF型変換------------------------------
             PandasAstype(self.pt2.model.df)
             # --------------------------------------
@@ -572,6 +654,77 @@ class DataGrid:
             return True
         except:
             return False
+
+    # -----------------------------------------------------------------------------------------
+    def npDaysSort(self, Finddf):
+        """
+        元帳を現在日時から指定月数以内にソート
+        """
+
+        today = date.today()
+        DS = self.Hani.get()
+        if DS != "":  # 抽出月範囲を判定
+            DS = DS.replace("['", "").replace("']", "")
+            next_Month = relativedelta(months=int(DS))
+            D = today - next_Month
+
+            FinddfCol = Finddf.columns  # 元帳DFの列名
+            Finddf = np.array(Finddf)  # 元帳DFをnp変換
+            ind = np.where(FinddfCol == str(self.Moto_Day.get()))  # 元帳DFの日付列番号
+            F_Data = Finddf[1 : Finddf.shape[0], :]  # 元帳DFData
+            Finddf_Date = Finddf[1 : Finddf.shape[0], ind]  # 元帳DFの日付列のみ抽出
+            Finddf_Date_Dim = Finddf_Date.flatten()  # 元帳DFの日付列を1次元化
+            Finddf_Date = pd.Series(Finddf_Date_Dim)  # 1次元化した元帳DFの日付列をシリーズ化
+            Finddf_Date = Finddf_Date.astype("datetime64")  # シリーズ化した元帳DFの日付列を型変換
+            convert_time = Finddf_Date.dt.month  # シリーズ化した元帳DFの日付列から月のみ抽出
+            convert_time = np.array(convert_time)
+
+            ind = np.where(convert_time >= int(D.month))  # 元帳DFの日付列番号
+            F_Data = F_Data[ind]
+            # Ret_Data = np.vstack([FinddfCol, F_Data])
+            Ret_Data = pd.DataFrame(F_Data, columns=FinddfCol)
+            return Ret_Data
+        else:
+            return Finddf
+
+    # -----------------------------------------------------------------------------------------
+    def ValChange(self, AJ_List):
+        """
+        元帳を現在日時から指定月数以内にソート
+        """
+        try:
+            AJ_List = np.array(AJ_List)
+            AJ_head = AJ_List[0, :]
+            AJ = AJ_List[1:, :]
+            AJKariMoney = AJ[:, self.Moto_KariMoney_No]
+            AJKashiMoney = AJ[:, self.Moto_KashiMoney_No]
+            r = 0
+            for AJKariMoneyItem in AJKariMoney:
+                try:
+                    int(AJKariMoneyItem)
+                    AJKashiMoney[r] = AJKariMoney[r]
+                except:
+                    AJKariMoney[r] = AJKashiMoney[r]
+                r += 1
+            AJ[:, self.Moto_KariMoney_No] = AJKariMoney
+            AJ[:, self.Moto_KashiMoney_No] = AJKashiMoney
+            R_AJ = np.vstack((AJ_head, AJ))
+            R_AJ = list(R_AJ)
+            return R_AJ
+        except:
+            return AJ_List
+
+    # -----------------------------------------------------------------------------------------
+    def MoneyCheck(self, AJnp, L_CName_c, R_CName_c):
+        """
+        OCR結果の金額列を確認入替
+        """
+        try:
+            var = int(AJnp[L_CName_c])
+            return var
+        except:
+            var = int(AJnp[R_CName_c])
+            return var
 
     # -----------------------------------------------------------------------------------------
     def AJAllCalc(self, csvurl):
@@ -587,12 +740,24 @@ class DataGrid:
         global AJSeturl
 
         try:
+            # 検索対象月間を判定
+            try:
+                if self.Hani.get() != "":
+                    int(self.Hani.get())  # 抽出月範囲を判定
+                    Finddf = self.npDaysSort(self.pt6.model.df)
+                    self.pt6.model.df = Finddf
+                else:
+                    print("DF空白")
+            except:
+                tk.messagebox.showinfo("確認", "抽出月範囲に数値・空白以外が入っています。")
+                return
+            # ##########################################################################
             sv = int(self.SortVar.get())
             self.FileName = csvurl  # OCR抽出結果表
-            self.JounalFileName = AJurl
+            self.JounalFileName = AJurl  # 自動仕訳出力先CSVURL
             self.Roolurl = Roolurl  # テキスト置換ルール代入
-            # SetList = self.GetTxt_ChangeEntry(0)  # テキスト置換ルール代入
             st = 0  # 行ポジション
+            # OCR表に対する列設定読込---------------------------------------------------
             for stom in self.entryList:  # Entryウィジェットリスト
                 if stom == "自動仕訳基準列名":
                     JS_var = st
@@ -603,8 +768,8 @@ class DataGrid:
                 elif stom == "出金列名":
                     Out_var = st
                 st += 1
+            # ------------------------------------------------------------------------
             FileNameenc = CSVO.getFileEncoding(csvurl)
-            # JounalFileNameenc = CSVO.getFileEncoding(AJurl)
             Roolurlenc = CSVO.getFileEncoding(Roolurl)
             ChangeTxtURLenc = CSVO.getFileEncoding(self.ChangeTxtURL)
             # Entry要素設定-------------------------------------------------------------------
@@ -641,16 +806,19 @@ class DataGrid:
             )
             # --------------------------------------------------------------------------------
             if Messagebox == "yes":  # If関数
+                # プログレスバー起動##########################################################
+                self.PBAR = PB.Open(tk.Toplevel())  # プログレスバー起動
                 AJ_List = AJ.AllChange(
                     self.Moto_Tekiyou.get(),
                     self.HidukeColName,
                     self.Moto_Day.get(),
-                    self.Moto_Money_No,
-                    self.Moto_Karikata.get(),
-                    self.Moto_Kashikata.get(),
-                    self.FileName,
+                    self.Moto_KariMoney_No,
+                    self.Moto_KashiMoney_No,
+                    self.Moto_Karikata.get(),  # 元帳借方科目列名
+                    self.Moto_Kashikata.get(),  # 元帳貸方科目列名
+                    self.FileName,  # OCR結果CSVURL
                     FileNameenc,
-                    self.Roolurl,
+                    self.Roolurl,  # ミロク元帳CSVURL
                     Roolurlenc,
                     self.ChangeTxtURL,
                     ChangeTxtURLenc,
@@ -659,38 +827,31 @@ class DataGrid:
                     OCRList,
                     MJSList,
                     sv,
+                    self.pt6.model.df,
+                    self.PBAR,
                 )  # 仕訳候補を抽出
-
-                PT_ColList = list(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
+                PT_ColList = np.array(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
                 PT_List = np.array(self.pt.model.df)
                 PT_List = list(PT_List)  # OCR抽出結果表の列名リスト
                 # データ内のFalse,nan処理--------------------------------------------
                 if AJ_List[0] is True:
                     AJ_Column = AJ_List[1]
                     AJ_List = AJ_List[2]
-                    # ################################################################
+                    self.PBAR_c = 20 / len(self.Frame7EntL)
                     # OCR抽出結果表の値を変換ルールに従って自動仕訳表に代入--------------------
                     for r in range(len(self.Frame7EntL)):
                         L_CName = self.Frame7EntL[r].get()
                         R_CName = self.Frame7EntR[r].get()
-                        # 自動仕訳表の列番号検索--------------------------------------
-                        PT_c = 0
-                        for AJ_ListItem in AJ_Column:
-                            if L_CName == AJ_ListItem:
-                                L_CName_c = PT_c
-                                break
-                            PT_c += 1
-                        # -----------------------------------------------------------
-                        # OCR抽出結果表の列番号検索-------------------------------------------
-                        PT_c = 0
-                        for PT_ColListItem in PT_ColList:
-                            if R_CName == PT_ColListItem:
-                                R_CName_c = PT_c
-                                break
-                            PT_c += 1
-                        # ---------------------------------------------------------------
+                        L_CName_c = int(
+                            np.where(AJ_Column == L_CName)[0]
+                        )  # 自動仕訳表の列番号検索
+                        R_CName_c = int(
+                            np.where(PT_ColList == R_CName)[0]
+                        )  # OCR抽出結果表の列番号検索
                         # ヘッダー行処理##################################################
                         for L_r in range(len(AJ_List)):
+                            if L_r == 12:
+                                print("")
                             AJnp = np.array(AJ_List[L_r])
                             lenAJ = len(AJ_List[L_r])  # 次元数確認
                             RowElement = AJnp.ndim  # 次元数確認
@@ -700,38 +861,15 @@ class DataGrid:
                                 # ########################################################
                                 if (R_CName == I) or (R_CName == O):
                                     # 数値確認-------------------------------------------
-                                    try:
-                                        Var = int(PT_List[L_r][R_CName_c])
-                                        AJtxt = AJ_List[L_r]
-                                        AJtxt = AJtxt[0][L_CName_c]
-                                        C_Txt = AJ.TxtEdit(
-                                            L_CName,
-                                            AJtxt,
-                                            Var,
-                                        )
-                                        AJ_List[L_r][0][L_CName_c] = C_Txt[1]
-                                    except:
-                                        if R_CName == I:
-                                            R_CName = O
-                                        elif R_CName == O:
-                                            R_CName = I
-                                        # OCR抽出結果表の列番号検索---------------------------
-                                        PT_c = 0
-                                        for PT_ColListItem in PT_ColList:
-                                            if R_CName == PT_ColListItem:
-                                                R_CName_c = PT_c
-                                                break
-                                            PT_c += 1
-                                        # ----------------------------------------
-                                        Var = int(PT_List[L_r][R_CName_c])
-                                        AJtxt = AJ_List[L_r]
-                                        AJtxt = AJtxt[0][L_CName_c]
-                                        C_Txt = AJ.TxtEdit(
-                                            L_CName,
-                                            AJtxt,
-                                            Var,
-                                        )
-                                        AJ_List[L_r][0][L_CName_c] = C_Txt[1]
+                                    Var = self.MoneyCheck(AJnp[0], L_CName_c, R_CName_c)
+                                    AJtxt = AJ_List[L_r]
+                                    AJtxt = AJtxt[0][L_CName_c]
+                                    C_Txt = AJ.TxtEdit(
+                                        L_CName,
+                                        AJtxt,
+                                        Var,
+                                    )
+                                    AJ_List[L_r][0][R_CName_c] = C_Txt[1]
                                     # ---------------------------------------------------
                                 else:
                                     Var = PT_List[L_r][R_CName_c]
@@ -751,7 +889,9 @@ class DataGrid:
                                 if (R_CName == I) or (R_CName == O):
                                     # 数値確認-------------------------------------------
                                     try:
-                                        Var = int(PT_List[L_r][R_CName_c])
+                                        Var = self.MoneyCheck(
+                                            AJnp[0], L_CName_c, R_CName_c
+                                        )
                                         AJtxt = AJ_List[L_r]
                                         # 複合仕訳の金額割合摘要関数
                                         AJ.MoneyCalc(
@@ -768,13 +908,9 @@ class DataGrid:
                                             R_CName = O
                                         elif R_CName == O:
                                             R_CName = I
-                                        # OCR抽出結果表の列番号検索---------------------------
-                                        PT_c = 0
-                                        for PT_ColListItem in PT_ColList:
-                                            if R_CName == PT_ColListItem:
-                                                R_CName_c = PT_c
-                                                break
-                                            PT_c += 1
+                                            R_CName_c = int(
+                                                np.where(PT_ColList == R_CName)[0]
+                                            )  # OCR抽出結果表の列番号検索
                                         # ----------------------------------------
                                         Var = int(PT_List[L_r][R_CName_c])
                                         AJtxt = AJ_List[L_r]
@@ -813,9 +949,12 @@ class DataGrid:
                                     Var,
                                 )
                                 AJ_List[L_r][L_CName_c] = C_Txt[1]
+                        # ################################################################
+                        self.PBAR._target.step(self.PBAR_c)  # プログレスバー更新
                     # ################################################################
                     # 適正次元に処理し、リスト化
                     FinalList = []
+                    self.PBAR_c = 20 / len(AJ_List)
                     for L_r in range(len(AJ_List)):
                         AJnp = np.array(AJ_List[L_r])
                         lenAJ = len(AJ_List[L_r])  # 次元数確認
@@ -831,12 +970,15 @@ class DataGrid:
                         else:
                             A_Row = list(AJ_List[L_r])
                             FinalList.append(A_Row)
+                        # ################################################################
+                        self.PBAR._target.step(self.PBAR_c)  # プログレスバー更新
                     # ################################################################
                     FinalList = np.array(FinalList)
                     FinalList = np.vstack((AJ_Column, FinalList))  # ヘッダーと結合
                     FinalList = list(FinalList)
                     # ################################################################
                     PiriDel(FinalList)
+                    self.PBAR_c = 20 / len(self.RepLEntries)
                     # 月分等の置換変更処理
                     for i in range(len(self.RepLEntries)):
                         ReplaceKey = self.RepLEntries[i].get()
@@ -855,6 +997,10 @@ class DataGrid:
                                             )
                                         except:
                                             print("置換変更無し")
+                        # ################################################################
+                        self.PBAR._target.step(self.PBAR_c)  # プログレスバー更新
+                    # ------------------------------------------------------------------
+                    FinalList = self.ValChange(FinalList)  # 金額が文字列の場合変更
                     # ------------------------------------------------------------------
                     with open(AJurl, "wt", encoding="cp932", newline="") as fout:
                         # ライター（書き込み者）を作成
@@ -866,9 +1012,13 @@ class DataGrid:
                     PandasAstype(self.pt2.model.df)
                     # --------------------------------------
                     self.pt2.redraw
+                    self.PBAR._target.master.destroy()  # プログレスバー更新
+                    tk.messagebox.showinfo("確認", "自動仕訳完了です。")
                 else:
+                    self.PBAR._target.master.destroy()  # プログレスバー更新
                     tk.messagebox.showinfo("戻る", "アプリケーション画面に戻ります")
         except:
+            self.PBAR._target.master.destroy()  # プログレスバー更新
             tk.messagebox.showinfo("確認", "仕訳一致率に数値以外が入っています。")
 
     # -----------------------------------------------------------------------------------------
@@ -884,19 +1034,31 @@ class DataGrid:
         global AJSeturl
 
         try:
+            # 検索対象月間を判定
+            try:
+                if self.Hani.get() != "":
+                    int(self.Hani.get())  # 抽出月範囲を判定
+                    Finddf = self.npDaysSort(self.pt6.model.df)
+                    self.pt6.model.df = Finddf
+                else:
+                    print("DF空白")
+            except:
+                tk.messagebox.showinfo("確認", "抽出月範囲に数値・空白以外が入っています。")
+                return
             sv = int(self.SortVar.get())
-            self.FileName = csvurl
-            self.JounalFileName = AJurl
-            self.Roolurl = Roolurl
+            self.FileName = csvurl  # OCR結果CSVURL
+            self.JounalFileName = AJurl  # 自動仕訳出力先CSVURL
+            self.Roolurl = Roolurl  # ミロク元帳CSVURL
 
             if self.pt.startrow is None:
                 tk.messagebox.showinfo("確認", "OCR抽出結果表のセルが選択されていません。")
             else:
-                Moto_Tekiyou = self.Moto_Tekiyou.get()
-                Moto_Day = self.Moto_Day.get()
-                Moto_Karikata = self.Moto_Karikata.get()
-                Moto_Kashikata = self.Moto_Kashikata.get()
+                Moto_Tekiyou = self.Moto_Tekiyou.get()  # 元帳摘要列名
+                Moto_Day = self.Moto_Day.get()  # 元帳日付列名
+                Moto_Karikata = self.Moto_Karikata.get()  # 元帳借方科目列名
+                Moto_Kashikata = self.Moto_Kashikata.get()  # 元帳貸方科目列名
                 st = 0  # 行ポジション
+                # OCR表に対する列設定読込---------------------------------------------------
                 for stom in self.entryList:  # Entryウィジェットリスト
                     if stom == "自動仕訳基準列名":
                         JS_var = st
@@ -907,10 +1069,12 @@ class DataGrid:
                     elif stom == "出金列名":
                         Out_var = st
                     st += 1
-                FileNameenc = CSVO.getFileEncoding(csvurl)
-                # JounalFileNameenc = CSVO.getFileEncoding(AJurl)
-                Roolurlenc = CSVO.getFileEncoding(Roolurl)
-                ChangeTxtURLenc = CSVO.getFileEncoding(self.ChangeTxtURL)
+                # ------------------------------------------------------------------------
+                FileNameenc = CSVO.getFileEncoding(csvurl)  # OCR表のエンコード取得
+                Roolurlenc = CSVO.getFileEncoding(Roolurl)  # ミロク元帳のエンコード取得
+                ChangeTxtURLenc = CSVO.getFileEncoding(
+                    self.ChangeTxtURL
+                )  # テキスト変換設定のエンコード取得
                 # Entry要素設定-------------------------------------------------------------------
                 JS = self.tomlEntries[JS_var].get()  # 自動仕訳基準列名Entry取得
                 D = self.tomlEntries[Day_var].get()  # 日付列Entry取得
@@ -988,12 +1152,13 @@ class DataGrid:
                             Moto_Tekiyou,
                             self.HidukeColName,
                             Moto_Day,
-                            self.Moto_Money_No,
+                            self.Moto_KariMoney_No,
+                            self.Moto_KashiMoney_No,
                             Moto_Karikata,
                             Moto_Kashikata,
-                            self.FileName,
+                            self.FileName,  # OCR結果CSVURL
                             FileNameenc,
-                            self.Roolurl,
+                            self.Roolurl,  # ミロク元帳CSVURL
                             Roolurlenc,
                             self.ChangeTxtURL,
                             ChangeTxtURLenc,
@@ -1002,9 +1167,12 @@ class DataGrid:
                             OCRList,
                             MJSList,
                             sv,
+                            self.pt6.model.df,
                         )  # 仕訳候補を抽出
 
-                        PT_ColList = list(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
+                        PT_ColList = np.array(
+                            self.pt.model.df.columns
+                        )  # OCR抽出結果表の列名リスト
                         PT_List = np.array(self.pt.model.df)
                         PT_List = list(PT_List)  # OCR抽出結果表の列名リスト
                         # データ内のFalse,nan処理--------------------------------------------
@@ -1029,22 +1197,12 @@ class DataGrid:
                                 for r in range(len(self.Frame7EntL)):
                                     L_CName = self.Frame7EntL[r].get()
                                     R_CName = self.Frame7EntR[r].get()
-                                    # 自動仕訳表の列番号検索--------------------------------------
-                                    PT_c = 0
-                                    for AJ_ListItem in AJ_Column:
-                                        if L_CName == AJ_ListItem:
-                                            L_CName_c = PT_c
-                                            break
-                                        PT_c += 1
-                                    # -----------------------------------------------------------
-                                    # OCR抽出結果表の列番号検索-------------------------------------------
-                                    PT_c = 0
-                                    for PT_ColListItem in PT_ColList:
-                                        if R_CName == PT_ColListItem:
-                                            R_CName_c = PT_c
-                                            break
-                                        PT_c += 1
-                                    # ---------------------------------------------------------------
+                                    L_CName_c = int(
+                                        np.where(AJ_Column == L_CName)[0]
+                                    )  # 自動仕訳表の列番号検索
+                                    R_CName_c = int(
+                                        np.where(PT_ColList == R_CName)[0]
+                                    )  # OCR抽出結果表の列番号検索
                                     L_r = self.pt.startrow + 1
                                     # 取得リストの次元調整############################################
                                     AJnp = np.array(AJ_List)
@@ -1062,7 +1220,9 @@ class DataGrid:
                                         if (R_CName == I) or (R_CName == O):
                                             # 数値確認-------------------------------------------
                                             try:
-                                                Var = int(PT_List[L_r][R_CName_c])
+                                                Var = self.MoneyCheck(
+                                                    AJnp[0], L_CName_c, R_CName_c
+                                                )
                                                 AJtxt = AJ_List[L_r]
                                                 AJtxt = AJtxt[0][L_CName_c]
                                                 C_Txt = AJ.TxtEdit(
@@ -1079,13 +1239,11 @@ class DataGrid:
                                                     R_CName = O
                                                 elif R_CName == O:
                                                     R_CName = I
-                                                # OCR抽出結果表の列番号検索---------------------------
-                                                PT_c = 0
-                                                for PT_ColListItem in PT_ColList:
-                                                    if R_CName == PT_ColListItem:
-                                                        R_CName_c = PT_c
-                                                        break
-                                                    PT_c += 1
+                                                    R_CName_c = int(
+                                                        np.where(PT_ColList == R_CName)[
+                                                            0
+                                                        ]
+                                                    )  # OCR抽出結果表の列番号検索
                                                 # ----------------------------------------
                                                 Var = int(PT_List[L_r][R_CName_c])
                                                 AJtxt = AJ_List[L_r]
@@ -1141,14 +1299,11 @@ class DataGrid:
                                                     R_CName = O
                                                 elif R_CName == O:
                                                     R_CName = I
-                                                # OCR抽出結果表の列番号検索---------------------------
-                                                PT_c = 0
-                                                for PT_ColListItem in PT_ColList:
-                                                    if R_CName == PT_ColListItem:
-                                                        R_CName_c = PT_c
-                                                        break
-                                                    PT_c += 1
-                                                # --------------------------------------------------------
+                                                    R_CName_c = int(
+                                                        np.where(PT_ColList == R_CName)[
+                                                            0
+                                                        ]
+                                                    )  # OCR抽出結果表の列番号検索
                                                 if tkm[3] == "入金" and R_CName_c != (
                                                     Out_var - 1
                                                 ):
@@ -1355,7 +1510,12 @@ class DataGrid:
                                                         print("置換変更無し")
                                 # ------------------------------------------------------------------
                                 AJDF = pd.DataFrame(FinalList)
-                                AJDF.to_csv(AJSeturl, index=False, header=False)
+                                AJDF.to_csv(
+                                    AJSeturl,
+                                    index=False,
+                                    header=False,
+                                    quoting=QUOTE_NONNUMERIC,
+                                )
                                 enc = CSVO.getFileEncoding(AJSeturl)
                                 self.pt3.importCSV(AJSeturl, encoding=enc)
                                 # DF型変換------------------------------
@@ -1364,7 +1524,9 @@ class DataGrid:
                                 self.pt3.redraw
                         else:
                             tk.messagebox.showinfo("確認", "仕訳検索結果がありません。\n元帳全行表示を行います。")
-                            self.pt3.importCSV(self.Roolurl, encoding=Roolurlenc)
+                            self.pt3.importCSV(
+                                self.Roolurl, encoding=Roolurlenc
+                            )  # ミロク元帳CSVURL
                             # DF型変換------------------------------
                             PandasAstype(self.pt3.model.df)
                             # --------------------------------------
@@ -1382,13 +1544,13 @@ class DataGrid:
         self.AJ_Btn
         bind関数
         """
-        enc = CSVO.getFileEncoding(self.FileName)
+        enc = CSVO.getFileEncoding(self.FileName)  # OCR結果CSVURL
         with open(self.FileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
             for cells in reader:
                 self.ColumnName = cells
                 break
-        enc = CSVO.getFileEncoding(self.JounalFileName)
+        enc = CSVO.getFileEncoding(self.JounalFileName)  # 自動仕訳出力先CSVURL
         with open(self.JounalFileName, "r", encoding=enc) as f:  # csv読込み(Treeview 表示用)
             reader = csv.reader(f, delimiter=",", quotechar='"')
             for cells in reader:
@@ -1489,7 +1651,23 @@ def IntCheck(c_var):
 
 
 # -----------------------------------------------------------------------------------------
-def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
+def BeforeNGFT(url, enc):
+    try:
+        file = open(url, "r", encoding=enc)
+        file_data = file.read()
+        file.close()
+        print(file_data)
+        prc = pd.read_csv(StringIO(file_data), quotechar='"', skipinitialspace=True)
+        pdHeaders = prc.columns
+        prcList = np.array(prc)
+        ReturnList = np.vstack((pdHeaders, prcList))  # ヘッダーと結合
+        return ReturnList
+    except:
+        return ""
+
+
+# -----------------------------------------------------------------------------------------
+def Main(US, Bk, Bkurl, DS, MS, RS, RlS, SGEL, r_win):
     """
     呼出構文↓
     DG.Main(
@@ -1502,10 +1680,11 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
     )
     """
     global AJurl, AJSeturl, Roolurl, ChangeTxtURL, Master, main_window
-    global csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr, ColNameList
+    global csvurl, Banktoml, BanktomlUrl, DaySet, MoneySet, ReplaceSet, ReplaceStr, ColNameList
     Master = r_win
     csvurl = US
     Banktoml = Bk
+    BanktomlUrl = Bkurl
     DaySet = DS
     MoneySet = MS
     ReplaceSet = RS
@@ -1529,7 +1708,7 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
     Roolurldf = Roolurldf.drop(Roolurldf.index[DelIndex])
     # --------------------------------------------------------
     AJurl = csvurl.replace(".csv", "_AutoJounal.csv")
-    Roolurldf.to_csv(AJurl, index=False, encoding=enc)
+    Roolurldf.to_csv(AJurl, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC)
     # -----------------------------------------------------------------------------------
     AJSeturl = r"D:\OCRTESTPDF\PDFTEST\1869\AJSet.csv"
     typ = [("テキスト変換ルールCSVを選択してください。", "*.csv")]
@@ -1537,9 +1716,10 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
     fle = tk.filedialog.askopenfilename(filetypes=typ, initialdir=dir)  # ファイル指定ダイアログ
     ChangeTxtURL = fle
     enc = CSVO.getFileEncoding(ChangeTxtURL)  # 摘要変換ルールエンコード
-    ColNameList_np = np.genfromtxt(
-        ChangeTxtURL, dtype=None, encoding=enc, delimiter=","
-    )  # 元帳CSVをnp配列に変換
+    ColNameList_np = BeforeNGFT(ChangeTxtURL, enc)
+    # ColNameList_np = np.genfromtxt(
+    #     ChangeTxtURL, dtype=None, encoding=enc, delimiter=","
+    # )  # 元帳CSVをnp配列に変換
     ColNameList = ColNameList_np[0, :]
     ColNameList = list(ColNameList)
     # Viewクラス生成
@@ -1552,7 +1732,7 @@ def Main(US, Bk, DS, MS, RS, RlS, SGEL, r_win):
 # -----------------------------------------------------------------------------------------
 if __name__ == "__main__":
     global AJurl, AJSeturl, Roolurl, ChangeTxtURL
-    global csvurl, Banktoml, DaySet, MoneySet, ReplaceSet, ReplaceStr, ColNameList
+    global csvurl, Banktoml, BanktomlUrl, DaySet, MoneySet, ReplaceSet, ReplaceStr, ColNameList
 
     DaySet = ["1"]
     MoneySet = ["3,4,5"]
@@ -1560,20 +1740,22 @@ if __name__ == "__main__":
     ReplaceStr = ["CDカード", "マツモトトソウテン", "ザンダカショウメイショ"]
     # ColNameList = ["日付", "摘要", "出金", "入金", "残高"]  # OCR出力列名
     # ColNameList = ["日付", "摘要", "入金", "摘要", "出金", "摘要"]  # OCR出力列名
-    csvurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_10page.csv"
-    AJurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_10page_AutoJounal.csv"
+    csvurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_9page.csv"
+    AJurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_9page_AutoJounal.csv"
     AJSeturl = r"D:\OCRTESTPDF\PDFTEST\1869\AJSet.csv"
     Roolurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_仕訳日記帳.csv"
     ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\1869\1869ChangeTxtList.csv"
 
     enc = CSVO.getFileEncoding(ChangeTxtURL)  # 摘要変換ルールエンコード
-    ColNameList_np = np.genfromtxt(
-        ChangeTxtURL, dtype=None, encoding=enc, delimiter=","
-    )  # 元帳CSVをnp配列に変換
+    ColNameList_np = BeforeNGFT(ChangeTxtURL, enc)
+    # ColNameList_np = np.genfromtxt(
+    #     ChangeTxtURL, dtype=None, encoding=enc, delimiter=","
+    # )  # 元帳CSVをnp配列に変換
     ColNameList = ColNameList_np[0, :]
     ColNameList = list(ColNameList)
+    BanktomlUrl = r"D:\OCRTESTPDF\PDFTEST\1869\Setting.toml"
     # toml読込------------------------------------------------------------------------------
-    with open(r"D:\OCRTESTPDF\PDFTEST\1869\Setting.toml", encoding="utf-8") as f:
+    with open(BanktomlUrl, encoding="utf-8") as f:
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
