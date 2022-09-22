@@ -140,7 +140,7 @@ class Application(tk.Frame):
         # サイドメニュー内変換設定フレーム#################################################
         Setframe = tk.Frame(
             frame0,
-            bg="white",
+            bg="snow",
             relief=tk.GROOVE,
             width=5,
             bd=2,
@@ -184,7 +184,7 @@ class Application(tk.Frame):
         # サイドメニュー内ボタンフレーム###################################################
         frame = tk.Frame(
             frame0,
-            bg="white",
+            bg="snow",
             relief=tk.GROOVE,
             width=5,
             bd=2,
@@ -308,8 +308,8 @@ class Application(tk.Frame):
         """
         tomlリストをTKentryに挿入
         """
-        l = ",".join(List)
-        Ent.insert(0, l)
+        l_s = ",".join(List)
+        Ent.insert(0, l_s)
 
     # ---------------------------------------------------------------------------------------------
     def InportIMG(self):
@@ -538,39 +538,39 @@ def tomlreturn(self):
     # ----------------------------------------------------------
     DaySet = tomlEntries[0].get()
     if "," not in DaySet:
-        l = []
-        l.append(DaySet)
-        Banktoml["Setframe"]["DaySetList"] = l
+        l_s = []
+        l_s.append(DaySet)
+        Banktoml["Setframe"]["DaySetList"] = l_s
     else:
-        l = DaySet.split(",")
-        Banktoml["Setframe"]["DaySetList"] = l
+        l_s = DaySet.split(",")
+        Banktoml["Setframe"]["DaySetList"] = l_s
     # ----------------------------------------------------------
     MoneySet = tomlEntries[1].get()
     if "," not in MoneySet:
-        l = []
-        l.append(MoneySet)
-        Banktoml["Setframe"]["MoneySet"] = l
+        l_s = []
+        l_s.append(MoneySet)
+        Banktoml["Setframe"]["MoneySet"] = l_s
     else:
-        l = MoneySet.split(",")
-        Banktoml["Setframe"]["MoneySet"] = l
+        l_s = MoneySet.split(",")
+        Banktoml["Setframe"]["MoneySet"] = l_s
     # ----------------------------------------------------------
     ReplaceSet = tomlEntries[2].get()
     if "," not in ReplaceSet:
-        l = []
-        l.append(ReplaceSet)
-        Banktoml["Setframe"]["ReplaceSet"] = l
+        l_s = []
+        l_s.append(ReplaceSet)
+        Banktoml["Setframe"]["ReplaceSet"] = l_s
     else:
-        l = ReplaceSet.split(",")
-        Banktoml["Setframe"]["ReplaceSet"] = l
+        l_s = ReplaceSet.split(",")
+        Banktoml["Setframe"]["ReplaceSet"] = l_s
     # ----------------------------------------------------------
     ReplaceStr = tomlEntries[3].get()
     if "," not in ReplaceStr:
-        l = []
-        l.append(ReplaceStr)
-        Banktoml["Setframe"]["ReplaceStr"] = l
+        l_s = []
+        l_s.append(ReplaceStr)
+        Banktoml["Setframe"]["ReplaceStr"] = l_s
     else:
-        l = ReplaceStr.split(",")
-        Banktoml["Setframe"]["ReplaceStr"] = l
+        l_s = ReplaceStr.split(",")
+        Banktoml["Setframe"]["ReplaceStr"] = l_s
     toml_c.dump_toml(Banktoml, tomlurl)
 
 

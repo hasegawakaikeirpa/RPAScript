@@ -2,6 +2,7 @@ import sys
 import ProgressBar as PB
 import tkinter as tk
 import os
+from tkinter import ttk, filedialog, messagebox
 
 # from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
@@ -44,24 +45,14 @@ class ViewGUI:
         # self.window_root.bind("<Button-1>", self.ChangeWSize)
         # サブウィンドウ
         # フォルダ・ファイル選択
-        self.window_sub_ctrl1 = tk.Frame(
-            self.window_root, bd=2, relief=tk.RAISED, height=300, width=300
-        )
+        self.window_sub_ctrl1 = tk.Frame(self.window_root, height=300, width=300)
         # 画像加工
-        self.window_sub_ctrl2 = tk.Frame(
-            self.window_root, bd=2, relief=tk.RAISED, height=300, width=300
-        )
-        # プレビュー
-        # self.window_sub_ctrl3 = tk.Frame(self.window_root, height=50, width=400)
+        self.window_sub_ctrl2 = tk.Frame(self.window_root, height=300, width=300)
         # 画像加工2
-        self.window_sub_ctrl4 = tk.Frame(
-            self.window_root, bd=2, relief=tk.RAISED, height=50, width=400
-        )
+        self.window_sub_ctrl4 = tk.Frame(self.window_root, height=50, width=400)
         # キャンバス
-        # FCW = int(int(NWINSize[0]) * 0.4)
-        FCH = int(int(NWINSize[1]) * 0.65)
-        FCW = int(int(NWINSize[0]))
-        # FCH = int(int(NWINSize[1]))
+        FCW = int(int(NWINSize[0]) * 0.4)
+        FCH = int(int(NWINSize[1]) * 0.4)
         self.window_sub_FrameCanvas = tk.Frame(self.window_root, height=FCH, width=FCW)
         self.window_sub_canvas = tk.Canvas(
             self.window_root, height=FCH, width=FCW, bg="gray"
@@ -96,7 +87,7 @@ class ViewGUI:
         )
         self.str_dir.set(self.dir_path)
         # コンボBOX生成
-        self.combo_file = tk.ttk.Combobox(
+        self.combo_file = ttk.Combobox(
             self.window_sub_ctrl1,
             text="combo_file",
             value=self.file_list,
@@ -106,7 +97,13 @@ class ViewGUI:
         )
         self.combo_file.set(self.file_list[0])
         self.combo_file.bind("<<ComboboxSelected>>", self.event_selectfile)
-
+        # ファイル削除ボタン生成
+        self.Delete_button = tk.Button(
+            self.window_sub_ctrl1,
+            text="ファイル削除",
+            width=10,
+            command=self.FileDelete,
+        )
         # 　切替ボタン生成
         button_next = tk.Button(
             self.window_sub_ctrl1, text=">>次画像", width=10, command=self.event_next
@@ -185,22 +182,6 @@ class ViewGUI:
             )
         self.radio_intvar2.set(0)  # 0:No select
 
-        # Scaleの作成
-        # self.scale_var = tk.DoubleVar()
-        # scaleH = tk.Scale(
-        #     self.window_sub_ctrl2,
-        #     variable=self.scale_var,
-        #     command=self.slider_scroll,
-        #     orient=tk.HORIZONTAL,  # 配置の向き、水平(HORIZONTAL)、垂直(VERTICAL)
-        #     length=200,  # 全体の長さ
-        #     width=20,  # 全体の太さ
-        #     sliderlength=20,  # スライダー（つまみ）の幅
-        #     from_=-10,  # 最小値（開始の値）
-        #     to=10,  # 最大値（終了の値）
-        #     resolution=1,  # 変化の分解能(初期値:1)
-        #     tickinterval=5,  # 目盛りの分解能(初期値0で表示なし)
-        # )
-
         # 右回転ボタン生成
         button_RightLotate = tk.Button(
             self.window_sub_ctrl2,
@@ -226,19 +207,13 @@ class ViewGUI:
 
         # ウィジェット配置
         # キャンバスを配置
-        # self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
-        self.window_sub_canvas.grid(row=0, columnspan=6, sticky=tk.NSEW)
-        # プレビューを配置
-        # self.window_sub_ctrl3.pack(side=tk.LEFT, fill="both", expand=True)
+        self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
         # フォルダー・ファイル選択を配置
-        # self.window_sub_ctrl1.pack(side=tk.LEFT, padx=100, fill="both", expand=True)
-        self.window_sub_ctrl1.grid(row=1, column=0, sticky=tk.NSEW)
+        self.window_sub_ctrl1.pack(side=tk.LEFT, padx=100, fill="both", expand=True)
         # 画像編集1を配置
-        # self.window_sub_ctrl2.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
-        self.window_sub_ctrl2.grid(row=1, column=1, sticky=tk.NSEW)
+        self.window_sub_ctrl2.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
         # 画像編集2を配置
-        # self.window_sub_ctrl4.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
-        self.window_sub_ctrl4.grid(row=1, column=2, sticky=tk.NSEW)
+        self.window_sub_ctrl4.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
         # window_sub_ctrl1---------------------------------------------------
         self.button_setdir.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
         button_prev.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
@@ -246,13 +221,13 @@ class ViewGUI:
         self.entry_dir.grid(row=2, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W)
         label_target.grid(row=3, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W)
         self.combo_file.grid(row=4, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W)
+        self.Delete_button.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
         # window_sub_ctrl2---------------------------------------------------
         label_rotate.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
         radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
         radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
         radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
-        # scaleH.grid(row=4, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
         button_LeftLotate.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
         button_RightLotate.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
         label_flip.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
@@ -273,12 +248,6 @@ class ViewGUI:
         button_LinOCR.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
         button_SubMenu.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
         # -------------------------------------------------------------------
-        # window_sub_ctrl3---------------------------------------------------
-        # label_s3_blk1.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.EW)
-        # button_prev.grid(row=1, column=3, padx=5, pady=5, sticky=tk.E)
-        # label_s3_blk2.grid(row=1, column=4, columnspan=2, padx=5, pady=5, sticky=tk.EW)
-        # button_next.grid(row=1, column=6, padx=5, pady=5, sticky=tk.W)
-        # -------------------------------------------------------------------
         # Exposeイベントbind
         for event_type in tk.EventType.__members__.keys():
             if event_type == "Expose":
@@ -291,8 +260,23 @@ class ViewGUI:
                     pass
         # -------------------------------------------------------------------
         self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
+        self.control.model.stock_url = ""  # 一時保存URLをリセット
 
     # Event Callback----------------------------------------------------------------------
+    def FileDelete(self):
+        """
+        ファイル削除ボタンクリックイベント
+        """
+        F_u = self.entry_dir.get() + r"\\" + self.combo_file.get()
+        msg = messagebox.askokcancel("確認", F_u + "を削除しますか？")
+        if msg is True:
+            os.remove(F_u)
+            self.file_list = self.control.SetDirlist(self.dir_path)  # ファイルリストリロード
+            self.combo_file.set("")
+            self.event_selectfile
+        else:
+            messagebox.showinfo("確認", "処理を中断します。")
+
     # イベントハンドラ
     def event_handler(self, event):
         """
@@ -307,54 +291,67 @@ class ViewGUI:
         SubMenu起動ボタン関数
         """
         # menu作成######################################################################
-        self.menuwin = tk.Toplevel()  # サブWindow作成
-        self.menuwin.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
-        # self.top.overrideredirect(True)  # ウィンドウのタイトル部分を消去
-        self.menuwin.geometry("360x180+0+0")  # トップWindow表示位置指定
-        # フレーム作成
-        self.menuwinFrame = tk.Frame(self.menuwin, height=360, width=180)
-        self.menuwinFrame.pack(fill=tk.BOTH, expand=True)
-        # 　ボタン生成------------------------------------------------------------------
-        menubutton1 = tk.Button(
-            self.menuwinFrame, text="線抽出自動回転", width=50, command=self.menubutton1_click
-        )
-        menubutton1.grid(row=1, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
-        # ------------------------------------------------------------------------------
-        # 　ラベル生成--------------------------------------------------------------------
-        label_tb1 = tk.Label(self.menuwinFrame, text="[ノイズ除去値]")
-        label_tb1.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
-        # ------------------------------------------------------------------------------
-        # 　テキストボックス生成---------------------------------------------------------
-        textbox1 = tk.Entry(self.menuwinFrame, text="ノイズ除去値(奇数)", width=15)
-        textbox1.grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
-        # ------------------------------------------------------------------------------
-        # 　ボタン生成------------------------------------------------------------------
-        menubutton2 = tk.Button(
-            self.menuwinFrame,
-            text="ノイズ除去",
-            width=20,
-            command=lambda: self.menubutton2_click(textbox1),
-        )
-        menubutton2.grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
-        # 　ラベル生成--------------------------------------------------------------------
-        label_tb1 = tk.Label(self.menuwinFrame, text="[線形基準値]")
-        label_tb1.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
-        # ------------------------------------------------------------------------------
-        # 　テキストボックス生成---------------------------------------------------------
-        textbox2 = tk.Entry(self.menuwinFrame, text="1.41421356", width=15)
-        textbox2.grid(row=3, column=2, padx=5, pady=5, sticky=tk.W)
-        # ------------------------------------------------------------------------------
-        # 　ボタン生成------------------------------------------------------------------
-        menubutton3 = tk.Button(
-            self.menuwinFrame,
-            text="線形削除",
-            width=20,
-            command=lambda: self.menubutton3_click(textbox2),
-        )
-        menubutton3.grid(row=3, column=3, padx=5, pady=5, sticky=tk.W)
-        # ------------------------------------------------------------------------------
+        # サブフレーム起動確認
+        try:
+            if self.menuwin.widgetName == "toplevel":
+                SMW = True
+            else:
+                SMW = False
+        except:
+            SMW = False
+        # -------------------------------------------------------------------------------
+        if SMW is False:
+            self.menuwin = tk.Toplevel()  # サブWindow作成
+            self.menuwin.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
+            # self.top.overrideredirect(True)  # ウィンドウのタイトル部分を消去
+            self.menuwin.geometry("360x180+0+0")  # トップWindow表示位置指定
+            # フレーム作成
+            self.menuwinFrame = tk.Frame(self.menuwin, height=360, width=180)
+            self.menuwinFrame.pack(fill=tk.BOTH, expand=True)
+            # # 　ボタン生成------------------------------------------------------------------
+            # menubutton1 = tk.Button(
+            #     self.menuwinFrame,
+            #     text="線抽出自動回転",
+            #     width=50,
+            #     command=self.menubutton1_click,
+            # )
+            # menubutton1.grid(row=1, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
+            # # ------------------------------------------------------------------------------
+            # 　ラベル生成--------------------------------------------------------------------
+            label_tb1 = tk.Label(self.menuwinFrame, text="[ノイズ除去値]")
+            label_tb1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+            # ------------------------------------------------------------------------------
+            # 　テキストボックス生成---------------------------------------------------------
+            textbox1 = tk.Entry(self.menuwinFrame, text="ノイズ除去値(奇数)", width=15)
+            textbox1.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+            # ------------------------------------------------------------------------------
+            # 　ボタン生成------------------------------------------------------------------
+            menubutton2 = tk.Button(
+                self.menuwinFrame,
+                text="ノイズ除去",
+                width=20,
+                command=lambda: self.menubutton2_click(textbox1),
+            )
+            menubutton2.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
+            # # 　ラベル生成--------------------------------------------------------------------
+            # label_tb1 = tk.Label(self.menuwinFrame, text="[線形基準値]")
+            # label_tb1.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
+            # # ------------------------------------------------------------------------------
+            # # 　テキストボックス生成---------------------------------------------------------
+            # textbox2 = tk.Entry(self.menuwinFrame, text="1.41421356", width=15)
+            # textbox2.grid(row=3, column=2, padx=5, pady=5, sticky=tk.W)
+            # # ------------------------------------------------------------------------------
+            # # 　ボタン生成------------------------------------------------------------------
+            # menubutton3 = tk.Button(
+            #     self.menuwinFrame,
+            #     text="線形削除",
+            #     width=20,
+            #     command=lambda: self.menubutton3_click(textbox2),
+            # )
+            # menubutton3.grid(row=3, column=3, padx=5, pady=5, sticky=tk.W)
+            # # ------------------------------------------------------------------------------
 
-    # ##############################################################################
+        # ##############################################################################
 
     def Resize(self, Resizewidth, Resizeheight):
         """
@@ -364,20 +361,28 @@ class ViewGUI:
 
         try:
             ReList = [int(Resizewidth.get()), int(Resizeheight.get())]
-            msg = tk.messagebox.askokcancel("確認", "リサイズを行いますか？")
+            msg = messagebox.askokcancel("確認", "リサイズを行いますか？")
             if msg is True:
-                self.control.MenuFuncRun("Resize", ReList, set_pos=set_pos)
+                SCM = self.control.MenuFuncRun("Resize", ReList, set_pos=set_pos)
+                if SCM == "画像無":
+                    messagebox.showinfo("確認", "画像を指定して下さい。")
+                elif SCM == "Err":
+                    messagebox.showinfo("確認", "編集中にエラーが発生しました。")
         except:
             print("Resize起動")
 
-    def menubutton1_click(self):
-        """
-        サブメニュー内線抽出自動回転ボタン処理
-        """
-        set_pos = self.combo_file.current()
-        msg = tk.messagebox.askokcancel("確認", "線抽出自動回転を適用しますか？")
-        if msg is True:
-            self.control.MenuFuncRun("LineLotate", "", set_pos=set_pos)
+    # def menubutton1_click(self):
+    #     """
+    #     サブメニュー内線抽出自動回転ボタン処理
+    #     """
+    #     set_pos = self.combo_file.current()
+    #     msg = messagebox.askokcancel("確認", "線抽出自動回転を適用しますか？")
+    #     if msg is True:
+    #         SCM = self.control.MenuFuncRun("LineLotate", "", set_pos=set_pos)
+    #         if SCM == "画像無":
+    #             messagebox.showinfo("確認", "画像を指定して下さい。")
+    #         elif SCM == "Err":
+    #             messagebox.showinfo("確認", "編集中にエラーが発生しました。")
 
     def menubutton2_click(self, textbox1):
         """
@@ -387,28 +392,36 @@ class ViewGUI:
         try:
             noisepar = int(textbox1.get())
             if noisepar % 2 == 0:
-                msg = tk.messagebox.showinfo("確認", "ノイズ除去値は奇数で入力してください。")
+                msg = messagebox.showinfo("確認", "ノイズ除去値は奇数で入力してください。")
             else:
-                msg = tk.messagebox.askokcancel(
-                    "確認", "ノイズ除去を除去値" + textbox1.get() + "で適用しますか？"
+                msg = messagebox.askokcancel(
+                    "確認", "ノイズ除去を除去値" + str(textbox1.get()) + "で適用しますか？"
                 )
                 if msg is True:
-                    self.control.MenuFuncRun(
+                    SCM = self.control.MenuFuncRun(
                         "Noise",
-                        "",
+                        noisepar,
                         set_pos=set_pos,
                     )
+                    if SCM == "画像無":
+                        messagebox.showinfo("確認", "画像を指定して下さい。")
+                    elif SCM == "Err":
+                        messagebox.showinfo("確認", "編集中にエラーが発生しました。")
         except:
-            msg = tk.messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
+            msg = messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
 
-    def menubutton3_click(self, textbox2):
-        """
-        サブメニュー内線形削除ボタン処理
-        """
-        set_pos = self.combo_file.current()
-        msg = tk.messagebox.askokcancel("確認", "線形削除を適用しますか？(undoで戻せません)")
-        if msg is True:
-            self.control.MenuFuncRun("LineDelete", textbox2, set_pos=set_pos)
+    # def menubutton3_click(self, textbox2):
+    #     """
+    #     サブメニュー内線形削除ボタン処理
+    #     """
+    #     set_pos = self.combo_file.current()
+    #     msg = messagebox.askokcancel("確認", "線形削除を適用しますか？(undoで戻せません)")
+    #     if msg is True:
+    #         SCM = self.control.MenuFuncRun("LineDelete", textbox2, set_pos=set_pos)
+    #         if SCM == "画像無":
+    #             messagebox.showinfo("確認", "画像を指定して下さい。")
+    #         elif SCM == "Err":
+    #             messagebox.showinfo("確認", "編集中にエラーが発生しました。")
 
     def button_LeftLotate(self, event=None):
         """
@@ -424,25 +437,12 @@ class ViewGUI:
         cmd = "rotateFree-" + str(-1)
         self.control.EditImage(cmd)
 
-    # def slider_scroll(self, event=None):
-    #     global Sval
-    #     """スライダーを移動したとき"""
-    #     val = int(self.scale_var.get())
-    #     if Sval < val:  # スライダー初期値が0未満の場合
-    #         val = val - Sval
-    #     else:
-    #         val = Sval - val
-    #     cmd = "rotateFree-" + str(val)
-    #     self.control.EditImage(cmd)
-    #     Sval = val
-    #     print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
-
     def event_set_folder(self):
         """
         フォルダー選択ボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        self.dir_path = tk.filedialog.askdirectory(
+        self.dir_path = filedialog.askdirectory(
             initialdir=self.dir_path, mustexist=True
         )
         self.str_dir.set(self.dir_path)
@@ -466,7 +466,7 @@ class ViewGUI:
         set_pos = self.combo_file.current()
         FN = self.control.get_file("set", set_pos=set_pos)
         if ".PDF" in FN or ".pdf" in FN:
-            msg = tk.messagebox.askokcancel(
+            msg = messagebox.askokcancel(
                 "確認", "PDFが選択されています。PNGに変換しますか？\n10ページ以上の処理は処理時間が長時間になる可能性があります。"
             )
             if msg is True:
@@ -474,9 +474,9 @@ class ViewGUI:
                 PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
                 spd = self.control.pdf_image(FN, "png", 600, PBAR)
                 if spd is True:
-                    msg = tk.messagebox.askokcancel("確認", "PNG変換完了しました。")
+                    msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
                 else:
-                    msg = tk.messagebox.askokcancel("確認", "PNG変換に失敗しました。")
+                    msg = messagebox.askokcancel("確認", "PNG変換に失敗しました。")
         else:
             self.control.DrawImage("set", set_pos=set_pos)
 
@@ -568,14 +568,28 @@ class ViewGUI:
         Saveボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        self.Newfilename = tk.filedialog.asksaveasfilename()
+        # 一時保存ファイルを確認
+        if self.control.model.stock_url != "":
+            os.remove(self.control.model.stock_url)
+        self.Newfilename = filedialog.asksaveasfilename(
+            filetypes=[("PNG", ".png"), ("JPEG", ".jpg")]
+        )
         self.control.SaveImage(self.Newfilename)
+        self.file_list = self.control.SetDirlist(self.dir_path)  # ファイルリストリロード
+        for F_r in range(len(self.file_list)):
+            if self.file_list[F_r] in self.Newfilename:
+                self.control.model.stock_url = ""
+                self.combo_file.set(self.file_list[F_r])
 
     def event_Oversave(self):
         """
         OverSaveボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        # 一時保存ファイルを確認
+        if self.control.model.stock_url != "":
+            os.remove(self.control.model.stock_url)
+            self.control.model.stock_url = ""
         self.control.OverSaveImage()
 
     def event_undo(self):
@@ -583,6 +597,10 @@ class ViewGUI:
         Undoボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        # 一時保存ファイルを確認
+        if self.control.model.stock_url != "":
+            os.remove(self.control.model.stock_url)
+            self.control.model.stock_url = ""
         self.control.UndoImage("None")
         self.radio_intvar1.set(0)
         self.radio_intvar2.set(0)
@@ -593,7 +611,8 @@ class ViewGUI:
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         typ = [("tomlファイル", "*.toml")]
-        self.tomlPath = tk.filedialog.askopenfilename(
+        messagebox.showinfo("確認", "次にOCR読取設定が格納されているtomlファイルを指定して下さい。")
+        self.tomlPath = filedialog.askopenfilename(
             filetypes=typ, initialdir=self.dir_path
         )
 
@@ -602,7 +621,7 @@ class ViewGUI:
         Imgurl = FDir + r"\\" + FN
         Imgurl = Imgurl.replace("/", r"\\")
         if "[select file]" in Imgurl:
-            tk.messagebox.showinfo("確認", "画像ファイルを選択してください。")
+            messagebox.showinfo("確認", "画像ファイルを選択してください。")
         else:
             Main(main_window, Imgurl, self.tomlPath)
 

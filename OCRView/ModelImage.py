@@ -1,6 +1,7 @@
 import os
 import numpy as np
-from datetime import datetime
+
+# from datetime import datetime
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 import cv2
 import math
@@ -57,7 +58,7 @@ class ModelImage:
 
         if h > w:
             rate = h / self.canvas_h
-            x_spc = self.pad_x * rate
+            # x_spc = self.pad_x * rate
             sy, sx, ch, cw = self.get_correct_values(rate, sy, sx, ey, ex)
             # sx = sx - x_spc
             # sx = int(np.max((sx, 0)))
@@ -65,7 +66,7 @@ class ModelImage:
 
         else:
             rate = w / self.canvas_w
-            y_spc = self.pad_y * rate
+            # y_spc = self.pad_y * rate
             sy, sx, ch, cw = self.get_correct_values(rate, sy, sx, ey, ex)
             # sy = sy - y_spc
             # sy = int(np.max((sy, 0)))
@@ -75,7 +76,7 @@ class ModelImage:
 
     def edit_image_command(self, orginal_image, edit_image, command, args={}):
 
-        if edit_image != None:
+        if edit_image is not None:
             img = edit_image
         else:
             img = orginal_image.copy()
@@ -140,7 +141,7 @@ class ModelImage:
         if canvas.gettags("Photo"):
             canvas.delete("Photo")
 
-        if self.edit_img != None and command != "None":
+        if self.edit_img is not None and command != "None":
             img = self.edit_img
 
         else:
@@ -202,7 +203,7 @@ class ModelImage:
 
     def OverSaveImage(self, fname):
 
-        if self.edit_img != None:
+        if self.edit_img is not None:
             name, ext = os.path.splitext(fname)
             name = name.replace("\\", "/")
             fpath = name.replace("/", r"\\") + ext
@@ -210,55 +211,56 @@ class ModelImage:
             self.edit_img.save(fpath)
             print("Saved: {}".format(fpath))
 
-    def ImageLotate(self, URL, imgurl, disth, canth1, canth2, casize, do):
-        """
-        概要: 画像から直線を検出し、画像の傾きを調べ回転して上書き保存
-        @param URL: 画像フォルダ(str)
-        @param imgurl: 画像URL(str)
-        @param disth: マージする線分の距離(float)
-        @param canth1: Canny Edge Detectorの引数1(float)
-        @param canth2: Canny Edge Detectorの引数2(float)
-        @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
-        @param dom: Trueなら線分をマージして出力する(boolean)
-        @return 傾き値リスト(np配列)
-        """
-        try:
-            img = imread(imgurl)
-            # 回転-----------------------------------------------------------------------
-            # StraightLineDetectionで最後の一つになるまで絞りだしたピクセル連続線から
-            # 角度をmathアークタンジェントで計算し、degreesでラジアン→℃変換後画像を回転
-            Kakuavg = self.StraightLineDetection(
-                URL, imgurl, disth, canth1, canth2, casize, do
-            )
-            if Kakuavg[0] is True:
-                x1 = Kakuavg[1][:, 1]
-                y1 = Kakuavg[1][:, 0]
-                x2 = Kakuavg[1][:, 3]
-                y2 = Kakuavg[1][:, 2]
-                # numpyとmathではy,x軸が反対なので入替--------------------------------------
-                x = np.average(y1) - np.average(y2)
-                y = np.average(x1) - np.average(x2)
-                # ------------------------------------------------------------------------
-                tan = math.degrees(math.atan2(y, x))
-                img = Image.open(imgurl)
-                img = img.rotate(tan)
-            # ---------------------------------------------------------------------------
-            else:
-                return False
-            return img
-        except:
-            return False
+    # def ImageLotate(self, URL, imgurl, disth, canth1, canth2, casize, do):
+    #     """
+    #     概要: 画像から直線を検出し、画像の傾きを調べ回転して上書き保存
+    #     @param URL: 画像フォルダ(str)
+    #     @param imgurl: 画像URL(str)
+    #     @param disth: マージする線分の距離(float)
+    #     @param canth1: Canny Edge Detectorの引数1(float)
+    #     @param canth2: Canny Edge Detectorの引数2(float)
+    #     @param casize: Canny Edge Detectorに使うSobelのサイズ(0ならCannyは適用しない)(int)
+    #     @param dom: Trueなら線分をマージして出力する(boolean)
+    #     @return 傾き値リスト(np配列)
+    #     """
+    #     try:
+    #         img = imread(imgurl)
+    #         # 回転-----------------------------------------------------------------------
+    #         # StraightLineDetectionで最後の一つになるまで絞りだしたピクセル連続線から
+    #         # 角度をmathアークタンジェントで計算し、degreesでラジアン→℃変換後画像を回転
+    #         Kakuavg = self.StraightLineDetection(
+    #             URL, imgurl, disth, canth1, canth2, casize, do
+    #         )
+    #         if Kakuavg[0] is True:
+    #             x1 = Kakuavg[1][:, 1]
+    #             y1 = Kakuavg[1][:, 0]
+    #             x2 = Kakuavg[1][:, 3]
+    #             y2 = Kakuavg[1][:, 2]
+    #             # numpyとmathではy,x軸が反対なので入替--------------------------------------
+    #             x = np.average(y1) - np.average(y2)
+    #             y = np.average(x1) - np.average(x2)
+    #             # ------------------------------------------------------------------------
+    #             tan = math.degrees(math.atan2(y, x))
+    #             img = Image.open(imgurl)
+    #             img = img.rotate(tan)
+    #         # ---------------------------------------------------------------------------
+    #         else:
+    #             return False
+    #         return img
+    #     except:
+    #         return False
 
     def TotalNoise(self, imgurl, ksize):
-
+        S_imgurl = imgurl.split(".")
+        S_imgurl = S_imgurl[0] + "Noize." + S_imgurl[1]
         Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
-        Inv_img.save(imgurl)  # 白黒反転保存(PIL)
-        img = imread(imgurl)  # 白黒反転画像(cv2)
+        Inv_img.save(S_imgurl)  # 白黒反転保存(PIL)
+        img = imread(S_imgurl)  # 白黒反転画像(cv2)
         CleanUp_img = self.NoiseRemoval(img, ksize)  # ノイズ除去(cv2)
-        imwrite(imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
-        Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
-        Inv_img.save(imgurl)  # 白黒反転保存(PIL)
-        Inv_img = Image.open(imgurl)
+        imwrite(S_imgurl, CleanUp_img)  # ノイズ除去保存(cv2)
+        Inv_img = self.ColorInverter(S_imgurl)  # 白黒反転(PIL)
+        Inv_img.save(S_imgurl)  # 白黒反転保存(PIL)
+        Inv_img = Image.open(S_imgurl)
         return Inv_img
 
     def StraightLineDetection(self, URL, imgurl, disth, canth1, canth2, casize, do):
@@ -491,6 +493,8 @@ class ModelImage:
         """
         try:
             img = imread(imgurl)
+            S_imgurl = imgurl.split(".")
+            S_imgurl = S_imgurl[0] + "SLE." + S_imgurl[1]
             size = img.shape  # 画像のサイズ 横,縦
             Pix = int(size[0] / 50)  # 検出ピクセル数
             LineWidth = int((size[0] / 2000))
@@ -510,7 +514,7 @@ class ModelImage:
                     do,
                 )  # boolean,yx値
                 if FLDs[0] is True:  # 連続ピクセルを検知したら
-                    FLDItem = len(FLDs[1])  # 配列要素数
+                    # FLDItem = len(FLDs[1])  # 配列要素数
                     FLStock = FLDs[1]
                     LCheck = True
             ######################################################

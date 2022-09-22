@@ -5,7 +5,8 @@ import numpy as np
 
 # from numpy import fromfile, uint8
 import csv
-from tkinter import messagebox, filedialog
+
+# from tkinter import messagebox, filedialog
 
 # from tkinter import ttk, filedialog
 

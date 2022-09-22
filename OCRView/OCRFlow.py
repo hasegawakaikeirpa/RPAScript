@@ -66,16 +66,16 @@ def DiffListCreate(
     """
 
     # try:
-    dic = {
-        "FileURL": FileURL,
-        "Yoko": Yoko,
-        "Tate": Tate,
-        "Banktoml": Banktoml,
-        "ColList": ColList,
-        "MoneySet": MoneySet,
-        "ReplaceSet": ReplaceSet,
-        "ReplaceStr": ReplaceStr,
-    }
+    # dic = {
+    #     "FileURL": FileURL,
+    #     "Yoko": Yoko,
+    #     "Tate": Tate,
+    #     "Banktoml": Banktoml,
+    #     "ColList": ColList,
+    #     "MoneySet": MoneySet,
+    #     "ReplaceSet": ReplaceSet,
+    #     "ReplaceStr": ReplaceStr,
+    # }
     # ####################################################################################
     readcsv1 = Yoko
     readcsv2 = Tate

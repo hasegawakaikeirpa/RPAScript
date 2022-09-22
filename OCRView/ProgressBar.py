@@ -1,4 +1,4 @@
-from tkinter import *
+import tkinter as tk
 import tkinter.ttk as ttk
 import threading
 
@@ -8,14 +8,14 @@ class ProgressBar(ttk.Frame):
         super().__init__(app)
         ttk.Style().theme_use("winnative")
         self.pack()
-        self.l_text = StringVar()
+        self.l_text = tk.StringVar()
         self.l_text.set("実行中:0%")
         self.label = ttk.Label(self, textvariable=self.l_text)
         self.label.pack(side="left")
         self.wint = 0
         self.pbDeterminateVer = ttk.Progressbar(
             self,
-            orient=HORIZONTAL,
+            orient=tk.HORIZONTAL,
             length=500,
             mode="determinate",
         )
@@ -52,7 +52,7 @@ class PB_indeterminate(ttk.Frame):
         label.pack(side="left")
 
         self.pbDeterminateVer = ttk.Progressbar(
-            self, orient=HORIZONTAL, length=500, mode="indeterminate"
+            self, orient=tk.HORIZONTAL, length=500, mode="indeterminate"
         )
         self.pbDeterminateVer.pack(side="left")
         self.pbDeterminateVer.start(100)
@@ -115,7 +115,7 @@ def Open_IN(app):
 
 if __name__ == "__main__":
     # Tkインスタンスを作成し、app変数に格納する
-    app = Tk()
+    app = tk.Tk()
     # 縦幅400横幅300に画面サイズを変更します。
     app.geometry("650x30")
     # タイトルを指定

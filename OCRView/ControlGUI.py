@@ -51,7 +51,6 @@ class ControlGUI:
 
         elif self.file_pos >= num:
             self.file_pos = 0
-
         cur_file = os.path.join(self.dir_path, self.target_files[self.file_pos])
         print("{}/{} {} ".format(self.file_pos, num - 1, cur_file))
         return cur_file
@@ -88,12 +87,15 @@ class ControlGUI:
         """
         キャンバスに画像を読込む
         """
-        fname = self.get_file(command, set_pos)
-        if command == "Map":
-            self.model.DrawImage(fname, self.canvas, "Map")
-        else:
-            self.model.DrawImage(fname, self.canvas, "None")
-        return self.file_pos, self.model
+        try:
+            fname = self.get_file(command, set_pos)
+            if command == "Map":
+                self.model.DrawImage(fname, self.canvas, "Map")
+            else:
+                self.model.DrawImage(fname, self.canvas, "None")
+            return self.file_pos, self.model
+        except:
+            print("DrawImageSkip")
 
     def pdf_image(self, pdf_file, fmtt, dpi, PBAR):
         mpd = self.model.pdf_image(pdf_file, fmtt, dpi, PBAR)
@@ -106,36 +108,55 @@ class ControlGUI:
         """
         menuボタンクリック
         """
-        fname = self.get_file(command, set_pos)
+        try:
+            fname = self.get_file(command, set_pos)
+        except:
+            fname = ""
+        if fname == "":
+            return "画像無"
+        else:
+            try:
+                # 線形検出パラメータ設定########################################
+                disth = 1.41421356
+                canth1 = 50.0
+                canth2 = 50.0
+                casize = 3
+                do = True
+                # ############################################################
+                if command == "Noise":
+                    limg = self.model.TotalNoise(fname, 7)
+                    fname = limg.filename
+                    self.model.stock_url = limg.filename
+                # elif command == "LineLotate":
+                #     limg = self.model.ImageLotate(
+                #         fname, disth, canth1, canth2, casize, do
+                #     )
+                #     fname = limg.filename
+                #     self.model.stock_url = limg.filename
+                elif command == "Resize":
+                    limg = self.model.edit_img
+                    fname = limg.filename
+                    self.model.stock_url = limg.filename
+                elif command == "LineDelete":
+                    disth = whlist
+                    limg = self.model.StraightLineErase(
+                        fname, disth, canth1, canth2, casize, do
+                    )
+                    fname = limg.filename
+                    self.model.stock_url = limg.filename
+                # -----------------------------------------------------------
+                self.model.edit_img = limg
+                args = {}
+                self.model.DrawImage(fname, self.canvas, command, args=args)
+                return "完了"
+            except:
+                return "Err"
 
-        # 線形検出パラメータ設定########################################
-        disth = 1.41421356
-        canth1 = 50.0
-        canth2 = 50.0
-        casize = 3
-        do = True
-        # ############################################################
-        if command == "Noise":
-            limg = self.model.TotalNoise(fname, 7)
-        elif command == "LineLotate":
-            limg = self.model.ImageLotate(fname, disth, canth1, canth2, casize, do)
-        elif command == "Resize":
-            limg = self.model.edit_img
-        elif command == "LineDelete":
-            disth = whlist
-            limg = self.model.StraightLineErase(
-                fname, disth, canth1, canth2, casize, do
-            )
-
-        self.model.edit_img = limg
-        args = {}
-        self.model.DrawImage(fname, self.canvas, command, args=args)
-
-    def ResizeRun(self, command, set_pos=-1):
-        """
-        resizeボタンクリック
-        """
-        fname = self.get_file(command, set_pos)
+    # def ResizeRun(self, command, set_pos=-1):
+    #     """
+    #     resizeボタンクリック
+    #     """
+    #     fname = self.get_file(command, set_pos)
 
     def DrawRectangle(self, command, pos_y, pos_x):
         """

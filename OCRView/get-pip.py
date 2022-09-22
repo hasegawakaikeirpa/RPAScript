@@ -21,6 +21,13 @@
 # `scripts/generate.py` in https://github.com/pypa/get-pip.
 
 import sys
+import os.path
+import pkgutil
+import shutil
+import tempfile
+import argparse
+import importlib
+from base64 import b85decode
 
 this_python = sys.version_info[:2]
 min_version = (3, 7)
@@ -32,16 +39,6 @@ if this_python < min_version:
     ]
     print("ERROR: " + " ".join(message_parts))
     sys.exit(1)
-
-
-import os.path
-import pkgutil
-import shutil
-import tempfile
-import argparse
-import importlib
-from base64 import b85decode
-
 
 def include_setuptools(args):
     """
@@ -32097,3 +32094,4 @@ U
 
 if __name__ == "__main__":
     main()
+    

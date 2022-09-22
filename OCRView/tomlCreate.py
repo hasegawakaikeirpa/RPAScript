@@ -1,4 +1,4 @@
-import tomli, tomli_w
+import tomli_w
 
 
 def create_toml_sample(self, path: str):
