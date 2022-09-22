@@ -266,91 +266,95 @@ def DfTuuchou(
         GyouList = []
         # 縦軸Listループ処理----------------------------------------------------------------
         for TL in range(len(TateList)):
-            if not TL == len(TateList) - 1:
-                for lb in range(dfRow):
-                    btxt = str(dfnp[lb][1])  # 現在の文字
-                    bjsonX = int(dfnp[lb][3])  # 現在の文字の縦軸
-                    bjsonY = int(dfnp[lb][2])  # 現在の文字の横軸
-                    # 行のみを抽出-------------------------------------------------------------
-                    if not TL == len(TateList):
-                        if (
-                            int(TateList[TL][1]) <= bjsonX
-                            and int(TateList[TL + 1][1]) > bjsonX
-                        ):
-                            GyouList.append([btxt, bjsonX, bjsonY])
-                    # ------------------------------------------------------------------------
-                GyouList = sorted(GyouList, key=lambda x: x[2])  # 行List並び替え
-                print("")
-                NowRets = 0
-                # 行Listループ処理-------------------------------------------------------------
-                for GyouListItem in GyouList:
-                    # 今の列位置を判定---------------------------------------------------------
-                    for IRC in range(len(YokoList)):
-                        if not IRC == len(YokoList) - 1:  # 行List最終要素じゃなければ
-                            if (
-                                int(YokoList[IRC][0]) <= GyouListItem[2]
-                                and int(YokoList[IRC + 1][0]) > GyouListItem[2]
-                            ):
-                                NowRets = IRC
-                                break
-                        else:
-                            if int(YokoList[IRC][0]) < GyouListItem[2]:
-                                NowRets = IRC
-                                break
-                    # ------------------------------------------------------------------------
-                    if not InputRetu == len(YokoList) - 1:  # 行List最終要素じゃなければ
-                        # 今の行の縦軸が今の行の縦軸以上かつ次の行の縦軸未満なら------------------
-                        if (
-                            int(YokoList[InputRetu][0]) <= GyouListItem[2]
-                            and int(YokoList[InputRetu + 1][0]) > GyouListItem[2]
-                        ):
-                            strs += GyouListItem[0]
-                        elif int(YokoList[InputRetu + 1][0]) <= GyouListItem[2]:
-                            if not NowRets == InputRetu:
-                                NI = NowRets - InputRetu
-                                if NI > 0:
-                                    while NowRets != InputRetu:
-                                        strList.append(strs)
-                                        strs = ""
-                                        InputRetu += 1
-                                        if NowRets == InputRetu:
-                                            strs += GyouListItem[0]
-                                else:
-                                    while NowRets != InputRetu:
-                                        strList.append("")
-                                        NowRets += 1
-                                        if NowRets == InputRetu:
-                                            strs += GyouListItem[0]
-                            else:
-                                strList.append(strs)
-                                strs = ""
-                                strs += GyouListItem[0]
-                                InputRetu += 1
-                        # ---------------------------------------------------------------------
-                    else:
-                        if int(YokoList[InputRetu][0]) <= GyouListItem[2]:
-                            strs += GyouListItem[0]
-                        # ---------------------------------------------------------------------
-                # -----------------------------------------------------------------------------
-                YDiff = (len(YokoList) - 1) - InputRetu
-                if YDiff == 0:
-                    strList.append(strs)
-                    strs = ""
-                    FstrList.append(strList)
-                    strList = []
-                    GyouList = []
-                    InputRetu = 0
+            # if not TL == len(TateList) - 1:
+
+            for lb in range(dfRow):
+                btxt = str(dfnp[lb][1])  # 現在の文字
+                bjsonX = int(dfnp[lb][3])  # 現在の文字の縦軸
+                bjsonY = int(dfnp[lb][2])  # 現在の文字の横軸
+                # 行のみを抽出-------------------------------------------------------------
+                if not TL == len(TateList) - 1:
+                    if (
+                        int(TateList[TL][1]) <= bjsonX
+                        and int(TateList[TL + 1][1]) > bjsonX
+                    ):
+                        GyouList.append([btxt, bjsonX, bjsonY])
                 else:
-                    while YDiff != 0:
-                        strList.append(strs)
-                        strs = ""
-                        YDiff -= 1
+                    L_t = int(TateList[TL][1]) + 5
+                    if L_t <= bjsonX:
+                        GyouList.append([btxt, bjsonX, bjsonY])
+                # ------------------------------------------------------------------------
+            GyouList = sorted(GyouList, key=lambda x: x[2])  # 行List並び替え
+            NowRets = 0
+            # 行Listループ処理-------------------------------------------------------------
+            for GyouListItem in GyouList:
+                # 今の列位置を判定---------------------------------------------------------
+                for IRC in range(len(YokoList)):
+                    if not IRC == len(YokoList) - 1:  # 行List最終要素じゃなければ
+                        if (
+                            int(YokoList[IRC][0]) <= GyouListItem[2]
+                            and int(YokoList[IRC + 1][0]) > GyouListItem[2]
+                        ):
+                            NowRets = IRC
+                            break
+                    else:
+                        if int(YokoList[IRC][0]) < GyouListItem[2]:
+                            NowRets = IRC
+                            break
+                # ------------------------------------------------------------------------
+                if not InputRetu == len(YokoList) - 1:  # 行List最終要素じゃなければ
+                    # 今の行の縦軸が今の行の縦軸以上かつ次の行の縦軸未満なら------------------
+                    if (
+                        int(YokoList[InputRetu][0]) <= GyouListItem[2]
+                        and int(YokoList[InputRetu + 1][0]) > GyouListItem[2]
+                    ):
+                        strs += GyouListItem[0]
+                    elif int(YokoList[InputRetu + 1][0]) <= GyouListItem[2]:
+                        if not NowRets == InputRetu:
+                            NI = NowRets - InputRetu
+                            if NI > 0:
+                                while NowRets != InputRetu:
+                                    strList.append(strs)
+                                    strs = ""
+                                    InputRetu += 1
+                                    if NowRets == InputRetu:
+                                        strs += GyouListItem[0]
+                            else:
+                                while NowRets != InputRetu:
+                                    strList.append("")
+                                    NowRets += 1
+                                    if NowRets == InputRetu:
+                                        strs += GyouListItem[0]
+                        else:
+                            strList.append(strs)
+                            strs = ""
+                            strs += GyouListItem[0]
+                            InputRetu += 1
+                    # ---------------------------------------------------------------------
+                else:
+                    if int(YokoList[InputRetu][0]) <= GyouListItem[2]:
+                        strs += GyouListItem[0]
+                    # ---------------------------------------------------------------------
+            # -----------------------------------------------------------------------------
+            YDiff = (len(YokoList) - 1) - InputRetu
+            if YDiff == 0:
+                strList.append(strs)
+                strs = ""
+                FstrList.append(strList)
+                strList = []
+                GyouList = []
+                InputRetu = 0
+            else:
+                while YDiff != 0:
                     strList.append(strs)
                     strs = ""
-                    FstrList.append(strList)
-                    strList = []
-                    GyouList = []
-                    InputRetu = 0
+                    YDiff -= 1
+                strList.append(strs)
+                strs = ""
+                FstrList.append(strList)
+                strList = []
+                GyouList = []
+                InputRetu = 0
         return True, FstrList
     except:
         return False, ""

@@ -101,11 +101,17 @@ class ModelImage:
             # return img.rotate(cmd, expand=True)
 
         elif "clip_done" in command:
+            C_url = self.original_img.filename.split(".")
+            C_url = C_url[0] + "edit." + C_url[1]
             h, w = np_img[:, :, 0].shape
             sy, sx, ch, cw = self.get_original_coords(h, w, args)
             np_img = np_img[sy : sy + ch, sx : sx + cw, :]
+            imwrite(C_url, np_img)
+            self.stock_url = C_url
 
         elif "clip_Erace" in command:
+            C_url = self.original_img.filename.split(".")
+            C_url = C_url[0] + "edit." + C_url[1]
             img = imread(self.original_img.filename)
             img = cv2.rectangle(
                 img,
@@ -114,7 +120,8 @@ class ModelImage:
                 (255, 255, 255),
                 thickness=-1,
             )
-            imwrite(self.original_img.filename, img)
+            imwrite(C_url, img)
+            self.stock_url = C_url
             np_img = np.array(img)
 
         return Image.fromarray(np_img)
@@ -253,7 +260,7 @@ class ModelImage:
 
     def TotalNoise(self, imgurl, ksize):
         S_imgurl = imgurl.split(".")
-        S_imgurl = S_imgurl[0] + "Noize." + S_imgurl[1]
+        S_imgurl = S_imgurl[0] + "edit." + S_imgurl[1]
         Inv_img = self.ColorInverter(imgurl)  # 白黒反転(PIL)
         Inv_img.save(S_imgurl)  # 白黒反転保存(PIL)
         img = imread(S_imgurl)  # 白黒反転画像(cv2)
@@ -495,7 +502,7 @@ class ModelImage:
         try:
             img = imread(imgurl)
             S_imgurl = imgurl.split(".")
-            S_imgurl = S_imgurl[0] + "SLE." + S_imgurl[1]
+            S_imgurl = S_imgurl[0] + "edit." + S_imgurl[1]
             size = img.shape  # 画像のサイズ 横,縦
             Pix = int(size[0] / 50)  # 検出ピクセル数
             LineWidth = int((size[0] / 2000))

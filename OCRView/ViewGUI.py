@@ -15,6 +15,12 @@ from TKINTERCV2Setting import Main
 # プログレスバーの起動
 # PBAR = PB.ProgressBar(tk.Tk())
 
+# exe化コマンド↓
+# pyinstaller ViewGUI.py --onefile --onedir --noconsole --clean --icon=hasegawa.ico
+# 上記コマンドでできた[dist]→[ViewGUI]フォルダ内に
+# [poppler-22.01.0フォルダ]・[StraightListTate.csv]・[StraightListYoko.csv]・[key.json]
+# をコピーして完了
+
 
 class ViewGUI:
     """
@@ -42,6 +48,7 @@ class ViewGUI:
         NWINSize = ["1480", "750"]  # 横,縦
         # 　メインウィンドウタイトル
         self.window_root.title("OCR読取 Ver:0.9")
+        self.window_root.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
         # self.window_root.bind("<Button-1>", self.ChangeWSize)
         # サブウィンドウ
         # フォルダ・ファイル選択
@@ -427,6 +434,7 @@ class ViewGUI:
         """
         左回転ボタン処理
         """
+        self.event_Searchsave()  # 編集履歴判定後上書き
         cmd = "rotateFree-" + str(1)
         self.control.EditImage(cmd)
 
@@ -434,6 +442,7 @@ class ViewGUI:
         """
         右回転ボタン処理
         """
+        self.event_Searchsave()  # 編集履歴判定後上書き
         cmd = "rotateFree-" + str(-1)
         self.control.EditImage(cmd)
 
@@ -442,6 +451,7 @@ class ViewGUI:
         フォルダー選択ボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.event_Searchsave()  # 編集履歴判定後上書き
         self.dir_path = filedialog.askdirectory(
             initialdir=self.dir_path, mustexist=True
         )
@@ -454,6 +464,7 @@ class ViewGUI:
         ファイル選択ウィンドウクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.event_Searchsave()  # 編集履歴判定後上書き
         self.file_list = self.control.SetDirlist(self.dir_path)
         self.combo_file["value"] = self.file_list
 
@@ -484,6 +495,7 @@ class ViewGUI:
         """
         prevボタンクリックイベント
         """
+        self.event_Searchsave()  # 編集履歴判定後上書き
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         pos = self.control.DrawImage("prev")
         self.combo_file.set(self.file_list[pos])
@@ -492,6 +504,7 @@ class ViewGUI:
         """
         nextボタンクリックイベント
         """
+        self.event_Searchsave()  # 編集履歴判定後上書き
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         pos = self.control.DrawImage("next")
         self.combo_file.set(self.file_list[pos])
@@ -500,6 +513,7 @@ class ViewGUI:
         """
         画像回転変更イベント
         """
+        self.event_Searchsave()  # 編集履歴判定後上書き
         val = self.radio_intvar1.get()
         cmd = "rotate-" + str(val)
         self.control.EditImage(cmd)
@@ -509,6 +523,7 @@ class ViewGUI:
         """
         画像反転イベント
         """
+        self.event_Searchsave()  # 編集履歴判定後上書き
         val = self.radio_intvar2.get()
         cmd = "flip-" + str(val)
         self.control.EditImage(cmd)
@@ -519,6 +534,11 @@ class ViewGUI:
         Tryボタンイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        if self.control.model.stock_url != "":
+            if messagebox.askokcancel("確認", "編集履歴が残っています。上書きしますか？"):
+                os.remove(self.control.model.stock_url)
+                self.control.model.stock_url = ""
+            self.control.OverSaveImage()
         self.clip_enable = True
 
     def event_clip_done(self):
@@ -552,6 +572,9 @@ class ViewGUI:
         画像処理Undoイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        if self.control.model.stock_url != "":
+            os.remove(self.control.model.stock_url)
+            self.control.model.stock_url = ""
         if self.clip_enable:
             self.control.DrawRectangle("clip_keep", event.y, event.x)
 
@@ -560,6 +583,7 @@ class ViewGUI:
         キャンバス画像左クリック範囲指定で終端まで確定後
         """
         print(sys._getframe().f_code.co_name, event.x, event.y)
+        self.event_Searchsave()  # 編集履歴判定後上書き
         if self.clip_enable:
             self.control.DrawRectangle("clip_end", event.y, event.x)
 
@@ -580,6 +604,18 @@ class ViewGUI:
             if self.file_list[F_r] in self.Newfilename:
                 self.control.model.stock_url = ""
                 self.combo_file.set(self.file_list[F_r])
+
+    def event_Searchsave(self):
+        """
+        OverSaveボタンクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        # 一時保存ファイルを確認
+        if self.control.model.stock_url != "":
+            if messagebox.askokcancel("確認", "編集履歴が残っています。上書きしますか？"):
+                os.remove(self.control.model.stock_url)
+                self.control.model.stock_url = ""
+                self.control.OverSaveImage()
 
     def event_Oversave(self):
         """
@@ -610,12 +646,7 @@ class ViewGUI:
         OCROpenボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        typ = [("tomlファイル", "*.toml")]
-        messagebox.showinfo("確認", "次にOCR読取設定が格納されているtomlファイルを指定して下さい。")
-        self.tomlPath = filedialog.askopenfilename(
-            filetypes=typ, initialdir=self.dir_path
-        )
-
+        self.event_Searchsave()  # 編集履歴判定後上書き
         FDir = self.entry_dir.get()
         FN = self.combo_file.get()
         Imgurl = FDir + r"\\" + FN
@@ -623,7 +654,19 @@ class ViewGUI:
         if "[select file]" in Imgurl:
             messagebox.showinfo("確認", "画像ファイルを選択してください。")
         else:
+            typ = [("tomlファイル", "*.toml")]
+            messagebox.showinfo("確認", "次にOCR読取設定が格納されているtomlファイルを指定して下さい。")
+            self.tomlPath = filedialog.askopenfilename(
+                filetypes=typ, initialdir=self.dir_path
+            )
             Main(main_window, Imgurl, self.tomlPath)
+
+    def click_close(self):
+        """
+        ウィンドウ×ボタンクリック
+        """
+        if messagebox.askokcancel("確認", "終了しますか？"):
+            self.window_root.destroy()
 
     # ------------------------------------------------------------------------------------
 

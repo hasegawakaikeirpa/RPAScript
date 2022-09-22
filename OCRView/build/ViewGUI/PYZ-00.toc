@@ -1,42 +1,11 @@
 ('D:\\PythonScript\\RPAScript\\OCRView\\build\\ViewGUI\\PYZ-00.pyz',
- [('_distutils_hack',
-   'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\_distutils_hack\\__init__.py',
-   'PYMODULE'),
-  ('importlib.util',
+ [('subprocess',
    'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\util.py',
+   'Studio\\Shared\\Python37_64\\lib\\subprocess.py',
    'PYMODULE'),
-  ('contextlib',
+  ('selectors',
    'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\contextlib.py',
-   'PYMODULE'),
-  ('importlib._bootstrap_external',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\_bootstrap_external.py',
-   'PYMODULE'),
-  ('importlib._bootstrap',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\_bootstrap.py',
-   'PYMODULE'),
-  ('importlib.abc',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\abc.py',
-   'PYMODULE'),
-  ('importlib.machinery',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\machinery.py',
-   'PYMODULE'),
-  ('importlib',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\__init__.py',
-   'PYMODULE'),
-  ('multiprocessing.popen_spawn_posix',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\popen_spawn_posix.py',
-   'PYMODULE'),
-  ('multiprocessing.semaphore_tracker',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\semaphore_tracker.py',
+   'Studio\\Shared\\Python37_64\\lib\\selectors.py',
    'PYMODULE'),
   ('threading',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -45,6 +14,14 @@
   ('_threading_local',
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\_threading_local.py',
+   'PYMODULE'),
+  ('contextlib',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\contextlib.py',
+   'PYMODULE'),
+  ('signal',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\signal.py',
    'PYMODULE'),
   ('_strptime',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -78,9 +55,40 @@
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\struct.py',
    'PYMODULE'),
-  ('signal',
+  ('_distutils_hack',
+   'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\_distutils_hack\\__init__.py',
+   'PYMODULE'),
+  ('importlib.util',
    'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\signal.py',
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\util.py',
+   'PYMODULE'),
+  ('importlib._bootstrap_external',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\_bootstrap_external.py',
+   'PYMODULE'),
+  ('importlib._bootstrap',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\_bootstrap.py',
+   'PYMODULE'),
+  ('importlib.abc',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\abc.py',
+   'PYMODULE'),
+  ('importlib.machinery',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\machinery.py',
+   'PYMODULE'),
+  ('importlib',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\__init__.py',
+   'PYMODULE'),
+  ('multiprocessing.popen_spawn_posix',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\popen_spawn_posix.py',
+   'PYMODULE'),
+  ('multiprocessing.semaphore_tracker',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\semaphore_tracker.py',
    'PYMODULE'),
   ('multiprocessing.util',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -302,10 +310,6 @@
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\socket.py',
    'PYMODULE'),
-  ('selectors',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\selectors.py',
-   'PYMODULE'),
   ('tempfile',
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\tempfile.py',
@@ -421,10 +425,6 @@
   ('multiprocessing.popen_spawn_win32',
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\popen_spawn_win32.py',
-   'PYMODULE'),
-  ('subprocess',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\subprocess.py',
    'PYMODULE'),
   ('multiprocessing.spawn',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -747,13 +747,17 @@
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\platform.py',
    'PYMODULE'),
-  ('tracemalloc',
+  ('_py_abc',
    'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\tracemalloc.py',
+   'Studio\\Shared\\Python37_64\\lib\\_py_abc.py',
    'PYMODULE'),
   ('stringprep',
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\stringprep.py',
+   'PYMODULE'),
+  ('tracemalloc',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\tracemalloc.py',
    'PYMODULE'),
   ('getpass',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -775,10 +779,6 @@
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\http\\cookiejar.py',
    'PYMODULE'),
-  ('_py_abc',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\_py_abc.py',
-   'PYMODULE'),
   ('TKINTERCV2Setting',
    'D:\\PythonScript\\RPAScript\\OCRView\\TKINTERCV2Setting.py',
    'PYMODULE'),
@@ -791,43 +791,11 @@
   ('tomli_w._writer',
    'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\tomli_w\\_writer.py',
    'PYMODULE'),
-  ('tomli',
-   'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\tomli\\__init__.py',
-   'PYMODULE'),
-  ('tomli._parser',
-   'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\tomli\\_parser.py',
-   'PYMODULE'),
-  ('tomli._types',
-   'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\tomli\\_types.py',
-   'PYMODULE'),
-  ('tomli._re',
-   'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\tomli\\_re.py',
-   'PYMODULE'),
   ('ScrollableFrame',
    'D:\\PythonScript\\RPAScript\\OCRView\\ScrollableFrame.py',
    'PYMODULE'),
-  ('tkinter.ttk',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\tkinter\\ttk.py',
-   'PYMODULE'),
   ('CV2Setting',
    'D:\\PythonScript\\RPAScript\\OCRView\\CV2Setting.py',
-   'PYMODULE'),
-  ('tkinter.filedialog',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\tkinter\\filedialog.py',
-   'PYMODULE'),
-  ('tkinter.commondialog',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\tkinter\\commondialog.py',
-   'PYMODULE'),
-  ('tkinter.dialog',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\tkinter\\dialog.py',
-   'PYMODULE'),
-  ('tkinter.messagebox',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\tkinter\\messagebox.py',
    'PYMODULE'),
   ('numpy',
    'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\numpy\\__init__.py',
@@ -4116,6 +4084,26 @@
    'PYMODULE'),
   ('pdf2image.generators',
    'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\pdf2image\\generators.py',
+   'PYMODULE'),
+  ('tkinter.messagebox',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\tkinter\\messagebox.py',
+   'PYMODULE'),
+  ('tkinter.commondialog',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\tkinter\\commondialog.py',
+   'PYMODULE'),
+  ('tkinter.filedialog',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\tkinter\\filedialog.py',
+   'PYMODULE'),
+  ('tkinter.dialog',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\tkinter\\dialog.py',
+   'PYMODULE'),
+  ('tkinter.ttk',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\tkinter\\ttk.py',
    'PYMODULE'),
   ('tkinter',
    'C:\\Program Files (x86)\\Microsoft Visual '

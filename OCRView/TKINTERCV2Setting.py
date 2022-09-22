@@ -3,7 +3,7 @@ import csv
 from PIL import Image, ImageTk
 import subprocess
 
-# from tkinter import END, messagebox
+from tkinter import messagebox
 import os
 
 import OCRFlow as OCRF
@@ -45,8 +45,10 @@ class Application(tk.Frame):
         CW, CH, HCW, HCH, TKimg = IR[0], IR[1], IR[2], IR[3], IR[4]
         # ##############################################################################
         self.top = tk.Toplevel()  # サブWindow作成
-        self.top.bind("<Motion>", self.change)  # 透過ウィンドウにクリック関数bind
-        self.master.bind("<Motion>", self.change)
+        self.top.bind("<Motion>", self.change)  # 透過ウィンドウにマウス移動関数bind
+        self.master.bind("<Motion>", self.change)  # 下ウィンドウにマウス移動関数bind
+        self.top.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
+        self.master.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
         self.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
         # self.top.overrideredirect(True)  # ウィンドウのタイトル部分を消去
         self.top.geometry("1480x750+0+0")  # トップWindow表示位置指定
@@ -294,11 +296,11 @@ class Application(tk.Frame):
             if tomlurl != "":
                 self.master.destroy()
                 self.top.destroy()
-                tk.messagebox.showinfo("設定ファイル再読込", "設定ファイルを再読み込みします。")
+                messagebox.showinfo("設定ファイル再読込", "設定ファイルを再読み込みします。")
                 Main(Master, imgurl, tomlurl)
                 print("toml変更")
             else:
-                tk.messagebox.showinfo("確認", "設定ファイルを指定してください。")
+                messagebox.showinfo("確認", "設定ファイルを指定してください。")
                 self.top.deiconify()
         except:
             self.top.deiconify()
@@ -509,6 +511,16 @@ class Application(tk.Frame):
         return GetEntry
 
     # -------------------------------------------------------------------------------------
+    def click_close(self):
+        """
+        ウィンドウ×ボタンクリック
+        """
+        self.top.withdraw()
+        if messagebox.askokcancel("確認", "終了しますか？"):
+            self.top.destroy()
+            self.master.destroy()
+        else:
+            self.top.deiconify()
 
     # 以下関数######################################################################################
 
@@ -604,7 +616,7 @@ def NewLineCreate(self, selfC, HCW, HCH):
     global tagsList
     # メッセージボックス（OK・キャンセル）
     unmap(self)
-    MSG = tk.messagebox.askokcancel("確認", "新たに直線を描画しますか？")
+    MSG = messagebox.askokcancel("確認", "新たに直線を描画しますか？")
     if MSG is True:
         SLS = straightlinesetting(imgurl)
         if SLS[0] is True:
@@ -629,7 +641,7 @@ def NewLineCreate(self, selfC, HCW, HCH):
             Gra(selfC, SLS[1], SLS[2], HCW, HCH)  # 透過キャンバスに罫線描画
             map(self)
         else:
-            MSG = tk.messagebox.showinfo(
+            MSG = messagebox.showinfo(
                 "直線描画失敗", "直線描画に失敗しました。画像ファイル名に日本語が混じっている可能性があります。"
             )
             map(self)
@@ -844,11 +856,11 @@ def EnterP(self, HCW, HCH, selfmother):
     # ------------------------------------------------------
     # 条件テキストボックスの内容で処理分け-------------------------------------------------------------------
     if listintCheck(DaySet) is False:
-        tk.messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
+        messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
     elif listintCheck(MoneySet) is False:
-        tk.messagebox.showinfo("エラー", "金額表示列番号が不正です。数値以外を指定していないか確認してください。")
+        messagebox.showinfo("エラー", "金額表示列番号が不正です。数値以外を指定していないか確認してください。")
     elif listintCheck(ReplaceSet) is False:
-        tk.messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
+        messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
     else:
         for tagsListItem in tagsList:
             BB = self.bbox(tagsListItem[0][0])
@@ -884,7 +896,7 @@ def EnterP(self, HCW, HCH, selfmother):
         # メッセージボックス（OK・キャンセル）
         unmap(selfmother)
         if len(FYokoList) == len(SGEL):
-            MSG = tk.messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
+            MSG = messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
             if MSG is True:
                 map(selfmother)
                 ####################################################################################
@@ -916,18 +928,20 @@ def EnterP(self, HCW, HCH, selfmother):
                 )
                 if OM[0] is True:
                     unmap(selfmother)
-                    MSG = tk.messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
-                    subprocess.Popen(["start", str(OM[1])], shell=True)
-                    map(selfmother)
+                    MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
+                    selfmother.top.iconify()  # 透過ウィンドウ最小化
+                    selfmother.master.iconify()  # 下ウィンドウ最小化
+                    subprocess.Popen(["start", str(OM[1])], shell=True)  # excel起動
+                    # map(selfmother)
                 else:
                     unmap(selfmother)
-                    MSG = tk.messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
+                    MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
                     map(selfmother)
             else:
-                tk.messagebox.showinfo("中断", "処理を中断します。")
+                messagebox.showinfo("中断", "処理を中断します。")
                 map(selfmother)
         else:
-            tk.messagebox.showinfo("確認", "縦軸数と設定列名の数が一致しません。再確認してください。")
+            messagebox.showinfo("確認", "縦軸数と設定列名の数が一致しません。再確認してください。")
             map(selfmother)
 
 
