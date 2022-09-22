@@ -4,7 +4,8 @@ import numpy as np
 # from datetime import datetime
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 import cv2
-import math
+
+# import math
 from pathlib import Path
 from pdf2image import convert_from_path
 
