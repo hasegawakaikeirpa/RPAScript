@@ -436,6 +436,7 @@ class ViewGUI:
         self.str_dir.set(self.dir_path)
         self.file_list = self.control.SetDirlist(self.dir_path)
         self.combo_file["value"] = self.file_list
+        self.logger.debug("フォルダー選択完了")  # Log出力
 
     def event_updatefile(self):
         """
@@ -446,6 +447,7 @@ class ViewGUI:
         self.event_Searchsave()  # 編集履歴判定後上書き
         self.file_list = self.control.SetDirlist(self.dir_path)
         self.combo_file["value"] = self.file_list
+        self.logger.debug("ファイル選択完了")  # Log出力
 
     def event_selectfile(self, event):
         """
@@ -453,7 +455,6 @@ class ViewGUI:
         """
 
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        self.logger.debug("PNG変換起動")  # Log出力
         set_pos = self.combo_file.current()
         FN = self.control.get_file("set", set_pos=set_pos)
         if ".PDF" in FN or ".pdf" in FN:
@@ -461,21 +462,26 @@ class ViewGUI:
                 "確認", "PDFが選択されています。PNGに変換しますか？\n10ページ以上の処理は処理時間が長時間になる可能性があります。"
             )
             if msg is True:
+                self.logger.debug("PNG変換起動")  # Log出力
                 # プログレスバーの起動
                 PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
                 spd = self.control.pdf_image(FN, "png", 600, PBAR)
                 if spd is True:
                     msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
+                    self.logger.debug("PNG変換完了起動")  # Log出力
                 else:
                     msg = messagebox.askokcancel("確認", "PNG変換に失敗しました。")
+                    self.logger.debug("PNG変換失敗起動")  # Log出力
         else:
             self.control.DrawImage("set", set_pos=set_pos)
+            self.logger.debug("PNG変換起動")  # Log出力
 
     def event_prev(self):
         """
         prevボタンクリックイベント
         """
         self.event_Searchsave()  # 編集履歴判定後上書き
+        self.logger.debug("prev起動")  # Log出力
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         pos = self.control.DrawImage("prev")
         self.combo_file.set(self.file_list[pos])
@@ -485,6 +491,7 @@ class ViewGUI:
         nextボタンクリックイベント
         """
         self.event_Searchsave()  # 編集履歴判定後上書き
+        self.logger.debug("next起動")  # Log出力
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         pos = self.control.DrawImage("next")
         self.combo_file.set(self.file_list[pos])
