@@ -1,4 +1,0 @@
-[2022/04/12 12:50:33][DEBUG](MailDBUpdate.py:183) エクセルブックを読込 MainFlow d:\PythonScript\RPAScript\MailDBUpdate.py
-[2022/04/12 12:50:34][DEBUG](MailDBUpdate.py:203) Excelデータを履歴テーブルにインサート MainFlow d:\PythonScript\RPAScript\MailDBUpdate.py
-[2022/04/12 12:50:37][DEBUG](SQLConnect.py:151) MysqlColumnPic(テーブルのカラム情報をタプルで返す)完了: debug level log MysqlColumnPic d:\PythonScript\RPAScript\Function\SQLConnect.py
-[2022/04/12 12:50:37][DEBUG](SQLConnect.py:85) MySQLAct(SQL文を送信、結果をBooleanで返す)完了: debug level log MySQLAct d:\PythonScript\RPAScript\Function\SQLConnect.py

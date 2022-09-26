@@ -1,3 +1,0 @@
-[2022/03/30 08:19:54][DEBUG](PDFReadForList.py:217) \\Sv05121a\e\電子ファイル\メッセージボックス\2022-3\送信分受信通知内のPDF結合開始 <module> d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/03/30 08:22:57][DEBUG](PDFReadForList.py:203) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/10102/10102　受信通知2.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py
-[2022/03/30 08:23:04][DEBUG](PDFReadForList.py:203) //Sv05121a/e/電子ファイル/メッセージボックス/2022-3/送信分受信通知/10107/ミロク送信分/10107_秋本 尚孝_R 4_固定・償却_全資産（電）.pdf_1ページ目取得失敗 MergeFilsT d:\PythonScript\RPAScript\PDFReadForList.py

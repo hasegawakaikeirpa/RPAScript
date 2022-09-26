@@ -15,6 +15,11 @@ from TKINTERCV2Setting import Main
 # プログレスバーの起動
 # PBAR = PB.ProgressBar(tk.Tk())
 
+import logging.config
+from platform import machine, node, platform, processor, release, system, version
+from socket import gethostbyname, gethostname
+from uuid import getnode
+
 # exe化コマンド↓
 # pyinstaller ViewGUI.py --onefile --onedir --noconsole --clean --icon=hasegawa.ico
 # 上記コマンドでできた[dist]→[ViewGUI]フォルダ内に
@@ -31,6 +36,23 @@ class ViewGUI:
         print("#########################################################")
         print(os.getcwd())
         print("#########################################################")
+        # logger設定-----------------------------------------------------------------------------------------------------
+        logging.config.fileConfig(os.getcwd() + r"\LogConf\logging_debug.conf")
+        self.logger = logging.getLogger(__name__)
+        # ---------------------------------------------------------------------------------------------------------------
+        # 初回Log
+        self.logger.debug(f"Network: {node()}")  # ネットワーク名
+        self.logger.debug(f"Machine: {machine()}")  # 機種
+        self.logger.debug(f"Processor: {processor()}")  # プロセッサ名 (CPU)
+        self.logger.debug(f"Platform: {platform() }")  # プラットフォーム (OS) 情報
+        self.logger.debug(f"System: {system() }")  # OS名
+        self.logger.debug(f"Release: {release()}")  # リリース情報
+        self.logger.debug(f"Version: {version()}")  # バージョン情報
+        self.logger.debug(f"MAC Address: {getnode():_X}")  # MACアドレス
+        self.logger.debug(f"Host name: {gethostname()}")  # ホスト名
+        self.logger.debug(f"IP Address: {gethostbyname(gethostname())}")  # IPアドレス
+        self.logger.debug("ViewGUI起動")  # Log出力
+        # ---------------------------------------------------------------------------------------------------------------
         global Sval  # スライダー初期値
         Sval = 0  # スライダー初期値
         # Controller Class生成
@@ -268,12 +290,14 @@ class ViewGUI:
         # -------------------------------------------------------------------
         self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
         self.control.model.stock_url = ""  # 一時保存URLをリセット
+        self.logger.debug("ViewGUI起動完了")  # Log出力
 
     # Event Callback----------------------------------------------------------------------
     def FileDelete(self):
         """
         ファイル削除ボタンクリックイベント
         """
+        self.logger.debug("FileDelete関数起動")  # Log出力
         F_u = self.entry_dir.get() + r"\\" + self.combo_file.get()
         msg = messagebox.askokcancel("確認", F_u + "を削除しますか？")
         if msg is True:
@@ -298,6 +322,7 @@ class ViewGUI:
         SubMenu起動ボタン関数
         """
         # menu作成######################################################################
+        self.logger.debug("SubMenuOpen関数起動")  # Log出力
         # サブフレーム起動確認
         try:
             if self.menuwin.widgetName == "toplevel":
@@ -315,15 +340,6 @@ class ViewGUI:
             # フレーム作成
             self.menuwinFrame = tk.Frame(self.menuwin, height=360, width=180)
             self.menuwinFrame.pack(fill=tk.BOTH, expand=True)
-            # # 　ボタン生成------------------------------------------------------------------
-            # menubutton1 = tk.Button(
-            #     self.menuwinFrame,
-            #     text="線抽出自動回転",
-            #     width=50,
-            #     command=self.menubutton1_click,
-            # )
-            # menubutton1.grid(row=1, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
-            # # ------------------------------------------------------------------------------
             # 　ラベル生成--------------------------------------------------------------------
             label_tb1 = tk.Label(self.menuwinFrame, text="[ノイズ除去値]")
             label_tb1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
@@ -340,23 +356,6 @@ class ViewGUI:
                 command=lambda: self.menubutton2_click(textbox1),
             )
             menubutton2.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
-            # # 　ラベル生成--------------------------------------------------------------------
-            # label_tb1 = tk.Label(self.menuwinFrame, text="[線形基準値]")
-            # label_tb1.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
-            # # ------------------------------------------------------------------------------
-            # # 　テキストボックス生成---------------------------------------------------------
-            # textbox2 = tk.Entry(self.menuwinFrame, text="1.41421356", width=15)
-            # textbox2.grid(row=3, column=2, padx=5, pady=5, sticky=tk.W)
-            # # ------------------------------------------------------------------------------
-            # # 　ボタン生成------------------------------------------------------------------
-            # menubutton3 = tk.Button(
-            #     self.menuwinFrame,
-            #     text="線形削除",
-            #     width=20,
-            #     command=lambda: self.menubutton3_click(textbox2),
-            # )
-            # menubutton3.grid(row=3, column=3, padx=5, pady=5, sticky=tk.W)
-            # # ------------------------------------------------------------------------------
 
         # ##############################################################################
 
@@ -365,7 +364,7 @@ class ViewGUI:
         リサイズ処理(未使用2022/08/08時点)
         """
         set_pos = self.combo_file.current()
-
+        self.logger.debug("Resize関数起動")  # Log出力
         try:
             ReList = [int(Resizewidth.get()), int(Resizeheight.get())]
             msg = messagebox.askokcancel("確認", "リサイズを行いますか？")
@@ -376,26 +375,14 @@ class ViewGUI:
                 elif SCM == "Err":
                     messagebox.showinfo("確認", "編集中にエラーが発生しました。")
         except:
-            print("Resize起動")
-
-    # def menubutton1_click(self):
-    #     """
-    #     サブメニュー内線抽出自動回転ボタン処理
-    #     """
-    #     set_pos = self.combo_file.current()
-    #     msg = messagebox.askokcancel("確認", "線抽出自動回転を適用しますか？")
-    #     if msg is True:
-    #         SCM = self.control.MenuFuncRun("LineLotate", "", set_pos=set_pos)
-    #         if SCM == "画像無":
-    #             messagebox.showinfo("確認", "画像を指定して下さい。")
-    #         elif SCM == "Err":
-    #             messagebox.showinfo("確認", "編集中にエラーが発生しました。")
+            self.logger.debug("Resize関数Err")  # Log出力
 
     def menubutton2_click(self, textbox1):
         """
         サブメニュー内ノイズ除去ボタン処理
         """
         set_pos = self.combo_file.current()
+        self.logger.debug("ノイズ除去関数起動")  # Log出力
         try:
             noisepar = int(textbox1.get())
             if noisepar % 2 == 0:
@@ -413,27 +400,16 @@ class ViewGUI:
                     if SCM == "画像無":
                         messagebox.showinfo("確認", "画像を指定して下さい。")
                     elif SCM == "Err":
+                        self.logger.debug("ノイズ除去関数control側Err")  # Log出力
                         messagebox.showinfo("確認", "編集中にエラーが発生しました。")
         except:
             msg = messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
-
-    # def menubutton3_click(self, textbox2):
-    #     """
-    #     サブメニュー内線形削除ボタン処理
-    #     """
-    #     set_pos = self.combo_file.current()
-    #     msg = messagebox.askokcancel("確認", "線形削除を適用しますか？(undoで戻せません)")
-    #     if msg is True:
-    #         SCM = self.control.MenuFuncRun("LineDelete", textbox2, set_pos=set_pos)
-    #         if SCM == "画像無":
-    #             messagebox.showinfo("確認", "画像を指定して下さい。")
-    #         elif SCM == "Err":
-    #             messagebox.showinfo("確認", "編集中にエラーが発生しました。")
 
     def button_LeftLotate(self, event=None):
         """
         左回転ボタン処理
         """
+        self.logger.debug("左回転関数起動")  # Log出力
         self.event_Searchsave()  # 編集履歴判定後上書き
         cmd = "rotateFree-" + str(1)
         self.control.EditImage(cmd)
@@ -442,6 +418,7 @@ class ViewGUI:
         """
         右回転ボタン処理
         """
+        self.logger.debug("右回転関数起動")  # Log出力
         self.event_Searchsave()  # 編集履歴判定後上書き
         cmd = "rotateFree-" + str(-1)
         self.control.EditImage(cmd)
@@ -451,6 +428,7 @@ class ViewGUI:
         フォルダー選択ボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("フォルダー選択起動")  # Log出力
         self.event_Searchsave()  # 編集履歴判定後上書き
         self.dir_path = filedialog.askdirectory(
             initialdir=self.dir_path, mustexist=True
@@ -464,6 +442,7 @@ class ViewGUI:
         ファイル選択ウィンドウクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("ファイル選択起動")  # Log出力
         self.event_Searchsave()  # 編集履歴判定後上書き
         self.file_list = self.control.SetDirlist(self.dir_path)
         self.combo_file["value"] = self.file_list
@@ -474,6 +453,7 @@ class ViewGUI:
         """
 
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("PNG変換起動")  # Log出力
         set_pos = self.combo_file.current()
         FN = self.control.get_file("set", set_pos=set_pos)
         if ".PDF" in FN or ".pdf" in FN:
