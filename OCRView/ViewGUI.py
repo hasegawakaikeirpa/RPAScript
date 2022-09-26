@@ -436,7 +436,7 @@ class ViewGUI:
         self.str_dir.set(self.dir_path)
         self.file_list = self.control.SetDirlist(self.dir_path)
         self.combo_file["value"] = self.file_list
-        self.logger.debug("フォルダー選択完了")  # Log出力
+        self.logger.debug(self.dir_path + "_フォルダー選択完了")  # Log出力
 
     def event_updatefile(self):
         """
@@ -447,7 +447,6 @@ class ViewGUI:
         self.event_Searchsave()  # 編集履歴判定後上書き
         self.file_list = self.control.SetDirlist(self.dir_path)
         self.combo_file["value"] = self.file_list
-        self.logger.debug("ファイル選択完了")  # Log出力
 
     def event_selectfile(self, event):
         """
@@ -468,13 +467,13 @@ class ViewGUI:
                 spd = self.control.pdf_image(FN, "png", 600, PBAR)
                 if spd is True:
                     msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
-                    self.logger.debug("PNG変換完了起動")  # Log出力
+                    self.logger.debug(FN + "_PNG変換完了起動")  # Log出力
                 else:
                     msg = messagebox.askokcancel("確認", "PNG変換に失敗しました。")
-                    self.logger.debug("PNG変換失敗起動")  # Log出力
+                    self.logger.debug(FN + "_PNG変換失敗起動")  # Log出力
         else:
             self.control.DrawImage("set", set_pos=set_pos)
-            self.logger.debug("PNG変換起動")  # Log出力
+            self.logger.debug(FN + "_ファイル選択後イベント完了")  # Log出力
 
     def event_prev(self):
         """
@@ -501,6 +500,7 @@ class ViewGUI:
         画像回転変更イベント
         """
         self.event_Searchsave()  # 編集履歴判定後上書き
+        self.logger.debug("画像回転変更起動")  # Log出力
         val = self.radio_intvar1.get()
         cmd = "rotate-" + str(val)
         self.control.EditImage(cmd)
@@ -511,6 +511,7 @@ class ViewGUI:
         画像反転イベント
         """
         self.event_Searchsave()  # 編集履歴判定後上書き
+        self.logger.debug("画像反転変更起動")  # Log出力
         val = self.radio_intvar2.get()
         cmd = "flip-" + str(val)
         self.control.EditImage(cmd)
@@ -521,6 +522,7 @@ class ViewGUI:
         Tryボタンイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("Tryボタン起動")  # Log出力
         if self.control.model.stock_url != "":
             if messagebox.askokcancel("確認", "編集履歴が残っています。上書きしますか？"):
                 os.remove(self.control.model.stock_url)
@@ -533,6 +535,7 @@ class ViewGUI:
         Doneボタンイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("Doneボタン起動")  # Log出力
         if self.clip_enable:
             self.control.EditImage("clip_done")
             self.clip_enable = False
@@ -542,6 +545,7 @@ class ViewGUI:
         Eraceボタンイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("Eraceボタン起動")  # Log出力
         if self.clip_enable:
             self.control.EditImage("clip_Erace")
             self.clip_enable = False
@@ -551,6 +555,7 @@ class ViewGUI:
         画像処理Saveイベント
         """
         print(sys._getframe().f_code.co_name, event.x, event.y)
+        self.logger.debug("画像処理Save起動")  # Log出力
         if self.clip_enable:
             self.control.DrawRectangle("clip_start", event.y, event.x)
 
@@ -559,6 +564,7 @@ class ViewGUI:
         画像処理Undoイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("画像処理Undo起動")  # Log出力
         if self.control.model.stock_url != "":
             os.remove(self.control.model.stock_url)
             self.control.model.stock_url = ""
@@ -570,6 +576,7 @@ class ViewGUI:
         キャンバス画像左クリック範囲指定で終端まで確定後
         """
         print(sys._getframe().f_code.co_name, event.x, event.y)
+        self.logger.debug("画像範囲選択イベント完了")  # Log出力
         self.event_Searchsave()  # 編集履歴判定後上書き
         if self.clip_enable:
             self.control.DrawRectangle("clip_end", event.y, event.x)
@@ -579,6 +586,7 @@ class ViewGUI:
         Saveボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("Saveボタン起動")  # Log出力
         # 一時保存ファイルを確認
         if self.control.model.stock_url != "":
             os.remove(self.control.model.stock_url)
@@ -597,6 +605,7 @@ class ViewGUI:
         OverSaveボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("OverSaveボタン起動")  # Log出力
         # 一時保存ファイルを確認
         if self.control.model.stock_url != "":
             if messagebox.askokcancel("確認", "編集履歴が残っています。上書きしますか？"):
@@ -606,9 +615,10 @@ class ViewGUI:
 
     def event_Oversave(self):
         """
-        OverSaveボタンクリックイベント
+        ファイル削除クリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("ファイル削除起動")  # Log出力
         # 一時保存ファイルを確認
         if self.control.model.stock_url != "":
             os.remove(self.control.model.stock_url)
@@ -620,6 +630,7 @@ class ViewGUI:
         Undoボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("Undoボタンクリック起動")  # Log出力
         # 一時保存ファイルを確認
         if self.control.model.stock_url != "":
             os.remove(self.control.model.stock_url)
@@ -633,6 +644,7 @@ class ViewGUI:
         OCROpenボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("OCR処理起動")  # Log出力
         self.event_Searchsave()  # 編集履歴判定後上書き
         FDir = self.entry_dir.get()
         FN = self.combo_file.get()
@@ -646,13 +658,18 @@ class ViewGUI:
             self.tomlPath = filedialog.askopenfilename(
                 filetypes=typ, initialdir=self.dir_path
             )
-            Main(main_window, Imgurl, self.tomlPath)
+            try:
+                Main(main_window, Imgurl, self.tomlPath, self.logger)
+                self.logger.debug("OCR処理完了")  # Log出力
+            except:
+                self.logger.debug("OCR処理tomlファイル選択時Err")  # Log出力
 
     def click_close(self):
         """
         ウィンドウ×ボタンクリック
         """
         if messagebox.askokcancel("確認", "終了しますか？"):
+            self.logger.debug("OCRViewClose完了")  # Log出力
             self.window_root.destroy()
 
     # ------------------------------------------------------------------------------------

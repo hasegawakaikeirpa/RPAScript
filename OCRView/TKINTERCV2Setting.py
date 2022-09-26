@@ -32,6 +32,7 @@ class Application(tk.Frame):
         # Windowの初期設定を行う。
         super().__init__(master)
         # Windowの画面サイズを設定する。
+        G_logger.debug("TKINTERCV2Setting_Application起動")  # Log出力
         # geometryについて : https://kuroro.blog/python/rozH3S2CYE0a0nB3s2QL/
         self.master.geometry("1480x750+0+0")  # Window表示位置指定
         # 画像の読込#####################################################################
@@ -71,20 +72,20 @@ class Application(tk.Frame):
         # ##############################################################################
         # 配置
         # サイドメニューフレーム##########################################################
-        frame0 = tk.Frame(
+        self.frame0 = tk.Frame(
             self.top,
             bg="snow",
             width=5,
             bd=2,
             relief=tk.GROOVE,
         )
-        frame0.grid(row=0, column=1, sticky=tk.N)
-        # frame0.pack(side=tk.RIGHT, anchor=tk.N)
-        frame0.propagate(0)
+        self.frame0.grid(row=0, column=1, sticky=tk.N)
+        # self.frame0.pack(side=tk.RIGHT, anchor=tk.N)
+        self.frame0.propagate(0)
         #################################################################################
         # サイドメニュー内フレーム########################################################
         Tframe = tk.Frame(
-            frame0,
+            self.frame0,
             bg="snow",
             bd=2,
             relief=tk.GROOVE,
@@ -121,8 +122,8 @@ class Application(tk.Frame):
         self.tomlbutton.grid(row=3, column=0, columnspan=2, sticky=tk.N)
         #################################################################################
         # 列名設定フレーム################################################################
-        tk.Label(frame0, text="出力列名設定").grid(row=1, column=0)  # フレームテキスト
-        self.SF = SF.ScrollableFrame(frame0, bar_x=False)
+        tk.Label(self.frame0, text="出力列名設定").grid(row=1, column=0)  # フレームテキスト
+        self.SF = SF.ScrollableFrame(self.frame0, bar_x=False)
         self.SF.grid(sticky=tk.W + tk.E)  # , ipadx=500, ipady=100)
         # エントリーウィジェットマネージャを初期化
         self.Entries = []  # エントリーウィジェットのインスタンス
@@ -141,7 +142,7 @@ class Application(tk.Frame):
         #################################################################################
         # サイドメニュー内変換設定フレーム#################################################
         Setframe = tk.Frame(
-            frame0,
+            self.frame0,
             bg="snow",
             relief=tk.GROOVE,
             width=5,
@@ -181,11 +182,13 @@ class Application(tk.Frame):
         # self.ReplaceStr.insert(0, Banktoml["Setframe"]["ReplaceStr"])
         self.ReplaceStr.bind("<Return>", tomlreturn)
         self.ReplaceStr.bind("<Tab>", tomlreturn)
+        self.ReplaceStr.bind("<Double-1>", self.tomlFrameOpen)
+
         self.ReplaceStr.grid(row=3, column=1)
         #################################################################################
         # サイドメニュー内ボタンフレーム###################################################
         frame = tk.Frame(
-            frame0,
+            self.frame0,
             bg="snow",
             relief=tk.GROOVE,
             width=5,
@@ -282,8 +285,166 @@ class Application(tk.Frame):
         self.InportIMG()
         # ##############################################################################
         Entries = self.Entries
+        G_logger.debug("TKINTERCV2Setting_Application起動完了")  # Log出力
 
     # 以下self関数###################################################################################
+    def tomlFrameOpen(self, event):
+        MSG = messagebox.askokcancel("確認", "置換設定ウィンドウを起動します。")
+        if MSG is True:
+            self.topFrame.grid_remove()
+            self.frame0.grid_remove()
+            print(self.top.geometry())
+            CWgeo = int(self.top.geometry().split("x")[0])
+            CHgeo = int(self.top.geometry().split("x")[1].split("+")[0])
+            self.topRepFrame = tk.Frame(
+                self.top,
+                bg="snow",
+                height=CHgeo,
+                width=CWgeo,
+                relief=tk.GROOVE,
+                bd=2,
+            )
+            self.BRS = Banktoml["Setframe"]["ReplaceStr"]
+            self.topRepFrame.grid(
+                row=0, column=0, sticky=tk.NW
+            )  # , ipadx=500, ipady=100)
+            self.topRepSF = SF.SubScrollableFrame(
+                self.topRepFrame, CWgeo, CHgeo, len(self.BRS)
+            )
+            self.topRepSF.grid(row=0, column=0, sticky=tk.W)  # , ipadx=500, ipady=100)
+            self.BRSTxt = []
+            self.BRSPlus = []
+            self.BRSDel = []
+            i = 0
+            for BRSItem in self.BRS:
+                # テキストボックス----------------------------------------------------
+                txt = tk.Entry(
+                    self.topRepSF.scrollable_frame, width=int(CWgeo / 10), bg="snow"
+                )
+                txt.insert(0, BRSItem)
+                txt.grid(row=i, column=0, sticky=tk.W)
+                self.BRSTxt.insert(i, txt)
+                # -------------------------------------------------------------------
+                # ボタン--------------------------------------------------------------
+                btn = tk.Label(
+                    self.topRepSF.scrollable_frame,
+                    text="+",
+                    fg="#33ff33",
+                    font=("Arial Black", 20),
+                )
+                # 追加するボタンのようなラベルにクリックイベントを設定
+                btn.bind(
+                    "<1>",
+                    lambda event, id=self.index: self.tomlFrameOpen_click(event, "+"),
+                )
+                btn.grid(row=i, column=1)
+                self.BRSPlus.insert(i, btn)
+                # -------------------------------------------------------------------
+                # ボタン--------------------------------------------------------------
+                btn = tk.Label(
+                    self.topRepSF.scrollable_frame,
+                    text="−",
+                    fg="#ff3333",
+                    font=("Arial Black", 20),
+                )
+                # 追加するボタンのようなラベルにクリックイベントを設定
+                btn.bind(
+                    "<1>",
+                    lambda event, id=self.index: self.tomlFrameOpen_click(event, "−"),
+                )
+                btn.grid(row=i, column=2)
+                self.BRSDel.insert(i, btn)
+                # -------------------------------------------------------------------
+                i += 1
+            # 確定ボタン--------------------------------------------------------------
+
+            btn = tk.Button(
+                self.topRepFrame,
+                text="確定",
+                fg="Snow",
+                command=self.tomlFrameClose,
+                bg="steelblue3",
+                font=("Arial Black", 20),
+            )
+            btn.grid(row=0, column=3, sticky=tk.NSEW)
+            # # ----------------------------------------------------------
+            # ReplaceSet = tomlEntries[2].get()
+            # if "," not in ReplaceSet:
+            #     l_s = []
+            #     l_s.append(ReplaceSet)
+            #     Banktoml["Setframe"]["ReplaceSet"] = l_s
+            # else:
+            #     l_s = ReplaceSet.split(",")
+            #     Banktoml["Setframe"]["ReplaceSet"] = l_s
+            # # ----------------------------------------------------------
+            # ReplaceStr = tomlEntries[3].get()
+            # if "," not in ReplaceStr:
+            #     l_s = []
+            #     l_s.append(ReplaceStr)
+            #     Banktoml["Setframe"]["ReplaceStr"] = l_s
+            # else:
+            #     l_s = ReplaceStr.split(",")
+            #     Banktoml["Setframe"]["ReplaceStr"] = l_s
+            # toml_c.dump_toml(Banktoml, tomlurl)
+            # self.top.wm_deiconify()
+            # G_logger.debug("toml変換設定の更新完了")  # Log出力
+
+    # ---------------------------------------------------------------------------------------------
+    def tomlFrameClose(self):
+        print("")
+
+    # ---------------------------------------------------------------------------------------------
+    def tomlFrameOpen_click(self, event, Fl):
+        w_Name = event.widget._name
+        if Fl == "−":
+            b = 0
+            for B_i in self.BRSDel:
+                if B_i._name == w_Name:
+                    self.BRSTxt[b].destroy()
+                    self.BRSPlus[b].destroy()
+                    self.BRSDel[b].destroy()
+                    self.BRSTxt.pop(b)
+                    self.BRSPlus.pop(b)
+                    self.BRSDel.pop(b)
+                b += 1
+        elif Fl == "+":
+            i = len(self.BRSTxt)
+            # テキストボックス----------------------------------------------------
+            txt = tk.Entry(self.topRepSF.scrollable_frame, width=10, bg="snow")
+            txt.insert(0, "")
+            txt.grid(row=i, column=0)
+            self.BRSTxt.insert(i, txt)
+            # -------------------------------------------------------------------
+            # ボタン--------------------------------------------------------------
+            btn = tk.Label(
+                self.topRepSF.scrollable_frame,
+                text="+",
+                fg="#33ff33",
+                font=("Arial Black", 20),
+            )
+            # 追加するボタンのようなラベルにクリックイベントを設定
+            btn.bind(
+                "<1>",
+                lambda event, id=self.index: self.tomlFrameOpen_click(event, "+"),
+            )
+            btn.grid(row=i, column=1)
+            self.BRSPlus.insert(i, btn)
+            # -------------------------------------------------------------------
+            # ボタン--------------------------------------------------------------
+            btn = tk.Label(
+                self.topRepSF.scrollable_frame,
+                text="−",
+                fg="#ff3333",
+                font=("Arial Black", 20),
+            )
+            # 追加するボタンのようなラベルにクリックイベントを設定
+            btn.bind(
+                "<1>",
+                lambda event, id=self.index: self.tomlFrameOpen_click(event, "−"),
+            )
+            btn.grid(row=i, column=2)
+            self.BRSDel.insert(i, btn)
+
     # ---------------------------------------------------------------------------------------------
     def ChangeToml(self):
         """
@@ -297,12 +458,15 @@ class Application(tk.Frame):
                 self.master.destroy()
                 self.top.destroy()
                 messagebox.showinfo("設定ファイル再読込", "設定ファイルを再読み込みします。")
-                Main(Master, imgurl, tomlurl)
+                G_logger.debug("tomlファイル再読込")  # Log出力
+                Main(Master, imgurl, tomlurl, G_logger)
+                G_logger.debug("tomlファイル再読込完了")  # Log出力
                 print("toml変更")
             else:
                 messagebox.showinfo("確認", "設定ファイルを指定してください。")
                 self.top.deiconify()
         except:
+            G_logger.debug("tomlファイル変更Err")  # Log出力
             self.top.deiconify()
 
     # ---------------------------------------------------------------------------------------------
@@ -321,6 +485,8 @@ class Application(tk.Frame):
         global TKimg
         global imgurl
         global CW, CH
+
+        G_logger.debug("下ウィンドウに画像をリサイズして配置開始")  # Log出力
         img = Image.open(imgurl)
         img = img.resize((CW, CH))  # 画像リサイズ
         self.back = tk.Canvas(self.master, background="white", width=CW, height=CH)
@@ -361,6 +527,8 @@ class Application(tk.Frame):
         列名設定項目追加ボタン処理
         """
         global Entries
+
+        G_logger.debug("列名設定項目追加ボタン処理開始")  # Log出力
         # 追加する位置
         wn = event.widget
         si_r = 0
@@ -382,6 +550,8 @@ class Application(tk.Frame):
         列名設定項目削除ボタン処理
         """
         global Entries
+
+        G_logger.debug("列名設定項目削除ボタン処理開始")  # Log出力
         id = 0
         for SRI in self.removeEntries:
             if SRI == event.widget:
@@ -410,6 +580,8 @@ class Application(tk.Frame):
         """
         列名設定項目を再配置
         """
+
+        G_logger.debug("列名設定項目を再配置開始")  # Log出力
         # エントリーウィジェットマネージャを参照して再配置
         for i in range(len(self.indexes)):
             self.Entries[i].grid(column=0, row=i)
@@ -453,12 +625,15 @@ class Application(tk.Frame):
                 row=len(self.indexes), column=0, columnspan=4, sticky=tk.E + tk.W
             )
             self.SF.canvas.configure(xscrollcommand=self.SF.scrollbar_x.set)
+        G_logger.debug("列名設定項目を再配置完了")  # Log出力
 
     # -------------------------------------------------------------------------------------
     def createEntry(self, next, bar_x=False, bar_y=True):
         """
         列名設定項目を作成して再配置
         """
+
+        G_logger.debug("列名設定項目を作成して再配置開始")  # Log出力
         # 最初のエントリーウィジェットを追加
         self.Entries.insert(
             next, tk.Entry(self.SF.scrollable_frame, width=35, bg="snow")
@@ -502,6 +677,7 @@ class Application(tk.Frame):
         列名設定項目取得関数
         """
         GetEntry = []
+        G_logger.debug("列名設定項目取得関数開始")  # Log出力
 
         # 全てのエントリーウィジェットの内容を配列化
         for i in range(len(self.indexes)):
@@ -519,8 +695,10 @@ class Application(tk.Frame):
         if messagebox.askokcancel("確認", "終了しますか？"):
             self.top.destroy()
             self.master.destroy()
+            G_logger.debug("TKINTERCV2SettingClose完了")  # Log出力
         else:
             self.top.deiconify()
+            G_logger.debug("TKINTERCV2SettingClose失敗")  # Log出力
 
     # 以下関数######################################################################################
 
@@ -536,8 +714,9 @@ def ColumnTomlIn(self):
             TEntries.append(item.get())
         Banktoml["ColList"]["List"] = TEntries
         toml_c.dump_toml(Banktoml, tomlurl)
+        G_logger.debug("toml列名設定の更新完了")  # Log出力
     except:
-        print("")
+        G_logger.debug("toml列名設定の更新Err")  # Log出力
 
 
 # ---------------------------------------------------------------------------------------------
@@ -584,6 +763,7 @@ def tomlreturn(self):
         l_s = ReplaceStr.split(",")
         Banktoml["Setframe"]["ReplaceStr"] = l_s
     toml_c.dump_toml(Banktoml, tomlurl)
+    G_logger.debug("toml変換設定の更新完了")  # Log出力
 
 
 # ---------------------------------------------------------------------------------------------
@@ -618,6 +798,7 @@ def NewLineCreate(self, selfC, HCW, HCH):
     unmap(self)
     MSG = messagebox.askokcancel("確認", "新たに直線を描画しますか？")
     if MSG is True:
+        G_logger.debug("新規直線描画処理開始")  # Log出力
         SLS = straightlinesetting(imgurl)
         if SLS[0] is True:
             ####################################################################################
@@ -641,6 +822,7 @@ def NewLineCreate(self, selfC, HCW, HCH):
             Gra(selfC, SLS[1], SLS[2], HCW, HCH)  # 透過キャンバスに罫線描画
             map(self)
         else:
+            G_logger.debug("新規直線描画失敗")  # Log出力
             MSG = messagebox.showinfo(
                 "直線描画失敗", "直線描画に失敗しました。画像ファイル名に日本語が混じっている可能性があります。"
             )
@@ -688,6 +870,7 @@ def StLine(canvastop, CW, CH):
     縦直線追加ボタン処理
     """
     TName = "Line" + str(len(tagsList) + 1)
+    G_logger.debug("縦直線追加ボタン処理開始")  # Log出力
     canvastop.create_line(
         CW - 50,
         0,
@@ -711,6 +894,7 @@ def StWLine(canvastop, CW, CH):
     横直線追加ボタン処理
     """
     TName = "Line" + str(len(tagsList) + 1)
+    G_logger.debug("横直線追加ボタン処理開始")  # Log出力
     canvastop.create_line(
         0,
         CH - 50,
@@ -792,6 +976,7 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
         ]
         tagsList.append([tagsListItem, BSS])
     print("直線描画完了")
+    G_logger.debug("透過キャンバス(上ウィンドウ)に罫線描画処理完了")  # Log出力
 
 
 # ---------------------------------------------------------------------------------------------
@@ -815,6 +1000,7 @@ def EnterP(self, HCW, HCH, selfmother):
     global tagsList
     global MaxW, MaxH
 
+    G_logger.debug("確定ボタンクリック処理開始")  # Log出力
     FList = []
     FYokoList = []
     FTateList = []
@@ -916,6 +1102,7 @@ def EnterP(self, HCW, HCH, selfmother):
                     writer.writerow(FTateList)
                 ####################################################################################
                 print("csv保存完了")
+                G_logger.debug("縦横リスト書出完了")  # Log出力
                 OM = OCRF.Main(
                     imgurl,
                     FYokoList,
@@ -925,8 +1112,10 @@ def EnterP(self, HCW, HCH, selfmother):
                     MoneySet,
                     ReplaceSet,
                     ReplaceStr,
+                    G_logger,
                 )
                 if OM[0] is True:
+                    G_logger.debug("GoogleVisionAPI完了")  # Log出力
                     unmap(selfmother)
                     MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
                     selfmother.top.iconify()  # 透過ウィンドウ最小化
@@ -934,13 +1123,16 @@ def EnterP(self, HCW, HCH, selfmother):
                     subprocess.Popen(["start", str(OM[1])], shell=True)  # excel起動
                     # map(selfmother)
                 else:
+                    G_logger.debug("GoogleVisionAPI抽出失敗")  # Log出力
                     unmap(selfmother)
                     MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
                     map(selfmother)
             else:
+                G_logger.debug("GoogleVisionAPI抽出中断")  # Log出力
                 messagebox.showinfo("中断", "処理を中断します。")
                 map(selfmother)
         else:
+            G_logger.debug("GoogleVisionAPI縦軸数と設定列名数不一致。")  # Log出力
             messagebox.showinfo("確認", "縦軸数と設定列名の数が一致しません。再確認してください。")
             map(selfmother)
 
@@ -972,6 +1164,7 @@ def LineDelete(self):
     global tagsList
     TName = "Line" + str(id1[0])
     self.delete(TName)
+    G_logger.debug(TName + "_削除完了")  # Log出力
     r = 0
     for tagsListItem in tagsList:
         if TName == tagsListItem[0][0]:
@@ -1006,6 +1199,7 @@ def click1(event):
     y2 = event.y
     id1 = event.widget.find_closest(x2, y2)
     TName = "Line" + str(id1[0])
+    G_logger.debug(TName + "_縦直線描画処理完了")  # Log出力
     txt.insert(tk.END, TName)
     x1 = x2
     y1 = y2
@@ -1031,19 +1225,22 @@ def drag1(event):
     y1 = y2
 
 
-def Main(MUI, US, turl):
+# ---------------------------------------------------------------------------------------------
+def Main(MUI, US, turl, logger):
     """
     呼出関数
     """
     global Master, imgurl
     global readcsv1, readcsv2
-    global URL
+    global URL, G_logger
     global Banktoml, tomlurl
+
     Master = MUI
     imgurl = US.replace(r"\\\\", r"\\")
     URL = os.getcwd()
     Master.withdraw()
     tomlurl = turl
+    G_logger = logger
     # imgurl = URL + r"\TKInterGUI\OCR0.png"
     # toml読込------------------------------------------------------------------------------
     with open(turl, encoding="utf-8") as f:
@@ -1100,6 +1297,13 @@ def Main(MUI, US, turl):
 
 # ------------------------------------------------------------------------------------------
 if __name__ == "__main__":
+    import logging.config
+
+    # logger設定-----------------------------------------------------------------------------------------------------
+    logging.config.fileConfig(os.getcwd() + r"\LogConf\logging_debug.conf")
+    G_logger = logging.getLogger(__name__)
+    # ---------------------------------------------------------------------------------------------------------------
+
     global Banktoml, tomlurl
     URL = os.getcwd()
     imgurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.png"

@@ -1,11 +1,42 @@
 ('D:\\PythonScript\\RPAScript\\OCRView\\build\\ViewGUI\\PYZ-00.pyz',
- [('subprocess',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\subprocess.py',
+ [('_distutils_hack',
+   'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\_distutils_hack\\__init__.py',
    'PYMODULE'),
-  ('selectors',
+  ('importlib.util',
    'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\selectors.py',
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\util.py',
+   'PYMODULE'),
+  ('contextlib',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\contextlib.py',
+   'PYMODULE'),
+  ('importlib._bootstrap_external',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\_bootstrap_external.py',
+   'PYMODULE'),
+  ('importlib._bootstrap',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\_bootstrap.py',
+   'PYMODULE'),
+  ('importlib.abc',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\abc.py',
+   'PYMODULE'),
+  ('importlib.machinery',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\machinery.py',
+   'PYMODULE'),
+  ('importlib',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\importlib\\__init__.py',
+   'PYMODULE'),
+  ('multiprocessing.popen_spawn_posix',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\popen_spawn_posix.py',
+   'PYMODULE'),
+  ('multiprocessing.semaphore_tracker',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\semaphore_tracker.py',
    'PYMODULE'),
   ('threading',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -14,14 +45,6 @@
   ('_threading_local',
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\_threading_local.py',
-   'PYMODULE'),
-  ('contextlib',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\contextlib.py',
-   'PYMODULE'),
-  ('signal',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\signal.py',
    'PYMODULE'),
   ('_strptime',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -55,40 +78,9 @@
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\struct.py',
    'PYMODULE'),
-  ('_distutils_hack',
-   'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\_distutils_hack\\__init__.py',
-   'PYMODULE'),
-  ('importlib.util',
+  ('signal',
    'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\util.py',
-   'PYMODULE'),
-  ('importlib._bootstrap_external',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\_bootstrap_external.py',
-   'PYMODULE'),
-  ('importlib._bootstrap',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\_bootstrap.py',
-   'PYMODULE'),
-  ('importlib.abc',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\abc.py',
-   'PYMODULE'),
-  ('importlib.machinery',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\machinery.py',
-   'PYMODULE'),
-  ('importlib',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\importlib\\__init__.py',
-   'PYMODULE'),
-  ('multiprocessing.popen_spawn_posix',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\popen_spawn_posix.py',
-   'PYMODULE'),
-  ('multiprocessing.semaphore_tracker',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\semaphore_tracker.py',
+   'Studio\\Shared\\Python37_64\\lib\\signal.py',
    'PYMODULE'),
   ('multiprocessing.util',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -306,9 +298,9 @@
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\hmac.py',
    'PYMODULE'),
-  ('socket',
+  ('selectors',
    'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\socket.py',
+   'Studio\\Shared\\Python37_64\\lib\\selectors.py',
    'PYMODULE'),
   ('tempfile',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -425,6 +417,10 @@
   ('multiprocessing.popen_spawn_win32',
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\multiprocessing\\popen_spawn_win32.py',
+   'PYMODULE'),
+  ('subprocess',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\subprocess.py',
    'PYMODULE'),
   ('multiprocessing.spawn',
    'C:\\Program Files (x86)\\Microsoft Visual '
@@ -609,34 +605,6 @@
   ('pkg_resources._vendor.pyparsing',
    'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\pkg_resources\\_vendor\\pyparsing.py',
    'PYMODULE'),
-  ('uuid',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\uuid.py',
-   'PYMODULE'),
-  ('ctypes.util',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\ctypes\\util.py',
-   'PYMODULE'),
-  ('ctypes._aix',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\ctypes\\_aix.py',
-   'PYMODULE'),
-  ('ctypes.macholib.dyld',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\ctypes\\macholib\\dyld.py',
-   'PYMODULE'),
-  ('ctypes.macholib',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\ctypes\\macholib\\__init__.py',
-   'PYMODULE'),
-  ('ctypes.macholib.dylib',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\ctypes\\macholib\\dylib.py',
-   'PYMODULE'),
-  ('ctypes.macholib.framework',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\ctypes\\macholib\\framework.py',
-   'PYMODULE'),
   ('pkg_resources._vendor.packaging.version',
    'd:\\PythonScript\\RPAScript\\OCRFlowVenv\\lib\\site-packages\\pkg_resources\\_vendor\\packaging\\version.py',
    'PYMODULE'),
@@ -743,18 +711,6 @@
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\plistlib.py',
    'PYMODULE'),
-  ('platform',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\platform.py',
-   'PYMODULE'),
-  ('stringprep',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\stringprep.py',
-   'PYMODULE'),
-  ('_py_abc',
-   'C:\\Program Files (x86)\\Microsoft Visual '
-   'Studio\\Shared\\Python37_64\\lib\\_py_abc.py',
-   'PYMODULE'),
   ('getpass',
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\getpass.py',
@@ -778,6 +734,50 @@
   ('tracemalloc',
    'C:\\Program Files (x86)\\Microsoft Visual '
    'Studio\\Shared\\Python37_64\\lib\\tracemalloc.py',
+   'PYMODULE'),
+  ('_py_abc',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\_py_abc.py',
+   'PYMODULE'),
+  ('stringprep',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\stringprep.py',
+   'PYMODULE'),
+  ('uuid',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\uuid.py',
+   'PYMODULE'),
+  ('ctypes.util',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\ctypes\\util.py',
+   'PYMODULE'),
+  ('ctypes._aix',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\ctypes\\_aix.py',
+   'PYMODULE'),
+  ('ctypes.macholib.dyld',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\ctypes\\macholib\\dyld.py',
+   'PYMODULE'),
+  ('ctypes.macholib',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\ctypes\\macholib\\__init__.py',
+   'PYMODULE'),
+  ('ctypes.macholib.dylib',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\ctypes\\macholib\\dylib.py',
+   'PYMODULE'),
+  ('ctypes.macholib.framework',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\ctypes\\macholib\\framework.py',
+   'PYMODULE'),
+  ('socket',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\socket.py',
+   'PYMODULE'),
+  ('platform',
+   'C:\\Program Files (x86)\\Microsoft Visual '
+   'Studio\\Shared\\Python37_64\\lib\\platform.py',
    'PYMODULE'),
   ('logging.config',
    'C:\\Program Files (x86)\\Microsoft Visual '

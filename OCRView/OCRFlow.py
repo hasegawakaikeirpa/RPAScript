@@ -82,13 +82,15 @@ def DiffListCreate(
     COLArray = True, readcsv1, readcsv2
     # ####################################################################################
     if COLArray[0] is True:
-        print("Bankrentxtver起動")
+        G_logger.debug("Bankrentxtver起動")  # Log出力
+
         GF = Bankrentxtver(
             FileURL,
             COLArray[1],
             COLArray[2],
         )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
-        print("Bankrentxtver完了")
+        G_logger.debug("Bankrentxtver完了")  # Log出力
+
         print(GF[0])
         if GF[0] is True:
             GFTable = GF[1]
@@ -97,8 +99,8 @@ def DiffListCreate(
             ChangeTxtList = []
             # OCR結果を整形----------------------------------------------------------------
             for g in range(GFRow):
-                if g == 21:
-                    print("")
+                # if g == 21:
+                #     print("")
                 try:
                     # toml設定の列数以上の列を削除-----------------------------------------------
                     lentoml = len(ColList)
@@ -182,17 +184,7 @@ def DiffListCreate(
                                 GFTable[g][c - 1] = GNV[1]
 
                     # -------------------------------------------------------------------------
-            # デコード＆エンコード--------------------------------------------------------------
-            # for g in range(GFRow):
-            #     for c in range(len(GFTable[g])):
-            #         ChangeTxt = GFTable[g][c]
-            #         result = ChangeTxt.encode("utf-8")
-            #         henkan = result.decode("cp932", errors="ignore")
-            #         fukugenhenkan = henkan.encode("cp932")
-            #         kekkafukugen = fukugenhenkan.decode("utf-8", errors="ignore")
-            #         GFTable[g][c] = kekkafukugen
-            # ---------------------------------------------------------------------------------
-            print("GoogleAPI完了")
+            G_logger.debug("GoogleAPI後編集処理完了")  # Log出力
             # DataFrame作成
             DiffCheck(GFTable, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
             df = DataFrame(GFTable, columns=ColList)
@@ -205,31 +197,15 @@ def DiffListCreate(
                 enc = CSVO.getFileEncoding(ChangeTxtUrl)  # 摘要変換ルールエンコード
             else:
                 enc = "cp932"
-
-            # 変換実績リストに要素があれば保存------------------------------------------------
-            # if len(ChangeTxtList) > 0:
-            #     if os.path.isfile(ChangeTxtUrl) is True:
-            #         CTL_df = DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
-            #         CTL_df.to_csv(
-            #             ChangeTxtUrl,
-            #             mode="a",
-            #             header=False,
-            #             index=False,
-            #             encoding=enc,
-            #         )
-            #     else:
-            #         CTL_df = DataFrame(ChangeTxtList, columns=["OCRテキスト", "元帳テキスト"])
-            #         CTL_df.to_csv(ChangeTxtUrl, index=False, encoding=enc)
-            # -------------------------------------------------------------------------------
             if os.path.isfile(FileName) is True:
                 enc = CSVO.getFileEncoding(FileName)  # 摘要変換ルールエンコード
             else:
                 enc = "cp932"
             try:
-                print("dfto_csv開始")
+                G_logger.debug("GoogleAPI後dfto_csv開始")  # Log出力
                 df.to_csv(FileName, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC)
             except:
-                print("dfto_csvエラー後開始")
+                G_logger.debug("GoogleAPI後dfto_csvエラー後開始")  # Log出力
                 with open(
                     FileName,
                     mode="w",
@@ -239,14 +215,16 @@ def DiffListCreate(
                 ) as f:
                     df.to_csv(f, index=False, quoting=QUOTE_NONNUMERIC)
                 # df.to_csv(FileName, index=False, encoding="utf8")
-            print("END")
+            G_logger.debug("GoogleAPI後csv処理完了")  # Log出力
             return True, FileName
     # except:
     #     print("ループ内エラー抽出失敗")
     #     return False, ""
 
 
-def Main(FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr):
+def Main(
+    FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr, logger
+):
     """
     概要: 呼出関数
     @param FileURL : 画像URL(str)
@@ -259,6 +237,9 @@ def Main(FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceSt
     @param ReplaceStr : 置換対象文字列のリスト(list)
     @return : bool,CSVURL(str)
     """
+    global G_logger
+
+    G_logger = logger
     # # toml読込------------------------------------------------------------------------------
     # with open(os.getcwd() + r"/TKInterGUI/BankSetting.toml", encoding="utf-8") as f:
     #     Banktoml = toml.load(f)
