@@ -2,7 +2,7 @@ import tkinter as tk
 import csv
 from PIL import Image, ImageTk
 
-# from tkinter import END, messagebox
+from tkinter import END, messagebox
 import os
 
 import OCRFlow as OCRF
@@ -18,7 +18,7 @@ import DataGrid as DG
 import ScrollableFrame as SF
 import tomlCreate as toml_c
 
-# from tkinter import filedialog
+from tkinter import filedialog
 
 ###################################################################################################
 class Application(tk.Frame):
@@ -288,10 +288,13 @@ class Application(tk.Frame):
         try:
             typ = [("tomlファイル", "*.toml")]
             self.top.withdraw()
-            tomlurl = tk.filedialog.askopenfilename(filetypes=typ)
+            tomlurl = filedialog.askopenfilename(filetypes=typ)
             if tomlurl != "":
-                self.master.destroy()
-                self.top.destroy()
+                try:
+                    self.master.destroy()
+                    self.top.destroy()
+                except:
+                    print("")
                 tk.messagebox.showinfo("設定ファイル再読込", "設定ファイルを再読み込みします。")
                 Main(Master, imgurl, tomlurl)
                 print("toml変更")
@@ -306,8 +309,8 @@ class Application(tk.Frame):
         """
         tomlリストをTKentryに挿入
         """
-        l = ",".join(List)
-        Ent.insert(0, l)
+        l_l = ",".join(List)
+        Ent.insert(0, l_l)
 
     # ---------------------------------------------------------------------------------------------
     def InportIMG(self):
@@ -537,39 +540,39 @@ def tomlreturn(self):
     # ----------------------------------------------------------
     DaySet = tomlEntries[0].get()
     if "," not in DaySet:
-        l = []
-        l.append(DaySet)
-        Banktoml["Setframe"]["DaySetList"] = l
+        l_l = []
+        l_l.append(DaySet)
+        Banktoml["Setframe"]["DaySetList"] = l_l
     else:
-        l = DaySet.split(",")
-        Banktoml["Setframe"]["DaySetList"] = l
+        l_l = DaySet.split(",")
+        Banktoml["Setframe"]["DaySetList"] = l_l
     # ----------------------------------------------------------
     MoneySet = tomlEntries[1].get()
     if "," not in MoneySet:
-        l = []
-        l.append(MoneySet)
-        Banktoml["Setframe"]["MoneySet"] = l
+        l_l = []
+        l_l.append(MoneySet)
+        Banktoml["Setframe"]["MoneySet"] = l_l
     else:
-        l = MoneySet.split(",")
-        Banktoml["Setframe"]["MoneySet"] = l
+        l_l = MoneySet.split(",")
+        Banktoml["Setframe"]["MoneySet"] = l_l
     # ----------------------------------------------------------
     ReplaceSet = tomlEntries[2].get()
     if "," not in ReplaceSet:
-        l = []
-        l.append(ReplaceSet)
-        Banktoml["Setframe"]["ReplaceSet"] = l
+        l_l = []
+        l_l.append(ReplaceSet)
+        Banktoml["Setframe"]["ReplaceSet"] = l_l
     else:
-        l = ReplaceSet.split(",")
-        Banktoml["Setframe"]["ReplaceSet"] = l
+        l_l = ReplaceSet.split(",")
+        Banktoml["Setframe"]["ReplaceSet"] = l_l
     # ----------------------------------------------------------
     ReplaceStr = tomlEntries[3].get()
     if "," not in ReplaceStr:
-        l = []
-        l.append(ReplaceStr)
-        Banktoml["Setframe"]["ReplaceStr"] = l
+        l_l = []
+        l_l.append(ReplaceStr)
+        Banktoml["Setframe"]["ReplaceStr"] = l_l
     else:
-        l = ReplaceStr.split(",")
-        Banktoml["Setframe"]["ReplaceStr"] = l
+        l_l = ReplaceStr.split(",")
+        Banktoml["Setframe"]["ReplaceStr"] = l_l
     toml_c.dump_toml(Banktoml, tomlurl)
 
 
@@ -843,103 +846,98 @@ def EnterP(self, HCW, HCH, selfmother):
     # ------------------------------------------------------
     # 条件テキストボックスの内容で処理分け-------------------------------------------------------------------
     if listintCheck(DaySet) is False:
-        tk.messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
+        messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
     elif listintCheck(MoneySet) is False:
-        tk.messagebox.showinfo("エラー", "金額表示列番号が不正です。数値以外を指定していないか確認してください。")
+        messagebox.showinfo("エラー", "金額表示列番号が不正です。数値以外を指定していないか確認してください。")
     elif listintCheck(ReplaceSet) is False:
-        tk.messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
+        messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
     else:
-        for tagsListItem in tagsList:
-            BB = self.bbox(tagsListItem[0][0])
-            BBS = [BB[0], BB[1], BB[2], BB[3]]
-            FList.append([tagsListItem[0], tagsListItem[1], BBS])
-        for FListItem in FList:
-            FSSC1 = round((FListItem[1][0] + FListItem[2][0]) / HCW)
-            FSSC2 = round((FListItem[1][1] + FListItem[2][1]) / HCH)
-            FSSC3 = round((FListItem[1][2] + FListItem[2][2]) / HCW)
-            FSSC4 = round((FListItem[1][3] + FListItem[2][3]) / HCH)
-            if FSSC1 < 0 and FSSC1 < MaxW:
-                FSSC1 = 0
-            elif FSSC1 > MaxW:
-                FSSC1 = MaxW
-            if FSSC2 < 0 and FSSC2 < MaxH:
-                FSSC2 = 0
-            elif FSSC2 > MaxH:
-                FSSC2 = MaxH
-            if FSSC3 < 0 and FSSC3 < MaxW:
-                FSSC3 = 0
-            elif FSSC3 > MaxW:
-                FSSC3 = MaxW
-            if FSSC4 < 0 and FSSC4 < MaxH:
-                FSSC4 = 0
-            elif FSSC4 > MaxH:
-                FSSC4 = MaxH
-            FSS = [FSSC1, FSSC2, FSSC3, FSSC4]
-            if FListItem[0][5] == "Yoko":
-                FYokoList.append(FSS)
-            else:
-                FTateList.append(FSS)
-            print(FSS)
-        # メッセージボックス（OK・キャンセル）
-        unmap(selfmother)
-        MSG = tk.messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
-        if MSG is True:
-            map(selfmother)
-            ####################################################################################
-            with open(
-                URL + r"\TKInterGUI\StraightListYoko.csv",
-                "w",
-                newline="",
-            ) as file:
-                writer = csv.writer(file)
-                writer.writerow(FYokoList)
-            with open(
-                URL + r"\TKInterGUI\StraightListTate.csv",
-                "w",
-                newline="",
-            ) as file:
-                writer = csv.writer(file)
-                writer.writerow(FTateList)
-            ####################################################################################
-            print("csv保存完了")
-            OM = OCRF.Main(
-                imgurl,
-                FYokoList,
-                FTateList,
-                Banktoml,
-                SGEL,
-                MoneySet,
-                ReplaceSet,
-                ReplaceStr,
-            )
-            if OM[0] is True:
-                unmap(selfmother)
-                MSG = tk.messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
-                Viw = tk.messagebox.askokcancel(
-                    "確認", "抽出内容を表示いたしますか？\n初めにミロクから出力した仕訳CSVを指定してください。"
-                )
-                map(selfmother)
-                if Viw is True:
-                    ReturnNext(selfmother)
-                    csvurl = imgurl.replace(".png", ".csv")
-                    DG.Main(
-                        csvurl,
+        if len(tagsList) == 0:
+            messagebox.showinfo("エラー", "縦軸が設定されていません。")
+        elif len(FList) == 0:
+            messagebox.showinfo("エラー", "横軸が設定されていません。")
+        else:
+            for tagsListItem in tagsList:
+                BB = self.bbox(tagsListItem[0][0])
+                BBS = [BB[0], BB[1], BB[2], BB[3]]
+                FList.append([tagsListItem[0], tagsListItem[1], BBS])
+            for FListItem in FList:
+                FSSC1 = round((FListItem[1][0] + FListItem[2][0]) / HCW)
+                FSSC2 = round((FListItem[1][1] + FListItem[2][1]) / HCH)
+                FSSC3 = round((FListItem[1][2] + FListItem[2][2]) / HCW)
+                FSSC4 = round((FListItem[1][3] + FListItem[2][3]) / HCH)
+                if FSSC1 < 0 and FSSC1 < MaxW:
+                    FSSC1 = 0
+                elif FSSC1 > MaxW:
+                    FSSC1 = MaxW
+                if FSSC2 < 0 and FSSC2 < MaxH:
+                    FSSC2 = 0
+                elif FSSC2 > MaxH:
+                    FSSC2 = MaxH
+                if FSSC3 < 0 and FSSC3 < MaxW:
+                    FSSC3 = 0
+                elif FSSC3 > MaxW:
+                    FSSC3 = MaxW
+                if FSSC4 < 0 and FSSC4 < MaxH:
+                    FSSC4 = 0
+                elif FSSC4 > MaxH:
+                    FSSC4 = MaxH
+                FSS = [FSSC1, FSSC2, FSSC3, FSSC4]
+                if FListItem[0][5] == "Yoko":
+                    FYokoList.append(FSS)
+                else:
+                    FTateList.append(FSS)
+                print(FSS)
+            # メッセージボックス（OK・キャンセル）
+            unmap(selfmother)
+            if len(FYokoList) == len(SGEL):
+                MSG = messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
+                if MSG is True:
+                    map(selfmother)
+                    ####################################################################################
+                    with open(
+                        URL + r"\StraightListYoko.csv",
+                        "w",
+                        newline="",
+                    ) as file:
+                        writer = csv.writer(file)
+                        writer.writerow(FYokoList)
+                    with open(
+                        URL + r"\StraightListTate.csv",
+                        "w",
+                        newline="",
+                    ) as file:
+                        writer = csv.writer(file)
+                        writer.writerow(FTateList)
+                    ####################################################################################
+                    print("csv保存完了")
+                    OM = OCRF.Main(
+                        imgurl,
+                        FYokoList,
+                        FTateList,
                         Banktoml,
-                        self.tomlurl,
-                        DaySet,
+                        SGEL,
                         MoneySet,
                         ReplaceSet,
                         ReplaceStr,
-                        SGEL,
-                        selfmother.master,
                     )
+                    if OM[0] is True:
+                        unmap(selfmother)
+                        MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
+                        selfmother.top.iconify()  # 透過ウィンドウ最小化
+                        selfmother.master.iconify()  # 下ウィンドウ最小化
+                        subprocess.Popen(["start", str(OM[1])], shell=True)  # excel起動
+                        # map(selfmother)
+                    else:
+                        unmap(selfmother)
+                        MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
+                        map(selfmother)
+                else:
+                    messagebox.showinfo("中断", "処理を中断します。")
+                    map(selfmother)
             else:
-                unmap(selfmother)
-                MSG = tk.messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
+                messagebox.showinfo("確認", "縦軸数と設定列名の数が一致しません。再確認してください。")
                 map(selfmother)
-        else:
-            tk.messagebox.showinfo("中断", "処理を中断します。")
-            map(selfmother)
 
 
 # ---------------------------------------------------------------------------------------------

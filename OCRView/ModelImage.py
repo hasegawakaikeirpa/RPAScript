@@ -411,6 +411,7 @@ class ModelImage:
             # pdf_file、img_pathをPathにする
             pdf_path = Path(pdf_file)
             image_dir = os.path.dirname(pdf_file)
+            os.environ["PATH"] += os.pathsep + str(pppath)
             FileKey = os.path.basename(pdf_file)
             FileKey = FileKey.replace(".pdf", "").replace(".PDF", "")
             # 線形検出パラメータ設定########################################

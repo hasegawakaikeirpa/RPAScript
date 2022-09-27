@@ -464,7 +464,7 @@ class ViewGUI:
                 self.logger.debug("PNG変換起動")  # Log出力
                 # プログレスバーの起動
                 PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
-                spd = self.control.pdf_image(FN, "png", 600, PBAR)
+                spd = self.control.pdf_image(FN, "png", 300, PBAR)
                 if spd is True:
                     msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
                     self.logger.debug(FN + "_PNG変換完了起動")  # Log出力
@@ -528,6 +528,7 @@ class ViewGUI:
                 os.remove(self.control.model.stock_url)
                 self.control.model.stock_url = ""
             self.control.OverSaveImage()
+            self.event_selectfile(self)
         self.clip_enable = True
 
     def event_clip_done(self):

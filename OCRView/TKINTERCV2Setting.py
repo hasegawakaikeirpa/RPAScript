@@ -18,7 +18,7 @@ from CV2Setting import straightlinesetting
 import ScrollableFrame as SF
 import tomlCreate as toml_c
 
-# from tkinter import filedialog
+from tkinter import filedialog
 
 ###################################################################################################
 class Application(tk.Frame):
@@ -516,10 +516,13 @@ class Application(tk.Frame):
         try:
             typ = [("tomlファイル", "*.toml")]
             self.top.withdraw()
-            tomlurl = tk.filedialog.askopenfilename(filetypes=typ)
+            tomlurl = filedialog.askopenfilename(filetypes=typ)
             if tomlurl != "":
-                self.master.destroy()
-                self.top.destroy()
+                try:
+                    self.top.destroy()
+                    self.master.destroy()
+                except:
+                    print("")
                 messagebox.showinfo("設定ファイル再読込", "設定ファイルを再読み込みします。")
                 G_logger.debug("tomlファイル再読込")  # Log出力
                 Main(Master, imgurl, tomlurl, G_logger)
@@ -1113,93 +1116,103 @@ def EnterP(self, HCW, HCH, selfmother):
     elif listintCheck(ReplaceSet) is False:
         messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
     else:
-        for tagsListItem in tagsList:
-            BB = self.bbox(tagsListItem[0][0])
-            BBS = [BB[0], BB[1], BB[2], BB[3]]
-            FList.append([tagsListItem[0], tagsListItem[1], BBS])
-        for FListItem in FList:
-            FSSC1 = round((FListItem[1][0] + FListItem[2][0]) / HCW)
-            FSSC2 = round((FListItem[1][1] + FListItem[2][1]) / HCH)
-            FSSC3 = round((FListItem[1][2] + FListItem[2][2]) / HCW)
-            FSSC4 = round((FListItem[1][3] + FListItem[2][3]) / HCH)
-            if FSSC1 < 0 and FSSC1 < MaxW:
-                FSSC1 = 0
-            elif FSSC1 > MaxW:
-                FSSC1 = MaxW
-            if FSSC2 < 0 and FSSC2 < MaxH:
-                FSSC2 = 0
-            elif FSSC2 > MaxH:
-                FSSC2 = MaxH
-            if FSSC3 < 0 and FSSC3 < MaxW:
-                FSSC3 = 0
-            elif FSSC3 > MaxW:
-                FSSC3 = MaxW
-            if FSSC4 < 0 and FSSC4 < MaxH:
-                FSSC4 = 0
-            elif FSSC4 > MaxH:
-                FSSC4 = MaxH
-            FSS = [FSSC1, FSSC2, FSSC3, FSSC4]
-            if FListItem[0][5] == "Yoko":
-                FYokoList.append(FSS)
-            else:
-                FTateList.append(FSS)
-            print(FSS)
-        # メッセージボックス（OK・キャンセル）
-        unmap(selfmother)
-        if len(FYokoList) == len(SGEL):
-            MSG = messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
-            if MSG is True:
-                map(selfmother)
-                ####################################################################################
-                with open(
-                    URL + r"\StraightListYoko.csv",
-                    "w",
-                    newline="",
-                ) as file:
-                    writer = csv.writer(file)
-                    writer.writerow(FYokoList)
-                with open(
-                    URL + r"\StraightListTate.csv",
-                    "w",
-                    newline="",
-                ) as file:
-                    writer = csv.writer(file)
-                    writer.writerow(FTateList)
-                ####################################################################################
-                print("csv保存完了")
-                G_logger.debug("縦横リスト書出完了")  # Log出力
-                OM = OCRF.Main(
-                    imgurl,
-                    FYokoList,
-                    FTateList,
-                    Banktoml,
-                    SGEL,
-                    MoneySet,
-                    ReplaceSet,
-                    ReplaceStr,
-                    G_logger,
-                )
-                if OM[0] is True:
-                    G_logger.debug("GoogleVisionAPI完了")  # Log出力
-                    unmap(selfmother)
-                    MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
-                    selfmother.top.iconify()  # 透過ウィンドウ最小化
-                    selfmother.master.iconify()  # 下ウィンドウ最小化
-                    subprocess.Popen(["start", str(OM[1])], shell=True)  # excel起動
-                    # map(selfmother)
-                else:
-                    G_logger.debug("GoogleVisionAPI抽出失敗")  # Log出力
-                    unmap(selfmother)
-                    MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
-                    map(selfmother)
-            else:
-                G_logger.debug("GoogleVisionAPI抽出中断")  # Log出力
-                messagebox.showinfo("中断", "処理を中断します。")
-                map(selfmother)
+        if len(tagsList) == 0:
+            messagebox.showinfo("エラー", "軸が設定されていません。")
         else:
-            G_logger.debug("GoogleVisionAPI縦軸数と設定列名数不一致。")  # Log出力
-            messagebox.showinfo("確認", "縦軸数と設定列名の数が一致しません。再確認してください。")
-            map(selfmother)
+            for tagsListItem in tagsList:
+                BB = self.bbox(tagsListItem[0][0])
+                BBS = [BB[0], BB[1], BB[2], BB[3]]
+                FList.append([tagsListItem[0], tagsListItem[1], BBS])
+            for FListItem in FList:
+                FSSC1 = round((FListItem[1][0] + FListItem[2][0]) / HCW)
+                FSSC2 = round((FListItem[1][1] + FListItem[2][1]) / HCH)
+                FSSC3 = round((FListItem[1][2] + FListItem[2][2]) / HCW)
+                FSSC4 = round((FListItem[1][3] + FListItem[2][3]) / HCH)
+                if FSSC1 < 0 and FSSC1 < MaxW:
+                    FSSC1 = 0
+                elif FSSC1 > MaxW:
+                    FSSC1 = MaxW
+                if FSSC2 < 0 and FSSC2 < MaxH:
+                    FSSC2 = 0
+                elif FSSC2 > MaxH:
+                    FSSC2 = MaxH
+                if FSSC3 < 0 and FSSC3 < MaxW:
+                    FSSC3 = 0
+                elif FSSC3 > MaxW:
+                    FSSC3 = MaxW
+                if FSSC4 < 0 and FSSC4 < MaxH:
+                    FSSC4 = 0
+                elif FSSC4 > MaxH:
+                    FSSC4 = MaxH
+                FSS = [FSSC1, FSSC2, FSSC3, FSSC4]
+                if FListItem[0][5] == "Yoko":
+                    FYokoList.append(FSS)
+                else:
+                    FTateList.append(FSS)
+                print(FSS)
+            if len(FTateList) == 0:
+                messagebox.showinfo("エラー", "横軸が設定されていません。")
+            elif len(FYokoList) == 0:
+                messagebox.showinfo("エラー", "縦軸が設定されていません。")
+            else:
+                # メッセージボックス（OK・キャンセル）
+                unmap(selfmother)
+                if len(FYokoList) == len(SGEL):
+                    MSG = messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
+                    if MSG is True:
+                        map(selfmother)
+                        ####################################################################################
+                        with open(
+                            URL + r"\StraightListYoko.csv",
+                            "w",
+                            newline="",
+                        ) as file:
+                            writer = csv.writer(file)
+                            writer.writerow(FYokoList)
+                        with open(
+                            URL + r"\StraightListTate.csv",
+                            "w",
+                            newline="",
+                        ) as file:
+                            writer = csv.writer(file)
+                            writer.writerow(FTateList)
+                        ####################################################################################
+                        print("csv保存完了")
+                        G_logger.debug("縦横リスト書出完了")  # Log出力
+                        OM = OCRF.Main(
+                            imgurl,
+                            FYokoList,
+                            FTateList,
+                            Banktoml,
+                            SGEL,
+                            MoneySet,
+                            ReplaceSet,
+                            ReplaceStr,
+                            G_logger,
+                        )
+                        if OM[0] is True:
+                            G_logger.debug("GoogleVisionAPI完了")  # Log出力
+                            unmap(selfmother)
+                            MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
+                            selfmother.top.iconify()  # 透過ウィンドウ最小化
+                            selfmother.master.iconify()  # 下ウィンドウ最小化
+                            subprocess.Popen(
+                                ["start", str(OM[1])], shell=True
+                            )  # excel起動
+                            # map(selfmother)
+                        else:
+                            G_logger.debug("GoogleVisionAPI抽出失敗")  # Log出力
+                            unmap(selfmother)
+                            MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
+                            map(selfmother)
+                    else:
+                        G_logger.debug("GoogleVisionAPI抽出中断")  # Log出力
+                        messagebox.showinfo("中断", "処理を中断します。")
+                        map(selfmother)
+                else:
+                    G_logger.debug("GoogleVisionAPI縦軸数と設定列名数不一致。")  # Log出力
+                    messagebox.showinfo("確認", "縦軸数と設定列名の数が一致しません。再確認してください。")
+                    map(selfmother)
 
 
 # ---------------------------------------------------------------------------------------------

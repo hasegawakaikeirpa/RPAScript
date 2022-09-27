@@ -197,7 +197,7 @@ def create_SettingFrame(self):
 
     # 列名設定フレーム################################################################
     tk.Label(self.frame8, text="摘要置換設定").grid(row=1, column=0)  # フレームテキスト
-    self.SF = SF.ScrollableFrame(self.frame8, bar_x=False)
+    self.SF = SF.ScrollableFrame(self.frame8, 700, bar_x=False)
     self.SF.grid(sticky=tk.W + tk.E)  # , ipadx=500, ipady=100)
     # エントリーウィジェットマネージャを初期化
     self.RepLEntries = []  # エントリーウィジェットのインスタンス

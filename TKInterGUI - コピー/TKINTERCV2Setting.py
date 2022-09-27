@@ -20,7 +20,7 @@ from CV2Setting import straightlinesetting
 import ScrollableFrame as SF
 import tomlCreate as toml_c
 
-# from tkinter import filedialog
+from tkinter import filedialog
 
 ###################################################################################################
 class Application(tk.Frame):
@@ -518,7 +518,7 @@ class Application(tk.Frame):
         try:
             typ = [("tomlファイル", "*.toml")]
             self.top.withdraw()
-            tomlurl = tk.filedialog.askopenfilename(filetypes=typ)
+            tomlurl = filedialog.askopenfilename(filetypes=typ)
             if tomlurl != "":
                 self.master.destroy()
                 self.top.destroy()
@@ -1195,7 +1195,7 @@ def EnterP(self, HCW, HCH, selfmother):
                     DG.Main(
                         csvurl,
                         Banktoml,
-                        self.tomlurl,
+                        tomlurl,
                         DaySet,
                         MoneySet,
                         ReplaceSet,
