@@ -129,7 +129,10 @@ def straightlinesetting(imgurl):
         # 「Q」が押されるまで画像を表示する
         while True:
             cv2.imshow("img", img)
-            if cv2.waitKey(1) & 0xFF == ord("q"):
+            # if cv2.waitKey(1) & 0xFF == ord("return"):
+            # ESCかEnterキーが押されたらループを抜ける
+            k = cv2.waitKey(1)  # 1msec確認
+            if k == 27 or k == 13:
                 break
         # 元画像に対する直線設定
         TpList = []
