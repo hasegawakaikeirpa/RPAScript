@@ -8,7 +8,7 @@ from tkinter import ttk, filedialog, messagebox
 from ControlGUI import ControlGUI
 
 # import TKINTERCV2Setting as TKCV2
-from TKINTERCV2Setting import Main
+from TKINTERCV2Setting import Main as CSVSetMain
 
 # from tkinter import messagebox
 
@@ -53,246 +53,296 @@ class ViewGUI:
         self.logger.debug(f"IP Address: {gethostbyname(gethostname())}")  # IPアドレス
         self.logger.debug("ViewGUI起動")  # Log出力
         # ---------------------------------------------------------------------------------------------------------------
-        global Sval  # スライダー初期値
-        Sval = 0  # スライダー初期値
         # Controller Class生成
         self.control = ControlGUI(default_path)
-
         # 初期化
         self.dir_path = default_path
         self.file_list = ["..[select file]"]
         self.clip_enable = False
-
+        self.File_url_List = []  # 書出しCSVURLリスト
         # メインウィンドウ
         self.window_root = window_root
         # 　メインウィンドウサイズ指定
-        self.window_root.geometry("1480x750")  # 横,縦
-        NWINSize = ["1480", "750"]  # 横,縦
+        self.window_root.geometry("1480x750+0+0")  # 横,縦
+        self.window_root.minsize(1480, 750)
         # 　メインウィンドウタイトル
         self.window_root.title("OCR読取 Ver:0.9")
         self.window_root.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
-        # self.window_root.bind("<Button-1>", self.ChangeWSize)
-        # サブウィンドウ
-        # フォルダ・ファイル選択
-        self.window_sub_ctrl1 = tk.Frame(self.window_root, height=300, width=300)
-        # 画像加工
-        self.window_sub_ctrl2 = tk.Frame(self.window_root, height=300, width=300)
-        # 画像加工2
-        self.window_sub_ctrl4 = tk.Frame(self.window_root, height=50, width=400)
-        # キャンバス
-        FCW = int(int(NWINSize[0]) * 0.4)
-        FCH = int(int(NWINSize[1]) * 0.4)
-        self.window_sub_FrameCanvas = tk.Frame(self.window_root, height=FCH, width=FCW)
-        self.window_sub_canvas = tk.Canvas(
-            self.window_root, height=FCH, width=FCW, bg="gray"
-        )
-
-        # オブジェクト
-        # StringVar(ストリング)生成
-        self.str_dir = tk.StringVar()
-        # IntVar生成
-        self.radio_intvar1 = tk.IntVar()
-        self.radio_intvar2 = tk.IntVar()
-
-        # GUIウィジェット・イベント登録
-        # ラベル
-        label_target = tk.Label(self.window_sub_ctrl1, text="[ファイル]")
-        label_rotate = tk.Label(self.window_sub_ctrl2, text="[画像回転]")
-        label_flip = tk.Label(self.window_sub_ctrl2, text="[反転]")
-        label_clip = tk.Label(self.window_sub_ctrl2, text="[トリミング・削除]")
-        label_run = tk.Label(self.window_sub_ctrl4, text="[編集確定]")
-        label_Line = tk.Label(self.window_sub_ctrl4, text="[サブメニュー]")
-
-        # フォルダ選択ボタン生成
-        self.button_setdir = tk.Button(
-            self.window_sub_ctrl1,
-            text="フォルダ選択",
-            width=10,
-            command=self.event_set_folder,
-        )
-        # 　テキストエントリ生成
-        self.entry_dir = tk.Entry(
-            self.window_sub_ctrl1, text="entry_dir", textvariable=self.str_dir, width=40
-        )
+        self.window_root.HeaderCol_c = 0  # ページ追加時の列数
+        self.MenuCreate()  # メニューバー作成
+        NWINSize = ["1480", "750"]  # 横,縦
+        self.FrameCreate(NWINSize)  # Frame作成
+        self.CanvasCreate()  # Canvas作成
+        self.str_dir = tk.StringVar()  # StringVar(ストリング)生成
         self.str_dir.set(self.dir_path)
-        # コンボBOX生成
-        self.combo_file = ttk.Combobox(
-            self.window_sub_ctrl1,
-            text="combo_file",
-            value=self.file_list,
-            state="readonly",
-            width=30,
-            postcommand=self.event_updatefile,
-        )
-        self.combo_file.set(self.file_list[0])
-        self.combo_file.bind("<<ComboboxSelected>>", self.event_selectfile)
-        # ファイル削除ボタン生成
-        self.Delete_button = tk.Button(
-            self.window_sub_ctrl1,
-            text="ファイル削除",
-            width=10,
-            command=self.FileDelete,
-        )
-        # 　切替ボタン生成
-        button_next = tk.Button(
-            self.window_sub_ctrl1, text=">>次画像", width=10, command=self.event_next
-        )
-        button_prev = tk.Button(
-            self.window_sub_ctrl1, text="前画像<<", width=10, command=self.event_prev
-        )
-
-        # クリップボタン生成
-        button_clip_start = tk.Button(
-            self.window_sub_ctrl2, text="選択開始", width=10, command=self.event_clip_try
-        )
-        button_clip_done = tk.Button(
-            self.window_sub_ctrl2,
-            text="範囲トリミング",
-            width=10,
-            command=self.event_clip_done,
-        )
-        button_clip_Erace = tk.Button(
-            self.window_sub_ctrl2,
-            text="範囲削除",
-            width=10,
-            command=self.event_clip_Erace,
-        )
-
-        # Save/Undoボタン生成
-        button_Oversave = tk.Button(
-            self.window_sub_ctrl4,
-            text="上書保存",
-            width=10,
-            command=self.event_Oversave,
-        )
-        button_save = tk.Button(
-            self.window_sub_ctrl4, text="別名保存", width=10, command=self.event_save
-        )
-        button_undo = tk.Button(
-            self.window_sub_ctrl4, text="編集取消", width=10, command=self.event_undo
-        )
-
-        # LineOCR起動ボタン生成
-        button_LinOCR = tk.Button(
-            self.window_sub_ctrl4, text="OCR起動", width=10, command=self.LinOCROpen
-        )
-
-        # SubMenu起動ボタン生成
-        button_SubMenu = tk.Button(
-            self.window_sub_ctrl4, text="サブメニュー", width=10, command=self.event_menu
-        )
-
-        # ラジオボタン生成
-        radio_rotate = []
-        for val, text in enumerate(
-            ["90°", "180°", "270°"]
-        ):  # 1:rot90 2:rot180 3:rot270
-            radio_rotate.append(
-                tk.Radiobutton(
-                    self.window_sub_ctrl2,
-                    text=text,
-                    value=val + 1,
-                    variable=self.radio_intvar1,
-                    command=self.event_rotate,
-                )
-            )
-        self.radio_intvar1.set(0)  # 0:No select
-
-        radio_flip = []
-        for val, text in enumerate(["U/D", "L/R"]):  # 1:Flip U/L 2:Flip L/R
-            radio_flip.append(
-                tk.Radiobutton(
-                    self.window_sub_ctrl2,
-                    text=text,
-                    value=val + 1,
-                    variable=self.radio_intvar2,
-                    command=self.event_flip,
-                )
-            )
-        self.radio_intvar2.set(0)  # 0:No select
-
-        # 右回転ボタン生成
-        button_RightLotate = tk.Button(
-            self.window_sub_ctrl2,
-            text="右回転",
-            width=10,
-            command=self.button_RightLotate,
-        )
-        # 左回転ボタン生成
-        button_LeftLotate = tk.Button(
-            self.window_sub_ctrl2,
-            text="左回転",
-            width=10,
-            command=self.button_LeftLotate,
-        )
         # ---------------------------------------------------------------
-
-        # キャンバス内クリック開始イベントに関数バインド
-        self.window_sub_canvas.bind("<ButtonPress-1>", self.event_clip_start)
-        # キャンバス内ドラッグイベントに関数バインド
-        self.window_sub_canvas.bind("<Button1-Motion>", self.event_clip_keep)
-        # キャンバス内クリック終了イベントに関数バインド
-        self.window_sub_canvas.bind("<ButtonRelease-1>", self.event_clip_end)
-
-        # ウィジェット配置
-        # キャンバスを配置
-        self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
-        # フォルダー・ファイル選択を配置
-        self.window_sub_ctrl1.pack(side=tk.LEFT, padx=100, fill="both", expand=True)
-        # 画像編集1を配置
-        self.window_sub_ctrl2.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
-        # 画像編集2を配置
-        self.window_sub_ctrl4.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
-        # window_sub_ctrl1---------------------------------------------------
-        self.button_setdir.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        button_prev.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
-        button_next.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
-        self.entry_dir.grid(row=2, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W)
-        label_target.grid(row=3, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W)
-        self.combo_file.grid(row=4, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W)
-        self.Delete_button.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
-        # -------------------------------------------------------------------
-        # window_sub_ctrl2---------------------------------------------------
-        label_rotate.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
-        radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
-        button_LeftLotate.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
-        button_RightLotate.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
-        label_flip.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_flip[0].grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
-        radio_flip[1].grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
-
-        label_clip.grid(row=7, column=1, padx=5, pady=5, sticky=tk.W)
-        button_clip_start.grid(row=8, column=1, padx=5, pady=5, sticky=tk.W)
-        button_clip_done.grid(row=8, column=2, padx=5, pady=5, sticky=tk.W)
-        button_clip_Erace.grid(row=8, column=3, padx=5, pady=5, sticky=tk.W)
-        # -------------------------------------------------------------------
-        # window_sub_ctrl4---------------------------------------------------
-        label_run.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        button_Oversave.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
-        button_undo.grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
-        button_save.grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
-        label_Line.grid(row=3, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        button_LinOCR.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
-        button_SubMenu.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
-        # -------------------------------------------------------------------
-        # Exposeイベントbind
-        for event_type in tk.EventType.__members__.keys():
-            if event_type == "Expose":
-                event_seq = "<" + event_type + ">"
-                try:
-                    self.window_root.bind_all(event_seq, self.event_handler)
-                    # print(event_type)
-                except tk.TclError:
-                    # print("bind error:", event_type)
-                    pass
-        # -------------------------------------------------------------------
-        self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
-        self.control.model.stock_url = ""  # 一時保存URLをリセット
+        self.ElementCreate()  # Element作成
         self.logger.debug("ViewGUI起動完了")  # Log出力
+        # #############################################################################
 
     # Event Callback----------------------------------------------------------------------
+    def ElementCreate(self):
+        try:
+            # フォルダー・ファイル選択を配置
+            self.window_sub_ctrl1.pack(side=tk.LEFT, padx=100, fill="both", expand=True)
+            # 画像編集1を配置
+            self.window_sub_ctrl2.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
+            # 画像編集2を配置
+            self.window_sub_ctrl4.pack(side=tk.LEFT, padx=5, fill="both", expand=True)
+            # window_sub_ctrl1#############################################################
+            # フォルダ選択ボタン生成
+            self.button_setdir = tk.Button(
+                self.window_sub_ctrl1,
+                text="フォルダ選択",
+                width=10,
+                command=self.event_set_folder,
+            )
+            self.button_setdir.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+
+            button_prev = tk.Button(
+                self.window_sub_ctrl1, text="前画像<<", width=10, command=self.event_prev
+            )
+            button_prev.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+            # 　切替ボタン生成
+            button_next = tk.Button(
+                self.window_sub_ctrl1, text=">>次画像", width=10, command=self.event_next
+            )
+            button_next.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
+            # 　テキストエントリ生成
+            self.entry_dir = tk.Entry(
+                self.window_sub_ctrl1,
+                text="entry_dir",
+                textvariable=self.str_dir,
+                width=40,
+            )
+            self.entry_dir.grid(
+                row=2, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W
+            )
+            # ラベル
+            label_target = tk.Label(self.window_sub_ctrl1, text="[ファイル]")
+            label_target.grid(
+                row=3, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W
+            )
+            # コンボBOX生成
+            self.combo_file = ttk.Combobox(
+                self.window_sub_ctrl1,
+                text="combo_file",
+                value=self.file_list,
+                state="readonly",
+                width=30,
+                postcommand=self.event_updatefile,
+            )
+            self.combo_file.set(self.file_list[0])
+            self.combo_file.bind("<<ComboboxSelected>>", self.event_selectfile)
+            self.combo_file.grid(
+                row=4, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W
+            )
+            # ファイル削除ボタン生成
+            self.Delete_button = tk.Button(
+                self.window_sub_ctrl1,
+                text="ファイル削除",
+                width=10,
+                command=self.FileDelete,
+            )
+            self.Delete_button.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
+            # #############################################################################
+            # window_sub_ctrl2#############################################################
+            label_rotate = tk.Label(self.window_sub_ctrl2, text="[画像回転]")
+            label_rotate.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+            # 回転角度ラジオボックス生成
+            self.radio_intvar1 = tk.IntVar()
+            self.radio_intvar2 = tk.IntVar()
+            self.radio_intvar1.set(0)  # 0:No select
+            self.radio_intvar2.set(0)  # 0:No select
+            radio_rotate = []
+            for val, text in enumerate(
+                ["90°", "180°", "270°"]
+            ):  # 1:rot90 2:rot180 3:rot270
+                radio_rotate.append(
+                    tk.Radiobutton(
+                        self.window_sub_ctrl2,
+                        text=text,
+                        value=val + 1,
+                        variable=self.radio_intvar1,
+                        command=self.event_rotate,
+                    )
+                )
+            radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
+            radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
+            radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
+            # 左回転ボタン生成
+            button_LeftLotate = tk.Button(
+                self.window_sub_ctrl2,
+                text="左回転",
+                width=10,
+                command=self.button_LeftLotate,
+            )
+            button_LeftLotate.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
+            # 右回転ボタン生成
+            button_RightLotate = tk.Button(
+                self.window_sub_ctrl2,
+                text="右回転",
+                width=10,
+                command=self.button_RightLotate,
+            )
+            button_RightLotate.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
+            label_flip = tk.Label(self.window_sub_ctrl2, text="[反転]")
+            label_flip.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
+            radio_flip = []
+            for val, text in enumerate(["U/D", "L/R"]):  # 1:Flip U/L 2:Flip L/R
+                radio_flip.append(
+                    tk.Radiobutton(
+                        self.window_sub_ctrl2,
+                        text=text,
+                        value=val + 1,
+                        variable=self.radio_intvar2,
+                        command=self.event_flip,
+                    )
+                )
+            radio_flip[0].grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
+            radio_flip[1].grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
+
+            label_clip = tk.Label(self.window_sub_ctrl2, text="[トリミング・削除]")
+            label_clip.grid(row=7, column=1, padx=5, pady=5, sticky=tk.W)
+            # クリップボタン生成
+            button_clip_start = tk.Button(
+                self.window_sub_ctrl2,
+                text="選択開始",
+                width=10,
+                command=self.event_clip_try,
+            )
+            button_clip_start.grid(row=8, column=1, padx=5, pady=5, sticky=tk.W)
+            button_clip_done = tk.Button(
+                self.window_sub_ctrl2,
+                text="範囲トリミング",
+                width=10,
+                command=self.event_clip_done,
+            )
+            button_clip_done.grid(row=8, column=2, padx=5, pady=5, sticky=tk.W)
+            button_clip_Erace = tk.Button(
+                self.window_sub_ctrl2,
+                text="範囲削除",
+                width=10,
+                command=self.event_clip_Erace,
+            )
+            button_clip_Erace.grid(row=8, column=3, padx=5, pady=5, sticky=tk.W)
+            # #############################################################################
+            # window_sub_ctrl4#############################################################
+            label_run = tk.Label(self.window_sub_ctrl4, text="[編集確定]")
+            label_run.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+            # Save/Undoボタン生成
+            button_Oversave = tk.Button(
+                self.window_sub_ctrl4,
+                text="上書保存",
+                width=10,
+                command=self.event_Oversave,
+            )
+            button_Oversave.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
+            button_undo = tk.Button(
+                self.window_sub_ctrl4, text="編集取消", width=10, command=self.event_undo
+            )
+            button_undo.grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
+            button_save = tk.Button(
+                self.window_sub_ctrl4, text="別名保存", width=10, command=self.event_save
+            )
+            button_save.grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
+            label_Line = tk.Label(self.window_sub_ctrl4, text="[サブメニュー]")
+            label_Line.grid(row=3, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+            # LineOCR起動ボタン生成
+            button_LinOCR = tk.Button(
+                self.window_sub_ctrl4, text="OCR起動", width=10, command=self.LinOCROpen
+            )
+            button_LinOCR.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
+            # SubMenu起動ボタン生成
+            button_SubMenu = tk.Button(
+                self.window_sub_ctrl4, text="サブメニュー", width=10, command=self.event_menu
+            )
+            button_SubMenu.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
+            # -------------------------------------------------------------------
+            # Exposeイベントbind
+            for event_type in tk.EventType.__members__.keys():
+                if event_type == "Expose":
+                    event_seq = "<" + event_type + ">"
+                    try:
+                        self.window_root.bind_all(event_seq, self.event_handler)
+                        # print(event_type)
+                    except tk.TclError:
+                        # print("bind error:", event_type)
+                        pass
+            # -------------------------------------------------------------------
+            self.control.model.stock_url = ""  # 一時保存URLをリセット
+        except:
+            self.logger.debug("要素作成失敗")  # Log出力
+
+    # ----------------------------------------------------------------------------------
+    def CanvasCreate(self):
+        """
+        キャンバス作成
+        """
+        try:
+            # キャンバス
+            self.window_sub_canvas = tk.Canvas(
+                self.window_root, height=self.FCH, width=self.FCW, bg="gray"
+            )
+            # キャンバス内クリック開始イベントに関数バインド
+            self.window_sub_canvas.bind("<ButtonPress-1>", self.event_clip_start)
+            # キャンバス内ドラッグイベントに関数バインド
+            self.window_sub_canvas.bind("<Button1-Motion>", self.event_clip_keep)
+            # キャンバス内クリック終了イベントに関数バインド
+            self.window_sub_canvas.bind("<ButtonRelease-1>", self.event_clip_end)
+            # キャンバスを配置
+            self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
+            self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
+        except:
+            self.logger.debug("キャンバス作成失敗")  # Log出力
+
+    # ----------------------------------------------------------------------------------
+    def FrameCreate(self, NWINSize):
+        """
+        Frame作成
+        """
+        try:
+            # フォルダ・ファイル選択
+            self.window_sub_ctrl1 = tk.Frame(self.window_root, height=300, width=300)
+            # 画像加工
+            self.window_sub_ctrl2 = tk.Frame(self.window_root, height=300, width=300)
+            # 画像加工2
+            self.window_sub_ctrl4 = tk.Frame(self.window_root, height=50, width=400)
+            self.FCW = int(int(NWINSize[0]) * 0.4)
+            self.FCH = int(int(NWINSize[1]) * 0.4)
+            self.window_sub_FrameCanvas = tk.Frame(
+                self.window_root, height=self.FCH, width=self.FCW
+            )
+        except:
+            self.logger.debug("Frame作成失敗")  # Log出力
+
+    # ----------------------------------------------------------------------------------
+    def MenuCreate(self):
+        """
+        メニューバー作成
+        """
+        try:
+            # メニューバー作成
+            self.men = tk.Menu(self.window_root)
+            # メニューバーを画面にセット
+            self.window_root.config(menu=self.men)
+            # ファイルメニューを作成する
+            self.menu_file = tk.Menu(self.men)
+            self.men.add_command(label="ファイル", command=self.event_set_file)
+            # 保存メニューを作成する
+            self.savemenu = tk.Menu(self.window_root, tearoff=False)
+            self.men.add_cascade(label="保存", menu=self.savemenu)
+            self.savemenu.add_command(label="上書保存", command=self.event_save)
+            self.savemenu.add_separator()  # 仕切り線
+            self.savemenu.add_command(label="別名保存", command=self.event_Searchsave)
+
+            # OCRメニューを作成する
+            self.OCR_men = tk.Menu(self.men)
+            self.men.add_command(label="OCR起動", command=self.LinOCROpen)
+        except:
+            self.logger.debug("メニューバー作成失敗")  # Log出力
+
+    # ----------------------------------------------------------------------------------
     def FileDelete(self):
         """
         ファイル削除ボタンクリックイベント
@@ -308,6 +358,7 @@ class ViewGUI:
         else:
             messagebox.showinfo("確認", "処理を中断します。")
 
+    # ----------------------------------------------------------------------------------
     # イベントハンドラ
     def event_handler(self, event):
         """
@@ -317,6 +368,7 @@ class ViewGUI:
         set_pos = self.combo_file.current()
         self.control.DrawImage("Map", set_pos=set_pos)
 
+    # ----------------------------------------------------------------------------------
     def event_menu(self):
         """
         SubMenu起動ボタン関数
@@ -359,6 +411,7 @@ class ViewGUI:
 
         # ##############################################################################
 
+    # ----------------------------------------------------------------------------------
     def Resize(self, Resizewidth, Resizeheight):
         """
         リサイズ処理(未使用2022/08/08時点)
@@ -377,6 +430,7 @@ class ViewGUI:
         except:
             self.logger.debug("Resize関数Err")  # Log出力
 
+    # ----------------------------------------------------------------------------------
     def menubutton2_click(self, textbox1):
         """
         サブメニュー内ノイズ除去ボタン処理
@@ -405,6 +459,7 @@ class ViewGUI:
         except:
             msg = messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
 
+    # ----------------------------------------------------------------------------------
     def button_LeftLotate(self, event=None):
         """
         左回転ボタン処理
@@ -414,6 +469,7 @@ class ViewGUI:
         cmd = "rotateFree-" + str(1)
         self.control.EditImage(cmd)
 
+    # ----------------------------------------------------------------------------------
     def button_RightLotate(self, event=None):
         """
         右回転ボタン処理
@@ -423,6 +479,7 @@ class ViewGUI:
         cmd = "rotateFree-" + str(-1)
         self.control.EditImage(cmd)
 
+    # ----------------------------------------------------------------------------------
     def event_set_folder(self):
         """
         フォルダー選択ボタンクリックイベント
@@ -438,6 +495,67 @@ class ViewGUI:
         self.combo_file["value"] = self.file_list
         self.logger.debug(self.dir_path + "_フォルダー選択完了")  # Log出力
 
+    # ----------------------------------------------------------------------------------
+    def event_set_file(self):
+        """
+        ファイル選択ボタンクリックイベント
+        """
+        print(sys._getframe().f_code.co_name)  # ターミナルへ表示
+        self.logger.debug("ファイル選択起動")  # Log出力
+        self.event_Searchsave()  # 編集履歴判定後上書き
+        self.Selectfile_url = filedialog.askopenfilename(
+            title="画像ファイルを開く", filetypes=[("PNG", ".png")], initialdir="./"
+        )
+        self.dir_path = os.path.dirname(self.Selectfile_url)
+        FN = os.path.basename(self.Selectfile_url)
+        self.str_dir.set(self.dir_path)
+        self.file_list = self.control.SetDirlist(self.dir_path)
+
+        if ".PDF" in FN or ".pdf" in FN:
+            msg = messagebox.askokcancel(
+                "確認", "PDFが選択されています。PNGに変換しますか？\n10ページ以上の処理は処理時間が長時間になる可能性があります。"
+            )
+            if msg is True:
+                self.logger.debug("PNG変換起動")  # Log出力
+                # プログレスバーの起動
+                PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
+                spd = self.control.pdf_image(FN, "png", 300, PBAR)
+                if spd is True:
+                    f_r = 0
+                    for f_l in self.file_list:
+                        if f_l == FN:
+                            set_pos = f_r
+                            break
+                        f_r += 1
+                    msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
+                    self.control.DrawImage("set", set_pos=set_pos)
+                    self.combo_file.set(self.file_list[set_pos])
+                    self.logger.debug(FN + "_PNG変換完了起動")  # Log出力
+                else:
+                    f_r = 0
+                    for f_l in self.file_list:
+                        if f_l == FN:
+                            set_pos = f_r
+                            break
+                        f_r += 1
+                    msg = messagebox.askokcancel(
+                        "確認", "PNG変換に失敗しました。指定DPIが高すぎる可能性があります。"
+                    )
+                    self.control.DrawImage("set", set_pos=set_pos)
+                    self.combo_file.set(self.file_list[set_pos])
+                    self.logger.debug(FN + "_PNG変換失敗起動")  # Log出力
+        else:
+            f_r = 0
+            for f_l in self.file_list:
+                if f_l == FN:
+                    set_pos = f_r
+                    break
+                f_r += 1
+            self.control.DrawImage("set", set_pos=set_pos)
+            self.combo_file.set(self.file_list[set_pos])
+            self.logger.debug(self.dir_path + "_ファイル選択完了")  # Log出力
+
+    # ----------------------------------------------------------------------------------
     def event_updatefile(self):
         """
         ファイル選択ウィンドウクリックイベント
@@ -448,6 +566,7 @@ class ViewGUI:
         self.file_list = self.control.SetDirlist(self.dir_path)
         self.combo_file["value"] = self.file_list
 
+    # ----------------------------------------------------------------------------------
     def event_selectfile(self, event):
         """
         ファイル選択後イベント
@@ -469,12 +588,15 @@ class ViewGUI:
                     msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
                     self.logger.debug(FN + "_PNG変換完了起動")  # Log出力
                 else:
-                    msg = messagebox.askokcancel("確認", "PNG変換に失敗しました。")
+                    msg = messagebox.askokcancel(
+                        "確認", "PNG変換に失敗しました。指定DPIが高すぎる可能性があります。"
+                    )
                     self.logger.debug(FN + "_PNG変換失敗起動")  # Log出力
         else:
             self.control.DrawImage("set", set_pos=set_pos)
             self.logger.debug(FN + "_ファイル選択後イベント完了")  # Log出力
 
+    # ----------------------------------------------------------------------------------
     def event_prev(self):
         """
         prevボタンクリックイベント
@@ -485,6 +607,7 @@ class ViewGUI:
         pos = self.control.DrawImage("prev")
         self.combo_file.set(self.file_list[pos])
 
+    # ----------------------------------------------------------------------------------
     def event_next(self):
         """
         nextボタンクリックイベント
@@ -495,6 +618,7 @@ class ViewGUI:
         pos = self.control.DrawImage("next")
         self.combo_file.set(self.file_list[pos])
 
+    # ----------------------------------------------------------------------------------
     def event_rotate(self):
         """
         画像回転変更イベント
@@ -506,6 +630,7 @@ class ViewGUI:
         self.control.EditImage(cmd)
         print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
 
+    # ----------------------------------------------------------------------------------
     def event_flip(self):
         """
         画像反転イベント
@@ -517,6 +642,7 @@ class ViewGUI:
         self.control.EditImage(cmd)
         print("{} {} {}".format(sys._getframe().f_code.co_name, val, cmd))
 
+    # ----------------------------------------------------------------------------------
     def event_clip_try(self):
         """
         Tryボタンイベント
@@ -531,6 +657,7 @@ class ViewGUI:
             self.event_selectfile(self)
         self.clip_enable = True
 
+    # ----------------------------------------------------------------------------------
     def event_clip_done(self):
         """
         Doneボタンイベント
@@ -541,6 +668,7 @@ class ViewGUI:
             self.control.EditImage("clip_done")
             self.clip_enable = False
 
+    # ----------------------------------------------------------------------------------
     def event_clip_Erace(self):
         """
         Eraceボタンイベント
@@ -551,6 +679,7 @@ class ViewGUI:
             self.control.EditImage("clip_Erace")
             self.clip_enable = False
 
+    # ----------------------------------------------------------------------------------
     def event_clip_start(self, event):
         """
         画像処理Saveイベント
@@ -560,6 +689,7 @@ class ViewGUI:
         if self.clip_enable:
             self.control.DrawRectangle("clip_start", event.y, event.x)
 
+    # ----------------------------------------------------------------------------------
     def event_clip_keep(self, event):
         """
         画像処理Undoイベント
@@ -572,6 +702,7 @@ class ViewGUI:
         if self.clip_enable:
             self.control.DrawRectangle("clip_keep", event.y, event.x)
 
+    # ----------------------------------------------------------------------------------
     def event_clip_end(self, event):
         """
         キャンバス画像左クリック範囲指定で終端まで確定後
@@ -582,50 +713,71 @@ class ViewGUI:
         if self.clip_enable:
             self.control.DrawRectangle("clip_end", event.y, event.x)
 
+    # ----------------------------------------------------------------------------------
     def event_save(self):
         """
         Saveボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        self.logger.debug("Saveボタン起動")  # Log出力
-        # 一時保存ファイルを確認
-        if self.control.model.stock_url != "":
-            os.remove(self.control.model.stock_url)
-        self.Newfilename = filedialog.asksaveasfilename(
-            filetypes=[("PNG", ".png"), ("JPEG", ".jpg")]
-        )
-        self.control.SaveImage(self.Newfilename)
-        self.file_list = self.control.SetDirlist(self.dir_path)  # ファイルリストリロード
-        for F_r in range(len(self.file_list)):
-            if self.file_list[F_r] in self.Newfilename:
-                self.control.model.stock_url = ""
-                self.combo_file.set(self.file_list[F_r])
+        try:
+            print(self.Selectfile_url)
+            if self.Selectfile_url != "":
+                self.logger.debug("Saveボタン起動")  # Log出力
+                # 一時保存ファイルを確認
+                if self.control.model.stock_url != "":
+                    os.remove(self.control.model.stock_url)
+                self.Newfilename = filedialog.asksaveasfilename(
+                    filetypes=[("PNG", ".png"), ("JPEG", ".jpg")]
+                )
+                self.control.SaveImage(self.Newfilename)
+                self.file_list = self.control.SetDirlist(self.dir_path)  # ファイルリストリロード
+                for F_r in range(len(self.file_list)):
+                    if self.file_list[F_r] in self.Newfilename:
+                        self.control.model.stock_url = ""
+                        self.combo_file.set(self.file_list[F_r])
+            else:
+                messagebox.showinfo("確認", "画像ファイルが選択されていません。")
+        except:
+            messagebox.showinfo("確認", "画像ファイルが選択されていません。")
 
+    # ----------------------------------------------------------------------------------
     def event_Searchsave(self):
         """
-        OverSaveボタンクリックイベント
+        編集履歴確認イベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        self.logger.debug("OverSaveボタン起動")  # Log出力
-        # 一時保存ファイルを確認
-        if self.control.model.stock_url != "":
-            if messagebox.askokcancel("確認", "編集履歴が残っています。上書きしますか？"):
-                os.remove(self.control.model.stock_url)
-                self.control.model.stock_url = ""
-                self.control.OverSaveImage()
+        try:
+            self.logger.debug("OverSaveボタン起動")  # Log出力
+            # 一時保存ファイルを確認
+            if self.control.model.stock_url != "":
+                if messagebox.askokcancel("確認", "編集履歴が残っています。上書きしますか？"):
+                    os.remove(self.control.model.stock_url)
+                    self.control.model.stock_url = ""
+                    self.control.OverSaveImage()
+        except:
+            messagebox.showinfo("確認", "編集履歴確認でエラーが起きました。")
 
+    # ----------------------------------------------------------------------------------
     def event_Oversave(self):
         """
-        ファイル削除クリックイベント
+        上書保存ボタンクリックイベント
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        self.logger.debug("ファイル削除起動")  # Log出力
-        # 一時保存ファイルを確認
-        if self.control.model.stock_url != "":
-            os.remove(self.control.model.stock_url)
-            self.control.model.stock_url = ""
-        self.control.OverSaveImage()
+        try:
+            print(self.Selectfile_url)
+            if self.Selectfile_url != "":
+                self.logger.debug("ファイル削除起動")  # Log出力
+                # 一時保存ファイルを確認
+                if self.control.model.stock_url != "":
+                    os.remove(self.control.model.stock_url)
+                    self.control.model.stock_url = ""
+                self.control.OverSaveImage()
+            else:
+                messagebox.showinfo("確認", "画像ファイルが選択されていません。")
+        except:
+            messagebox.showinfo("確認", "画像ファイルが選択されていません。")
 
+    # ----------------------------------------------------------------------------------
     def event_undo(self):
         """
         Undoボタンクリックイベント
@@ -640,6 +792,7 @@ class ViewGUI:
         self.radio_intvar1.set(0)
         self.radio_intvar2.set(0)
 
+    # ----------------------------------------------------------------------------------
     def LinOCROpen(self):
         """
         OCROpenボタンクリックイベント
@@ -654,17 +807,36 @@ class ViewGUI:
         if "[select file]" in Imgurl:
             messagebox.showinfo("確認", "画像ファイルを選択してください。")
         else:
-            typ = [("tomlファイル", "*.toml")]
-            messagebox.showinfo("確認", "次にOCR読取設定が格納されているtomlファイルを指定して下さい。")
-            self.tomlPath = filedialog.askopenfilename(
-                filetypes=typ, initialdir=self.dir_path
-            )
             try:
-                Main(main_window, Imgurl, self.tomlPath, self.logger)
-                self.logger.debug("OCR処理完了")  # Log出力
+                print(self.tomlPath)
+                CSVSetMain(
+                    main_window,
+                    Imgurl,
+                    self.tomlPath,
+                    self.logger,
+                    self.File_url_List,
+                )
             except:
-                self.logger.debug("OCR処理tomlファイル選択時Err")  # Log出力
+                typ = [("tomlファイル", "*.toml")]
+                messagebox.showinfo(
+                    "確認", "先頭ページ読込です。\nOCR読取設定が格納されているtomlファイルを指定して下さい。"
+                )
+                self.tomlPath = filedialog.askopenfilename(
+                    filetypes=typ, initialdir=self.dir_path
+                )
+                try:
+                    CSVSetMain(
+                        main_window,
+                        Imgurl,
+                        self.tomlPath,
+                        self.logger,
+                        self.File_url_List,
+                    )
+                    self.logger.debug("OCR処理完了")  # Log出力
+                except:
+                    self.logger.debug("OCR処理tomlファイル選択時Err")  # Log出力
 
+    # ----------------------------------------------------------------------------------
     def click_close(self):
         """
         ウィンドウ×ボタンクリック

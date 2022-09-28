@@ -4,7 +4,7 @@ import os
 import toml
 
 # import pandas as pd
-from pandas import DataFrame
+from pandas import DataFrame, read_csv, concat
 from csv import reader, QUOTE_NONNUMERIC
 
 # import numpy as np
@@ -47,6 +47,23 @@ def DiffCheck(GFTable, ColList):
         for GC_d in range(GC_Diff):
             ColList.append("未設定" + str(GC_d + 1))
     # ----------------------------------------------------------------------------
+
+
+def JoinCSV(CSVList):
+    """
+    概要: 引数リストのURLから連結CSVを作成
+    @param CSVList: CSVURLリスト
+    @return 連結CSVURL
+    """
+    r = 0
+    for CSVListItem in CSVList:
+        enc = CSVO.getFileEncoding(CSVListItem)  # 摘要変換ルールエンコード
+        if r == 0:
+            m_csv = read_csv(CSVListItem, encoding=enc)
+        else:
+            r_csv = read_csv(CSVListItem, encoding=enc)
+            m_csv = concat([m_csv, r_csv])
+        r += 1
 
 
 def DiffListCreate(

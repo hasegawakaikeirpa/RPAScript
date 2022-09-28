@@ -33,8 +33,8 @@ class Application(tk.Frame):
         super().__init__(master)
         # Windowの画面サイズを設定する。
         G_logger.debug("TKINTERCV2Setting_Application起動")  # Log出力
-        # geometryについて : https://kuroro.blog/python/rozH3S2CYE0a0nB3s2QL/
         self.master.geometry("1480x750+0+0")  # Window表示位置指定
+        self.master.minsize(1480, 750)
         # 画像の読込#####################################################################
         # 透過キャンバスの画像範囲検出の為リサイズ比率等を算出
         print(self.master.geometry())
@@ -46,12 +46,12 @@ class Application(tk.Frame):
         CW, CH, HCW, HCH, TKimg = IR[0], IR[1], IR[2], IR[3], IR[4]
         # ##############################################################################
         self.top = tk.Toplevel()  # サブWindow作成
+        self.top.minsize(1480, 750)
         self.top.bind("<Motion>", self.change)  # 透過ウィンドウにマウス移動関数bind
         self.master.bind("<Motion>", self.change)  # 下ウィンドウにマウス移動関数bind
         self.top.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
         self.master.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
         self.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
-        # self.top.overrideredirect(True)  # ウィンドウのタイトル部分を消去
         self.top.geometry("1480x750+0+0")  # トップWindow表示位置指定
         # 透過キャンバスフレーム##########################################################
         self.topFrame = tk.Frame(
@@ -63,11 +63,9 @@ class Application(tk.Frame):
             bd=2,
         )
         self.topFrame.grid(row=0, column=0, sticky=tk.N)
-        # self.topFrame.pack(side=tk.LEFT, anchor=tk.N)
         self.top.forward = tk.Canvas(
             self.topFrame, background="white", width=CW, height=CH
         )  # 透過キャンバス作成
-        # self.top.forward.pack(side=tk.LEFT, anchor=tk.N)  # 透過キャンバスを配置
         self.top.forward.grid(row=0, column=0)
         # ##############################################################################
         # 配置
@@ -80,7 +78,6 @@ class Application(tk.Frame):
             relief=tk.GROOVE,
         )
         self.frame0.grid(row=0, column=1, sticky=tk.N)
-        # self.frame0.pack(side=tk.RIGHT, anchor=tk.N)
         self.frame0.propagate(0)
         #################################################################################
         # サイドメニュー内フレーム########################################################
@@ -134,7 +131,6 @@ class Application(tk.Frame):
         # こちらはインデックスマネージャ。ウィジェットの数や並び方を管理
         self.index = 0  # 最新のインデックス番号
         self.indexes = []  # インデックスの並び
-        # self.createEntry(0, bar_x=False)
         self.ColList = Banktoml["ColList"]["List"]
         i = 0
         for ColListItem in self.ColList:
@@ -157,7 +153,6 @@ class Application(tk.Frame):
         self.DaySet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.DaySet)
         self.TomlInsert(self.DaySet, Banktoml["Setframe"]["DaySetList"])
-        # self.DaySet.insert(0, Banktoml["Setframe"]["DaySetList"])
         self.DaySet.bind("<Return>", tomlreturn)
         self.DaySet.bind("<Tab>", tomlreturn)
         self.DaySet.grid(row=0, column=1)
@@ -165,7 +160,6 @@ class Application(tk.Frame):
         self.MoneySet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.MoneySet)
         self.TomlInsert(self.MoneySet, Banktoml["Setframe"]["MoneySet"])
-        # self.MoneySet.insert(0, Banktoml["Setframe"]["MoneySet"])
         self.MoneySet.bind("<Return>", tomlreturn)
         self.MoneySet.bind("<Tab>", tomlreturn)
         self.MoneySet.grid(row=1, column=1)
@@ -173,7 +167,6 @@ class Application(tk.Frame):
         self.ReplaceSet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.ReplaceSet)
         self.TomlInsert(self.ReplaceSet, Banktoml["Setframe"]["ReplaceSet"])
-        # self.ReplaceSet.insert(0, Banktoml["Setframe"]["ReplaceSet"])
         self.ReplaceSet.bind("<Return>", tomlreturn)
         self.ReplaceSet.bind("<Tab>", tomlreturn)
         self.ReplaceSet.grid(row=2, column=1)
@@ -181,11 +174,9 @@ class Application(tk.Frame):
         self.ReplaceStr = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.ReplaceStr)
         self.TomlInsert(self.ReplaceStr, Banktoml["Setframe"]["ReplaceStr"])
-        # self.ReplaceStr.insert(0, Banktoml["Setframe"]["ReplaceStr"])
         self.ReplaceStr.bind("<Return>", tomlreturn)
         self.ReplaceStr.bind("<Tab>", tomlreturn)
         self.ReplaceStr.bind("<Double-1>", self.tomlFrameOpen)
-
         self.ReplaceStr.grid(row=3, column=1)
         #################################################################################
         # サイドメニュー内ボタンフレーム###################################################
@@ -197,13 +188,11 @@ class Application(tk.Frame):
             bd=2,
         )
         frame.grid(sticky=tk.W + tk.E)
-        # frame.pack(side=tk.TOP, pady=50, padx=10, anchor=tk.E)
         BW = 25  # ボタン横幅
         BH = 1  # ボタン縦幅
         fonts = ("", 16)  # ボタンフォントの設定
         # 縦直線追加ボタン---------------------------------------------------------------
         button = tk.Button(
-            # self.top,
             frame,
             text="縦直線追加",
             fg="White",
@@ -216,7 +205,6 @@ class Application(tk.Frame):
         button.grid(row=0, column=0, sticky=tk.N)
         # 横直線追加ボタン---------------------------------------------------------------
         button2 = tk.Button(
-            # self.top,
             frame,
             text="横直線追加",
             fg="White",
@@ -229,7 +217,6 @@ class Application(tk.Frame):
         button2.grid(row=1, column=0, sticky=tk.N)
         # 削除ボタン---------------------------------------------------------------
         button5 = tk.Button(
-            # self.top,
             frame,
             text="選択直線削除",
             fg="White",
@@ -242,7 +229,6 @@ class Application(tk.Frame):
         button5.grid(row=2, column=0, sticky=tk.N)
         # 新規直線描画ボタン---------------------------------------------------------------
         button3 = tk.Button(
-            # self.top,
             frame,
             text="新規直線描画",
             fg="White",
@@ -255,7 +241,6 @@ class Application(tk.Frame):
         button3.grid(row=3, column=0, sticky=tk.N)
         # 置換ボタン---------------------------------------------------------------
         button7 = tk.Button(
-            # self.top,
             frame,
             text="置換対象文字列設定",
             fg="White",
@@ -268,7 +253,6 @@ class Application(tk.Frame):
         button7.grid(row=4, column=0, sticky=tk.N)
         # 確定ボタン---------------------------------------------------------------
         button4 = tk.Button(
-            # self.top,
             frame,
             text="確定",
             fg="White",
@@ -281,7 +265,6 @@ class Application(tk.Frame):
         button4.grid(row=5, column=0, sticky=tk.N)
         # 戻るボタン---------------------------------------------------------------
         button6 = tk.Button(
-            # self.top,
             frame,
             text="戻る",
             fg="White",
@@ -307,9 +290,9 @@ class Application(tk.Frame):
         """
         置換設定隠しサイドメニューの表示
         """
+        unmap(self)
         MSG = messagebox.askokcancel("確認", "置換設定ウィンドウを起動します。")
         if MSG is True:
-            # self.topFrame.grid_remove()
             self.frame0.grid_remove()
             print(self.top.geometry())
             CWgeo = int(self.top.geometry().split("x")[0])
@@ -323,13 +306,11 @@ class Application(tk.Frame):
                 bd=2,
             )
             self.BRS = Banktoml["Setframe"]["ReplaceStr"]
-            self.topRepFrame.grid(
-                row=0, column=1, sticky=tk.NSEW
-            )  # , ipadx=500, ipady=100)
+            self.topRepFrame.grid(row=0, column=1, sticky=tk.NSEW)
             self.topRepSF = SF.SubScrollableFrame(
                 self.topRepFrame, CWgeo, CHgeo, len(self.BRS), bar_x=False
             )
-            self.topRepSF.grid(row=0, column=0, sticky=tk.W)  # , ipadx=500, ipady=100)
+            self.topRepSF.grid(row=0, column=0, sticky=tk.W)
             self.BRSTxt = []
             self.BRSPlus = []
             self.BRSDel = []
@@ -357,8 +338,7 @@ class Application(tk.Frame):
                         text="+",
                         fg="#33ff33",
                         font=("Arial Black", 20),
-                    )
-                    # 追加するボタンのようなラベルにクリックイベントを設定
+                    )  # 追加するボタンのようなラベルにクリックイベントを設定
                     btn.bind(
                         "<1>",
                         lambda event, id=self.index: self.tomlFrameOpen_click(
@@ -374,8 +354,7 @@ class Application(tk.Frame):
                         text="−",
                         fg="#ff3333",
                         font=("Arial Black", 20),
-                    )
-                    # 追加するボタンのようなラベルにクリックイベントを設定
+                    )  # 追加するボタンのようなラベルにクリックイベントを設定
                     btn.bind(
                         "<1>",
                         lambda event, id=self.index: self.tomlFrameOpen_click(
@@ -397,6 +376,7 @@ class Application(tk.Frame):
                 font=("Arial Black", 10),
             )
             btn.grid(row=1, column=0, columnspan=3, sticky=tk.NSEW)
+            map(self)
 
     # ---------------------------------------------------------------------------------------------
     def tomlFrameClose(self):
@@ -446,8 +426,7 @@ class Application(tk.Frame):
                     text="+",
                     fg="#33ff33",
                     font=("Arial Black", 20),
-                )
-                # 追加するボタンのようなラベルにクリックイベントを設定
+                )  # 追加するボタンのようなラベルにクリックイベントを設定
                 btn.bind(
                     "<1>",
                     lambda event, id=self.index: self.tomlFrameOpen_click(event, "+"),
@@ -461,8 +440,7 @@ class Application(tk.Frame):
                     text="−",
                     fg="#ff3333",
                     font=("Arial Black", 20),
-                )
-                # 追加するボタンのようなラベルにクリックイベントを設定
+                )  # 追加するボタンのようなラベルにクリックイベントを設定
                 btn.bind(
                     "<1>",
                     lambda event, id=self.index: self.tomlFrameOpen_click(event, "−"),
@@ -484,8 +462,7 @@ class Application(tk.Frame):
                     text="+",
                     fg="#33ff33",
                     font=("Arial Black", 20),
-                )
-                # 追加するボタンのようなラベルにクリックイベントを設定
+                )  # 追加するボタンのようなラベルにクリックイベントを設定
                 btn.bind(
                     "<1>",
                     lambda event, id=self.index: self.tomlFrameOpen_click(event, "+"),
@@ -499,8 +476,7 @@ class Application(tk.Frame):
                     text="−",
                     fg="#ff3333",
                     font=("Arial Black", 20),
-                )
-                # 追加するボタンのようなラベルにクリックイベントを設定
+                )  # 追加するボタンのようなラベルにクリックイベントを設定
                 btn.bind(
                     "<1>",
                     lambda event, id=self.index: self.tomlFrameOpen_click(event, "−"),
@@ -603,7 +579,6 @@ class Application(tk.Frame):
             if si == wn:
                 break
             si_r += 1
-        # next = self.indexes.index(id) + 1
         next = si_r + 1
         self.index = self.index + 1
         # エントリーウィジェットを作成して配置
@@ -625,7 +600,6 @@ class Application(tk.Frame):
                 break
             id += 1
         # 削除する位置
-        # current = self.indexes.index(id)
         current = id
         # エントリーウィジェットと追加・削除ボタンのようなラベルを削除
         self.Entries[current].destroy()
@@ -636,7 +610,6 @@ class Application(tk.Frame):
         self.insertEntries.pop(current)
         self.removeEntries.pop(current)
         self.indexes.pop(current)
-
         Entries = self.Entries
         # 再配置
         self.updateEntries()
@@ -704,8 +677,7 @@ class Application(tk.Frame):
         # 最初のエントリーウィジェットを追加
         self.Entries.insert(
             next, tk.Entry(self.SF.scrollable_frame, width=35, bg="snow")
-        )
-        # エントリーウィジェットを追加するボタンのようなラベルを作成
+        )  # エントリーウィジェットを追加するボタンのようなラベルを作成
         self.insertEntries.insert(
             next,
             tk.Label(
@@ -714,8 +686,7 @@ class Application(tk.Frame):
                 fg="#33ff33",
                 font=("Arial Black", 20),
             ),
-        )
-        # エントリーウィジェットを削除するボタンのようなラベルを作成（初期の段階では表示しない）
+        )  # エントリーウィジェットを削除するボタンのようなラベルを作成（初期の段階では表示しない）
         self.removeEntries.insert(
             next,
             tk.Label(
@@ -724,16 +695,13 @@ class Application(tk.Frame):
                 fg="#ff3333",
                 font=("Arial Black", 20),
             ),
-        )
-        # 追加するボタンのようなラベルにクリックイベントを設定
+        )  # 追加するボタンのようなラベルにクリックイベントを設定
         self.insertEntries[next].bind(
             "<1>", lambda event, id=self.index: self.insertEntry_click(event, id)
-        )
-        # 削除するボタンのようなラベルにクリックイベントを設定
+        )  # 削除するボタンのようなラベルにクリックイベントを設定
         self.removeEntries[next].bind(
             "<1>", lambda event, id=self.index: self.removeEntry_click(event, id)
-        )
-        # インデックスマネージャに登録
+        )  # インデックスマネージャに登録
         self.indexes.insert(next, self.index)
         # 再配置
         self.updateEntries(bar_x=False)
@@ -745,11 +713,9 @@ class Application(tk.Frame):
         """
         GetEntry = []
         G_logger.debug("列名設定項目取得関数開始")  # Log出力
-
         # 全てのエントリーウィジェットの内容を配列化
         for i in range(len(self.indexes)):
             GetEntry.append(self.Entries[i].get())
-
         # コンソールに表示
         return GetEntry
 
@@ -841,8 +807,6 @@ def ReturnNext(self):
     """
     self.top.withdraw()
     self.master.withdraw()
-    # Master.deiconify()
-    # root.destroy()
 
 
 # ---------------------------------------------------------------------------------------------
@@ -853,7 +817,6 @@ def ReturnBack(self):
     self.top.destroy()
     self.master.destroy()
     Master.deiconify()
-    # root.destroy()
 
 
 # ---------------------------------------------------------------------------------------------
@@ -920,12 +883,10 @@ def LoadImg(Wwidth, Wheight):
     global MaxW, MaxH
     global imgurl
     # 画像の読込#####################################################################
-    # 画像を指定
     img = Image.open(imgurl)
     MaxW, MaxH = img.width, img.height
     CW, CH = int(Wwidth), int(Wheight)
     HCW, HCH = CW / MaxW, CH / MaxH  # リサイズ比率
-
     img = img.resize((CW, CH))  # 画像リサイズ
     imgobj = ImageTk.PhotoImage(img)  # 下Windowに表示する画像オブジェクト
     return CW, CH, HCW, HCH, imgobj
@@ -1158,56 +1119,83 @@ def EnterP(self, HCW, HCH, selfmother):
                 # メッセージボックス（OK・キャンセル）
                 unmap(selfmother)
                 if len(FYokoList) == len(SGEL):
-                    MSG = messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
-                    if MSG is True:
-                        map(selfmother)
-                        ####################################################################################
-                        with open(
-                            URL + r"\StraightListYoko.csv",
-                            "w",
-                            newline="",
-                        ) as file:
-                            writer = csv.writer(file)
-                            writer.writerow(FYokoList)
-                        with open(
-                            URL + r"\StraightListTate.csv",
-                            "w",
-                            newline="",
-                        ) as file:
-                            writer = csv.writer(file)
-                            writer.writerow(FTateList)
-                        ####################################################################################
-                        print("csv保存完了")
-                        G_logger.debug("縦横リスト書出完了")  # Log出力
-                        OM = OCRF.Main(
-                            imgurl,
-                            FYokoList,
-                            FTateList,
-                            Banktoml,
-                            SGEL,
-                            MoneySet,
-                            ReplaceSet,
-                            ReplaceStr,
-                            G_logger,
-                        )
-                        if OM[0] is True:
-                            G_logger.debug("GoogleVisionAPI完了")  # Log出力
-                            unmap(selfmother)
-                            MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
-                            selfmother.top.iconify()  # 透過ウィンドウ最小化
-                            selfmother.master.iconify()  # 下ウィンドウ最小化
-                            subprocess.Popen(
-                                ["start", str(OM[1])], shell=True
-                            )  # excel起動
-                            # map(selfmother)
+                    if Master.HeaderCol_c == len(SGEL) or Master.HeaderCol_c == 0:
+                        MSG = messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
+                        if MSG is True:
+                            map(selfmother)
+                            ####################################################################################
+
+                            F_N = os.path.splitext(os.path.basename(imgurl))[0]
+                            Yoko_N = F_N + "_Yoko"
+                            Tate_N = F_N + "_Tate"
+                            Banktoml["LineSetting"][Yoko_N] = FYokoList
+                            Banktoml["LineSetting"][Tate_N] = FTateList
+                            toml_c.dump_toml(Banktoml, tomlurl)
+                            # with open(
+                            #     URL + r"\StraightListYoko.csv",
+                            #     "w",
+                            #     newline="",
+                            # ) as file:
+                            #     writer = csv.writer(file)
+                            #     writer.writerow(FYokoList)
+                            # with open(
+                            #     URL + r"\StraightListTate.csv",
+                            #     "w",
+                            #     newline="",
+                            # ) as file:
+                            #     writer = csv.writer(file)
+                            #     writer.writerow(FTateList)
+                            ####################################################################################
+                            print("csv保存完了")
+                            G_logger.debug("縦横リスト書出完了")  # Log出力
+                            OM = OCRF.Main(
+                                imgurl,
+                                FYokoList,
+                                FTateList,
+                                Banktoml,
+                                SGEL,
+                                MoneySet,
+                                ReplaceSet,
+                                ReplaceStr,
+                                G_logger,
+                            )
+                            if OM[0] is True:
+                                Read_Url = str(OM[1])
+                                G_logger.debug("GoogleVisionAPI完了")  # Log出力
+                                unmap(selfmother)
+                                MSG = messagebox.showinfo(
+                                    "抽出完了", Read_Url + "_に保存しました。"
+                                )
+                                MSG = messagebox.askokcancel("確認", "次ページ読込を行いますか？")
+                                if MSG is True:
+                                    Master.HeaderCol_c = len(SGEL)
+                                    G_logger.debug("次ページ読込開始")  # Log出力
+                                    FUL.append(Read_Url)  # 書出しCSVURLリスト
+                                    ReturnBack(selfmother)
+                                else:
+                                    FUL.append(Read_Url)  # 書出しCSVURLリスト
+                                    if len(FUL) == 1:
+                                        selfmother.top.iconify()  # 透過ウィンドウ最小化
+                                        selfmother.master.iconify()  # 下ウィンドウ最小化
+                                        subprocess.Popen(
+                                            ["start", Read_Url], shell=True
+                                        )  # excel起動
+                                        # map(selfmother)
+                                    else:
+                                        Read_Url = OCRF.JoinCSV(FUL)
+
+                            else:
+                                G_logger.debug("GoogleVisionAPI抽出失敗")  # Log出力
+                                unmap(selfmother)
+                                MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
+                                map(selfmother)
                         else:
-                            G_logger.debug("GoogleVisionAPI抽出失敗")  # Log出力
-                            unmap(selfmother)
-                            MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
+                            G_logger.debug("GoogleVisionAPI抽出中断")  # Log出力
+                            messagebox.showinfo("中断", "処理を中断します。")
                             map(selfmother)
                     else:
-                        G_logger.debug("GoogleVisionAPI抽出中断")  # Log出力
-                        messagebox.showinfo("中断", "処理を中断します。")
+                        G_logger.debug("先頭ページの列数と設定列名数不一致。")  # Log出力
+                        messagebox.showinfo("エラー", "先頭ページの列数と設定列名の数が一致しません。再確認してください。")
                         map(selfmother)
                 else:
                     G_logger.debug("GoogleVisionAPI縦軸数と設定列名数不一致。")  # Log出力
@@ -1263,12 +1251,10 @@ def AllLineDelete(self):
 
 # ---------------------------------------------------------------------------------------------
 # 円、矩形、直線を描画＆ドラッグできるようにする【tkinter】
-# https://irohaplat.com/python-tkinter-line-rectangle-oval-drag-and-drop-sample/
 def click1(event):
     """
     縦直線描画処理(画面クリック)
     """
-    # https://office54.net/python/tkinter/tkinter-bind-event#section2
     global x1
     global y1
     global id1
@@ -1288,7 +1274,6 @@ def drag1(event):
     """
     縦直線移動処理(ドラッグ)
     """
-    # https://office54.net/python/tkinter/tkinter-bind-event#section2
     global x1
     global y1
     global id1
@@ -1304,7 +1289,7 @@ def drag1(event):
 
 
 # ---------------------------------------------------------------------------------------------
-def Main(MUI, US, turl, logger):
+def Main(MUI, US, turl, logger, File_url_List):
     """
     呼出関数
     """
@@ -1312,6 +1297,7 @@ def Main(MUI, US, turl, logger):
     global readcsv1, readcsv2
     global URL, G_logger
     global Banktoml, tomlurl
+    global FUL
 
     Master = MUI
     imgurl = US.replace(r"\\\\", r"\\")
@@ -1319,55 +1305,25 @@ def Main(MUI, US, turl, logger):
     Master.withdraw()
     tomlurl = turl
     G_logger = logger
-    # imgurl = URL + r"\TKInterGUI\OCR0.png"
+    FUL = File_url_List
+
     # toml読込------------------------------------------------------------------------------
     with open(turl, encoding="utf-8") as f:
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
     try:
-        readcsv1 = []
-        with open(
-            URL + r"\StraightListYoko.csv",
-            "r",
-            newline="",
-        ) as inputfile:
-            for row in csv.reader(inputfile):
-                for rowItem in row:
-                    rsp = (
-                        rowItem.replace("[", "")
-                        .replace("]", "")
-                        .replace(" ", "")
-                        .split(",")
-                    )
-                    readcsv1.append(
-                        [int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])]
-                    )
-        readcsv2 = []
-        with open(
-            URL + r"\StraightListTate.csv",
-            "r",
-            newline="",
-        ) as inputfile:
-            for row in csv.reader(inputfile):
-                for rowItem in row:
-                    rsp = (
-                        rowItem.replace("[", "")
-                        .replace("]", "")
-                        .replace(" ", "")
-                        .split(",")
-                    )
-                    readcsv2.append(
-                        [int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])]
-                    )
+        F_N = os.path.splitext(os.path.basename(imgurl))[0]
+        Yoko_N = F_N + "_Yoko"
+        Tate_N = F_N + "_Tate"
+        readcsv1 = Banktoml["LineSetting"][Yoko_N]
+        readcsv2 = Banktoml["LineSetting"][Tate_N]
     except:
-        print("行列CSVインポートエラー")
+        print("行列tomlインポートエラー")
         readcsv1 = []
         readcsv2 = []
-    # Windowについて : https://kuroro.blog/python/116yLvTkzH2AUJj8FHLx/
     root = tk.Tk()  # Window生成
     app = Application(master=root)
-    # frame = tk.Frame(root, height=3840, width=3840)  # frame生成
     # --- 基本的な表示準備 ----------------
 
     app.mainloop()
@@ -1391,6 +1347,9 @@ if __name__ == "__main__":
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
+
+    rc1 = Banktoml["LineSetting"]["Hirogin_1page_Yoko"]
+
     readcsv1 = []
     with open(
         URL + r"\TKInterGUI\StraightListYoko.csv",
