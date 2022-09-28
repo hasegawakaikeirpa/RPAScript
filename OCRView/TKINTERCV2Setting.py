@@ -2,7 +2,7 @@ import tkinter as tk
 import csv
 from PIL import Image, ImageTk
 import subprocess
-
+import P_Table as PT
 from tkinter import messagebox
 import os
 
@@ -1177,13 +1177,26 @@ def EnterP(self, HCW, HCH, selfmother):
                                     if len(FUL) == 1:
                                         selfmother.top.iconify()  # 透過ウィンドウ最小化
                                         selfmother.master.iconify()  # 下ウィンドウ最小化
-                                        subprocess.Popen(
-                                            ["start", Read_Url], shell=True
-                                        )  # excel起動
-                                        # map(selfmother)
+                                        # subprocess.Popen(
+                                        #     ["start", Read_Url], shell=True
+                                        # )  # excel起動
+                                        PT.Main(
+                                            selfmother, Read_Url, Banktoml, G_logger
+                                        )
                                     else:
-                                        Read_Url = OCRF.JoinCSV(FUL)
-
+                                        RU = OCRF.JoinCSV(FUL)
+                                        if RU[0] is True:
+                                            Read_Url = RU[1]
+                                            selfmother.top.iconify()  # 透過ウィンドウ最小化
+                                            selfmother.master.iconify()  # 下ウィンドウ最小化
+                                            # subprocess.Popen(
+                                            #     ["start", Read_Url], shell=True
+                                            # )  # excel起動
+                                            PT.Main(
+                                                selfmother, Read_Url, Banktoml, G_logger
+                                            )
+                                        else:
+                                            G_logger.debug("CSV連結後出力失敗")  # Log出力
                             else:
                                 G_logger.debug("GoogleVisionAPI抽出失敗")  # Log出力
                                 unmap(selfmother)
@@ -1347,39 +1360,41 @@ if __name__ == "__main__":
         Banktoml = toml.load(f)
         print(Banktoml)
     # -----------------------------------------------------------
-
-    rc1 = Banktoml["LineSetting"]["Hirogin_1page_Yoko"]
-
-    readcsv1 = []
-    with open(
-        URL + r"\TKInterGUI\StraightListYoko.csv",
-        "r",
-        newline="",
-    ) as inputfile:
-        for row in csv.reader(inputfile):
-            for rowItem in row:
-                rsp = (
-                    rowItem.replace("[", "")
-                    .replace("]", "")
-                    .replace(" ", "")
-                    .split(",")
-                )
-                readcsv1.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
-    readcsv2 = []
-    with open(
-        URL + r"\TKInterGUI\StraightListTate.csv",
-        "r",
-        newline="",
-    ) as inputfile:
-        for row in csv.reader(inputfile):
-            for rowItem in row:
-                rsp = (
-                    rowItem.replace("[", "")
-                    .replace("]", "")
-                    .replace(" ", "")
-                    .split(",")
-                )
-                readcsv2.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
+    # readcsv1 = []
+    # with open(
+    #     URL + r"\TKInterGUI\StraightListYoko.csv",
+    #     "r",
+    #     newline="",
+    # ) as inputfile:
+    #     for row in csv.reader(inputfile):
+    #         for rowItem in row:
+    #             rsp = (
+    #                 rowItem.replace("[", "")
+    #                 .replace("]", "")
+    #                 .replace(" ", "")
+    #                 .split(",")
+    #             )
+    #             readcsv1.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
+    # readcsv2 = []
+    # with open(
+    #     URL + r"\TKInterGUI\StraightListTate.csv",
+    #     "r",
+    #     newline="",
+    # ) as inputfile:
+    #     for row in csv.reader(inputfile):
+    #         for rowItem in row:
+    #             rsp = (
+    #                 rowItem.replace("[", "")
+    #                 .replace("]", "")
+    #                 .replace(" ", "")
+    #                 .split(",")
+    #             )
+    #             readcsv2.append([int(rsp[0]), int(rsp[1]), int(rsp[2]), int(rsp[3])])
+    F_N = os.path.splitext(os.path.basename(imgurl))[0]
+    Yoko_N = F_N + "_Yoko"
+    Tate_N = F_N + "_Tate"
+    readcsv1 = Banktoml["LineSetting"][Yoko_N]
+    readcsv2 = Banktoml["LineSetting"][Tate_N]
     COLArray = True, readcsv1, readcsv2
 
     # Windowについて : https://kuroro.blog/python/116yLvTkzH2AUJj8FHLx/
