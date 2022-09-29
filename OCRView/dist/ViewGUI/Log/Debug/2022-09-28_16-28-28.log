@@ -1315,3 +1315,4 @@
 [2022/09/28 16:32:12][DEBUG](OCRFlow.py:70) D:\\OCRTESTPDF\\PDFTEST\\\\Hirogin_2page.csv_1ページ連結完了 JoinCSV OCRFlow.py
 [2022/09/28 16:32:12][DEBUG](OCRFlow.py:74) ページ連結後dfto_csv開始 JoinCSV OCRFlow.py
 [2022/09/28 16:32:12][DEBUG](OCRFlow.py:86) GoogleAPI後csv処理完了 JoinCSV OCRFlow.py
+[2022/09/28 16:52:38][DEBUG](TKINTERCV2Setting.py:731) TKINTERCV2SettingClose完了 click_close TKINTERCV2Setting.py

@@ -1,4 +1,5 @@
 # モジュールインポート
+from tkinter.dialog import DIALOG_ICON
 import pyautogui as pg
 import time
 import MJSOpen
@@ -1586,6 +1587,42 @@ def ZaisanUpdate(FolURL, TFolURL, ExRow, driver):
                             10,
                         )
                         ImgClick(TFolURL, CDB[1], 0.9, 10)  # 顧問先情報取込ボタンをクリック
+                # データ基本情報を更新---------------------------------------------------
+                ImgClick(TFolURL, r"\DataIcon.png", 0.9, 10)
+                while (
+                    pg.locateOnScreen(TFolURL + r"\DataInIcon.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                ImgClick(TFolURL, r"\DataInIcon.png", 0.9, 10)
+                while (
+                    pg.locateOnScreen(TFolURL + r"\DataInOK.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                ImgClick(TFolURL, r"\DataInOK.png", 0.9, 10)
+                while (
+                    pg.locateOnScreen(TFolURL + r"\DataInIcon.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                ME = ImgCheckForList(
+                    TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
+                )
+                if ME[0] is True:
+                    ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
+                while (
+                    pg.locateOnScreen(TFolURL + r"\DataEndQ.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                pg.press("y")
+                while (
+                    pg.locateOnScreen(TFolURL + r"\ZaisanKousin.png", confidence=0.9)
+                    is None
+                ):
+                    time.sleep(1)
+                # --------------------------------------------------------------------
                 # --------------------------------------------------------------------
                 ImgClick(TFolURL, r"\ZaisanKousin.png", 0.9, 10)  # 一括更新のアイコンをクリック
                 # 財産評価メニューが表示されるまで待機------------------------------------
