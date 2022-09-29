@@ -152,7 +152,8 @@ class MyTable(Table):
             takefocus=1,
             font=self.thefont,
         )
-        self.cellentry.insert(END, text)
+        self.cellentry.delete(0, END)
+        self.cellentry.insert(0, text)
         self.cellentry.icursor(END)
         self.cellentry.focus_set()
         self.cellentry.bind("<Return>", lambda x: self.HCE(row, col))

@@ -245,12 +245,18 @@ def NameSearch(NameDF, Rno):
     try:
         NameDFColumn = np.array(NameDF.columns)
         NameDF = np.array(NameDF)
-        NC = np.where(NameDFColumn=="コード")
-        KC = np.where(NameDFColumn=="顧問先名称")
-        NameDFIndex = NameDF[:,NC]
-        NR = np.where(NameDFIndex==Rno)
-        N_L = NameDF[NR,KC]
-        N_L = str(N_L[0]).replace("[","").replace("]","").replace("'","").replace('"',"")
+        NC = np.where(NameDFColumn == "コード")
+        KC = np.where(NameDFColumn == "顧問先名称")
+        NameDFIndex = NameDF[:, NC]
+        NR = np.where(NameDFIndex == Rno)
+        N_L = NameDF[NR, KC]
+        N_L = (
+            str(N_L[0])
+            .replace("[", "")
+            .replace("]", "")
+            .replace("'", "")
+            .replace('"', "")
+        )
         print(N_L)
         return N_L
     except:
@@ -866,7 +872,7 @@ def HoujinzeiUpdateSinkokuItiran(
                 ):
                     time.sleep(1)
             SCB = ImgCheck(CFolURL, r"\Houjinzei\Saiyou_Check.png", 0.9, 10)
-            if DNQ[0] is True:
+            if SCB[0] is True:
                 pg.press("y")
                 while (
                     pg.locateOnScreen(
@@ -3209,7 +3215,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                 ICFL = ImgCheckForList(CFolURL, ImgList, 0.9, 10)
                 # -----------------------------------------------------------------------
                 if ICFL[0] is True:
-                    ImgClick(CFolURL, ICFL[1], 0.9, 10)  #  内訳書印刷アイコンをクリック
+                    ImgClick(CFolURL, ICFL[1], 0.9, 10)  # 内訳書印刷アイコンをクリック
                 # 印刷ボタンが表示されるまで待機---------------------------------
                 while (
                     pg.locateOnScreen(
@@ -3483,7 +3489,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             )
                             is None
                         ):
-                            time.sleep(1)               
+                            time.sleep(1)
                 # --------------------------------------------------------------------
                 # 指示内容で処理分け----------------------------------------------------------
                 if PN == "消費税確定申告書":

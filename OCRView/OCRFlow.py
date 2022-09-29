@@ -8,12 +8,12 @@ from pandas import DataFrame, read_csv, concat
 from csv import reader, QUOTE_NONNUMERIC
 
 # import numpy as np
-from numpy import asarray
+from numpy import asarray, array
 from difflib import SequenceMatcher
 from mojimoji import han_to_zen
 import CSVOut as CSVO
 
-
+# ----------------------------------------------------------------------------
 def getNearestValue(list, num):
     """
     概要: リストからある値に最も近い値を返却する関数
@@ -29,6 +29,7 @@ def getNearestValue(list, num):
     return list[idx]
 
 
+# ----------------------------------------------------------------------------
 def DiffCheck(GFTable, ColList):
     """
     概要: データフレームの列数にあわせて列名リスト要素数を変更
@@ -46,9 +47,9 @@ def DiffCheck(GFTable, ColList):
     else:
         for GC_d in range(GC_Diff):
             ColList.append("未設定" + str(GC_d + 1))
-    # ----------------------------------------------------------------------------
 
 
+# ----------------------------------------------------------------------------
 def JoinCSV(CSVList):
     """
     概要: 引数リストのURLから連結CSVを作成
@@ -90,8 +91,22 @@ def JoinCSV(CSVList):
         return False, ""
 
 
+# ----------------------------------------------------------------------------
+def DayCheck(GFTable, DaySet):
+    """
+    概要: 設定日付列番号に応じて日付書式変換
+    @param GFTable: データ配列
+    @param DaySet: 設定日付列番号
+    """
+
+    # 設定日付列番号に応じて日付書式変換------------------------------
+    DS = int(DaySet[0]) - 1
+    G_list = array(GFTable)[:, DS]
+
+
+# ----------------------------------------------------------------------------
 def DiffListCreate(
-    FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr
+    FileURL, Yoko, Tate, Banktoml, ColList, DaySet, MoneySet, ReplaceSet, ReplaceStr
 ):
     """
     概要: GoogleVisionApiを実行し、結果をCSV化
@@ -99,7 +114,8 @@ def DiffListCreate(
     @param Yoko : 横軸リスト
     @param Tate : 縦軸リスト
     @param Banktoml : toml設定ファイルURL(str)
-    @param ColList : 日付列番号リスト(list)
+    @param ColList : 列名リスト(list)
+    @param DaySet : 日付列番号リスト(list)
     @param MoneySet : 金額表示列番号リスト(list)
     @param ReplaceSet : 置換対象列番号のリスト(list)
     @param ReplaceStr : 置換対象文字列のリスト(list)
@@ -135,6 +151,9 @@ def DiffListCreate(
         print(GF[0])
         if GF[0] is True:
             GFTable = GF[1]
+            # 設定日付列番号に応じて日付書式変換------------------------------
+            DayCheck(GFTable, DaySet)
+            # --------------------------------------------------------------
             GFRow = len(GFTable)
             GFCol = len(GFTable[0])
             ChangeTxtList = []
@@ -264,7 +283,16 @@ def DiffListCreate(
 
 
 def Main(
-    FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr, logger
+    FileURL,
+    Yoko,
+    Tate,
+    Banktoml,
+    ColList,
+    DaySet,
+    MoneySet,
+    ReplaceSet,
+    ReplaceStr,
+    logger,
 ):
     """
     概要: 呼出関数
@@ -287,7 +315,7 @@ def Main(
     #     print(Banktoml)
     # # -----------------------------------------------------------
     DLC = DiffListCreate(
-        FileURL, Yoko, Tate, Banktoml, ColList, MoneySet, ReplaceSet, ReplaceStr
+        FileURL, Yoko, Tate, Banktoml, ColList, DaySet, MoneySet, ReplaceSet, ReplaceStr
     )
     if DLC[0] is True:
         return DLC

@@ -1154,6 +1154,7 @@ def EnterP(self, HCW, HCH, selfmother):
                                 FTateList,
                                 Banktoml,
                                 SGEL,
+                                DaySet,
                                 MoneySet,
                                 ReplaceSet,
                                 ReplaceStr,

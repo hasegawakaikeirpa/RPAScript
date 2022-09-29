@@ -1,5 +1,4 @@
 # モジュールインポート
-from tkinter.dialog import DIALOG_ICON
 import pyautogui as pg
 import time
 import MJSOpen
@@ -2904,7 +2903,7 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
     @return : bool,ミロク入力関与先コード, ミロク入力処理年, ミロク入力処理月
     """
     try:
-        ErrStr = ""  # Rpaエラー判別変数
+        # ErrStr = ""  # Rpaエラー判別変数
         # 会計大将のアイコンを探す-------------------------------------------------
         ImgList = [r"\K_TaisyouIcon.png", r"\K_TaisyouIcon2.png"]
         ICFL = ImgCheckForList(TFolURL, ImgList, 0.9, 10)
