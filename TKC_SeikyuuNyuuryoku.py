@@ -274,8 +274,11 @@ def FMSOpen(driver, FolURL2, xls_data, KamokuCD, Lday):
     ImgClick(FolURL2, FileName, conf, LoopVal)
     time.sleep(3)
     conf = 0.9
-    FileName = "BoxMenu.png"
-    ImgClick(FolURL2, FileName, conf, LoopVal)
+    # -------------------------------------------
+    FileName = "F10END.png"
+    F10E = ImgCheck(FolURL2, FileName, 0.9, 5)
+    pyautogui.click(F10E[1] + 10, F10E[2] - 30)
+    # -------------------------------------------
     pg.write("202", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
     pg.press("return")
     FileName = "KanyoItiWin.png"
