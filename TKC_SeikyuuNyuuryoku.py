@@ -319,7 +319,11 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
         time.sleep(2)
         conf = 0.9
         LoopVal = 10
-        FileName = "BoxMenu.png"
+        # -------------------------------------------
+        FileName = "F10Close.png"
+        F10C = ImgCheck(FolURL2, FileName, 0.9, 5)
+        pyautogui.click(F10C[1] + 10, F10C[2] - 30)
+        # -------------------------------------------
         ImgClick(FolURL2, FileName, conf, LoopVal)
         pg.write("1", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
         time.sleep(2)
@@ -338,8 +342,11 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
             ImgClick(FolURL2, "FullMenu.png", 0.9, 5)
             time.sleep(3)
             conf = 0.9
-            FileName = "BoxMenu.png"
-            ImgClick(FolURL2, FileName, conf, LoopVal)
+            # -------------------------------------------
+            FileName = "F10Close.png"
+            F10C = ImgCheck(FolURL2, FileName, 0.9, 5)
+            pyautogui.click(F10C[1] + 10, F10C[2] - 30)
+            # -------------------------------------------
             pg.write("202", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
             pg.press("return")
             FileName = "KanyoItiWin.png"
@@ -363,8 +370,11 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
         else:
             conf = 0.9
             LoopVal = 10
-            FileName = "BoxMenu.png"
-            ImgClick(FolURL2, FileName, conf, LoopVal)
+            # -------------------------------------------
+            FileName = "F10Close.png"
+            F10C = ImgCheck(FolURL2, FileName, 0.9, 5)
+            pyautogui.click(F10C[1] + 10, F10C[2] - 30)
+            # -------------------------------------------
             pg.write(KamokuCD, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
             pg.press("return")
             pg.press("return")
@@ -444,8 +454,11 @@ def OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
         time.sleep(2)
         conf = 0.9
         LoopVal = 10
-        FileName = "BoxMenu.png"
-        ImgClick(FolURL2, FileName, conf, LoopVal)
+        # -------------------------------------------
+        FileName = "F10Close.png"
+        F10C = ImgCheck(FolURL2, FileName, 0.9, 5)
+        pyautogui.click(F10C[1] + 10, F10C[2] - 30)
+        # -------------------------------------------
         pg.write("1", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
         time.sleep(2)
         pg.press("return")
@@ -457,8 +470,11 @@ def OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
             time.sleep(2)
         conf = 0.8
         LoopVal = 10
-        FileName = "BoxMenu.png"
-        ImgClick(FolURL2, FileName, conf, LoopVal)
+        # -------------------------------------------
+        FileName = "F10Close.png"
+        F10C = ImgCheck(FolURL2, FileName, 0.9, 5)
+        pyautogui.click(F10C[1] + 10, F10C[2] - 30)
+        # -------------------------------------------
         pg.write(KamokuCD, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
         pg.press("return")
         pg.press("return")
