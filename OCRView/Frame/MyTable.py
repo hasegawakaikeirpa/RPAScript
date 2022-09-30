@@ -258,3 +258,37 @@ class MyTable(Table):
         return
 
     # --------------------------------------------------------------------
+    def handle_double_click(self, event):
+        """Do double click stuff. Selected row/cols will already have
+        been set with single click binding"""
+        # "比較ファイルMain"
+        if event.widget._name == "OCR抽出結果表Main":
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            if event.widget.model.df.columns[col] == "比較対象行番号":
+                # 比較対象DF検索--------------------------------------
+                Dif_t = event.widget
+                for i in range(100):
+                    Dif_t = Dif_t.master
+                    try:
+                        print(Dif_t._name)
+                    except:
+                        Dif_t = Dif_t.children["!application"]
+                        Dif_t = Dif_t.pt2
+                        break
+                # ---------------------------------------------------
+                ewm = event.widget.model.df.iloc[row]
+                ewm = int(ewm["比較対象行番号"]) - 1
+                Dif_t.setSelectedRow(ewm)
+                Dif_t.setSelectedCol(0)
+                Dif_t.drawSelectedRect(ewm, 0)
+                Dif_t.drawSelectedRow()
+                return
+            else:
+                self.drawCellEntry(self.currentrow, self.currentcol)
+                return
+        else:
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            self.drawCellEntry(self.currentrow, self.currentcol)
+            return

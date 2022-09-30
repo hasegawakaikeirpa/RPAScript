@@ -106,7 +106,17 @@ def DayCheck(GFTable, DaySet):
 
 # ----------------------------------------------------------------------------
 def DiffListCreate(
-    FileURL, Yoko, Tate, Banktoml, ColList, DaySet, MoneySet, ReplaceSet, ReplaceStr
+    FileURL,
+    Yoko,
+    Tate,
+    Banktoml,
+    ColList,
+    DaySet,
+    MoneySet,
+    ReplaceSet,
+    ReplaceStr,
+    PBAR,
+    ChangeVar,
 ):
     """
     概要: GoogleVisionApiを実行し、結果をCSV化
@@ -147,7 +157,7 @@ def DiffListCreate(
             COLArray[2],
         )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
         G_logger.debug("Bankrentxtver完了")  # Log出力
-
+        PBAR._target.step(20)
         print(GF[0])
         if GF[0] is True:
             GFTable = GF[1]
@@ -157,10 +167,10 @@ def DiffListCreate(
             GFRow = len(GFTable)
             GFCol = len(GFTable[0])
             ChangeTxtList = []
+            PB_v = int(90 / GFRow)
+            strsList = []
             # OCR結果を整形----------------------------------------------------------------
             for g in range(GFRow):
-                # if g == 21:
-                #     print("")
                 try:
                     # toml設定の列数以上の列を削除-----------------------------------------------
                     lentoml = len(ColList)
@@ -210,8 +220,8 @@ def DiffListCreate(
                             GFTable[g][c - 1] = ints
                         elif len(ints) == 0:
                             GFTable[g][c - 1] = strs
-                        else:
-                            GFTable[g][c - 1] = strs + "::" + ints
+                        # else:
+                        #     GFTable[g][c - 1] = strs + "::" + ints
                     # -------------------------------------------------------------------------
                 # tomlから摘要変換リストを読込一致率50％を超えるものがあれば置換-----------------
                 if "," in ReplaceSet:
@@ -239,11 +249,13 @@ def DiffListCreate(
                                 r = SequenceMatcher(None, src, trg).ratio()
                                 CTCount.append([r, CT])
                             GNV = getNearestValue(CTCount, 1.0)
-                            if 1.0 - GNV[0] < 0.5:
+                            R_par = ChangeVar / 100
+                            if 1.0 - GNV[0] < R_par:
                                 ChangeTxtList.append([GFTable[g][c - 1], GNV[1]])
                                 GFTable[g][c - 1] = GNV[1]
-
-                    # -------------------------------------------------------------------------
+                strsList.append(strs)
+                PBAR._target.step(PB_v)
+                # -------------------------------------------------------------------------
             G_logger.debug("GoogleAPI後編集処理完了")  # Log出力
             # DataFrame作成
             DiffCheck(GFTable, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
@@ -293,6 +305,8 @@ def Main(
     ReplaceSet,
     ReplaceStr,
     logger,
+    PBAR,
+    ChangeVar,
 ):
     """
     概要: 呼出関数
@@ -315,7 +329,17 @@ def Main(
     #     print(Banktoml)
     # # -----------------------------------------------------------
     DLC = DiffListCreate(
-        FileURL, Yoko, Tate, Banktoml, ColList, DaySet, MoneySet, ReplaceSet, ReplaceStr
+        FileURL,
+        Yoko,
+        Tate,
+        Banktoml,
+        ColList,
+        DaySet,
+        MoneySet,
+        ReplaceSet,
+        ReplaceStr,
+        PBAR,
+        ChangeVar,
     )
     if DLC[0] is True:
         return DLC

@@ -1,7 +1,8 @@
 import tkinter as tk
 import csv
 from PIL import Image, ImageTk
-import subprocess
+
+# import subprocess
 import P_Table as PT
 from tkinter import messagebox
 import os
@@ -19,6 +20,7 @@ import ScrollableFrame as SF
 import tomlCreate as toml_c
 
 from tkinter import filedialog
+import ProgressBar as PB
 
 ###################################################################################################
 class Application(tk.Frame):
@@ -33,8 +35,11 @@ class Application(tk.Frame):
         super().__init__(master)
         # Windowの画面サイズを設定する。
         G_logger.debug("TKINTERCV2Setting_Application起動")  # Log出力
-        self.master.geometry("1480x750+0+0")  # Window表示位置指定
+        self.master.geometry("1480x780+0+0")  # Window表示位置指定
+        # 　メインウィンドウタイトル
+        self.master.title("OCR読取 Ver:0.9-表形式抽出-")
         self.master.minsize(1480, 750)
+        fonts = ("ＭＳ ゴシック", 10)  # フォント設定
         # 画像の読込#####################################################################
         # 透過キャンバスの画像範囲検出の為リサイズ比率等を算出
         print(self.master.geometry())
@@ -52,7 +57,7 @@ class Application(tk.Frame):
         self.top.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
         self.master.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
         self.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
-        self.top.geometry("1480x750+0+0")  # トップWindow表示位置指定
+        self.top.geometry("1480x780+0+0")  # トップWindow表示位置指定
         # 透過キャンバスフレーム##########################################################
         self.topFrame = tk.Frame(
             self.top,
@@ -93,30 +98,36 @@ class Application(tk.Frame):
         # テキストボックスの作成と配置
         txt = tk.Entry(Tframe, width=30)
         txt.grid(row=0, column=1)
+        # テキスト変換一致率
+        tk.Label(Tframe, text="テキスト変換一致率").grid(row=1, column=0)  # 位置指定
+        # テキストボックスの作成と配置
+        self.ChangeVar = tk.Entry(Tframe, width=30, bg="snow")
+        self.ChangeVar.insert(0, 50)
+        self.ChangeVar.grid(row=1, column=1)
         # 行数表示テキスト
-        tk.Label(Tframe, text="元帳日付列名").grid(row=1, column=0)  # 位置指定
+        tk.Label(Tframe, text="元帳日付列名").grid(row=2, column=0)  # 位置指定
         self.LimitCol = tk.Entry(Tframe, width=30, bg="snow")
         self.LimitCol.insert(0, "伝票日付")
-        self.LimitCol.grid(row=1, column=1)
+        self.LimitCol.grid(row=2, column=1)
         # 行数表示テキスト
-        tk.Label(Tframe, text="設定ファイル").grid(row=2, column=0)  # 位置指定
+        tk.Label(Tframe, text="設定ファイル").grid(row=3, column=0)  # 位置指定
         self.tomlurl = tk.Entry(Tframe, width=30, bg="snow")
         self.tomlurl.insert(0, tomlurl)
-        self.tomlurl.grid(row=2, column=1)
+        self.tomlurl.grid(row=3, column=1)
         # 行数表示テキスト
         # 設定ファイル変更ボタン--------------------------------------------------------
         self.tomlbutton = tk.Button(
             # self.top,
             Tframe,
             text="設定ファイル変更",
-            fg="White",
+            fg="snow",
             command=self.ChangeToml,
             bg="gray",
-            font=1,
-            width=23,
+            font=fonts,
+            width=40,
             height=1,
         )  # ボタン作成
-        self.tomlbutton.grid(row=3, column=0, columnspan=2, sticky=tk.N)
+        self.tomlbutton.grid(row=4, column=0, columnspan=2, sticky=tk.N)
         #################################################################################
         # 列名設定フレーム################################################################
         tk.Label(self.frame0, text="出力列名設定").grid(
@@ -155,21 +166,21 @@ class Application(tk.Frame):
         self.TomlInsert(self.DaySet, Banktoml["Setframe"]["DaySetList"])
         self.DaySet.bind("<Return>", tomlreturn)
         self.DaySet.bind("<Tab>", tomlreturn)
-        self.DaySet.grid(row=0, column=1)
+        self.DaySet.grid(row=0, column=1, padx=5)
         tk.Label(Setframe, text="金額表示列番号").grid(row=1, column=0)  # 位置指定
         self.MoneySet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.MoneySet)
         self.TomlInsert(self.MoneySet, Banktoml["Setframe"]["MoneySet"])
         self.MoneySet.bind("<Return>", tomlreturn)
         self.MoneySet.bind("<Tab>", tomlreturn)
-        self.MoneySet.grid(row=1, column=1)
+        self.MoneySet.grid(row=1, column=1, padx=5)
         tk.Label(Setframe, text="置換対象列番号").grid(row=2, column=0)  # 位置指定
         self.ReplaceSet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.ReplaceSet)
         self.TomlInsert(self.ReplaceSet, Banktoml["Setframe"]["ReplaceSet"])
         self.ReplaceSet.bind("<Return>", tomlreturn)
         self.ReplaceSet.bind("<Tab>", tomlreturn)
-        self.ReplaceSet.grid(row=2, column=1)
+        self.ReplaceSet.grid(row=2, column=1, padx=5)
         tk.Label(Setframe, text="置換対象文字列").grid(row=3, column=0)  # 位置指定
         self.ReplaceStr = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.ReplaceStr)
@@ -177,7 +188,7 @@ class Application(tk.Frame):
         self.ReplaceStr.bind("<Return>", tomlreturn)
         self.ReplaceStr.bind("<Tab>", tomlreturn)
         self.ReplaceStr.bind("<Double-1>", self.tomlFrameOpen)
-        self.ReplaceStr.grid(row=3, column=1)
+        self.ReplaceStr.grid(row=3, column=1, padx=5)
         #################################################################################
         # サイドメニュー内ボタンフレーム###################################################
         frame = tk.Frame(
@@ -195,86 +206,88 @@ class Application(tk.Frame):
         button = tk.Button(
             frame,
             text="縦直線追加",
-            fg="White",
+            fg="snow",
             command=lambda: StLine(self.top.forward, CW, CH),
             bg="tomato",
             font=fonts,
             width=BW,
             height=BH,
         )  # ボタン作成
-        button.grid(row=0, column=0, sticky=tk.N)
+        button.grid(row=0, column=0, padx=5, sticky=tk.N)
         # 横直線追加ボタン---------------------------------------------------------------
         button2 = tk.Button(
             frame,
             text="横直線追加",
-            fg="White",
+            fg="snow",
             command=lambda: StWLine(self.top.forward, CW, CH),
             bg="seagreen3",
             font=fonts,
             width=BW,
             height=BH,
         )  # ボタン作成
-        button2.grid(row=1, column=0, sticky=tk.N)
+        button2.grid(row=1, column=0, padx=5, sticky=tk.N)
         # 削除ボタン---------------------------------------------------------------
         button5 = tk.Button(
             frame,
             text="選択直線削除",
-            fg="White",
+            fg="snow",
             command=lambda: LineDelete(self.top.forward),
             bg="Orange",
             font=fonts,
             width=BW,
             height=BH,
         )  # ボタン作成
-        button5.grid(row=2, column=0, sticky=tk.N)
+        button5.grid(row=2, column=0, padx=5, sticky=tk.N)
         # 新規直線描画ボタン---------------------------------------------------------------
         button3 = tk.Button(
             frame,
             text="新規直線描画",
-            fg="White",
+            fg="snow",
             command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
             bg="mediumPurple",
             font=fonts,
             width=BW,
             height=BH,
         )  # ボタン作成
-        button3.grid(row=3, column=0, sticky=tk.N)
+        button3.grid(row=3, column=0, padx=5, sticky=tk.N)
         # 置換ボタン---------------------------------------------------------------
         button7 = tk.Button(
             frame,
             text="置換対象文字列設定",
-            fg="White",
+            fg="snow",
             command=lambda: self.tomlFrameOpen(self),
             bg="hotpink1",
             font=fonts,
             width=BW,
             height=BH,
         )  # ボタン作成
-        button7.grid(row=4, column=0, sticky=tk.N)
+        button7.grid(row=4, column=0, padx=5, sticky=tk.N)
         # 確定ボタン---------------------------------------------------------------
         button4 = tk.Button(
             frame,
             text="確定",
-            fg="White",
-            command=lambda: EnterP(self.top.forward, HCW, HCH, self),
+            fg="snow",
+            command=lambda: EnterP(
+                self.top.forward, HCW, HCH, self, self.master, self.top, self.ChangeVar
+            ),
             bg="steelblue3",
             font=fonts,
             width=BW,
             height=BH,
         )  # ボタン作成
-        button4.grid(row=5, column=0, sticky=tk.N)
+        button4.grid(row=5, column=0, padx=5, sticky=tk.N)
         # 戻るボタン---------------------------------------------------------------
         button6 = tk.Button(
             frame,
             text="戻る",
-            fg="White",
+            fg="snow",
             command=lambda: ReturnBack(self),
             bg="gray",
             font=fonts,
             width=BW,
             height=BH,
         )  # ボタン作成
-        button6.grid(row=6, column=0, sticky=tk.N)
+        button6.grid(row=6, column=0, padx=5, sticky=tk.N)
         # ##############################################################################
         Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)  # 透過キャンバスに罫線描画
         self.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
@@ -1022,7 +1035,7 @@ def listintCheck(list):
 
 
 # ---------------------------------------------------------------------------------------------
-def EnterP(self, HCW, HCH, selfmother):
+def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
     """
     確定ボタンクリック
     """
@@ -1120,11 +1133,17 @@ def EnterP(self, HCW, HCH, selfmother):
                 unmap(selfmother)
                 if len(FYokoList) == len(SGEL):
                     if Master.HeaderCol_c == len(SGEL) or Master.HeaderCol_c == 0:
+                        try:
+                            ChangeVar = int(ChangeVar.get())
+                        except:
+                            MSG = messagebox.showinfo("エラー", "テキスト変換一致率に数値以外が入力されています。")
+                            map(selfmother)
+                            return
                         MSG = messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
                         if MSG is True:
                             map(selfmother)
+                            PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
                             ####################################################################################
-
                             F_N = os.path.splitext(os.path.basename(imgurl))[0]
                             Yoko_N = F_N + "_Yoko"
                             Tate_N = F_N + "_Tate"
@@ -1159,15 +1178,21 @@ def EnterP(self, HCW, HCH, selfmother):
                                 ReplaceSet,
                                 ReplaceStr,
                                 G_logger,
+                                PBAR,
+                                ChangeVar,
                             )
                             if OM[0] is True:
                                 Read_Url = str(OM[1])
+                                PBAR._target.step(10)
+                                PBAR._target.master.destroy()
                                 G_logger.debug("GoogleVisionAPI完了")  # Log出力
                                 unmap(selfmother)
                                 MSG = messagebox.showinfo(
                                     "抽出完了", Read_Url + "_に保存しました。"
                                 )
-                                MSG = messagebox.askokcancel("確認", "次ページ読込を行いますか？")
+                                MSG = messagebox.askokcancel(
+                                    "確認", "次ページ読込を行いますか？\nキャンセルで比較ウィンドウを起動します。"
+                                )
                                 if MSG is True:
                                     Master.HeaderCol_c = len(SGEL)
                                     G_logger.debug("次ページ読込開始")  # Log出力
@@ -1182,7 +1207,12 @@ def EnterP(self, HCW, HCH, selfmother):
                                         #     ["start", Read_Url], shell=True
                                         # )  # excel起動
                                         PT.Main(
-                                            selfmother, Read_Url, Banktoml, G_logger
+                                            self,
+                                            Read_Url,
+                                            Banktoml,
+                                            G_logger,
+                                            Mter,
+                                            Top,
                                         )
                                     else:
                                         RU = OCRF.JoinCSV(FUL)
@@ -1194,7 +1224,12 @@ def EnterP(self, HCW, HCH, selfmother):
                                             #     ["start", Read_Url], shell=True
                                             # )  # excel起動
                                             PT.Main(
-                                                selfmother, Read_Url, Banktoml, G_logger
+                                                self,
+                                                Read_Url,
+                                                Banktoml,
+                                                G_logger,
+                                                Mter,
+                                                Top,
                                             )
                                         else:
                                             G_logger.debug("CSV連結後出力失敗")  # Log出力

@@ -817,13 +817,14 @@ class ViewGUI:
                     self.File_url_List,
                 )
             except:
-                typ = [("tomlファイル", "*.toml")]
-                messagebox.showinfo(
-                    "確認", "先頭ページ読込です。\nOCR読取設定が格納されているtomlファイルを指定して下さい。"
-                )
-                self.tomlPath = filedialog.askopenfilename(
-                    filetypes=typ, initialdir=self.dir_path
-                )
+                # typ = [("tomlファイル", "*.toml")]
+                # messagebox.showinfo(
+                #     "確認", "先頭ページ読込です。\nOCR読取設定が格納されているtomlファイルを指定して下さい。"
+                # )
+                # self.tomlPath = filedialog.askopenfilename(
+                #     filetypes=typ, initialdir=self.dir_path
+                # )
+                self.tomlPath = os.getcwd() + r"\OCRView\Setting.toml"
                 try:
                     CSVSetMain(
                         main_window,

@@ -37,10 +37,14 @@ class ProgressBar(ttk.Frame):
 
     # stepの引数にどれだけ進捗を進めるかを指定する
     def step(self, wint):
-        self.wint += wint
-        self.l_text.set("実行中:" + str(int(self.wint)) + "%")
-        threading.Thread(target=self.pbDeterminateVer.step(wint))
-        self.update_idletasks()
+        if self.wint < 100:
+            self.wint += wint
+            if self.wint >= 100:
+                wint = self.wint - 100
+                self.wint = 100
+            self.l_text.set("実行中:" + str(int(self.wint)) + "%")
+            threading.Thread(target=self.pbDeterminateVer.step(wint))
+            self.update_idletasks()
 
 
 class PB_indeterminate(ttk.Frame):
