@@ -273,7 +273,7 @@ def FMSOpen(driver, FolURL2, xls_data, KamokuCD, Lday):
     FileName = "TTOK.png"
     ImgClick(FolURL2, FileName, conf, LoopVal)
     time.sleep(3)
-    conf = 0.8
+    conf = 0.9
     FileName = "BoxMenu.png"
     ImgClick(FolURL2, FileName, conf, LoopVal)
     pg.write("202", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
@@ -317,7 +317,7 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
     FM = FindMenu(driver, FolURL2, xls_cd)
     if FM is True:
         time.sleep(2)
-        conf = 0.8
+        conf = 0.9
         LoopVal = 10
         FileName = "BoxMenu.png"
         ImgClick(FolURL2, FileName, conf, LoopVal)
@@ -337,7 +337,7 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
         if NoD[0] is True:
             ImgClick(FolURL2, "FullMenu.png", 0.9, 5)
             time.sleep(3)
-            conf = 0.8
+            conf = 0.9
             FileName = "BoxMenu.png"
             ImgClick(FolURL2, FileName, conf, LoopVal)
             pg.write("202", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
@@ -361,7 +361,7 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
             ) as f:
                 pd.DataFrame(UpList).to_csv(f)
         else:
-            conf = 0.8
+            conf = 0.9
             LoopVal = 10
             FileName = "BoxMenu.png"
             ImgClick(FolURL2, FileName, conf, LoopVal)
@@ -442,7 +442,7 @@ def OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
     FM = FindMenu(driver, FolURL2, xls_cd)
     if FM is True:
         time.sleep(2)
-        conf = 0.8
+        conf = 0.9
         LoopVal = 10
         FileName = "BoxMenu.png"
         ImgClick(FolURL2, FileName, conf, LoopVal)
