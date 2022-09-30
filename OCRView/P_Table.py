@@ -13,6 +13,8 @@ class Application(tk.Frame):
         super().__init__(master)
         # Windowの画面サイズを設定する。
         G_logger.debug("P_Table起動")  # Log出力
+        s = tk.ttk.Style()
+        s.theme_use("clam")
         ########################################
         wid = 2.25  # width割率
         hei = 1.5  # width割率
@@ -48,15 +50,21 @@ class Application(tk.Frame):
         self.DStxt.insert(0, "")  # 日付列名テキストボックスに文字代入
         self.DStxt.grid(row=0, column=1, sticky=tk.W)  # 日付列名テキストボックス配置
         fonts = ("", 10)
+        PN = tk.PhotoImage(
+            file=r"D:\PythonScript\RPAScript\RPAPhoto\MJS_SystemNextCreate\THI.png"
+        )
+        PN = PN.zoom(3, 3)
         self.DSbtn = tk.Button(
             self.Side_Sub,
             text="選択列名転記",
             fg="White",
             command=self.DSSetClick,
-            bg="orangered3",
+            # bg="orangered3",
             font=fonts,
-            width=12,
-            height=1,
+            width=300,
+            height=30,
+            image=PN,
+            compound="center",
         )  # ボタン作成
         self.DSbtn.grid(row=0, column=2, padx=5)
         # --------------------------------------------------------------------------------
@@ -454,35 +462,37 @@ class Application(tk.Frame):
         try:
             pt = np.array(self.pt.model.df)
 
-            ptCol = self.pt.model.df.columns
+            ptCol = list(self.pt.model.df.columns)
             pt2 = np.array(self.pt2.model.df)
             pt_r_list = np.array(self.pt.model.df)[:, 0]
             for r in range(pt.shape[0]):
-                if r == 7:
-                    print("")
-                if pt[r, OutM_col] != "" and pt[r, OutM_col] != float("nan"):
-                    ptstr = pt[r, Day_col] + pt[r, OutM_col]
-                    for rr in range(pt2.shape[0]):
-                        if pt2[rr, InM_col2] != float("nan"):
-                            pt2str = pt2[rr, Day_col2] + pt2[rr, InM_col2]
-                            if ptstr == pt2str:
-                                pt_r_list[r] = rr + 1
-                                break
-                            else:
-                                pt_r_list[r] = ""
-                elif pt[r, InM_col] != "" and pt[r, InM_col] != float("nan"):
-                    ptstr = pt[r, Day_col] + pt[r, InM_col]
-                    for rr in range(pt2.shape[0]):
-                        if pt2[rr, OutM_col2] != float("nan"):
-                            pt2str = pt2[rr, Day_col2] + pt2[rr, OutM_col2]
-                            if ptstr == pt2str:
-                                pt_r_list[r] = rr + 1
-                                break
-                            else:
-                                pt_r_list[r] = ""
+                if pt[r, OutM_col] == pt[r, OutM_col]:
+                    if pt[r, OutM_col] != "" and pt[r, OutM_col] != float("nan"):
+                        ptstr = pt[r, Day_col] + pt[r, OutM_col]
+                        for rr in range(pt2.shape[0]):
+                            if pt2[rr, InM_col2] == pt2[rr, InM_col2]:
+                                pt2str = pt2[rr, Day_col2] + pt2[rr, InM_col2]
+                                if ptstr == pt2str:
+                                    pt_r_list[r] = rr + 1
+                                    break
+                                else:
+                                    pt_r_list[r] = ""
+                    elif pt[r, InM_col] != "" and pt[r, InM_col] != float("nan"):
+                        ptstr = pt[r, Day_col] + pt[r, InM_col]
+                        for rr in range(pt2.shape[0]):
+                            if pt2[rr, OutM_col2] == pt2[rr, OutM_col2]:
+                                pt2str = pt2[rr, Day_col2] + pt2[rr, OutM_col2]
+                                if ptstr == pt2str:
+                                    pt_r_list[r] = rr + 1
+                                    break
+                                else:
+                                    pt_r_list[r] = ""
             ptCol.append("比較対象行番号")
+            pt_r_list = np.reshape(pt_r_list, (pt_r_list.shape[0], 1))
             pt = np.hstack([pt, pt_r_list])
             pt = pd.DataFrame(pt, columns=ptCol)
+            self.pt.model.df = pt
+            self.pt.show()
         except:
             tk.messagebox.showinfo("確認", "比較ファイルが指定されていません。")
 
