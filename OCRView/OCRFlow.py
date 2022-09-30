@@ -4,7 +4,7 @@ import os
 import toml
 
 # import pandas as pd
-from pandas import DataFrame
+from pandas import DataFrame, read_csv, concat
 from csv import reader, QUOTE_NONNUMERIC
 
 # import numpy as np
@@ -47,6 +47,47 @@ def DiffCheck(GFTable, ColList):
         for GC_d in range(GC_Diff):
             ColList.append("未設定" + str(GC_d + 1))
     # ----------------------------------------------------------------------------
+
+
+def JoinCSV(CSVList):
+    """
+    概要: 引数リストのURLから連結CSVを作成
+    @param CSVList: CSVURLリスト
+    @return 連結CSVURL
+    """
+    try:
+        r = 0
+        for CSVListItem in CSVList:
+            enc = CSVO.getFileEncoding(CSVListItem)  # 摘要変換ルールエンコード
+            if r == 0:
+                m_csv = read_csv(CSVListItem, encoding=enc)
+                F_File = CSVListItem.split(".")[0] + "_merge" + ".csv"
+                os.remove(CSVListItem)
+                G_logger.debug(CSVListItem + "_先頭ページ連結完了")  # Log出力
+            else:
+                r_csv = read_csv(CSVListItem, encoding=enc)
+                os.remove(CSVListItem)
+                G_logger.debug(CSVListItem + "_" + str(r) + "ページ連結完了")  # Log出力
+                m_csv = concat([m_csv, r_csv])
+            r += 1
+        try:
+            G_logger.debug("ページ連結後dfto_csv開始")  # Log出力
+            m_csv.to_csv(F_File, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC)
+        except:
+            G_logger.debug("GoogleAPI後dfto_csvエラー後開始")  # Log出力
+            with open(
+                F_File,
+                mode="w",
+                encoding="cp932",
+                errors="ignore",
+                newline="",
+            ) as f:
+                m_csv.to_csv(f, index=False, quoting=QUOTE_NONNUMERIC)
+        G_logger.debug("GoogleAPI後csv処理完了")  # Log出力
+        return True, F_File
+    except:
+        G_logger.debug("GoogleAPI後csv処理失敗")  # Log出力
+        return False, ""
 
 
 def DiffListCreate(

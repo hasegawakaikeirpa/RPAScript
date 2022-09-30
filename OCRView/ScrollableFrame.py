@@ -160,7 +160,7 @@ class SubScrollableFrame(ttk.Frame):
     def __init__(self, container, wid, hei, mrow, bar_x=True, bar_y=True):
         super().__init__(container)
         self.canvas = tk.Canvas(
-            self, width=int(wid / 5), height=(hei - 70), bg="gray94"
+            self, width=int(wid / 5) - 10, height=(hei - 70), bg="gray94"
         )
         # self.scrollable_frame = ttk.Frame(
         #     self.canvas,
@@ -171,7 +171,7 @@ class SubScrollableFrame(ttk.Frame):
         self.scrollable_frame = tk.Frame(
             self.canvas,
             bg="gray94",
-            width=int(wid / 5),
+            width=int(wid / 5) - 10,
             height=(hei - 70),
             relief=tk.GROOVE,
             bd=2,
