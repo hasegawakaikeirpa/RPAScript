@@ -105,10 +105,10 @@ class Application(tk.Frame):
         self.ChangeVar.insert(0, 50)
         self.ChangeVar.grid(row=1, column=1)
         # 行数表示テキスト
-        tk.Label(Tframe, text="元帳日付列名").grid(row=2, column=0)  # 位置指定
-        self.LimitCol = tk.Entry(Tframe, width=30, bg="snow")
-        self.LimitCol.insert(0, "伝票日付")
-        self.LimitCol.grid(row=2, column=1)
+        # tk.Label(Tframe, text="元帳日付列名").grid(row=2, column=0)  # 位置指定
+        # self.LimitCol = tk.Entry(Tframe, width=30, bg="snow")
+        # self.LimitCol.insert(0, "伝票日付")
+        # self.LimitCol.grid(row=2, column=1)
         # 行数表示テキスト
         tk.Label(Tframe, text="設定ファイル").grid(row=3, column=0)  # 位置指定
         self.tomlurl = tk.Entry(Tframe, width=30, bg="snow")
@@ -184,7 +184,7 @@ class Application(tk.Frame):
         tk.Label(Setframe, text="置換対象文字列").grid(row=3, column=0)  # 位置指定
         self.ReplaceStr = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.ReplaceStr)
-        self.TomlInsert(self.ReplaceStr, Banktoml["Setframe"]["ReplaceStr"])
+        self.TomlInsert(self.ReplaceStr, Banktoml["LineSetting"][rep_N])
         self.ReplaceStr.bind("<Return>", tomlreturn)
         self.ReplaceStr.bind("<Tab>", tomlreturn)
         self.ReplaceStr.bind("<Double-1>", self.tomlFrameOpen)
@@ -318,7 +318,7 @@ class Application(tk.Frame):
                 relief=tk.GROOVE,
                 bd=2,
             )
-            self.BRS = Banktoml["Setframe"]["ReplaceStr"]
+            self.BRS = Banktoml["LineSetting"][rep_N]
             self.topRepFrame.grid(row=0, column=1, sticky=tk.NSEW)
             self.topRepSF = SF.SubScrollableFrame(
                 self.topRepFrame, CWgeo, CHgeo, len(self.BRS), bar_x=False
@@ -399,9 +399,9 @@ class Application(tk.Frame):
         l_s = []
         for B_t in self.BRSTxt:
             l_s.append(B_t.get())
-        Banktoml["Setframe"]["ReplaceStr"] = l_s
+        Banktoml["LineSetting"][rep_N] = l_s
         toml_c.dump_toml(Banktoml, tomlurl)
-        self.TomlInsert(self.ReplaceStr, Banktoml["Setframe"]["ReplaceStr"])
+        self.TomlInsert(self.ReplaceStr, Banktoml["LineSetting"][rep_N])
         self.frame0.grid()
         self.topRepFrame.grid_forget()
         G_logger.debug("SideMenutoml変換設定の更新完了")  # Log出力
@@ -805,10 +805,10 @@ def tomlreturn(self):
     if "," not in ReplaceStr:
         l_s = []
         l_s.append(ReplaceStr)
-        Banktoml["Setframe"]["ReplaceStr"] = l_s
+        Banktoml["LineSetting"][rep_N] = l_s
     else:
         l_s = ReplaceStr.split(",")
-        Banktoml["Setframe"]["ReplaceStr"] = l_s
+        Banktoml["LineSetting"][rep_N] = l_s
     toml_c.dump_toml(Banktoml, tomlurl)
     G_logger.debug("toml変換設定の更新完了")  # Log出力
 
@@ -1132,6 +1132,7 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                 # メッセージボックス（OK・キャンセル）
                 unmap(selfmother)
                 if len(FYokoList) == len(SGEL):
+                    # --------------------------------------------------------------
                     if Master.HeaderCol_c == len(SGEL) or Master.HeaderCol_c == 0:
                         try:
                             ChangeVar = int(ChangeVar.get())
@@ -1195,6 +1196,8 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                 )
                                 if MSG is True:
                                     Master.HeaderCol_c = len(SGEL)
+                                    if "抽出摘要" in SGEL:
+                                        Master.HeaderCol_c = Master.HeaderCol_c - 1
                                     G_logger.debug("次ページ読込開始")  # Log出力
                                     FUL.append(Read_Url)  # 書出しCSVURLリスト
                                     ReturnBack(selfmother)
@@ -1346,7 +1349,7 @@ def Main(MUI, US, turl, logger, File_url_List):
     global readcsv1, readcsv2
     global URL, G_logger
     global Banktoml, tomlurl
-    global FUL
+    global FUL, rep_N
 
     Master = MUI
     imgurl = US.replace(r"\\\\", r"\\")
@@ -1365,8 +1368,10 @@ def Main(MUI, US, turl, logger, File_url_List):
         F_N = os.path.splitext(os.path.basename(imgurl))[0]
         Yoko_N = F_N + "_Yoko"
         Tate_N = F_N + "_Tate"
+        rep_N = F_N + "_ReplaceStr"
         readcsv1 = Banktoml["LineSetting"][Yoko_N]
         readcsv2 = Banktoml["LineSetting"][Tate_N]
+
     except:
         print("行列tomlインポートエラー")
         readcsv1 = []
@@ -1387,10 +1392,10 @@ if __name__ == "__main__":
     G_logger = logging.getLogger(__name__)
     # ---------------------------------------------------------------------------------------------------------------
 
-    global Banktoml, tomlurl
+    global Banktoml, tomlurl, rep_N
     URL = os.getcwd()
     imgurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.png"
-    tomlurl = r"D:\OCRTESTPDF\PDFTEST\Setting.toml"
+    tomlurl = r"D:\PythonScript\RPAScript\OCRView\Setting.toml"
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
         Banktoml = toml.load(f)
@@ -1429,6 +1434,7 @@ if __name__ == "__main__":
     F_N = os.path.splitext(os.path.basename(imgurl))[0]
     Yoko_N = F_N + "_Yoko"
     Tate_N = F_N + "_Tate"
+    rep_N = F_N + "_ReplaceStr"
     readcsv1 = Banktoml["LineSetting"][Yoko_N]
     readcsv2 = Banktoml["LineSetting"][Tate_N]
     COLArray = True, readcsv1, readcsv2

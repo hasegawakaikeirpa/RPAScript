@@ -58,6 +58,7 @@ def JoinCSV(CSVList):
     """
     try:
         r = 0
+        CSVList = set(CSVList)
         for CSVListItem in CSVList:
             enc = CSVO.getFileEncoding(CSVListItem)  # 摘要変換ルールエンコード
             if r == 0:
@@ -168,7 +169,6 @@ def DiffListCreate(
             GFCol = len(GFTable[0])
             ChangeTxtList = []
             PB_v = int(90 / GFRow)
-            strsList = []
             # OCR結果を整形----------------------------------------------------------------
             for g in range(GFRow):
                 try:
@@ -253,13 +253,72 @@ def DiffListCreate(
                             if 1.0 - GNV[0] < R_par:
                                 ChangeTxtList.append([GFTable[g][c - 1], GNV[1]])
                                 GFTable[g][c - 1] = GNV[1]
-                strsList.append(strs)
                 PBAR._target.step(PB_v)
                 # -------------------------------------------------------------------------
+            # 入出金列の数値以外を分別------------------------------------------------------
+            strsList = []
+            for g in range(GFRow):
+                strs = ""
+                for c in MoneySet:
+                    ints = ""
+                    c = int(c)
+                    S = GFTable[g][c - 1]
+                    for y in range(len(S)):
+                        if S[y].isdecimal() is False:
+                            strs += S[y]
+                        else:
+                            ints += S[y]
+                    if strs == "":
+                        if c == int(MoneySet[len(MoneySet) - 1]):
+                            strsList.append("")
+                    elif ints != "":
+                        GFTable[g][c - 1] = ints
+                        if c == int(MoneySet[len(MoneySet) - 1]) and strs != "":
+                            strsList.append(strs)
+                    else:
+                        GFTable[g][c - 1] = ""
+                        if c == int(MoneySet[len(MoneySet) - 1]) and strs != "":
+                            strsList.append(strs)
+                # -------------------------------------------------------------------------
+            # 入出金列の数値以外を分別------------------------------------------------------
+            intsList = []
+            for g in range(GFRow):
+                intsList_r = []
+                for c in MoneySet:
+                    ints = ""
+                    c = int(c)
+                    S = GFTable[g][c - 1]
+                    if S == "":
+                        intsList_r.append(0)
+                    else:
+                        intsList_r.append(int(S))
+                Min_S = min(intsList_r)
+                Min_S_c = [i for i, x in enumerate(intsList_r) if x == Min_S]
+                Min_S_c = int(MoneySet[int(Min_S_c[0])]) - 1
+                GFTable[g][Min_S_c] = ""
+                if Min_S == 0:
+                    intsList.append("")
+                else:
+                    intsList.append(str(Min_S))
+                # -------------------------------------------------------------------------
+            # -----------------------------------------------------------------------------
             G_logger.debug("GoogleAPI後編集処理完了")  # Log出力
             # DataFrame作成
-            DiffCheck(GFTable, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
-            df = DataFrame(GFTable, columns=ColList)
+            # 分割文字列リストを結合---------------------------------------------------------
+            if len(strsList) == 0:
+                df = DataFrame(GFTable, columns=ColList)
+                DiffCheck(df, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
+            else:
+                DF_strsList = DataFrame(strsList, columns=["抽出摘要"])
+                DF_intsList = DataFrame(intsList, columns=["抽出金額"])
+                GFTable = DataFrame(GFTable)
+                GFTable = concat([GFTable, DF_strsList], axis=1)
+                GFTable = concat([GFTable, DF_intsList], axis=1)
+                ColList.append("抽出摘要")
+                ColList.append("抽出金額")
+                GFTable.columns = ColList
+                df = GFTable
+            # -----------------------------------------------------------------------------
             FU = FileURL.split("\\")
             FN = FU[len(FU) - 1].replace(".png", ".csv")
             FDir = FileURL.replace(FU[len(FU) - 1], "")
