@@ -575,6 +575,7 @@ class ViewGUI:
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         set_pos = self.combo_file.current()
         FN = self.control.get_file("set", set_pos=set_pos)
+        self.Selectfile_url = FN
         if ".PDF" in FN or ".pdf" in FN:
             msg = messagebox.askokcancel(
                 "確認", "PDFが選択されています。PNGに変換しますか？\n10ページ以上の処理は処理時間が長時間になる可能性があります。"

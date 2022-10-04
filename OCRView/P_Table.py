@@ -4,7 +4,8 @@ import numpy as np
 import WarekiHenkan as wh
 import pandas as pd
 import re
-import math
+
+# import math
 import logging.config
 import toml
 import os
@@ -49,10 +50,10 @@ class Application(tk.Frame):
         )
         self.Side_Sub.grid(row=1, column=0, sticky=tk.NSEW)
         # --------------------------------------------------------------------------------
-        tk.Label(self.Side_Sub, text="日付列名").grid(row=1, column=0)  # 日付列名ラベル
+        tk.Label(self.Side_Sub, text="日付列名").grid(row=0, column=0)  # 日付列名ラベル
         self.DStxt = tk.Entry(self.Side_Sub, width=15, bg="snow")  # 日付列名テキストボックス
         self.DStxt.insert(0, "")  # 日付列名テキストボックスに文字代入
-        self.DStxt.grid(row=1, column=1, pady=5, sticky=tk.W)  # 日付列名テキストボックス配置
+        self.DStxt.grid(row=0, column=1, pady=5, sticky=tk.W)  # 日付列名テキストボックス配置
         self.DSbtn = tk.Button(
             self.Side_Sub,
             text="選択列名転記",
@@ -63,12 +64,12 @@ class Application(tk.Frame):
             width=12,
             height=1,
         )  # ボタン作成
-        self.DSbtn.grid(row=1, column=2, padx=5)
+        self.DSbtn.grid(row=0, column=2, padx=5)
         # --------------------------------------------------------------------------------
-        tk.Label(self.Side_Sub, text="出金列名").grid(row=2, column=0)  # 出金列名ラベル
+        tk.Label(self.Side_Sub, text="出金列名").grid(row=1, column=0)  # 出金列名ラベル
         self.OMtxt = tk.Entry(self.Side_Sub, width=15, bg="snow")  # 出金列名テキストボックス
         self.OMtxt.insert(0, "")  # 出金列名テキストボックスに文字代入
-        self.OMtxt.grid(row=2, column=1, pady=5, sticky=tk.W)  # 出金列名テキストボックス配置
+        self.OMtxt.grid(row=1, column=1, pady=5, sticky=tk.W)  # 出金列名テキストボックス配置
         self.OMbtn = tk.Button(
             self.Side_Sub,
             text="選択列名転記",
@@ -79,12 +80,12 @@ class Application(tk.Frame):
             width=12,
             height=1,
         )  # ボタン作成
-        self.OMbtn.grid(row=2, column=2, padx=5)
+        self.OMbtn.grid(row=1, column=2, padx=5)
         # --------------------------------------------------------------------------------
-        tk.Label(self.Side_Sub, text="入金列名").grid(row=3, column=0)  # 入金列名ラベル
+        tk.Label(self.Side_Sub, text="入金列名").grid(row=2, column=0)  # 入金列名ラベル
         self.IMtxt = tk.Entry(self.Side_Sub, width=15, bg="snow")  # 入金列名テキストボックス
         self.IMtxt.insert(0, "")  # 入金列名テキストボックスに文字代入
-        self.IMtxt.grid(row=3, column=1, pady=5, sticky=tk.W)  # 入金列名テキストボックス配置
+        self.IMtxt.grid(row=2, column=1, pady=5, sticky=tk.W)  # 入金列名テキストボックス配置
         self.IMbtn = tk.Button(
             self.Side_Sub,
             text="選択列名転記",
@@ -95,7 +96,56 @@ class Application(tk.Frame):
             width=12,
             height=1,
         )  # ボタン作成
-        self.IMbtn.grid(row=3, column=2, padx=5)
+        self.IMbtn.grid(row=2, column=2, padx=5)
+        # --------------------------------------------------------------------------------
+        tk.Label(self.Side_Sub, text="金額列数").grid(
+            row=3, column=0, sticky=tk.N
+        )  # フレームテキスト
+        # radio1ウィジェット
+        self.select_var = tk.IntVar()  # ウィジェット変数select_varを作成
+        self.select_var.set(1)  # select_var変数に数値をセット
+        self.languages = [("複数", 1), ("単一", 2)]  # languagesリストを定義
+        for language, val in self.languages:  # ループ開始
+            self.radio1 = tk.Radiobutton(
+                self.Side_Sub,
+                text=language,
+                value=val,
+                variable=self.select_var,
+                command=self.radioclick,
+            )  # languagesリストを選択肢とするradio1ウィジェットを生成
+            self.radio1.grid(row=3, column=val, sticky=tk.N)
+        self.SplitVarLabel = tk.Label(self.Side_Sub, text="貸借判定基準列名").grid(
+            row=5, column=0
+        )  # 位置指定
+        self.SplitVar = tk.Entry(self.Side_Sub, width=30, bg="gray10")
+        self.SplitVar.delete(0, tk.END)
+        self.SplitVar.insert(0, "貸借")
+        self.SplitVar.configure(state="readonly")
+        self.SplitVar.grid(row=5, column=1, columnspan=2)
+        self.In_vLabel = tk.Label(self.Side_Sub, text="入金文字列").grid(
+            row=6, column=0
+        )  # 位置指定
+        self.In_v = tk.Entry(self.Side_Sub, width=30, bg="gray10")
+        self.In_v.delete(0, tk.END)
+        self.In_v.insert(0, "借")
+        self.In_v.configure(state="readonly")
+        self.In_v.grid(row=6, column=1, columnspan=2)
+        self.Out_vLabel = tk.Label(self.Side_Sub, text="出金文字列").grid(
+            row=7, column=0
+        )  # 位置指定
+        self.Out_v = tk.Entry(self.Side_Sub, width=30, bg="gray10")
+        self.Out_v.delete(0, tk.END)
+        self.Out_v.insert(0, "貸")
+        self.Out_v.configure(state="readonly")
+        self.Out_v.grid(row=7, column=1, columnspan=2)
+        self.Money_Label = tk.Label(self.Side_Sub, text="金額列名").grid(
+            row=8, column=0
+        )  # 位置指定
+        self.Money_v = tk.Entry(self.Side_Sub, width=30, bg="gray10")
+        self.Money_v.delete(0, tk.END)
+        self.Money_v.insert(0, "金額")
+        self.Money_v.configure(state="readonly")
+        self.Money_v.grid(row=8, column=1, columnspan=2)
         # #######################################################################################
         # Side_Sub2##############################################################################
         self.Side_Sub2 = tk.Frame(
@@ -253,6 +303,23 @@ class Application(tk.Frame):
         )  # OCR抽出結果表フレーム
 
     # -------------------------------------------------------------------------------------
+    def radioclick(self):
+        if self.select_var.get() == 1:
+            self.SplitVar.configure(bg="gray10", state="readonly")
+            self.In_v.configure(bg="gray10", state="readonly")
+            self.Out_v.configure(bg="gray10", state="readonly")
+            self.Money_v.configure(bg="gray10", state="readonly")
+            self.IMtxt.configure(bg="snow", state="normal")
+            self.OMtxt.configure(bg="snow", state="normal")
+        else:
+            self.SplitVar.configure(bg="snow", state="normal")
+            self.In_v.configure(bg="snow", state="normal")
+            self.Out_v.configure(bg="snow", state="normal")
+            self.Money_v.configure(bg="snow", state="normal")
+            self.IMtxt.configure(bg="gray10", state="readonly")
+            self.OMtxt.configure(bg="gray10", state="readonly")
+
+    # -------------------------------------------------------------------------------------
     def DifftxtCol(self, event):
         """
         OCR列名更新
@@ -260,6 +327,7 @@ class Application(tk.Frame):
         ColList = self.Diff_col.get().split(",")
         if len(self.pt2.model.df.columns) == len(ColList):
             self.pt2.model.df.columns = ColList
+            DGF.PandasAstype(self.pt2.model.df)
             self.pt2.show()
         else:
             tk.messagebox.showinfo("確認", "指定列名数と比較ファイルの列数が一致しません。再確認してください。")
@@ -270,8 +338,10 @@ class Application(tk.Frame):
         OCR列名更新
         """
         ColList = self.OCR_col.get().split(",")
+        self.ColumnsDelete(self.pt)
         if len(self.pt.model.df.columns) == len(ColList):
             self.pt.model.df.columns = ColList
+            DGF.PandasAstype(self.pt.model.df)
             self.pt.show()
         else:
             tk.messagebox.showinfo("確認", "指定列名数とOCR表の列数が一致しません。再確認してください。")
@@ -320,6 +390,7 @@ class Application(tk.Frame):
                 pt[:, InM_col] = ptIn
                 pt = pd.DataFrame(pt, columns=ptCol)
                 self.pt.model.df = pt
+                DGF.PandasAstype(self.pt.model.df)
                 self.pt.show()
             else:
                 ptIn = np.array(self.pt.model.df)[:, InM_col]
@@ -342,7 +413,9 @@ class Application(tk.Frame):
                 pt2 = pd.DataFrame(pt2, columns=pt2Col)
                 self.pt.model.df = pt
                 self.pt2.model.df = pt2
+                DGF.PandasAstype(self.pt.model.df)
                 self.pt.show()
+                DGF.PandasAstype(self.pt2.model.df)
                 self.pt2.show()
         except:
             tk.messagebox.showinfo("確認", "入金列の書式整理エラーです。")
@@ -364,6 +437,7 @@ class Application(tk.Frame):
                 pt[:, OutM_col] = ptOut
                 pt = pd.DataFrame(pt, columns=ptCol)
                 self.pt.model.df = pt
+                DGF.PandasAstype(self.pt.model.df)
                 self.pt.show()
             else:
                 ptOut = np.array(self.pt.model.df)[:, OutM_col]
@@ -386,7 +460,9 @@ class Application(tk.Frame):
                 pt2 = pd.DataFrame(pt2, columns=pt2Col)
                 self.pt.model.df = pt
                 self.pt2.model.df = pt2
+                DGF.PandasAstype(self.pt.model.df)
                 self.pt.show()
+                DGF.PandasAstype(self.pt2.model.df)
                 self.pt2.show()
         except:
             tk.messagebox.showinfo("確認", "出金列の書式整理エラーです。")
@@ -402,11 +478,13 @@ class Application(tk.Frame):
                 ptCol = np.array(self.pt.model.df.columns)
                 for r in range(ptDay.shape[0]):
                     txt = self.ChangeD_Txt(ptDay[r])
-                    ptDay[r] = txt[1]
+                    if txt[0] is True:
+                        ptDay[r] = txt[1]
                 pt = np.array(self.pt.model.df)
                 pt[:, Day_col] = ptDay
                 pt = pd.DataFrame(pt, columns=ptCol)
                 self.pt.model.df = pt
+                DGF.PandasAstype(self.pt.model.df)
                 self.pt.show()
             else:
                 ptDay = np.array(self.pt.model.df)[:, Day_col]
@@ -415,10 +493,12 @@ class Application(tk.Frame):
                 pt2Col = np.array(self.pt2.model.df.columns)
                 for r in range(ptDay.shape[0]):
                     txt = self.ChangeD_Txt(ptDay[r])
-                    ptDay[r] = txt[1]
+                    if txt[0] is True:
+                        ptDay[r] = txt[1]
                 for r in range(pt2Day.shape[0]):
                     txt = self.ChangeD_Txt(pt2Day[r])
-                    pt2Day[r] = txt[1]
+                    if txt[0] is True:
+                        pt2Day[r] = txt[1]
                 pt = np.array(self.pt.model.df)
                 pt2 = np.array(self.pt2.model.df)
                 pt[:, Day_col] = ptDay
@@ -427,7 +507,9 @@ class Application(tk.Frame):
                 pt2 = pd.DataFrame(pt2, columns=pt2Col)
                 self.pt.model.df = pt
                 self.pt2.model.df = pt2
+                DGF.PandasAstype(self.pt.model.df)
                 self.pt.show()
+                DGF.PandasAstype(self.pt2.model.df)
                 self.pt2.show()
         except:
             tk.messagebox.showinfo("確認", "日付列の書式整理エラーです。")
@@ -533,6 +615,41 @@ class Application(tk.Frame):
             pt.setSelectedCol(0)
             pt.drawSelectedRect(r, 0)
             pt.drawSelectedRow()
+
+            # row = r
+            # col = 0
+            x, y = pt.getCanvasPos(pt.currentrow, pt.currentcol - 1)
+            rmin = pt.visiblerows[0]
+            rmax = pt.visiblerows[-1] - 2
+            cmax = pt.visiblecols[-1] - 1
+            cmin = pt.visiblecols[0]
+            FirstPos = pt.currentrow
+
+            if x is None:
+                return
+
+            if pt.currentcol > cmax or pt.currentcol <= cmin:
+                # print (pt.currentcol, pt.visiblecols)
+                pt.xview("moveto", x)
+                pt.colheader.xview("moveto", x)
+                pt.redraw()
+
+            if pt.currentrow < rmin and FirstPos == 0:
+                # we need to shift y to page up enough
+                vh = len(pt.visiblerows) / 2
+                x, y = pt.getCanvasPos(pt.currentrow - vh, 0)
+
+            if pt.currentrow >= rmax or pt.currentrow <= rmin:
+                pt.yview("moveto", y)
+                pt.rowheader.yview("moveto", y)
+                pt.redraw()
+
+            pt.drawSelectedRect(pt.currentrow, pt.currentcol)
+            coltype = pt.model.getColumnType(pt.currentcol)
+            return
+
+        # ---------------------------------------------------------------------
+
         except:
             tk.messagebox.showinfo("確認", "表選択操作に失敗しました。")
 
@@ -557,29 +674,50 @@ class Application(tk.Frame):
             pt2 = np.array(self.pt2.model.df)
             pt_r_list = np.array(self.pt.model.df)[:, 0]
             r = self.pt.startrow
+            if r is None:
+                tk.messagebox.showinfo("確認", "検索したいOCR抽出結果表のセルを選択してください。")
+                return
             if pt[r, OutM_col] == pt[r, OutM_col]:
                 if pt[r, OutM_col] != "" and pt[r, OutM_col] != float("nan"):
                     ptstr = pt[r, Day_col] + pt[r, OutM_col]
                     for rr in range(pt2.shape[0]):
                         if pt2[rr, InM_col2] == pt2[rr, InM_col2]:
-                            pt2str = pt2[rr, Day_col2] + pt2[rr, InM_col2]
-                            if ptstr == pt2str:
-                                self.EntrySelect(self.pt2, r)
-                                break
-                            else:
+                            try:
+                                pt2str = pt2[rr, Day_col2] + pt2[rr, InM_col2]
+                                if ptstr == pt2str:
+                                    self.EntrySelect(self.pt2, r)
+                                    break
+                                else:
+                                    pt_r_list[r] = ""
+                            except:
                                 pt_r_list[r] = ""
                 elif pt[r, InM_col] != "" and pt[r, InM_col] != float("nan"):
                     ptstr = pt[r, Day_col] + pt[r, InM_col]
                     for rr in range(pt2.shape[0]):
                         if pt2[rr, OutM_col2] == pt2[rr, OutM_col2]:
-                            pt2str = pt2[rr, Day_col2] + pt2[rr, OutM_col2]
-                            if ptstr == pt2str:
-                                self.EntrySelect(self.pt2, r)
-                                break
-                            else:
+                            try:
+                                pt2str = pt2[rr, Day_col2] + pt2[rr, OutM_col2]
+                                if ptstr == pt2str:
+                                    self.EntrySelect(self.pt2, r)
+                                    break
+                                else:
+                                    pt_r_list[r] = ""
+                            except:
                                 pt_r_list[r] = ""
         except:
             tk.messagebox.showinfo("確認", "比較ファイルが指定されていません。")
+
+    # ---------------------------------------------------------------------
+    def ColumnsDelete(self, DF):
+        DF_Columns = DF.model.df.columns
+        if (PlusCol in DF_Columns) is True:
+            Col_n = int(np.where(DF_Columns == PlusCol)[0])
+            npDF = np.array(DF.model.df)
+            DF_Columns = DF_Columns[0:Col_n]
+            npDF = npDF[:, 0:Col_n]
+            Ret_DF = pd.DataFrame(npDF, columns=DF_Columns)
+            DF.model.df = Ret_DF
+            DF.show()
 
     # ---------------------------------------------------------------------
     def SearchStart(self):
@@ -587,6 +725,7 @@ class Application(tk.Frame):
         検索開始
         """
         try:
+            self.ColumnsDelete(self.pt)
             if len(self.pt.model.df.columns) == len(self.pt2.model.df.columns):
                 CL = self.ChangeList()
                 self.PtSearch(CL[0], CL[1], CL[2], CL[3], CL[4], CL[5])
@@ -594,6 +733,63 @@ class Application(tk.Frame):
                 tk.messagebox.showinfo("確認", "OCR抽出結果表と比較ファイルの設定列数が一致しません。")
         except:
             tk.messagebox.showinfo("確認", "比較ファイルが指定されていません。")
+
+    # ---------------------------------------------------------------------
+    def PtSearch_Sub(
+        self,
+        r,
+        pt,
+        pt2,
+        pt_r_list,
+        Day_col,
+        Day_col2,
+        OutM_col,
+        OutM_col2,
+        InM_col,
+        InM_col2,
+    ):
+        try:
+            # if r == 10:
+            #     print("")
+            if pt[r, OutM_col] == pt[r, OutM_col]:
+                if pt[r, OutM_col] != "" and pt[r, OutM_col] != float("nan"):
+                    ptstr = pt[r, Day_col] + pt[r, OutM_col]
+                    try:
+                        for rr in range(pt2.shape[0]):
+                            if pt2[rr, InM_col2] == pt2[rr, InM_col2]:
+                                try:
+                                    pt2str = pt2[rr, Day_col2] + pt2[rr, InM_col2]
+                                    if ptstr == pt2str:
+                                        pt_r_list[r] = rr + 1
+                                        break
+                                    else:
+                                        pt_r_list[r] = ""
+                                except:
+                                    pt_r_list[r] = ""
+                    except:
+                        pt_r_list[r] = ""
+                elif pt[r, InM_col] != "" and pt[r, InM_col] != float("nan"):
+                    try:
+                        ptstr = pt[r, Day_col] + pt[r, InM_col]
+                        for rr in range(pt2.shape[0]):
+                            if pt2[rr, OutM_col2] == pt2[rr, OutM_col2]:
+                                try:
+                                    pt2str = pt2[rr, Day_col2] + pt2[rr, OutM_col2]
+                                    if ptstr == pt2str:
+                                        pt_r_list[r] = rr + 1
+                                        break
+                                    else:
+                                        pt_r_list[r] = ""
+                                except:
+                                    pt_r_list[r] = ""
+                    except:
+                        pt_r_list[r] = ""
+                else:
+                    pt_r_list[r] = ""
+            else:
+                pt_r_list[r] = ""
+        except:
+            pt_r_list[r] = ""
 
     # ---------------------------------------------------------------------
     def PtSearch(self, Day_col, Day_col2, OutM_col, OutM_col2, InM_col, InM_col2):
@@ -607,32 +803,24 @@ class Application(tk.Frame):
             pt2 = np.array(self.pt2.model.df)
             pt_r_list = np.array(self.pt.model.df)[:, 0]
             for r in range(pt.shape[0]):
-                if pt[r, OutM_col] == pt[r, OutM_col]:
-                    if pt[r, OutM_col] != "" and pt[r, OutM_col] != float("nan"):
-                        ptstr = pt[r, Day_col] + pt[r, OutM_col]
-                        for rr in range(pt2.shape[0]):
-                            if pt2[rr, InM_col2] == pt2[rr, InM_col2]:
-                                pt2str = pt2[rr, Day_col2] + pt2[rr, InM_col2]
-                                if ptstr == pt2str:
-                                    pt_r_list[r] = rr + 1
-                                    break
-                                else:
-                                    pt_r_list[r] = ""
-                    elif pt[r, InM_col] != "" and pt[r, InM_col] != float("nan"):
-                        ptstr = pt[r, Day_col] + pt[r, InM_col]
-                        for rr in range(pt2.shape[0]):
-                            if pt2[rr, OutM_col2] == pt2[rr, OutM_col2]:
-                                pt2str = pt2[rr, Day_col2] + pt2[rr, OutM_col2]
-                                if ptstr == pt2str:
-                                    pt_r_list[r] = rr + 1
-                                    break
-                                else:
-                                    pt_r_list[r] = ""
-            ptCol.append("比較対象行番号")
+                self.PtSearch_Sub(
+                    r,
+                    pt,
+                    pt2,
+                    pt_r_list,
+                    Day_col,
+                    Day_col2,
+                    OutM_col,
+                    OutM_col2,
+                    InM_col,
+                    InM_col2,
+                )
+            ptCol.append(PlusCol)
             pt_r_list = np.reshape(pt_r_list, (pt_r_list.shape[0], 1))
             pt = np.hstack([pt, pt_r_list])
             pt = pd.DataFrame(pt, columns=ptCol)
             self.pt.model.df = pt
+            DGF.PandasAstype(self.pt.model.df)
             self.pt.show()
         except:
             tk.messagebox.showinfo("確認", "比較ファイルが指定されていません。")
@@ -653,6 +841,7 @@ class Application(tk.Frame):
             self.pt2.model.df = JCSV[1]
             try:
                 print(self.pt2.model.df.columns)
+                self.ColumnsDelete(self.pt)
                 if len(self.pt.model.df.columns) == len(self.pt2.model.df.columns):
                     Diff_colStr = ",".join(self.pt2.model.df.columns)
                     self.Diff_col.delete(0, tk.END)
@@ -662,6 +851,7 @@ class Application(tk.Frame):
             except:
                 self.Diff_col.delete(0, tk.END)
                 self.Diff_col.insert(0, "")  # OCR抽出結果表列名テキストボックスに文字代入
+            DGF.PandasAstype(self.pt2.model.df)
             self.pt2.show()
 
     # -------------------------------------------------------------------------------------
@@ -678,6 +868,7 @@ class Application(tk.Frame):
             self.pt2.model.df = JCSV[1]
             try:
                 print(self.pt2.model.df.columns)
+                self.ColumnsDelete(self.pt)
                 if len(self.pt.model.df.columns) == len(self.pt2.model.df.columns):
                     Diff_colStr = ",".join(self.pt2.model.df.columns)
                     self.Diff_col.delete(0, tk.END)
@@ -687,6 +878,7 @@ class Application(tk.Frame):
             except:
                 self.Diff_col.delete(0, tk.END)
                 self.Diff_col.insert(0, "")  # OCR抽出結果表列名テキストボックスに文字代入
+            DGF.PandasAstype(self.pt2.model.df)
             self.pt2.show()
 
     # -------------------------------------------------------------------------------------
@@ -704,6 +896,87 @@ class Application(tk.Frame):
             G_logger.debug("TKINTERCV2SettingClose失敗")  # Log出力
 
     # -------------------------------------------------------------------------------------
+    def SingleSplit(self):
+        """
+        データ整理サブ
+        """
+        print(self.SplitVar.get())
+        In_v = self.In_v.get()  # 入金文字列
+        Out_v = self.Out_v.get()  # 出金文字列
+        Money_v = self.Money_v.get()  # 金額列名
+        S_Var = self.SplitVar.get()  # 貸借判定基準列数値
+        try:
+            ptDF = self.SingleSplit_Sub(self.pt2.model.df, In_v, Out_v, Money_v, S_Var)
+            if ptDF[0] is True:
+                self.pt2.model.df = ptDF[1]
+                DGF.PandasAstype(self.pt2.model.df)
+                self.pt2.show()
+            ptDF = self.SingleSplit_Sub(self.pt.model.df, In_v, Out_v, Money_v, S_Var)
+            if ptDF[0] is True:
+                self.pt.model.df = ptDF[1]
+                DGF.PandasAstype(self.pt.model.df)
+                self.pt.show()
+        except:
+            ptDF = self.SingleSplit_Sub(self.pt.model.df, In_v, Out_v, Money_v, S_Var)
+            if ptDF[0] is True:
+                self.pt.model.df = ptDF[1]
+                DGF.PandasAstype(self.pt.model.df)
+                self.pt.show()
+
+    # -------------------------------------------------------------------------------------
+    def SingleSplit_Sub(self, DF, In_v, Out_v, Money_v, S_Var):
+        try:
+            DFCol = np.array(DF.columns)
+            In_vList = []
+            Out_vList = []
+            for r in range(len(DF)):
+                DF_itemRow = DF.iloc[r]
+                if DF_itemRow[S_Var] == In_v:
+                    In_vList.append(DF_itemRow[Money_v])
+                    Out_vList.append("")
+                    DF_itemRow[Money_v] = ""
+                elif DF_itemRow[S_Var] == Out_v:
+                    In_vList.append("")
+                    Out_vList.append(DF_itemRow[Money_v])
+                    DF_itemRow[Money_v] = ""
+                else:
+                    In_vList.append("")
+                    Out_vList.append("")
+                    DF_itemRow[Money_v] = ""
+            SplitCol = int(np.where(DFCol == S_Var)[0][0])
+            DF = np.array(DF)
+            LEFTDF = DF[:, 0:SplitCol]
+            LEFTDFCol = DFCol[0:SplitCol]
+            RIGHTDF = DF[:, (SplitCol + 1) : DFCol.shape[0]]
+            RIGHTDFCol = DFCol[(SplitCol + 1) : DFCol.shape[0]]
+            In_vList = np.array(In_vList)
+            In_vList = In_vList.reshape(In_vList.shape[0], 1)
+            In_vListCol = np.array(["入金"])
+            Out_vList = np.array(Out_vList)
+            Out_vList = Out_vList.reshape(Out_vList.shape[0], 1)
+            Out_vListCol = np.array(["出金"])
+            MergeDF = np.hstack([LEFTDF, In_vList])
+            MergeCol = np.hstack([LEFTDFCol, In_vListCol])
+            MergeDF = np.hstack([MergeDF, Out_vList])
+            MergeCol = np.hstack([MergeCol, Out_vListCol])
+            MergeDF = np.hstack([MergeDF, RIGHTDF])
+            MergeCol = np.hstack([MergeCol, RIGHTDFCol])
+
+            Money_vCol = int(np.where(MergeCol == Money_v)[0][0])
+            LEFTDF = MergeDF[:, 0:Money_vCol]
+            LEFTDFCol = MergeCol[0:Money_vCol]
+            RIGHTDF = MergeDF[:, (Money_vCol + 1) : MergeCol.shape[0]]
+            RIGHTDFCol = MergeCol[(Money_vCol + 1) : MergeCol.shape[0]]
+
+            MergeDF = np.hstack([LEFTDF, RIGHTDF])
+            MergeCol = np.hstack([LEFTDFCol, RIGHTDFCol])
+
+            MergePD = pd.DataFrame(MergeDF, columns=MergeCol)
+            return True, MergePD
+        except:
+            return False, ""
+
+    # -------------------------------------------------------------------------------------
     def ChangeList(self):
         """
         データ整理
@@ -711,46 +984,104 @@ class Application(tk.Frame):
         if self.DStxt.get() == "":
             tk.messagebox.showinfo("確認", "日付列名設定がされていません。")
             return "Day_col", "Day_col2", "OutM_col", "OutM_col2", "InM_col", "InM_col2"
-        elif self.OMtxt.get() == "":
+        elif self.OMtxt.get() == "" and self.select_var.get() == 1:
             tk.messagebox.showinfo("確認", "出金列名設定がされていません。")
             return "Day_col", "Day_col2", "OutM_col", "OutM_col2", "InM_col", "InM_col2"
-        elif self.IMtxt.get() == "":
+        elif self.IMtxt.get() == "" and self.select_var.get() == 1:
             tk.messagebox.showinfo("確認", "入金列名設定がされていません。")
             return "Day_col", "Day_col2", "OutM_col", "OutM_col2", "InM_col", "InM_col2"
         try:
-            print(self.pt2.model.df.columns)
-            ptcol = np.array(self.pt.model.df.columns)
-            Day_col = int(np.where(ptcol == self.DStxt.get())[0])
-            OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
-            InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
-            ptcol2 = np.array(self.pt2.model.df.columns)
-            Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
-            OutM_col2 = int(np.where(ptcol2 == self.OMtxt.get())[0])
-            InM_col2 = int(np.where(ptcol2 == self.IMtxt.get())[0])
-            ptarray = np.array(self.pt.model.df)
-            for c in range(ptarray.shape[1]):
-                if c == Day_col:
-                    self.DaysCheck(Day_col, Day_col2)
-                elif c == OutM_col:
-                    self.OutMCheck(OutM_col, OutM_col2)
-                elif c == InM_col:
-                    self.InMCheck(InM_col, InM_col2)
-            return Day_col, Day_col2, OutM_col, OutM_col2, InM_col, InM_col2
+            if self.select_var.get() == 1:
+                self.ColumnsDelete(self.pt)
+                # 　複数----------------------------------------------------------
+                print(self.pt2.model.df.columns)
+                ptcol = np.array(self.pt.model.df.columns)
+                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+                OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
+                InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
+                ptcol2 = np.array(self.pt2.model.df.columns)
+                Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
+                OutM_col2 = int(np.where(ptcol2 == self.OMtxt.get())[0])
+                InM_col2 = int(np.where(ptcol2 == self.IMtxt.get())[0])
+                ptarray = np.array(self.pt.model.df)
+                for c in range(ptarray.shape[1]):
+                    if c == Day_col:
+                        self.DaysCheck(Day_col, Day_col2)
+                    elif c == OutM_col:
+                        self.OutMCheck(OutM_col, OutM_col2)
+                    elif c == InM_col:
+                        self.InMCheck(InM_col, InM_col2)
+                return Day_col, Day_col2, OutM_col, OutM_col2, InM_col, InM_col2
+            else:
+                self.ColumnsDelete(self.pt)
+                # 　単一----------------------------------------------------------
+                print(self.pt2.model.df.columns)
+                ptcol = np.array(self.pt.model.df.columns)
+                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+
+                ptcol2 = np.array(self.pt2.model.df.columns)
+                Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
+
+                ptarray = np.array(self.pt.model.df)
+                for c in range(ptarray.shape[1]):
+                    if c == Day_col:
+                        self.DaysCheck(Day_col, Day_col2)
+                self.SingleSplit()
+
+                ptcol = np.array(self.pt.model.df.columns)
+                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+
+                ptcol2 = np.array(self.pt2.model.df.columns)
+                Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
+
+                OutM_col = int(np.where(ptcol == "出金")[0][0])
+                InM_col = int(np.where(ptcol == "入金")[0][0])
+                OutM_col2 = int(np.where(ptcol2 == "出金")[0][0])
+                InM_col2 = int(np.where(ptcol2 == "入金")[0][0])
+
+                ptarray = np.array(self.pt.model.df)
+                for c in range(ptarray.shape[1]):
+                    if c == OutM_col:
+                        self.OutMCheck(OutM_col, OutM_col2)
+                    elif c == InM_col:
+                        self.InMCheck(InM_col, InM_col2)
+
+                return Day_col, Day_col2, OutM_col, OutM_col2, InM_col, InM_col2
         except:
-            print(self.pt2.model.df.columns)
-            ptcol = np.array(self.pt.model.df.columns)
-            Day_col = int(np.where(ptcol == self.DStxt.get())[0])
-            OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
-            InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
-            ptarray = np.array(self.pt.model.df)
-            for c in range(ptarray.shape[1]):
-                if c == Day_col:
-                    self.DaysCheck(Day_col, "Day_col2")
-                elif c == OutM_col:
-                    self.OutMCheck(OutM_col, "OutM_col2")
-                elif c == InM_col:
-                    self.InMCheck(InM_col, "InM_col2")
-            return Day_col, "Day_col2", OutM_col, "OutM_col2", InM_col, "InM_col2"
+            if self.select_var.get() == 1:
+                self.ColumnsDelete(self.pt)
+                # 　複数----------------------------------------------------------
+                print(self.pt2.model.df.columns)
+                ptcol = np.array(self.pt.model.df.columns)
+                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+                OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
+                InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
+                ptarray = np.array(self.pt.model.df)
+                for c in range(ptarray.shape[1]):
+                    if c == Day_col:
+                        self.DaysCheck(Day_col, "Day_col2")
+                return Day_col, "Day_col2", OutM_col, "OutM_col2", InM_col, "InM_col2"
+            else:
+                self.ColumnsDelete(self.pt)
+                # 　単一----------------------------------------------------------
+                print(self.pt2.model.df.columns)
+                ptcol = np.array(self.pt.model.df.columns)
+                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+                # OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
+                # InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
+                ptarray = np.array(self.pt.model.df)
+                for c in range(ptarray.shape[1]):
+                    if c == Day_col:
+                        self.DaysCheck(Day_col, "Day_col2")
+                self.SingleSplit()
+                return (
+                    Day_col,
+                    "Day_col2",
+                    "OutM_col",
+                    "OutM_col2",
+                    "InM_col",
+                    "InM_col2",
+                )
 
     # ---------------------------------------------------------------------------------------------
     def ReturnBack(self):
@@ -769,7 +1100,7 @@ def Main(MUI, US, tom, logger, MT, TP):
     """
     global Master, csv_u
     global G_logger, C_MT, C_TP
-    global Banktoml, tomlurl
+    global Banktoml, tomlurl, PlusCol
 
     Master = MUI
     C_MT = MT
@@ -777,6 +1108,7 @@ def Main(MUI, US, tom, logger, MT, TP):
     csv_u = US
     Banktoml = tom
     G_logger = logger
+    PlusCol = "比較対象行番号"
     # -----------------------------------------------------------
     root = tk.Tk()  # Window生成
     app = Application(csvurl=csv_u, master=root)
@@ -792,11 +1124,12 @@ if __name__ == "__main__":
     G_logger = logging.getLogger(__name__)
     # ---------------------------------------------------------------------------------------------------------------
 
-    global Banktoml, tomlurl
+    global Banktoml, tomlurl, PlusCol
     URL = os.getcwd()
-    imgurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.png"
+    imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.png"
     tomlurl = r"D:\OCRTESTPDF\PDFTEST\Setting.toml"
-    csv_u = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page_merge.csv"
+    csv_u = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.csv"
+    PlusCol = "比較対象行番号"
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
         Banktoml = toml.load(f)

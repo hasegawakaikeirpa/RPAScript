@@ -256,7 +256,29 @@ def DiffListCreate(
                 PBAR._target.step(PB_v)
                 # -------------------------------------------------------------------------
             # 入出金列の数値以外を分別------------------------------------------------------
+            Replist = [
+                ",",
+                "*",
+                "'",
+                "○",
+                "×",
+                "✓",
+                "¥",
+                "´",
+                "=",
+                "串",
+                "第",
+                "$",
+                "〒",
+                ".",
+                "|",
+                "-",
+                "･",
+                "!",
+                ":",
+            ]
             strsList = []
+            # Check = [True for i in Replist if strs == i]
             for g in range(GFRow):
                 strs = ""
                 for c in MoneySet:
@@ -272,35 +294,58 @@ def DiffListCreate(
                         if c == int(MoneySet[len(MoneySet) - 1]):
                             strsList.append("")
                     elif ints != "":
-                        GFTable[g][c - 1] = ints
+                        Check = [True if strs == i else False for i in Replist]
+                        if True not in Check:
+                            GFTable[g][c - 1] = ints
                         if c == int(MoneySet[len(MoneySet) - 1]) and strs != "":
-                            strsList.append(strs)
+                            if True not in Check:
+                                strsList.append(strs)
+                            else:
+                                strsList.append("")
+                        else:
+                            GFTable[g][c - 1] = ints
                     else:
                         GFTable[g][c - 1] = ""
                         if c == int(MoneySet[len(MoneySet) - 1]) and strs != "":
                             strsList.append(strs)
                 # -------------------------------------------------------------------------
             # 入出金列の数値以外を分別------------------------------------------------------
-            intsList = []
-            for g in range(GFRow):
-                intsList_r = []
-                for c in MoneySet:
-                    ints = ""
-                    c = int(c)
-                    S = GFTable[g][c - 1]
-                    if S == "":
-                        intsList_r.append(0)
-                    else:
-                        intsList_r.append(int(S))
-                Min_S = min(intsList_r)
-                Min_S_c = [i for i, x in enumerate(intsList_r) if x == Min_S]
-                Min_S_c = int(MoneySet[int(Min_S_c[0])]) - 1
-                GFTable[g][Min_S_c] = ""
-                if Min_S == 0:
-                    intsList.append("")
-                else:
-                    intsList.append(str(Min_S))
-                # -------------------------------------------------------------------------
+            # intsList = []
+            # for g in range(GFRow):
+            #     intsList_r = []
+            #     for c in MoneySet:
+            #         ints = ""
+            #         c = int(c)
+            #         S = GFTable[g][c - 1]
+            #         if S == "":
+            #             intsList_r.append(0)
+            #         else:
+            #             Check = [True if i in S else False for i in Replist]
+            #             if True not in Check:
+            #                 intsList_r.append(int(S))
+            #             else:
+            #                 try:
+            #                     intsList_r.append(int(S))
+            #                 except:
+            #                     intsList_r.append(0)
+            #     if len(intsList_r) == 1:
+            #         intsList_r[g] = ""
+            #     else:
+            #         Min_S = min(intsList_r)
+            #         Min_S_c = [i for i, x in enumerate(intsList_r) if x == Min_S]
+            #         Min_S_c = int(MoneySet[int(Min_S_c[0])]) - 1
+            #         if True not in Check:
+            #             GFTable[g][Min_S_c] = ""
+            #         else:
+            #             GFTable[g][Min_S_c] = S
+            #         if Min_S == 0:
+            #             if True not in Check:
+            #                 intsList.append("")
+            #             else:
+            #                 intsList.append(S)
+            #         else:
+            #             intsList.append(str(Min_S))
+            # -------------------------------------------------------------------------
             # -----------------------------------------------------------------------------
             G_logger.debug("GoogleAPI後編集処理完了")  # Log出力
             # DataFrame作成
@@ -309,13 +354,13 @@ def DiffListCreate(
                 df = DataFrame(GFTable, columns=ColList)
                 DiffCheck(df, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
             else:
-                DF_strsList = DataFrame(strsList, columns=["抽出摘要"])
-                DF_intsList = DataFrame(intsList, columns=["抽出金額"])
+                DF_strsList = DataFrame(strsList, columns=["抽出文字列"])
+                # DF_intsList = DataFrame(intsList, columns=["抽出数値"])
                 GFTable = DataFrame(GFTable)
                 GFTable = concat([GFTable, DF_strsList], axis=1)
-                GFTable = concat([GFTable, DF_intsList], axis=1)
-                ColList.append("抽出摘要")
-                ColList.append("抽出金額")
+                # GFTable = concat([GFTable, DF_intsList], axis=1)
+                ColList.append("抽出文字列")
+                # ColList.append("抽出数値")
                 GFTable.columns = ColList
                 df = GFTable
             # -----------------------------------------------------------------------------

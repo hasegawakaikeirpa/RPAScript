@@ -1,10 +1,13 @@
 import tkinter as tk
-import tkinter.ttk as ttk
+
+# import tkinter.ttk as ttk
 import Frame.MyTable as MT
 import CSVOut as CSVO
-import ScrollableFrame as SF
+
+# import ScrollableFrame as SF
 from pandas import read_csv, concat
-from csv import QUOTE_NONNUMERIC
+
+# from csv import QUOTE_NONNUMERIC
 
 # メインフレーム######################################################################################
 def create_Frame(self, wid, hei):

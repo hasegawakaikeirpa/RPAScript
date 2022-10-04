@@ -1,6 +1,7 @@
 import tkinter as tk
 import csv
 from PIL import Image, ImageTk
+from requests import delete
 
 # import subprocess
 import P_Table as PT
@@ -16,6 +17,7 @@ import toml
 
 # import CV2Setting as CV2S
 from CV2Setting import straightlinesetting
+from GCloudVision import AutoLine
 import ScrollableFrame as SF
 import tomlCreate as toml_c
 
@@ -44,7 +46,8 @@ class Application(tk.Frame):
         # 透過キャンバスの画像範囲検出の為リサイズ比率等を算出
         print(self.master.geometry())
         W = self.master.geometry().split("x")
-        Wwidth = int(1480 * 0.8)  # int(W[0]) * 0.7
+        # Wwidth = int(1480 * 0.8)  # int(W[0]) * 0.7
+        Wwidth = int(1480)  # int(W[0]) * 0.7
         W = W[1].split("+")
         Wheight = int(750 * 0.8)  # int(W[0]) * 0.7
         IR = LoadImg(Wwidth, Wheight)
@@ -75,14 +78,17 @@ class Application(tk.Frame):
         # ##############################################################################
         # 配置
         # サイドメニューフレーム##########################################################
+        # self.frame00 = SF.ScrollableUnderFrame(self.top, CW)
+        # self.frame00.grid(row=1, column=0, sticky=tk.W + tk.E)
+        # self.frame0 = self.frame00.scrollable_frame
         self.frame0 = tk.Frame(
             self.top,
-            bg="snow",
+            bg="gray94",
             width=5,
             bd=2,
             relief=tk.GROOVE,
         )
-        self.frame0.grid(row=0, column=1, sticky=tk.N)
+        self.frame0.grid(row=1, column=0, sticky=tk.W + tk.E)
         self.frame0.propagate(0)
         #################################################################################
         # サイドメニュー内フレーム########################################################
@@ -92,7 +98,7 @@ class Application(tk.Frame):
             bd=2,
             relief=tk.GROOVE,
         )
-        Tframe.grid(sticky=tk.W + tk.E)
+        Tframe.grid(row=0, column=0, sticky=tk.N)
         # LineNo表示テキスト
         tk.Label(Tframe, text="選択ライン名").grid(row=0, column=0)  # 位置指定
         # テキストボックスの作成と配置
@@ -130,10 +136,18 @@ class Application(tk.Frame):
         self.tomlbutton.grid(row=4, column=0, columnspan=2, sticky=tk.N)
         #################################################################################
         # 列名設定フレーム################################################################
-        tk.Label(self.frame0, text="出力列名設定").grid(
-            row=1, column=0, sticky=tk.W + tk.E
+        # サイドメニュー内フレーム########################################################
+        Tframe2 = tk.Frame(
+            self.frame0,
+            bg="gray94",
+            bd=2,
+            relief=tk.GROOVE,
+        )
+        Tframe2.grid(row=0, column=1, sticky=tk.N)
+        tk.Label(Tframe2, text="出力列名設定").grid(
+            row=0, column=0, sticky=tk.W + tk.E
         )  # フレームテキスト
-        self.SF = SF.ScrollableFrame(self.frame0, CW, bar_x=False)
+        self.SF = SF.ScrollableFrame(Tframe2, CW, CH, bar_x=False)
         self.SF.grid(sticky=tk.W + tk.E)  # , ipadx=500, ipady=100)
         # エントリーウィジェットマネージャを初期化
         self.Entries = []  # エントリーウィジェットのインスタンス
@@ -142,7 +156,10 @@ class Application(tk.Frame):
         # こちらはインデックスマネージャ。ウィジェットの数や並び方を管理
         self.index = 0  # 最新のインデックス番号
         self.indexes = []  # インデックスの並び
-        self.ColList = Banktoml["ColList"]["List"]
+        try:
+            self.ColList = Banktoml["ColList"][F_N + "_List"]
+        except:
+            self.ColList = Banktoml["ColList"]["Nomal_List"]
         i = 0
         for ColListItem in self.ColList:
             self.createEntry(i, bar_x=False)
@@ -157,34 +174,60 @@ class Application(tk.Frame):
             width=5,
             bd=2,
         )
-        Setframe.grid(sticky=tk.W + tk.E)
+        Setframe.grid(row=0, column=3, sticky=tk.N)
         tomlEntries = []
         # テキストボックスの作成と配置
+        # Start ####################################################################
         tk.Label(Setframe, text="日付列番号").grid(row=0, column=0)  # 位置指定
         self.DaySet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.DaySet)
-        self.TomlInsert(self.DaySet, Banktoml["Setframe"]["DaySetList"])
+        # tomlインポート------------------------------------------------------------
+        try:
+            self.TomlInsert(self.DaySet, Banktoml["Setframe"][F_N + "_DaySetList"])
+        except:
+            self.TomlInsert(self.DaySet, Banktoml["Setframe"]["Nomal_DaySetList"])
+        # --------------------------------------------------------------------------
         self.DaySet.bind("<Return>", tomlreturn)
         self.DaySet.bind("<Tab>", tomlreturn)
         self.DaySet.grid(row=0, column=1, padx=5)
+        # Start ####################################################################
         tk.Label(Setframe, text="金額表示列番号").grid(row=1, column=0)  # 位置指定
         self.MoneySet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.MoneySet)
-        self.TomlInsert(self.MoneySet, Banktoml["Setframe"]["MoneySet"])
+        # tomlインポート------------------------------------------------------------
+        try:
+            self.TomlInsert(self.MoneySet, Banktoml["Setframe"][F_N + "_MoneySet"])
+        except:
+            self.TomlInsert(self.MoneySet, Banktoml["Setframe"]["Nomal_MoneySet"])
+        # --------------------------------------------------------------------------
         self.MoneySet.bind("<Return>", tomlreturn)
         self.MoneySet.bind("<Tab>", tomlreturn)
         self.MoneySet.grid(row=1, column=1, padx=5)
+        # Start ####################################################################
         tk.Label(Setframe, text="置換対象列番号").grid(row=2, column=0)  # 位置指定
         self.ReplaceSet = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.ReplaceSet)
-        self.TomlInsert(self.ReplaceSet, Banktoml["Setframe"]["ReplaceSet"])
+        # tomlインポート------------------------------------------------------------
+        try:
+            self.TomlInsert(self.ReplaceSet, Banktoml["Setframe"][F_N + "_ReplaceSet"])
+        except:
+            self.TomlInsert(self.ReplaceSet, Banktoml["Setframe"]["Nomal_ReplaceSet"])
+        # --------------------------------------------------------------------------
         self.ReplaceSet.bind("<Return>", tomlreturn)
         self.ReplaceSet.bind("<Tab>", tomlreturn)
         self.ReplaceSet.grid(row=2, column=1, padx=5)
+        # Start ####################################################################
         tk.Label(Setframe, text="置換対象文字列").grid(row=3, column=0)  # 位置指定
         self.ReplaceStr = tk.Entry(Setframe, width=30, bg="snow")
         tomlEntries.append(self.ReplaceStr)
-        self.TomlInsert(self.ReplaceStr, Banktoml["LineSetting"][rep_N])
+        # tomlインポート------------------------------------------------------------
+        try:
+            self.TomlInsert(self.ReplaceStr, Banktoml["LineSetting"][rep_N])
+        except:
+            self.TomlInsert(
+                self.ReplaceStr, Banktoml["LineSetting"]["Nomal_ReplaceStr"]
+            )
+        # --------------------------------------------------------------------------
         self.ReplaceStr.bind("<Return>", tomlreturn)
         self.ReplaceStr.bind("<Tab>", tomlreturn)
         self.ReplaceStr.bind("<Double-1>", self.tomlFrameOpen)
@@ -198,10 +241,10 @@ class Application(tk.Frame):
             width=5,
             bd=2,
         )
-        frame.grid(sticky=tk.W + tk.E)
-        BW = 25  # ボタン横幅
+        frame.grid(row=0, column=4, sticky=tk.N)
+        BW = 30  # ボタン横幅
         BH = 1  # ボタン縦幅
-        fonts = ("", 16)  # ボタンフォントの設定
+        fonts = ("ＭＳ ゴシック", 10)  # ボタンフォントの設定
         # 縦直線追加ボタン---------------------------------------------------------------
         button = tk.Button(
             frame,
@@ -213,7 +256,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button.grid(row=0, column=0, padx=5, sticky=tk.N)
+        button.grid(row=0, column=0, padx=5, sticky=tk.W + tk.E)
         # 横直線追加ボタン---------------------------------------------------------------
         button2 = tk.Button(
             frame,
@@ -225,7 +268,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button2.grid(row=1, column=0, padx=5, sticky=tk.N)
+        button2.grid(row=1, column=0, padx=5, sticky=tk.W + tk.E)
         # 削除ボタン---------------------------------------------------------------
         button5 = tk.Button(
             frame,
@@ -237,7 +280,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button5.grid(row=2, column=0, padx=5, sticky=tk.N)
+        button5.grid(row=2, column=0, padx=5, sticky=tk.W + tk.E)
         # 新規直線描画ボタン---------------------------------------------------------------
         button3 = tk.Button(
             frame,
@@ -249,7 +292,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button3.grid(row=3, column=0, padx=5, sticky=tk.N)
+        button3.grid(row=3, column=0, padx=5, sticky=tk.W + tk.E)
         # 置換ボタン---------------------------------------------------------------
         button7 = tk.Button(
             frame,
@@ -261,10 +304,34 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button7.grid(row=4, column=0, padx=5, sticky=tk.N)
+        button7.grid(row=4, column=0, padx=5, sticky=tk.W + tk.E)
+        # 自動直線描画ボタン---------------------------------------------------------------
+        button3 = tk.Button(
+            frame,
+            text="自動直線描画",
+            fg="snow",
+            command=self.AutoNewLineCreate,
+            bg="mediumPurple",
+            font=fonts,
+            width=BW,
+            height=BH,
+        )  # ボタン作成
+        button3.grid(row=5, column=0, padx=5, sticky=tk.W + tk.E)
+        # サイドメニュー内ボタンフレーム2###################################################
+        frame2 = tk.Frame(
+            self.frame0,
+            bg="gray94",
+            relief=tk.GROOVE,
+            width=5,
+            bd=2,
+        )
+        frame2.grid(row=0, column=5, sticky=tk.N)
+        BW = 30  # ボタン横幅
+        BH = 2  # ボタン縦幅
+        fonts = ("ＭＳ ゴシック", 10)  # ボタンフォントの設定
         # 確定ボタン---------------------------------------------------------------
         button4 = tk.Button(
-            frame,
+            frame2,
             text="確定",
             fg="snow",
             command=lambda: EnterP(
@@ -275,10 +342,10 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button4.grid(row=5, column=0, padx=5, sticky=tk.N)
+        button4.grid(row=0, column=0, padx=5, sticky=tk.W + tk.E)
         # 戻るボタン---------------------------------------------------------------
         button6 = tk.Button(
-            frame,
+            frame2,
             text="戻る",
             fg="snow",
             command=lambda: ReturnBack(self),
@@ -287,7 +354,7 @@ class Application(tk.Frame):
             width=BW,
             height=BH,
         )  # ボタン作成
-        button6.grid(row=6, column=0, padx=5, sticky=tk.N)
+        button6.grid(row=1, column=0, padx=5, sticky=tk.W + tk.E)
         # ##############################################################################
         Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)  # 透過キャンバスに罫線描画
         self.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
@@ -298,7 +365,7 @@ class Application(tk.Frame):
         Entries = self.Entries
         G_logger.debug("TKINTERCV2Setting_Application起動完了")  # Log出力
 
-    # 以下self関数###################################################################################
+    # 以下self関数##################################################################################
     def tomlFrameOpen(self, event):
         """
         置換設定隠しサイドメニューの表示
@@ -313,13 +380,16 @@ class Application(tk.Frame):
             self.topRepFrame = tk.Frame(
                 self.top,
                 bg="snow",
-                height=CHgeo,
+                # height=CHgeo,
                 width=CWgeo,
                 relief=tk.GROOVE,
                 bd=2,
             )
-            self.BRS = Banktoml["LineSetting"][rep_N]
-            self.topRepFrame.grid(row=0, column=1, sticky=tk.NSEW)
+            try:
+                self.BRS = Banktoml["LineSetting"][rep_N]
+            except:
+                self.BRS = Banktoml["Setframe"]["Nomal_ReplaceSet"]
+            self.topRepFrame.grid(row=1, column=0, sticky=tk.NSEW)
             self.topRepSF = SF.SubScrollableFrame(
                 self.topRepFrame, CWgeo, CHgeo, len(self.BRS), bar_x=False
             )
@@ -384,11 +454,12 @@ class Application(tk.Frame):
                 text="確定",
                 fg="Snow",
                 command=self.tomlFrameClose,
-                height=2,
-                bg="Gray",
-                font=("Arial Black", 10),
+                width=30,
+                height=1,
+                bg="blue",
+                font=("Arial Black", 15),
             )
-            btn.grid(row=1, column=0, columnspan=3, sticky=tk.NSEW)
+            btn.grid(row=0, column=1, padx=10, sticky=tk.NSEW)
             map(self)
 
     # ---------------------------------------------------------------------------------------------
@@ -746,6 +817,17 @@ class Application(tk.Frame):
             self.top.deiconify()
             G_logger.debug("TKINTERCV2SettingClose失敗")  # Log出力
 
+    # ---------------------------------------------------------------------------------------------
+    def AutoNewLineCreate(self):
+        """
+        自動直線描画ボタン処理
+        """
+        unmap(self)
+        MSG = messagebox.askokcancel("確認", "自動直線描画しますか？")
+        if MSG is True:
+            G_logger.debug("新規直線描画処理開始")  # Log出力
+            AutoLine(imgurl)
+
     # 以下関数######################################################################################
 
 
@@ -759,7 +841,7 @@ def ColumnTomlIn(self):
         TEntries = []
         for item in Entries:
             TEntries.append(item.get())
-        Banktoml["ColList"]["List"] = TEntries
+        Banktoml["ColList"][F_N + "_List"] = TEntries
         toml_c.dump_toml(Banktoml, tomlurl)
         G_logger.debug("toml列名設定の更新完了")  # Log出力
     except:
@@ -778,28 +860,28 @@ def tomlreturn(self):
     if "," not in DaySet:
         l_s = []
         l_s.append(DaySet)
-        Banktoml["Setframe"]["DaySetList"] = l_s
+        Banktoml["Setframe"][F_N + "_DaySetList"] = l_s
     else:
         l_s = DaySet.split(",")
-        Banktoml["Setframe"]["DaySetList"] = l_s
+        Banktoml["Setframe"][F_N + "_DaySetList"] = l_s
     # ----------------------------------------------------------
     MoneySet = tomlEntries[1].get()
     if "," not in MoneySet:
         l_s = []
         l_s.append(MoneySet)
-        Banktoml["Setframe"]["MoneySet"] = l_s
+        Banktoml["Setframe"][F_N + "_MoneySet"] = l_s
     else:
         l_s = MoneySet.split(",")
-        Banktoml["Setframe"]["MoneySet"] = l_s
+        Banktoml["Setframe"][F_N + "_MoneySet"] = l_s
     # ----------------------------------------------------------
     ReplaceSet = tomlEntries[2].get()
     if "," not in ReplaceSet:
         l_s = []
         l_s.append(ReplaceSet)
-        Banktoml["Setframe"]["ReplaceSet"] = l_s
+        Banktoml["Setframe"][F_N + "_ReplaceSet"] = l_s
     else:
         l_s = ReplaceSet.split(",")
-        Banktoml["Setframe"]["ReplaceSet"] = l_s
+        Banktoml["Setframe"][F_N + "_ReplaceSet"] = l_s
     # ----------------------------------------------------------
     ReplaceStr = tomlEntries[3].get()
     if "," not in ReplaceStr:
@@ -846,20 +928,28 @@ def NewLineCreate(self, selfC, HCW, HCH):
         SLS = straightlinesetting(imgurl)
         if SLS[0] is True:
             ####################################################################################
-            with open(
-                URL + r"\StraightListYoko.csv",
-                "w",
-                newline="",
-            ) as file:
-                writer = csv.writer(file)
-                writer.writerow(SLS[1])
-            with open(
-                URL + r"\StraightListTate.csv",
-                "w",
-                newline="",
-            ) as file:
-                writer = csv.writer(file)
-                writer.writerow(SLS[2])
+            # with open(
+            #     URL + r"\StraightListYoko.csv",
+            #     "w",
+            #     newline="",
+            # ) as file:
+            #     writer = csv.writer(file)
+            #     writer.writerow(SLS[1])
+            # with open(
+            #     URL + r"\StraightListTate.csv",
+            #     "w",
+            #     newline="",
+            # ) as file:
+            #     writer = csv.writer(file)
+            #     writer.writerow(SLS[2])
+            ####################################################################################
+            F_N = os.path.splitext(os.path.basename(imgurl))[0]
+            Yoko_N = F_N + "_Yoko"
+            Tate_N = F_N + "_Tate"
+            Banktoml["LineSetting"][Yoko_N] = SLS[1]
+            Banktoml["LineSetting"][Tate_N] = SLS[2]
+            toml_c.dump_toml(Banktoml, tomlurl)
+            ####################################################################################
             ####################################################################################
             AllLineDelete(selfC)
             tagsList = []
@@ -1151,23 +1241,14 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                             Banktoml["LineSetting"][Yoko_N] = FYokoList
                             Banktoml["LineSetting"][Tate_N] = FTateList
                             toml_c.dump_toml(Banktoml, tomlurl)
-                            # with open(
-                            #     URL + r"\StraightListYoko.csv",
-                            #     "w",
-                            #     newline="",
-                            # ) as file:
-                            #     writer = csv.writer(file)
-                            #     writer.writerow(FYokoList)
-                            # with open(
-                            #     URL + r"\StraightListTate.csv",
-                            #     "w",
-                            #     newline="",
-                            # ) as file:
-                            #     writer = csv.writer(file)
-                            #     writer.writerow(FTateList)
                             ####################################################################################
                             print("csv保存完了")
                             G_logger.debug("縦横リスト書出完了")  # Log出力
+                            # SelectList = [
+                            #     selfmother.select_var.get(),
+                            #     selfmother.In_v.get(),
+                            #     selfmother.Out_v.get(),
+                            # ]
                             OM = OCRF.Main(
                                 imgurl,
                                 FYokoList,
@@ -1196,7 +1277,9 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                 )
                                 if MSG is True:
                                     Master.HeaderCol_c = len(SGEL)
-                                    if "抽出摘要" in SGEL:
+                                    if "抽出文字列" in SGEL:
+                                        Master.HeaderCol_c = Master.HeaderCol_c - 1
+                                    if "抽出数値" in SGEL:
                                         Master.HeaderCol_c = Master.HeaderCol_c - 1
                                     G_logger.debug("次ページ読込開始")  # Log出力
                                     FUL.append(Read_Url)  # 書出しCSVURLリスト
@@ -1349,7 +1432,7 @@ def Main(MUI, US, turl, logger, File_url_List):
     global readcsv1, readcsv2
     global URL, G_logger
     global Banktoml, tomlurl
-    global FUL, rep_N
+    global FUL, rep_N, F_N
 
     Master = MUI
     imgurl = US.replace(r"\\\\", r"\\")
@@ -1371,11 +1454,11 @@ def Main(MUI, US, turl, logger, File_url_List):
         rep_N = F_N + "_ReplaceStr"
         readcsv1 = Banktoml["LineSetting"][Yoko_N]
         readcsv2 = Banktoml["LineSetting"][Tate_N]
-
     except:
         print("行列tomlインポートエラー")
-        readcsv1 = []
-        readcsv2 = []
+        readcsv1 = Banktoml["LineSetting"]["Nomal_Yoko"]
+        readcsv2 = Banktoml["LineSetting"]["Nomal_Tate"]
+
     root = tk.Tk()  # Window生成
     app = Application(master=root)
     # --- 基本的な表示準備 ----------------
@@ -1392,9 +1475,9 @@ if __name__ == "__main__":
     G_logger = logging.getLogger(__name__)
     # ---------------------------------------------------------------------------------------------------------------
 
-    global Banktoml, tomlurl, rep_N
+    global Banktoml, tomlurl, rep_N, F_N, imgurl
     URL = os.getcwd()
-    imgurl = r"D:\OCRTESTPDF\PDFTEST\Hirogin_1page.png"
+    imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_2page.png"
     tomlurl = r"D:\PythonScript\RPAScript\OCRView\Setting.toml"
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
@@ -1435,8 +1518,12 @@ if __name__ == "__main__":
     Yoko_N = F_N + "_Yoko"
     Tate_N = F_N + "_Tate"
     rep_N = F_N + "_ReplaceStr"
-    readcsv1 = Banktoml["LineSetting"][Yoko_N]
-    readcsv2 = Banktoml["LineSetting"][Tate_N]
+    try:
+        readcsv1 = Banktoml["LineSetting"][Yoko_N]
+        readcsv2 = Banktoml["LineSetting"][Tate_N]
+    except:
+        readcsv1 = Banktoml["LineSetting"]["Nomal_Yoko"]
+        readcsv2 = Banktoml["LineSetting"]["Nomal_Tate"]
     COLArray = True, readcsv1, readcsv2
 
     # Windowについて : https://kuroro.blog/python/116yLvTkzH2AUJj8FHLx/

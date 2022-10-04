@@ -12,7 +12,8 @@ from pandas import DataFrame
 import numpy as np
 
 # from collections import OrderedDict
-
+import pyocr
+import pyocr.builders
 
 # loggerインポート
 from logging import getLogger
@@ -428,6 +429,63 @@ def Bankrentxtver(filein, YokoList, TateList):  # 自作関数一文字づつの
         print("rentxtver(OCR結果を整形)失敗Exception")
         logger.debug("rentxtver(OCR結果を整形)失敗Exception: debug level log")
         return False, e
+
+
+def AutoLine(imgurl):
+    # Pah設定
+    TESSERACT_PATH = (
+        os.getcwd() + r"\OCRView\Tesseract-OCR"
+    )  # インストールしたTesseract-OCRのpath
+    TESSDATA_PATH = TESSERACT_PATH + r"\tessdata"  # tessdataのpath
+    os.environ["PATH"] += os.pathsep + TESSERACT_PATH
+    os.environ["TESSDATA_PREFIX"] = TESSDATA_PATH
+
+    # OCRエンジン取得
+    tools = pyocr.get_available_tools()
+    tool = tools[0]
+
+    res = tool.image_to_string(
+        Image.open(imgurl),
+        lang="jpn",
+        builder=pyocr.builders.WordBoxBuilder(tesseract_layout=6),
+    )
+    # -------------------------------------------------------------
+    Pos_List = []
+    for d in res:
+        Pos_List_r = [
+            d.position[0][0],
+            d.position[0][1],
+            d.position[1][0],
+            d.position[1][1],
+        ]
+        Pos_List.append(Pos_List_r)
+    # -------------------------------------------------------------
+    d_heightList = []
+    for Pos_r in range(len(Pos_List)):
+        d_height = Pos_List[Pos_r][3] - Pos_List[Pos_r][1]
+        if Pos_List[Pos_r][1] < d_height:
+            Pos_List_r = [
+                Pos_List[Pos_r][0],
+                Pos_List[Pos_r][1],
+                Pos_List[Pos_r][2],
+                Pos_List[Pos_r][3],
+            ]
+            d_heightList.append(Pos_List_r)
+        else:
+            print("")
+            Pos_List_r = [
+                Pos_List[Pos_r][0],
+                Pos_List[Pos_r][1],
+                Pos_List[Pos_r][2],
+                Pos_List[Pos_r][3],
+            ]
+            d_heightList.append(Pos_List_r)
+    # -------------------------------------------------------------
+    Pos_List = np.array(Pos_List)
+    ind = np.argsort(Pos_List[:, 1], axis=-1)
+    Pos_List = Pos_List[ind]
+    print(Pos_List)
+    print(Pos_List)
 
 
 if __name__ == "__main__":
