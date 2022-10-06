@@ -1,7 +1,7 @@
 import tkinter as tk
-import csv
+
+# import csv
 from PIL import Image, ImageTk
-from requests import delete
 
 # import subprocess
 import P_Table as PT
@@ -14,11 +14,13 @@ import OCRFlow as OCRF
 import toml
 
 # from tkinter import ttk
+import customtkinter as ck
 
 # import CV2Setting as CV2S
 from CV2Setting import straightlinesetting
-from GCloudVision import AutoLine
+from GCloudVision import AutoLine, LineTomlOut
 import ScrollableFrame as SF
+
 import tomlCreate as toml_c
 
 from tkinter import filedialog
@@ -29,19 +31,35 @@ class Application(tk.Frame):
     def __init__(self, master=None):
         global TKimg  # 画像オブジェクト用グローバル変数
         global txt
-        global CW, CH
+        global CW, CH, HCW, HCH
         global Banktoml
         global Entries
         global tomlEntries
+        global SideWidth, SideHeight, LabelWidth
+        global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
         # Windowの初期設定を行う。
         super().__init__(master)
         # Windowの画面サイズを設定する。
         G_logger.debug("TKINTERCV2Setting_Application起動")  # Log出力
-        self.master.geometry("1480x780+0+0")  # Window表示位置指定
+        # customtkスタイル
+        ck.set_appearance_mode("System")  # Modes: system (default), light, dark
+        ck.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
+        width_of_window = 1480
+        height_of_window = 750
+        screen_width = master.winfo_screenwidth()
+        screen_height = master.winfo_screenheight()
+        x_coodinate = (screen_width / 2) - (width_of_window / 2)
+        y_coodinate = (screen_height / 2) - (height_of_window / 2)
+        # 　メインウィンドウサイズ指定
+        # self.window_root.geometry("1480x750+0+0")  # 横,縦
+        self.master.geometry(
+            "%dx%d+%d+%d"
+            % (width_of_window, height_of_window, x_coodinate, y_coodinate)
+        )
         # 　メインウィンドウタイトル
         self.master.title("OCR読取 Ver:0.9-表形式抽出-")
         self.master.minsize(1480, 750)
-        fonts = ("ＭＳ ゴシック", 10)  # フォント設定
+        self.master.resizable(0, 0)
         # 画像の読込#####################################################################
         # 透過キャンバスの画像範囲検出の為リサイズ比率等を算出
         print(self.master.geometry())
@@ -60,7 +78,12 @@ class Application(tk.Frame):
         self.top.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
         self.master.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
         self.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
-        self.top.geometry("1480x780+0+0")  # トップWindow表示位置指定
+        self.top.geometry(
+            "%dx%d+%d+%d"
+            % (width_of_window, height_of_window, x_coodinate, y_coodinate)
+        )
+        self.top.resizable(0, 0)
+        # self.top.geometry("1480x780+0+0")  # トップWindow表示位置指定
         # 透過キャンバスフレーム##########################################################
         self.topFrame = tk.Frame(
             self.top,
@@ -78,73 +101,169 @@ class Application(tk.Frame):
         # ##############################################################################
         # 配置
         # サイドメニューフレーム##########################################################
-        # self.frame00 = SF.ScrollableUnderFrame(self.top, CW)
-        # self.frame00.grid(row=1, column=0, sticky=tk.W + tk.E)
-        # self.frame0 = self.frame00.scrollable_frame
+        SideWidth = 200
+        SideHeight = 200
+        LabelWidth = 20
+        LabelHeight = 2
+        BtnWidth = 200
+        BtnHeight = 1
+        EntHeight = 1  # Ent高さ
+        EntWidth = 150  # Ent高さ
+        # self.frame0 = tk.Frame(
+        #     self.top,
+        #     bg="gray94",
+        #     width=5,
+        #     bd=2,
+        #     relief=tk.GROOVE,
+        # )
         self.frame0 = tk.Frame(
             self.top,
-            bg="gray94",
-            width=5,
-            bd=2,
+            width=width_of_window,
+            height=height_of_window,
+            bg="#ecb5f5",
             relief=tk.GROOVE,
         )
         self.frame0.grid(row=1, column=0, sticky=tk.W + tk.E)
         self.frame0.propagate(0)
         #################################################################################
         # サイドメニュー内フレーム########################################################
+        # Tframe = tk.Frame(
+        #     self.frame0,
+        #     bg="gray94",
+        #     bd=2,
+        #     relief=tk.GROOVE,
+        # )
         Tframe = tk.Frame(
             self.frame0,
-            bg="gray94",
-            bd=2,
+            width=SideWidth,
+            height=SideHeight,
+            bg="#ecb5f5",
             relief=tk.GROOVE,
         )
-        Tframe.grid(row=0, column=0, sticky=tk.N)
+        # Tframe.grid(row=0, column=0, sticky=tk.N)
+        Tframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # LineNo表示テキスト
-        tk.Label(Tframe, text="選択ライン名").grid(row=0, column=0)  # 位置指定
+        # tk.Label(Tframe, text="選択ライン名").grid(row=0, column=0)  # 位置指定
+        ck.CTkLabel(
+            master=Tframe,
+            text="選択ライン名",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+        ).grid(row=0, column=0, pady=5)
         # テキストボックスの作成と配置
-        txt = tk.Entry(Tframe, width=30)
-        txt.grid(row=0, column=1)
+        # txt = tk.Entry(Tframe, width=30)
+        txt = ck.CTkEntry(
+            master=Tframe,
+            width=EntWidth,
+            height=EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+        )
+        txt.grid(row=0, column=1, pady=5)
         # テキスト変換一致率
-        tk.Label(Tframe, text="テキスト変換一致率").grid(row=1, column=0)  # 位置指定
+        # tk.Label(Tframe, text="テキスト変換一致率").grid(row=1, column=0)  # 位置指定
+        ck.CTkLabel(
+            master=Tframe,
+            text="テキスト変換一致率",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+        ).grid(row=1, column=0, pady=5)
         # テキストボックスの作成と配置
-        self.ChangeVar = tk.Entry(Tframe, width=30, bg="snow")
+        # self.ChangeVar = tk.Entry(Tframe, width=30, bg="snow")
+        self.ChangeVar = ck.CTkEntry(
+            master=Tframe,
+            width=EntWidth,
+            height=EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+        )
         self.ChangeVar.insert(0, 50)
-        self.ChangeVar.grid(row=1, column=1)
+        self.ChangeVar.grid(row=1, column=1, pady=5)
         # 行数表示テキスト
         # tk.Label(Tframe, text="元帳日付列名").grid(row=2, column=0)  # 位置指定
         # self.LimitCol = tk.Entry(Tframe, width=30, bg="snow")
         # self.LimitCol.insert(0, "伝票日付")
         # self.LimitCol.grid(row=2, column=1)
         # 行数表示テキスト
-        tk.Label(Tframe, text="設定ファイル").grid(row=3, column=0)  # 位置指定
-        self.tomlurl = tk.Entry(Tframe, width=30, bg="snow")
+        # tk.Label(Tframe, text="設定ファイル").grid(row=3, column=0)  # 位置指定
+        ck.CTkLabel(
+            master=Tframe,
+            text="設定ファイル",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+        ).grid(row=3, column=0, pady=5)
+        # self.tomlurl = tk.Entry(Tframe, width=30, bg="snow")
+        self.tomlurl = ck.CTkEntry(
+            master=Tframe,
+            width=EntWidth,
+            height=EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+        )
         self.tomlurl.insert(0, tomlurl)
-        self.tomlurl.grid(row=3, column=1)
+        self.tomlurl.grid(row=3, column=1, pady=5)
         # 行数表示テキスト
         # 設定ファイル変更ボタン--------------------------------------------------------
-        self.tomlbutton = tk.Button(
-            # self.top,
-            Tframe,
+        # self.tomlbutton = tk.Button(
+        #     # self.top,
+        #     Tframe,
+        #     text="設定ファイル変更",
+        #     fg="snow",
+        #     command=self.ChangeToml,
+        #     bg="gray",
+        #     font=fonts,
+        #     width=40,
+        #     height=1,
+        # )  # ボタン作成
+        self.tomlbutton = ck.CTkButton(
+            master=Tframe,
             text="設定ファイル変更",
-            fg="snow",
             command=self.ChangeToml,
-            bg="gray",
-            font=fonts,
-            width=40,
-            height=1,
-        )  # ボタン作成
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+        )
         self.tomlbutton.grid(row=4, column=0, columnspan=2, sticky=tk.N)
         #################################################################################
         # 列名設定フレーム################################################################
         # サイドメニュー内フレーム########################################################
+        # Tframe2 = tk.Frame(
+        #     self.frame0,
+        #     bg="gray94",
+        #     bd=2,
+        #     relief=tk.GROOVE,
+        # )
         Tframe2 = tk.Frame(
             self.frame0,
-            bg="gray94",
-            bd=2,
+            width=SideWidth,
+            height=SideHeight,
+            bg="#ecb5f5",
             relief=tk.GROOVE,
         )
-        Tframe2.grid(row=0, column=1, sticky=tk.N)
-        tk.Label(Tframe2, text="出力列名設定").grid(
+        # Tframe2.grid(row=0, column=1, padx=5, sticky=tk.N)
+        Tframe2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # tk.Label(Tframe2, text="出力列名設定").grid(
+        #     row=0, column=0, sticky=tk.W + tk.E
+        # )  # フレームテキスト
+        ck.CTkLabel(
+            master=Tframe2,
+            text="出力列名設定",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+        ).grid(
             row=0, column=0, sticky=tk.W + tk.E
         )  # フレームテキスト
         self.SF = SF.ScrollableFrame(Tframe2, CW, CH, bar_x=False)
@@ -169,17 +288,34 @@ class Application(tk.Frame):
         # サイドメニュー内変換設定フレーム#################################################
         Setframe = tk.Frame(
             self.frame0,
-            bg="gray94",
+            bg="#ecb5f5",
             relief=tk.GROOVE,
             width=5,
             bd=2,
         )
-        Setframe.grid(row=0, column=3, sticky=tk.N)
+        # Setframe.grid(row=0, column=3, sticky=tk.N)
+        Setframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         tomlEntries = []
         # テキストボックスの作成と配置
         # Start ####################################################################
-        tk.Label(Setframe, text="日付列番号").grid(row=0, column=0)  # 位置指定
-        self.DaySet = tk.Entry(Setframe, width=30, bg="snow")
+        # tk.Label(Setframe, text="日付列番号").grid(row=0, column=0)  # 位置指定
+        ck.CTkLabel(
+            master=Setframe,
+            text="日付列番号",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+        ).grid(row=0, column=0)
+        # self.DaySet = tk.Entry(Setframe, width=30, bg="snow")
+        self.DaySet = ck.CTkEntry(
+            master=Setframe,
+            width=EntWidth,
+            height=EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+        )
         tomlEntries.append(self.DaySet)
         # tomlインポート------------------------------------------------------------
         try:
@@ -189,10 +325,26 @@ class Application(tk.Frame):
         # --------------------------------------------------------------------------
         self.DaySet.bind("<Return>", tomlreturn)
         self.DaySet.bind("<Tab>", tomlreturn)
-        self.DaySet.grid(row=0, column=1, padx=5)
+        self.DaySet.grid(row=0, column=1, padx=5, pady=5)
         # Start ####################################################################
-        tk.Label(Setframe, text="金額表示列番号").grid(row=1, column=0)  # 位置指定
-        self.MoneySet = tk.Entry(Setframe, width=30, bg="snow")
+        # tk.Label(Setframe, text="金額表示列番号").grid(row=1, column=0)  # 位置指定
+        ck.CTkLabel(
+            master=Setframe,
+            text="金額表示列番号",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+        ).grid(row=1, column=0)
+        # self.MoneySet = tk.Entry(Setframe, width=30, bg="snow")
+        self.MoneySet = ck.CTkEntry(
+            master=Setframe,
+            width=EntWidth,
+            height=EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+        )
         tomlEntries.append(self.MoneySet)
         # tomlインポート------------------------------------------------------------
         try:
@@ -202,10 +354,26 @@ class Application(tk.Frame):
         # --------------------------------------------------------------------------
         self.MoneySet.bind("<Return>", tomlreturn)
         self.MoneySet.bind("<Tab>", tomlreturn)
-        self.MoneySet.grid(row=1, column=1, padx=5)
+        self.MoneySet.grid(row=1, column=1, padx=5, pady=5)
         # Start ####################################################################
-        tk.Label(Setframe, text="置換対象列番号").grid(row=2, column=0)  # 位置指定
-        self.ReplaceSet = tk.Entry(Setframe, width=30, bg="snow")
+        # tk.Label(Setframe, text="置換対象列番号").grid(row=2, column=0)  # 位置指定
+        ck.CTkLabel(
+            master=Setframe,
+            text="置換対象列番号",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+        ).grid(row=2, column=0)
+        # self.ReplaceSet = tk.Entry(Setframe, width=30, bg="snow")
+        self.ReplaceSet = ck.CTkEntry(
+            master=Setframe,
+            width=EntWidth,
+            height=EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+        )
         tomlEntries.append(self.ReplaceSet)
         # tomlインポート------------------------------------------------------------
         try:
@@ -215,10 +383,26 @@ class Application(tk.Frame):
         # --------------------------------------------------------------------------
         self.ReplaceSet.bind("<Return>", tomlreturn)
         self.ReplaceSet.bind("<Tab>", tomlreturn)
-        self.ReplaceSet.grid(row=2, column=1, padx=5)
+        self.ReplaceSet.grid(row=2, column=1, padx=5, pady=5)
         # Start ####################################################################
-        tk.Label(Setframe, text="置換対象文字列").grid(row=3, column=0)  # 位置指定
-        self.ReplaceStr = tk.Entry(Setframe, width=30, bg="snow")
+        # tk.Label(Setframe, text="置換対象文字列").grid(row=3, column=0)  # 位置指定
+        ck.CTkLabel(
+            master=Setframe,
+            text="置換対象文字列",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+        ).grid(row=3, column=0)
+        # self.ReplaceStr = tk.Entry(Setframe, width=30, bg="snow")
+        self.ReplaceStr = ck.CTkEntry(
+            master=Setframe,
+            width=EntWidth,
+            height=EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+        )
         tomlEntries.append(self.ReplaceStr)
         # tomlインポート------------------------------------------------------------
         try:
@@ -231,130 +415,226 @@ class Application(tk.Frame):
         self.ReplaceStr.bind("<Return>", tomlreturn)
         self.ReplaceStr.bind("<Tab>", tomlreturn)
         self.ReplaceStr.bind("<Double-1>", self.tomlFrameOpen)
-        self.ReplaceStr.grid(row=3, column=1, padx=5)
+        self.ReplaceStr.grid(row=3, column=1, padx=5, pady=5)
         #################################################################################
+        BtnWidth = 150
         # サイドメニュー内ボタンフレーム###################################################
         frame = tk.Frame(
             self.frame0,
-            bg="gray94",
+            bg="#ecb5f5",
             relief=tk.GROOVE,
             width=5,
             bd=2,
         )
-        frame.grid(row=0, column=4, sticky=tk.N)
-        BW = 30  # ボタン横幅
-        BH = 1  # ボタン縦幅
-        fonts = ("ＭＳ ゴシック", 10)  # ボタンフォントの設定
+        # frame.grid(row=0, column=4, sticky=tk.N)
+        frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # 縦直線追加ボタン---------------------------------------------------------------
-        button = tk.Button(
-            frame,
+        # button = tk.Button(
+        #     frame,
+        #     text="縦直線追加",
+        #     fg="snow",
+        #     command=lambda: StLine(self.top.forward, CW, CH),
+        #     bg="tomato",
+        #     font=fonts,
+        #     width=BW,
+        #     height=BH,
+        # )  # ボタン作成
+        button = ck.CTkButton(
+            master=frame,
             text="縦直線追加",
-            fg="snow",
             command=lambda: StLine(self.top.forward, CW, CH),
-            bg="tomato",
-            font=fonts,
-            width=BW,
-            height=BH,
-        )  # ボタン作成
-        button.grid(row=0, column=0, padx=5, sticky=tk.W + tk.E)
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="tomato",
+        )
+        button.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # 横直線追加ボタン---------------------------------------------------------------
-        button2 = tk.Button(
-            frame,
+        # button2 = tk.Button(
+        #     frame,
+        #     text="横直線追加",
+        #     fg="snow",
+        #     command=lambda: StWLine(self.top.forward, CW, CH),
+        #     bg="seagreen3",
+        #     font=fonts,
+        #     width=BW,
+        #     height=BH,
+        # )  # ボタン作成
+        button2 = ck.CTkButton(
+            master=frame,
             text="横直線追加",
-            fg="snow",
             command=lambda: StWLine(self.top.forward, CW, CH),
-            bg="seagreen3",
-            font=fonts,
-            width=BW,
-            height=BH,
-        )  # ボタン作成
-        button2.grid(row=1, column=0, padx=5, sticky=tk.W + tk.E)
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="seagreen3",
+        )
+        button2.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
         # 削除ボタン---------------------------------------------------------------
-        button5 = tk.Button(
-            frame,
+        # button5 = tk.Button(
+        #     frame,
+        #     text="選択直線削除",
+        #     fg="snow",
+        #     command=lambda: LineDelete(self.top.forward),
+        #     bg="Orange",
+        #     font=fonts,
+        #     width=BW,
+        #     height=BH,
+        # )  # ボタン作成
+        button5 = ck.CTkButton(
+            master=frame,
             text="選択直線削除",
-            fg="snow",
             command=lambda: LineDelete(self.top.forward),
-            bg="Orange",
-            font=fonts,
-            width=BW,
-            height=BH,
-        )  # ボタン作成
-        button5.grid(row=2, column=0, padx=5, sticky=tk.W + tk.E)
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="Orange",
+        )
+        button5.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # 新規直線描画ボタン---------------------------------------------------------------
-        button3 = tk.Button(
-            frame,
+        # button3 = tk.Button(
+        #     frame,
+        #     text="新規直線描画",
+        #     fg="snow",
+        #     command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
+        #     bg="mediumPurple",
+        #     font=fonts,
+        #     width=BW,
+        #     height=BH,
+        # )  # ボタン作成
+        button3 = ck.CTkButton(
+            master=frame,
             text="新規直線描画",
-            fg="snow",
             command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
-            bg="mediumPurple",
-            font=fonts,
-            width=BW,
-            height=BH,
-        )  # ボタン作成
-        button3.grid(row=3, column=0, padx=5, sticky=tk.W + tk.E)
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="mediumPurple",
+        )
+        button3.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
         # 置換ボタン---------------------------------------------------------------
-        button7 = tk.Button(
-            frame,
+        # button7 = tk.Button(
+        #     frame,
+        #     text="置換対象文字列設定",
+        #     fg="snow",
+        #     command=lambda: self.tomlFrameOpen(self),
+        #     bg="hotpink1",
+        #     font=fonts,
+        #     width=BW,
+        #     height=BH,
+        # )  # ボタン作成
+        button7 = ck.CTkButton(
+            master=frame,
             text="置換対象文字列設定",
-            fg="snow",
             command=lambda: self.tomlFrameOpen(self),
-            bg="hotpink1",
-            font=fonts,
-            width=BW,
-            height=BH,
-        )  # ボタン作成
-        button7.grid(row=4, column=0, padx=5, sticky=tk.W + tk.E)
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="hotpink1",
+        )
+        button7.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # 自動直線描画ボタン---------------------------------------------------------------
-        button3 = tk.Button(
-            frame,
+        # button3 = tk.Button(
+        #     frame,
+        #     text="自動直線描画",
+        #     fg="snow",
+        #     command=lambda: self.AutoNewLineCreate(self.top.forward, HCW, HCH),
+        #     bg="mediumPurple",
+        #     font=fonts,
+        #     width=BW,
+        #     height=BH,
+        # )  # ボタン作成
+        button3 = ck.CTkButton(
+            master=frame,
             text="自動直線描画",
-            fg="snow",
-            command=self.AutoNewLineCreate,
-            bg="mediumPurple",
-            font=fonts,
-            width=BW,
-            height=BH,
-        )  # ボタン作成
-        button3.grid(row=5, column=0, padx=5, sticky=tk.W + tk.E)
+            command=lambda: self.AutoNewLineCreate(self.top.forward, HCW, HCH),
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="#2b5cff",
+        )
+        button3.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
         # サイドメニュー内ボタンフレーム2###################################################
+        BtnWidth = 200
         frame2 = tk.Frame(
             self.frame0,
-            bg="gray94",
+            bg="#ecb5f5",
             relief=tk.GROOVE,
             width=5,
             bd=2,
         )
-        frame2.grid(row=0, column=5, sticky=tk.N)
-        BW = 30  # ボタン横幅
-        BH = 2  # ボタン縦幅
-        fonts = ("ＭＳ ゴシック", 10)  # ボタンフォントの設定
+        # frame2.grid(row=0, column=5, sticky=tk.N)
+        frame2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # 確定ボタン---------------------------------------------------------------
-        button4 = tk.Button(
-            frame2,
+        # button4 = tk.Button(
+        #     frame2,
+        #     text="確定",
+        #     fg="snow",
+        #     command=lambda: EnterP(
+        #         self.top.forward, HCW, HCH, self, self.master, self.top, self.ChangeVar
+        #     ),
+        #     bg="steelblue3",
+        #     font=fonts,
+        #     width=BW,
+        #     height=BH,
+        # )  # ボタン作成
+        button4 = ck.CTkButton(
+            master=frame2,
             text="確定",
-            fg="snow",
             command=lambda: EnterP(
                 self.top.forward, HCW, HCH, self, self.master, self.top, self.ChangeVar
             ),
-            bg="steelblue3",
-            font=fonts,
-            width=BW,
-            height=BH,
-        )  # ボタン作成
-        button4.grid(row=0, column=0, padx=5, sticky=tk.W + tk.E)
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="steelblue3",
+        )
+        button4.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # 戻るボタン---------------------------------------------------------------
-        button6 = tk.Button(
-            frame2,
+        # button6 = tk.Button(
+        #     frame2,
+        #     text="戻る",
+        #     fg="snow",
+        #     command=lambda: ReturnBack(self),
+        #     bg="gray",
+        #     font=fonts,
+        #     width=BW,
+        #     height=BH,
+        # )  # ボタン作成
+        button6 = ck.CTkButton(
+            master=frame2,
             text="戻る",
-            fg="snow",
             command=lambda: ReturnBack(self),
-            bg="gray",
-            font=fonts,
-            width=BW,
-            height=BH,
-        )  # ボタン作成
-        button6.grid(row=1, column=0, padx=5, sticky=tk.W + tk.E)
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="gray",
+        )
+        button6.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # ##############################################################################
         Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)  # 透過キャンバスに罫線描画
         self.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
@@ -401,7 +681,16 @@ class Application(tk.Frame):
             for BRSItem in self.BRS:
                 if len(self.BRS) == 1:
                     # テキストボックス----------------------------------------------------
-                    txt = tk.Entry(self.topRepSF.scrollable_frame, width=35, bg="snow")
+                    # txt = tk.Entry(self.topRepSF.scrollable_frame, width=35, bg="snow")
+                    txt = ck.CTkEntry(
+                        master=self.topRepSF.scrollable_frame,
+                        width=EntWidth,
+                        height=EntHeight,
+                        border_width=2,
+                        corner_radius=8,
+                        text_color="black",
+                        border_color="snow",
+                    )
                     txt.insert(0, BRSItem)
                     txt.bind("<MouseWheel>", self.topRepSF.mouse_y_scroll)
                     txt.grid(row=i, column=0, sticky=tk.W)
@@ -409,7 +698,16 @@ class Application(tk.Frame):
                     # -------------------------------------------------------------------
                 else:
                     # テキストボックス----------------------------------------------------
-                    txt = tk.Entry(self.topRepSF.scrollable_frame, width=35, bg="snow")
+                    # txt = tk.Entry(self.topRepSF.scrollable_frame, width=35, bg="snow")
+                    txt = ck.CTkEntry(
+                        master=self.topRepSF.scrollable_frame,
+                        width=EntWidth,
+                        height=EntHeight,
+                        border_width=2,
+                        corner_radius=8,
+                        text_color="black",
+                        border_color="snow",
+                    )
                     txt.insert(0, BRSItem)
                     txt.bind("<MouseWheel>", self.topRepSF.mouse_y_scroll)
                     txt.grid(row=i, column=0, sticky=tk.W)
@@ -420,6 +718,7 @@ class Application(tk.Frame):
                         self.topRepSF.scrollable_frame,
                         text="+",
                         fg="#33ff33",
+                        bg="#ecb5f5",
                         font=("Arial Black", 20),
                     )  # 追加するボタンのようなラベルにクリックイベントを設定
                     btn.bind(
@@ -436,6 +735,7 @@ class Application(tk.Frame):
                         self.topRepSF.scrollable_frame,
                         text="−",
                         fg="#ff3333",
+                        bg="#ecb5f5",
                         font=("Arial Black", 20),
                     )  # 追加するボタンのようなラベルにクリックイベントを設定
                     btn.bind(
@@ -498,7 +798,16 @@ class Application(tk.Frame):
             if len(self.BRS) == 1:
                 i = len(self.BRSTxt)
                 # テキストボックス----------------------------------------------------
-                txt = tk.Entry(self.topRepSF.scrollable_frame, width=35, bg="snow")
+                # txt = tk.Entry(self.topRepSF.scrollable_frame, width=35, bg="snow")
+                txt = ck.CTkEntry(
+                    master=self.topRepSF.scrollable_frame,
+                    width=EntWidth,
+                    height=EntHeight,
+                    border_width=2,
+                    corner_radius=8,
+                    text_color="black",
+                    border_color="snow",
+                )
                 txt.insert(0, "")
                 txt.bind("<MouseWheel>", self.topRepSF.mouse_y_scroll)
                 txt.grid(row=i, column=0, sticky=tk.W)
@@ -509,6 +818,7 @@ class Application(tk.Frame):
                     self.topRepSF.scrollable_frame,
                     text="+",
                     fg="#33ff33",
+                    bg="#ecb5f5",
                     font=("Arial Black", 20),
                 )  # 追加するボタンのようなラベルにクリックイベントを設定
                 btn.bind(
@@ -523,6 +833,7 @@ class Application(tk.Frame):
                     self.topRepSF.scrollable_frame,
                     text="−",
                     fg="#ff3333",
+                    bg="#ecb5f5",
                     font=("Arial Black", 20),
                 )  # 追加するボタンのようなラベルにクリックイベントを設定
                 btn.bind(
@@ -534,7 +845,16 @@ class Application(tk.Frame):
             else:
                 i = len(self.BRSTxt)
                 # テキストボックス----------------------------------------------------
-                txt = tk.Entry(self.topRepSF.scrollable_frame, width=35, bg="snow")
+                # txt = tk.Entry(self.topRepSF.scrollable_frame, width=35, bg="snow")
+                txt = ck.CTkEntry(
+                    master=self.topRepSF.scrollable_frame,
+                    width=EntWidth,
+                    height=EntHeight,
+                    border_width=2,
+                    corner_radius=8,
+                    text_color="black",
+                    border_color="snow",
+                )
                 txt.insert(0, "")
                 txt.bind("<MouseWheel>", self.topRepSF.mouse_y_scroll)
                 txt.grid(row=i, column=0)
@@ -545,6 +865,7 @@ class Application(tk.Frame):
                     self.topRepSF.scrollable_frame,
                     text="+",
                     fg="#33ff33",
+                    bg="#ecb5f5",
                     font=("Arial Black", 20),
                 )  # 追加するボタンのようなラベルにクリックイベントを設定
                 btn.bind(
@@ -559,6 +880,7 @@ class Application(tk.Frame):
                     self.topRepSF.scrollable_frame,
                     text="−",
                     fg="#ff3333",
+                    bg="#ecb5f5",
                     font=("Arial Black", 20),
                 )  # 追加するボタンのようなラベルにクリックイベントを設定
                 btn.bind(
@@ -708,14 +1030,14 @@ class Application(tk.Frame):
         G_logger.debug("列名設定項目を再配置開始")  # Log出力
         # エントリーウィジェットマネージャを参照して再配置
         for i in range(len(self.indexes)):
-            self.Entries[i].grid(column=0, row=i)
+            self.Entries[i].grid(column=0, row=i, padx=5)
             self.Entries[i].bind("<MouseWheel>", self.SF.mouse_y_scroll)
             self.Entries[i].bind("<Return>", ColumnTomlIn)
             self.Entries[i].bind("<Tab>", ColumnTomlIn)
             self.Entries[i].lift()
-            self.insertEntries[i].grid(column=1, row=i)
+            self.insertEntries[i].grid(column=1, row=i, padx=5)
             self.insertEntries[i].bind("<MouseWheel>", self.SF.mouse_y_scroll)
-            self.removeEntries[i].grid(column=2, row=i)
+            self.removeEntries[i].grid(column=2, row=i, padx=5)
             self.removeEntries[i].bind("<MouseWheel>", self.SF.mouse_y_scroll)
         # 1つしかないときは削除ボタンのようなラベルを表示しない
         if len(self.indexes) == 1:
@@ -759,15 +1081,28 @@ class Application(tk.Frame):
 
         G_logger.debug("列名設定項目を作成して再配置開始")  # Log出力
         # 最初のエントリーウィジェットを追加
+        # self.Entries.insert(
+        #     next, tk.Entry(self.SF.scrollable_frame, width=35, bg="snow")
+        # )  # エントリーウィジェットを追加するボタンのようなラベルを作成
         self.Entries.insert(
-            next, tk.Entry(self.SF.scrollable_frame, width=35, bg="snow")
-        )  # エントリーウィジェットを追加するボタンのようなラベルを作成
+            next,
+            ck.CTkEntry(
+                master=self.SF.scrollable_frame,
+                width=EntWidth,
+                height=EntHeight,
+                border_width=2,
+                corner_radius=8,
+                text_color="black",
+                border_color="snow",
+            ),
+        )
         self.insertEntries.insert(
             next,
             tk.Label(
                 self.SF.scrollable_frame,
                 text="+",
                 fg="#33ff33",
+                bg="#ecb5f5",
                 font=("Arial Black", 20),
             ),
         )  # エントリーウィジェットを削除するボタンのようなラベルを作成（初期の段階では表示しない）
@@ -777,6 +1112,7 @@ class Application(tk.Frame):
                 self.SF.scrollable_frame,
                 text="−",
                 fg="#ff3333",
+                bg="#ecb5f5",
                 font=("Arial Black", 20),
             ),
         )  # 追加するボタンのようなラベルにクリックイベントを設定
@@ -818,7 +1154,7 @@ class Application(tk.Frame):
             G_logger.debug("TKINTERCV2SettingClose失敗")  # Log出力
 
     # ---------------------------------------------------------------------------------------------
-    def AutoNewLineCreate(self):
+    def AutoNewLineCreate(self, selfC, HCW, HCH):
         """
         自動直線描画ボタン処理
         """
@@ -826,7 +1162,22 @@ class Application(tk.Frame):
         MSG = messagebox.askokcancel("確認", "自動直線描画しますか？")
         if MSG is True:
             G_logger.debug("新規直線描画処理開始")  # Log出力
-            AutoLine(imgurl)
+            selfC = self.top.forward
+            AL = AutoLine(imgurl, 1)
+            if AL[0] is True:
+                ####################################################################################
+                F_N = os.path.splitext(os.path.basename(imgurl))[0]
+                Yoko_N = F_N + "_Yoko"
+                Tate_N = F_N + "_Tate"
+                Banktoml["LineSetting"][Yoko_N] = AL[1]
+                Banktoml["LineSetting"][Tate_N] = AL[2]
+                toml_c.dump_toml(Banktoml, tomlurl)
+                ####################################################################################
+                AllLineDelete(self, selfC)
+                Gra(selfC, AL[1], AL[2], HCW, HCH)  # 透過キャンバスに罫線描画
+                map(self)
+            else:
+                MSG = messagebox.showinfo("確認", "自動直線描画に失敗しました。")
 
     # 以下関数######################################################################################
 
@@ -928,21 +1279,6 @@ def NewLineCreate(self, selfC, HCW, HCH):
         SLS = straightlinesetting(imgurl)
         if SLS[0] is True:
             ####################################################################################
-            # with open(
-            #     URL + r"\StraightListYoko.csv",
-            #     "w",
-            #     newline="",
-            # ) as file:
-            #     writer = csv.writer(file)
-            #     writer.writerow(SLS[1])
-            # with open(
-            #     URL + r"\StraightListTate.csv",
-            #     "w",
-            #     newline="",
-            # ) as file:
-            #     writer = csv.writer(file)
-            #     writer.writerow(SLS[2])
-            ####################################################################################
             F_N = os.path.splitext(os.path.basename(imgurl))[0]
             Yoko_N = F_N + "_Yoko"
             Tate_N = F_N + "_Tate"
@@ -950,9 +1286,7 @@ def NewLineCreate(self, selfC, HCW, HCH):
             Banktoml["LineSetting"][Tate_N] = SLS[2]
             toml_c.dump_toml(Banktoml, tomlurl)
             ####################################################################################
-            ####################################################################################
-            AllLineDelete(selfC)
-            tagsList = []
+            AllLineDelete(self, selfC)
             Gra(selfC, SLS[1], SLS[2], HCW, HCH)  # 透過キャンバスに罫線描画
             map(self)
         else:
@@ -1014,6 +1348,7 @@ def StLine(canvastop, CW, CH):
         activefill="#DBDD6F",
     )
     canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
+    canvastop.tag_bind(TName, "<Double-1>", EventDelete)
     canvastop.tag_bind(TName, "<B1-Motion>", drag1)
     BSS = [0, 0, 0, 0]
     TSS = [TName, CW - 50, 0, CW - 50, CH, "Yoko"]
@@ -1038,6 +1373,7 @@ def StWLine(canvastop, CW, CH):
         activefill="#DBDD6F",
     )
     canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
+    canvastop.tag_bind(TName, "<Double-1>", EventDelete)
     canvastop.tag_bind(TName, "<B1-Motion>", drag1)
     TSS = [TName, 0, CH - 50, CW, CH - 50, "Tate"]
     BSS = [0, 0, 0, 0]
@@ -1061,6 +1397,10 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
         ripar2 = readcsv1Item[2] * HCW  # * CHh
         ripar3 = readcsv1Item[3] * HCH  # * CWw
         TName = "Line" + str(ri)
+        try:
+            canvas.dtag(TName, TName)
+        except:
+            print("dtagErr")
         canvas.create_line(
             ripar0,
             ripar1,
@@ -1072,6 +1412,7 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
             activefill="#DBDD6F",
         )
         canvas.tag_bind(TName, "<ButtonPress-1>", click1)
+        canvas.tag_bind(TName, "<Double-1>", EventDelete)
         canvas.tag_bind(TName, "<B1-Motion>", drag1)
         canvas.place(x=0, y=0)
         BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Yoko"])
@@ -1093,6 +1434,7 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
             activefill="#DBDD6F",
         )
         canvas.tag_bind(TName, "<ButtonPress-1>", click1)
+        canvas.tag_bind(TName, "<Double-1>", EventDelete)
         canvas.tag_bind(TName, "<B1-Motion>", drag1)
         canvas.place(x=0, y=0)
         BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Tate"])
@@ -1185,8 +1527,11 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
         else:
             for tagsListItem in tagsList:
                 BB = self.bbox(tagsListItem[0][0])
-                BBS = [BB[0], BB[1], BB[2], BB[3]]
-                FList.append([tagsListItem[0], tagsListItem[1], BBS])
+                try:
+                    BBS = [BB[0], BB[1], BB[2], BB[3]]
+                    FList.append([tagsListItem[0], tagsListItem[1], BBS])
+                except:
+                    print("BBSErr")
             for FListItem in FList:
                 FSSC1 = round((FListItem[1][0] + FListItem[2][0]) / HCW)
                 FSSC2 = round((FListItem[1][1] + FListItem[2][1]) / HCH)
@@ -1363,7 +1708,8 @@ def LineDelete(self):
     """
     global id1
     global tagsList
-    TName = "Line" + str(id1[0])
+    # TName = "Line" + str(id1[0])
+    TName = str(txt.get())
     self.delete(TName)
     G_logger.debug(TName + "_削除完了")  # Log出力
     r = 0
@@ -1372,16 +1718,32 @@ def LineDelete(self):
             tagsList.pop(r)
             break
         r += 1
+    nptag_L = LineTomlOut(tagsList, HCW, HCH)
+    if nptag_L[0] is True:
+        ####################################################################################
+        F_N = os.path.splitext(os.path.basename(imgurl))[0]
+        Yoko_N = F_N + "_Yoko"
+        Tate_N = F_N + "_Tate"
+        Banktoml["LineSetting"][Yoko_N] = nptag_L[1]
+        Banktoml["LineSetting"][Tate_N] = nptag_L[2]
+        toml_c.dump_toml(Banktoml, tomlurl)
+        ####################################################################################
+    else:
+        print("Err")
 
 
 # ---------------------------------------------------------------------------------------------
-def AllLineDelete(self):
+def AllLineDelete(self, selfC):
     """
     選択直線の削除
     """
     global tagsList
-    for tagsListItem in tagsList:
-        self.delete(tagsListItem[0][0])
+    r = len(tagsList) - 1
+    selfC.delete("all")
+    for tagsListItem in reversed(tagsList):
+        selfC.delete(tagsListItem[0][0])
+        tagsList.pop(r)
+        r -= 1
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1397,11 +1759,47 @@ def click1(event):
     x2 = event.x
     y2 = event.y
     id1 = event.widget.find_closest(x2, y2)
-    TName = "Line" + str(id1[0])
+    TName = event.widget.gettags(id1[0])[0]
     G_logger.debug(TName + "_縦直線描画処理完了")  # Log出力
     txt.insert(tk.END, TName)
     x1 = x2
     y1 = y2
+
+
+# ---------------------------------------------------------------------------------------------
+def EventDelete(event):
+    """
+    縦直線描画処理(画面ダブルクリック)
+    """
+    global x1
+    global y1
+    global id1
+
+    x2 = event.x
+    y2 = event.y
+    id1 = event.widget.find_closest(x2, y2)
+    TName = event.widget.gettags(id1[0])[0]
+    event.widget.delete(TName)
+    G_logger.debug(TName + "_削除完了")  # Log出力
+    r = 0
+    for tagsListItem in tagsList:
+        if TName == tagsListItem[0][0]:
+            tagsList.pop(r)
+            break
+        r += 1
+    nptag_L = LineTomlOut(tagsList, HCW, HCH)
+    if nptag_L[0] is True:
+        ####################################################################################
+        F_N = os.path.splitext(os.path.basename(imgurl))[0]
+        Yoko_N = F_N + "_Yoko"
+        Tate_N = F_N + "_Tate"
+        Banktoml["LineSetting"][Yoko_N] = nptag_L[1]
+        Banktoml["LineSetting"][Tate_N] = nptag_L[2]
+        toml_c.dump_toml(Banktoml, tomlurl)
+        ####################################################################################
+    else:
+        print("Err")
+    txt.delete(0, tk.END)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1411,6 +1809,7 @@ def drag1(event):
     """
     global x1
     global y1
+
     global id1
     x2 = event.x
     y2 = event.y

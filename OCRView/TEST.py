@@ -1,26 +1,135 @@
-Replist = [
-    ",",
-    "*",
-    "'",
-    "○",
-    "×",
-    "✓",
-    "¥",
-    "´",
-    "=",
-    "串",
-    "第",
-    "$",
-    "〒",
-    ".",
-    "|",
-    "-",
-    "･",
-    "!",
-]
+import tkinter as tk
+from PIL import ImageTk, Image
+import time
+import os
 
-s = ""
 
-Check = [True if s == i else False for i in Replist]
-if True not in Check:
-    print(True in Check)
+class Open_Win:
+    """
+    概要: TKinterメインWindowクラス
+    """
+
+    def __init__(self, window_root, default_path):
+        w = window_root
+        width_of_window = 427
+        height_of_window = 427
+
+        screen_width = w.winfo_screenwidth()
+        screen_height = w.winfo_screenheight()
+        x_coodinate = (screen_width / 2) - (width_of_window / 2)
+        y_coodinate = (screen_height / 2) - (height_of_window / 2)
+        w.geometry(
+            "%dx%d+%d+%d"
+            % (width_of_window, height_of_window, x_coodinate, y_coodinate)
+        )
+        w.overrideredirect(1)
+
+        def new_win():
+            q = tk.Tk()
+            q.tatile("main window")
+            q.mainloop()
+
+        tk.Frame(w, width=427, height=250, bg="#60cad1").place(x=0, y=0)
+        label1 = tk.Label(w, text="PROGRAMMED", fg="snow", bg="#60cad1")
+        label1.configure(font=("HGｺﾞｼｯｸE", 24, "bold"))
+        label1.pack()
+        # label1.place(x=130, y=80)
+        label2 = tk.Label(w, text="Loading...", fg="snow", bg="#60cad1")
+        label2.configure(font=("HGｺﾞｼｯｸE", 11))
+        label2.place(x=10, y=200)
+
+        image_a = ImageTk.PhotoImage(
+            Image.open(os.getcwd() + r"\OCRView\D_curcle_a.png")
+        )
+        image_b = ImageTk.PhotoImage(
+            Image.open(os.getcwd() + r"\OCRView\D_curcle_b.png")
+        )
+
+        for i in range(5):
+            l1 = tk.Label(w, image=image_a, border=0, relief=tk.SUNKEN).place(
+                x=180, y=145
+            )
+            l2 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=200, y=145
+            )
+            l3 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=220, y=145
+            )
+            l4 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=240, y=145
+            )
+            w.update_idletasks()
+            time.sleep(0.5)
+
+            l1 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=180, y=145
+            )
+            l2 = tk.Label(w, image=image_a, border=0, relief=tk.SUNKEN).place(
+                x=200, y=145
+            )
+            l3 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=220, y=145
+            )
+            l4 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=240, y=145
+            )
+            w.update_idletasks()
+            time.sleep(0.5)
+
+            l1 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=180, y=145
+            )
+            l2 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=200, y=145
+            )
+            l3 = tk.Label(w, image=image_a, border=0, relief=tk.SUNKEN).place(
+                x=220, y=145
+            )
+            l4 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=240, y=145
+            )
+            w.update_idletasks()
+            time.sleep(0.5)
+
+            l1 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=180, y=145
+            )
+            l2 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=200, y=145
+            )
+            l3 = tk.Label(w, image=image_b, border=0, relief=tk.SUNKEN).place(
+                x=220, y=145
+            )
+            l4 = tk.Label(w, image=image_a, border=0, relief=tk.SUNKEN).place(
+                x=240, y=145
+            )
+            w.update_idletasks()
+            time.sleep(0.5)
+        w.destroy()
+
+
+def Open():
+    main_window = tk.Tk()
+    # Viewクラス生成
+    Open_Win(main_window, "./")
+    # 　フレームループ処理
+    main_window.mainloop()
+    return
+
+
+def FontSearch():
+    for f in tk.Tk().call("font", "families"):
+        print(f)
+
+
+if __name__ == "__main__":
+    Open()
+    # FontSearch()
+    # 　Tk MainWindow 生成
+    # main_window = tk.Tk()
+    main_window = tk.Tk()
+    # Viewクラス生成
+    Open_Win(main_window, "./")
+
+    # 　フレームループ処理
+    main_window.mainloop()

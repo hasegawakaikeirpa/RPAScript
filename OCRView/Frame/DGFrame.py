@@ -13,18 +13,24 @@ from pandas import read_csv, concat
 def create_Frame(self, wid, hei):
     # ツリーフレーム設定---------------------------------------------------------------------
     self.OCR_frame = tk.Frame(
-        self.Main_Frame, width=wid, height=hei, bd=2, relief=tk.RIDGE
+        self.Main_Frame, width=wid, height=hei, bd=2, bg="#fce4d2", relief=tk.RIDGE
     )  # 親フレーム
-    self.OCR_frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
-    self.tree_frame = tk.Frame(self.OCR_frame, width=wid, height=hei)  # 子フレーム
-    tk.Label(self.OCR_frame, text="OCR抽出結果表").grid(
+    # self.OCR_frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+    self.OCR_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    self.tree_frame = tk.Frame(
+        self.OCR_frame, width=wid, height=hei, bg="#fce4d2"
+    )  # 子フレーム
+    tk.Label(self.OCR_frame, text="OCR抽出結果表", bg="#fce4d2").grid(
         row=0, column=0, sticky=tk.N + tk.W
     )  # 位置指定
     self.tree_frame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     # df = TableModel.getSampleData()
     # pt = Table(self.tree_frame)
     pt = MT.MyTable(
-        self.tree_frame, width=wid, height=hei, sticky=tk.N + tk.S + tk.W + tk.E
+        self.tree_frame,
+        width=wid,
+        height=hei,
+        sticky=tk.N + tk.S + tk.W + tk.E,
     )  # テーブルをサブクラス化
     enc = CSVO.getFileEncoding(self.FileName)
     self.table = pt.importCSV(self.FileName, encoding=enc)
@@ -40,11 +46,14 @@ def create_Frame(self, wid, hei):
 def create_Frame2(self, wid, hei, CSVList, G_logger):
     # ツリーフレーム設定---------------------------------------------------------------------
     self.OCR_frame2 = tk.Frame(
-        self.Main_Frame, width=wid, height=hei, bd=2, relief=tk.RIDGE
+        self.Main_Frame, width=wid, height=hei, bd=2, bg="#fce4d2", relief=tk.RIDGE
     )  # 親フレーム
-    self.OCR_frame2.grid(row=0, column=1, sticky=tk.N + tk.S + tk.W + tk.E)
-    self.tree_frame2 = tk.Frame(self.OCR_frame2, width=wid, height=hei)  # 子フレーム
-    tk.Label(self.OCR_frame2, text="比較ファイル").grid(
+    # self.OCR_frame2.grid(row=0, column=1, sticky=tk.N + tk.S + tk.W + tk.E)
+    self.OCR_frame2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    self.tree_frame2 = tk.Frame(
+        self.OCR_frame2, width=wid, height=hei, bg="#fce4d2"
+    )  # 子フレーム
+    tk.Label(self.OCR_frame2, text="比較ファイル", bg="#fce4d2").grid(
         row=0, column=0, sticky=tk.N + tk.W
     )  # 位置指定
     self.tree_frame2.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)

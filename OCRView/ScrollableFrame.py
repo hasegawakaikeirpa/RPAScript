@@ -9,11 +9,11 @@ class ScrollableFrame(ttk.Frame):
             self,
             width=int(wid / 5),
             height=int(hei / 5),
-            bg="gray94",
+            bg="#ecb5f5",
         )
         self.scrollable_frame = tk.Frame(
             self.canvas,
-            bg="gray94",
+            bg="#ecb5f5",
             relief=tk.GROOVE,
             width=int(wid / 5),
             bd=2,

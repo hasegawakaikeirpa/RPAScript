@@ -431,61 +431,238 @@ def Bankrentxtver(filein, YokoList, TateList):  # 自作関数一文字づつの
         return False, e
 
 
-def AutoLine(imgurl):
-    # Pah設定
-    TESSERACT_PATH = (
-        os.getcwd() + r"\OCRView\Tesseract-OCR"
-    )  # インストールしたTesseract-OCRのpath
-    TESSDATA_PATH = TESSERACT_PATH + r"\tessdata"  # tessdataのpath
-    os.environ["PATH"] += os.pathsep + TESSERACT_PATH
-    os.environ["TESSDATA_PREFIX"] = TESSDATA_PATH
+def AutoLine(imgurl, mag):
+    try:
+        # Pah設定
+        TESSERACT_PATH = (
+            os.getcwd() + r"\OCRView\Tesseract-OCR"
+        )  # インストールしたTesseract-OCRのpath
+        TESSDATA_PATH = TESSERACT_PATH + r"\tessdata"  # tessdataのpath
+        os.environ["PATH"] += os.pathsep + TESSERACT_PATH
+        os.environ["TESSDATA_PREFIX"] = TESSDATA_PATH
 
-    # OCRエンジン取得
-    tools = pyocr.get_available_tools()
-    tool = tools[0]
-
-    res = tool.image_to_string(
-        Image.open(imgurl),
-        lang="jpn",
-        builder=pyocr.builders.WordBoxBuilder(tesseract_layout=6),
-    )
-    # -------------------------------------------------------------
-    Pos_List = []
-    for d in res:
+        # OCRエンジン取得
+        tools = pyocr.get_available_tools()
+        tool = tools[0]
+        img = Image.open(imgurl)
+        w, h = img.size
+        res = tool.image_to_string(
+            img,
+            lang="jpn",
+            builder=pyocr.builders.WordBoxBuilder(tesseract_layout=6),
+        )
+        # -------------------------------------------------------------
+        Pos_List = []
+        for d in res:
+            Pos_List_r = [
+                d.position[0][0],
+                d.position[0][1],
+                d.position[1][0],
+                d.position[1][1],
+            ]
+            Pos_List.append(Pos_List_r)
+        # -------------------------------------------------------------
+        Pos_List = np.array(Pos_List)
+        ind = np.argsort(Pos_List[:, 1], axis=-1)
+        Pos_List = Pos_List[ind]
+        Pos_List = list(Pos_List)
+        d_heightList = []
+        H_Pos_List = []
+        d_Trig = 0
+        for Pos_r in range(len(Pos_List)):
+            d_height = d_Trig + (Pos_List[Pos_r][3] - Pos_List[Pos_r][1])
+            try:
+                NextDiff = Pos_List[Pos_r + 1][1] - Pos_List[Pos_r][1]
+            except:
+                NextDiff = Pos_List[Pos_r][1] - Pos_List[Pos_r][1]
+            if NextDiff < (d_height * mag):
+                Pos_List_r = [
+                    Pos_List[Pos_r][0],
+                    Pos_List[Pos_r][1],
+                    Pos_List[Pos_r][2],
+                    Pos_List[Pos_r][3],
+                ]
+                d_heightList.append(Pos_List_r)
+            else:
+                print("")
+                Pos_List_r = [
+                    Pos_List[Pos_r][0],
+                    Pos_List[Pos_r][1],
+                    Pos_List[Pos_r][2],
+                    Pos_List[Pos_r][3],
+                ]
+                d_heightList.append(Pos_List_r)
+                d_List0 = np.array(d_heightList)[:, 0]
+                d_List1 = np.array(d_heightList)[:, 1]
+                d_List2 = np.array(d_heightList)[:, 2]
+                d_List3 = np.array(d_heightList)[:, 3]
+                Pos_List_r = [
+                    0,
+                    min(d_List1),
+                    w,
+                    min(d_List1),
+                ]
+                H_Pos_List.append(Pos_List_r)
+                d_heightList = []
         Pos_List_r = [
-            d.position[0][0],
-            d.position[0][1],
-            d.position[1][0],
-            d.position[1][1],
+            Pos_List[Pos_r][0],
+            Pos_List[Pos_r][1],
+            Pos_List[Pos_r][2],
+            Pos_List[Pos_r][3],
         ]
-        Pos_List.append(Pos_List_r)
-    # -------------------------------------------------------------
-    d_heightList = []
-    for Pos_r in range(len(Pos_List)):
-        d_height = Pos_List[Pos_r][3] - Pos_List[Pos_r][1]
-        if Pos_List[Pos_r][1] < d_height:
-            Pos_List_r = [
-                Pos_List[Pos_r][0],
-                Pos_List[Pos_r][1],
-                Pos_List[Pos_r][2],
-                Pos_List[Pos_r][3],
-            ]
-            d_heightList.append(Pos_List_r)
-        else:
-            print("")
-            Pos_List_r = [
-                Pos_List[Pos_r][0],
-                Pos_List[Pos_r][1],
-                Pos_List[Pos_r][2],
-                Pos_List[Pos_r][3],
-            ]
-            d_heightList.append(Pos_List_r)
-    # -------------------------------------------------------------
-    Pos_List = np.array(Pos_List)
-    ind = np.argsort(Pos_List[:, 1], axis=-1)
-    Pos_List = Pos_List[ind]
-    print(Pos_List)
-    print(Pos_List)
+        d_heightList.append(Pos_List_r)
+        d_List0 = np.array(d_heightList)[:, 0]
+        d_List1 = np.array(d_heightList)[:, 1]
+        d_List2 = np.array(d_heightList)[:, 2]
+        d_List3 = np.array(d_heightList)[:, 3]
+        Pos_List_r = [
+            0,
+            min(d_List1),
+            w,
+            min(d_List1),
+        ]
+        H_Pos_List.append(Pos_List_r)
+        d_heightList = []
+        H_Pos_List = np.array(H_Pos_List)
+        ind = np.argsort(H_Pos_List[:, 1], axis=-1)
+        H_Pos_List = H_Pos_List[ind]
+        H_Pos_List = list(H_Pos_List)
+        H_Pos = []
+        for H_Pos_ListItem in H_Pos_List:
+            H_Pos.append(
+                [
+                    int(H_Pos_ListItem[0]),
+                    int(H_Pos_ListItem[1]),
+                    int(H_Pos_ListItem[2]),
+                    int(H_Pos_ListItem[3]),
+                ]
+            )
+        H_Pos_List = H_Pos
+        # -------------------------------------------------------------
+        Pos_List = np.array(Pos_List)
+        ind = np.argsort(Pos_List[:, 0], axis=-1)
+        Pos_List = Pos_List[ind]
+
+        ColumnRow = H_Pos_List[0][1] * 2
+        d_widPos_List = Pos_List[:, 1]
+        Pos_List = Pos_List[np.where(d_widPos_List > ColumnRow)]
+        Pos_List = list(Pos_List)
+
+        d_widthList = []
+        W_Pos_List = []
+        d_Trig = 0
+        for Pos_r in range(len(Pos_List)):
+            strsize = int(Pos_List[Pos_r][2] - Pos_List[Pos_r][0])
+            mag_strsize = int(strsize * mag)
+            try:
+                NextDiff = Pos_List[Pos_r + 1][0] - Pos_List[Pos_r][2]
+                Diff_Target = NextDiff - mag_strsize
+            except:
+                NextDiff = Pos_List[Pos_r][0] - Pos_List[Pos_r][2]
+                Diff_Target = NextDiff - mag_strsize
+            if Diff_Target < 0:
+                Pos_List_r = [
+                    Pos_List[Pos_r][0],
+                    Pos_List[Pos_r][1],
+                    Pos_List[Pos_r][2],
+                    Pos_List[Pos_r][3],
+                ]
+                d_widthList.append(Pos_List_r)
+            else:
+                print("")
+                Pos_List_r = [
+                    Pos_List[Pos_r][0],
+                    Pos_List[Pos_r][1],
+                    Pos_List[Pos_r][2],
+                    Pos_List[Pos_r][3],
+                ]
+                d_widthList.append(Pos_List_r)
+                d_List0 = np.array(d_widthList)[:, 0]
+                d_List1 = np.array(d_widthList)[:, 1]
+                d_List2 = np.array(d_widthList)[:, 2]
+                d_List3 = np.array(d_widthList)[:, 3]
+                Pos_List_r = [
+                    min(d_List0),
+                    0,
+                    min(d_List0),
+                    h,
+                ]
+                W_Pos_List.append(Pos_List_r)
+                d_widthList = []
+        Pos_List_r = [
+            Pos_List[Pos_r][0],
+            Pos_List[Pos_r][1],
+            Pos_List[Pos_r][2],
+            Pos_List[Pos_r][3],
+        ]
+        d_widthList.append(Pos_List_r)
+        d_List0 = np.array(d_widthList)[:, 0]
+        d_List1 = np.array(d_widthList)[:, 1]
+        d_List2 = np.array(d_widthList)[:, 2]
+        d_List3 = np.array(d_widthList)[:, 3]
+        Pos_List_r = [
+            min(d_List0),
+            0,
+            min(d_List0),
+            h,
+        ]
+        W_Pos_List.append(Pos_List_r)
+        W_Pos_List = np.array(W_Pos_List)
+        # ind = np.argsort(W_Pos_List[:, 1], axis=-1)
+        # W_Pos_List = W_Pos_List[ind]
+        W_Pos_List = list(W_Pos_List)
+        W_Pos = []
+        for W_Pos_ListItem in W_Pos_List:
+            W_Pos.append(
+                [
+                    int(W_Pos_ListItem[0]),
+                    int(W_Pos_ListItem[1]),
+                    int(W_Pos_ListItem[2]),
+                    int(W_Pos_ListItem[3]),
+                ]
+            )
+        W_Pos_List = W_Pos
+        d_widthList = []
+        return True, W_Pos_List, H_Pos_List
+    except:
+        return False, "", ""
+
+
+def LineTomlOut(List, Wid_p, Hei_p):
+    try:
+        npList = [ListItem[0] for ListItem in List]
+        npList = np.array(npList)
+        ColsList = npList[:, 5]
+        YokoInd = np.where(ColsList == "Yoko")
+        TateInd = np.where(ColsList == "Tate")
+        YokoList = npList[YokoInd]
+        YokoList = list(YokoList[:, 1:5])
+        TateList = npList[TateInd]
+        TateList = list(TateList[:, 1:5])
+        Y_L = []
+        for YokoListItem in YokoList:
+            print(YokoListItem[0])
+            Y_L.append(
+                [
+                    int(float(YokoListItem[0]) / Wid_p),
+                    int(float(YokoListItem[1]) / Hei_p),
+                    int(float(YokoListItem[2]) / Wid_p),
+                    int(float(YokoListItem[3]) / Hei_p),
+                ]
+            )
+        T_L = []
+        for TateListItem in TateList:
+            T_L.append(
+                [
+                    int(float(TateListItem[0]) / Wid_p),
+                    int(float(TateListItem[1]) / Hei_p),
+                    int(float(TateListItem[2]) / Wid_p),
+                    int(float(TateListItem[3]) / Hei_p),
+                ]
+            )
+        return True, Y_L, T_L
+    except:
+        return False, "", ""
 
 
 if __name__ == "__main__":
