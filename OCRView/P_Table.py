@@ -4,8 +4,6 @@ import numpy as np
 import WarekiHenkan as wh
 import pandas as pd
 import re
-
-# import math
 import logging.config
 import toml
 import os
@@ -17,6 +15,7 @@ class Application(tk.Frame):
     def __init__(self, csvurl, master=None):
         global SideWidth, SideHeight, LabelWidth
         global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
+        global wid_Par, hei_Par
         # Windowの初期設定を行う。
         super().__init__(master)
         # Windowの画面サイズを設定する。
@@ -26,14 +25,13 @@ class Application(tk.Frame):
         ck.set_default_color_theme(
             "dark-blue"
         )  # Themes: blue (default), dark-blue, green
-        width_of_window = 1480
-        height_of_window = 750
-        screen_width = master.winfo_screenwidth()
-        screen_height = master.winfo_screenheight()
-        x_coodinate = (screen_width / 2) - (width_of_window / 2)
-        y_coodinate = (screen_height / 2) - (height_of_window / 2)
+        width_of_window = int(int(self.window_root.winfo_screenwidth()) * 0.95)
+        height_of_window = int(int(self.window_root.winfo_screenheight()) * 0.85)
+        wid_Par = width_of_window / 1459
+        hei_Par = height_of_window / 820
+        x_coodinate = width_of_window * 0.01
+        y_coodinate = height_of_window * 0.01
         # 　メインウィンドウサイズ指定
-        # self.window_root.geometry("1480x750+0+0")  # 横,縦
         self.master.geometry(
             "%dx%d+%d+%d"
             % (width_of_window, height_of_window, x_coodinate, y_coodinate)
@@ -41,25 +39,23 @@ class Application(tk.Frame):
         ########################################
         wid = 2.25  # width割率
         hei = 1.8  # width割率
-        # fonts = ("ＭＳ ゴシック", 10)  # フォント設定
         ########################################
         self.FileName = csvurl
-        # self.master.geometry("1520x780+0+0")  # Window表示位置指定
         self.master.minsize(1480, 750)
         self.master.title("OCR読取 Ver:0.9-比較ウィンドウ-")
         self.master.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
         # 統合フレーム
         ################################################################################
-        SideWidth = 200
-        SideHeight = 200
-        LabelWidth = 20
-        LabelHeight = 2
-        BtnWidth = 200
-        BtnHeight = 1
-        EntHeight = 1  # Ent高さ
-        EntWidth = 100  # Ent高さ
+        SideWidth = int(200 * wid_Par)
+        SideHeight = int(200 * hei_Par)
+        LabelWidth = int(20 * wid_Par)
+        LabelHeight = int(20 * hei_Par)
+        BtnWidth = int(200 * wid_Par)
+        BtnHeight = int(20 * hei_Par)
+        EntWidth = int(100 * hei_Par)
+        EntHeight = int(20 * wid_Par)
+        t_font = (1, int(8 * wid_Par))
         ################################################################################
-        # self.Main_Frame = tk.Frame(self.master, width=1400, height=700, bd=2)
         self.Main_Frame = tk.Frame(
             self.master,
             width=width_of_window,
@@ -68,12 +64,10 @@ class Application(tk.Frame):
             relief=tk.GROOVE,
         )
         self.Main_Frame.pack(fill=tk.BOTH, expand=True)
-        # self.Main_Frame.grid(row=0, column=0, sticky=tk.NSEW)
         # サイドフレーム
         self.Side_Frame = tk.Frame(
             self.Main_Frame, width=330, height=700, bd=2, bg="#fabd91", relief=tk.RIDGE
         )
-        # self.Side_Frame.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
         self.Side_Frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         # # サイドフレーム2
         # self.Side_Frame2 = tk.Frame(
@@ -89,10 +83,8 @@ class Application(tk.Frame):
         self.Side_Sub = tk.Frame(
             self.Side_Frame, width=330, height=700, bd=2, bg="#fabd91", relief=tk.RIDGE
         )
-        # self.Side_Sub.grid(row=1, column=0, sticky=tk.NSEW)
         self.Side_Sub.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # --------------------------------------------------------------------------------
-        # tk.Label(self.Side_Sub, text="日付列名").grid(row=0, column=0)  # 日付列名ラベル
         ck.CTkLabel(
             master=self.Side_Sub,
             text="日付列名",
@@ -100,7 +92,6 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
         ).grid(row=0, column=0)
-        # self.DStxt = tk.Entry(self.Side_Sub, width=15, bg="snow")  # 日付列名テキストボックス
         self.DStxt = ck.CTkEntry(
             master=self.Side_Sub,
             width=50,
@@ -112,16 +103,6 @@ class Application(tk.Frame):
         )
         self.DStxt.insert(0, "")  # 日付列名テキストボックスに文字代入
         self.DStxt.grid(row=0, column=1, pady=5, sticky=tk.W)  # 日付列名テキストボックス配置
-        # self.DSbtn = tk.Button(
-        #     self.Side_Sub,
-        #     text="選択列名転記",
-        #     fg="White",
-        #     command=self.DSSetClick,
-        #     bg="purple1",
-        #     font=fonts,
-        #     width=12,
-        #     height=1,
-        # )  # ボタン作成
         self.DSbtn = ck.CTkButton(
             master=self.Side_Sub,
             text="選択列名転記",
@@ -135,7 +116,6 @@ class Application(tk.Frame):
         )
         self.DSbtn.grid(row=0, column=2, padx=5, pady=5)
         # --------------------------------------------------------------------------------
-        # tk.Label(self.Side_Sub, text="出金列名").grid(row=1, column=0)  # 出金列名ラベル
         ck.CTkLabel(
             master=self.Side_Sub,
             text="出金列名",
@@ -143,7 +123,6 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
         ).grid(row=1, column=0)
-        # self.OMtxt = tk.Entry(self.Side_Sub, width=15, bg="snow")  # 出金列名テキストボックス
         self.OMtxt = ck.CTkEntry(
             master=self.Side_Sub,
             width=50,
@@ -155,16 +134,6 @@ class Application(tk.Frame):
         )
         self.OMtxt.insert(0, "")  # 出金列名テキストボックスに文字代入
         self.OMtxt.grid(row=1, column=1, pady=5, sticky=tk.W)  # 出金列名テキストボックス配置
-        # self.OMbtn = tk.Button(
-        #     self.Side_Sub,
-        #     text="選択列名転記",
-        #     fg="White",
-        #     command=self.OutMoneyClick,
-        #     bg="purple1",
-        #     font=fonts,
-        #     width=12,
-        #     height=1,
-        # )  # ボタン作成
         self.OMbtn = ck.CTkButton(
             master=self.Side_Sub,
             text="選択列名転記",
@@ -178,7 +147,6 @@ class Application(tk.Frame):
         )
         self.OMbtn.grid(row=1, column=2, padx=5)
         # --------------------------------------------------------------------------------
-        # tk.Label(self.Side_Sub, text="入金列名").grid(row=2, column=0)  # 入金列名ラベル
         ck.CTkLabel(
             master=self.Side_Sub,
             text="入金列名",
@@ -186,7 +154,6 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
         ).grid(row=2, column=0)
-        # self.IMtxt = tk.Entry(self.Side_Sub, width=15, bg="snow")  # 入金列名テキストボックス
         self.IMtxt = ck.CTkEntry(
             master=self.Side_Sub,
             width=50,
@@ -198,16 +165,6 @@ class Application(tk.Frame):
         )
         self.IMtxt.insert(0, "")  # 入金列名テキストボックスに文字代入
         self.IMtxt.grid(row=2, column=1, pady=5, sticky=tk.W)  # 入金列名テキストボックス配置
-        # self.IMbtn = tk.Button(
-        #     self.Side_Sub,
-        #     text="選択列名転記",
-        #     fg="White",
-        #     command=self.InMoneyClick,
-        #     bg="purple1",
-        #     font=fonts,
-        #     width=12,
-        #     height=1,
-        # )  # ボタン作成
         self.IMbtn = ck.CTkButton(
             master=self.Side_Sub,
             text="選択列名転記",
@@ -221,9 +178,6 @@ class Application(tk.Frame):
         )
         self.IMbtn.grid(row=2, column=2, padx=5)
         # --------------------------------------------------------------------------------
-        # tk.Label(self.Side_Sub, text="金額列数").grid(
-        #     row=3, column=0, sticky=tk.N
-        # )  # フレームテキスト
         ck.CTkLabel(
             master=self.Side_Sub,
             text="金額列数",
@@ -253,11 +207,6 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
         ).grid(row=5, column=0)
-
-        # self.SplitVarLabel = tk.Label(self.Side_Sub, text="貸借判定基準列名").grid(
-        #     row=5, column=0
-        # )  # 位置指定
-        # self.SplitVar = tk.Entry(self.Side_Sub, width=30, bg="gray10")
         self.SplitVar = ck.CTkEntry(
             master=self.Side_Sub,
             width=200,
@@ -271,9 +220,6 @@ class Application(tk.Frame):
         self.SplitVar.insert(0, "貸借")
         self.SplitVar.configure(state="readonly")
         self.SplitVar.grid(row=5, column=1, pady=5, columnspan=2)
-        # self.In_vLabel = tk.Label(self.Side_Sub, text="入金文字列").grid(
-        #     row=6, column=0
-        # )  # 位置指定
         self.In_vLabel = ck.CTkLabel(
             master=self.Side_Sub,
             text="入金文字列",
@@ -281,7 +227,6 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
         ).grid(row=6, column=0)
-        # self.In_v = tk.Entry(self.Side_Sub, width=30, bg="gray10")
         self.In_v = ck.CTkEntry(
             master=self.Side_Sub,
             width=200,
@@ -295,9 +240,6 @@ class Application(tk.Frame):
         self.In_v.insert(0, "借")
         self.In_v.configure(state="readonly")
         self.In_v.grid(row=6, column=1, pady=5, columnspan=2)
-        # self.Out_vLabel = tk.Label(self.Side_Sub, text="出金文字列").grid(
-        #     row=7, column=0
-        # )  # 位置指定
         self.Out_vLabel = ck.CTkLabel(
             master=self.Side_Sub,
             text="出金文字列",
@@ -305,7 +247,6 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
         ).grid(row=7, column=0)
-        # self.Out_v = tk.Entry(self.Side_Sub, width=30, bg="gray10")
         self.Out_v = ck.CTkEntry(
             master=self.Side_Sub,
             width=200,
@@ -319,9 +260,6 @@ class Application(tk.Frame):
         self.Out_v.insert(0, "貸")
         self.Out_v.configure(state="readonly")
         self.Out_v.grid(row=7, column=1, pady=5, columnspan=2)
-        # self.Money_Label = tk.Label(self.Side_Sub, text="金額列名").grid(
-        #     row=8, column=0
-        # )  # 位置指定
         self.Money_Label = ck.CTkLabel(
             master=self.Side_Sub,
             text="金額列名",
@@ -329,7 +267,6 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
         ).grid(row=8, column=0)
-        # self.Money_v = tk.Entry(self.Side_Sub, width=30, bg="gray10")
         self.Money_v = ck.CTkEntry(
             master=self.Side_Sub,
             width=200,
@@ -351,16 +288,6 @@ class Application(tk.Frame):
         # self.Side_Sub2.grid(row=1, column=1, sticky=tk.NSEW)
         self.Side_Sub2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # 書式整理-------------------------------------------------------------------------
-        # self.ChangeL = tk.Button(
-        #     self.Side_Sub2,
-        #     text="書式整理",
-        #     fg="White",
-        #     command=self.ChangeList,
-        #     bg="firebrick2",
-        #     font=fonts,
-        #     width=30,
-        #     height=2,
-        # )  # ボタン作成
         self.ChangeL = ck.CTkButton(
             master=self.Side_Sub2,
             text="書式整理",
@@ -378,16 +305,6 @@ class Application(tk.Frame):
         )  # 日付列名テキストボックス配置
 
         # 比較対象ファイル複数選択-----------------------------------------------------------
-        # self.FileRead = tk.Button(
-        #     self.Side_Sub2,
-        #     text="比較対象ファイル複数選択",
-        #     fg="White",
-        #     command=self.ChangeFileRead,
-        #     bg="steelblue3",
-        #     font=fonts,
-        #     width=30,
-        #     height=2,
-        # )  # ボタン作成
         self.FileRead = ck.CTkButton(
             master=self.Side_Sub2,
             text="比較対象ファイル複数選択",
@@ -404,16 +321,6 @@ class Application(tk.Frame):
             row=1, column=0, columnspan=3, padx=10, pady=10, sticky=tk.N
         )  # 日付列名テキストボックス配置
         # 比較対象ファイル追加---------------------------------------------------------------
-        # self.SingleFileRead = tk.Button(
-        #     self.Side_Sub2,
-        #     text="比較対象ファイル追加",
-        #     fg="White",
-        #     command=self.ChangeFileSingleRead,
-        #     bg="Orange",
-        #     font=fonts,
-        #     width=30,
-        #     height=2,
-        # )  # ボタン作成
         self.SingleFileRead = ck.CTkButton(
             master=self.Side_Sub2,
             text="比較対象ファイル追加",
@@ -434,10 +341,8 @@ class Application(tk.Frame):
         self.Side_Sub3 = tk.Frame(
             self.Side_Frame, width=330, height=750, bd=2, bg="#fabd91", relief=tk.RIDGE
         )
-        # self.Side_Sub3.grid(row=1, column=2, sticky=tk.NSEW)
         self.Side_Sub3.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # 比較対象ファイルリストボックス------------------------------------------------------
-        # tk.Label(self.Side_Sub3, text="比較対象ファイル").grid(row=0, column=0)  # 比較対象ファイルラベル
         ck.CTkLabel(
             master=self.Side_Sub3,
             text="比較対象ファイル",
@@ -448,7 +353,7 @@ class Application(tk.Frame):
         self.module = ""
         self.listbox_var = tk.StringVar(value=self.module)
         self.listbox = tk.Listbox(
-            self.Side_Sub3, width=40, height=12, listvariable=self.listbox_var
+            self.Side_Sub3, width=40, height=20, listvariable=self.listbox_var
         )
         self.listbox.grid(row=1, column=0, padx=40, sticky=tk.E + tk.W)
         # #######################################################################################
@@ -456,14 +361,8 @@ class Application(tk.Frame):
         self.Side_Sub4 = tk.Frame(
             self.Side_Frame, width=330, height=750, bd=2, bg="#fabd91", relief=tk.RIDGE
         )
-        # self.Side_Sub4.grid(row=1, column=3, sticky=tk.NSEW)
         self.Side_Sub4.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # 列名テキストボックス--------------------------------------------------------------
-        # tk.Label(self.Side_Sub4, text="OCR抽出結果表列名").grid(
-        #     row=0,
-        #     column=0,
-        #     pady=5,
-        # )  # OCR抽出結果表列名ラベル
         ck.CTkLabel(
             master=self.Side_Sub4,
             text="OCR抽出結果表列名",
@@ -471,9 +370,6 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
         ).grid(row=0, column=0)
-        # self.OCR_col = tk.Entry(
-        #     self.Side_Sub4, width=35, bg="snow"
-        # )  # OCR抽出結果表列名テキストボックス
         self.OCR_col = ck.CTkEntry(
             master=self.Side_Sub4,
             width=200,
@@ -494,11 +390,6 @@ class Application(tk.Frame):
             row=0, column=1, padx=5, pady=5, sticky=tk.W
         )  # OCR抽出結果表列名テキストボックス配置
         # 列名テキストボックス--------------------------------------------------------------
-        # tk.Label(self.Side_Sub4, text="比較ファイル列名").grid(
-        #     row=1,
-        #     column=0,
-        #     pady=5,
-        # )  # 入金列名ラベル
         ck.CTkLabel(
             master=self.Side_Sub4,
             text="比較ファイル列名",
@@ -506,7 +397,6 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
         ).grid(row=1, column=0)
-        # self.Diff_col = tk.Entry(self.Side_Sub4, width=35, bg="snow")  # 入金列名テキストボックス
         self.Diff_col = ck.CTkEntry(
             master=self.Side_Sub4,
             width=200,
@@ -535,16 +425,6 @@ class Application(tk.Frame):
         # self.Side_Sub5.grid(row=1, column=4, sticky=tk.NSEW)
         self.Side_Sub5.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # 検索開始ボタン--------------------------------------------------------------------
-        # self.SearchBtn = tk.Button(
-        #     self.Side_Sub5,
-        #     text="全検索",
-        #     fg="White",
-        #     command=self.SearchStart,
-        #     bg="indianred1",
-        #     font=fonts,
-        #     width=30,
-        #     height=2,
-        # )  # ボタン作成
         self.SearchBtn = ck.CTkButton(
             master=self.Side_Sub5,
             text="全検索",
@@ -561,16 +441,6 @@ class Application(tk.Frame):
             row=0, column=0, pady=10, padx=10, sticky=tk.NSEW
         )  # 日付列名テキストボックス配置
         # 選択行検索開始ボタン--------------------------------------------------------------
-        # self.SingleSearchBtn = tk.Button(
-        #     self.Side_Sub5,
-        #     text="選択行検索",
-        #     fg="White",
-        #     command=self.SingleSearchStart,
-        #     bg="green4",
-        #     font=fonts,
-        #     width=30,
-        #     height=2,
-        # )  # ボタン作成
         self.SingleSearchBtn = ck.CTkButton(
             master=self.Side_Sub5,
             text="選択行検索",
@@ -587,16 +457,6 @@ class Application(tk.Frame):
             row=1, column=0, pady=10, padx=10, sticky=tk.NSEW
         )  # 日付列名テキストボックス配置
         # 戻るボタン--------------------------------------------------------------
-        # self.ReturnBackBtn = tk.Button(
-        #     self.Side_Sub5,
-        #     text="戻る",
-        #     fg="White",
-        #     command=self.ReturnBack,
-        #     bg="gray",
-        #     font=fonts,
-        #     width=30,
-        #     height=2,
-        # )  # ボタン作成
         self.ReturnBackBtn = ck.CTkButton(
             master=self.Side_Sub5,
             text="戻る",
@@ -930,9 +790,6 @@ class Application(tk.Frame):
             pt.setSelectedCol(0)
             pt.drawSelectedRect(r, 0)
             pt.drawSelectedRow()
-
-            # row = r
-            # col = 0
             x, y = pt.getCanvasPos(pt.currentrow, pt.currentcol - 1)
             rmin = pt.visiblerows[0]
             rmax = pt.visiblerows[-1] - 2
@@ -944,13 +801,11 @@ class Application(tk.Frame):
                 return
 
             if pt.currentcol > cmax or pt.currentcol <= cmin:
-                # print (pt.currentcol, pt.visiblecols)
                 pt.xview("moveto", x)
                 pt.colheader.xview("moveto", x)
                 pt.redraw()
 
             if pt.currentrow < rmin and FirstPos == 0:
-                # we need to shift y to page up enough
                 vh = len(pt.visiblerows) / 2
                 x, y = pt.getCanvasPos(pt.currentrow - vh, 0)
 
@@ -1382,8 +1237,6 @@ class Application(tk.Frame):
                 print(self.pt2.model.df.columns)
                 ptcol = np.array(self.pt.model.df.columns)
                 Day_col = int(np.where(ptcol == self.DStxt.get())[0])
-                # OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
-                # InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
                 ptarray = np.array(self.pt.model.df)
                 for c in range(ptarray.shape[1]):
                     if c == Day_col:

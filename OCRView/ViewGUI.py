@@ -2,19 +2,10 @@ import sys
 import ProgressBar as PB
 import tkinter as tk
 import os
-from tkinter import ttk, filedialog, messagebox
+from tkinter import filedialog, messagebox
 import OpenWindow as OW
-
-# from tkinter import ttk, filedialog
 from ControlGUI import ControlGUI
-
-# import TKINTERCV2Setting as TKCV2
 from TKINTERCV2Setting import Main as CSVSetMain
-
-# from tkinter import messagebox
-
-# プログレスバーの起動
-# PBAR = PB.ProgressBar(tk.Tk())
 import customtkinter as ck
 import logging.config
 from platform import machine, node, platform, processor, release, system, version
@@ -36,6 +27,7 @@ class ViewGUI:
     def __init__(self, window_root, title_n, default_path):
         global SideWidth, SideHeight, LabelWidth
         global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
+        global wid_Par, hei_Par
         print("#########################################################")
         print(os.getcwd())
         print("#########################################################")
@@ -68,19 +60,18 @@ class ViewGUI:
         ck.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
         # メインウィンドウ
         self.window_root = window_root
-        width_of_window = 1480
-        height_of_window = 750
-        screen_width = self.window_root.winfo_screenwidth()
-        screen_height = self.window_root.winfo_screenheight()
-        x_coodinate = (screen_width / 2) - (width_of_window / 2)
-        y_coodinate = (screen_height / 2) - (height_of_window / 2)
+        width_of_window = int(int(self.window_root.winfo_screenwidth()) * 0.95)
+        height_of_window = int(int(self.window_root.winfo_screenheight()) * 0.85)
+        wid_Par = width_of_window / 1459
+        hei_Par = height_of_window / 820
+        x_coodinate = width_of_window * 0.01
+        y_coodinate = height_of_window * 0.01
         # 　メインウィンドウサイズ指定
-        # self.window_root.geometry("1480x750+0+0")  # 横,縦
         self.window_root.geometry(
             "%dx%d+%d+%d"
             % (width_of_window, height_of_window, x_coodinate, y_coodinate)
         )
-        self.window_root.minsize(1480, 750)
+        self.window_root.minsize(width_of_window, height_of_window)
         # 　メインウィンドウタイトル
         self.window_root.title(title_n)
         self.window_root.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
@@ -93,7 +84,7 @@ class ViewGUI:
         )
         self.window_rootFrame.pack(fill=tk.BOTH, expand=True)
         self.MenuCreate()  # メニューバー作成
-        NWINSize = ["1480", "750"]  # 横,縦
+        NWINSize = [str(width_of_window), str(height_of_window)]  # 横,縦
         self.FrameCreate(NWINSize)  # Frame作成
         self.CanvasCreate()  # Canvas作成
         self.str_dir = tk.StringVar()  # StringVar(ストリング)生成
@@ -106,12 +97,16 @@ class ViewGUI:
     # Event Callback----------------------------------------------------------------------
     def ElementCreate(self):
         try:
-            LabelHeight = 1  # ラベル高さ
-            LabelWidth = 30  # ラベル幅
-            BtnHeight = 30  # ボタン高さ
-            BtnWidth = 100  # ボタン高さ
-            EntHeight = 1  # Ent高さ
-            EntWidth = 300  # Ent高さ
+            # SideWidth = int(100 * wid_Par)
+            # SideHeight = int(50 * hei_Par)
+            LabelWidth = int(50 * wid_Par)
+            LabelHeight = int(20 * hei_Par)
+            BtnWidth = int(140 * wid_Par)
+            BtnHeight = int(20 * hei_Par)
+            EntWidth = int(300 * hei_Par)
+            EntHeight = int(20 * wid_Par)
+            # t_font = (1, int(8 * wid_Par))
+
             # フォルダー・ファイル選択を配置
             self.window_sub_ctrl1.pack(side=tk.LEFT, padx=5, fill=tk.BOTH, expand=True)
             # 画像編集1を配置
@@ -120,12 +115,6 @@ class ViewGUI:
             self.window_sub_ctrl4.pack(side=tk.LEFT, padx=5, fill=tk.BOTH, expand=True)
             # window_sub_ctrl1#############################################################
             # フォルダ選択ボタン生成
-            # self.button_setdir = tk.Button(
-            #     self.window_sub_ctrl1,
-            #     text="フォルダ選択",
-            #     width=10,
-            #     command=self.event_set_folder,
-            # )
             self.button_setdir = ck.CTkButton(
                 master=self.window_sub_ctrl1,
                 text="フォルダ選択",
@@ -138,11 +127,8 @@ class ViewGUI:
                 border_color="snow",
                 fg_color="seagreen3",
             )
+            # 前画像ボタン生成
             self.button_setdir.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-
-            # button_prev = tk.Button(
-            #     self.window_sub_ctrl1, text="前画像<<", width=10, command=self.event_prev
-            # )
             button_prev = ck.CTkButton(
                 master=self.window_sub_ctrl1,
                 text="前画像<<",
@@ -155,10 +141,7 @@ class ViewGUI:
                 border_color="snow",
             )
             button_prev.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
-            # 　切替ボタン生成
-            # button_next = tk.Button(
-            #     self.window_sub_ctrl1, text=">>次画像", width=10, command=self.event_next
-            # )
+            # 切替ボタン生成
             button_next = ck.CTkButton(
                 master=self.window_sub_ctrl1,
                 text=">>次画像",
@@ -172,12 +155,6 @@ class ViewGUI:
             )
             button_next.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
             # 　テキストエントリ生成
-            # self.entry_dir = tk.Entry(
-            #     self.window_sub_ctrl1,
-            #     text="entry_dir",
-            #     textvariable=self.str_dir,
-            #     width=EntWidth,
-            # )
             self.entry_dir = ck.CTkEntry(
                 master=self.window_sub_ctrl1,
                 placeholder_text="entry_dir",
@@ -193,7 +170,6 @@ class ViewGUI:
                 row=2, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W
             )
             # ラベル
-            # label_target = tk.Label(self.window_sub_ctrl1, text="[ファイル]")
             label_target = ck.CTkLabel(
                 master=self.window_sub_ctrl1,
                 text="[ファイル]",
@@ -205,14 +181,6 @@ class ViewGUI:
                 row=3, column=0, columnspan=4, padx=5, pady=5, sticky=tk.W
             )
             # コンボBOX生成
-            # self.combo_file = ttk.Combobox(
-            #     self.window_sub_ctrl1,
-            #     text="combo_file",
-            #     value=self.file_list,
-            #     state="readonly",
-            #     width=30,
-            #     postcommand=self.event_updatefile,
-            # )
             self.combo_file = ck.CTkComboBox(
                 master=self.window_sub_ctrl1,
                 # text="combo_file",
@@ -223,17 +191,10 @@ class ViewGUI:
                 command=self.event_updatefile,
             )
             self.combo_file.set(self.file_list[0])
-            # self.combo_file.bind("<<ComboboxSelected>>", self.event_selectfile)
             self.combo_file.grid(
                 row=4, column=1, columnspan=4, padx=5, pady=5, sticky=tk.W
             )
             # ファイル削除ボタン生成
-            # self.Delete_button = tk.Button(
-            #     self.window_sub_ctrl1,
-            #     text="ファイル削除",
-            #     width=10,
-            #     command=self.FileDelete,
-            # )
             self.Delete_button = ck.CTkButton(
                 master=self.window_sub_ctrl1,
                 text="ファイル削除",
@@ -244,12 +205,11 @@ class ViewGUI:
                 corner_radius=8,
                 text_color="snow",
                 border_color="snow",
-                fg_color="tomato",
+                fg_color="red",
             )
             self.Delete_button.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
             # #############################################################################
             # window_sub_ctrl2#############################################################
-            # label_rotate = tk.Label(self.window_sub_ctrl2, text="[画像回転]")
             label_rotate = ck.CTkLabel(
                 master=self.window_sub_ctrl2,
                 text="[画像回転]",
@@ -281,12 +241,6 @@ class ViewGUI:
             radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
             radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
             # 左回転ボタン生成
-            # button_LeftLotate = tk.Button(
-            #     self.window_sub_ctrl2,
-            #     text="左回転",
-            #     width=10,
-            #     command=self.button_LeftLotate,
-            # )
             button_LeftLotate = ck.CTkButton(
                 master=self.window_sub_ctrl2,
                 text="左回転",
@@ -301,12 +255,6 @@ class ViewGUI:
             )
             button_LeftLotate.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
             # 右回転ボタン生成
-            # button_RightLotate = tk.Button(
-            #     self.window_sub_ctrl2,
-            #     text="右回転",
-            #     width=10,
-            #     command=self.button_RightLotate,
-            # )
             button_RightLotate = ck.CTkButton(
                 master=self.window_sub_ctrl2,
                 text="右回転",
@@ -320,7 +268,6 @@ class ViewGUI:
                 fg_color="Orange",
             )
             button_RightLotate.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
-            # label_flip = tk.Label(self.window_sub_ctrl2, text="[反転]")
             label_flip = ck.CTkLabel(
                 master=self.window_sub_ctrl2,
                 text="[反転]",
@@ -343,25 +290,19 @@ class ViewGUI:
                 )
             radio_flip[0].grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
             radio_flip[1].grid(row=6, column=2, padx=5, pady=5, sticky=tk.W)
-
-            # label_clip = tk.Label(self.window_sub_ctrl2, text="[トリミング・削除]")
+            # #############################################################################
+            # window_sub_ctrl4#############################################################
             label_clip = ck.CTkLabel(
-                master=self.window_sub_ctrl2,
+                master=self.window_sub_ctrl4,
                 text="[トリミング・削除]",
                 width=LabelWidth,
                 height=LabelHeight,
                 corner_radius=8,
             )
-            label_clip.grid(row=7, column=1, padx=5, pady=5, sticky=tk.W)
+            label_clip.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
             # クリップボタン生成
-            # button_clip_start = tk.Button(
-            #     self.window_sub_ctrl2,
-            #     text="選択開始",
-            #     width=10,
-            #     command=self.event_clip_try,
-            # )
             button_clip_start = ck.CTkButton(
-                master=self.window_sub_ctrl2,
+                master=self.window_sub_ctrl4,
                 text="選択開始",
                 command=self.event_clip_try,
                 width=BtnWidth,
@@ -370,17 +311,11 @@ class ViewGUI:
                 corner_radius=8,
                 text_color="snow",
                 border_color="snow",
-                fg_color="mediumPurple",
+                fg_color="#7eb000",
             )
-            button_clip_start.grid(row=8, column=1, padx=5, pady=5, sticky=tk.W)
-            # button_clip_done = tk.Button(
-            #     self.window_sub_ctrl2,
-            #     text="範囲トリミング",
-            #     width=10,
-            #     command=self.event_clip_done,
-            # )
+            button_clip_start.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
             button_clip_done = ck.CTkButton(
-                master=self.window_sub_ctrl2,
+                master=self.window_sub_ctrl4,
                 text="範囲トリミング",
                 command=self.event_clip_done,
                 width=BtnWidth,
@@ -389,17 +324,11 @@ class ViewGUI:
                 corner_radius=8,
                 text_color="snow",
                 border_color="snow",
-                fg_color="steelblue3",
+                fg_color="#6100b0",
             )
-            button_clip_done.grid(row=8, column=2, padx=5, pady=5, sticky=tk.W)
-            # button_clip_Erace = tk.Button(
-            #     self.window_sub_ctrl2,
-            #     text="範囲削除",
-            #     width=10,
-            #     command=self.event_clip_Erace,
-            # )
+            button_clip_done.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
             button_clip_Erace = ck.CTkButton(
-                master=self.window_sub_ctrl2,
+                master=self.window_sub_ctrl4,
                 text="範囲削除",
                 command=self.event_clip_Erace,
                 width=BtnWidth,
@@ -408,12 +337,9 @@ class ViewGUI:
                 corner_radius=8,
                 text_color="snow",
                 border_color="snow",
-                fg_color="gray",
+                fg_color="#c7048c",
             )
-            button_clip_Erace.grid(row=8, column=3, padx=5, pady=5, sticky=tk.W)
-            # #############################################################################
-            # window_sub_ctrl4#############################################################
-            # label_run = tk.Label(self.window_sub_ctrl4, text="[編集確定]")
+            button_clip_Erace.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
             label_run = ck.CTkLabel(
                 master=self.window_sub_ctrl4,
                 text="[編集確定]",
@@ -421,14 +347,8 @@ class ViewGUI:
                 height=LabelHeight,
                 corner_radius=8,
             )
-            label_run.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+            label_run.grid(row=2, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
             # Save/Undoボタン生成
-            # button_Oversave = tk.Button(
-            #     self.window_sub_ctrl4,
-            #     text="上書保存",
-            #     width=10,
-            #     command=self.event_Oversave,
-            # )
             button_Oversave = ck.CTkButton(
                 master=self.window_sub_ctrl4,
                 text="上書保存",
@@ -441,10 +361,7 @@ class ViewGUI:
                 border_color="snow",
                 fg_color="#cf94ff",
             )
-            button_Oversave.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
-            # button_undo = tk.Button(
-            #     self.window_sub_ctrl4, text="編集取消", width=10, command=self.event_undo
-            # )
+            button_Oversave.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
             button_undo = ck.CTkButton(
                 master=self.window_sub_ctrl4,
                 text="編集取消",
@@ -457,10 +374,7 @@ class ViewGUI:
                 border_color="snow",
                 fg_color="gray",
             )
-            button_undo.grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
-            # button_save = tk.Button(
-            #     self.window_sub_ctrl4, text="別名保存", width=10, command=self.event_save
-            # )
+            button_undo.grid(row=3, column=2, padx=5, pady=5, sticky=tk.W)
             button_save = ck.CTkButton(
                 master=self.window_sub_ctrl4,
                 text="別名保存",
@@ -473,20 +387,16 @@ class ViewGUI:
                 border_color="snow",
                 fg_color="hotpink1",
             )
-            button_save.grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
-            # label_Line = tk.Label(self.window_sub_ctrl4, text="[サブメニュー]")
-            label_Line = ck.CTkLabel(
-                master=self.window_sub_ctrl2,
-                text="[サブメニュー]",
-                width=LabelWidth,
-                height=LabelHeight,
-                corner_radius=8,
-            )
-            label_Line.grid(row=3, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
-            # LineOCR起動ボタン生成
-            # button_LinOCR = tk.Button(
-            #     self.window_sub_ctrl4, text="OCR起動", width=10, command=self.LinOCROpen
+            button_save.grid(row=3, column=3, padx=5, pady=5, sticky=tk.W)
+            # label_Line = ck.CTkLabel(
+            #     master=self.window_sub_ctrl2,
+            #     text="[サブメニュー]",
+            #     width=LabelWidth,
+            #     height=LabelHeight,
+            #     corner_radius=8,
             # )
+            # label_Line.grid(row=4, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+            # LineOCR起動ボタン生成
             button_LinOCR = ck.CTkButton(
                 master=self.window_sub_ctrl4,
                 text="OCR起動",
@@ -499,23 +409,20 @@ class ViewGUI:
                 border_color="snow",
                 fg_color="tomato",
             )
-            button_LinOCR.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
+            button_LinOCR.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
             # SubMenu起動ボタン生成
-            # button_SubMenu = tk.Button(
-            #     self.window_sub_ctrl4, text="サブメニュー", width=10, command=self.event_menu
+            # button_SubMenu = ck.CTkButton(
+            #     master=self.window_sub_ctrl4,
+            #     text="サブメニュー",
+            #     command=self.event_menu,
+            #     width=BtnWidth,
+            #     height=BtnHeight,
+            #     border_width=2,
+            #     corner_radius=8,
+            #     text_color="snow",
+            #     border_color="snow",
             # )
-            button_SubMenu = ck.CTkButton(
-                master=self.window_sub_ctrl4,
-                text="サブメニュー",
-                command=self.event_menu,
-                width=BtnWidth,
-                height=BtnHeight,
-                border_width=2,
-                corner_radius=8,
-                text_color="snow",
-                border_color="snow",
-            )
-            button_SubMenu.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
+            # button_SubMenu.grid(row=5, column=2, padx=5, pady=5, sticky=tk.W)
             # -------------------------------------------------------------------
             # Exposeイベントbind
             for event_type in tk.EventType.__members__.keys():
@@ -646,9 +553,7 @@ class ViewGUI:
             self.combo_file.set("")
             self.str_dir.set(self.dir_path)
             self.file_list = self.control.SetDirlist(self.dir_path)
-            # self.combo_file["value"] = self.file_list
             self.combo_file.configure(values=self.file_list)
-            # self.event_selectfile(self)
             self.control.DrawImage("set", set_pos=0)
         else:
             messagebox.showinfo("確認", "処理を中断します。")
@@ -660,7 +565,6 @@ class ViewGUI:
         Exposeイベントに関数設定
         """
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        # set_pos = self.combo_file.current()
         for r in range(len(self.combo_file.values)):
             if self.combo_file.get() == self.combo_file.values[r]:
                 set_pos = r
@@ -686,13 +590,11 @@ class ViewGUI:
         if SMW is False:
             self.menuwin = tk.Toplevel()  # サブWindow作成
             self.menuwin.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
-            # self.top.overrideredirect(True)  # ウィンドウのタイトル部分を消去
             self.menuwin.geometry("360x180+0+0")  # トップWindow表示位置指定
             # フレーム作成
             self.menuwinFrame = tk.Frame(self.menuwin, height=360, width=180)
             self.menuwinFrame.pack(fill=tk.BOTH, expand=True)
             # 　ラベル生成--------------------------------------------------------------------
-            # label_tb1 = tk.Label(self.menuwinFrame, text="[ノイズ除去値]")
             label_tb1 = ck.CTkLabel(
                 master=self.menuwinFrame,
                 text="[ノイズ除去値]",
@@ -722,7 +624,6 @@ class ViewGUI:
         """
         リサイズ処理(未使用2022/08/08時点)
         """
-        # set_pos = self.combo_file.current()
         for r in range(len(self.combo_file.values)):
             if self.combo_file.get() == self.combo_file.values[r]:
                 set_pos = r
@@ -745,7 +646,6 @@ class ViewGUI:
         """
         サブメニュー内ノイズ除去ボタン処理
         """
-        # set_pos = self.combo_file.current()
         for r in range(len(self.combo_file.values)):
             if self.combo_file.get() == self.combo_file.values[r]:
                 set_pos = r
@@ -879,7 +779,6 @@ class ViewGUI:
         self.logger.debug("ファイル選択起動")  # Log出力
         self.event_Searchsave()  # 編集履歴判定後上書き
         self.file_list = self.control.SetDirlist(self.dir_path)
-        # self.combo_file["value"] = self.file_list
         self.combo_file.configure(values=self.file_list)
         self.event_selectfile(self)
 
@@ -890,7 +789,6 @@ class ViewGUI:
         """
 
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
-        # set_pos = self.combo_file.current()
         for r in range(len(self.combo_file.values)):
             if self.combo_file.get() == self.combo_file.values[r]:
                 set_pos = r
@@ -1139,14 +1037,7 @@ class ViewGUI:
                     self.File_url_List,
                 )
             except:
-                # typ = [("tomlファイル", "*.toml")]
-                # messagebox.showinfo(
-                #     "確認", "先頭ページ読込です。\nOCR読取設定が格納されているtomlファイルを指定して下さい。"
-                # )
-                # self.tomlPath = filedialog.askopenfilename(
-                #     filetypes=typ, initialdir=self.dir_path
-                # )
-                self.tomlPath = os.getcwd() + r"\OCRView\Setting.toml"
+                self.tomlPath = self.tomlread()
                 try:
                     CSVSetMain(
                         main_window,
@@ -1158,6 +1049,18 @@ class ViewGUI:
                     self.logger.debug("OCR処理完了")  # Log出力
                 except:
                     self.logger.debug("OCR処理tomlファイル選択時Err")  # Log出力
+
+    # ----------------------------------------------------------------------------------
+    def tomlread(self):
+        """
+        tomlリード
+        """
+        try:
+            r_toml = os.getcwd() + r"\OCRView\Setting.toml"
+            return r_toml
+        except:
+            r_toml = os.getcwd() + r"\Setting.toml"
+            return r_toml
 
     # ----------------------------------------------------------------------------------
     def click_close(self):
@@ -1181,10 +1084,7 @@ def onResize(e):
 if __name__ == "__main__":
     OW.Open("OCR読取 Ver:0.9")
     # 　Tk MainWindow 生成
-    # main_window = tk.Tk()
-
-    main_window = ck.CTk()
-    # main_window.bind("<Configure>", onResize)
+    main_window = tk.Tk()
     # Viewクラス生成
     ViewGUI(main_window, "OCR読取 Ver:0.9", "./")
 
