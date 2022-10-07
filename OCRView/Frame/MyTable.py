@@ -292,3 +292,5 @@ class MyTable(Table):
             col = self.get_col_clicked(event)
             self.drawCellEntry(self.currentrow, self.currentcol)
             return
+
+    # --------------------------------------------------------------------

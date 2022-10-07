@@ -780,10 +780,10 @@ class ViewGUI:
         self.event_Searchsave()  # 編集履歴判定後上書き
         self.file_list = self.control.SetDirlist(self.dir_path)
         self.combo_file.configure(values=self.file_list)
-        self.event_selectfile(self)
+        self.event_selectfile(self, "")
 
     # ----------------------------------------------------------------------------------
-    def event_selectfile(self, event):
+    def event_selectfile(self, event, str):
         """
         ファイル選択後イベント
         """
@@ -825,7 +825,17 @@ class ViewGUI:
         self.logger.debug("prev起動")  # Log出力
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         pos = self.control.DrawImage("prev")
-        self.combo_file.set(self.file_list[pos])
+        try:
+            self.combo_file.set(self.file_list[pos[0]])
+        except:
+            posTrue = False
+            while posTrue is False:
+                pos = self.control.DrawImage("prev")
+                try:
+                    self.combo_file.set(self.file_list[pos[0]])
+                    posTrue = True
+                except:
+                    posTrue = False
 
     # ----------------------------------------------------------------------------------
     def event_next(self):
@@ -836,7 +846,17 @@ class ViewGUI:
         self.logger.debug("next起動")  # Log出力
         print(sys._getframe().f_code.co_name)  # ターミナルへ表示
         pos = self.control.DrawImage("next")
-        self.combo_file.set(self.file_list[pos])
+        try:
+            self.combo_file.set(self.file_list[pos[0]])
+        except:
+            posTrue = False
+            while posTrue is False:
+                pos = self.control.DrawImage("next")
+                try:
+                    self.combo_file.set(self.file_list[pos[0]])
+                    posTrue = True
+                except:
+                    posTrue = False
 
     # ----------------------------------------------------------------------------------
     def event_rotate(self):
@@ -1027,18 +1047,13 @@ class ViewGUI:
         if "[select file]" in Imgurl:
             messagebox.showinfo("確認", "画像ファイルを選択してください。")
         else:
-            try:
-                print(self.tomlPath)
-                CSVSetMain(
-                    main_window,
-                    Imgurl,
-                    self.tomlPath,
-                    self.logger,
-                    self.File_url_List,
-                )
-            except:
-                self.tomlPath = self.tomlread()
+            if self.control.model.stock_url != "":
+                if messagebox.askokcancel("確認", "編集履歴が残っています。上書きしますか？"):
+                    os.remove(self.control.model.stock_url)
+                    self.control.model.stock_url = ""
+                self.control.OverSaveImage()
                 try:
+                    print(self.tomlPath)
                     CSVSetMain(
                         main_window,
                         Imgurl,
@@ -1046,9 +1061,42 @@ class ViewGUI:
                         self.logger,
                         self.File_url_List,
                     )
-                    self.logger.debug("OCR処理完了")  # Log出力
                 except:
-                    self.logger.debug("OCR処理tomlファイル選択時Err")  # Log出力
+                    self.tomlPath = self.tomlread()
+                    try:
+                        CSVSetMain(
+                            main_window,
+                            Imgurl,
+                            self.tomlPath,
+                            self.logger,
+                            self.File_url_List,
+                        )
+                        self.logger.debug("OCR処理完了")  # Log出力
+                    except:
+                        self.logger.debug("OCR処理tomlファイル選択時Err")  # Log出力
+            else:
+                try:
+                    print(self.tomlPath)
+                    CSVSetMain(
+                        main_window,
+                        Imgurl,
+                        self.tomlPath,
+                        self.logger,
+                        self.File_url_List,
+                    )
+                except:
+                    self.tomlPath = self.tomlread()
+                    try:
+                        CSVSetMain(
+                            main_window,
+                            Imgurl,
+                            self.tomlPath,
+                            self.logger,
+                            self.File_url_List,
+                        )
+                        self.logger.debug("OCR処理完了")  # Log出力
+                    except:
+                        self.logger.debug("OCR処理tomlファイル選択時Err")  # Log出力
 
     # ----------------------------------------------------------------------------------
     def tomlread(self):
@@ -1085,6 +1133,11 @@ if __name__ == "__main__":
     OW.Open("OCR読取 Ver:0.9")
     # 　Tk MainWindow 生成
     main_window = tk.Tk()
+    try:
+        iconfile = os.getcwd() + r"\OCRView\OCR.png"
+    except:
+        iconfile = os.getcwd() + r"\OCR.png"
+    main_window.iconphoto(False, tk.PhotoImage(file=iconfile))
     # Viewクラス生成
     ViewGUI(main_window, "OCR読取 Ver:0.9", "./")
 

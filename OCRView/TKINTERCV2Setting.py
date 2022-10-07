@@ -1041,6 +1041,7 @@ class Application(tk.Frame):
             else:
                 MSG = messagebox.showinfo("確認", "自動直線描画に失敗しました。")
 
+    # ---------------------------------------------------------------------------------------------
     # 以下関数######################################################################################
 
 
@@ -1676,6 +1677,19 @@ def drag1(event):
 
 
 # ---------------------------------------------------------------------------------------------
+def tomlread():
+    """
+    tomlリード
+    """
+    try:
+        r_toml = os.getcwd() + r"\OCRView\Setting.toml"
+        return r_toml
+    except:
+        r_toml = os.getcwd() + r"\Setting.toml"
+        return r_toml
+
+
+# ---------------------------------------------------------------------------------------------
 def Main(MUI, US, turl, logger, File_url_List):
     """
     呼出関数
@@ -1690,7 +1704,7 @@ def Main(MUI, US, turl, logger, File_url_List):
     imgurl = US.replace(r"\\\\", r"\\")
     URL = os.getcwd()
     Master.withdraw()
-    tomlurl = turl
+    tomlurl = tomlread()
     G_logger = logger
     FUL = File_url_List
 
@@ -1712,6 +1726,12 @@ def Main(MUI, US, turl, logger, File_url_List):
         readcsv2 = Banktoml["LineSetting"]["Nomal_Tate"]
 
     root = tk.Tk()  # Window生成
+
+    try:
+        iconfile = os.getcwd() + r"\OCRView\OCR.png"
+    except:
+        iconfile = os.getcwd() + r"\OCR.png"
+    root.iconphoto(False, tk.PhotoImage(file=iconfile))
     # root = ck.CTk()  # Window生成
     app = Application(master=root)
     # --- 基本的な表示準備 ----------------
@@ -1731,7 +1751,7 @@ if __name__ == "__main__":
     global Banktoml, tomlurl, rep_N, F_N, imgurl
     URL = os.getcwd()
     imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_2page.png"
-    tomlurl = r"D:\PythonScript\RPAScript\OCRView\Setting.toml"
+    tomlurl = tomlread()
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
         Banktoml = toml.load(f)
@@ -1751,6 +1771,11 @@ if __name__ == "__main__":
 
     # Windowについて : https://kuroro.blog/python/116yLvTkzH2AUJj8FHLx/
     root = tk.Tk()  # Window生成
+    try:
+        iconfile = os.getcwd() + r"\OCRView\OCR.png"
+    except:
+        iconfile = os.getcwd() + r"\OCR.png"
+    root.iconphoto(False, tk.PhotoImage(file=iconfile))
     app = Application(master=root)
     # frame = tk.Frame(root, height=3840, width=3840)  # frame生成
     # --- 基本的な表示準備 ----------------
