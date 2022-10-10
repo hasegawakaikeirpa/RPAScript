@@ -12,6 +12,8 @@ import ScrollableFrame as SF
 import tomlCreate as toml_c
 from tkinter import filedialog
 import ProgressBar as PB
+import IconCode
+import threading
 
 ###################################################################################################
 class Application(tk.Frame):
@@ -58,6 +60,8 @@ class Application(tk.Frame):
         CW, CH, HCW, HCH, TKimg = IR[0], IR[1], IR[2], IR[3], IR[4]
         # ##############################################################################
         self.top = tk.Toplevel()  # サブWindow作成
+        data = IconCode.icondata()
+        self.top.tk.call("wm", "iconphoto", self.top._w, tk.PhotoImage(data=data))
         self.top.minsize(width_of_window, height_of_window)
         self.top.bind("<Motion>", self.change)  # 透過ウィンドウにマウス移動関数bind
         self.master.bind("<Motion>", self.change)  # 下ウィンドウにマウス移動関数bind
@@ -85,6 +89,8 @@ class Application(tk.Frame):
         )  # 透過キャンバス作成
         self.top.forward.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.top.forward.bind("Enter", self.change)
+        # キャンバス内ダブルクリックイベントに関数バインド
+        self.top.forward.bind("<Double-1>", lambda: self.RedLine(self, CW, CH))
         # ##############################################################################
         # 配置
         # サイドメニューフレーム##########################################################
@@ -216,24 +222,8 @@ class Application(tk.Frame):
         ).grid(
             row=0, column=0, sticky=tk.W + tk.E
         )  # フレームテキスト
-        self.SF = SF.ScrollableFrame(Tframe2, CW, CH, bar_x=False)
-        self.SF.grid(sticky=tk.W + tk.E)  # , ipadx=500, ipady=100)
-        # エントリーウィジェットマネージャを初期化
-        self.Entries = []  # エントリーウィジェットのインスタンス
-        self.insertEntries = []  # 追加するボタンのようなラベル
-        self.removeEntries = []  # 削除するボタンのようなラベル
-        # こちらはインデックスマネージャ。ウィジェットの数や並び方を管理
-        self.index = 0  # 最新のインデックス番号
-        self.indexes = []  # インデックスの並び
-        try:
-            self.ColList = Banktoml["ColList"][F_N + "_List"]
-        except:
-            self.ColList = Banktoml["ColList"]["Nomal_List"]
-        i = 0
-        for ColListItem in self.ColList:
-            self.createEntry(i, bar_x=False)
-            self.Entries[i].insert(0, ColListItem)
-            i += 1
+        thread1 = threading.Thread(target=self.createSC(Tframe2))
+        thread1.start()
         #################################################################################
         # サイドメニュー内変換設定フレーム#################################################
         Setframe = tk.Frame(
@@ -304,68 +294,6 @@ class Application(tk.Frame):
         self.MoneySet.bind("<Return>", tomlreturn)
         self.MoneySet.bind("<Tab>", tomlreturn)
         self.MoneySet.grid(row=1, column=1, padx=5, pady=5)
-        # Start ####################################################################
-        ck.CTkLabel(
-            master=Setframe,
-            text="置換対象列番号",
-            width=LabelWidth,
-            height=LabelHeight,
-            corner_radius=8,
-            text_font=t_font,
-        ).grid(row=2, column=0)
-        self.ReplaceSet = ck.CTkEntry(
-            master=Setframe,
-            width=EntWidth,
-            height=EntHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="black",
-            border_color="snow",
-            fg_color="snow",
-        )
-        tomlEntries.append(self.ReplaceSet)
-        # tomlインポート------------------------------------------------------------
-        try:
-            self.TomlInsert(self.ReplaceSet, Banktoml["Setframe"][F_N + "_ReplaceSet"])
-        except:
-            self.TomlInsert(self.ReplaceSet, Banktoml["Setframe"]["Nomal_ReplaceSet"])
-        # --------------------------------------------------------------------------
-        self.ReplaceSet.bind("<Return>", tomlreturn)
-        self.ReplaceSet.bind("<Tab>", tomlreturn)
-        self.ReplaceSet.grid(row=2, column=1, padx=5, pady=5)
-        # Start ####################################################################
-        ck.CTkLabel(
-            master=Setframe,
-            text="置換対象文字列",
-            width=LabelWidth,
-            height=LabelHeight,
-            corner_radius=8,
-            text_font=t_font,
-        ).grid(row=3, column=0)
-        self.ReplaceStr = ck.CTkEntry(
-            master=Setframe,
-            width=EntWidth,
-            height=EntHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="black",
-            border_color="snow",
-            fg_color="snow",
-        )
-        tomlEntries.append(self.ReplaceStr)
-        # tomlインポート------------------------------------------------------------
-        try:
-            self.TomlInsert(self.ReplaceStr, Banktoml["LineSetting"][rep_N])
-        except:
-            self.TomlInsert(
-                self.ReplaceStr, Banktoml["LineSetting"]["Nomal_ReplaceStr"]
-            )
-        # --------------------------------------------------------------------------
-        self.ReplaceStr.bind("<Return>", tomlreturn)
-        self.ReplaceStr.bind("<Tab>", tomlreturn)
-        self.ReplaceStr.bind("<Double-1>", self.tomlFrameOpen)
-        self.ReplaceStr.grid(row=3, column=1, padx=5, pady=5)
-        #################################################################################
         # サイドメニュー内ボタンフレーム###################################################
         frame = tk.Frame(
             self.frame0,
@@ -432,20 +360,20 @@ class Application(tk.Frame):
             fg_color="mediumPurple",
         )
         button3.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
-        # 置換ボタン---------------------------------------------------------------
-        button7 = ck.CTkButton(
-            master=frame,
-            text="置換対象文字列設定",
-            command=lambda: self.tomlFrameOpen(self),
-            width=BtnWidth,
-            height=BtnHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="snow",
-            border_color="snow",
-            fg_color="hotpink1",
-        )
-        button7.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
+        # # 置換ボタン---------------------------------------------------------------
+        # button7 = ck.CTkButton(
+        #     master=frame,
+        #     text="置換対象文字列設定",
+        #     command=lambda: self.tomlFrameOpen(self),
+        #     width=BtnWidth,
+        #     height=BtnHeight,
+        #     border_width=2,
+        #     corner_radius=8,
+        #     text_color="snow",
+        #     border_color="snow",
+        #     fg_color="hotpink1",
+        # )
+        # button7.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # 自動直線描画ボタン---------------------------------------------------------------
         button3 = ck.CTkButton(
             master=frame,
@@ -500,131 +428,65 @@ class Application(tk.Frame):
         )
         button6.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # ##############################################################################
-        Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)  # 透過キャンバスに罫線描画
+        thread2 = threading.Thread(
+            target=Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)
+        )
+        thread2.start()  # 透過キャンバスに罫線描画
         self.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
         # 下Windowのキャンバス作成
         # 画像の配置#####################################################################
         self.InportIMG()
         # ##############################################################################
         Entries = self.Entries
+        self.master.attributes("-topmost", True)
+        self.master.attributes("-topmost", False)
+        self.top.attributes("-topmost", True)
         G_logger.debug("TKINTERCV2Setting_Application起動完了")  # Log出力
 
     # 以下self関数##################################################################################
-    def tomlFrameOpen(self, event):
+    def RedLine(self, CW, CH):
         """
-        置換設定隠しサイドメニューの表示
+        縦直線追加ボタン処理
         """
-        unmap(self)
-        MSG = messagebox.askokcancel("確認", "置換設定ウィンドウを起動します。")
-        if MSG is True:
-            self.frame0.grid_remove()
-            print(self.top.geometry())
-            CWgeo = int(self.top.geometry().split("x")[0])
-            CHgeo = int(self.top.geometry().split("x")[1].split("+")[0])
-            self.topRepFrame = tk.Frame(
-                self.top,
-                bg="snow",
-                # height=CHgeo,
-                width=CWgeo,
-                relief=tk.GROOVE,
-                bd=2,
-            )
-            try:
-                self.BRS = Banktoml["LineSetting"][rep_N]
-            except:
-                self.BRS = Banktoml["Setframe"]["Nomal_ReplaceSet"]
-            self.topRepFrame.grid(row=1, column=0, sticky=tk.NSEW)
-            self.topRepSF = SF.SubScrollableFrame(
-                self.topRepFrame, CWgeo, CHgeo, len(self.BRS), bar_x=False
-            )
-            self.topRepSF.grid(row=0, column=0, sticky=tk.W)
-            self.BRSTxt = []
-            self.BRSPlus = []
-            self.BRSDel = []
-            i = 0
-            for BRSItem in self.BRS:
-                if len(self.BRS) == 1:
-                    # テキストボックス----------------------------------------------------
-                    txt = ck.CTkEntry(
-                        master=self.topRepSF.scrollable_frame,
-                        width=EntWidth,
-                        height=EntHeight,
-                        border_width=2,
-                        corner_radius=8,
-                        text_color="black",
-                        border_color="snow",
-                        fg_color="snow",
-                    )
-                    txt.insert(0, BRSItem)
-                    txt.bind("<MouseWheel>", self.topRepSF.mouse_y_scroll)
-                    txt.grid(row=i, column=0, sticky=tk.W)
-                    self.BRSTxt.insert(i, txt)
-                    # -------------------------------------------------------------------
-                else:
-                    # テキストボックス----------------------------------------------------
-                    txt = ck.CTkEntry(
-                        master=self.topRepSF.scrollable_frame,
-                        width=EntWidth,
-                        height=EntHeight,
-                        border_width=2,
-                        corner_radius=8,
-                        text_color="black",
-                        border_color="snow",
-                        fg_color="snow",
-                    )
-                    txt.insert(0, BRSItem)
-                    txt.bind("<MouseWheel>", self.topRepSF.mouse_y_scroll)
-                    txt.grid(row=i, column=0, sticky=tk.W)
-                    self.BRSTxt.insert(i, txt)
-                    # -------------------------------------------------------------------
-                    # ボタン--------------------------------------------------------------
-                    btn = tk.Label(
-                        self.topRepSF.scrollable_frame,
-                        text="+",
-                        fg="#33ff33",
-                        bg="#ecb5f5",
-                        font=("Arial Black", 20),
-                    )  # 追加するボタンのようなラベルにクリックイベントを設定
-                    btn.bind(
-                        "<1>",
-                        lambda event, id=self.index: self.tomlFrameOpen_click(
-                            event, "+"
-                        ),
-                    )
-                    btn.grid(row=i, column=1)
-                    self.BRSPlus.insert(i, btn)
-                    # -------------------------------------------------------------------
-                    # ボタン--------------------------------------------------------------
-                    btn = tk.Label(
-                        self.topRepSF.scrollable_frame,
-                        text="−",
-                        fg="#ff3333",
-                        bg="#ecb5f5",
-                        font=("Arial Black", 20),
-                    )  # 追加するボタンのようなラベルにクリックイベントを設定
-                    btn.bind(
-                        "<1>",
-                        lambda event, id=self.index: self.tomlFrameOpen_click(
-                            event, "−"
-                        ),
-                    )
-                    btn.grid(row=i, column=2)
-                    self.BRSDel.insert(i, btn)
-                    # -------------------------------------------------------------------
-                i += 1
-            # 確定ボタン--------------------------------------------------------------
-            btn = tk.Button(
-                self.topRepFrame,
-                text="確定",
-                fg="Snow",
-                command=self.tomlFrameClose,
-                width=30,
-                height=1,
-                bg="blue",
-                font=("Arial Black", 15),
-            )
-            btn.grid(row=0, column=1, padx=10, sticky=tk.NSEW)
-            map(self)
+        TName = "Line" + str(len(tagsList) + 1)
+        G_logger.debug("縦直線追加ボタン処理開始")  # Log出力
+        self.create_line(
+            CW - 50,
+            0,
+            CW - 50,
+            CH,
+            tags=TName,
+            width=7,
+            fill="#FF0000",
+            activefill="#DBDD6F",
+        )
+        self.tag_bind(TName, "<ButtonPress-1>", click1)
+        self.tag_bind(TName, "<Double-1>", EventDelete)
+        self.tag_bind(TName, "<B1-Motion>", drag1)
+        BSS = [0, 0, 0, 0]
+        TSS = [TName, CW - 50, 0, CW - 50, CH, "Yoko"]
+        tagsList.append([TSS, BSS])
+
+    # ---------------------------------------------------------------------------------------------
+    def createSC(self, Tframe2):
+        self.SF = SF.ScrollableFrame(Tframe2, CW, CH, bar_x=False)
+        self.SF.grid(sticky=tk.W + tk.E)  # , ipadx=500, ipady=100)
+        # エントリーウィジェットマネージャを初期化
+        self.Entries = []  # エントリーウィジェットのインスタンス
+        self.insertEntries = []  # 追加するボタンのようなラベル
+        self.removeEntries = []  # 削除するボタンのようなラベル
+        # こちらはインデックスマネージャ。ウィジェットの数や並び方を管理
+        self.index = 0  # 最新のインデックス番号
+        self.indexes = []  # インデックスの並び
+        try:
+            self.ColList = Banktoml["ColList"][F_N + "_List"]
+        except:
+            self.ColList = Banktoml["ColList"]["Nomal_List"]
+        i = 0
+        for ColListItem in self.ColList:
+            self.createEntry(i, bar_x=False)
+            self.Entries[i].insert(0, ColListItem)
+            i += 1
 
     # ---------------------------------------------------------------------------------------------
     def tomlFrameClose(self):
@@ -642,117 +504,6 @@ class Application(tk.Frame):
         G_logger.debug("SideMenutoml変換設定の更新完了")  # Log出力
 
     # ---------------------------------------------------------------------------------------------
-    def tomlFrameOpen_click(self, event, Fl):
-        """
-        置換設定隠しサイドメニューのボタンクリック関数
-        """
-        w_Name = event.widget._name
-        if Fl == "−":
-            b = 0
-            for B_i in self.BRSDel:
-                if B_i._name == w_Name:
-                    self.BRSTxt[b].destroy()
-                    self.BRSPlus[b].destroy()
-                    self.BRSDel[b].destroy()
-                    self.BRSTxt.pop(b)
-                    self.BRSPlus.pop(b)
-                    self.BRSDel.pop(b)
-                b += 1
-        elif Fl == "+":
-            if len(self.BRS) == 1:
-                i = len(self.BRSTxt)
-                # テキストボックス----------------------------------------------------
-                txt = ck.CTkEntry(
-                    master=self.topRepSF.scrollable_frame,
-                    width=EntWidth,
-                    height=EntHeight,
-                    border_width=2,
-                    corner_radius=8,
-                    text_color="black",
-                    border_color="snow",
-                    fg_color="snow",
-                )
-                txt.insert(0, "")
-                txt.bind("<MouseWheel>", self.topRepSF.mouse_y_scroll)
-                txt.grid(row=i, column=0, sticky=tk.W)
-                self.BRSTxt.insert(i, txt)
-                # -------------------------------------------------------------------
-                # ボタン--------------------------------------------------------------
-                btn = tk.Label(
-                    self.topRepSF.scrollable_frame,
-                    text="+",
-                    fg="#33ff33",
-                    bg="#ecb5f5",
-                    font=("Arial Black", 20),
-                )  # 追加するボタンのようなラベルにクリックイベントを設定
-                btn.bind(
-                    "<1>",
-                    lambda event, id=self.index: self.tomlFrameOpen_click(event, "+"),
-                )
-                btn.grid(row=i, column=1)
-                self.BRSPlus.insert(i, btn)
-                # -------------------------------------------------------------------
-                # ボタン--------------------------------------------------------------
-                btn = tk.Label(
-                    self.topRepSF.scrollable_frame,
-                    text="−",
-                    fg="#ff3333",
-                    bg="#ecb5f5",
-                    font=("Arial Black", 20),
-                )  # 追加するボタンのようなラベルにクリックイベントを設定
-                btn.bind(
-                    "<1>",
-                    lambda event, id=self.index: self.tomlFrameOpen_click(event, "−"),
-                )
-                btn.grid(row=i, column=2)
-                self.BRSDel.insert(i, btn)
-            else:
-                i = len(self.BRSTxt)
-                # テキストボックス----------------------------------------------------
-                txt = ck.CTkEntry(
-                    master=self.topRepSF.scrollable_frame,
-                    width=EntWidth,
-                    height=EntHeight,
-                    border_width=2,
-                    corner_radius=8,
-                    text_color="black",
-                    border_color="snow",
-                    fg_color="snow",
-                )
-                txt.insert(0, "")
-                txt.bind("<MouseWheel>", self.topRepSF.mouse_y_scroll)
-                txt.grid(row=i, column=0)
-                self.BRSTxt.insert(i, txt)
-                # -------------------------------------------------------------------
-                # ボタン--------------------------------------------------------------
-                btn = tk.Label(
-                    self.topRepSF.scrollable_frame,
-                    text="+",
-                    fg="#33ff33",
-                    bg="#ecb5f5",
-                    font=("Arial Black", 20),
-                )  # 追加するボタンのようなラベルにクリックイベントを設定
-                btn.bind(
-                    "<1>",
-                    lambda event, id=self.index: self.tomlFrameOpen_click(event, "+"),
-                )
-                btn.grid(row=i, column=1)
-                self.BRSPlus.insert(i, btn)
-                # -------------------------------------------------------------------
-                # ボタン--------------------------------------------------------------
-                btn = tk.Label(
-                    self.topRepSF.scrollable_frame,
-                    text="−",
-                    fg="#ff3333",
-                    bg="#ecb5f5",
-                    font=("Arial Black", 20),
-                )  # 追加するボタンのようなラベルにクリックイベントを設定
-                btn.bind(
-                    "<1>",
-                    lambda event, id=self.index: self.tomlFrameOpen_click(event, "−"),
-                )
-                btn.grid(row=i, column=2)
-                self.BRSDel.insert(i, btn)
 
     # ---------------------------------------------------------------------------------------------
     def ChangeToml(self):
@@ -1206,7 +957,7 @@ def StLine(canvastop, CW, CH):
         CW - 50,
         CH,
         tags=TName,
-        width=5,
+        width=7,
         fill="#FF0000",
         activefill="#DBDD6F",
     )
@@ -1231,7 +982,7 @@ def StWLine(canvastop, CW, CH):
         CW,
         CH - 50,
         tags=TName,
-        width=5,
+        width=7,
         fill="#00FF40",
         activefill="#DBDD6F",
     )
@@ -1270,7 +1021,7 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
             ripar2,
             ripar3,
             tags=TName,
-            width=5,
+            width=7,
             fill="#FF0000",
             activefill="#DBDD6F",
         )
@@ -1292,7 +1043,7 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
             ripar2,
             ripar3,
             tags=TName,
-            width=5,
+            width=7,
             fill="#00FF40",
             activefill="#DBDD6F",
         )
@@ -1345,8 +1096,8 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
     # 条件テキストボックスの値格納---------------------------
     DaySet = selfmother.DaySet.get()
     MoneySet = selfmother.MoneySet.get()
-    ReplaceSet = selfmother.ReplaceSet.get()
-    ReplaceStr = selfmother.ReplaceStr.get()
+    # ReplaceSet = selfmother.ReplaceSet.get()
+    # ReplaceStr = selfmother.ReplaceStr.get()
     # ------------------------------------------------------
     # 条件テキストボックスのリスト化---------------------------
     if "," in DaySet:
@@ -1363,27 +1114,27 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
     else:
         MoneySet = list(MoneySet)
     # --------------------------------------------------------
-    if "," in ReplaceSet:
-        ReplaceSet = ReplaceSet.split(",")
-    elif " " in ReplaceSet:
-        ReplaceSet = ReplaceSet.split(" ")
-    else:
-        ReplaceSet = list(ReplaceSet)
+    # if "," in ReplaceSet:
+    #     ReplaceSet = ReplaceSet.split(",")
+    # elif " " in ReplaceSet:
+    #     ReplaceSet = ReplaceSet.split(" ")
+    # else:
+    #     ReplaceSet = list(ReplaceSet)
     # --------------------------------------------------------
-    if "," in ReplaceStr:
-        ReplaceStr = ReplaceStr.split(",")
-    elif " " in ReplaceStr:
-        ReplaceStr = ReplaceStr.split(" ")
-    else:
-        ReplaceStr = list(ReplaceStr)
+    # if "," in ReplaceStr:
+    #     ReplaceStr = ReplaceStr.split(",")
+    # elif " " in ReplaceStr:
+    #     ReplaceStr = ReplaceStr.split(" ")
+    # else:
+    #     ReplaceStr = list(ReplaceStr)
     # ------------------------------------------------------
     # 条件テキストボックスの内容で処理分け-------------------------------------------------------------------
     if listintCheck(DaySet) is False:
         messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
     elif listintCheck(MoneySet) is False:
         messagebox.showinfo("エラー", "金額表示列番号が不正です。数値以外を指定していないか確認してください。")
-    elif listintCheck(ReplaceSet) is False:
-        messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
+    # elif listintCheck(ReplaceSet) is False:
+    #     messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
     else:
         if len(tagsList) == 0:
             messagebox.showinfo("エラー", "軸が設定されていません。")
@@ -1460,8 +1211,8 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                 SGEL,
                                 DaySet,
                                 MoneySet,
-                                ReplaceSet,
-                                ReplaceStr,
+                                "ReplaceSet",
+                                "ReplaceStr",
                                 G_logger,
                                 PBAR,
                                 ChangeVar,
@@ -1500,6 +1251,7 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                             G_logger,
                                             Mter,
                                             Top,
+                                            imgurl,
                                         )
                                     else:
                                         RU = OCRF.JoinCSV(FUL)
@@ -1515,6 +1267,7 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                                 G_logger,
                                                 Mter,
                                                 Top,
+                                                imgurl,
                                             )
                                         else:
                                             G_logger.debug("CSV連結後出力失敗")  # Log出力
@@ -1726,13 +1479,8 @@ def Main(MUI, US, turl, logger, File_url_List):
         readcsv2 = Banktoml["LineSetting"]["Nomal_Tate"]
 
     root = tk.Tk()  # Window生成
-
-    try:
-        iconfile = os.getcwd() + r"\OCRView\OCR.png"
-    except:
-        iconfile = os.getcwd() + r"\OCR.png"
-    root.iconphoto(False, tk.PhotoImage(file=iconfile))
-    # root = ck.CTk()  # Window生成
+    data = IconCode.icondata()
+    root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
     app = Application(master=root)
     # --- 基本的な表示準備 ----------------
 
@@ -1751,6 +1499,7 @@ if __name__ == "__main__":
     global Banktoml, tomlurl, rep_N, F_N, imgurl
     URL = os.getcwd()
     imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_2page.png"
+    imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
     tomlurl = tomlread()
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
@@ -1771,11 +1520,8 @@ if __name__ == "__main__":
 
     # Windowについて : https://kuroro.blog/python/116yLvTkzH2AUJj8FHLx/
     root = tk.Tk()  # Window生成
-    try:
-        iconfile = os.getcwd() + r"\OCRView\OCR.png"
-    except:
-        iconfile = os.getcwd() + r"\OCR.png"
-    root.iconphoto(False, tk.PhotoImage(file=iconfile))
+    data = IconCode.icondata()
+    root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
     app = Application(master=root)
     # frame = tk.Frame(root, height=3840, width=3840)  # frame生成
     # --- 基本的な表示準備 ----------------

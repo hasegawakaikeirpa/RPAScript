@@ -12,6 +12,7 @@ from numpy import asarray, array
 from difflib import SequenceMatcher
 from mojimoji import han_to_zen
 import CSVOut as CSVO
+import re
 
 # ----------------------------------------------------------------------------
 def getNearestValue(list, num):
@@ -160,6 +161,9 @@ def DiffListCreate(
         G_logger.debug("Bankrentxtver完了")  # Log出力
         PBAR._target.step(20)
         print(GF[0])
+        code_regex = re.compile(
+            "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
+        )
         if GF[0] is True:
             GFTable = GF[1]
             # 設定日付列番号に応じて日付書式変換------------------------------
@@ -195,27 +199,7 @@ def DiffListCreate(
                                 strs += S[y]
                             else:
                                 ints += S[y]
-                        strs = (
-                            strs.replace(",", "")
-                            .replace("*", "")
-                            .replace("'", "")
-                            .replace(",", "")
-                            .replace("○", "")
-                            .replace("×", "")
-                            .replace("✓", "")
-                            .replace("¥", "")
-                            .replace("´", "")
-                            .replace("=", "")
-                            .replace("串", "")
-                            .replace("第", "")
-                            .replace("$", "")
-                            .replace("〒", "")
-                            .replace(".", "")
-                            .replace("|", "")
-                            .replace("-", "")
-                            .replace("･", "")
-                            .replace("!", "")
-                        )
+                        strs = code_regex.sub("", strs)
                         if len(strs) == 0:
                             GFTable[g][c - 1] = ints
                         elif len(ints) == 0:
@@ -223,36 +207,36 @@ def DiffListCreate(
                         # else:
                         #     GFTable[g][c - 1] = strs + "::" + ints
                     # -------------------------------------------------------------------------
-                # tomlから摘要変換リストを読込一致率50％を超えるものがあれば置換-----------------
-                if "," in ReplaceSet:
-                    ReplaceSet = ReplaceSet.split(",")
-                for c in ReplaceSet:
-                    c = int(c)
-                    # 指定列がデータフレーム列数未満なら------------------------------------------
-                    if c <= GFCol:
-                        strs = ""
-                        ints = ""
-                        S = GFTable[g][c - 1]
-                        for y in range(len(S)):
-                            if S[y].isdecimal() is False:
-                                strs += S[y]
-                            else:
-                                ints += S[y]
-                        CTCount = []
-                        if len(ReplaceStr) != 0:
-                            if "," in ReplaceStr:
-                                ReplaceStr = ReplaceStr.split(",")
-                            for CT in ReplaceStr:
-                                src, trg = han_to_zen(strs.lower()), han_to_zen(
-                                    CT.lower()
-                                )
-                                r = SequenceMatcher(None, src, trg).ratio()
-                                CTCount.append([r, CT])
-                            GNV = getNearestValue(CTCount, 1.0)
-                            R_par = ChangeVar / 100
-                            if 1.0 - GNV[0] < R_par:
-                                ChangeTxtList.append([GFTable[g][c - 1], GNV[1]])
-                                GFTable[g][c - 1] = GNV[1]
+                # # tomlから摘要変換リストを読込一致率50％を超えるものがあれば置換-----------------
+                # if "," in ReplaceSet:
+                #     ReplaceSet = ReplaceSet.split(",")
+                # for c in ReplaceSet:
+                #     c = int(c)
+                #     # 指定列がデータフレーム列数未満なら------------------------------------------
+                #     if c <= GFCol:
+                #         strs = ""
+                #         ints = ""
+                #         S = GFTable[g][c - 1]
+                #         for y in range(len(S)):
+                #             if S[y].isdecimal() is False:
+                #                 strs += S[y]
+                #             else:
+                #                 ints += S[y]
+                #         CTCount = []
+                #         if len(ReplaceStr) != 0:
+                #             if "," in ReplaceStr:
+                #                 ReplaceStr = ReplaceStr.split(",")
+                #             for CT in ReplaceStr:
+                #                 src, trg = han_to_zen(strs.lower()), han_to_zen(
+                #                     CT.lower()
+                #                 )
+                #                 r = SequenceMatcher(None, src, trg).ratio()
+                #                 CTCount.append([r, CT])
+                #             GNV = getNearestValue(CTCount, 1.0)
+                #             R_par = ChangeVar / 100
+                #             if 1.0 - GNV[0] < R_par:
+                #                 ChangeTxtList.append([GFTable[g][c - 1], GNV[1]])
+                #                 GFTable[g][c - 1] = GNV[1]
                 PBAR._target.step(PB_v)
                 # -------------------------------------------------------------------------
             # 入出金列の数値以外を分別------------------------------------------------------

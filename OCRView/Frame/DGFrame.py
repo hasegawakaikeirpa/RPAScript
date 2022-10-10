@@ -1,6 +1,7 @@
 import tkinter as tk
 import Frame.MyTable as MT
 import CSVOut as CSVO
+import numpy as np
 from pandas import read_csv, concat
 from pandastable import config
 
@@ -26,8 +27,8 @@ def create_Frame(self, wid, hei, t_font, hei_Par):
     # pt = Table(self.tree_frame)
     pt = MT.MyTable(
         self.tree_frame,
-        width=wid,
-        height=int(hei * (hei_Par * 0.85)),
+        width=int(wid * 0.95),
+        height=int(hei * (hei_Par * 0.75)),
         sticky=tk.N + tk.S + tk.W + tk.E,
     )  # テーブルをサブクラス化
     enc = CSVO.getFileEncoding(self.FileName)
@@ -39,12 +40,14 @@ def create_Frame(self, wid, hei, t_font, hei_Par):
     config.apply_options(options, self.pt)
     # DF型変換------------------------------
     PandasAstype(self.pt.model.df)
+    Pandas_mem_usage(self.pt.model.df)
     # --------------------------------------
+    self.pt.resized
     self.pt.show()
 
 
 # メインフレーム######################################################################################
-def create_Frame2(self, wid, hei, CSVList, t_font, G_logger):
+def create_Frame2(self, wid, hei, CSVList, t_font, hei_Par, G_logger):
     # ツリーフレーム設定---------------------------------------------------------------------
     self.OCR_frame2 = tk.Frame(
         self.Main_Frame, width=wid, height=hei, bd=2, bg="#fce4d2", relief=tk.RIDGE
@@ -62,8 +65,8 @@ def create_Frame2(self, wid, hei, CSVList, t_font, G_logger):
     # pt = Table(self.tree_frame)
     pt2 = MT.MyTable(
         self.tree_frame2,
-        width=wid,
-        height=int(hei * 0.85),
+        width=int(wid * 0.95),
+        height=int(hei * (hei_Par * 0.75)),
         sticky=tk.N + tk.S + tk.W + tk.E,
     )  # テーブルをサブクラス化
     self.pt2 = pt2
@@ -76,6 +79,7 @@ def create_Frame2(self, wid, hei, CSVList, t_font, G_logger):
         config.apply_options(options, self.pt2)
         # DF型変換------------------------------
         PandasAstype(self.pt2.model.df)
+        Pandas_mem_usage(self.pt2.model.df)
         # --------------------------------------
         self.pt2.show()
 
@@ -96,7 +100,56 @@ def PandasAstype(P_df):
             P_df[ptcItem] = P_df[ptcItem].astype(int)
             P_df[ptcItem] = P_df[ptcItem].astype(str)
             P_df[ptcItem] = P_df[ptcItem].replace("0", "")
+        elif "object" == ptc_n.name:
+            P_df[ptcItem] = P_df[ptcItem].astype(str)
+
     # --------------------------------------
+
+
+# -------------------------------------------------------------------------------------
+def Pandas_mem_usage(df):
+    """
+    Pandasデータフレームのメモリ最適化
+    """
+    start_mem = df.memory_usage().sum() / 1024**2
+    print("Memory usage of dataframe is {:.2f} MB".format(start_mem))
+
+    for col in df.columns:
+        col_type = df[col].dtype
+
+        if col_type != object:
+            c_min = df[col].min()
+            c_max = df[col].max()
+            if str(col_type)[:3] == "int":
+                if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                    df[col] = df[col].astype(np.int8)
+                elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
+                    df[col] = df[col].astype(np.int16)
+                elif c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
+                    df[col] = df[col].astype(np.int32)
+                elif c_min > np.iinfo(np.int64).min and c_max < np.iinfo(np.int64).max:
+                    df[col] = df[col].astype(np.int64)
+            else:
+                if (
+                    c_min > np.finfo(np.float16).min
+                    and c_max < np.finfo(np.float16).max
+                ):
+                    df[col] = df[col].astype(np.float16)
+                elif (
+                    c_min > np.finfo(np.float32).min
+                    and c_max < np.finfo(np.float32).max
+                ):
+                    df[col] = df[col].astype(np.float32)
+                else:
+                    df[col] = df[col].astype(np.float64)
+        else:
+            df[col] = df[col].astype("category")
+
+    end_mem = df.memory_usage().sum() / 1024**2
+    print("Memory usage after optimization is: {:.2f} MB".format(end_mem))
+    print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
+
+    return df
 
 
 # -------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
-# import tkinter as tk
-from tkinter import *
+import tkinter as tk
+
+# from tkinter import *
 
 # from pandastable import Table, TableModel, config
 
@@ -9,7 +10,8 @@ from csv import QUOTE_NONNUMERIC
 # import DataGrid as DG
 import pandas as pd
 import os
-from CSVOut import getFileEncoding
+import numpy as np
+from chardet.universaldetector import UniversalDetector
 
 
 class MyTable(Table):
@@ -72,8 +74,8 @@ class MyTable(Table):
         """Handle arrow keys press"""
         # print event.keysym
 
-        row = self.get_row_clicked(event)
-        col = self.get_col_clicked(event)
+        self.hand_row = self.get_row_clicked(event)
+        self.hand_col = self.get_col_clicked(event)
         x, y = self.getCanvasPos(self.currentrow, self.currentcol - 1)
         rmin = self.visiblerows[0]
         rmax = self.visiblerows[-1] - 2
@@ -81,7 +83,7 @@ class MyTable(Table):
         cmin = self.visiblecols[0]
         FirstPos = self.currentrow
 
-        if x == None:
+        if x is None:
             return
 
         if event.keysym == "Up":
@@ -126,35 +128,36 @@ class MyTable(Table):
             self.redraw()
 
         self.drawSelectedRect(self.currentrow, self.currentcol)
-        coltype = self.model.getColumnType(self.currentcol)
+        self.hand_coltype = self.model.getColumnType(self.currentcol)
         return
 
     # --------------------------------------------------------------------
     def drawCellEntry(self, row, col, text=None):
         """When the user single/double clicks on a text/number cell,
         bring up entry window and allow edits."""
-        if self.editable == False:
+        if self.editable is False:
             return
         h = self.rowheight
-        model = self.model
+        self.draw_model = self.model
         text = self.model.getValueAt(row, col)
         if pd.isnull(text):
             text = ""
         x1, y1, x2, y2 = self.getCellCoords(row, col)
         w = x2 - x1
-        txtvar = StringVar()
+        txtvar = tk.StringVar()
         txtvar.set(text)
+        self.F_stack.append(str(text))
         # 代入テキストウィンドウの作成-------------------------------------------------------
-        self.cellentry = Entry(
+        self.cellentry = tk.Entry(
             self.parentframe,
             width=20,
             textvariable=txtvar,
             takefocus=1,
             font=self.thefont,
         )
-        self.cellentry.delete(0, END)
+        self.cellentry.delete(0, tk.END)
         self.cellentry.insert(0, text)
-        self.cellentry.icursor(END)
+        self.cellentry.icursor(tk.END)
         self.cellentry.focus_set()
         self.cellentry.bind("<Return>", lambda x: self.HCE(row, col))
 
@@ -168,9 +171,9 @@ class MyTable(Table):
     def importCSV(self, filename=None, dialog=False, **kwargs):
         """Import from csv file"""
 
-        if self.importpath == None:
+        if self.importpath is None:
             self.importpath = os.getcwd()
-        if filename == None:
+        if filename is None:
             filename = self.model.filedialog.askopenfilename(
                 parent=self.master,
                 defaultextension=".csv",
@@ -184,7 +187,7 @@ class MyTable(Table):
             )
         if not filename:
             return
-        if dialog == True:
+        if dialog is True:
             impdialog = self.model.ImportDialog(self, filename=filename)
             df = impdialog.df
             if df is None:
@@ -208,14 +211,11 @@ class MyTable(Table):
         else:
             df = None
         self.model.setValueAt(value, row, col, df=df)
+        self.L_stack.append(value)
         self.drawText(row, col, value, align=self.align)
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        enc = getFileEncoding(self.importFilePath)
-        self.model.df.to_csv(
-            self.importFilePath, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC
-        )
         return
 
     # --------------------------------------------------------------------
@@ -227,7 +227,7 @@ class MyTable(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
-        if colclicked == None:
+        if colclicked is None:
             return
         self.focus_set()
 
@@ -294,3 +294,94 @@ class MyTable(Table):
             return
 
     # --------------------------------------------------------------------
+    def set_xviews(self, *args):
+        """Set the xview of table and col header"""
+
+        self.xview(*args)
+        self.colheader.xview(*args)
+        self.redrawVisible()
+        return
+
+    # -------------------------------------------------------------------------------------
+    def PandasAstype(self):
+        """
+        Pandasデータフレーム型変換
+        """
+        # DF型変換------------------------------
+        ptc = self.model.df.columns
+        for ptcItem in ptc:
+            ptc_n = self.model.df[ptcItem].dtype
+            if "float" == ptc_n.name:
+                self.model.df[ptcItem].astype(int)
+            elif "float64" == ptc_n.name:
+                self.model.df[ptcItem] = self.model.df[ptcItem].fillna(0)
+                self.model.df[ptcItem] = self.model.df[ptcItem].astype(int)
+                self.model.df[ptcItem] = self.model.df[ptcItem].astype(str)
+                self.model.df[ptcItem] = self.model.df[ptcItem].replace("0", "")
+        # --------------------------------------
+        return
+
+    # -------------------------------------------------------------------------------------
+    def Pandas_mem_usage(self):
+        """
+        Pandasデータフレームのメモリ最適化
+        """
+        start_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage of dataframe is {:.2f} MB".format(start_mem))
+
+        for col in self.model.df.columns:
+            col_type = self.model.df[col].dtype
+
+            if col_type != object:
+                c_min = self.model.df[col].min()
+                c_max = self.model.df[col].max()
+                if str(col_type)[:3] == "int":
+                    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                        self.model.df[col] = self.model.df[col].astype(np.int8)
+                    elif (
+                        c_min > np.iinfo(np.int16).min
+                        and c_max < np.iinfo(np.int16).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int16)
+                    elif (
+                        c_min > np.iinfo(np.int32).min
+                        and c_max < np.iinfo(np.int32).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int32)
+                    elif (
+                        c_min > np.iinfo(np.int64).min
+                        and c_max < np.iinfo(np.int64).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int64)
+                else:
+                    if (
+                        c_min > np.finfo(np.float16).min
+                        and c_max < np.finfo(np.float16).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.float16)
+                    elif (
+                        c_min > np.finfo(np.float32).min
+                        and c_max < np.finfo(np.float32).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.float32)
+                    else:
+                        self.model.df[col] = self.model.df[col].astype(np.float64)
+            else:
+                self.model.df[col] = self.model.df[col].astype("category")
+
+        end_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage after optimization is: {:.2f} MB".format(end_mem))
+        print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
+
+        return
+
+    # -------------------------------------------------------------------------------------------------------------------------------
+    def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+        detector = UniversalDetector()
+        with open(file_path, mode="rb") as f:
+            for binary in f:
+                detector.feed(binary)
+                if detector.done:
+                    break
+        detector.close()
+        return detector.result["encoding"]
