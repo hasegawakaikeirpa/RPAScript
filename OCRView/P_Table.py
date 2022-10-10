@@ -7,15 +7,17 @@ import re
 import logging.config
 import toml
 import os
-
+import IconCode
 import customtkinter as ck
+import ImageViewer
+import ReplaceView
 
 ###################################################################################################
 class Application(tk.Frame):
     def __init__(self, csvurl, master=None):
-        global SideWidth, SideHeight, LabelWidth
+        global SideWidth, SideHeight, LabelWidth, t_font
         global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
-        global wid_Par, hei_Par
+        global wid_Par, hei_Par, width_of_window, height_of_window, wid, hei
         # Windowの初期設定を行う。
         super().__init__(master)
         # Windowの画面サイズを設定する。
@@ -341,6 +343,41 @@ class Application(tk.Frame):
         self.ChangeL.grid(
             row=0, column=0, columnspan=3, padx=10, pady=5, sticky=tk.N
         )  # 日付列名テキストボックス配置
+        # 置換-------------------------------------------------------------------------
+        self.ChangeL = ck.CTkButton(
+            master=self.Side_Sub2,
+            text="置換起動",
+            command=self.ReadRepView,
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="tomato",
+            text_font=t_font,
+        )
+        self.ChangeL.grid(
+            row=1, column=0, columnspan=3, padx=10, pady=5, sticky=tk.N
+        )  # 日付列名テキストボックス配置
+
+        # OCR抽出ファイル-----------------------------------------------------------
+        self.OCRRead = ck.CTkButton(
+            master=self.Side_Sub2,
+            text="OCR抽出ファイル選択",
+            command=self.OCRFileRead,
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="skyblue",
+            text_font=t_font,
+        )
+        self.OCRRead.grid(
+            row=2, column=0, columnspan=3, padx=10, pady=5, sticky=tk.N
+        )  # 日付列名テキストボックス配置
 
         # 比較対象ファイル複数選択-----------------------------------------------------------
         self.FileRead = ck.CTkButton(
@@ -357,7 +394,7 @@ class Application(tk.Frame):
             text_font=t_font,
         )
         self.FileRead.grid(
-            row=1, column=0, columnspan=3, padx=10, pady=5, sticky=tk.N
+            row=3, column=0, columnspan=3, padx=10, pady=5, sticky=tk.N
         )  # 日付列名テキストボックス配置
         # 比較対象ファイル追加---------------------------------------------------------------
         self.SingleFileRead = ck.CTkButton(
@@ -374,7 +411,7 @@ class Application(tk.Frame):
             text_font=t_font,
         )
         self.SingleFileRead.grid(
-            row=2, column=0, columnspan=3, padx=10, sticky=tk.N
+            row=4, column=0, columnspan=3, padx=10, sticky=tk.N
         )  # 日付列名テキストボックス配置
         # #######################################################################################
         # Side_Sub3##############################################################################
@@ -419,12 +456,34 @@ class Application(tk.Frame):
         # 列名テキストボックス--------------------------------------------------------------
         ck.CTkLabel(
             master=self.Side_Sub4,
-            text="OCR抽出結果表列名",
+            text="OCR抽出結果表URL",
             width=LabelWidth,
             height=LabelHeight,
             corner_radius=8,
             text_font=t_font,
         ).grid(row=0, column=0)
+        self.OCR_url = ck.CTkEntry(
+            master=self.Side_Sub4,
+            width=int(EntWidth * 3),
+            height=EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+            text_font=t_font,
+        )
+        self.OCR_url.insert(0, csv_u)
+        self.OCR_url.grid(
+            row=0, column=1, padx=5, pady=5, sticky=tk.W
+        )  # OCR抽出結果表列名テキストボックス配置
+        ck.CTkLabel(
+            master=self.Side_Sub4,
+            text="OCR抽出結果表列名",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+            text_font=t_font,
+        ).grid(row=1, column=0)
         self.OCR_col = ck.CTkEntry(
             master=self.Side_Sub4,
             width=int(EntWidth * 3),
@@ -443,7 +502,7 @@ class Application(tk.Frame):
             self.OCR_col.insert(0, "")  # OCR抽出結果表列名テキストボックスに文字代入
         self.OCR_col.bind("<Return>", self.OCRtxtCol)
         self.OCR_col.grid(
-            row=0, column=1, padx=5, pady=5, sticky=tk.W
+            row=1, column=1, padx=5, pady=5, sticky=tk.W
         )  # OCR抽出結果表列名テキストボックス配置
         # 列名テキストボックス--------------------------------------------------------------
         ck.CTkLabel(
@@ -453,7 +512,7 @@ class Application(tk.Frame):
             height=LabelHeight,
             corner_radius=8,
             text_font=t_font,
-        ).grid(row=1, column=0)
+        ).grid(row=2, column=0)
         self.Diff_col = ck.CTkEntry(
             master=self.Side_Sub4,
             width=int(EntWidth * 3),
@@ -473,7 +532,30 @@ class Application(tk.Frame):
             self.Diff_col.insert(0, "")  # OCR抽出結果表列名テキストボックスに文字代入
         self.Diff_col.bind("<Return>", self.DifftxtCol)
         self.Diff_col.grid(
-            row=1, column=1, padx=5, pady=5, sticky=tk.W
+            row=2, column=1, padx=5, pady=5, sticky=tk.W
+        )  # 入金列名テキストボックス配置
+        # 画像ファイルテキストボックス--------------------------------------------------------------
+        ck.CTkLabel(
+            master=self.Side_Sub4,
+            text="画像ファイル",
+            width=LabelWidth,
+            height=LabelHeight,
+            corner_radius=8,
+            text_font=t_font,
+        ).grid(row=3, column=0)
+        self.Img_url = ck.CTkEntry(
+            master=self.Side_Sub4,
+            width=int(EntWidth * 3),
+            height=EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+            text_font=t_font,
+        )
+        self.Img_url.insert(0, imgurl)
+        self.Img_url.grid(
+            row=3, column=1, padx=5, pady=5, sticky=tk.W
         )  # 入金列名テキストボックス配置
         # #######################################################################################
         # Side_Sub5##############################################################################
@@ -521,6 +603,23 @@ class Application(tk.Frame):
         self.SingleSearchBtn.grid(
             row=1, column=0, pady=5, padx=10, sticky=tk.NSEW
         )  # 日付列名テキストボックス配置
+        # 読込ボタン--------------------------------------------------------------
+        self.ImgOpen = ck.CTkButton(
+            master=self.Side_Sub5,
+            text="画像ビューワー起動",
+            command=self.ReadImg,
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="purple",
+            text_font=t_font,
+        )
+        self.ImgOpen.grid(
+            row=2, column=0, pady=5, padx=10, sticky=tk.NSEW
+        )  # 日付列名テキストボックス配置
         # 戻るボタン--------------------------------------------------------------
         self.ReturnBackBtn = ck.CTkButton(
             master=self.Side_Sub5,
@@ -536,7 +635,7 @@ class Application(tk.Frame):
             text_font=t_font,
         )
         self.ReturnBackBtn.grid(
-            row=2, column=0, pady=5, padx=10, sticky=tk.NSEW
+            row=3, column=0, pady=5, padx=10, sticky=tk.NSEW
         )  # 日付列名テキストボックス配置
         # フレーム設定---------------------------------------------------------------------
         DGF.create_Frame2(
@@ -545,11 +644,59 @@ class Application(tk.Frame):
             int(height_of_window / hei),
             list(self.module),
             t_font,
+            hei_Par,
             G_logger,
         )  # OCR抽出結果表フレーム
+        # フレーム設定---------------------------------------------------------------------
+        self.IMG_frame = tk.Frame(
+            self.Main_Frame,
+            width=int(width_of_window / wid),
+            height=int(height_of_window / hei),
+            bd=2,
+            bg="#fce4d2",
+            relief=tk.RIDGE,
+        )  # 親フレーム
+        self.IMG_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.IMG_frame.pack_forget()
+        self.Img_c = 0
+        self.update()
+
+    # ----------------------------------------------------------------------
+    def ReadRepView(self):
+        """
+        置換フレーム起動
+        """
+        try:
+            self.RView = ReplaceView.Main(self, csv_u)
+        except:
+            tk.messagebox.showinfo("確認", " 置換フレーム起動エラーです。")
+
+    # -------------------------------------------------------------------------------------
+    def ReadImg(self):
+        """
+        画像フレーム起動
+        """
+        try:
+            if self.Img_c != 1:
+                self.OCR_frame2.pack_forget()
+                self.IMG_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+                try:
+                    print(self.IView.master)
+                except:
+                    self.IView = ImageViewer.call(imgurl, self.IMG_frame)
+                self.Img_c = 1
+            else:
+                self.IMG_frame.pack_forget()
+                self.OCR_frame2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+                self.Img_c = 0
+        except:
+            tk.messagebox.showinfo("確認", " 画像フレーム起動エラーです。")
 
     # -------------------------------------------------------------------------------------
     def radioclick(self):
+        """
+        ラジオボタン切替
+        """
         if self.select_var.get() == 1:
             self.SplitVar.configure(bg="gray10", state="readonly")
             self.In_v.configure(bg="gray10", state="readonly")
@@ -557,6 +704,7 @@ class Application(tk.Frame):
             self.Money_v.configure(bg="gray10", state="readonly")
             self.IMtxt.configure(bg="snow", state="normal")
             self.OMtxt.configure(bg="snow", state="normal")
+            self.update()
         else:
             self.SplitVar.configure(bg="snow", state="normal")
             self.In_v.configure(bg="snow", state="normal")
@@ -564,6 +712,7 @@ class Application(tk.Frame):
             self.Money_v.configure(bg="snow", state="normal")
             self.IMtxt.configure(bg="gray10", state="readonly")
             self.OMtxt.configure(bg="gray10", state="readonly")
+            self.update()
 
     # -------------------------------------------------------------------------------------
     def DifftxtCol(self, event):
@@ -574,6 +723,7 @@ class Application(tk.Frame):
         if len(self.pt2.model.df.columns) == len(ColList):
             self.pt2.model.df.columns = ColList
             DGF.PandasAstype(self.pt2.model.df)
+            DGF.Pandas_mem_usage(self.pt2.model.df)
             self.pt2.show()
         else:
             tk.messagebox.showinfo("確認", "指定列名数と比較ファイルの列数が一致しません。再確認してください。")
@@ -588,6 +738,7 @@ class Application(tk.Frame):
         if len(self.pt.model.df.columns) == len(ColList):
             self.pt.model.df.columns = ColList
             DGF.PandasAstype(self.pt.model.df)
+            DGF.Pandas_mem_usage(self.pt.model.df)
             self.pt.show()
         else:
             tk.messagebox.showinfo("確認", "指定列名数とOCR表の列数が一致しません。再確認してください。")
@@ -637,6 +788,7 @@ class Application(tk.Frame):
                 pt = pd.DataFrame(pt, columns=ptCol)
                 self.pt.model.df = pt
                 DGF.PandasAstype(self.pt.model.df)
+                DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
             else:
                 ptIn = np.array(self.pt.model.df)[:, InM_col]
@@ -660,8 +812,10 @@ class Application(tk.Frame):
                 self.pt.model.df = pt
                 self.pt2.model.df = pt2
                 DGF.PandasAstype(self.pt.model.df)
+                DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
                 DGF.PandasAstype(self.pt2.model.df)
+                DGF.Pandas_mem_usage(self.pt2.model.df)
                 self.pt2.show()
         except:
             tk.messagebox.showinfo("確認", "入金列の書式整理エラーです。")
@@ -684,6 +838,7 @@ class Application(tk.Frame):
                 pt = pd.DataFrame(pt, columns=ptCol)
                 self.pt.model.df = pt
                 DGF.PandasAstype(self.pt.model.df)
+                DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
             else:
                 ptOut = np.array(self.pt.model.df)[:, OutM_col]
@@ -707,8 +862,10 @@ class Application(tk.Frame):
                 self.pt.model.df = pt
                 self.pt2.model.df = pt2
                 DGF.PandasAstype(self.pt.model.df)
+                DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
                 DGF.PandasAstype(self.pt2.model.df)
+                DGF.Pandas_mem_usage(self.pt2.model.df)
                 self.pt2.show()
         except:
             tk.messagebox.showinfo("確認", "出金列の書式整理エラーです。")
@@ -731,6 +888,7 @@ class Application(tk.Frame):
                 pt = pd.DataFrame(pt, columns=ptCol)
                 self.pt.model.df = pt
                 DGF.PandasAstype(self.pt.model.df)
+                DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
             else:
                 ptDay = np.array(self.pt.model.df)[:, Day_col]
@@ -754,11 +912,39 @@ class Application(tk.Frame):
                 self.pt.model.df = pt
                 self.pt2.model.df = pt2
                 DGF.PandasAstype(self.pt.model.df)
+                DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
                 DGF.PandasAstype(self.pt2.model.df)
+                DGF.Pandas_mem_usage(self.pt2.model.df)
                 self.pt2.show()
         except:
             tk.messagebox.showinfo("確認", "日付列の書式整理エラーです。")
+
+    # -------------------------------------------------------------------------------------
+    def StrCheck(self, col):
+        """
+        文字列の形式を揃える
+        """
+        try:
+            code_regex = re.compile(
+                "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
+            )
+            nptxt = np.array(self.pt.model.df)[:, col]
+            ptCol = np.array(self.pt.model.df.columns)
+            for r in range(nptxt.shape[0]):
+                txt = nptxt[r]
+                if type(txt) == str:
+                    txt = code_regex.sub("", txt)
+                    nptxt[r] = txt
+            pt = np.array(self.pt.model.df)
+            pt[:, col] = nptxt
+            pt = pd.DataFrame(pt, columns=ptCol)
+            self.pt.model.df = pt
+            DGF.PandasAstype(self.pt.model.df)
+            DGF.Pandas_mem_usage(self.pt.model.df)
+            self.pt.show()
+        except:
+            tk.messagebox.showinfo("確認", "文字列の書式整理エラーです。")
 
     # -------------------------------------------------------------------------------------
     def ChangeD_Txt(self, Txt):
@@ -766,87 +952,25 @@ class Application(tk.Frame):
         日付西暦和暦変換
         """
         try:
-            # 日付文字列の変換-----------------------------------------------------
-            if "-" in Txt:
-                TxtSP = Txt.split("-")
-                T_Nen = len(TxtSP[0])
-                if T_Nen <= 2:
-                    print("和暦")
-                    D_str = (
-                        "令和"
-                        + str(TxtSP[0])
-                        + "年"
-                        + str(TxtSP[1])
-                        + "月"
-                        + str(TxtSP[2])
-                        + "日"
-                    )
-                    D_str = wh.SeirekiSTRDate(D_str)
-                elif T_Nen <= 4:
-                    print("西暦")
-                    D_str = TxtSP[0] + "/" + TxtSP[1].zfill(2) + "/" + TxtSP[2].zfill(2)
-                else:
-                    print("西暦")
-            elif "/" in Txt:
-                TxtSP = Txt.split("/")
-                T_Nen = len(TxtSP[0])
-                if T_Nen <= 2:
-                    print("和暦")
-                    D_str = (
-                        "令和"
-                        + str(TxtSP[0])
-                        + "年"
-                        + str(TxtSP[1])
-                        + "月"
-                        + str(TxtSP[2])
-                        + "日"
-                    )
-                    D_str = wh.SeirekiSTRDate(D_str)
-                elif T_Nen <= 4:
-                    print("西暦")
-                    D_str = TxtSP[0] + "/" + TxtSP[1].zfill(2) + "/" + TxtSP[2].zfill(2)
-                else:
-                    print("西暦")
-            elif "_" in Txt:
-                TxtSP = Txt.split("_")
-                T_Nen = len(TxtSP[0])
-                if T_Nen <= 2:
-                    print("和暦")
-                    D_str = (
-                        "令和"
-                        + str(TxtSP[0])
-                        + "年"
-                        + str(TxtSP[1])
-                        + "月"
-                        + str(TxtSP[2])
-                        + "日"
-                    )
-                    D_str = wh.SeirekiSTRDate(D_str)
-                elif T_Nen <= 4:
-                    print("西暦")
-                    D_str = TxtSP[0] + "/" + TxtSP[1].zfill(2) + "/" + TxtSP[2].zfill(2)
-                else:
-                    print("西暦")
-            elif "." in Txt:
-                TxtSP = Txt.split(".")
-                T_Nen = len(TxtSP[0])
-                if T_Nen <= 2:
-                    print("和暦")
-                    D_str = (
-                        "令和"
-                        + str(TxtSP[0])
-                        + "年"
-                        + str(TxtSP[1])
-                        + "月"
-                        + str(TxtSP[2])
-                        + "日"
-                    )
-                    D_str = wh.SeirekiSTRDate(D_str)
-                elif T_Nen <= 4:
-                    print("西暦")
-                    D_str = TxtSP[0] + "/" + TxtSP[1].zfill(2) + "/" + TxtSP[2].zfill(2)
-                else:
-                    print("西暦")
+            TxtSP = re.findall(r"\d+", Txt)
+            T_Nen = len(TxtSP[0])
+            if T_Nen <= 2:
+                print("和暦")
+                D_str = (
+                    "令和"
+                    + str(TxtSP[0])
+                    + "年"
+                    + str(TxtSP[1])
+                    + "月"
+                    + str(TxtSP[2])
+                    + "日"
+                )
+                D_str = wh.SeirekiSTRDate(D_str)
+            elif T_Nen <= 4:
+                print("西暦")
+                D_str = TxtSP[0] + "/" + TxtSP[1].zfill(2) + "/" + TxtSP[2].zfill(2)
+            else:
+                print("西暦")
             return True, D_str
         except:
             return False, ""
@@ -1062,6 +1186,7 @@ class Application(tk.Frame):
             pt = pd.DataFrame(pt, columns=ptCol)
             self.pt.model.df = pt
             DGF.PandasAstype(self.pt.model.df)
+            DGF.Pandas_mem_usage(self.pt.model.df)
             self.pt.show()
         except:
             tk.messagebox.showinfo("確認", "比較ファイルが指定されていません。")
@@ -1081,6 +1206,11 @@ class Application(tk.Frame):
         if JCSV[0] is True:
             self.pt2.model.df = JCSV[1]
             try:
+                if self.Img_c != 0:
+                    self.canvas.pack_forget()
+                    self.Img_frame.pack_forget()
+                    self.OCR_frame2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+                    self.Img_c = 0
                 print(self.pt2.model.df.columns)
                 self.ColumnsDelete(self.pt)
                 if len(self.pt.model.df.columns) == len(self.pt2.model.df.columns):
@@ -1093,6 +1223,7 @@ class Application(tk.Frame):
                 self.Diff_col.delete(0, tk.END)
                 self.Diff_col.insert(0, "")  # OCR抽出結果表列名テキストボックスに文字代入
             DGF.PandasAstype(self.pt2.model.df)
+            DGF.Pandas_mem_usage(self.pt2.model.df)
             self.pt2.show()
 
     # -------------------------------------------------------------------------------------
@@ -1108,6 +1239,11 @@ class Application(tk.Frame):
         if JCSV[0] is True:
             self.pt2.model.df = JCSV[1]
             try:
+                if self.Img_c != 0:
+                    self.canvas.pack_forget()
+                    self.Img_frame.pack_forget()
+                    self.OCR_frame2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+                    self.Img_c = 0
                 print(self.pt2.model.df.columns)
                 self.ColumnsDelete(self.pt)
                 if len(self.pt.model.df.columns) == len(self.pt2.model.df.columns):
@@ -1120,6 +1256,7 @@ class Application(tk.Frame):
                 self.Diff_col.delete(0, tk.END)
                 self.Diff_col.insert(0, "")  # OCR抽出結果表列名テキストボックスに文字代入
             DGF.PandasAstype(self.pt2.model.df)
+            DGF.Pandas_mem_usage(self.pt2.model.df)
             self.pt2.show()
 
     # -------------------------------------------------------------------------------------
@@ -1127,13 +1264,10 @@ class Application(tk.Frame):
         """
         ウィンドウ×ボタンクリック
         """
-        self.top.withdraw()
         if tk.messagebox.askokcancel("確認", "終了しますか？"):
-            self.top.destroy()
             self.master.destroy()
             G_logger.debug("TKINTERCV2SettingClose完了")  # Log出力
         else:
-            self.top.deiconify()
             G_logger.debug("TKINTERCV2SettingClose失敗")  # Log出力
 
     # -------------------------------------------------------------------------------------
@@ -1151,17 +1285,20 @@ class Application(tk.Frame):
             if ptDF[0] is True:
                 self.pt2.model.df = ptDF[1]
                 DGF.PandasAstype(self.pt2.model.df)
+                DGF.Pandas_mem_usage(self.pt2.model.df)
                 self.pt2.show()
             ptDF = self.SingleSplit_Sub(self.pt.model.df, In_v, Out_v, Money_v, S_Var)
             if ptDF[0] is True:
                 self.pt.model.df = ptDF[1]
                 DGF.PandasAstype(self.pt.model.df)
+                DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
         except:
             ptDF = self.SingleSplit_Sub(self.pt.model.df, In_v, Out_v, Money_v, S_Var)
             if ptDF[0] is True:
                 self.pt.model.df = ptDF[1]
                 DGF.PandasAstype(self.pt.model.df)
+                DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
 
     # -------------------------------------------------------------------------------------
@@ -1223,35 +1360,70 @@ class Application(tk.Frame):
         データ整理
         """
         if self.DStxt.get() == "":
-            tk.messagebox.showinfo("確認", "日付列名設定がされていません。")
-            return "Day_col", "Day_col2", "OutM_col", "OutM_col2", "InM_col", "InM_col2"
-        elif self.OMtxt.get() == "" and self.select_var.get() == 1:
-            tk.messagebox.showinfo("確認", "出金列名設定がされていません。")
-            return "Day_col", "Day_col2", "OutM_col", "OutM_col2", "InM_col", "InM_col2"
-        elif self.IMtxt.get() == "" and self.select_var.get() == 1:
-            tk.messagebox.showinfo("確認", "入金列名設定がされていません。")
-            return "Day_col", "Day_col2", "OutM_col", "OutM_col2", "InM_col", "InM_col2"
+            if self.select_var.get() == 1:
+                D_c = "Day_col"
+                D_c2 = "Day_col2"
+            else:
+                D_c = "Day_col"
+        else:
+            D_c = "else"
+            D_c2 = "else"
+
+        if self.OMtxt.get() == "":
+            if self.select_var.get() == 1:
+                O_c = "OutM_col"
+                O_c2 = "OutM_col2"
+            else:
+                O_c = "OutM_col"
+        else:
+            O_c = "else"
+            O_c2 = "else"
+
+        if self.IMtxt.get() == "":
+            if self.select_var.get() == 1:
+                I_c = "InM_col"
+                I_c2 = "InM_col2"
+            else:
+                I_c = "InM_col"
+        else:
+            I_c = "else"
+            I_c2 = "else"
+
+        self.ChangeList_sub(D_c, D_c2, O_c, O_c2, I_c, I_c2)
+
+    # -------------------------------------------------------------------------------------
+    def ChangeList_sub(self, Day_col, Day_col2, OutM_col, OutM_col2, InM_col, InM_col2):
         try:
             if self.select_var.get() == 1:
                 self.ColumnsDelete(self.pt)
                 # 　複数----------------------------------------------------------
                 print(self.pt2.model.df.columns)
                 ptcol = np.array(self.pt.model.df.columns)
-                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
-                OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
-                InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
+                if Day_col != "Day_col":
+                    Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+                if OutM_col != "OutM_col":
+                    OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
+                if InM_col != "InM_col":
+                    InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
+
                 ptcol2 = np.array(self.pt2.model.df.columns)
-                Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
-                OutM_col2 = int(np.where(ptcol2 == self.OMtxt.get())[0])
-                InM_col2 = int(np.where(ptcol2 == self.IMtxt.get())[0])
+                if Day_col2 != "Day_col2":
+                    Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
+                if OutM_col2 != "OutM_col2":
+                    OutM_col2 = int(np.where(ptcol2 == self.OMtxt.get())[0])
+                if InM_col2 != "InM_col2":
+                    InM_col2 = int(np.where(ptcol2 == self.IMtxt.get())[0])
+
                 ptarray = np.array(self.pt.model.df)
                 for c in range(ptarray.shape[1]):
-                    if c == Day_col:
+                    if c == Day_col and Day_col != "Day_col":
                         self.DaysCheck(Day_col, Day_col2)
-                    elif c == OutM_col:
+                    elif c == OutM_col and OutM_col != "OutM_col":
                         self.OutMCheck(OutM_col, OutM_col2)
-                    elif c == InM_col:
+                    elif c == InM_col and InM_col != "InM_col":
                         self.InMCheck(InM_col, InM_col2)
+                    else:
+                        self.StrCheck(c)
                 return Day_col, Day_col2, OutM_col, OutM_col2, InM_col, InM_col2
             else:
                 self.ColumnsDelete(self.pt)
@@ -1267,6 +1439,8 @@ class Application(tk.Frame):
                 for c in range(ptarray.shape[1]):
                     if c == Day_col:
                         self.DaysCheck(Day_col, Day_col2)
+                    else:
+                        self.StrCheck(c)
                 self.SingleSplit()
 
                 ptcol = np.array(self.pt.model.df.columns)
@@ -1286,7 +1460,6 @@ class Application(tk.Frame):
                         self.OutMCheck(OutM_col, OutM_col2)
                     elif c == InM_col:
                         self.InMCheck(InM_col, InM_col2)
-
                 return Day_col, Day_col2, OutM_col, OutM_col2, InM_col, InM_col2
         except:
             if self.select_var.get() == 1:
@@ -1301,6 +1474,9 @@ class Application(tk.Frame):
                 for c in range(ptarray.shape[1]):
                     if c == Day_col:
                         self.DaysCheck(Day_col, "Day_col2")
+                    else:
+                        self.StrCheck(c)
+
                 return Day_col, "Day_col2", OutM_col, "OutM_col2", InM_col, "InM_col2"
             else:
                 self.ColumnsDelete(self.pt)
@@ -1312,6 +1488,8 @@ class Application(tk.Frame):
                 for c in range(ptarray.shape[1]):
                     if c == Day_col:
                         self.DaysCheck(Day_col, "Day_col2")
+                    else:
+                        self.StrCheck(c)
                 self.SingleSplit()
                 return (
                     Day_col,
@@ -1331,6 +1509,28 @@ class Application(tk.Frame):
         C_MT.deiconify()
         C_TP.deiconify()
 
+    def OCRFileRead(self):
+        # ファイル→開く
+        filename = tk.filedialog.askopenfilename(
+            filetypes=[
+                ("CSV", ".csv"),
+            ],  # ファイルフィルタ
+            initialdir=os.getcwd(),  # カレントディレクトリ
+        )
+        self.FileName = filename
+        if filename != "":
+            enc = DGF.CSVO.getFileEncoding(self.FileName)
+            self.table = self.pt.importCSV(self.FileName, encoding=enc)
+            options = {"fontsize": t_font[1]}
+            DGF.config.apply_options(options, self.pt)
+            # DF型変換------------------------------
+            DGF.PandasAstype(self.pt.model.df)
+            DGF.Pandas_mem_usage(self.pt.model.df)
+            # --------------------------------------
+            self.pt.show()
+            self.OCR_url.delete(0, tk.END)
+            self.OCR_url.insert(0, self.FileName)
+
 
 # ---------------------------------------------------------------------------------------------
 def tomlread():
@@ -1346,13 +1546,13 @@ def tomlread():
 
 
 # -------------------------------------------------------------------------------------
-def Main(MUI, US, tom, logger, MT, TP):
+def Main(MUI, US, tom, logger, MT, TP, imgu):
     """
     呼出関数
     """
     global Master, csv_u
     global G_logger, C_MT, C_TP
-    global Banktoml, tomlurl, PlusCol
+    global Banktoml, tomlurl, PlusCol, imgurl
 
     Master = MUI
     C_MT = MT
@@ -1360,14 +1560,12 @@ def Main(MUI, US, tom, logger, MT, TP):
     csv_u = US
     Banktoml = tom
     G_logger = logger
+    imgurl = imgu
     PlusCol = "比較対象行番号"
     # -----------------------------------------------------------
     root = tk.Tk()  # Window生成
-    try:
-        iconfile = os.getcwd() + r"\OCRView\OCR.png"
-    except:
-        iconfile = os.getcwd() + r"\OCR.png"
-    root.iconphoto(False, tk.PhotoImage(file=iconfile))
+    data = IconCode.icondata()
+    root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
     app = Application(csvurl=csv_u, master=root)
     # --- 基本的な表示準備 ----------------
 
@@ -1381,11 +1579,13 @@ if __name__ == "__main__":
     G_logger = logging.getLogger(__name__)
     # ---------------------------------------------------------------------------------------------------------------
 
-    global Banktoml, tomlurl, PlusCol
+    global Banktoml, tomlurl, PlusCol, imgurl
     URL = os.getcwd()
-    imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.png"
+    # imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.png"
+    imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
     tomlurl = tomlread()
-    csv_u = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.csv"
+    # csv_u = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.csv"
+    csv_u = r"C:/Users/もちねこ/Desktop/PDFTEST/JA_1page_AutoJounal.csv"
     PlusCol = "比較対象行番号"
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
@@ -1394,11 +1594,8 @@ if __name__ == "__main__":
     # -----------------------------------------------------------
     # -----------------------------------------------------------
     root = tk.Tk()  # Window生成
-    try:
-        iconfile = os.getcwd() + r"\OCRView\OCR.png"
-    except:
-        iconfile = os.getcwd() + r"\OCR.png"
-    root.iconphoto(False, tk.PhotoImage(file=iconfile))
+    data = IconCode.icondata()
+    root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
     app = Application(csvurl=csv_u, master=root)
     # --- 基本的な表示準備 ----------------
 
