@@ -154,7 +154,7 @@ class Application(tk.Toplevel):
         )  # OCR抽出結果表フレーム
         self.sql_data = CreateDB(dbname, tbname)
         self.sql_data.readsql(dbname, tbname, self.P_table)
-        m.update()
+        # m.update()
 
     # -------------------------------------------------------------------------------------
     def Read_P_Table(self, Frame, width, height, t_font):
@@ -281,9 +281,19 @@ class CreateDB:
         cur = conn.cursor()
 
         # terminalで実行したSQL文と同じようにexecute()に書く
-        df = pd.read_sql_query("SELECT * FROM " + tbname, conn)
-        Pandas_T.model.df = df
-        Pandas_T.show()
+        try:
+            df = pd.read_sql_query("SELECT * FROM " + tbname, conn)
+            Pandas_T.model.df = df
+            Pandas_T.show()
+        except:
+            df = pd.DataFrame(
+                data={
+                    "変更前": ["変更前_文字列"],
+                    "変更後": ["変更後_文字列"],
+                }
+            )
+            Pandas_T.model.df = df
+            Pandas_T.show()
         cur.close()
         conn.close()
 
@@ -337,8 +347,9 @@ def Main(self, csv_u):
     dbname = "ReplaceView.db"
     # -----------------------------------------------------------
     self.top = tk.Toplevel()  # サブWindow作成
-    Application(self.top, self.master)
+    app = Application(self.top, self.master)
     CreateDB(dbname, tbname)
+    CreateDB.readsql(self, dbname, tbname, app.P_table)
     return self.top
 
 

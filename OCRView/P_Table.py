@@ -675,17 +675,29 @@ class Application(tk.Frame):
         置換フレーム起動
         """
         try:
+            m = self.children_get()
+            m.ColumnHeader = ["変更前", "変更後"]
+            self.RView.destroy()
+            self.RView = ReplaceView.Main(self, csv_u)  # 置換テーブルの読込
+            # ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
+            self.RView.update()
+        except:
+            tk.messagebox.showinfo("確認", " 置換フレーム起動エラーです。")
+
+    # ----------------------------------------------------------------------
+    def children_get(self):
+        """
+        置換フレームからテーブル取得
+        """
+        try:
             m = self.RView
             m = m.children["!frame"]
             m = m.children["!frame2"]
             m = m.children["!mytablesql"]
             m.ColumnHeader = ["変更前", "変更後"]
-            ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
-            self.RView.destroy()
-            self.RView = ReplaceView.Main(self, csv_u)  # 置換テーブルの読込
-            self.RView.update()
+            return m
         except:
-            tk.messagebox.showinfo("確認", " 置換フレーム起動エラーです。")
+            return False
 
     # -------------------------------------------------------------------------------------
     def ReadImg(self):
@@ -1383,11 +1395,7 @@ class Application(tk.Frame):
         """
 
         try:
-            m = self.RView
-            m = m.children["!frame"]
-            m = m.children["!frame2"]
-            m = m.children["!mytablesql"]
-            m.ColumnHeader = ["変更前", "変更後"]
+            m = self.children_get()
             ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
             self.RView_df = m.model.df
         except:
@@ -1568,6 +1576,8 @@ class Application(tk.Frame):
             initialdir=os.getcwd(),  # カレントディレクトリ
         )
         self.FileName = filename
+        self.OCR_dbname = "ReplaceView.db"
+        self.OCR_tbname = os.path.splitext(os.path.basename(self.FileName))[0]
         if filename != "":
             enc = DGF.CSVO.getFileEncoding(self.FileName)
             self.table = self.pt.importCSV(self.FileName, encoding=enc)
@@ -1577,8 +1587,15 @@ class Application(tk.Frame):
             DGF.Pandas_mem_usage(self.pt.model.df)
             # --------------------------------------
             self.pt.show()
+            self.pt.update()
             self.OCR_url.delete(0, tk.END)
             self.OCR_url.insert(0, self.FileName)
+            m = self.children_get()
+
+            self.RView.destroy()
+            self.RView = ReplaceView.Main(self, csv_u)  # 置換テーブルの読込
+            # ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
+            self.RView.update()
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1630,11 +1647,11 @@ if __name__ == "__main__":
 
     global Banktoml, tomlurl, PlusCol, imgurl
     URL = os.getcwd()
-    imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.png"
-    # imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
+    # imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.png"
+    imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
     tomlurl = tomlread()
-    csv_u = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.csv"
-    # csv_u = r"C:/Users/もちねこ/Desktop/PDFTEST/JA_1page_AutoJounal.csv"
+    # csv_u = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.csv"
+    csv_u = r"C:/Users/もちねこ/Desktop/PDFTEST/JA_1page_AutoJounal.csv"
     PlusCol = "比較対象行番号"
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
