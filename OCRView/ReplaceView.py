@@ -15,25 +15,45 @@ import Frame.MyTableSQL as MyTableSQL
 
 ###################################################################################################
 class Application(tk.Toplevel):
-    def __init__(self, master=None):
+    def __init__(self, Top, master=None):
         global SideWidth, SideHeight, LabelWidth, t_font
         global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
         global wid_Par, hei_Par, width_of_window, height_of_window, wid, hei
-        # Windowの初期設定を行う。
-        super().__init__(master)
-        # Windowの画面サイズを設定する。
-        # G_logger.debug("ReplaceView起動")  # Log出力
+        f = False
+        m = Top
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m = m.children["!application"]
+                break
         # customtkスタイル
         ck.set_appearance_mode("System")  # Modes: system (default), light, dark
         ck.set_default_color_theme(
             "dark-blue"
         )  # Themes: blue (default), dark-blue, green
-        width_of_window = int(int(self.master.winfo_screenwidth()) * 0.95)
-        height_of_window = int(int(self.master.winfo_screenheight()) * 0.90)
+        width_of_window = int(int(m.winfo_screenwidth()) * 0.5)
+        height_of_window = int(int(m.winfo_screenheight()) * 0.7)
+        # wid_Par = width_of_window / 1459
+        # hei_Par = height_of_window / 820
+        x_coodinate = width_of_window * 0.9
+        y_coodinate = height_of_window * 0.01
+        data = IconCode.icondata()
+        Top.tk.call("wm", "iconphoto", Top._w, tk.PhotoImage(data=data))
+        Top.minsize(width_of_window, height_of_window)
+        Top.protocol("WM_DELETE_WINDOW", lambda: self.Rep_click_close(Top))  # 閉じる処理設定
+        Top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
+        # Top.resizable(0, 0)
+        Top.minsize(width_of_window, height_of_window)
+        width_of_window = int(int(m.winfo_screenwidth()) * 0.95)
+        height_of_window = int(int(m.winfo_screenheight()) * 0.90)
         wid_Par = width_of_window / 1459
         hei_Par = height_of_window / 820
         x_coodinate = width_of_window * 0.01
         y_coodinate = height_of_window * 0.01
+        Top.geometry(
+            "%dx%d+%d+%d"
+            % (width_of_window, height_of_window, x_coodinate, y_coodinate)
+        )
         ########################################
         wid = 2.25  # width割率
         hei = 1.4  # width割率
@@ -51,7 +71,7 @@ class Application(tk.Toplevel):
         t_font = (1, int(10 * wid_Par))
         ################################################################################
         self.Main_Frame = tk.Frame(
-            self.master,
+            m.top,
             width=width_of_window,
             height=height_of_window,
             bg="#fabd91",
@@ -134,25 +154,25 @@ class Application(tk.Toplevel):
         )  # OCR抽出結果表フレーム
         self.sql_data = CreateDB(dbname, tbname)
         self.sql_data.readsql(dbname, tbname, self.P_table)
-        self.master.update()
+        m.update()
 
     # -------------------------------------------------------------------------------------
     def Read_P_Table(self, Frame, width, height, t_font):
-        pt = MyTableSQL.MyTableSQL(
+        r_pt = MyTableSQL.MyTableSQL(
             Frame,
             width=width,
             height=height,
             sticky=tk.N + tk.S + tk.W + tk.E,
         )  # テーブルをサブクラス化
         # enc = getFileEncoding(csv_url)
-        # pt.importCSV(csv_url, encoding=enc)
-        pt._name = "OCR抽出結果表Main"
+        # r_pt.importCSV(csv_url, encoding=enc)
+        r_pt._name = "SQLMain"
         # options is a dict that you can set yourself
         options = {"fontsize": t_font[1]}
-        DGF.config.apply_options(options, pt)
-        pt.resized
-        pt.show()
-        return pt
+        DGF.config.apply_options(options, r_pt)
+        r_pt.resized
+        r_pt.show()
+        return r_pt
 
     # -------------------------------------------------------------------------------------
     def FileOpen(self):
@@ -165,23 +185,20 @@ class Application(tk.Toplevel):
             ],  # ファイルフィルタ
             initialdir=os.getcwd(),  # カレントディレクトリ
         )
-        tbname = csv_url.split(r"/")[len(csv_url.split(r"/")) - 1].replace(".csv", "")
+        tbname = os.path.splitext(os.path.basename(csv_url))[0]
         self.sql_data.CsvConvert(csv_url, dbname, tbname)
         self.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
 
     # -------------------------------------------------------------------------------------
-    def click_close(self):
+    def Rep_click_close(self, Win):
         """
         ウィンドウ×ボタンクリック
         """
-        self.top.withdraw()
-        if tk.messagebox.askokcancel("確認", "終了しますか？"):
-            self.top.destroy()
-            self.master.destroy()
-            G_logger.debug("TKINTERCV2SettingClose完了")  # Log出力
-        else:
-            self.top.deiconify()
-            G_logger.debug("TKINTERCV2SettingClose失敗")  # Log出力
+        try:
+            Win.withdraw()
+            # G_logger.debug("ReplaceView完了")  # Log出力
+        except:
+            G_logger.debug("ReplaceView失敗")  # Log出力
 
 
 # ---------------------------------------------------------------------------------------------
@@ -276,7 +293,7 @@ class CreateDB:
         cur = conn.cursor()
 
         # データの投入
-        df.to_sql(tbname, conn, if_exists="replace")
+        df.to_sql(tbname, conn, if_exists="replace", index=False)
         cur.close()
         conn.close()
 
@@ -295,7 +312,7 @@ class CreateDB:
 
         # dbのnameをsampleとし、読み込んだcsvファイルをsqlに書き込む
         # if_existsで、もしすでにexpenseが存在していたら、書き換えるように指示
-        df.to_sql(tbname, conn, if_exists="replace")
+        df.to_sql(tbname, conn, if_exists="replace", index=False)
 
         # 作成したデータベースを1行ずつ見る
         select_sql = "SELECT * FROM " + tbname
@@ -316,28 +333,13 @@ def Main(self, csv_u):
     global Banktoml, tomlurl, PlusCol, imgurl
 
     csv_url = csv_u
-    tbname = csv_url.split(r"/")[len(csv_url.split(r"/")) - 1].replace(".csv", "")
+    tbname = os.path.splitext(os.path.basename(csv_url))[0]
     dbname = "ReplaceView.db"
-    width_of_window = int(int(self.master.winfo_screenwidth()) * 0.5)
-    height_of_window = int(int(self.master.winfo_screenheight()) * 0.7)
-    # wid_Par = width_of_window / 1459
-    # hei_Par = height_of_window / 820
-    x_coodinate = width_of_window * 0.9
-    y_coodinate = height_of_window * 0.01
     # -----------------------------------------------------------
     self.top = tk.Toplevel()  # サブWindow作成
-    data = IconCode.icondata()
-    self.top.tk.call("wm", "iconphoto", self.top._w, tk.PhotoImage(data=data))
-    self.top.minsize(width_of_window, height_of_window)
-    self.top.protocol("WM_DELETE_WINDOW", self.click_close)  # 閉じる処理設定
-    self.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
-    self.top.geometry(
-        "%dx%d+%d+%d" % (width_of_window, height_of_window, x_coodinate, y_coodinate)
-    )
-    # self.top.resizable(0, 0)
-    self.top.minsize(width_of_window, height_of_window)
-    Application(self.top)
+    Application(self.top, self.master)
     CreateDB(dbname, tbname)
+    return self.top
 
 
 # ------------------------------------------------------------------------------------------

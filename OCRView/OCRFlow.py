@@ -10,7 +10,6 @@ from csv import reader, QUOTE_NONNUMERIC
 # import numpy as np
 from numpy import asarray, array
 from difflib import SequenceMatcher
-from mojimoji import han_to_zen
 import CSVOut as CSVO
 import re
 

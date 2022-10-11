@@ -39,7 +39,6 @@ def create_Frame(self, wid, hei, t_font, hei_Par):
     options = {"fontsize": t_font[1]}
     config.apply_options(options, self.pt)
     # DF型変換------------------------------
-    PandasAstype(self.pt.model.df)
     Pandas_mem_usage(self.pt.model.df)
     # --------------------------------------
     self.pt.resized
@@ -78,32 +77,9 @@ def create_Frame2(self, wid, hei, CSVList, t_font, hei_Par, G_logger):
         options = {"fontsize": t_font[1]}
         config.apply_options(options, self.pt2)
         # DF型変換------------------------------
-        PandasAstype(self.pt2.model.df)
         Pandas_mem_usage(self.pt2.model.df)
         # --------------------------------------
         self.pt2.show()
-
-
-# -------------------------------------------------------------------------------------
-def PandasAstype(P_df):
-    """
-    Pandasデータフレーム型変換
-    """
-    # DF型変換------------------------------
-    ptc = P_df.columns
-    for ptcItem in ptc:
-        ptc_n = P_df[ptcItem].dtype
-        if "float" == ptc_n.name:
-            P_df[ptcItem].astype(int)
-        elif "float64" == ptc_n.name:
-            P_df[ptcItem] = P_df[ptcItem].fillna(0)
-            P_df[ptcItem] = P_df[ptcItem].astype(int)
-            P_df[ptcItem] = P_df[ptcItem].astype(str)
-            P_df[ptcItem] = P_df[ptcItem].replace("0", "")
-        elif "object" == ptc_n.name:
-            P_df[ptcItem] = P_df[ptcItem].astype(str)
-
-    # --------------------------------------
 
 
 # -------------------------------------------------------------------------------------
@@ -134,16 +110,20 @@ def Pandas_mem_usage(df):
                     c_min > np.finfo(np.float16).min
                     and c_max < np.finfo(np.float16).max
                 ):
-                    df[col] = df[col].astype(np.float16)
+                    # df[col] = df[col].astype(np.float16)
+                    df[col] = df[col].astype("object")
                 elif (
                     c_min > np.finfo(np.float32).min
                     and c_max < np.finfo(np.float32).max
                 ):
-                    df[col] = df[col].astype(np.float32)
+                    # df[col] = df[col].astype(np.float32)
+                    df[col] = df[col].astype("object")
                 else:
-                    df[col] = df[col].astype(np.float64)
+                    # df[col] = df[col].astype(np.float64)
+                    df[col] = df[col].astype("object")
         else:
-            df[col] = df[col].astype("category")
+            df[col] = df[col].astype("object")
+            # df[col] = df[col].astype("category")
 
     end_mem = df.memory_usage().sum() / 1024**2
     print("Memory usage after optimization is: {:.2f} MB".format(end_mem))

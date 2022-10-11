@@ -3,7 +3,6 @@ import tkinter as tk
 # from tkinter import *
 
 # from pandastable import Table, TableModel, config
-
 from pandastable import Table, TableModel
 from csv import QUOTE_NONNUMERIC
 
@@ -54,6 +53,7 @@ class MyTableSQL(Table):
         self.bind("<Control-v>", self.paste)
         self.bind("<Control-a>", self.selectAll)
         self.bind("<Control-f>", self.findText)
+        self.bind("<Control-z>", self.undo)
 
         self.bind("<Right>", self.handle_arrow_keys)
         self.bind("<Left>", self.handle_arrow_keys)
@@ -67,10 +67,9 @@ class MyTableSQL(Table):
         self.bind("<Button-4>", self.mouse_wheel)
         self.bind("<Button-5>", self.mouse_wheel)
         self.focus_set()
-        self.PandasAstype()
-        self.Pandas_mem_usage()
         self.F_stack = []
         self.L_stack = []
+
         return
 
     # --------------------------------------------------------------------
@@ -266,7 +265,7 @@ class MyTableSQL(Table):
         """Do double click stuff. Selected row/cols will already have
         been set with single click binding"""
         # "比較ファイルMain"
-        if event.widget._name == "OCR抽出結果表Main":
+        if event.widget._name == "SQLMain":
             row = self.get_row_clicked(event)
             col = self.get_col_clicked(event)
             if event.widget.model.df.columns[col] == "比較対象行番号":
@@ -298,31 +297,37 @@ class MyTableSQL(Table):
             return
 
     # --------------------------------------------------------------------
+    def handle_left_release(self, event):
+        """Handle left mouse button release event"""
+
+        self.endrow = self.get_row_clicked(event)
+        # df = self.model.df
+        # colname = df.columns[self.currentcol]
+        # dtype = df.dtypes[colname]
+
+        # if dtype.name == "category":
+        #     # drop down menu for category entry
+        #     row = self.get_row_clicked(event)
+        #     col = self.get_col_clicked(event)
+        #     x1, y1, x2, y2 = self.getCellCoords(row, col)
+        #     self.dropvar = tk.StringVar()
+        #     val = self.model.getValueAt(row, col)
+        #     # get categories
+        #     optionlist = list(df[colname].cat.categories[:50])
+        #     dropmenu = tk.OptionMenu(self, self.dropvar, val, *optionlist)
+        #     self.dropvar.trace("w", self.handleEntryMenu)
+        #     self.create_window(
+        #         x1, y1, width=120, height=30, window=dropmenu, anchor="nw", tag="entry"
+        #     )
+        return
+
+    # --------------------------------------------------------------------
     def set_xviews(self, *args):
         """Set the xview of table and col header"""
 
         self.xview(*args)
         self.colheader.xview(*args)
         self.redrawVisible()
-        return
-
-    # -------------------------------------------------------------------------------------
-    def PandasAstype(self):
-        """
-        Pandasデータフレーム型変換
-        """
-        # DF型変換------------------------------
-        ptc = self.model.df.columns
-        for ptcItem in ptc:
-            ptc_n = self.model.df[ptcItem].dtype
-            if "float" == ptc_n.name:
-                self.model.df[ptcItem].astype(int)
-            elif "float64" == ptc_n.name:
-                self.model.df[ptcItem] = self.model.df[ptcItem].fillna(0)
-                self.model.df[ptcItem] = self.model.df[ptcItem].astype(int)
-                self.model.df[ptcItem] = self.model.df[ptcItem].astype(str)
-                self.model.df[ptcItem] = self.model.df[ptcItem].replace("0", "")
-        # --------------------------------------
         return
 
     # -------------------------------------------------------------------------------------
@@ -362,16 +367,20 @@ class MyTableSQL(Table):
                         c_min > np.finfo(np.float16).min
                         and c_max < np.finfo(np.float16).max
                     ):
-                        self.model.df[col] = self.model.df[col].astype(np.float16)
+                        # self.model.df[col] = self.model.df[col].astype(np.float16)
+                        self.model.df[col] = self.model.df[col].astype("object")
                     elif (
                         c_min > np.finfo(np.float32).min
                         and c_max < np.finfo(np.float32).max
                     ):
-                        self.model.df[col] = self.model.df[col].astype(np.float32)
+                        # self.model.df[col] = self.model.df[col].astype(np.float32)
+                        self.model.df[col] = self.model.df[col].astype("object")
                     else:
-                        self.model.df[col] = self.model.df[col].astype(np.float64)
+                        # self.model.df[col] = self.model.df[col].astype(np.float64)
+                        self.model.df[col] = self.model.df[col].astype("object")
             else:
-                self.model.df[col] = self.model.df[col].astype("category")
+                # self.model.df[col] = self.model.df[col].astype("category")
+                self.model.df[col] = self.model.df[col].astype("object")
 
         end_mem = self.model.df.memory_usage().sum() / 1024**2
         print("Memory usage after optimization is: {:.2f} MB".format(end_mem))

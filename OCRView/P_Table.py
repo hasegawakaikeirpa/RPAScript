@@ -11,6 +11,8 @@ import IconCode
 import customtkinter as ck
 import ImageViewer
 import ReplaceView
+from difflib import SequenceMatcher
+from mojimoji import han_to_zen
 
 ###################################################################################################
 class Application(tk.Frame):
@@ -90,6 +92,9 @@ class Application(tk.Frame):
             t_font,
             hei_Par,
         )  # OCR抽出結果表フレーム
+        self.OCR_dbname = "ReplaceView.db"
+        self.OCR_tbname = os.path.splitext(os.path.basename(self.FileName))[0]
+        ReplaceView.CreateDB(self.OCR_dbname, self.OCR_tbname)
         # Side_Sub##############################################################################
         self.Side_Sub = tk.Frame(
             self.Side_Frame,
@@ -646,7 +651,8 @@ class Application(tk.Frame):
             t_font,
             hei_Par,
             G_logger,
-        )  # OCR抽出結果表フレーム
+        )  # 比較表フレーム
+
         # フレーム設定---------------------------------------------------------------------
         self.IMG_frame = tk.Frame(
             self.Main_Frame,
@@ -659,6 +665,8 @@ class Application(tk.Frame):
         self.IMG_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.IMG_frame.pack_forget()
         self.Img_c = 0
+        self.RView = ReplaceView.Main(self, csv_u)  # 置換テーブルの読込
+        self.RView.withdraw()
         self.update()
 
     # ----------------------------------------------------------------------
@@ -667,7 +675,15 @@ class Application(tk.Frame):
         置換フレーム起動
         """
         try:
-            self.RView = ReplaceView.Main(self, csv_u)
+            m = self.RView
+            m = m.children["!frame"]
+            m = m.children["!frame2"]
+            m = m.children["!mytablesql"]
+            m.ColumnHeader = ["変更前", "変更後"]
+            ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
+            self.RView.destroy()
+            self.RView = ReplaceView.Main(self, csv_u)  # 置換テーブルの読込
+            self.RView.update()
         except:
             tk.messagebox.showinfo("確認", " 置換フレーム起動エラーです。")
 
@@ -722,7 +738,6 @@ class Application(tk.Frame):
         ColList = self.Diff_col.get().split(",")
         if len(self.pt2.model.df.columns) == len(ColList):
             self.pt2.model.df.columns = ColList
-            DGF.PandasAstype(self.pt2.model.df)
             DGF.Pandas_mem_usage(self.pt2.model.df)
             self.pt2.show()
         else:
@@ -737,7 +752,6 @@ class Application(tk.Frame):
         self.ColumnsDelete(self.pt)
         if len(self.pt.model.df.columns) == len(ColList):
             self.pt.model.df.columns = ColList
-            DGF.PandasAstype(self.pt.model.df)
             DGF.Pandas_mem_usage(self.pt.model.df)
             self.pt.show()
         else:
@@ -787,7 +801,6 @@ class Application(tk.Frame):
                 pt[:, InM_col] = ptIn
                 pt = pd.DataFrame(pt, columns=ptCol)
                 self.pt.model.df = pt
-                DGF.PandasAstype(self.pt.model.df)
                 DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
             else:
@@ -811,10 +824,8 @@ class Application(tk.Frame):
                 pt2 = pd.DataFrame(pt2, columns=pt2Col)
                 self.pt.model.df = pt
                 self.pt2.model.df = pt2
-                DGF.PandasAstype(self.pt.model.df)
                 DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
-                DGF.PandasAstype(self.pt2.model.df)
                 DGF.Pandas_mem_usage(self.pt2.model.df)
                 self.pt2.show()
         except:
@@ -837,7 +848,6 @@ class Application(tk.Frame):
                 pt[:, OutM_col] = ptOut
                 pt = pd.DataFrame(pt, columns=ptCol)
                 self.pt.model.df = pt
-                DGF.PandasAstype(self.pt.model.df)
                 DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
             else:
@@ -861,10 +871,8 @@ class Application(tk.Frame):
                 pt2 = pd.DataFrame(pt2, columns=pt2Col)
                 self.pt.model.df = pt
                 self.pt2.model.df = pt2
-                DGF.PandasAstype(self.pt.model.df)
                 DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
-                DGF.PandasAstype(self.pt2.model.df)
                 DGF.Pandas_mem_usage(self.pt2.model.df)
                 self.pt2.show()
         except:
@@ -887,7 +895,6 @@ class Application(tk.Frame):
                 pt[:, Day_col] = ptDay
                 pt = pd.DataFrame(pt, columns=ptCol)
                 self.pt.model.df = pt
-                DGF.PandasAstype(self.pt.model.df)
                 DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
             else:
@@ -911,10 +918,8 @@ class Application(tk.Frame):
                 pt2 = pd.DataFrame(pt2, columns=pt2Col)
                 self.pt.model.df = pt
                 self.pt2.model.df = pt2
-                DGF.PandasAstype(self.pt.model.df)
                 DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
-                DGF.PandasAstype(self.pt2.model.df)
                 DGF.Pandas_mem_usage(self.pt2.model.df)
                 self.pt2.show()
         except:
@@ -929,24 +934,47 @@ class Application(tk.Frame):
             code_regex = re.compile(
                 "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
             )
+            GFTable = np.array(self.pt.model.df)
             nptxt = np.array(self.pt.model.df)[:, col]
             ptCol = np.array(self.pt.model.df.columns)
+            Before_L = np.array(self.RView_df)[:, 0]
+            After_L = np.array(self.RView_df)[:, 1]
+            Par = 0.5
             for r in range(nptxt.shape[0]):
                 txt = nptxt[r]
                 if type(txt) == str:
-                    txt = code_regex.sub("", txt)
-                    nptxt[r] = txt
+                    R_parList = []  # 文字列マッチングリスト初期化
+                    # tomlから摘要変換リストを読込一致率50％を超えるものがあれば置換-----------------
+                    for RView_r in range(Before_L.shape[0]):
+                        if Before_L.shape[0] != 0:  # 置換設定読込
+                            ReplaceStr = Before_L[RView_r]  # 置換設定変更前文字列読込
+                            src, trg = han_to_zen(txt.lower()), han_to_zen(
+                                ReplaceStr.lower()
+                            )  # 半角を全角に
+                            R_par = SequenceMatcher(None, src, trg).ratio()  # 文字列マッチング
+                            R_parList.append([RView_r, R_par])  # 文字列マッチングリストに追加
+
+                    R_parList = np.array(R_parList)  # 文字列マッチングリストnparray化
+                    ind = np.where(R_parList[:, 1] >= Par)  # 文字列マッチングインダイス
+                    # 文字列マッチングインダイスが一つになるまでループ
+                    if ind[0].shape[0] != 0:
+                        while ind[0].shape[0] != 1:
+                            Max_r = max(R_parList[:, 1])
+                            ind = np.where(R_parList[:, 1] >= Max_r)
+                        txt = After_L[ind][0]
+                        nptxt[r] = txt
+
             pt = np.array(self.pt.model.df)
             pt[:, col] = nptxt
             pt = pd.DataFrame(pt, columns=ptCol)
             self.pt.model.df = pt
-            DGF.PandasAstype(self.pt.model.df)
             DGF.Pandas_mem_usage(self.pt.model.df)
             self.pt.show()
+            self.pt.update()
         except:
             tk.messagebox.showinfo("確認", "文字列の書式整理エラーです。")
 
-    # -------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------
     def ChangeD_Txt(self, Txt):
         """
         日付西暦和暦変換
@@ -1185,7 +1213,6 @@ class Application(tk.Frame):
             pt = np.hstack([pt, pt_r_list])
             pt = pd.DataFrame(pt, columns=ptCol)
             self.pt.model.df = pt
-            DGF.PandasAstype(self.pt.model.df)
             DGF.Pandas_mem_usage(self.pt.model.df)
             self.pt.show()
         except:
@@ -1222,7 +1249,6 @@ class Application(tk.Frame):
             except:
                 self.Diff_col.delete(0, tk.END)
                 self.Diff_col.insert(0, "")  # OCR抽出結果表列名テキストボックスに文字代入
-            DGF.PandasAstype(self.pt2.model.df)
             DGF.Pandas_mem_usage(self.pt2.model.df)
             self.pt2.show()
 
@@ -1255,7 +1281,6 @@ class Application(tk.Frame):
             except:
                 self.Diff_col.delete(0, tk.END)
                 self.Diff_col.insert(0, "")  # OCR抽出結果表列名テキストボックスに文字代入
-            DGF.PandasAstype(self.pt2.model.df)
             DGF.Pandas_mem_usage(self.pt2.model.df)
             self.pt2.show()
 
@@ -1284,20 +1309,17 @@ class Application(tk.Frame):
             ptDF = self.SingleSplit_Sub(self.pt2.model.df, In_v, Out_v, Money_v, S_Var)
             if ptDF[0] is True:
                 self.pt2.model.df = ptDF[1]
-                DGF.PandasAstype(self.pt2.model.df)
                 DGF.Pandas_mem_usage(self.pt2.model.df)
                 self.pt2.show()
             ptDF = self.SingleSplit_Sub(self.pt.model.df, In_v, Out_v, Money_v, S_Var)
             if ptDF[0] is True:
                 self.pt.model.df = ptDF[1]
-                DGF.PandasAstype(self.pt.model.df)
                 DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
         except:
             ptDF = self.SingleSplit_Sub(self.pt.model.df, In_v, Out_v, Money_v, S_Var)
             if ptDF[0] is True:
                 self.pt.model.df = ptDF[1]
-                DGF.PandasAstype(self.pt.model.df)
                 DGF.Pandas_mem_usage(self.pt.model.df)
                 self.pt.show()
 
@@ -1359,32 +1381,47 @@ class Application(tk.Frame):
         """
         データ整理
         """
-        if self.DStxt.get() == "":
+
+        try:
+            m = self.RView
+            m = m.children["!frame"]
+            m = m.children["!frame2"]
+            m = m.children["!mytablesql"]
+            m.ColumnHeader = ["変更前", "変更後"]
+            ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
+            self.RView_df = m.model.df
+        except:
+            tk.messagebox.showinfo("確認", " 置換フレーム起動エラーです。")
+
+        if self.DStxt.get() != "":
             if self.select_var.get() == 1:
                 D_c = "Day_col"
                 D_c2 = "Day_col2"
             else:
                 D_c = "Day_col"
+                D_c2 = "else"
         else:
             D_c = "else"
             D_c2 = "else"
 
-        if self.OMtxt.get() == "":
+        if self.OMtxt.get() != "":
             if self.select_var.get() == 1:
                 O_c = "OutM_col"
                 O_c2 = "OutM_col2"
             else:
                 O_c = "OutM_col"
+                O_c2 = "else"
         else:
             O_c = "else"
             O_c2 = "else"
 
-        if self.IMtxt.get() == "":
+        if self.IMtxt.get() != "":
             if self.select_var.get() == 1:
                 I_c = "InM_col"
                 I_c2 = "InM_col2"
             else:
                 I_c = "InM_col"
+                I_c2 = "else"
         else:
             I_c = "else"
             I_c2 = "else"
@@ -1392,35 +1429,36 @@ class Application(tk.Frame):
         self.ChangeList_sub(D_c, D_c2, O_c, O_c2, I_c, I_c2)
 
     # -------------------------------------------------------------------------------------
-    def ChangeList_sub(self, Day_col, Day_col2, OutM_col, OutM_col2, InM_col, InM_col2):
+    def ChangeList_sub(self, D_c, D_c2, O_c, O_c2, I_c, I_c2):
         try:
             if self.select_var.get() == 1:
                 self.ColumnsDelete(self.pt)
                 # 　複数----------------------------------------------------------
-                print(self.pt2.model.df.columns)
-                ptcol = np.array(self.pt.model.df.columns)
-                if Day_col != "Day_col":
-                    Day_col = int(np.where(ptcol == self.DStxt.get())[0])
-                if OutM_col != "OutM_col":
-                    OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
-                if InM_col != "InM_col":
-                    InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
-
+                # Table2
                 ptcol2 = np.array(self.pt2.model.df.columns)
-                if Day_col2 != "Day_col2":
+                if D_c2 == "Day_col2":
                     Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
-                if OutM_col2 != "OutM_col2":
+                if O_c2 == "OutM_col2":
                     OutM_col2 = int(np.where(ptcol2 == self.OMtxt.get())[0])
-                if InM_col2 != "InM_col2":
+                if I_c2 == "InM_col2":
                     InM_col2 = int(np.where(ptcol2 == self.IMtxt.get())[0])
-
+                # ----------------------------------------------------------------
+                # Table1
+                ptcol = np.array(self.pt.model.df.columns)
+                if D_c == "Day_col":
+                    Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+                if O_c == "OutM_col":
+                    OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
+                if I_c == "InM_col":
+                    InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
+                # ----------------------------------------------------------------
                 ptarray = np.array(self.pt.model.df)
                 for c in range(ptarray.shape[1]):
-                    if c == Day_col and Day_col != "Day_col":
+                    if c == Day_col and D_c == "Day_col":
                         self.DaysCheck(Day_col, Day_col2)
-                    elif c == OutM_col and OutM_col != "OutM_col":
+                    elif c == OutM_col and O_c == "OutM_col":
                         self.OutMCheck(OutM_col, OutM_col2)
-                    elif c == InM_col and InM_col != "InM_col":
+                    elif c == InM_col and I_c == "InM_col":
                         self.InMCheck(InM_col, InM_col2)
                     else:
                         self.StrCheck(c)
@@ -1428,27 +1466,31 @@ class Application(tk.Frame):
             else:
                 self.ColumnsDelete(self.pt)
                 # 　単一----------------------------------------------------------
-                print(self.pt2.model.df.columns)
-                ptcol = np.array(self.pt.model.df.columns)
-                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
-
+                # Table2
                 ptcol2 = np.array(self.pt2.model.df.columns)
-                Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
-
+                if Day_col2 == "Day_col2":
+                    Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
+                # ----------------------------------------------------------------
+                # Table1
+                ptcol = np.array(self.pt.model.df.columns)
+                if Day_col == "Day_col":
+                    Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+                # ----------------------------------------------------------------
                 ptarray = np.array(self.pt.model.df)
                 for c in range(ptarray.shape[1]):
-                    if c == Day_col:
+                    if c == Day_col and D_c == "Day_col":
                         self.DaysCheck(Day_col, Day_col2)
                     else:
                         self.StrCheck(c)
                 self.SingleSplit()
-
-                ptcol = np.array(self.pt.model.df.columns)
-                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
-
+                # Table2
                 ptcol2 = np.array(self.pt2.model.df.columns)
                 Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
-
+                # ----------------------------------------------------------------
+                # Table1
+                ptcol = np.array(self.pt.model.df.columns)
+                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+                # ----------------------------------------------------------------
                 OutM_col = int(np.where(ptcol == "出金")[0][0])
                 InM_col = int(np.where(ptcol == "入金")[0][0])
                 OutM_col2 = int(np.where(ptcol2 == "出金")[0][0])
@@ -1465,15 +1507,21 @@ class Application(tk.Frame):
             if self.select_var.get() == 1:
                 self.ColumnsDelete(self.pt)
                 # 　複数----------------------------------------------------------
-                print(self.pt2.model.df.columns)
                 ptcol = np.array(self.pt.model.df.columns)
-                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
-                OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
-                InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
+                if D_c == "Day_col":
+                    Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+                if O_c == "OutM_col":
+                    OutM_col = int(np.where(ptcol == self.OMtxt.get())[0])
+                if I_c == "InM_col":
+                    InM_col = int(np.where(ptcol == self.IMtxt.get())[0])
                 ptarray = np.array(self.pt.model.df)
                 for c in range(ptarray.shape[1]):
-                    if c == Day_col:
+                    if c == Day_col and D_c == "Day_col":
                         self.DaysCheck(Day_col, "Day_col2")
+                    elif c == OutM_col and O_c == "OutM_col":
+                        self.OutMCheck(OutM_col, "OutM_col2")
+                    elif c == InM_col and I_c == "InM_col":
+                        self.InMCheck(InM_col, "InM_col2")
                     else:
                         self.StrCheck(c)
 
@@ -1483,7 +1531,9 @@ class Application(tk.Frame):
                 # 　単一----------------------------------------------------------
                 print(self.pt2.model.df.columns)
                 ptcol = np.array(self.pt.model.df.columns)
-                Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+                if D_c == "Day_col" and D_c == "Day_col":
+                    Day_col = int(np.where(ptcol == self.DStxt.get())[0])
+
                 ptarray = np.array(self.pt.model.df)
                 for c in range(ptarray.shape[1]):
                     if c == Day_col:
@@ -1524,7 +1574,6 @@ class Application(tk.Frame):
             options = {"fontsize": t_font[1]}
             DGF.config.apply_options(options, self.pt)
             # DF型変換------------------------------
-            DGF.PandasAstype(self.pt.model.df)
             DGF.Pandas_mem_usage(self.pt.model.df)
             # --------------------------------------
             self.pt.show()
@@ -1581,11 +1630,11 @@ if __name__ == "__main__":
 
     global Banktoml, tomlurl, PlusCol, imgurl
     URL = os.getcwd()
-    # imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.png"
-    imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
+    imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.png"
+    # imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
     tomlurl = tomlread()
-    # csv_u = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.csv"
-    csv_u = r"C:/Users/もちねこ/Desktop/PDFTEST/JA_1page_AutoJounal.csv"
+    csv_u = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.csv"
+    # csv_u = r"C:/Users/もちねこ/Desktop/PDFTEST/JA_1page_AutoJounal.csv"
     PlusCol = "比較対象行番号"
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
