@@ -16,7 +16,8 @@ from mojimoji import han_to_zen
 import P_Table_btn
 
 ###################################################################################################
-class Application(tk.Frame):
+# class Application(tk.Frame):
+class Application(tk.Toplevel):
     def __init__(self, csvurl, imgurl, master=None):
         # Windowの初期設定を行う。
         super().__init__(master)
@@ -69,8 +70,19 @@ class Application(tk.Frame):
         P_Table_btn.CreateFrame(self)
         self.pt1_OpenFlag = True
         self.pt2_OpenFlag = False
+        self.select_var.set(1)  # select_var変数に数値をセット
 
     # 以下関数----------------------------------------------------------------------
+    def chk_click(self, pt_bln):
+        """
+        チェックボックス切替
+        """
+        print(pt_bln.get())
+        if pt_bln.get() is True:
+            pt_bln.set(False)
+        else:
+            pt_bln.set(True)
+
     def ReadRepView(self):
         """
         置換フレーム起動
@@ -112,7 +124,7 @@ class Application(tk.Frame):
                 try:
                     print(self.IView.master)
                 except:
-                    self.IView = ImageViewer.call(imgurl, self.IMG_frame)
+                    self.IView = ImageViewer.call(self.imgurl, self.IMG_frame)
                 self.Img_c = 1
             else:
                 self.IMG_frame.pack_forget()
@@ -120,28 +132,6 @@ class Application(tk.Frame):
                 self.Img_c = 0
         except:
             tk.messagebox.showinfo("確認", " 画像フレーム起動エラーです。")
-
-    # -------------------------------------------------------------------------------------
-    def radioclick(self):
-        """
-        ラジオボタン切替
-        """
-        if self.select_var.get() == 1:
-            self.SplitVar.configure(bg="gray10", state="readonly")
-            self.In_v.configure(bg="gray10", state="readonly")
-            self.Out_v.configure(bg="gray10", state="readonly")
-            self.Money_v.configure(bg="gray10", state="readonly")
-            self.IMtxt.configure(bg="snow", state="normal")
-            self.OMtxt.configure(bg="snow", state="normal")
-            self.update()
-        else:
-            self.SplitVar.configure(bg="snow", state="normal")
-            self.In_v.configure(bg="snow", state="normal")
-            self.Out_v.configure(bg="snow", state="normal")
-            self.Money_v.configure(bg="snow", state="normal")
-            self.IMtxt.configure(bg="gray10", state="readonly")
-            self.OMtxt.configure(bg="gray10", state="readonly")
-            self.update()
 
     # -------------------------------------------------------------------------------------
     def DifftxtCol(self, event):
@@ -344,10 +334,11 @@ class Application(tk.Frame):
         文字列の形式を揃える
         """
         try:
-            code_regex = re.compile(
-                "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
-            )
-            GFTable = np.array(pt.model.df)
+            # code_regex = re.compile(
+            #     "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
+            # )
+            # strs = code_regex.sub("", strs)
+            # GFTable = np.array(pt.model.df)
             nptxt = np.array(pt.model.df)[:, col]
             ptCol = np.array(pt.model.df.columns)
             Before_L = np.array(self.RView_df)[:, 0]
@@ -400,16 +391,29 @@ class Application(tk.Frame):
         """
         try:
             TxtSP = re.findall(r"\d+", Txt)
+            Y_key = Txt
+            for TxtSPItem in TxtSP:
+                Y_key = Y_key.replace(TxtSPItem, "")
+            code_regex = re.compile(
+                "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
+            )
+            Y_key = code_regex.sub("", Y_key)
             T_Nen = len(TxtSP[0])
             if T_Nen <= 2:
+                if Y_key[0] == "H" or Y_key[0] == "h":
+                    D_strYear = "平成"
+                elif Y_key[0] == "S" or Y_key[0] == "s":
+                    D_strYear = "昭和"
+                else:
+                    D_strYear = "令和"
                 print("和暦")
                 D_str = (
-                    "令和"
-                    + str(TxtSP[0])
+                    D_strYear
+                    + str(TxtSP[0].zfill(2))
                     + "年"
-                    + str(TxtSP[1])
+                    + str(TxtSP[1].zfill(2))
                     + "月"
-                    + str(TxtSP[2])
+                    + str(TxtSP[2].zfill(2))
                     + "日"
                 )
                 D_str = wh.SeirekiSTRDate(D_str)
@@ -457,7 +461,7 @@ class Application(tk.Frame):
                 pt.redraw()
 
             pt.drawSelectedRect(pt.currentrow, pt.currentcol)
-            coltype = pt.model.getColumnType(pt.currentcol)
+            # coltype = pt.model.getColumnType(pt.currentcol)
             return
 
         # ---------------------------------------------------------------------
@@ -485,7 +489,15 @@ class Application(tk.Frame):
         """
         try:
             pt = np.array(self.pt.model.df)
+            ptCol = list(self.pt.model.df.columns)
+            if self.select_var.get() != 1:
+                self.OutM_col = int(np.where(np.array(ptCol) == "出金")[0])
+                self.InM_col = int(np.where(np.array(ptCol) == "入金")[0])
             pt2 = np.array(self.pt2.model.df)
+            ptCol2 = list(self.pt2.model.df.columns)
+            if self.select_var.get() != 1:
+                self.OutM_col2 = int(np.where(np.array(ptCol2) == "出金")[0])
+                self.InM_col2 = int(np.where(np.array(ptCol2) == "入金")[0])
             pt_r_list = np.array(self.pt.model.df)[:, 0]
             r = self.pt.startrow
             if r is None:
@@ -567,8 +579,6 @@ class Application(tk.Frame):
         pt_r_list,
     ):
         try:
-            # if r == 10:
-            #     print("")
             if pt[r, self.OutM_col] == pt[r, self.OutM_col]:
                 if pt[r, self.OutM_col] != "" and pt[r, self.OutM_col] != float("nan"):
                     ptstr = pt[r, self.Day_col] + pt[r, self.OutM_col]
@@ -612,6 +622,7 @@ class Application(tk.Frame):
                 pt_r_list[r] = ""
         except:
             pt_r_list[r] = pt_r_list[r]
+            self.ptsearch_F = False
 
     # ---------------------------------------------------------------------
     def PtSearch(self):
@@ -620,10 +631,17 @@ class Application(tk.Frame):
         """
         try:
             pt = np.array(self.pt.model.df)
-
             ptCol = list(self.pt.model.df.columns)
+            if self.select_var.get() != 1:
+                self.OutM_col = int(np.where(np.array(ptCol) == "出金")[0])
+                self.InM_col = int(np.where(np.array(ptCol) == "入金")[0])
             pt2 = np.array(self.pt2.model.df)
+            ptCol2 = list(self.pt2.model.df.columns)
+            if self.select_var.get() != 1:
+                self.OutM_col2 = int(np.where(np.array(ptCol2) == "出金")[0])
+                self.InM_col2 = int(np.where(np.array(ptCol2) == "入金")[0])
             pt_r_list = np.array(self.pt.model.df)[:, 0]
+            self.ptsearch_F = True
             for r in range(pt.shape[0]):
                 self.PtSearch_Sub(
                     r,
@@ -631,13 +649,19 @@ class Application(tk.Frame):
                     pt2,
                     pt_r_list,
                 )
-            ptCol.append(PlusCol)
-            pt_r_list = np.reshape(pt_r_list, (pt_r_list.shape[0], 1))
-            pt = np.hstack([pt, pt_r_list])
-            pt = pd.DataFrame(pt, columns=ptCol)
-            self.pt.model.df = pt
-            DGF.Pandas_mem_usage(self.pt.model.df)
-            self.pt.show()
+            if self.ptsearch_F is False:
+                if self.select_var.get() != 1:
+                    tk.messagebox.showinfo("確認", "単一検索で失敗しました。\n検索設定を確認してください。")
+                else:
+                    tk.messagebox.showinfo("確認", "複数検索で失敗しました。\n検索設定を確認してください。")
+            else:
+                ptCol.append(PlusCol)
+                pt_r_list = np.reshape(pt_r_list, (pt_r_list.shape[0], 1))
+                pt = np.hstack([pt, pt_r_list])
+                pt = pd.DataFrame(pt, columns=ptCol)
+                self.pt.model.df = pt
+                DGF.Pandas_mem_usage(self.pt.model.df)
+                self.pt.show()
         except:
             tk.messagebox.showinfo("確認", "比較ファイルが指定されていません。")
 
@@ -699,6 +723,8 @@ class Application(tk.Frame):
             self.pt2.update()
             self.pt2.show()
             self.pt2_OpenFlag = True
+        else:
+            self.tree_frame2.destroy()
 
     # -------------------------------------------------------------------------------------
     def click_close(self):
@@ -912,6 +938,7 @@ class Application(tk.Frame):
                 print("No_ColSet")
         pt.update()
         pt.show()
+        return
 
     # -------------------------------------------------------------------------------------
     def ChangeList_sub(self):
@@ -938,29 +965,7 @@ class Application(tk.Frame):
                 # PandasTable2
                 if self.pt2_OpenFlag is True:
                     self.C_L(self.pt2)
-                    # Table2
-                    ptcol2 = np.array(self.pt2.model.df.columns)
-                    # self.Day_col2 = int(np.where(ptcol2 == self.DStxt.get())[0])
-                    self.OutM_col2 = int(np.where(ptcol2 == "出金")[0][0])
-                    self.InM_col2 = int(np.where(ptcol2 == "入金")[0][0])
-                # ----------------------------------------------------------------
                 self.SingleSplit()
-                # Table1
-                ptcol = np.array(self.pt.model.df.columns)
-                # self.Day_col = int(np.where(ptcol == self.DStxt.get())[0])
-                # ----------------------------------------------------------------
-                self.OutM_col = int(np.where(ptcol == "出金")[0][0])
-                self.InM_col = int(np.where(ptcol == "入金")[0][0])
-
-                ptarray = np.array(self.pt.model.df)
-                for c in range(ptarray.shape[1]):
-                    try:
-                        if c == self.OutM_col:
-                            self.OutMCheck(self.OutM_col, self.OutM_col2)
-                        elif c == self.InM_col:
-                            self.InMCheck(self.InM_col, self.InM_col2)
-                    except:
-                        print("No_ColSet")
                 return (
                     self.Day_col,
                     self.Day_col2,
@@ -982,35 +987,38 @@ class Application(tk.Frame):
         C_TP.deiconify()
 
     def OCRFileRead(self):
-        # ファイル→開く
-        filename = tk.filedialog.askopenfilename(
-            filetypes=[
-                ("CSV", ".csv"),
-            ],  # ファイルフィルタ
-            initialdir=os.getcwd(),  # カレントディレクトリ
-        )
-        self.FileName = filename
-        self.OCR_dbname = "ReplaceView.db"
-        self.OCR_tbname = os.path.splitext(os.path.basename(self.FileName))[0]
-        if filename != "":
-            enc = DGF.CSVO.getFileEncoding(self.FileName)
-            self.table = self.pt.importCSV(self.FileName, encoding=enc)
-            options = {"fontsize": self.t_font[1]}
-            DGF.config.apply_options(options, self.pt)
-            # DF型変換------------------------------
-            DGF.Pandas_mem_usage(self.pt.model.df)
-            # --------------------------------------
-            self.pt.show()
-            self.pt.update()
-            self.pt1_OpenFlag = True
-            self.OCR_url.delete(0, tk.END)
-            self.OCR_url.insert(0, self.FileName)
-            m = self.children_get()
+        try:
+            # ファイル→開く
+            filename = tk.filedialog.askopenfilename(
+                filetypes=[
+                    ("CSV", ".csv"),
+                ],  # ファイルフィルタ
+                initialdir=os.getcwd(),  # カレントディレクトリ
+            )
+            self.FileName = filename
+            if filename != "":
+                self.OCR_dbname = "ReplaceView.db"
+                self.OCR_tbname = os.path.splitext(os.path.basename(self.FileName))[0]
+                enc = DGF.CSVO.getFileEncoding(self.FileName)
+                self.table = self.pt.importCSV(self.FileName, encoding=enc)
+                options = {"fontsize": self.t_font[1]}
+                DGF.config.apply_options(options, self.pt)
+                # DF型変換------------------------------
+                DGF.Pandas_mem_usage(self.pt.model.df)
+                # --------------------------------------
+                self.pt.show()
+                self.pt.update()
+                self.pt1_OpenFlag = True
+                self.OCR_url.delete(0, tk.END)
+                self.OCR_url.insert(0, self.FileName)
+                # m = self.children_get()
 
-            self.RView.destroy()
-            self.RView = ReplaceView.Main(self, self.FileName)  # 置換テーブルの読込
-            # ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
-            self.RView.update()
+                self.RView.destroy()
+                self.RView = ReplaceView.Main(self, self.FileName)  # 置換テーブルの読込
+                # ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
+                self.RView.update()
+        except:
+            return
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1033,7 +1041,7 @@ def Main(MUI, US, tom, logger, MT, TP, imgu):
     """
     global Master
     global G_logger, C_MT, C_TP
-    global Banktoml, tomlurl, PlusCol, imgurl
+    global Banktoml, tomlurl, PlusCol
 
     Master = MUI
     C_MT = MT
@@ -1044,7 +1052,8 @@ def Main(MUI, US, tom, logger, MT, TP, imgu):
     imgurl = imgu
     PlusCol = "比較対象行番号"
     # -----------------------------------------------------------
-    root = tk.Tk()  # Window生成
+    # root = tk.Tk()  # Window生成
+    root = tk.Toplevel()  # Window生成
     data = IconCode.icondata()
     root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
     app = Application(csvurl=csv_u, imgurl=imgurl, master=root)
@@ -1060,7 +1069,7 @@ if __name__ == "__main__":
     G_logger = logging.getLogger(__name__)
     # ---------------------------------------------------------------------------------------------------------------
 
-    global Banktoml, tomlurl, PlusCol, imgurl
+    global Banktoml, tomlurl, PlusCol
     URL = os.getcwd()
     imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.png"
     # imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"

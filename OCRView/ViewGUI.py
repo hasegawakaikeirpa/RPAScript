@@ -238,7 +238,10 @@ class ViewGUI:
             if self.combo_file.get() == self.combo_file.values[r]:
                 set_pos = r
                 break
-        self.control.DrawImage("Map", set_pos=set_pos)
+        try:
+            self.control.DrawImage("Map", set_pos=set_pos)
+        except:
+            print("No_set_pos")
 
     # ----------------------------------------------------------------------------------
     def event_menu(self):
@@ -722,7 +725,7 @@ class ViewGUI:
                     self.control.model.stock_url = ""
                 self.control.OverSaveImage()
                 try:
-                    print(self.tomlPath)
+                    self.tomlPath = self.tomlread()
                     CSVSetMain(
                         main_window,
                         Imgurl,
@@ -745,7 +748,7 @@ class ViewGUI:
                         self.logger.debug("OCR処理tomlファイル選択時Err")  # Log出力
             else:
                 try:
-                    print(self.tomlPath)
+                    self.tomlPath = self.tomlread()
                     CSVSetMain(
                         main_window,
                         Imgurl,

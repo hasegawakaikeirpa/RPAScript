@@ -22,12 +22,23 @@ def create_Frame(self, wid, hei, t_font, hei_Par):
     tk.Label(self.OCR_frame, text="OCR抽出結果表", bg="#fce4d2").grid(
         row=0, column=0, sticky=tk.N + tk.W
     )  # 位置指定
-    self.tree_frame.grid(row=1, column=0, padx=30, sticky=tk.N + tk.S + tk.W + tk.E)
+
+    self.pt_bln = tk.BooleanVar()
+    self.pt_bln.set(False)
+    self.pt_chk = tk.Checkbutton(
+        self.OCR_frame,
+        bg="#fce4d2",
+        text="変更を記録する",
+        command=lambda: self.chk_click(self.pt_bln),
+    )
+    self.pt_chk.grid(row=1, column=0, sticky=tk.N + tk.W)
+
+    self.tree_frame.grid(row=2, column=0, padx=30, sticky=tk.N + tk.S + tk.W + tk.E)
     # df = TableModel.getSampleData()
     # pt = Table(self.tree_frame)
     pt = MT.MyTable(
         self.tree_frame,
-        width=int(wid * 0.95),
+        width=int(wid * 0.90),
         height=int(hei * (hei_Par * 0.75)),
         sticky=tk.N + tk.S + tk.W + tk.E,
     )  # テーブルをサブクラス化
@@ -59,7 +70,21 @@ def create_Frame2(self, wid, hei, CSVList, t_font, hei_Par, G_logger):
     tk.Label(self.OCR_frame2, text="比較ファイル", bg="#fce4d2").grid(
         row=0, column=0, sticky=tk.N + tk.W
     )  # 位置指定
-    self.tree_frame2.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+    # ###########################################################################
+    tk.Label(self.OCR_frame2, text="", bg="#fce4d2").grid(
+        row=1, column=0, sticky=tk.N + tk.W
+    )  # 位置指定
+    # self.pt2_bln = tk.BooleanVar()
+    # self.pt2_bln.set(False)
+    # self.pt2_chk = tk.Checkbutton(
+    #     self.OCR_frame2,
+    #     bg="#fce4d2",
+    #     text="変更を記録する",
+    #     command=lambda: self.chk_click(self.pt2_bln),
+    # )
+    # self.pt2_chk.grid(row=1, column=0, sticky=tk.N + tk.W)
+    # ###########################################################################
+    self.tree_frame2.grid(row=2, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     # df = TableModel.getSampleData()
     # pt = Table(self.tree_frame)
     pt2 = MT.MyTable(

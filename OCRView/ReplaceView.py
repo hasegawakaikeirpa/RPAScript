@@ -1,9 +1,11 @@
 import tkinter as tk
 import Frame.DGFrame as DGF
-import numpy as np
-import WarekiHenkan as wh
+
+# import numpy as np
+# import WarekiHenkan as wh
 import pandas as pd
-import re
+
+# import re
 import logging.config
 import toml
 import os
@@ -24,8 +26,13 @@ class Application(tk.Toplevel):
         while f is False:
             m = m.master
             if m.master is None:
-                m = m.children["!application"]
-                break
+                try:
+                    m = m.children["!application"]
+                    Top = m.top
+                    break
+                except:
+                    m = Top
+                    break
         # customtkスタイル
         ck.set_appearance_mode("System")  # Modes: system (default), light, dark
         ck.set_default_color_theme(
@@ -66,7 +73,7 @@ class Application(tk.Toplevel):
         t_font = (1, int(30 * wid_Par))
         ################################################################################
         self.Main_Frame = tk.Frame(
-            m.top,
+            Top,
             width=width_of_window,
             height=height_of_window,
             bg="#fabd91",
@@ -115,19 +122,19 @@ class Application(tk.Toplevel):
         )
         self.ReplaceSet.grid(row=0, column=1, padx=5)
         # SQL
-        self.CDB_btn = ck.CTkButton(
-            master=self.Upper_Frame,
-            text="読込",
-            command=self.FileOpen,
-            width=EntWidth,
-            height=EntHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="black",
-            border_color="snow",
-            fg_color="blue",
-        )
-        self.CDB_btn.grid(row=0, column=3, padx=5)
+        # self.CDB_btn = ck.CTkButton(
+        #     master=self.Upper_Frame,
+        #     text="読込",
+        #     command=self.FileOpen,
+        #     width=EntWidth,
+        #     height=EntHeight,
+        #     border_width=2,
+        #     corner_radius=8,
+        #     text_color="black",
+        #     border_color="snow",
+        #     fg_color="blue",
+        # )
+        # self.CDB_btn.grid(row=0, column=3, padx=5)
         self.Ent_btn = ck.CTkButton(
             master=self.Upper_Frame,
             text="確定",
@@ -138,7 +145,7 @@ class Application(tk.Toplevel):
             corner_radius=8,
             text_color="black",
             border_color="snow",
-            fg_color="blue",
+            fg_color="lightblue",
         )
         self.Ent_btn.grid(row=0, column=4, padx=5)
         self.P_table = self.Read_P_Table(

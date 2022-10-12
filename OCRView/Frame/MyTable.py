@@ -105,16 +105,20 @@ class MyTable(Table):
                 if self.currentrow < self.rows - 1:
                     self.currentcol = 0
                     self.currentrow = self.currentrow + 1
+                    x = 0
                 else:
                     return
             else:
                 self.currentcol = self.currentcol + 1
         elif event.keysym == "Left":
-            if self.currentcol > 0:
+            if self.currentcol == 0:
+                self.currentcol = self.cols - 1
+                if self.currentrow != 0:
+                    self.currentrow = self.currentrow - 1
+            else:
                 self.currentcol = self.currentcol - 1
 
-        if self.currentcol > cmax or self.currentcol <= cmin:
-            # print (self.currentcol, self.visiblecols)
+        if self.currentcol > cmax or self.currentcol < cmin:
             self.xview("moveto", x)
             self.colheader.xview("moveto", x)
             self.redraw()
@@ -235,10 +239,20 @@ class MyTable(Table):
                 self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
             )
         else:
-            R_DF = CreateDB.pdinsert(
-                self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack, R_DF
-            )
-            CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+            print(m.pt_bln.get())
+            if m.pt_bln.get() is True:
+                R_DF = CreateDB.pdinsert(
+                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack, R_DF
+                )
+                CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+            else:
+                enc = MyTable.getFileEncoding(self.importFilePath)
+                self.model.df.to_csv(
+                    self.importFilePath,
+                    index=False,
+                    encoding=enc,
+                    quoting=QUOTE_NONNUMERIC,
+                )
         return
 
     # --------------------------------------------------------------------
@@ -343,13 +357,13 @@ class MyTable(Table):
 
     # --------------------------------------------------------------------
 
-    def set_xviews(self, *args):
-        """Set the xview of table and col header"""
+    # def set_xviews(self, *args):
+    #     """Set the xview of table and col header"""
 
-        self.xview(*args)
-        self.colheader.xview(*args)
-        self.redrawVisible()
-        return
+    #     self.xview(*args)
+    #     self.colheader.xview(*args)
+    #     self.redrawVisible()
+    #     return
 
     # -------------------------------------------------------------------------------------
     def Pandas_mem_usage(self):

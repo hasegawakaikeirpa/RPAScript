@@ -164,18 +164,16 @@ def CreateFrame(self):
     ).grid(row=3, column=0)
     # radio1ウィジェット
     self.select_var = tk.IntVar()  # ウィジェット変数select_varを作成
-    self.select_var.set(1)  # select_var変数に数値をセット
     self.languages = [("複数", 1), ("単一", 2)]  # languagesリストを定義
-    for language, val in self.languages:  # ループ開始
-        self.radio1 = tk.Radiobutton(
+    for language, val in reversed(self.languages):  # ループ開始
+        tk.Radiobutton(
             self.Side_Sub,
             text=language,
             value=val,
             variable=self.select_var,
-            command=self.radioclick,
+            command=lambda: radioclick(self),
             bg="#fabd91",
-        )  # languagesリストを選択肢とするradio1ウィジェットを生成
-        self.radio1.grid(row=3, column=val, sticky=tk.N)
+        ).grid(row=3, column=val, sticky=tk.N)
 
     self.SplitVarLabel = ck.CTkLabel(
         master=self.Side_Sub,
@@ -611,5 +609,32 @@ def CreateFrame(self):
     self.RView.withdraw()
     self.update()
 
+    # ----------------------------------------------------------------------
 
-# ----------------------------------------------------------------------
+
+def radioclick(self):
+    """
+    ラジオボタン切替
+    """
+    if self.select_var.get() == 1:
+        # self.select_var.set(0)
+        # sm = self.master.children["!application"]
+        self.master.children["!application"].SplitVar.configure(
+            bg="gray10", state="readonly"
+        )
+        self.In_v.configure(bg="gray10", state="readonly")
+        self.Out_v.configure(bg="gray10", state="readonly")
+        self.Money_v.configure(bg="gray10", state="readonly")
+        self.IMtxt.configure(bg="snow", state="normal")
+        self.OMtxt.configure(bg="snow", state="normal")
+        self.update()
+    else:
+        # sm = self.master.children["!application"]
+        # self.select_var.set(1)
+        self.SplitVar.configure(bg="snow", state="normal")
+        self.In_v.configure(bg="snow", state="normal")
+        self.Out_v.configure(bg="snow", state="normal")
+        self.Money_v.configure(bg="snow", state="normal")
+        self.IMtxt.configure(bg="gray10", state="readonly")
+        self.OMtxt.configure(bg="gray10", state="readonly")
+        self.update()

@@ -8,8 +8,9 @@ from pandas import DataFrame, read_csv, concat
 from csv import reader, QUOTE_NONNUMERIC
 
 # import numpy as np
-from numpy import asarray, array
-from difflib import SequenceMatcher
+from numpy import asarray
+
+# from difflib import SequenceMatcher
 import CSVOut as CSVO
 import re
 
@@ -101,8 +102,8 @@ def DayCheck(GFTable, DaySet):
     """
 
     # 設定日付列番号に応じて日付書式変換------------------------------
-    DS = int(DaySet[0]) - 1
-    G_list = array(GFTable)[:, DS]
+    # DS = int(DaySet[0]) - 1
+    # G_list = array(GFTable)[:, DS]
 
 
 # ----------------------------------------------------------------------------
@@ -170,7 +171,7 @@ def DiffListCreate(
             # --------------------------------------------------------------
             GFRow = len(GFTable)
             GFCol = len(GFTable[0])
-            ChangeTxtList = []
+            # ChangeTxtList = []
             PB_v = int(90 / GFRow)
             # OCR結果を整形----------------------------------------------------------------
             for g in range(GFRow):
