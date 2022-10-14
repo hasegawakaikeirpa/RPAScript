@@ -14,6 +14,7 @@ import ReplaceView
 from difflib import SequenceMatcher
 from mojimoji import han_to_zen
 import P_Table_btn
+import DataGrid as DG
 
 ###################################################################################################
 # class Application(tk.Frame):
@@ -83,6 +84,20 @@ class Application(tk.Toplevel):
         else:
             pt_bln.set(True)
 
+    # ----------------------------------------------------------------------
+    def JournalView(self):
+        """
+        仕訳フレーム起動
+        """
+        try:
+            self.master.withdraw()
+            Roolurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_仕訳日記帳.csv"
+            ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\1869\1869ChangeTxtList.csv"
+            DG.Main(self, self.FileName, "", "", "",ChangeTxtURL)
+        except:
+            tk.messagebox.showinfo("確認", " 置換フレーム起動エラーです。")
+
+    # ----------------------------------------------------------------------
     def ReadRepView(self):
         """
         置換フレーム起動
@@ -1035,19 +1050,18 @@ def tomlread():
 
 
 # -------------------------------------------------------------------------------------
-def Main(MUI, US, tom, logger, MT, TP, imgu):
+def Main(MUI, US, logger, MT, TP, imgu):
     """
     呼出関数
     """
     global Master
     global G_logger, C_MT, C_TP
-    global Banktoml, tomlurl, PlusCol
+    global tomlurl, PlusCol
 
     Master = MUI
     C_MT = MT
     C_TP = TP
     csv_u = US
-    Banktoml = tom
     G_logger = logger
     imgurl = imgu
     PlusCol = "比較対象行番号"

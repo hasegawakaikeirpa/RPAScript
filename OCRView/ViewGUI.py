@@ -13,6 +13,7 @@ from socket import gethostbyname, gethostname
 from uuid import getnode
 import IconCode
 import ViewGUI_obj as V_obj
+from P_Table import Main as ptMain
 
 # from line_profiler import LineProfiler
 
@@ -107,6 +108,15 @@ class ViewGUI:
         V_obj.ElementCreate(self)  # Element作成
         self.logger.debug("ViewGUI起動完了")  # Log出力
         # #############################################################################
+
+    # ----------------------------------------------------------------------------------
+    def __del__(self):
+        print("インスタンスが破棄されました")
+
+    # ----------------------------------------------------------------------------------
+    def Open_pt(self):
+        Read_Url = self.Selectfile_url.replace(".png", ".csv")
+        ptMain(self, Read_Url, None, self, None, self.Selectfile_url)
 
     # ----------------------------------------------------------------------------------
     def ckBtnSetting(self, btn):

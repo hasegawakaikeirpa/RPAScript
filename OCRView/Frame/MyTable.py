@@ -208,18 +208,99 @@ class MyTable(Table):
         return
 
     # --------------------------------------------------------------------
+    def childrenSearch_sub(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.OCR_dbname)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.OCR_dbname)
+                        f = True
+                        m = rm
+                        break
+                    except:
+                        print("next")
+        return m
+
+    # --------------------------------------------------------------------
+    def childrenSearch(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
+    def childrenSearch_sub2(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.RView)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.RView)
+                        f = True
+                        rm = rm.RView.children["!frame"]
+                        rm = rm.children["!frame2"]
+                        m = rm.children["!mytablesql"]
+                        break
+                    except:
+                        print("next")
+        return m
+
+    # --------------------------------------------------------------------
+    def childrenSearch2(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub2(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub2(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
 
     def HCE(self, row, col):
         """Callback for cell entry"""
         value = self.cellentry.get()
-        f = False
-        m = self.master
-        while f is False:
-            m = m.master
-            if m.master is None:
-                m = m.children["!application"]
-                break
-
+        m = self.childrenSearch()
         try:
             R_DF = CreateDB.readsql(self, m.OCR_dbname, m.OCR_tbname)
         except:
@@ -241,10 +322,15 @@ class MyTable(Table):
         else:
             print(m.pt_bln.get())
             if m.pt_bln.get() is True:
+                R_DF = R_DF.drop_duplicates()
                 R_DF = CreateDB.pdinsert(
                     self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack, R_DF
                 )
                 CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+                R_m = self.childrenSearch2()
+                R_m.model.df = R_DF
+                R_m.update()
+                R_m.show()
             else:
                 enc = MyTable.getFileEncoding(self.importFilePath)
                 self.model.df.to_csv(

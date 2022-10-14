@@ -70,6 +70,7 @@ class MyTableSQL(Table):
         self.focus_set()
         self.F_stack = []
         self.L_stack = []
+        self.T_name = "SQLMain"
 
         return
 

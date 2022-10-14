@@ -565,6 +565,23 @@ def CreateFrame(self):
     self.ImgOpen.grid(
         row=2, column=0, pady=5, padx=10, sticky=tk.NSEW
     )  # 日付列名テキストボックス配置
+    # 仕訳検索ボタン--------------------------------------------------------------
+    self.ImgOpen = ck.CTkButton(
+        master=self.Side_Sub5,
+        text="仕訳検索起動",
+        command=self.JournalView,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="snow",
+        border_color="snow",
+        fg_color="brown",
+        text_font=self.t_font,
+    )
+    self.ImgOpen.grid(
+        row=3, column=0, pady=5, padx=10, sticky=tk.NSEW
+    )  # 日付列名テキストボックス配置
     # 戻るボタン--------------------------------------------------------------
     self.ReturnBackBtn = ck.CTkButton(
         master=self.Side_Sub5,
@@ -580,7 +597,7 @@ def CreateFrame(self):
         text_font=self.t_font,
     )
     self.ReturnBackBtn.grid(
-        row=3, column=0, pady=5, padx=10, sticky=tk.NSEW
+        row=4, column=0, pady=5, padx=10, sticky=tk.NSEW
     )  # 日付列名テキストボックス配置
     # フレーム設定---------------------------------------------------------------------
     DGF.create_Frame2(
