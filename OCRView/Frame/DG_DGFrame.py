@@ -6,45 +6,72 @@ import Frame.DG_ScrollableFrame as SF
 import Frame.TKEntry as tke
 from pandastable import config
 import numpy as np
+import customtkinter as ck
+import os
 
 # メインフレーム######################################################################################
 def create_Frame(self, t_font):
     # ツリーフレーム設定---------------------------------------------------------------------
     self.DG_OCR_frame = tk.Frame(
-        self.DG_Main_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+        self.DG_Main_Frame, width=650, height=400, bg="#dfffa8", bd=2, relief=tk.RIDGE
     )  # 親フレーム
     self.DG_OCR_frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
-    self.tree_frame = tk.Frame(self.DG_OCR_frame, width=650, height=400)  # 子フレーム
-    tk.Label(self.DG_OCR_frame, text="OCR抽出結果表").grid(
+    self.tree_frame = tk.Frame(
+        self.DG_OCR_frame, bg="#dfffa8", width=650, height=400
+    )  # 子フレーム
+    # tk.Label(self.DG_OCR_frame, text="OCR抽出結果表").grid(
+    #     row=0, column=0, sticky=tk.N + tk.W
+    # )  # 位置指定
+    ck.CTkLabel(
+        master=self.DG_OCR_frame,
+        text="OCR抽出結果表",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
         row=0, column=0, sticky=tk.N + tk.W
     )  # 位置指定
+
     self.tree_frame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     # df = TableModel.getSampleData()
     # pt = Table(self.tree_frame)
     pt = MT.MyTable(
         self.tree_frame, width=650, height=400, sticky=tk.N + tk.S + tk.W + tk.E
     )  # テーブルをサブクラス化
-    enc = CSVO.getFileEncoding(self.FileName)
-    self.table = pt.importCSV(self.FileName, encoding=enc)
-    self.pt = pt
-    self.pt._name = "仕訳検索_OCRMain"
-    # DF型変換------------------------------
-    Pandas_mem_usage(self.pt.model.df)
-    # --------------------------------------
-    options = {"fontsize": t_font[1]}
-    config.apply_options(options, self.pt)
-    self.pt.resized
-    self.pt.show()
+    if self.FileName != "":
+        if os.path.isfile(self.FileName) is True:
+            enc = CSVO.getFileEncoding(self.FileName)
+            self.table = pt.importCSV(self.FileName, encoding=enc)
+            self.pt = pt
+            self.pt._name = "仕訳検索_OCRMain"
+            # DF型変換------------------------------
+            Pandas_mem_usage(self.pt.model.df)
+            # --------------------------------------
+            options = {"fontsize": t_font[1]}
+            config.apply_options(options, self.pt)
+            self.pt.resized
+            self.pt.show()
 
 
 def create_Frame2(self, t_font):
     # ツリーフレーム設定---------------------------------------------------------------------
     self.Jounal = tk.Frame(
-        self.DG_Main_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+        self.DG_Main_Frame, width=650, height=400, bg="#a8fff2", bd=2, relief=tk.RIDGE
     )  # 親フレーム
     self.Jounal.grid(row=0, column=1, sticky=tk.N + tk.S + tk.W + tk.E)
-    self.tree2_frame = tk.Frame(self.Jounal, width=650, height=400)
-    tk.Label(self.Jounal, text="作成仕訳表").grid(row=0, column=0, sticky=tk.W)  # 位置指定
+    self.tree2_frame = tk.Frame(self.Jounal, bg="#a8fff2", width=650, height=400)
+    # tk.Label(self.Jounal, text="作成仕訳表").grid(row=0, column=0, sticky=tk.W)  # 位置指定
+    ck.CTkLabel(
+        master=self.Jounal,
+        text="作成仕訳表",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=0, column=0, sticky=tk.W
+    )  # 位置指定
     self.tree2_frame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     # df = TableModel.getSampleData()
     # pt2 = Table(self.tree2_frame)
@@ -53,26 +80,37 @@ def create_Frame2(self, t_font):
     )  # テーブルをサブクラス化
     self.pt2 = pt2
     if self.JounalFileName != "":
-        enc = CSVO.getFileEncoding(self.JounalFileName)
-        self.table2 = pt2.importCSV(self.JounalFileName, encoding=enc)
-        self.pt2 = pt2
-        self.pt2._name = "仕訳検索_作成仕訳表Main"
-        # DF型変換------------------------------
-        Pandas_mem_usage(self.pt2.model.df)
-        # --------------------------------------
-        options = {"fontsize": t_font[1]}
-        config.apply_options(options, self.pt2)
-        self.pt2.resized
-        self.pt2.show()
+        if os.path.isfile(self.JounalFileName) is True:
+            enc = CSVO.getFileEncoding(self.JounalFileName)
+            self.table2 = pt2.importCSV(self.JounalFileName, encoding=enc)
+            self.pt2 = pt2
+            self.pt2._name = "仕訳検索_作成仕訳表Main"
+            # DF型変換------------------------------
+            Pandas_mem_usage(self.pt2.model.df)
+            # --------------------------------------
+            options = {"fontsize": t_font[1]}
+            config.apply_options(options, self.pt2)
+            self.pt2.resized
+            self.pt2.show()
 
 
 def create_Frame3(self, t_font):
     self.Predict_frame = tk.Frame(
-        self.DG_Main_Frame, width=650, height=400, bd=2, relief=tk.RIDGE
+        self.DG_Main_Frame, width=650, height=400, bg="#ebbbfa", bd=2, relief=tk.RIDGE
     )  # 親フレーム
     self.Predict_frame.grid(row=1, column=1, sticky=tk.N + tk.S + tk.W + tk.E)
-    self.frame5 = tk.Frame(self.Predict_frame, width=650, height=400)
-    tk.Label(self.Predict_frame, text="仕訳予想結果").grid(
+    self.frame5 = tk.Frame(self.Predict_frame, bg="#ebbbfa", width=650, height=400)
+    # tk.Label(self.Predict_frame, text="仕訳予想結果").grid(
+    #     row=0, column=0, sticky=tk.W
+    # )  # 位置指定
+    ck.CTkLabel(
+        master=self.Predict_frame,
+        text="仕訳予想結果",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
         row=0, column=0, sticky=tk.W
     )  # 位置指定
     self.frame5.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
@@ -81,17 +119,18 @@ def create_Frame3(self, t_font):
     )  # テーブルをサブクラス化
     self.pt3 = pt3
     if self.Roolurl != "":
-        enc = CSVO.getFileEncoding(self.Roolurl)
-        self.table3 = pt3.importCSV(self.Roolurl, encoding=enc)
-        self.pt3 = pt3
-        self.pt3._name = "仕訳検索_仕訳予想結果Main"
-        # DF型変換------------------------------
-        Pandas_mem_usage(self.pt3.model.df)
-        # --------------------------------------
-        options = {"fontsize": t_font[1]}
-        config.apply_options(options, self.pt3)
-        self.pt3.resized
-        self.pt3.show()
+        if os.path.isfile(self.Roolurl) is True:
+            enc = CSVO.getFileEncoding(self.Roolurl)
+            self.table3 = pt3.importCSV(self.Roolurl, encoding=enc)
+            self.pt3 = pt3
+            self.pt3._name = "仕訳検索_仕訳予想結果Main"
+            # DF型変換------------------------------
+            Pandas_mem_usage(self.pt3.model.df)
+            # --------------------------------------
+            options = {"fontsize": t_font[1]}
+            config.apply_options(options, self.pt3)
+            self.pt3.resized
+            self.pt3.show()
 
 
 def create_SettingFrame(self):
@@ -100,7 +139,17 @@ def create_SettingFrame(self):
     self.Mframe.grid(
         row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E
     )  # , ipadx=500, ipady=100)
-    tk.Label(self.Mframe.scrollable_frame, text="設定").grid(
+    # tk.Label(self.Mframe.scrollable_frame, text="設定").grid(
+    #     row=0, column=0, sticky=tk.N + tk.W
+    # )  # 位置指定
+    ck.CTkLabel(
+        master=self.Mframe.scrollable_frame,
+        text="設定",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
         row=0, column=0, sticky=tk.N + tk.W
     )  # 位置指定
     # -------------------------------------------------------------------------------------
@@ -129,88 +178,284 @@ def create_SettingFrame(self):
     self.frame8.grid(row=2, column=5, sticky=tk.N + tk.S)
     self.frame8EntryList = []  # このフレームのEntryのインスタンス
     # -------------------------------------------------------------------------------------
-    tk.Label(self.frame6, text="元帳日付列名").grid(row=0, column=0)  # 位置指定
-    self.Moto_Day = tk.Entry(self.frame6, width=10)
+    # tk.Label(self.frame6, text="元帳日付列名").grid(row=0, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame6,
+        text="元帳日付列名",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=0, column=0
+    )  # 位置指定
+    # self.Moto_Day = tk.Entry(self.frame6, width=10)
+    self.Moto_Day = ck.CTkEntry(
+        master=self.frame6,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.Moto_Day.insert(0, "元帳日付列名")
     self.Moto_Day.grid(row=0, column=1)
     # ---------------------------------------------------------------------------------------
-    tk.Label(self.frame6, text="元帳借方金額列名").grid(row=1, column=0)  # 位置指定
-    self.Moto_KariMoney = tk.Entry(self.frame6, width=10)
+    # tk.Label(self.frame6, text="元帳借方金額列名").grid(row=1, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame6,
+        text="元帳借方金額列名",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=1, column=0
+    )  # 位置指定
+    # self.Moto_KariMoney = tk.Entry(self.frame6, width=10)
+    self.Moto_KariMoney = ck.CTkEntry(
+        master=self.frame6,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.Moto_KariMoney.insert(0, "元帳借方金額列名")
     self.Moto_KariMoney.grid(row=1, column=1)
     # ---------------------------------------------------------------------------------------
-    tk.Label(self.frame6, text="元帳貸方金額列名").grid(row=2, column=0)  # 位置指定
-    self.Moto_KashiMoney = tk.Entry(self.frame6, width=10)
+    # tk.Label(self.frame6, text="元帳貸方金額列名").grid(row=2, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame6,
+        text="元帳貸方金額列名",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=2, column=0
+    )  # 位置指定
+    # self.Moto_KashiMoney = tk.Entry(self.frame6, width=10)
+    self.Moto_KashiMoney = ck.CTkEntry(
+        master=self.frame6,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.Moto_KashiMoney.insert(0, "元帳貸方金額列名")
     self.Moto_KashiMoney.grid(row=2, column=1)
     # ---------------------------------------------------------------------------------------
-    tk.Label(self.frame6, text="元帳摘要列名").grid(row=3, column=0)  # 位置指定
-    self.Moto_Tekiyou = tk.Entry(self.frame6, width=10)
+    # tk.Label(self.frame6, text="元帳摘要列名").grid(row=3, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame6,
+        text="元帳摘要列名",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=3, column=0
+    )  # 位置指定
+    # self.Moto_Tekiyou = tk.Entry(self.frame6, width=10)
+    self.Moto_Tekiyou = ck.CTkEntry(
+        master=self.frame6,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.Moto_Tekiyou.insert(0, "元帳摘要列名")
     self.Moto_Tekiyou.grid(row=3, column=1)
     # ---------------------------------------------------------------------------------------
-    tk.Label(self.frame6, text="元帳借方科目列名").grid(row=4, column=0)  # 位置指定
-    self.Moto_Karikata = tk.Entry(self.frame6, width=10)
+    # tk.Label(self.frame6, text="元帳借方科目列名").grid(row=4, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame6,
+        text="元帳借方科目列名",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=4, column=0
+    )  # 位置指定
+    # self.Moto_Karikata = tk.Entry(self.frame6, width=10)
+    self.Moto_Karikata = ck.CTkEntry(
+        master=self.frame6,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.Moto_Karikata.insert(0, "（借）科目名")
     self.Moto_Karikata.grid(row=4, column=1)
     # ---------------------------------------------------------------------------------------
-    tk.Label(self.frame6, text="元帳貸方科目列名").grid(row=5, column=0)  # 位置指定
-    self.Moto_Kashikata = tk.Entry(self.frame6, width=10)
+    # tk.Label(self.frame6, text="元帳貸方科目列名").grid(row=5, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame6,
+        text="元帳貸方科目列名",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=5, column=0
+    )  # 位置指定
+    # self.Moto_Kashikata = tk.Entry(self.frame6, width=10)
+    self.Moto_Kashikata = ck.CTkEntry(
+        master=self.frame6,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.Moto_Kashikata.insert(0, "（貸）科目名")
     self.Moto_Kashikata.grid(row=5, column=1)
     # ---------------------------------------------------------------------------------------
     # 全行自動仕訳ボタン-------------------------------------------------------------
-    self.AllRun = tk.Button(
-        self.frame6,
+    # self.AllRun = tk.Button(
+    #     self.frame6,
+    #     text="全行自動仕訳",
+    #     bg="LavenderBlush",
+    #     width=20,
+    #     command=lambda: self.AJAllCalc(self.FileName),
+    # )
+
+    self.AllRun = ck.CTkButton(
+        master=self.frame6,
         text="全行自動仕訳",
-        bg="LavenderBlush",
-        width=20,
-        command=lambda: self.AJAllCalc(self.FileName),
+        command=self.AJAllCalc,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="LavenderBlush",
     )
+
     self.AllRun.grid(row=6, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
     # 選択行自動仕訳作成ボタン----------------------------------------------------------------
-    self.AJ_Btn = tk.Button(
-        self.frame6,
+    # self.AJ_Btn = tk.Button(
+    #     self.frame6,
+    #     text="選択行仕訳予想検索",
+    #     width=20,
+    #     command=lambda: self.AJCalc(self.FileName),
+    #     bg="lightblue",
+    # )
+    self.AJ_Btn = ck.CTkButton(
+        master=self.frame6,
         text="選択行仕訳予想検索",
-        width=20,
-        command=lambda: self.AJCalc(self.FileName),
-        bg="lightblue",
+        command=self.AJCalc,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="lightblue",
     )
+
     self.AJ_Btn.grid(row=7, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
     # -------------------------------------------------------------------------------------
     # 抽出仕訳転記ボタン----------------------------------------------------------------
-    self.AJ_copy = tk.Button(
-        self.frame6,
+    # self.AJ_copy = tk.Button(
+    #     self.frame6,
+    #     text="抽出仕訳転記",
+    #     width=20,
+    #     command=lambda: self.AJ_copyCalc(),
+    #     bg="pink",
+    # )
+    self.AJ_copy = ck.CTkButton(
+        master=self.frame6,
         text="抽出仕訳転記",
-        width=20,
         command=lambda: self.AJ_copyCalc(),
-        bg="pink",
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="pink",
     )
+
     self.AJ_copy.grid(row=8, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
     # -------------------------------------------------------------------------------------
     # 元帳表示ボタン----------------------------------------------------------------
-    self.AJ_copy = tk.Button(
-        self.frame6,
+    # self.AJ_copy = tk.Button(
+    #     self.frame6,
+    #     text="元帳表示",
+    #     width=20,
+    #     command=lambda: self.ReadM(self.Roolurl),
+    #     bg="PaleGreen",
+    # )
+    self.AJ_copy = ck.CTkButton(
+        master=self.frame6,
         text="元帳表示",
-        width=20,
         command=lambda: self.ReadM(self.Roolurl),
-        bg="PaleGreen",
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="PaleGreen",
     )
+
     self.AJ_copy.grid(row=9, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
     # -------------------------------------------------------------------------------------
     # 置換設定追加ボタン--------------------------------------------------------------------
-    self.AJ_set = tk.Button(
-        self.frame7,
+    # self.AJ_set = tk.Button(
+    #     self.frame7,
+    #     text="置換設定追加",
+    #     width=20,
+    #     command=lambda: tke.AJ_setCalc(self),
+    #     bg="Coral",
+    # )
+    self.AJ_set = ck.CTkButton(
+        master=self.frame7,
         text="置換設定追加",
-        width=20,
         command=lambda: tke.AJ_setCalc(self),
-        bg="Coral",
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="Coral",
     )
-    self.AJ_set.grid(row=0, column=0, columnspan=4, sticky=tk.W + tk.E)  # 位置指定
+
+    self.AJ_set.grid(row=0, column=0, columnspan=4, sticky=tk.N)  # 位置指定
     # -------------------------------------------------------------------------------------
 
     # 列名設定フレーム################################################################
-    tk.Label(self.frame8, text="摘要置換設定").grid(row=1, column=0)  # フレームテキスト
+    # tk.Label(self.frame8, text="摘要置換設定").grid(row=1, column=0)  # フレームテキスト
+    ck.CTkLabel(
+        master=self.frame8,
+        text="摘要置換設定",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=1, column=0
+    )  # 位置指定
     self.SF = SF.ScrollableFrame(self.frame8, bar_x=False)
     self.SF.grid(sticky=tk.W + tk.E)  # , ipadx=500, ipady=100)
     # エントリーウィジェットマネージャを初期化
@@ -234,9 +479,35 @@ def RepcreateEntry(self, next, bar_x=True, bar_y=True):
     """
     global L_List, E_List
     # 最初のエントリーウィジェットを追加
-    self.RepLEntries.insert(next, tk.Entry(self.SF.scrollable_frame, width=10))
+    # self.RepLEntries.insert(next, tk.Entry(self.SF.scrollable_frame, width=10))
+    self.RepLEntries.insert(
+        next,
+        ck.CTkEntry(
+            master=self.SF.scrollable_frame,
+            width=self.EntWidth,
+            height=self.EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+            fg_color="snow",
+        ),
+    )
     # 最初のエントリーウィジェットを追加
-    self.RepREntries.insert(next, tk.Entry(self.SF.scrollable_frame, width=10))
+    # self.RepREntries.insert(next, tk.Entry(self.SF.scrollable_frame, width=10))
+    self.RepREntries.insert(
+        next,
+        ck.CTkEntry(
+            master=self.SF.scrollable_frame,
+            width=self.EntWidth,
+            height=self.EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+            fg_color="snow",
+        ),
+    )
     # エントリーウィジェットを追加するボタンのようなラベルを作成
     self.RepinsertEntries.insert(
         next,
@@ -247,6 +518,18 @@ def RepcreateEntry(self, next, bar_x=True, bar_y=True):
             font=("Arial Black", 20),
         ),
     )
+    # self.RepinsertEntries.insert(
+    #     next,
+    #     ck.CTkLabel(
+    #         master=self.SF.scrollable_frame,
+    #         text="+",
+    #         width=self.LabelWidth,
+    #         height=self.LabelHeight,
+    #         corner_radius=8,
+    #         text_font=self.t_font,
+    #         fg="#33ff33",
+    #     ),
+    # )
     # エントリーウィジェットを削除するボタンのようなラベルを作成（初期の段階では表示しない）
     self.RepremoveEntries.insert(
         next,
@@ -257,6 +540,18 @@ def RepcreateEntry(self, next, bar_x=True, bar_y=True):
             font=("Arial Black", 20),
         ),
     )
+    # self.RepremoveEntries.insert(
+    #     next,
+    #     ck.CTkLabel(
+    #         master=self.SF.scrollable_frame,
+    #         text="−",
+    #         width=self.LabelWidth,
+    #         height=self.LabelHeight,
+    #         corner_radius=8,
+    #         text_font=self.t_font,
+    #         fg="#ff3333",
+    #     ),
+    # )
     # 追加するボタンのようなラベルにクリックイベントを設定
     self.RepinsertEntries[next].bind(
         "<1>", lambda event, id=self.Repindex: RepinsertEntry_click(self, event, id)
@@ -408,9 +703,17 @@ def create_Frame4(self, t_font):
     )  # 親フレーム
     self.AJsetOCRFrame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     self.AJsetOCRFrameDG_Sub_Frame = tk.Frame(self.AJsetOCRFrame, width=650, height=200)
-    tk.Label(self.AJsetOCRFrame, text="OCR抽出結果表").grid(
-        row=0, column=0, sticky=tk.W
-    )  # 位置指定
+    # tk.Label(self.AJsetOCRFrame, text="OCR抽出結果表").grid(
+    #     row=0, column=0, sticky=tk.W
+    # )  # 位置指定
+    ck.CTkLabel(
+        master=self.AJsetOCRFrame,
+        text="OCR抽出結果表",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(row=0, column=0, sticky=tk.W)
     self.AJsetOCRFrameDG_Sub_Frame.grid(
         row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
     )
@@ -422,17 +725,18 @@ def create_Frame4(self, t_font):
     )  # テーブルをサブクラス化
     self.pt5 = pt5
     if self.FileName != "":
-        enc = CSVO.getFileEncoding(self.FileName)
-        self.table5 = pt5.importCSV(self.FileName, encoding=enc)
-        self.pt5 = pt5
-        self.pt5._name = "OCR抽出結果表Sub"
-        # DF型変換------------------------------
-        Pandas_mem_usage(self.pt5.model.df)
-        # --------------------------------------
-        options = {"fontsize": t_font[1]}
-        config.apply_options(options, self.pt5)
-        self.pt5.resized
-        self.pt5.show()
+        if os.path.isfile(self.FileName) is True:
+            enc = CSVO.getFileEncoding(self.FileName)
+            self.table5 = pt5.importCSV(self.FileName, encoding=enc)
+            self.pt5 = pt5
+            self.pt5._name = "OCR抽出結果表Sub"
+            # DF型変換------------------------------
+            Pandas_mem_usage(self.pt5.model.df)
+            # --------------------------------------
+            options = {"fontsize": t_font[1]}
+            config.apply_options(options, self.pt5)
+            self.pt5.resized
+            self.pt5.show()
 
     # ------------------------------------------------------------------------------
     self.AJsetRoolFrame = tk.Frame(
@@ -442,9 +746,17 @@ def create_Frame4(self, t_font):
     self.AJsetOCRFrameDG_Sub_Frame2 = tk.Frame(
         self.AJsetRoolFrame, width=650, height=200
     )
-    tk.Label(self.AJsetRoolFrame, text="ミロク元帳").grid(
-        row=0, column=0, sticky=tk.W
-    )  # 位置指定
+    # tk.Label(self.AJsetRoolFrame, text="ミロク元帳").grid(
+    #     row=0, column=0, sticky=tk.W
+    # )  # 位置指定
+    ck.CTkLabel(
+        master=self.AJsetRoolFrame,
+        text="ミロク元帳",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(row=0, column=0, sticky=tk.W)
     self.AJsetOCRFrameDG_Sub_Frame2.grid(
         row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
     )
@@ -456,17 +768,18 @@ def create_Frame4(self, t_font):
     )  # テーブルをサブクラス化
     self.pt6 = pt6
     if self.Roolurl != "":
-        enc = CSVO.getFileEncoding(self.Roolurl)
-        self.table6 = pt6.importCSV(self.Roolurl, encoding=enc)
-        self.pt6 = pt6
-        self.pt6._name = "ミロク元帳Sub"
-        # DF型変換------------------------------
-        Pandas_mem_usage(self.pt6.model.df)
-        # --------------------------------------
-        options = {"fontsize": t_font[1]}
-        config.apply_options(options, self.pt6)
-        self.pt6.resized
-        self.pt6.show()
+        if os.path.isfile(self.Roolurl) is True:
+            enc = CSVO.getFileEncoding(self.Roolurl)
+            self.table6 = pt6.importCSV(self.Roolurl, encoding=enc)
+            self.pt6 = pt6
+            self.pt6._name = "ミロク元帳Sub"
+            # DF型変換------------------------------
+            Pandas_mem_usage(self.pt6.model.df)
+            # --------------------------------------
+            options = {"fontsize": t_font[1]}
+            config.apply_options(options, self.pt6)
+            self.pt6.resized
+            self.pt6.show()
 
     # ------------------------------------------------------------------------------
     self.AJsetFrame = tk.Frame(
@@ -474,9 +787,17 @@ def create_Frame4(self, t_font):
     )  # 親フレーム
     self.AJsetFrame.grid(row=2, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     self.AJsetDG_Sub_Frame = tk.Frame(self.AJsetFrame, width=650, height=200)
-    tk.Label(self.AJsetFrame, text="テキスト変換ルール").grid(
-        row=0, column=0, sticky=tk.W
-    )  # 位置指定
+    # tk.Label(self.AJsetFrame, text="テキスト変換ルール").grid(
+    #     row=0, column=0, sticky=tk.W
+    # )  # 位置指定
+    ck.CTkLabel(
+        master=self.AJsetFrame,
+        text="テキスト変換ルール",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(row=0, column=0, sticky=tk.W)
     self.AJsetDG_Sub_Frame.grid(
         row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
     )
@@ -485,63 +806,130 @@ def create_Frame4(self, t_font):
     )  # テーブルをサブクラス化
     self.pt4 = pt4
     if self.ChangeTxtURL != "":
-        enc = CSVO.getFileEncoding(self.ChangeTxtURL)
-        self.table4 = pt4.importCSV(self.ChangeTxtURL, encoding=enc)
-        self.pt4 = pt4
-        self.pt4._name = "テキスト変換ルールSub"
-        # DF型変換------------------------------
-        Pandas_mem_usage(self.pt4.model.df)
-        # --------------------------------------
-        options = {"fontsize": t_font[1]}
-        config.apply_options(options, self.pt4)
-        self.pt4.resized
-        self.pt4.show()
+        if os.path.isfile(self.ChangeTxtURL) is True:
+            enc = CSVO.getFileEncoding(self.ChangeTxtURL)
+            self.table4 = pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+            self.pt4 = pt4
+            self.pt4._name = "テキスト変換ルールSub"
+            # DF型変換------------------------------
+            Pandas_mem_usage(self.pt4.model.df)
+            # --------------------------------------
+            options = {"fontsize": t_font[1]}
+            config.apply_options(options, self.pt4)
+            self.pt4.resized
+            self.pt4.show()
 
     # 行追加ボタン--------------------------------------------------------------------
-    self.Sub_RowInsert = tk.Button(
-        self.AJsetFrame,
+    # self.Sub_RowInsert = tk.Button(
+    #     self.AJsetFrame,
+    #     text="行追加",
+    #     bg="LightYellow",
+    #     width=20,
+    #     command=self.Sub_RowInsert,
+    # )
+
+    self.Sub_RowInsert = ck.CTkButton(
+        master=self.AJsetFrame,
         text="行追加",
-        bg="LightYellow",
-        width=20,
         command=self.Sub_RowInsert,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="LightYellow",
     )
+
     self.Sub_RowInsert.grid(row=3, column=0, sticky=tk.W)  # 位置指定
     # 列追加ボタン--------------------------------------------------------------------
-    self.Sub_ColumnInsert = tk.Button(
-        self.AJsetFrame,
+    # self.Sub_ColumnInsert = tk.Button(
+    #     self.AJsetFrame,
+    #     text="列追加",
+    #     bg="Lightblue",
+    #     width=20,
+    #     command=self.Sub_ColumnInsert,
+    # )
+    self.Sub_ColumnInsert = ck.CTkButton(
+        master=self.AJsetFrame,
         text="列追加",
-        bg="Lightblue",
-        width=20,
         command=self.Sub_ColumnInsert,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="Lightblue",
     )
+
     self.Sub_ColumnInsert.grid(row=3, column=1)  # 位置指定
     # 行削除ボタン--------------------------------------------------------------------
-    self.Sub_RowDelete = tk.Button(
-        self.AJsetFrame,
+    # self.Sub_RowDelete = tk.Button(
+    #     self.AJsetFrame,
+    #     text="行削除",
+    #     bg="darkorange",
+    #     width=20,
+    #     command=self.Sub_RowDelete,
+    # )
+    self.Sub_RowDelete = ck.CTkButton(
+        master=self.AJsetFrame,
         text="行削除",
-        bg="darkorange",
-        width=20,
         command=self.Sub_RowDelete,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="darkorange",
     )
+
     self.Sub_RowDelete.grid(row=3, column=2)  # 位置指定
     # 列削除ボタン--------------------------------------------------------------------
-    self.Sub_ColumnDelete = tk.Button(
-        self.AJsetFrame,
+    # self.Sub_ColumnDelete = tk.Button(
+    #     self.AJsetFrame,
+    #     text="列削除",
+    #     bg="darkgreen",
+    #     width=20,
+    #     command=self.Sub_ColumnDelete,
+    # )
+    self.Sub_ColumnDelete = ck.CTkButton(
+        master=self.AJsetFrame,
         text="列削除",
-        bg="darkgreen",
-        width=20,
         command=self.Sub_ColumnDelete,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="darkgreen",
     )
+
     self.Sub_ColumnDelete.grid(row=3, column=3)  # 位置指定
     # 戻るボタン--------------------------------------------------------------------
-    self.Sub_CloseBtn = tk.Button(
-        self.AJsetFrame,
-        text="戻る",
-        bg="gray80",
-        width=20,
-        command=self.Sub_ReturnBack,
-    )
-    self.Sub_CloseBtn.grid(row=3, column=4, sticky=tk.E)  # 位置指定
+    # self.Sub_CloseBtn = tk.Button(
+    #     self.AJsetFrame,
+    #     text="戻る",
+    #     bg="gray80",
+    #     width=20,
+    #     command=self.Sub_ReturnBack,
+    # )
+    # self.Sub_CloseBtn = ck.CTkButton(
+    #     master=self.AJsetFrame,
+    #     text="戻る",
+    #     command=lambda: self.ChangeFrame("詳細設定"),
+    #     width=self.BtnWidth,
+    #     height=self.BtnHeight,
+    #     border_width=2,
+    #     corner_radius=8,
+    #     text_color="black",
+    #     border_color="snow",
+    #     fg_color="gray80",
+    # )
+
+    # self.Sub_CloseBtn.grid(row=3, column=4, sticky=tk.E)  # 位置指定
     # メニューフレーム作成-----------------------------------------------------------
     # 右側メニュー
     self.AJM = tk.Frame(
@@ -560,7 +948,15 @@ def create_Frame4(self, t_font):
         bd=2,
         relief=tk.RIDGE,
     )  # 親フレーム
-    tk.Label(self.AJM, text="仕訳候補判定基準列設定").grid(row=0, column=0, sticky=tk.N)  # 位置指定
+    # tk.Label(self.AJM, text="仕訳候補判定基準列設定").grid(row=0, column=0, sticky=tk.N)  # 位置指定
+    ck.CTkLabel(
+        master=self.AJM,
+        text="仕訳候補判定基準列設定",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(row=0, column=0, sticky=tk.N)
     self.AJsetMenuFrame.grid(row=1, column=0)
 
 

@@ -66,6 +66,7 @@ class ViewGUI:
         self.control = ControlGUI(default_path)
         # 初期化
         self.dir_path = default_path
+        self.Com_path = self.ComUrlGet()
         self.file_list = ["..[select file]"]
         self.clip_enable = False
         self.File_url_List = []  # 書出しCSVURLリスト
@@ -110,6 +111,14 @@ class ViewGUI:
         # #############################################################################
 
     # ----------------------------------------------------------------------------------
+    def ComUrlGet(self):
+        filepath = self.dir_path + r"\\OCRView\\CompanyData"
+        if os.path.exists(filepath):
+            return filepath
+        filepath = self.dir_path + r"\\CompanyData"
+        if os.path.exists(filepath):
+            return filepath
+
     def __del__(self):
         print("インスタンスが破棄されました")
 
@@ -384,7 +393,7 @@ class ViewGUI:
         self.logger.debug("フォルダー選択起動")  # Log出力
         self.event_Searchsave()  # 編集履歴判定後上書き
         self.dir_path = filedialog.askdirectory(
-            initialdir=self.dir_path, mustexist=True
+            initialdir=self.Com_path, mustexist=True
         )
         self.str_dir.set(self.dir_path)
         self.file_list = self.control.SetDirlist(self.dir_path)

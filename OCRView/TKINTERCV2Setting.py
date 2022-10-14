@@ -1257,6 +1257,8 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                             Mter,
                                             Top,
                                             imgurl,
+                                            Banktoml,
+                                            tomlurl,
                                         )
                                     else:
                                         RU = OCRF.JoinCSV(FUL)
@@ -1272,6 +1274,8 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                                 Mter,
                                                 Top,
                                                 imgurl,
+                                                Banktoml,
+                                                tomlurl,
                                             )
                                         else:
                                             G_logger.debug("CSV連結後出力失敗")  # Log出力
@@ -1504,7 +1508,7 @@ if __name__ == "__main__":
     global Banktoml, tomlurl, rep_N, F_N, imgurl
     URL = os.getcwd()
     imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_2page.png"
-    imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
+    # imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
     tomlurl = tomlread()
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:

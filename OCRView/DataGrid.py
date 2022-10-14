@@ -24,9 +24,12 @@ from pandastable import config
 
 # class DataGrid:
 class DataGrid(tk.Toplevel):
-    def __init__(self, filename, J_File, A_File, R_Url, C_Url, master=None):
+    def __init__(
+        self, filename, J_File, A_File, R_Url, C_Url, Banktoml, BanktomlUrl, master=None
+    ):
         # Windowの初期設定を行う。
         super().__init__(master)
+        self.withdraw()
         # Windowの画面サイズを設定する。
         # G_logger.debug("P_Table起動")  # Log出力
         self.FileName = filename
@@ -62,9 +65,21 @@ class DataGrid(tk.Toplevel):
             )
         )
         ########################################
+        self.SideWidth = int(100 * self.wid_Par)
+        self.SideHeight = int(50 * self.hei_Par)
+        self.LabelWidth = int(50 * self.wid_Par)
+        self.LabelHeight = int(20 * self.hei_Par)
+        self.BtnWidth = int(200 * self.wid_Par)
+        self.BtnHeight = int(20 * self.hei_Par)
+        self.EntWidth = int(100 * self.hei_Par)
+        self.EntHeight = int(20 * self.wid_Par)
         self.wid = 2.25  # width割率
         self.hei = 1.4  # width割率
         self.t_font = (1, int(10 * self.wid_Par))
+        self.BanktomlUrl = BanktomlUrl
+        self.Banktoml = Banktoml
+        self.tomlList = self.Banktoml["ParList"]["Name"]  # tomlリスト値
+        self.tomlParList = self.Banktoml["ParList"]
         ########################################
         self.master.minsize(self.width_of_window, self.height_of_window)
         self.master.title("OCR読取 Ver:0.9-仕訳検索-")
@@ -87,35 +102,38 @@ class DataGrid(tk.Toplevel):
         # -------------------------------------------------------------------------------------
         ########################################################################################
         if self.Roolurl != "":
-            enc = CSVO.getFileEncoding(self.Roolurl)
-            AJ_np = BeforeNGFT(self.Roolurl, enc)
-            AJ_Column = AJ_np[0, :]
-            A = 0
-            # ミロク元帳の列名から元帳列名設定を抽出--------------------------------------------
-            for AJ_Item in AJ_Column:
-                if "日付" in AJ_Item:
-                    self.Moto_Day.delete(0, tk.END)
-                    self.Moto_Day.insert(0, AJ_Item.replace("'", "").replace('"', ""))
-                    self.Moto_Day_No = A
-                elif "金額" in AJ_Item and "借" in AJ_Item:
-                    self.Moto_KariMoney.delete(0, tk.END)
-                    self.Moto_KariMoney.insert(
-                        0, AJ_Item.replace("'", "").replace('"', "")
-                    )
-                    self.Moto_KariMoney_No = A
-                elif "金額" in AJ_Item and "貸" in AJ_Item:
-                    self.Moto_KashiMoney.delete(0, tk.END)
-                    self.Moto_KashiMoney.insert(
-                        0, AJ_Item.replace("'", "").replace('"', "")
-                    )
-                    self.Moto_KashiMoney_No = A
-                elif "摘要" in AJ_Item:
-                    self.Moto_Tekiyou.delete(0, tk.END)
-                    self.Moto_Tekiyou.insert(
-                        0, AJ_Item.replace("'", "").replace('"', "")
-                    )
-                    self.Moto_Tekiyou_No = A
-                A += 1
+            if os.path.isfile(self.Roolurl) is True:
+                enc = CSVO.getFileEncoding(self.Roolurl)
+                AJ_np = BeforeNGFT(self.Roolurl, enc)
+                AJ_Column = AJ_np[0, :]
+                A = 0
+                # ミロク元帳の列名から元帳列名設定を抽出--------------------------------------------
+                for AJ_Item in AJ_Column:
+                    if "日付" in AJ_Item:
+                        self.Moto_Day.delete(0, tk.END)
+                        self.Moto_Day.insert(
+                            0, AJ_Item.replace("'", "").replace('"', "")
+                        )
+                        self.Moto_Day_No = A
+                    elif "金額" in AJ_Item and "借" in AJ_Item:
+                        self.Moto_KariMoney.delete(0, tk.END)
+                        self.Moto_KariMoney.insert(
+                            0, AJ_Item.replace("'", "").replace('"', "")
+                        )
+                        self.Moto_KariMoney_No = A
+                    elif "金額" in AJ_Item and "貸" in AJ_Item:
+                        self.Moto_KashiMoney.delete(0, tk.END)
+                        self.Moto_KashiMoney.insert(
+                            0, AJ_Item.replace("'", "").replace('"', "")
+                        )
+                        self.Moto_KashiMoney_No = A
+                    elif "摘要" in AJ_Item:
+                        self.Moto_Tekiyou.delete(0, tk.END)
+                        self.Moto_Tekiyou.insert(
+                            0, AJ_Item.replace("'", "").replace('"', "")
+                        )
+                        self.Moto_Tekiyou_No = A
+                    A += 1
         # ---------------------------------------------------------------------------------------
         # ツリービューを配置
         tke.treeviewEntries(self)
@@ -123,7 +141,7 @@ class DataGrid(tk.Toplevel):
         # テキスト変換設定フレームを配置(サブメニューにもコピー配置)
         tke.FrameChangeEntries(self)
         # tomlListを配置
-        # tke.tomlEntries(self)
+        tke.tomlEntries(self)
         # フレーム7を配置
         tke.Frame7Entries(self)
         # フレーム7のスクロールバー再設定
@@ -137,11 +155,11 @@ class DataGrid(tk.Toplevel):
         """
         ウィンドウ×ボタンクリック
         """
-        if tk.messagebox.askokcancel("確認", "終了しますか？"):
-            self.master.destroy()
-            # G_logger.debug("TKINTERCV2SettingClose完了")  # Log出力
-        else:
-            print("")
+        try:
+            self.DG_Sub_Frame.pack_forget()
+            self.DG_Main_Frame.pack(expand=True)
+        except:
+            tk.messagebox.showinfo("確認", "フレームを閉じるのに失敗しました。")
             # G_logger.debug("TKINTERCV2SettingClose失敗")  # Log出力
 
     def Sub_ColumnDelete(self):
@@ -408,37 +426,40 @@ class DataGrid(tk.Toplevel):
         try:
             # ------------------------------------------------------------------------------
             if self.ChangeTxtURL != "":
-                enc = CSVO.getFileEncoding(self.ChangeTxtURL)
-                self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
-                # DF型変換------------------------------
-                PandasAstype(self.pt4.model.df)
-                # --------------------------------------
-                options = {"fontsize": self.t_font[1]}
-                config.apply_options(options, self.pt4)
-                self.pt4.update()
-                self.pt4.show()
+                if os.path.isfile(self.ChangeTxtURL) is True:
+                    enc = CSVO.getFileEncoding(self.ChangeTxtURL)
+                    self.pt4.importCSV(self.ChangeTxtURL, encoding=enc)
+                    # DF型変換------------------------------
+                    PandasAstype(self.pt4.model.df)
+                    # --------------------------------------
+                    options = {"fontsize": self.t_font[1]}
+                    config.apply_options(options, self.pt4)
+                    self.pt4.update()
+                    self.pt4.show()
             # ------------------------------------------------------------------------------
             if self.FileName != "":
-                enc = CSVO.getFileEncoding(self.FileName)  # OCR結果CSVURL
-                self.pt5.importCSV(self.FileName, encoding=enc)  # OCR結果CSVURL
-                # DF型変換------------------------------
-                PandasAstype(self.pt5.model.df)
-                # --------------------------------------
-                options = {"fontsize": self.t_font[1]}
-                config.apply_options(options, self.pt5)
-                self.pt5.update()
-                self.pt5.show()
+                if os.path.isfile(self.FileName) is True:
+                    enc = CSVO.getFileEncoding(self.FileName)  # OCR結果CSVURL
+                    self.pt5.importCSV(self.FileName, encoding=enc)  # OCR結果CSVURL
+                    # DF型変換------------------------------
+                    PandasAstype(self.pt5.model.df)
+                    # --------------------------------------
+                    options = {"fontsize": self.t_font[1]}
+                    config.apply_options(options, self.pt5)
+                    self.pt5.update()
+                    self.pt5.show()
             # ------------------------------------------------------------------------------
             if self.Roolurl != "":
-                enc = CSVO.getFileEncoding(self.Roolurl)  # ミロク元帳CSVURL
-                self.pt6.importCSV(self.Roolurl, encoding=enc)  # ミロク元帳CSVURL
-                # DF型変換------------------------------
-                PandasAstype(self.pt6.model.df)
-                # --------------------------------------
-                options = {"fontsize": self.t_font[1]}
-                config.apply_options(options, self.pt6)
-                self.pt6.update()
-                self.pt6.show()
+                if os.path.isfile(self.Roolurl) is True:
+                    enc = CSVO.getFileEncoding(self.Roolurl)  # ミロク元帳CSVURL
+                    self.pt6.importCSV(self.Roolurl, encoding=enc)  # ミロク元帳CSVURL
+                    # DF型変換------------------------------
+                    PandasAstype(self.pt6.model.df)
+                    # --------------------------------------
+                    options = {"fontsize": self.t_font[1]}
+                    config.apply_options(options, self.pt6)
+                    self.pt6.update()
+                    self.pt6.show()
             # ------------------------------------------------------------------------------
             self.DG_Main_Frame.pack_forget()
             # self.GetTxt_ChangeEntry(0)
@@ -834,7 +855,21 @@ class DataGrid(tk.Toplevel):
             return var
 
     # -----------------------------------------------------------------------------------------
-    def AJAllCalc(self, csvurl):
+    def AJCheck(self):
+        if os.path.isfile(self.FileName) is False:
+            tk.messagebox.showinfo("戻る", "OCR抽出表が存在しません。")
+            return False
+        if os.path.isfile(self.Roolurl) is False:
+            tk.messagebox.showinfo("戻る", "ミロク元帳が存在しません。")
+            return False
+        if os.path.isfile(self.ChangeTxtURL) is False:
+            tk.messagebox.showinfo("戻る", "変換ルールが存在しません。")
+            return False
+        else:
+            return True
+
+    # -----------------------------------------------------------------------------------------
+    def AJAllCalc(self):
         """
         全行自動仕訳処理
         DGFrame.py
@@ -848,21 +883,20 @@ class DataGrid(tk.Toplevel):
 
         try:
             # 検索対象月間を判定
-            try:
-                if self.Hani.get() != "":
-                    int(self.Hani.get())  # 抽出月範囲を判定
-                    Finddf = self.npDaysSort(self.pt6.model.df)
-                    self.pt6.model.df = Finddf
-                else:
-                    print("DF空白")
-            except:
-                tk.messagebox.showinfo("確認", "抽出月範囲に数値・空白以外が入っています。")
+            # try:
+            #     if self.Hani.get() != "":
+            #         int(self.Hani.get())  # 抽出月範囲を判定
+            #         Finddf = self.npDaysSort(self.pt6.model.df)
+            #         self.pt6.model.df = Finddf
+            #     else:
+            #         print("DF空白")
+            # except:
+            #     tk.messagebox.showinfo("確認", "抽出月範囲に数値・空白以外が入っています。")
+            #     return
+            if self.AJCheck() is False:
                 return
             # ##########################################################################
             sv = int(self.SortVar.get())
-            self.FileName = csvurl  # OCR抽出結果表
-            self.JounalFileName = AJurl  # 自動仕訳出力先CSVURL
-            self.Roolurl = Roolurl  # テキスト置換ルール代入
             st = 0  # 行ポジション
             # OCR表に対する列設定読込---------------------------------------------------
             for stom in self.entryList:  # Entryウィジェットリスト
@@ -876,8 +910,8 @@ class DataGrid(tk.Toplevel):
                     Out_var = st
                 st += 1
             # ------------------------------------------------------------------------
-            FileNameenc = CSVO.getFileEncoding(csvurl)
-            Roolurlenc = CSVO.getFileEncoding(Roolurl)
+            FileNameenc = CSVO.getFileEncoding(self.FileName)
+            Roolurlenc = CSVO.getFileEncoding(self.Roolurl)
             ChangeTxtURLenc = CSVO.getFileEncoding(self.ChangeTxtURL)
             # Entry要素設定-------------------------------------------------------------------
             JS = self.tomlEntries[JS_var].get()  # 自動仕訳基準列名Entry取得
@@ -1109,12 +1143,14 @@ class DataGrid(tk.Toplevel):
                     # ------------------------------------------------------------------
                     FinalList = self.ValChange(FinalList)  # 金額が文字列の場合変更
                     # ------------------------------------------------------------------
-                    with open(AJurl, "wt", encoding="cp932", newline="") as fout:
+                    with open(
+                        self.JounalFileName, "wt", encoding="cp932", newline=""
+                    ) as fout:
                         # ライター（書き込み者）を作成
                         writer = csv.writer(fout)
                         writer.writerows(FinalList)
-                    enc = CSVO.getFileEncoding(AJurl)
-                    self.pt2.importCSV(AJurl, encoding=enc)
+                    enc = CSVO.getFileEncoding(self.JounalFileName)
+                    self.pt2.importCSV(self.JounalFileName, encoding=enc)
                     # DF型変換------------------------------
                     PandasAstype(self.pt2.model.df)
                     # --------------------------------------
@@ -1132,7 +1168,7 @@ class DataGrid(tk.Toplevel):
             tk.messagebox.showinfo("確認", "仕訳一致率に数値以外が入っています。")
 
     # -----------------------------------------------------------------------------------------
-    def AJCalc(self, csvurl):
+    def AJCalc(self):
         """
         DGFrame.py
         ↓
@@ -1144,22 +1180,20 @@ class DataGrid(tk.Toplevel):
         global AJSeturl
 
         try:
-            # 検索対象月間を判定
-            try:
-                if self.Hani.get() != "":
-                    int(self.Hani.get())  # 抽出月範囲を判定
-                    Finddf = self.npDaysSort(self.pt6.model.df)
-                    self.pt6.model.df = Finddf
-                else:
-                    print("DF空白")
-            except:
-                tk.messagebox.showinfo("確認", "抽出月範囲に数値・空白以外が入っています。")
+            # # 検索対象月間を判定
+            # try:
+            #     if self.Hani.get() != "":
+            #         int(self.Hani.get())  # 抽出月範囲を判定
+            #         Finddf = self.npDaysSort(self.pt6.model.df)
+            #         self.pt6.model.df = Finddf
+            #     else:
+            #         print("DF空白")
+            # except:
+            #     tk.messagebox.showinfo("確認", "抽出月範囲に数値・空白以外が入っています。")
+            #     return
+            if self.AJCheck() is False:
                 return
             sv = int(self.SortVar.get())
-            self.FileName = csvurl  # OCR結果CSVURL
-            self.JounalFileName = AJurl  # 自動仕訳出力先CSVURL
-            self.Roolurl = Roolurl  # ミロク元帳CSVURL
-
             if self.pt.startrow is None:
                 tk.messagebox.showinfo("確認", "OCR抽出結果表のセルが選択されていません。")
             else:
@@ -1180,8 +1214,8 @@ class DataGrid(tk.Toplevel):
                         Out_var = st
                     st += 1
                 # ------------------------------------------------------------------------
-                FileNameenc = CSVO.getFileEncoding(csvurl)  # OCR表のエンコード取得
-                Roolurlenc = CSVO.getFileEncoding(Roolurl)  # ミロク元帳のエンコード取得
+                FileNameenc = CSVO.getFileEncoding(self.FileName)  # OCR表のエンコード取得
+                Roolurlenc = CSVO.getFileEncoding(self.Roolurl)  # ミロク元帳のエンコード取得
                 ChangeTxtURLenc = CSVO.getFileEncoding(
                     self.ChangeTxtURL
                 )  # テキスト変換設定のエンコード取得
@@ -1684,7 +1718,7 @@ class DataGrid(tk.Toplevel):
         bind関数
         """
 
-        self.root.destroy()
+        self.master.destroy()
         Master.deiconify()
 
     # ------------------------------------------------------------------------------
@@ -1783,12 +1817,14 @@ def BeforeNGFT(url, enc):
 
 
 # -----------------------------------------------------------------------------------------
-def Main(self, filename, J_File, A_File, R_Url, C_Url):
+def Main(self, Mas, filename, J_File, A_File, R_Url, C_Url, BT, BTURL):
     # root = tk.Tk()  # Window生成
+    global Master
+    Master = Mas
     root = tk.Toplevel()  # Window生成
     data = IconCode.icondata()
     root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
-    app = DataGrid(filename, J_File, A_File, R_Url, C_Url, master=root)
+    app = DataGrid(filename, J_File, A_File, R_Url, C_Url, BT, BTURL, master=root)
     # --- 基本的な表示準備 ----------------
 
     app.mainloop()
@@ -1810,12 +1846,6 @@ if __name__ == "__main__":
     AJSeturl = r"D:\OCRTESTPDF\PDFTEST\1869\AJSet.csv"
     Roolurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_仕訳日記帳.csv"
     ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\1869\1869ChangeTxtList.csv"
-
-    # toml読込------------------------------------------------------------------------------
-    with open(BanktomlUrl, encoding="utf-8") as f:
-        Banktoml = toml.load(f)
-        print(Banktoml)
-    # -----------------------------------------------------------
 
     enc = CSVO.getFileEncoding(ChangeTxtURL)  # 摘要変換ルールエンコード
     ColNameList_np = BeforeNGFT(ChangeTxtURL, enc)

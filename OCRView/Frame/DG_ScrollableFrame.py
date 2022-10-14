@@ -67,7 +67,6 @@ class ScrollableFrameDG(ttk.Frame):
         # )
         self.scrollable_frame = tk.Frame(
             self.canvas,
-            bg="gray95",
             relief=tk.GROOVE,
             bd=2,
         )

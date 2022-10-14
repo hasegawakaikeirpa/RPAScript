@@ -15,13 +15,15 @@ from difflib import SequenceMatcher
 from mojimoji import han_to_zen
 import P_Table_btn
 import DataGrid as DG
+from csv import QUOTE_NONNUMERIC
 
 ###################################################################################################
 # class Application(tk.Frame):
 class Application(tk.Toplevel):
-    def __init__(self, csvurl, imgurl, master=None):
+    def __init__(self, csvurl, imgurl, Banktoml, BanktomlUrl, master=None):
         # Windowの初期設定を行う。
         super().__init__(master)
+        self.withdraw()
         # Windowの画面サイズを設定する。
         G_logger.debug("P_Table起動")  # Log出力
         # customtkスタイル
@@ -67,6 +69,8 @@ class Application(tk.Toplevel):
         self.FileName = csvurl
         self.imgurl = imgurl
         self.G_logger = G_logger
+        self.BanktomlUrl = BanktomlUrl
+        self.Banktoml = Banktoml
         # 要素配置
         P_Table_btn.CreateFrame(self)
         self.pt1_OpenFlag = True
@@ -74,6 +78,15 @@ class Application(tk.Toplevel):
         self.select_var.set(1)  # select_var変数に数値をセット
 
     # 以下関数----------------------------------------------------------------------
+    def TableSave(self):
+        enc = DGF.CSVO.getFileEncoding(self.FileName)
+        self.pt.model.df.to_csv(
+            self.FileName,
+            index=False,
+            encoding=enc,
+            quoting=QUOTE_NONNUMERIC,
+        )
+
     def chk_click(self, pt_bln):
         """
         チェックボックス切替
@@ -91,11 +104,19 @@ class Application(tk.Toplevel):
         """
         try:
             self.master.withdraw()
-            Roolurl = r"D:\OCRTESTPDF\PDFTEST\1869\1869_仕訳日記帳.csv"
-            ChangeTxtURL = r"D:\OCRTESTPDF\PDFTEST\1869\1869ChangeTxtList.csv"
-            DG.Main(self, self.FileName, "", "", "",ChangeTxtURL)
+            DG.Main(
+                self,
+                self.master,
+                self.FileName,
+                self.AJ_u,
+                "",
+                "",
+                self.changetxturl,
+                self.Banktoml,
+                self.BanktomlUrl,
+            )
         except:
-            tk.messagebox.showinfo("確認", " 置換フレーム起動エラーです。")
+            tk.messagebox.showinfo("確認", " 仕訳検索フレーム起動エラーです。")
 
     # ----------------------------------------------------------------------
     def ReadRepView(self):
@@ -106,7 +127,9 @@ class Application(tk.Toplevel):
             m = self.children_get()
             m.ColumnHeader = ["変更前", "変更後"]
             self.RView.destroy()
-            self.RView = ReplaceView.Main(self, self.FileName)  # 置換テーブルの読込
+            self.RView = ReplaceView.Main(
+                self, self.FileName, self.OCR_tbname
+            )  # 置換テーブルの読込
             # ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
             self.RView.update()
         except:
@@ -349,10 +372,6 @@ class Application(tk.Toplevel):
         文字列の形式を揃える
         """
         try:
-            # code_regex = re.compile(
-            #     "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
-            # )
-            # strs = code_regex.sub("", strs)
             # GFTable = np.array(pt.model.df)
             nptxt = np.array(pt.model.df)[:, col]
             ptCol = np.array(pt.model.df.columns)
@@ -362,6 +381,11 @@ class Application(tk.Toplevel):
             for r in range(nptxt.shape[0]):
                 txt = nptxt[r]
                 if type(txt) == str:
+                    code_regex = re.compile(
+                        "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
+                    )
+                    txt = code_regex.sub("", txt)
+                    nptxt[r] = txt
                     R_parList = []  # 文字列マッチングリスト初期化
                     # tomlから摘要変換リストを読込一致率50％を超えるものがあれば置換-----------------
                     for RView_r in range(Before_L.shape[0]):
@@ -385,13 +409,23 @@ class Application(tk.Toplevel):
                             else:
                                 ind = np.where(R_parList[:, 1] != Min_r)
                                 R_parList = R_parList[ind]
-                        txt = After_L[ind][0]
-                        nptxt[r] = txt
+                        try:
+                            m_par = R_parList[:, 1][ind]
+                            m_par = int(m_par[0])
+                            ind = R_parList[:, 0][ind]
+                            ind = int(ind[0])
+                        except:
+                            m_par = R_parList[:, 1][0]
+                            m_par = int(m_par)
+                            ind = R_parList[:, 0]
+                            ind = int(ind)
+                        if m_par == 1.0:
+                            txt = After_L[ind]
+                            nptxt[r] = txt
 
             nppt = np.array(pt.model.df)
             nppt[:, col] = nptxt
             nppt_t = pd.DataFrame(nppt, columns=ptCol)
-
             DGF.Pandas_mem_usage(nppt_t)
             pt.model.df = nppt_t
             # pt.show()
@@ -415,10 +449,13 @@ class Application(tk.Toplevel):
             Y_key = code_regex.sub("", Y_key)
             T_Nen = len(TxtSP[0])
             if T_Nen <= 2:
-                if Y_key[0] == "H" or Y_key[0] == "h":
-                    D_strYear = "平成"
-                elif Y_key[0] == "S" or Y_key[0] == "s":
-                    D_strYear = "昭和"
+                if Y_key != "":
+                    if Y_key[0] == "H" or Y_key[0] == "h":
+                        D_strYear = "平成"
+                    elif Y_key[0] == "S" or Y_key[0] == "s":
+                        D_strYear = "昭和"
+                    else:
+                        D_strYear = "令和"
                 else:
                     D_strYear = "令和"
                 print("和暦")
@@ -1013,7 +1050,22 @@ class Application(tk.Toplevel):
             self.FileName = filename
             if filename != "":
                 self.OCR_dbname = "ReplaceView.db"
-                self.OCR_tbname = os.path.splitext(os.path.basename(self.FileName))[0]
+                self.OCR_tbname = (
+                    "TB_" + os.path.splitext(os.path.basename(self.FileName))[0]
+                )
+                self.OCR_fname = os.path.splitext(os.path.basename(self.FileName))[0]
+                self.changetxturl = (
+                    os.path.dirname(self.FileName)
+                    + r"\\"
+                    + os.path.basename(os.path.dirname(self.FileName))
+                    + "ChangeTxtList.csv"
+                )
+                self.AJ_u = (
+                    os.path.dirname(self.FileName)
+                    + r"\\"
+                    + self.OCR_fname
+                    + "_AutoJounal.csv"
+                )
                 enc = DGF.CSVO.getFileEncoding(self.FileName)
                 self.table = self.pt.importCSV(self.FileName, encoding=enc)
                 options = {"fontsize": self.t_font[1]}
@@ -1029,7 +1081,9 @@ class Application(tk.Toplevel):
                 # m = self.children_get()
 
                 self.RView.destroy()
-                self.RView = ReplaceView.Main(self, self.FileName)  # 置換テーブルの読込
+                self.RView = ReplaceView.Main(
+                    self, self.FileName, self.OCR_tbname
+                )  # 置換テーブルの読込
                 # ReplaceView.CreateDB.readsql(self, self.OCR_dbname, self.OCR_tbname, m)
                 self.RView.update()
         except:
@@ -1050,7 +1104,7 @@ def tomlread():
 
 
 # -------------------------------------------------------------------------------------
-def Main(MUI, US, logger, MT, TP, imgu):
+def Main(MUI, US, logger, MT, TP, imgu, BT, BTURL):
     """
     呼出関数
     """
@@ -1070,7 +1124,9 @@ def Main(MUI, US, logger, MT, TP, imgu):
     root = tk.Toplevel()  # Window生成
     data = IconCode.icondata()
     root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
-    app = Application(csvurl=csv_u, imgurl=imgurl, master=root)
+    app = Application(
+        csvurl=csv_u, imgurl=imgurl, Banktoml=BT, BanktomlUrl=BTURL, master=root
+    )
     # --- 基本的な表示準備 ----------------
 
     app.mainloop()
@@ -1083,24 +1139,27 @@ if __name__ == "__main__":
     G_logger = logging.getLogger(__name__)
     # ---------------------------------------------------------------------------------------------------------------
 
-    global Banktoml, tomlurl, PlusCol
+    global tomlurl, PlusCol
     URL = os.getcwd()
-    imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.png"
+    BTURL = r"D:\PythonScript\RPAScript\OCRView\Setting.toml"
+    imgurl = r"D:\PythonScript\RPAScript\OCRView\CompanyData\1869\1869_7page.png"
     # imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
     tomlurl = tomlread()
-    csv_u = r"D:\OCRTESTPDF\PDFTEST\相続_JA_1page.csv"
+    csv_u = r"D:\PythonScript\RPAScript\OCRView\CompanyData\1869\1869_7page_merge.csv"
     # csv_u = r"C:/Users/もちねこ/Desktop/PDFTEST/JA_1page_AutoJounal.csv"
     PlusCol = "比較対象行番号"
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
-        Banktoml = toml.load(f)
-        print(Banktoml)
+        BT = toml.load(f)
+        print(BT)
     # -----------------------------------------------------------
     # -----------------------------------------------------------
     root = tk.Tk()  # Window生成
     data = IconCode.icondata()
     root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
-    app = Application(csvurl=csv_u, imgurl=imgurl, master=root)
+    app = Application(
+        csvurl=csv_u, imgurl=imgurl, Banktoml=BT, BanktomlUrl=BTURL, master=root
+    )
     # --- 基本的な表示準備 ----------------
 
     app.mainloop()

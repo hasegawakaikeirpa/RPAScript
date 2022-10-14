@@ -39,7 +39,17 @@ def CreateFrame(self):
         self.hei_Par,
     )  # OCR抽出結果表フレーム
     self.OCR_dbname = "ReplaceView.db"
-    self.OCR_tbname = os.path.splitext(os.path.basename(self.FileName))[0]
+    self.OCR_tbname = "TB_" + os.path.splitext(os.path.basename(self.FileName))[0]
+    self.OCR_fname = os.path.splitext(os.path.basename(self.FileName))[0]
+    self.changetxturl = (
+        os.path.dirname(self.FileName)
+        + r"\\"
+        + os.path.basename(os.path.dirname(self.FileName))
+        + "ChangeTxtList.csv"
+    )
+    self.AJ_u = (
+        os.path.dirname(self.FileName) + r"\\" + self.OCR_fname + "_AutoJounal.csv"
+    )
     ReplaceView.CreateDB(self.OCR_dbname, self.OCR_tbname)
     # Side_Sub##############################################################################
     self.Side_Sub = tk.Frame(
@@ -303,7 +313,7 @@ def CreateFrame(self):
         corner_radius=8,
         text_color="snow",
         border_color="snow",
-        fg_color="tomato",
+        fg_color="#78c7ff",
         text_font=self.t_font,
     )
     self.ChangeL.grid(
@@ -328,6 +338,24 @@ def CreateFrame(self):
         row=2, column=0, columnspan=3, padx=10, pady=5, sticky=tk.N
     )  # 日付列名テキストボックス配置
 
+    # 選択テーブル上書-----------------------------------------------------------
+    self.OCRRead = ck.CTkButton(
+        master=self.Side_Sub2,
+        text="OCR抽出ファイル上書",
+        command=self.TableSave,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="snow",
+        border_color="snow",
+        fg_color="#ff78f6",
+        text_font=self.t_font,
+    )
+    self.OCRRead.grid(
+        row=3, column=0, columnspan=3, padx=10, pady=5, sticky=tk.N
+    )  # 日付列名テキストボックス配置
+
     # 比較対象ファイル複数選択-----------------------------------------------------------
     self.FileRead = ck.CTkButton(
         master=self.Side_Sub2,
@@ -343,7 +371,7 @@ def CreateFrame(self):
         text_font=self.t_font,
     )
     self.FileRead.grid(
-        row=3, column=0, columnspan=3, padx=10, pady=5, sticky=tk.N
+        row=4, column=0, columnspan=3, padx=10, pady=5, sticky=tk.N
     )  # 日付列名テキストボックス配置
     # 比較対象ファイル追加---------------------------------------------------------------
     self.SingleFileRead = ck.CTkButton(
@@ -360,8 +388,9 @@ def CreateFrame(self):
         text_font=self.t_font,
     )
     self.SingleFileRead.grid(
-        row=4, column=0, columnspan=3, padx=10, sticky=tk.N
+        row=5, column=0, columnspan=3, padx=10, sticky=tk.N
     )  # 日付列名テキストボックス配置
+
     # #######################################################################################
     # Side_Sub3##############################################################################
     self.Side_Sub3 = tk.Frame(
@@ -622,7 +651,7 @@ def CreateFrame(self):
     self.IMG_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
     self.IMG_frame.pack_forget()
     self.Img_c = 0
-    self.RView = ReplaceView.Main(self, self.FileName)  # 置換テーブルの読込
+    self.RView = ReplaceView.Main(self, self.FileName, self.OCR_tbname)  # 置換テーブルの読込
     self.RView.withdraw()
     self.update()
 

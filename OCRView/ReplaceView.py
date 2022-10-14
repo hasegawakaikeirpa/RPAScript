@@ -296,6 +296,7 @@ class CreateDB:
             )
             Pandas_T.model.df = df
             Pandas_T.show()
+            CreateDB.EntDF(self, dbname, tbname, df)
         cur.close()
         conn.close()
 
@@ -336,7 +337,7 @@ class CreateDB:
 
 
 # -------------------------------------------------------------------------------------
-def Main(self, csv_u):
+def Main(self, csv_u, tbn):
     """
     呼出関数
     """
@@ -345,7 +346,7 @@ def Main(self, csv_u):
     global Banktoml, tomlurl, PlusCol, imgurl
 
     csv_url = csv_u
-    tbname = os.path.splitext(os.path.basename(csv_url))[0]
+    tbname = tbn
     dbname = "ReplaceView.db"
     # -----------------------------------------------------------
     self.top = tk.Toplevel()  # サブWindow作成

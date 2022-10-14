@@ -51,8 +51,14 @@ def createtomlEntry(self, next, ColNameItem):  # , tomltitle):
     global HidukeColNo, MoneyCol, ChangeTextCol, HidukeColName, NyuName
     global SyutuName, ZanName, Henkan, Hani
     # 最初のエントリーウィジェットを追加
-    # self.tomlEntries.insert(next, tk.Entry(self.frame4, width=20))
-    lb = tk.Label(self.frame4, text=ColNameItem)
+    lb = ck.CTkLabel(
+        master=self.frame4,
+        text=ColNameItem,
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    )
     lb.grid(row=next, column=0)  # 位置指定
     # ラベル名からself変数を取得---------------------------------------
     if ColNameItem == "日付列":
@@ -121,11 +127,16 @@ def createtomlEntry(self, next, ColNameItem):  # , tomltitle):
     # ラベルを作成
     self.tomlinsertEntries.insert(
         next,
-        tk.Label(
-            self.frame4,
-            text=str(ColNameItem),
+        ck.CTkLabel(
+            master=self.frame4,
+            text=ColNameItem,
+            width=self.LabelWidth,
+            height=self.LabelHeight,
+            corner_radius=8,
+            text_font=self.t_font,
         ),
     )
+
     # インデックスマネージャに登録
     self.tomlindexes.insert(next, self.tomlindex)
     # 再配置
@@ -140,16 +151,46 @@ def tomEntry(self, next, tom):
     try:
         print(type(tom).__name__)
         if type(tom).__name__ == "list":
-            txtxt = tk.Entry(self.frame4, width=10)
+            # txtxt = tk.Entry(self.frame4, width=10)
+            txtxt = ck.CTkEntry(
+                master=self.frame4,
+                width=self.EntWidth,
+                height=self.EntHeight,
+                border_width=2,
+                corner_radius=8,
+                text_color="black",
+                border_color="snow",
+                fg_color="snow",
+            )
             for tomItem in tom:
                 tomtx += "," + str(tomItem)
             tomtx = tomtx.lstrip(",")
             txtxt.insert(0, tomtx)
         else:
-            txtxt = tk.Entry(self.frame4, width=10)
+            # txtxt = tk.Entry(self.frame4, width=10)
+            txtxt = ck.CTkEntry(
+                master=self.frame4,
+                width=self.EntWidth,
+                height=self.EntHeight,
+                border_width=2,
+                corner_radius=8,
+                text_color="black",
+                border_color="snow",
+                fg_color="snow",
+            )
             txtxt.insert(0, tom)
     except:
-        txtxt = tk.Entry(self.frame4, width=10)
+        # txtxt = tk.Entry(self.frame4, width=10)
+        txtxt = ck.CTkEntry(
+            master=self.frame4,
+            width=self.EntWidth,
+            height=self.EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+            fg_color="snow",
+        )
         txtxt.insert(0, tom)
     # ---------------------------------------------------------------
     txtxt.grid(row=next, column=1)  # 位置指定
@@ -222,69 +263,209 @@ def treeviewEntries(self):  # , tomltitle):
     self.indexes = []  # インデックスの並び
 
     # URLテキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="仕訳一致率").grid(row=0, column=0)  # 位置指定
-    self.SortVar = tk.Entry(self.frame3, width=10)
+    # tk.Label(self.frame3, text="仕訳一致率").grid(row=0, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame3,
+        text="仕訳一致率",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=0, column=0
+    )  # 位置指定
+    # self.SortVar = tk.Entry(self.frame3, width=10)
+    self.SortVar = ck.CTkEntry(
+        master=self.frame3,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.SortVar.insert(0, 50)
     self.SortVar.grid(row=0, column=1, columnspan=3)
     # URLテキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="OCRURL").grid(row=1, column=0)  # 位置指定
-    self.Label_URL = tk.Entry(self.frame3, width=10)
+    # tk.Label(self.frame3, text="OCRURL").grid(row=1, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame3,
+        text="OCRURL",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=1, column=0
+    )  # 位置指定
+    # self.Label_URL = tk.Entry(self.frame3, width=10)
+    self.Label_URL = ck.CTkEntry(
+        master=self.frame3,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.Label_URL.insert(0, self.FileName)
     self.Label_URL.grid(row=1, column=1, columnspan=3)
     # 出力先テキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="出力先URL").grid(row=2, column=0)  # 位置指定
-    self.Label_OutURL = tk.Entry(self.frame3, width=10)
+    # tk.Label(self.frame3, text="出力先URL").grid(row=2, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame3,
+        text="出力先URL",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=2, column=0
+    )  # 位置指定
+    # self.Label_OutURL = tk.Entry(self.frame3, width=10)
+    self.Label_OutURL = ck.CTkEntry(
+        master=self.frame3,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.Label_OutURL.insert(0, self.JounalFileName)
     self.Label_OutURL.grid(row=2, column=1, columnspan=3)
     # 元帳URLテキストボックス-----------------------------------------------------------
-    tk.Label(self.frame3, text="元帳URL").grid(row=3, column=0)  # 位置指定
-    self.Label_ChangeURL = tk.Entry(self.frame3, width=10)
+    # tk.Label(self.frame3, text="元帳URL").grid(row=3, column=0)  # 位置指定
+    ck.CTkLabel(
+        master=self.frame3,
+        text="元帳URL",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    ).grid(
+        row=3, column=0
+    )  # 位置指定
+    # self.Label_ChangeURL = tk.Entry(self.frame3, width=10)
+    self.Label_ChangeURL = ck.CTkEntry(
+        master=self.frame3,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
     self.Label_ChangeURL.insert(0, self.Roolurl)
     self.Label_ChangeURL.grid(row=3, column=1, columnspan=3)
     # URL指定ボタン-------------------------------------------------------------
-    self.URL_In = tk.Button(
-        self.frame3,
-        text="OCR抽出結果CSV選択",
-        width=20,
-        bg="LemonChiffon",
+    # self.URL_In = tk.Button(
+    #     self.frame3,
+    #     text="OCR抽出結果CSV選択",
+    #     width=20,
+    #     bg="LemonChiffon",
+    #     command=self.OCR_Open,
+    # )
+    self.URL_In = ck.CTkButton(
+        master=self.frame3,
+        text="設定ファイル変更",
         command=self.OCR_Open,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="#ffcb21",
     )
     self.URL_In.grid(row=4, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
-    self.URL_In2 = tk.Button(
-        self.frame3,
+    # self.URL_In2 = tk.Button(
+    #     self.frame3,
+    #     text="出力先CSV選択",
+    #     width=20,
+    #     bg="Honeydew",
+    #     command=self.Out_Open,
+    # )
+    self.URL_In2 = ck.CTkButton(
+        master=self.frame3,
         text="出力先CSV選択",
-        width=20,
-        bg="Honeydew",
         command=self.Out_Open,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="#a8fc00",
     )
     self.URL_In2.grid(row=5, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
-    self.URL_In3 = tk.Button(
-        self.frame3,
+    # self.URL_In3 = tk.Button(
+    #     self.frame3,
+    #     text="元帳CSV選択",
+    #     width=20,
+    #     bg="AntiqueWhite",
+    #     command=self.Moto_Open,
+    # )
+    self.URL_In3 = ck.CTkButton(
+        master=self.frame3,
         text="元帳CSV選択",
-        width=20,
-        bg="AntiqueWhite",
         command=self.Moto_Open,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="#ff723b",
     )
     self.URL_In3.grid(row=6, column=0, columnspan=2, sticky=tk.W + tk.E)  # 位置指定
     # テキスト変換ルール設定ボタン----------------------------------------------------
-    self.Txt_C = tk.Button(
-        self.frame3,
+    # self.Txt_C = tk.Button(
+    #     self.frame3,
+    #     text="テキスト変換ルール設定",
+    #     bg="LightSkyBlue",
+    #     width=20,
+    #     command=self.Txt_ChangeSetOpen,
+    # )
+    self.Txt_C = ck.CTkButton(
+        master=self.frame3,
         text="テキスト変換ルール設定",
-        bg="LightSkyBlue",
-        width=20,
         command=self.Txt_ChangeSetOpen,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="#1bfac6",
     )
     self.Txt_C.grid(
         row=len(self.indexes) + 7, column=0, columnspan=2, sticky=tk.W + tk.E
     )  # 位置指定
     # ------------------------------------------------------------------------------
     # 戻るボタン--------------------------------------------------------------------
-    self.CloseBtn = tk.Button(
-        self.frame3,
+    # self.CloseBtn = tk.Button(
+    #     self.frame3,
+    #     text="戻る",
+    #     bg="gray80",
+    #     width=20,
+    #     command=self.ReturnBack,
+    # )
+    self.CloseBtn = ck.CTkButton(
+        master=self.frame3,
         text="戻る",
-        bg="gray80",
-        width=20,
         command=self.ReturnBack,
+        width=self.BtnWidth,
+        height=self.BtnHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="gray80",
     )
     self.CloseBtn.grid(
         row=len(self.indexes) + 8, column=0, columnspan=2, sticky=tk.W + tk.E
@@ -313,19 +494,47 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
 
     if type(AJL) == list:
         # ---------------------------------------------
-        txtxt = tk.Entry(self.frame7, width=10)
+        # txtxt = tk.Entry(self.frame7, width=10)
+        txtxt = ck.CTkEntry(
+            master=self.frame7,
+            width=self.EntWidth,
+            height=self.EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+            fg_color="snow",
+        )
         txtxt.insert(0, AJL[next])
         txtxt.grid(row=next + 1, column=0)  # 位置指定
         # Entrマネージャに登録
         self.Frame7EntL.insert(next, txtxt)
         self.AJL.insert(next, AJL[next])
         # ---------------------------------------------
-        lab = tk.Label(self.frame7, text="→", width=2)
+        # lab = tk.Label(self.frame7, text="→", width=2)
+        lab = ck.CTkLabel(
+            master=self.frame7,
+            text="→",
+            width=2,
+            height=1,
+            corner_radius=8,
+            text_font=self.t_font,
+        )
         lab.grid(row=next + 1, column=1)  # 位置指定
         # Entrマネージャに登録
         self.Frame7Labels.insert(next, lab)
         # ---------------------------------------------
-        txtxt = tk.Entry(self.frame7, width=10)
+        # txtxt = tk.Entry(self.frame7, width=10)
+        txtxt = ck.CTkEntry(
+            master=self.frame7,
+            width=self.EntWidth,
+            height=self.EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+            fg_color="snow",
+        )
         txtxt.insert(0, AJR[next])
         txtxt.grid(row=next + 1, column=2)  # 位置指定
         # Entrマネージャに登録
@@ -335,8 +544,18 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
         Btn = tk.Button(
             self.frame7,
             text="X",
-            width=5,
+            width=1,
         )
+        # Btn = ck.CTkButton(
+        #     master=self.frame7,
+        #     text="X",
+        #     width=1,
+        #     height=1,
+        #     border_width=2,
+        #     corner_radius=8,
+        #     text_color="black",
+        # )
+
         Btn.bind("<Button-1>", AJ_EntDelete)
         Btn.grid(row=next + 1, column=3, sticky=tk.W + tk.E)
         # Entrマネージャに登録
@@ -344,19 +563,47 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
         # ---------------------------------------------
     else:
         # ---------------------------------------------
-        txtxt = tk.Entry(self.frame7, width=10)
+        # txtxt = tk.Entry(self.frame7, width=10)
+        txtxt = ck.CTkEntry(
+            master=self.frame7,
+            width=self.EntWidth,
+            height=self.EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+            fg_color="snow",
+        )
         txtxt.insert(0, AJL)
         txtxt.grid(row=next + 1, column=0)  # 位置指定
         # Entrマネージャに登録
         self.Frame7EntL.insert(next, txtxt)
         self.AJL.insert(next, AJL)
         # ---------------------------------------------
-        lab = tk.Label(self.frame7, text="→", width=2)
+        # lab = tk.Label(self.frame7, text="→", width=2)
+        lab = ck.CTkLabel(
+            master=self.frame7,
+            text="→",
+            width=2,
+            height=1,
+            corner_radius=8,
+            text_font=self.t_font,
+        )
         lab.grid(row=next + 1, column=1)  # 位置指定
         # Entrマネージャに登録
         self.Frame7Labels.insert(next, lab)
         # ---------------------------------------------
-        txtxt = tk.Entry(self.frame7, width=10)
+        # txtxt = tk.Entry(self.frame7, width=10)
+        txtxt = ck.CTkEntry(
+            master=self.frame7,
+            width=self.EntWidth,
+            height=self.EntHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="black",
+            border_color="snow",
+            fg_color="snow",
+        )
         txtxt.insert(0, AJR)
         txtxt.grid(row=next + 1, column=2)  # 位置指定
         # Entrマネージャに登録
@@ -366,8 +613,17 @@ def Frame7createtomlEntry(self, next, AJL, AJR):
         Btn = tk.Button(
             self.frame7,
             text="X",
-            width=5,
+            width=1,
         )
+        # Btn = ck.CTkButton(
+        #     master=self.frame7,
+        #     text="X",
+        #     width=1,
+        #     height=1,
+        #     border_width=2,
+        #     corner_radius=8,
+        #     text_color="black",
+        # )
         Btn.bind("<Button-1>", AJ_EntDelete)
         Btn.grid(row=next + 1, column=3, sticky=tk.W + tk.E)
         # Entrマネージャに登録
@@ -455,19 +711,31 @@ def AJ_setCalc(self):
                     # self.Frame7entryList.append([dfs_c_Name, dfs3_c_Name])
                     # ----------------------------------------------------------------------
                     # 詳細設定ボタン--------------------------------
-                    self.Setting_Btn = tk.Button(
-                        self.frame7,
-                        text="詳細設定",
-                        width=20,
-                        command=lambda: self.ChangeFrame("詳細設定"),
-                        bg="BlueViolet",
-                    )
-                    self.Setting_Btn.grid(
-                        row=len(self.Frame7EntL) + 1,
-                        column=0,
-                        columnspan=4,
-                        sticky=tk.W + tk.E,
-                    )  # 位置指定
+                    # self.Setting_Btn = tk.Button(
+                    #     self.frame7,
+                    #     text="詳細設定",
+                    #     width=20,
+                    #     command=lambda: self.ChangeFrame("詳細設定"),
+                    #     bg="BlueViolet",
+                    # )
+                    # self.Setting_Btn = ck.CTkButton(
+                    #     master=self.frame7,
+                    #     text="詳細設定",
+                    #     command=lambda: self.ChangeFrame("詳細設定"),
+                    #     width=self.BtnWidth,
+                    #     height=self.BtnHeight,
+                    #     border_width=2,
+                    #     corner_radius=8,
+                    #     text_color="black",
+                    #     border_color="snow",
+                    #     fg_color="#621bfa",
+                    # )
+                    # self.Setting_Btn.grid(
+                    #     row=len(self.Frame7EntL) + 1,
+                    #     column=0,
+                    #     columnspan=4,
+                    #     sticky=tk.W + tk.E,
+                    # )  # 位置指定
         except:
             tk.messagebox.showinfo("確認", "抽出仕訳表のセルが選択されていません。変換先の列のセルを選択して下さい。")
 
@@ -626,15 +894,41 @@ def updateFrameChangeEntries(self):
 def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
     global L_List, E_List, L_List_Sub, E_List_Sub
 
-    lb = tk.Label(self.ChangeFrame, text=ColNameItem + "対象列名")
+    # lb = tk.Label(self.ChangeFrame, text=ColNameItem + "対象列名")
+    lb = ck.CTkLabel(
+        master=self.ChangeFrame,
+        text=ColNameItem + "対象列名",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    )
     lb.grid(row=next, column=0)  # 位置指定
     self.ChangeLabelEntries.insert(next, lb)
-    lb = tk.Label(self.AJsetMenuFrame, text=ColNameItem + "対象列名")
+    # lb = tk.Label(self.AJsetMenuFrame, text=ColNameItem + "対象列名")
+    lb = ck.CTkLabel(
+        master=self.ChangeFrame,
+        text=ColNameItem + "対象列名",
+        width=self.LabelWidth,
+        height=self.LabelHeight,
+        corner_radius=8,
+        text_font=self.t_font,
+    )
     lb.grid(row=next, column=0)  # 位置指定
     self.Sub_ChangeLabelEntries.insert(next, lb)
     # ラベル名からself変数を取得---------------------------------------
     # ---------------------------------------------------------------
-    txtxt = tk.Entry(self.ChangeFrame, width=20)
+    # txtxt = tk.Entry(self.ChangeFrame, width=20)
+    txtxt = ck.CTkEntry(
+        master=self.ChangeFrame,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
 
     if "OCRテキスト" in self.ColumnName[next]:
         lis = list(self.pt.colheader.columnlabels)
@@ -652,7 +946,17 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
     txtxt.grid(row=next, column=1)  # 位置指定
     self.ChangeTxtEntries.insert(next, txtxt)
     # ---------------------------------------------------------------
-    txtxt = tk.Entry(self.AJsetMenuFrame, width=20)
+    # txtxt = tk.Entry(self.AJsetMenuFrame, width=20)
+    txtxt = ck.CTkEntry(
+        master=self.AJsetMenuFrame,
+        width=self.EntWidth,
+        height=self.EntHeight,
+        border_width=2,
+        corner_radius=8,
+        text_color="black",
+        border_color="snow",
+        fg_color="snow",
+    )
 
     if "OCRテキスト" in self.ColumnName[next]:
         lis = list(self.pt.colheader.columnlabels)
@@ -670,21 +974,43 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
     txtxt.grid(row=next, column=1)  # 位置指定
     self.Sub_ChangeTxtEntries.insert(next, txtxt)
     # ラベルを作成----------------------------------------------------
+    # self.ChangeTxtinsertEntries.insert(
+    #     next,
+    #     tk.Label(
+    #         self.ChangeFrame,
+    #         text=str(ColNameItem),
+    #     ),
+    # )
     self.ChangeTxtinsertEntries.insert(
         next,
-        tk.Label(
-            self.ChangeFrame,
+        ck.CTkLabel(
+            master=self.ChangeFrame,
             text=str(ColNameItem),
+            width=self.LabelWidth,
+            height=self.LabelHeight,
+            corner_radius=8,
+            text_font=self.t_font,
         ),
     )
     # インデックスマネージャに登録
     self.ChangeTxtindexes.insert(next, self.ChangeTxtindex)
     # ラベルを作成----------------------------------------------------
+    # self.Sub_ChangeTxtinsertEntries.insert(
+    #     next,
+    #     tk.Label(
+    #         self.AJsetMenuFrame,
+    #         text=str(ColNameItem),
+    #     ),
+    # )
     self.Sub_ChangeTxtinsertEntries.insert(
         next,
-        tk.Label(
-            self.AJsetMenuFrame,
+        ck.CTkLabel(
+            master=self.AJsetMenuFrame,
             text=str(ColNameItem),
+            width=self.LabelWidth,
+            height=self.LabelHeight,
+            corner_radius=8,
+            text_font=self.t_font,
         ),
     )
     # インデックスマネージャに登録

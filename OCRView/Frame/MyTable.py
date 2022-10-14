@@ -296,7 +296,6 @@ class MyTable(Table):
                 return self
 
     # --------------------------------------------------------------------
-
     def HCE(self, row, col):
         """Callback for cell entry"""
         value = self.cellentry.get()
@@ -315,31 +314,42 @@ class MyTable(Table):
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        if R_DF is None:
-            CreateDB.CreateDF(
-                self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
-            )
-        else:
-            print(m.pt_bln.get())
-            if m.pt_bln.get() is True:
-                R_DF = R_DF.drop_duplicates()
-                R_DF = CreateDB.pdinsert(
-                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack, R_DF
+        if self.F_stack != self.L_stack:
+            if R_DF is None:
+                R_DF = CreateDB.CreateDF(
+                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
                 )
-                CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
-                R_m = self.childrenSearch2()
-                R_m.model.df = R_DF
-                R_m.update()
-                R_m.show()
+                self.HCE_sub(m, R_DF)
             else:
-                enc = MyTable.getFileEncoding(self.importFilePath)
-                self.model.df.to_csv(
-                    self.importFilePath,
-                    index=False,
-                    encoding=enc,
-                    quoting=QUOTE_NONNUMERIC,
-                )
+                self.HCE_sub(m, R_DF)
         return
+
+    # --------------------------------------------------------------------
+    def HCE_sub(self, m, R_DF):
+        print(m.pt_bln.get())
+        if m.pt_bln.get() is True:
+            R_DF = R_DF.drop_duplicates()
+            R_DF = CreateDB.pdinsert(
+                self,
+                m.OCR_dbname,
+                m.OCR_tbname,
+                self.F_stack,
+                self.L_stack,
+                R_DF,
+            )
+            CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+            R_m = self.childrenSearch2()
+            R_m.model.df = R_DF
+            R_m.update()
+            R_m.show()
+        else:
+            enc = MyTable.getFileEncoding(self.importFilePath)
+            self.model.df.to_csv(
+                self.importFilePath,
+                index=False,
+                encoding=enc,
+                quoting=QUOTE_NONNUMERIC,
+            )
 
     # --------------------------------------------------------------------
     def handle_left_click(self, event):
@@ -553,6 +563,7 @@ class CreateDB:
         dfList.append(List)
         df = pd.DataFrame(dfList, columns=["変更前", "変更後"])
         CreateDB.EntDF(self, dbname, tbname, df)
+        return df
 
     def TableInsert(self, dbname, tbname, text):
 
