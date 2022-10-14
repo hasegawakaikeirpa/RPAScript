@@ -1,9 +1,11 @@
 import tkinter as tk
 import Frame.DGFrame as DGF
-import numpy as np
-import WarekiHenkan as wh
+
+# import numpy as np
+# import WarekiHenkan as wh
 import pandas as pd
-import re
+
+# import re
 import logging.config
 import toml
 import os
@@ -24,32 +26,32 @@ class Application(tk.Toplevel):
         while f is False:
             m = m.master
             if m.master is None:
-                m = m.children["!application"]
-                break
+                try:
+                    m = m.children["!application"]
+                    Top = m.top
+                    break
+                except:
+                    m = Top
+                    break
         # customtkスタイル
         ck.set_appearance_mode("System")  # Modes: system (default), light, dark
         ck.set_default_color_theme(
             "dark-blue"
         )  # Themes: blue (default), dark-blue, green
-        width_of_window = int(int(m.winfo_screenwidth()) * 0.5)
-        height_of_window = int(int(m.winfo_screenheight()) * 0.7)
-        # wid_Par = width_of_window / 1459
-        # hei_Par = height_of_window / 820
-        x_coodinate = width_of_window * 0.9
+        width_of_window = int(int(m.winfo_screenwidth()) * 0.3)
+        height_of_window = int(int(m.winfo_screenheight()) * 0.5)
+        wid_Par = width_of_window / 1459
+        hei_Par = height_of_window / 820
+        x_coodinate = width_of_window * 2
         y_coodinate = height_of_window * 0.01
         data = IconCode.icondata()
         Top.tk.call("wm", "iconphoto", Top._w, tk.PhotoImage(data=data))
+        Top.title("OCR読取 Ver:0.9-比較ウィンドウ-" + tbname)
         Top.minsize(width_of_window, height_of_window)
         Top.protocol("WM_DELETE_WINDOW", lambda: self.Rep_click_close(Top))  # 閉じる処理設定
         Top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
         # Top.resizable(0, 0)
         Top.minsize(width_of_window, height_of_window)
-        width_of_window = int(int(m.winfo_screenwidth()) * 0.95)
-        height_of_window = int(int(m.winfo_screenheight()) * 0.90)
-        wid_Par = width_of_window / 1459
-        hei_Par = height_of_window / 820
-        x_coodinate = width_of_window * 0.01
-        y_coodinate = height_of_window * 0.01
         Top.geometry(
             "%dx%d+%d+%d"
             % (width_of_window, height_of_window, x_coodinate, y_coodinate)
@@ -68,10 +70,10 @@ class Application(tk.Toplevel):
         BtnHeight = int(20 * hei_Par)
         EntWidth = int(70 * hei_Par)
         EntHeight = int(20 * wid_Par)
-        t_font = (1, int(10 * wid_Par))
+        t_font = (1, int(30 * wid_Par))
         ################################################################################
         self.Main_Frame = tk.Frame(
-            m.top,
+            Top,
             width=width_of_window,
             height=height_of_window,
             bg="#fabd91",
@@ -120,19 +122,19 @@ class Application(tk.Toplevel):
         )
         self.ReplaceSet.grid(row=0, column=1, padx=5)
         # SQL
-        self.CDB_btn = ck.CTkButton(
-            master=self.Upper_Frame,
-            text="読込",
-            command=self.FileOpen,
-            width=EntWidth,
-            height=EntHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="black",
-            border_color="snow",
-            fg_color="blue",
-        )
-        self.CDB_btn.grid(row=0, column=3, padx=5)
+        # self.CDB_btn = ck.CTkButton(
+        #     master=self.Upper_Frame,
+        #     text="読込",
+        #     command=self.FileOpen,
+        #     width=EntWidth,
+        #     height=EntHeight,
+        #     border_width=2,
+        #     corner_radius=8,
+        #     text_color="black",
+        #     border_color="snow",
+        #     fg_color="blue",
+        # )
+        # self.CDB_btn.grid(row=0, column=3, padx=5)
         self.Ent_btn = ck.CTkButton(
             master=self.Upper_Frame,
             text="確定",
@@ -143,7 +145,7 @@ class Application(tk.Toplevel):
             corner_radius=8,
             text_color="black",
             border_color="snow",
-            fg_color="blue",
+            fg_color="lightblue",
         )
         self.Ent_btn.grid(row=0, column=4, padx=5)
         self.P_table = self.Read_P_Table(
@@ -294,6 +296,7 @@ class CreateDB:
             )
             Pandas_T.model.df = df
             Pandas_T.show()
+            CreateDB.EntDF(self, dbname, tbname, df)
         cur.close()
         conn.close()
 
@@ -301,7 +304,7 @@ class CreateDB:
 
         conn = sql.connect(dbname)
         cur = conn.cursor()
-
+        df = df.drop_duplicates()
         # データの投入
         df.to_sql(tbname, conn, if_exists="replace", index=False)
         cur.close()
@@ -334,7 +337,7 @@ class CreateDB:
 
 
 # -------------------------------------------------------------------------------------
-def Main(self, csv_u):
+def Main(self, csv_u, tbn):
     """
     呼出関数
     """
@@ -343,7 +346,7 @@ def Main(self, csv_u):
     global Banktoml, tomlurl, PlusCol, imgurl
 
     csv_url = csv_u
-    tbname = os.path.splitext(os.path.basename(csv_url))[0]
+    tbname = tbn
     dbname = "ReplaceView.db"
     # -----------------------------------------------------------
     self.top = tk.Toplevel()  # サブWindow作成

@@ -4,7 +4,8 @@ import tkinter as tk
 
 # from pandastable import Table, TableModel, config
 from pandastable import Table, TableModel
-from csv import QUOTE_NONNUMERIC
+
+# from csv import QUOTE_NONNUMERIC
 
 # import DataGrid as DG
 import pandas as pd
@@ -69,6 +70,7 @@ class MyTableSQL(Table):
         self.focus_set()
         self.F_stack = []
         self.L_stack = []
+        self.T_name = "SQLMain"
 
         return
 
@@ -106,15 +108,20 @@ class MyTableSQL(Table):
                 if self.currentrow < self.rows - 1:
                     self.currentcol = 0
                     self.currentrow = self.currentrow + 1
+                    x = 0
                 else:
                     return
             else:
                 self.currentcol = self.currentcol + 1
         elif event.keysym == "Left":
-            if self.currentcol > 0:
+            if self.currentcol == 0:
+                self.currentcol = self.cols - 1
+                if self.currentrow != 0:
+                    self.currentrow = self.currentrow - 1
+            else:
                 self.currentcol = self.currentcol - 1
 
-        if self.currentcol > cmax or self.currentcol <= cmin:
+        if self.currentcol > cmax or self.currentcol < cmin:
             # print (self.currentcol, self.visiblecols)
             self.xview("moveto", x)
             self.colheader.xview("moveto", x)

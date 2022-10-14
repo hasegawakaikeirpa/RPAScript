@@ -311,6 +311,19 @@ def ElementCreate(self):
             fg_color="tomato",
         )
         button_LinOCR.grid(row=5, column=1, padx=5, pady=5, sticky=W)
+        button_PTable = CTkButton(
+            master=self.window_sub_ctrl4,
+            text="比較ウィンドウ起動",
+            command=self.Open_pt,
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="lightpink",
+        )
+        button_PTable.grid(row=5, column=2, padx=5, pady=5, sticky=W)
         # SubMenu起動ボタン生成
         # button_SubMenu = CTkButton(
         #     master=self.window_sub_ctrl4,

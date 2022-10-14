@@ -1,5 +1,4 @@
 import tkinter as tk  # ウィンドウ作成用
-from tkinter import filedialog  # ファイルを開くダイアログ用
 from PIL import Image, ImageTk  # 画像データ用
 import numpy as np  # アフィン変換行列演算用
 import os  # ディレクトリ操作用
@@ -37,10 +36,11 @@ class Application(tk.Frame):
         self.pil_image = None  # 表示する画像データ
         self.back_color = "#60cad1"  # 背景色
         self.create_widget_forFrame()  # ウィジェットの作成
-        self.set_image(imgurl)
-        self.master.update()
+        # self.set_image(imgurl)
+        # self.update()
 
     def menu_open_clicked(self, event=None):
+        global imgurl
         # ファイル→開く
         filename = tk.filedialog.askopenfilename(
             filetypes=[
@@ -52,7 +52,17 @@ class Application(tk.Frame):
             ],  # ファイルフィルタ
             initialdir=os.getcwd(),  # カレントディレクトリ
         )
-
+        try:
+            m = self.master
+            while m is not None:
+                L_m = m
+                m = m.master
+            L_m.children["!application"].Img_url.delete(0, tk.END)
+            L_m.children["!application"].Img_url.insert(0, filename)
+            L_m.children["!application"].imgurl = filename
+            imgurl = filename
+        except:
+            return
         # 画像ファイルを設定する
         self.set_image(filename)
 
@@ -103,10 +113,10 @@ class Application(tk.Frame):
         self.image_info = tk.Label(
             self.statusbar, relief=tk.SUNKEN, text="image info"
         )  # 画像情報
-        self.mouse_position.pack(side=tk.LEFT)
-        self.image_position.pack(side=tk.LEFT)
-        self.label_space.pack(side=tk.LEFT, expand=True, fill=tk.X)
-        self.image_info.pack(side=tk.RIGHT)
+        # self.mouse_position.pack(side=tk.LEFT)
+        # self.image_position.pack(side=tk.LEFT)
+        # self.label_space.pack(side=tk.LEFT, expand=True, fill=tk.X)
+        # self.image_info.pack(side=tk.RIGHT)
         self.statusbar.pack(side=tk.BOTTOM, fill=tk.X)
 
         # Canvas
@@ -140,10 +150,14 @@ class Application(tk.Frame):
         self.image_info = tk.Label(
             self.statusbar, relief=tk.SUNKEN, text="image info"
         )  # 画像情報
-        self.mouse_position.pack(side=tk.LEFT)
-        self.image_position.pack(side=tk.LEFT)
+        # self.mouse_position.pack(side=tk.LEFT)
+        # self.image_position.pack(side=tk.LEFT)
         # self.label_space.pack(side=tk.LEFT)
-        self.image_info.pack(side=tk.LEFT)
+        # self.image_info.pack(side=tk.LEFT)
+        self.ImgSet_btn = tk.Button(
+            self.statusbar, text="再表示", command=self.menu_Reopen_clicked
+        )
+        self.ImgSet_btn.pack(side=tk.LEFT, expand=True, fill=tk.X)
         self.Open_btn = tk.Button(
             self.statusbar, text="画像選択", command=self.menu_open_clicked
         )
@@ -195,7 +209,7 @@ class Application(tk.Frame):
         # マウス座標
         self.mouse_position["text"] = f"mouse(x, y) = ({event.x: 4d}, {event.y: 4d})"
 
-        if self.pil_image == None:
+        if self.pil_image is None:
             return
 
         # 画像座標
@@ -213,7 +227,7 @@ class Application(tk.Frame):
 
     def mouse_move_left(self, event):
         """マウスの左ボタンをドラッグ"""
-        if self.pil_image == None:
+        if self.pil_image is None:
             return
         self.translate(event.x - self.__old_event.x, event.y - self.__old_event.y)
         self.redraw_image()  # 再描画
@@ -240,14 +254,14 @@ class Application(tk.Frame):
 
     def mouse_double_click_left(self, event):
         """マウスの左ボタンをダブルクリック"""
-        if self.pil_image == None:
+        if self.pil_image is None:
             return
         self.zoom_fit(self.pil_image.width, self.pil_image.height)
         self.redraw_image()  # 再描画
 
     def mouse_wheel(self, event):
         """マウスホイールを回した"""
-        if self.pil_image == None:
+        if self.pil_image is None:
             return
 
         if event.delta < 0:
@@ -332,7 +346,7 @@ class Application(tk.Frame):
 
     def draw_image(self, pil_image):
 
-        if pil_image == None:
+        if pil_image is None:
             return
 
         self.canvas.delete("all")
@@ -369,7 +383,7 @@ class Application(tk.Frame):
 
     def redraw_image(self):
         """画像の再描画"""
-        if self.pil_image == None:
+        if self.pil_image is None:
             return
         self.draw_image(self.pil_image)
 

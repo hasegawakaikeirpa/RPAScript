@@ -1,9 +1,9 @@
 import pandas as pd
+import sqlite3 as sql
 
-F_stack = "#"
-L_stack = "借"
-List = [F_stack, L_stack]
-dfList = []
-dfList.append(List)
-df = pd.DataFrame(dfList, columns=["変更前", "変更後"])
+dbname = "ReplaceView.db"
+conn = sql.connect(dbname)
+cur = conn.cursor()
+
+df = pd.read_sql_query("SELECT * FROM 1869_7page_merge", conn)
 print(df)

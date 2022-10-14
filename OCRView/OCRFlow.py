@@ -8,10 +8,12 @@ from pandas import DataFrame, read_csv, concat
 from csv import reader, QUOTE_NONNUMERIC
 
 # import numpy as np
-from numpy import asarray, array
-from difflib import SequenceMatcher
+from numpy import asarray
+
+# from difflib import SequenceMatcher
 import CSVOut as CSVO
 import re
+import numpy as np
 
 # ----------------------------------------------------------------------------
 def getNearestValue(list, num):
@@ -101,8 +103,8 @@ def DayCheck(GFTable, DaySet):
     """
 
     # 設定日付列番号に応じて日付書式変換------------------------------
-    DS = int(DaySet[0]) - 1
-    G_list = array(GFTable)[:, DS]
+    # DS = int(DaySet[0]) - 1
+    # G_list = array(GFTable)[:, DS]
 
 
 # ----------------------------------------------------------------------------
@@ -132,18 +134,6 @@ def DiffListCreate(
     @param ReplaceStr : 置換対象文字列のリスト(list)
     @return : bool,CSVURL(str)
     """
-
-    # try:
-    # dic = {
-    #     "FileURL": FileURL,
-    #     "Yoko": Yoko,
-    #     "Tate": Tate,
-    #     "Banktoml": Banktoml,
-    #     "ColList": ColList,
-    #     "MoneySet": MoneySet,
-    #     "ReplaceSet": ReplaceSet,
-    #     "ReplaceStr": ReplaceStr,
-    # }
     # ####################################################################################
     readcsv1 = Yoko
     readcsv2 = Tate
@@ -170,7 +160,7 @@ def DiffListCreate(
             # --------------------------------------------------------------
             GFRow = len(GFTable)
             GFCol = len(GFTable[0])
-            ChangeTxtList = []
+            # ChangeTxtList = []
             PB_v = int(90 / GFRow)
             # OCR結果を整形----------------------------------------------------------------
             for g in range(GFRow):
@@ -203,39 +193,7 @@ def DiffListCreate(
                             GFTable[g][c - 1] = ints
                         elif len(ints) == 0:
                             GFTable[g][c - 1] = strs
-                        # else:
-                        #     GFTable[g][c - 1] = strs + "::" + ints
                     # -------------------------------------------------------------------------
-                # # tomlから摘要変換リストを読込一致率50％を超えるものがあれば置換-----------------
-                # if "," in ReplaceSet:
-                #     ReplaceSet = ReplaceSet.split(",")
-                # for c in ReplaceSet:
-                #     c = int(c)
-                #     # 指定列がデータフレーム列数未満なら------------------------------------------
-                #     if c <= GFCol:
-                #         strs = ""
-                #         ints = ""
-                #         S = GFTable[g][c - 1]
-                #         for y in range(len(S)):
-                #             if S[y].isdecimal() is False:
-                #                 strs += S[y]
-                #             else:
-                #                 ints += S[y]
-                #         CTCount = []
-                #         if len(ReplaceStr) != 0:
-                #             if "," in ReplaceStr:
-                #                 ReplaceStr = ReplaceStr.split(",")
-                #             for CT in ReplaceStr:
-                #                 src, trg = han_to_zen(strs.lower()), han_to_zen(
-                #                     CT.lower()
-                #                 )
-                #                 r = SequenceMatcher(None, src, trg).ratio()
-                #                 CTCount.append([r, CT])
-                #             GNV = getNearestValue(CTCount, 1.0)
-                #             R_par = ChangeVar / 100
-                #             if 1.0 - GNV[0] < R_par:
-                #                 ChangeTxtList.append([GFTable[g][c - 1], GNV[1]])
-                #                 GFTable[g][c - 1] = GNV[1]
                 PBAR._target.step(PB_v)
                 # -------------------------------------------------------------------------
             # 入出金列の数値以外を分別------------------------------------------------------
@@ -276,59 +234,27 @@ def DiffListCreate(
                     if strs == "":
                         if c == int(MoneySet[len(MoneySet) - 1]):
                             strsList.append("")
+                        if ints != "":
+                            GFTable[g][c - 1] = int(ints)
                     elif ints != "":
                         Check = [True if strs == i else False for i in Replist]
                         if True not in Check:
-                            GFTable[g][c - 1] = ints
+                            # GFTable[g][c - 1] = ints
+                            if ints != "":
+                                GFTable[g][c - 1] = int(ints)
                         if c == int(MoneySet[len(MoneySet) - 1]) and strs != "":
                             if True not in Check:
                                 strsList.append(strs)
                             else:
                                 strsList.append("")
                         else:
-                            GFTable[g][c - 1] = ints
+                            if ints != "":
+                                GFTable[g][c - 1] = int(ints)
+                            # GFTable[g][c - 1] = ints
                     else:
                         GFTable[g][c - 1] = ""
                         if c == int(MoneySet[len(MoneySet) - 1]) and strs != "":
                             strsList.append(strs)
-                # -------------------------------------------------------------------------
-            # 入出金列の数値以外を分別------------------------------------------------------
-            # intsList = []
-            # for g in range(GFRow):
-            #     intsList_r = []
-            #     for c in MoneySet:
-            #         ints = ""
-            #         c = int(c)
-            #         S = GFTable[g][c - 1]
-            #         if S == "":
-            #             intsList_r.append(0)
-            #         else:
-            #             Check = [True if i in S else False for i in Replist]
-            #             if True not in Check:
-            #                 intsList_r.append(int(S))
-            #             else:
-            #                 try:
-            #                     intsList_r.append(int(S))
-            #                 except:
-            #                     intsList_r.append(0)
-            #     if len(intsList_r) == 1:
-            #         intsList_r[g] = ""
-            #     else:
-            #         Min_S = min(intsList_r)
-            #         Min_S_c = [i for i, x in enumerate(intsList_r) if x == Min_S]
-            #         Min_S_c = int(MoneySet[int(Min_S_c[0])]) - 1
-            #         if True not in Check:
-            #             GFTable[g][Min_S_c] = ""
-            #         else:
-            #             GFTable[g][Min_S_c] = S
-            #         if Min_S == 0:
-            #             if True not in Check:
-            #                 intsList.append("")
-            #             else:
-            #                 intsList.append(S)
-            #         else:
-            #             intsList.append(str(Min_S))
-            # -------------------------------------------------------------------------
             # -----------------------------------------------------------------------------
             G_logger.debug("GoogleAPI後編集処理完了")  # Log出力
             # DataFrame作成
@@ -381,6 +307,7 @@ def DiffListCreate(
     #     return False, ""
 
 
+# -------------------------------------------------------------------------------------
 def Main(
     FileURL,
     Yoko,

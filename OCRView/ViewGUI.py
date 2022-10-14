@@ -13,6 +13,7 @@ from socket import gethostbyname, gethostname
 from uuid import getnode
 import IconCode
 import ViewGUI_obj as V_obj
+from P_Table import Main as ptMain
 
 # from line_profiler import LineProfiler
 
@@ -65,6 +66,7 @@ class ViewGUI:
         self.control = ControlGUI(default_path)
         # 初期化
         self.dir_path = default_path
+        self.Com_path = self.ComUrlGet()
         self.file_list = ["..[select file]"]
         self.clip_enable = False
         self.File_url_List = []  # 書出しCSVURLリスト
@@ -107,6 +109,23 @@ class ViewGUI:
         V_obj.ElementCreate(self)  # Element作成
         self.logger.debug("ViewGUI起動完了")  # Log出力
         # #############################################################################
+
+    # ----------------------------------------------------------------------------------
+    def ComUrlGet(self):
+        filepath = self.dir_path + r"\\OCRView\\CompanyData"
+        if os.path.exists(filepath):
+            return filepath
+        filepath = self.dir_path + r"\\CompanyData"
+        if os.path.exists(filepath):
+            return filepath
+
+    def __del__(self):
+        print("インスタンスが破棄されました")
+
+    # ----------------------------------------------------------------------------------
+    def Open_pt(self):
+        Read_Url = self.Selectfile_url.replace(".png", ".csv")
+        ptMain(self, Read_Url, None, self, None, self.Selectfile_url)
 
     # ----------------------------------------------------------------------------------
     def ckBtnSetting(self, btn):
@@ -238,7 +257,10 @@ class ViewGUI:
             if self.combo_file.get() == self.combo_file.values[r]:
                 set_pos = r
                 break
-        self.control.DrawImage("Map", set_pos=set_pos)
+        try:
+            self.control.DrawImage("Map", set_pos=set_pos)
+        except:
+            print("No_set_pos")
 
     # ----------------------------------------------------------------------------------
     def event_menu(self):
@@ -371,7 +393,7 @@ class ViewGUI:
         self.logger.debug("フォルダー選択起動")  # Log出力
         self.event_Searchsave()  # 編集履歴判定後上書き
         self.dir_path = filedialog.askdirectory(
-            initialdir=self.dir_path, mustexist=True
+            initialdir=self.Com_path, mustexist=True
         )
         self.str_dir.set(self.dir_path)
         self.file_list = self.control.SetDirlist(self.dir_path)
@@ -722,7 +744,7 @@ class ViewGUI:
                     self.control.model.stock_url = ""
                 self.control.OverSaveImage()
                 try:
-                    print(self.tomlPath)
+                    self.tomlPath = self.tomlread()
                     CSVSetMain(
                         main_window,
                         Imgurl,
@@ -745,7 +767,7 @@ class ViewGUI:
                         self.logger.debug("OCR処理tomlファイル選択時Err")  # Log出力
             else:
                 try:
-                    print(self.tomlPath)
+                    self.tomlPath = self.tomlread()
                     CSVSetMain(
                         main_window,
                         Imgurl,

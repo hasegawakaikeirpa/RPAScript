@@ -105,16 +105,20 @@ class MyTable(Table):
                 if self.currentrow < self.rows - 1:
                     self.currentcol = 0
                     self.currentrow = self.currentrow + 1
+                    x = 0
                 else:
                     return
             else:
                 self.currentcol = self.currentcol + 1
         elif event.keysym == "Left":
-            if self.currentcol > 0:
+            if self.currentcol == 0:
+                self.currentcol = self.cols - 1
+                if self.currentrow != 0:
+                    self.currentrow = self.currentrow - 1
+            else:
                 self.currentcol = self.currentcol - 1
 
-        if self.currentcol > cmax or self.currentcol <= cmin:
-            # print (self.currentcol, self.visiblecols)
+        if self.currentcol > cmax or self.currentcol < cmin:
             self.xview("moveto", x)
             self.colheader.xview("moveto", x)
             self.redraw()
@@ -204,18 +208,98 @@ class MyTable(Table):
         return
 
     # --------------------------------------------------------------------
-
-    def HCE(self, row, col):
-        """Callback for cell entry"""
-        value = self.cellentry.get()
+    def childrenSearch_sub(self, m):
         f = False
-        m = self.master
         while f is False:
             m = m.master
             if m.master is None:
-                m = m.children["!application"]
+                m_child = m.children
                 break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.OCR_dbname)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.OCR_dbname)
+                        f = True
+                        m = rm
+                        break
+                    except:
+                        print("next")
+        return m
 
+    # --------------------------------------------------------------------
+    def childrenSearch(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
+    def childrenSearch_sub2(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.RView)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.RView)
+                        f = True
+                        rm = rm.RView.children["!frame"]
+                        rm = rm.children["!frame2"]
+                        m = rm.children["!mytablesql"]
+                        break
+                    except:
+                        print("next")
+        return m
+
+    # --------------------------------------------------------------------
+    def childrenSearch2(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub2(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub2(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
+    def HCE(self, row, col):
+        """Callback for cell entry"""
+        value = self.cellentry.get()
+        m = self.childrenSearch()
         try:
             R_DF = CreateDB.readsql(self, m.OCR_dbname, m.OCR_tbname)
         except:
@@ -230,16 +314,42 @@ class MyTable(Table):
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        if R_DF is None:
-            CreateDB.CreateDF(
-                self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
-            )
-        else:
+        if self.F_stack != self.L_stack:
+            if R_DF is None:
+                R_DF = CreateDB.CreateDF(
+                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
+                )
+                self.HCE_sub(m, R_DF)
+            else:
+                self.HCE_sub(m, R_DF)
+        return
+
+    # --------------------------------------------------------------------
+    def HCE_sub(self, m, R_DF):
+        print(m.pt_bln.get())
+        if m.pt_bln.get() is True:
+            R_DF = R_DF.drop_duplicates()
             R_DF = CreateDB.pdinsert(
-                self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack, R_DF
+                self,
+                m.OCR_dbname,
+                m.OCR_tbname,
+                self.F_stack,
+                self.L_stack,
+                R_DF,
             )
             CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
-        return
+            R_m = self.childrenSearch2()
+            R_m.model.df = R_DF
+            R_m.update()
+            R_m.show()
+        else:
+            enc = MyTable.getFileEncoding(self.importFilePath)
+            self.model.df.to_csv(
+                self.importFilePath,
+                index=False,
+                encoding=enc,
+                quoting=QUOTE_NONNUMERIC,
+            )
 
     # --------------------------------------------------------------------
     def handle_left_click(self, event):
@@ -343,13 +453,13 @@ class MyTable(Table):
 
     # --------------------------------------------------------------------
 
-    def set_xviews(self, *args):
-        """Set the xview of table and col header"""
+    # def set_xviews(self, *args):
+    #     """Set the xview of table and col header"""
 
-        self.xview(*args)
-        self.colheader.xview(*args)
-        self.redrawVisible()
-        return
+    #     self.xview(*args)
+    #     self.colheader.xview(*args)
+    #     self.redrawVisible()
+    #     return
 
     # -------------------------------------------------------------------------------------
     def Pandas_mem_usage(self):
@@ -453,6 +563,7 @@ class CreateDB:
         dfList.append(List)
         df = pd.DataFrame(dfList, columns=["変更前", "変更後"])
         CreateDB.EntDF(self, dbname, tbname, df)
+        return df
 
     def TableInsert(self, dbname, tbname, text):
 

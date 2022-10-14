@@ -16,7 +16,8 @@ import IconCode
 import threading
 
 ###################################################################################################
-class Application(tk.Frame):
+# class Application(tk.Frame):
+class Application(tk.Toplevel):
     def __init__(self, master=None):
         global TKimg  # 画像オブジェクト用グローバル変数
         global txt
@@ -28,6 +29,7 @@ class Application(tk.Frame):
         global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
         # Windowの初期設定を行う。
         super().__init__(master)
+        self.withdraw()
         # Windowの画面サイズを設定する。
         G_logger.debug("TKINTERCV2Setting_Application起動")  # Log出力
         # customtkスタイル
@@ -443,6 +445,10 @@ class Application(tk.Frame):
         self.top.attributes("-topmost", True)
         G_logger.debug("TKINTERCV2Setting_Application起動完了")  # Log出力
 
+    # ----------------------------------------------------------------------------------
+    def __del__(self):
+        print("インスタンスが破棄されました")
+
     # 以下self関数##################################################################################
     def RedLine(self, CW, CH):
         """
@@ -839,23 +845,23 @@ def tomlreturn(self):
         l_s = MoneySet.split(",")
         Banktoml["Setframe"][F_N + "_MoneySet"] = l_s
     # ----------------------------------------------------------
-    ReplaceSet = tomlEntries[2].get()
-    if "," not in ReplaceSet:
-        l_s = []
-        l_s.append(ReplaceSet)
-        Banktoml["Setframe"][F_N + "_ReplaceSet"] = l_s
-    else:
-        l_s = ReplaceSet.split(",")
-        Banktoml["Setframe"][F_N + "_ReplaceSet"] = l_s
+    # ReplaceSet = tomlEntries[2].get()
+    # if "," not in ReplaceSet:
+    #     l_s = []
+    #     l_s.append(ReplaceSet)
+    #     Banktoml["Setframe"][F_N + "_ReplaceSet"] = l_s
+    # else:
+    #     l_s = ReplaceSet.split(",")
+    #     Banktoml["Setframe"][F_N + "_ReplaceSet"] = l_s
     # ----------------------------------------------------------
-    ReplaceStr = tomlEntries[3].get()
-    if "," not in ReplaceStr:
-        l_s = []
-        l_s.append(ReplaceStr)
-        Banktoml["LineSetting"][rep_N] = l_s
-    else:
-        l_s = ReplaceStr.split(",")
-        Banktoml["LineSetting"][rep_N] = l_s
+    # ReplaceStr = tomlEntries[3].get()
+    # if "," not in ReplaceStr:
+    #     l_s = []
+    #     l_s.append(ReplaceStr)
+    #     Banktoml["LineSetting"][rep_N] = l_s
+    # else:
+    #     l_s = ReplaceStr.split(",")
+    #     Banktoml["LineSetting"][rep_N] = l_s
     toml_c.dump_toml(Banktoml, tomlurl)
     G_logger.debug("toml変換設定の更新完了")  # Log出力
 
@@ -1247,11 +1253,12 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                         PT.Main(
                                             self,
                                             Read_Url,
-                                            Banktoml,
                                             G_logger,
                                             Mter,
                                             Top,
                                             imgurl,
+                                            Banktoml,
+                                            tomlurl,
                                         )
                                     else:
                                         RU = OCRF.JoinCSV(FUL)
@@ -1263,11 +1270,12 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                             PT.Main(
                                                 self,
                                                 Read_Url,
-                                                Banktoml,
                                                 G_logger,
                                                 Mter,
                                                 Top,
                                                 imgurl,
+                                                Banktoml,
+                                                tomlurl,
                                             )
                                         else:
                                             G_logger.debug("CSV連結後出力失敗")  # Log出力
@@ -1478,7 +1486,8 @@ def Main(MUI, US, turl, logger, File_url_List):
         readcsv1 = Banktoml["LineSetting"]["Nomal_Yoko"]
         readcsv2 = Banktoml["LineSetting"]["Nomal_Tate"]
 
-    root = tk.Tk()  # Window生成
+    # root = tk.Tk()  # Window生成
+    root = tk.Toplevel()  # Window生成
     data = IconCode.icondata()
     root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
     app = Application(master=root)
@@ -1499,7 +1508,7 @@ if __name__ == "__main__":
     global Banktoml, tomlurl, rep_N, F_N, imgurl
     URL = os.getcwd()
     imgurl = r"D:\OCRTESTPDF\PDFTEST\相続_JA_2page.png"
-    imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
+    # imgurl = r"C:\Users\もちねこ\Desktop\PDFTEST\JA_1page.png"
     tomlurl = tomlread()
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:
