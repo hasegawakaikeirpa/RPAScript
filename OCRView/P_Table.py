@@ -1056,10 +1056,11 @@ class Application(tk.Toplevel):
                 self.OCR_fname = os.path.splitext(os.path.basename(self.FileName))[0]
                 self.changetxturl = (
                     os.path.dirname(self.FileName)
-                    + r"\\"
-                    + os.path.basename(os.path.dirname(self.FileName))
-                    + "ChangeTxtList.csv"
+                    # + r"\\"
+                    # + os.path.basename(os.path.dirname(self.FileName))
+                    + r"\\ChangeTxtList.csv"
                 )
+
                 self.AJ_u = (
                     os.path.dirname(self.FileName)
                     + r"\\"
