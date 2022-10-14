@@ -1247,8 +1247,8 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                 else:
                                     FUL.append(Read_Url)  # 書出しCSVURLリスト
                                     if len(FUL) == 1:
-                                        selfmother.top.iconify()  # 透過ウィンドウ最小化
-                                        selfmother.master.iconify()  # 下ウィンドウ最小化
+                                        selfmother.top.withdraw()  # 透過ウィンドウ最小化
+                                        selfmother.master.withdraw()  # 下ウィンドウ最小化
 
                                         PT.Main(
                                             self,
@@ -1264,8 +1264,8 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                         RU = OCRF.JoinCSV(FUL)
                                         if RU[0] is True:
                                             Read_Url = RU[1]
-                                            selfmother.top.iconify()  # 透過ウィンドウ最小化
-                                            selfmother.master.iconify()  # 下ウィンドウ最小化
+                                            selfmother.top.withdraw()  # 透過ウィンドウ最小化
+                                            selfmother.master.withdraw()  # 下ウィンドウ最小化
 
                                             PT.Main(
                                                 self,

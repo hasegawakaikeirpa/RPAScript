@@ -41,7 +41,10 @@ def DiffCheck(GFTable, ColList):
     """
 
     # データフレームの列数にあわせて列名リスト要素数を変更------------------------------
-    GC_Diff = len(GFTable[0]) - len(ColList)
+    try:
+        GC_Diff = len(GFTable[0]) - len(ColList)
+    except:
+        GC_Diff = GFTable.shape[1] - len(ColList)
     if GC_Diff < 0:
         GC_Diff = GC_Diff * -1
         for GC_d in range(GC_Diff):

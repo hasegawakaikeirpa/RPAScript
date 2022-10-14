@@ -36,13 +36,16 @@ class Open_Win:
         label2 = tk.Label(w, text="Loading...", fg="snow", bg="#60cad1")
         label2.configure(font=("HGｺﾞｼｯｸE", 11))
         label2.place(x=10, y=200)
-
-        image_a = ImageTk.PhotoImage(
-            Image.open(os.getcwd() + r"\OCRView\D_curcle_a.png")
-        )
-        image_b = ImageTk.PhotoImage(
-            Image.open(os.getcwd() + r"\OCRView\D_curcle_b.png")
-        )
+        try:
+            image_a = ImageTk.PhotoImage(
+                Image.open(os.getcwd() + r"\OCRView\D_curcle_a.png")
+            )
+            image_b = ImageTk.PhotoImage(
+                Image.open(os.getcwd() + r"\OCRView\D_curcle_b.png")
+            )
+        except:
+            image_a = ImageTk.PhotoImage(Image.open(os.getcwd() + r"\D_curcle_a.png"))
+            image_b = ImageTk.PhotoImage(Image.open(os.getcwd() + r"\D_curcle_b.png"))
 
         for i in range(3):
             l1 = tk.Label(w, image=image_a, border=0, relief=tk.SUNKEN).place(

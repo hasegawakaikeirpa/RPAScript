@@ -2,6 +2,8 @@
 # モジュールインポート
 # pandasインポート
 import pandas as pd
+import os
+from tkinter import messagebox
 
 # 配列計算関数numpyインポート
 import numpy as np
@@ -9,14 +11,18 @@ from chardet.universaldetector import UniversalDetector
 
 # -------------------------------------------------------------------------------------------------------------------------------
 def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
-    detector = UniversalDetector()
-    with open(file_path, mode="rb") as f:
-        for binary in f:
-            detector.feed(binary)
-            if detector.done:
-                break
-    detector.close()
-    return detector.result["encoding"]
+    if os.path.isfile(file_path) is True:
+        detector = UniversalDetector()
+        with open(file_path, mode="rb") as f:
+            for binary in f:
+                detector.feed(binary)
+                if detector.done:
+                    break
+        detector.close()
+        return detector.result["encoding"]
+    else:
+        messagebox.showinfo("確認", file_path + "\nが存在しません。")
+        return ""
 
 
 # ------------------------------------------------------------------------------------------------------------------------------
