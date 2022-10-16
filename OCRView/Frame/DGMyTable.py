@@ -1,5 +1,6 @@
-# import tkinter as tk
-from tkinter import *
+import tkinter as tk
+
+# from tkinter import *
 
 # from pandastable import Table, TableModel, config
 
@@ -9,7 +10,9 @@ from csv import QUOTE_NONNUMERIC
 # import DataGrid as DG
 import pandas as pd
 import os
-from CSVOut import getFileEncoding
+import numpy as np
+from chardet.universaldetector import UniversalDetector
+import sqlite3 as sql
 
 
 class MyTable(Table):
@@ -52,6 +55,7 @@ class MyTable(Table):
         self.bind("<Control-v>", self.paste)
         self.bind("<Control-a>", self.selectAll)
         self.bind("<Control-f>", self.findText)
+        self.bind("<Control-z>", self.undo)
 
         self.bind("<Right>", self.handle_arrow_keys)
         self.bind("<Left>", self.handle_arrow_keys)
@@ -72,8 +76,8 @@ class MyTable(Table):
         """Handle arrow keys press"""
         # print event.keysym
 
-        row = self.get_row_clicked(event)
-        col = self.get_col_clicked(event)
+        self.hand_row = self.get_row_clicked(event)
+        self.hand_col = self.get_col_clicked(event)
         x, y = self.getCanvasPos(self.currentrow, self.currentcol - 1)
         rmin = self.visiblerows[0]
         rmax = self.visiblerows[-1] - 2
@@ -81,7 +85,7 @@ class MyTable(Table):
         cmin = self.visiblecols[0]
         FirstPos = self.currentrow
 
-        if x == None:
+        if x is None:
             return
 
         if event.keysym == "Up":
@@ -101,16 +105,20 @@ class MyTable(Table):
                 if self.currentrow < self.rows - 1:
                     self.currentcol = 0
                     self.currentrow = self.currentrow + 1
+                    x = 0
                 else:
                     return
             else:
                 self.currentcol = self.currentcol + 1
         elif event.keysym == "Left":
-            if self.currentcol > 0:
+            if self.currentcol == 0:
+                self.currentcol = self.cols - 1
+                if self.currentrow != 0:
+                    self.currentrow = self.currentrow - 1
+            else:
                 self.currentcol = self.currentcol - 1
 
-        if self.currentcol > cmax or self.currentcol <= cmin:
-            # print (self.currentcol, self.visiblecols)
+        if self.currentcol > cmax or self.currentcol < cmin:
             self.xview("moveto", x)
             self.colheader.xview("moveto", x)
             self.redraw()
@@ -126,34 +134,36 @@ class MyTable(Table):
             self.redraw()
 
         self.drawSelectedRect(self.currentrow, self.currentcol)
-        coltype = self.model.getColumnType(self.currentcol)
+        self.hand_coltype = self.model.getColumnType(self.currentcol)
         return
 
     # --------------------------------------------------------------------
     def drawCellEntry(self, row, col, text=None):
         """When the user single/double clicks on a text/number cell,
         bring up entry window and allow edits."""
-        if self.editable == False:
+        if self.editable is False:
             return
         h = self.rowheight
-        model = self.model
+        self.draw_model = self.model
         text = self.model.getValueAt(row, col)
         if pd.isnull(text):
             text = ""
         x1, y1, x2, y2 = self.getCellCoords(row, col)
         w = x2 - x1
-        txtvar = StringVar()
+        txtvar = tk.StringVar()
         txtvar.set(text)
+        self.F_stack = str(text)
         # 代入テキストウィンドウの作成-------------------------------------------------------
-        self.cellentry = Entry(
+        self.cellentry = tk.Entry(
             self.parentframe,
             width=20,
             textvariable=txtvar,
             takefocus=1,
             font=self.thefont,
         )
-        self.cellentry.insert(END, text)
-        self.cellentry.icursor(END)
+        self.cellentry.delete(0, tk.END)
+        self.cellentry.insert(0, text)
+        self.cellentry.icursor(tk.END)
         self.cellentry.focus_set()
         self.cellentry.bind("<Return>", lambda x: self.HCE(row, col))
 
@@ -167,9 +177,9 @@ class MyTable(Table):
     def importCSV(self, filename=None, dialog=False, **kwargs):
         """Import from csv file"""
 
-        if self.importpath == None:
+        if self.importpath is None:
             self.importpath = os.getcwd()
-        if filename == None:
+        if filename is None:
             filename = self.model.filedialog.askopenfilename(
                 parent=self.master,
                 defaultextension=".csv",
@@ -183,7 +193,7 @@ class MyTable(Table):
             )
         if not filename:
             return
-        if dialog == True:
+        if dialog is True:
             impdialog = self.model.ImportDialog(self, filename=filename)
             df = impdialog.df
             if df is None:
@@ -198,24 +208,148 @@ class MyTable(Table):
         return
 
     # --------------------------------------------------------------------
+    def childrenSearch_sub(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.OCR_dbname)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.OCR_dbname)
+                        f = True
+                        m = rm
+                        break
+                    except:
+                        print("next")
+        return m
 
+    # --------------------------------------------------------------------
+    def childrenSearch(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
+    def childrenSearch_sub2(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.RView)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.RView)
+                        f = True
+                        rm = rm.RView.children["!frame"]
+                        rm = rm.children["!frame2"]
+                        m = rm.children["!mytablesql"]
+                        break
+                    except:
+                        print("next")
+        return m
+
+    # --------------------------------------------------------------------
+    def childrenSearch2(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub2(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub2(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
     def HCE(self, row, col):
         """Callback for cell entry"""
         value = self.cellentry.get()
+        m = self.childrenSearch()
+        try:
+            R_DF = CreateDB.readsql(self, m.OCR_dbname, m.OCR_tbname)
+        except:
+            R_DF = None
         if self.filtered == 1:
             df = self.dataframe
         else:
             df = None
         self.model.setValueAt(value, row, col, df=df)
+        self.L_stack = value
         self.drawText(row, col, value, align=self.align)
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        enc = getFileEncoding(self.importFilePath)
-        self.model.df.to_csv(
-            self.importFilePath, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC
-        )
+        if self.F_stack != self.L_stack:
+            if R_DF is None:
+                R_DF = CreateDB.CreateDF(
+                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
+                )
+                self.HCE_sub(m, R_DF)
+            else:
+                self.HCE_sub(m, R_DF)
         return
+
+    # --------------------------------------------------------------------
+    def HCE_sub(self, m, R_DF):
+        print(m.pt_bln.get())
+        if m.pt_bln.get() is True:
+            R_DF = R_DF.drop_duplicates()
+            R_DF = CreateDB.pdinsert(
+                self,
+                m.OCR_dbname,
+                m.OCR_tbname,
+                self.F_stack,
+                self.L_stack,
+                R_DF,
+            )
+            CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+            R_m = self.childrenSearch2()
+            R_m.model.df = R_DF
+            R_m.update()
+            R_m.show()
+        else:
+            enc = MyTable.getFileEncoding(self.importFilePath)
+            self.model.df.to_csv(
+                self.importFilePath,
+                index=False,
+                encoding=enc,
+                quoting=QUOTE_NONNUMERIC,
+            )
 
     # --------------------------------------------------------------------
     def handle_left_click(self, event):
@@ -226,7 +360,7 @@ class MyTable(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
-        if colclicked == None:
+        if colclicked is None:
             return
         self.focus_set()
 
@@ -257,9 +391,146 @@ class MyTable(Table):
         return
 
     # --------------------------------------------------------------------
+    def handle_double_click(self, event):
+        """Do double click stuff. Selected row/cols will already have
+        been set with single click binding"""
+        # "比較ファイルMain"
+        if event.widget._name == "OCR抽出結果表Main":
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            if event.widget.model.df.columns[col] == "比較対象行番号":
+                # 比較対象DF検索--------------------------------------
+                Dif_t = event.widget
+                for i in range(100):
+                    Dif_t = Dif_t.master
+                    try:
+                        print(Dif_t._name)
+                    except:
+                        Dif_t = Dif_t.children["!application"]
+                        Dif_t = Dif_t.pt2
+                        break
+                # ---------------------------------------------------
+                ewm = event.widget.model.df.iloc[row]
+                ewm = int(ewm["比較対象行番号"]) - 1
+                Dif_t.setSelectedRow(ewm)
+                Dif_t.setSelectedCol(0)
+                Dif_t.drawSelectedRect(ewm, 0)
+                Dif_t.drawSelectedRow()
+                return
+            else:
+                self.drawCellEntry(self.currentrow, self.currentcol)
+                return
+        else:
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            self.drawCellEntry(self.currentrow, self.currentcol)
+            return
+
+    # --------------------------------------------------------------------
+    def handle_left_release(self, event):
+        """Handle left mouse button release event"""
+
+        self.endrow = self.get_row_clicked(event)
+        # df = self.model.df
+        # colname = df.columns[self.currentcol]
+        # dtype = df.dtypes[colname]
+
+        # if dtype.name == "category":
+        #     # drop down menu for category entry
+        #     row = self.get_row_clicked(event)
+        #     col = self.get_col_clicked(event)
+        #     x1, y1, x2, y2 = self.getCellCoords(row, col)
+        #     self.dropvar = tk.StringVar()
+        #     val = self.model.getValueAt(row, col)
+        #     # get categories
+        #     optionlist = list(df[colname].cat.categories[:50])
+        #     dropmenu = tk.OptionMenu(self, self.dropvar, val, *optionlist)
+        #     self.dropvar.trace("w", self.handleEntryMenu)
+        #     self.create_window(
+        #         x1, y1, width=120, height=30, window=dropmenu, anchor="nw", tag="entry"
+        #     )
+        return
+
+    # --------------------------------------------------------------------
+
+    # def set_xviews(self, *args):
+    #     """Set the xview of table and col header"""
+
+    #     self.xview(*args)
+    #     self.colheader.xview(*args)
+    #     self.redrawVisible()
+    #     return
+
+    # -------------------------------------------------------------------------------------
+    def Pandas_mem_usage(self):
+        """
+        Pandasデータフレームのメモリ最適化
+        """
+        start_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage of dataframe is {:.2f} MB".format(start_mem))
+
+        for col in self.model.df.columns:
+            col_type = self.model.df[col].dtype
+
+            if col_type != object:
+                c_min = self.model.df[col].min()
+                c_max = self.model.df[col].max()
+                if str(col_type)[:3] == "int":
+                    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                        self.model.df[col] = self.model.df[col].astype(np.int8)
+                    elif (
+                        c_min > np.iinfo(np.int16).min
+                        and c_max < np.iinfo(np.int16).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int16)
+                    elif (
+                        c_min > np.iinfo(np.int32).min
+                        and c_max < np.iinfo(np.int32).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int32)
+                    elif (
+                        c_min > np.iinfo(np.int64).min
+                        and c_max < np.iinfo(np.int64).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int64)
+                else:
+                    if (
+                        c_min > np.finfo(np.float16).min
+                        and c_max < np.finfo(np.float16).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float16)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    elif (
+                        c_min > np.finfo(np.float32).min
+                        and c_max < np.finfo(np.float32).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float32)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    else:
+                        # self.model.df[col] = self.model.df[col].astype(np.float64)
+                        self.model.df[col] = self.model.df[col].astype("object")
+            else:
+                # self.model.df[col] = self.model.df[col].astype("category")
+                self.model.df[col] = self.model.df[col].astype("object")
+
+        end_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage after optimization is: {:.2f} MB".format(end_mem))
+        print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
+
+        return
+
+    # -------------------------------------------------------------------------------------------------------------------------------
+    def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+        detector = UniversalDetector()
+        with open(file_path, mode="rb") as f:
+            for binary in f:
+                detector.feed(binary)
+                if detector.done:
+                    break
+        detector.close()
+        return detector.result["encoding"]
 
 
-####################################################################################
 class MyTable2(Table):
     """
     pandastableのTableクラスの継承サブクラス設定
@@ -300,6 +571,7 @@ class MyTable2(Table):
         self.bind("<Control-v>", self.paste)
         self.bind("<Control-a>", self.selectAll)
         self.bind("<Control-f>", self.findText)
+        self.bind("<Control-z>", self.undo)
 
         self.bind("<Right>", self.handle_arrow_keys)
         self.bind("<Left>", self.handle_arrow_keys)
@@ -320,8 +592,8 @@ class MyTable2(Table):
         """Handle arrow keys press"""
         # print event.keysym
 
-        row = self.get_row_clicked(event)
-        col = self.get_col_clicked(event)
+        self.hand_row = self.get_row_clicked(event)
+        self.hand_col = self.get_col_clicked(event)
         x, y = self.getCanvasPos(self.currentrow, self.currentcol - 1)
         rmin = self.visiblerows[0]
         rmax = self.visiblerows[-1] - 2
@@ -329,7 +601,7 @@ class MyTable2(Table):
         cmin = self.visiblecols[0]
         FirstPos = self.currentrow
 
-        if x == None:
+        if x is None:
             return
 
         if event.keysym == "Up":
@@ -349,16 +621,20 @@ class MyTable2(Table):
                 if self.currentrow < self.rows - 1:
                     self.currentcol = 0
                     self.currentrow = self.currentrow + 1
+                    x = 0
                 else:
                     return
             else:
                 self.currentcol = self.currentcol + 1
         elif event.keysym == "Left":
-            if self.currentcol > 0:
+            if self.currentcol == 0:
+                self.currentcol = self.cols - 1
+                if self.currentrow != 0:
+                    self.currentrow = self.currentrow - 1
+            else:
                 self.currentcol = self.currentcol - 1
 
-        if self.currentcol > cmax or self.currentcol <= cmin:
-            # print (self.currentcol, self.visiblecols)
+        if self.currentcol > cmax or self.currentcol < cmin:
             self.xview("moveto", x)
             self.colheader.xview("moveto", x)
             self.redraw()
@@ -374,36 +650,39 @@ class MyTable2(Table):
             self.redraw()
 
         self.drawSelectedRect(self.currentrow, self.currentcol)
-        coltype = self.model.getColumnType(self.currentcol)
+        self.hand_coltype = self.model.getColumnType(self.currentcol)
         return
 
     # --------------------------------------------------------------------
     def drawCellEntry(self, row, col, text=None):
         """When the user single/double clicks on a text/number cell,
         bring up entry window and allow edits."""
-        if self.editable == False:
+        if self.editable is False:
             return
         h = self.rowheight
-        model = self.model
+        self.draw_model = self.model
         text = self.model.getValueAt(row, col)
         if pd.isnull(text):
             text = ""
         x1, y1, x2, y2 = self.getCellCoords(row, col)
         w = x2 - x1
-        txtvar = StringVar()
+        txtvar = tk.StringVar()
         txtvar.set(text)
+        self.F_stack = str(text)
         # 代入テキストウィンドウの作成-------------------------------------------------------
-        self.cellentry = Entry(
+        self.cellentry = tk.Entry(
             self.parentframe,
             width=20,
             textvariable=txtvar,
             takefocus=1,
             font=self.thefont,
         )
-        self.cellentry.insert(END, text)
-        self.cellentry.icursor(END)
+        self.cellentry.delete(0, tk.END)
+        self.cellentry.insert(0, text)
+        self.cellentry.icursor(tk.END)
         self.cellentry.focus_set()
         self.cellentry.bind("<Return>", lambda x: self.HCE(row, col))
+
         self.entrywin = self.create_window(
             x1, y1, width=w, height=h, window=self.cellentry, anchor="nw", tag="entry"
         )
@@ -414,9 +693,9 @@ class MyTable2(Table):
     def importCSV(self, filename=None, dialog=False, **kwargs):
         """Import from csv file"""
 
-        if self.importpath == None:
+        if self.importpath is None:
             self.importpath = os.getcwd()
-        if filename == None:
+        if filename is None:
             filename = self.model.filedialog.askopenfilename(
                 parent=self.master,
                 defaultextension=".csv",
@@ -430,7 +709,7 @@ class MyTable2(Table):
             )
         if not filename:
             return
-        if dialog == True:
+        if dialog is True:
             impdialog = self.model.ImportDialog(self, filename=filename)
             df = impdialog.df
             if df is None:
@@ -445,24 +724,148 @@ class MyTable2(Table):
         return
 
     # --------------------------------------------------------------------
+    def childrenSearch_sub(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.OCR_dbname)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.OCR_dbname)
+                        f = True
+                        m = rm
+                        break
+                    except:
+                        print("next")
+        return m
 
+    # --------------------------------------------------------------------
+    def childrenSearch(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
+    def childrenSearch_sub2(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.RView)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.RView)
+                        f = True
+                        rm = rm.RView.children["!frame"]
+                        rm = rm.children["!frame2"]
+                        m = rm.children["!mytablesql"]
+                        break
+                    except:
+                        print("next")
+        return m
+
+    # --------------------------------------------------------------------
+    def childrenSearch2(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub2(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub2(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
     def HCE(self, row, col):
         """Callback for cell entry"""
         value = self.cellentry.get()
+        m = self.childrenSearch()
+        try:
+            R_DF = CreateDB.readsql(self, m.OCR_dbname, m.OCR_tbname)
+        except:
+            R_DF = None
         if self.filtered == 1:
             df = self.dataframe
         else:
             df = None
         self.model.setValueAt(value, row, col, df=df)
+        self.L_stack = value
         self.drawText(row, col, value, align=self.align)
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        enc = getFileEncoding(self.importFilePath)
-        self.model.df.to_csv(
-            self.importFilePath, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC
-        )
+        if self.F_stack != self.L_stack:
+            if R_DF is None:
+                R_DF = CreateDB.CreateDF(
+                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
+                )
+                self.HCE_sub(m, R_DF)
+            else:
+                self.HCE_sub(m, R_DF)
         return
+
+    # --------------------------------------------------------------------
+    def HCE_sub(self, m, R_DF):
+        print(m.pt_bln.get())
+        if m.pt_bln.get() is True:
+            R_DF = R_DF.drop_duplicates()
+            R_DF = CreateDB.pdinsert(
+                self,
+                m.OCR_dbname,
+                m.OCR_tbname,
+                self.F_stack,
+                self.L_stack,
+                R_DF,
+            )
+            CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+            R_m = self.childrenSearch2()
+            R_m.model.df = R_DF
+            R_m.update()
+            R_m.show()
+        else:
+            enc = MyTable.getFileEncoding(self.importFilePath)
+            self.model.df.to_csv(
+                self.importFilePath,
+                index=False,
+                encoding=enc,
+                quoting=QUOTE_NONNUMERIC,
+            )
 
     # --------------------------------------------------------------------
     def handle_left_click(self, event):
@@ -473,7 +876,7 @@ class MyTable2(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
-        if colclicked == None:
+        if colclicked is None:
             return
         self.focus_set()
 
@@ -503,8 +906,147 @@ class MyTable2(Table):
             self.cellentry.destroy()
         return
 
+    # --------------------------------------------------------------------
+    def handle_double_click(self, event):
+        """Do double click stuff. Selected row/cols will already have
+        been set with single click binding"""
+        # "比較ファイルMain"
+        if event.widget._name == "OCR抽出結果表Main":
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            if event.widget.model.df.columns[col] == "比較対象行番号":
+                # 比較対象DF検索--------------------------------------
+                Dif_t = event.widget
+                for i in range(100):
+                    Dif_t = Dif_t.master
+                    try:
+                        print(Dif_t._name)
+                    except:
+                        Dif_t = Dif_t.children["!application"]
+                        Dif_t = Dif_t.pt2
+                        break
+                # ---------------------------------------------------
+                ewm = event.widget.model.df.iloc[row]
+                ewm = int(ewm["比較対象行番号"]) - 1
+                Dif_t.setSelectedRow(ewm)
+                Dif_t.setSelectedCol(0)
+                Dif_t.drawSelectedRect(ewm, 0)
+                Dif_t.drawSelectedRow()
+                return
+            else:
+                self.drawCellEntry(self.currentrow, self.currentcol)
+                return
+        else:
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            self.drawCellEntry(self.currentrow, self.currentcol)
+            return
 
-####################################################################################
+    # --------------------------------------------------------------------
+    def handle_left_release(self, event):
+        """Handle left mouse button release event"""
+
+        self.endrow = self.get_row_clicked(event)
+        # df = self.model.df
+        # colname = df.columns[self.currentcol]
+        # dtype = df.dtypes[colname]
+
+        # if dtype.name == "category":
+        #     # drop down menu for category entry
+        #     row = self.get_row_clicked(event)
+        #     col = self.get_col_clicked(event)
+        #     x1, y1, x2, y2 = self.getCellCoords(row, col)
+        #     self.dropvar = tk.StringVar()
+        #     val = self.model.getValueAt(row, col)
+        #     # get categories
+        #     optionlist = list(df[colname].cat.categories[:50])
+        #     dropmenu = tk.OptionMenu(self, self.dropvar, val, *optionlist)
+        #     self.dropvar.trace("w", self.handleEntryMenu)
+        #     self.create_window(
+        #         x1, y1, width=120, height=30, window=dropmenu, anchor="nw", tag="entry"
+        #     )
+        return
+
+    # --------------------------------------------------------------------
+
+    # def set_xviews(self, *args):
+    #     """Set the xview of table and col header"""
+
+    #     self.xview(*args)
+    #     self.colheader.xview(*args)
+    #     self.redrawVisible()
+    #     return
+
+    # -------------------------------------------------------------------------------------
+    def Pandas_mem_usage(self):
+        """
+        Pandasデータフレームのメモリ最適化
+        """
+        start_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage of dataframe is {:.2f} MB".format(start_mem))
+
+        for col in self.model.df.columns:
+            col_type = self.model.df[col].dtype
+
+            if col_type != object:
+                c_min = self.model.df[col].min()
+                c_max = self.model.df[col].max()
+                if str(col_type)[:3] == "int":
+                    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                        self.model.df[col] = self.model.df[col].astype(np.int8)
+                    elif (
+                        c_min > np.iinfo(np.int16).min
+                        and c_max < np.iinfo(np.int16).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int16)
+                    elif (
+                        c_min > np.iinfo(np.int32).min
+                        and c_max < np.iinfo(np.int32).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int32)
+                    elif (
+                        c_min > np.iinfo(np.int64).min
+                        and c_max < np.iinfo(np.int64).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int64)
+                else:
+                    if (
+                        c_min > np.finfo(np.float16).min
+                        and c_max < np.finfo(np.float16).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float16)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    elif (
+                        c_min > np.finfo(np.float32).min
+                        and c_max < np.finfo(np.float32).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float32)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    else:
+                        # self.model.df[col] = self.model.df[col].astype(np.float64)
+                        self.model.df[col] = self.model.df[col].astype("object")
+            else:
+                # self.model.df[col] = self.model.df[col].astype("category")
+                self.model.df[col] = self.model.df[col].astype("object")
+
+        end_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage after optimization is: {:.2f} MB".format(end_mem))
+        print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
+
+        return
+
+    # -------------------------------------------------------------------------------------------------------------------------------
+    def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+        detector = UniversalDetector()
+        with open(file_path, mode="rb") as f:
+            for binary in f:
+                detector.feed(binary)
+                if detector.done:
+                    break
+        detector.close()
+        return detector.result["encoding"]
+
+
 class MyTable3(Table):
     """
     pandastableのTableクラスの継承サブクラス設定
@@ -545,6 +1087,7 @@ class MyTable3(Table):
         self.bind("<Control-v>", self.paste)
         self.bind("<Control-a>", self.selectAll)
         self.bind("<Control-f>", self.findText)
+        self.bind("<Control-z>", self.undo)
 
         self.bind("<Right>", self.handle_arrow_keys)
         self.bind("<Left>", self.handle_arrow_keys)
@@ -565,8 +1108,8 @@ class MyTable3(Table):
         """Handle arrow keys press"""
         # print event.keysym
 
-        row = self.get_row_clicked(event)
-        col = self.get_col_clicked(event)
+        self.hand_row = self.get_row_clicked(event)
+        self.hand_col = self.get_col_clicked(event)
         x, y = self.getCanvasPos(self.currentrow, self.currentcol - 1)
         rmin = self.visiblerows[0]
         rmax = self.visiblerows[-1] - 2
@@ -574,7 +1117,7 @@ class MyTable3(Table):
         cmin = self.visiblecols[0]
         FirstPos = self.currentrow
 
-        if x == None:
+        if x is None:
             return
 
         if event.keysym == "Up":
@@ -594,16 +1137,20 @@ class MyTable3(Table):
                 if self.currentrow < self.rows - 1:
                     self.currentcol = 0
                     self.currentrow = self.currentrow + 1
+                    x = 0
                 else:
                     return
             else:
                 self.currentcol = self.currentcol + 1
         elif event.keysym == "Left":
-            if self.currentcol > 0:
+            if self.currentcol == 0:
+                self.currentcol = self.cols - 1
+                if self.currentrow != 0:
+                    self.currentrow = self.currentrow - 1
+            else:
                 self.currentcol = self.currentcol - 1
 
-        if self.currentcol > cmax or self.currentcol <= cmin:
-            # print (self.currentcol, self.visiblecols)
+        if self.currentcol > cmax or self.currentcol < cmin:
             self.xview("moveto", x)
             self.colheader.xview("moveto", x)
             self.redraw()
@@ -619,36 +1166,39 @@ class MyTable3(Table):
             self.redraw()
 
         self.drawSelectedRect(self.currentrow, self.currentcol)
-        coltype = self.model.getColumnType(self.currentcol)
+        self.hand_coltype = self.model.getColumnType(self.currentcol)
         return
 
     # --------------------------------------------------------------------
     def drawCellEntry(self, row, col, text=None):
         """When the user single/double clicks on a text/number cell,
         bring up entry window and allow edits."""
-        if self.editable == False:
+        if self.editable is False:
             return
         h = self.rowheight
-        model = self.model
+        self.draw_model = self.model
         text = self.model.getValueAt(row, col)
         if pd.isnull(text):
             text = ""
         x1, y1, x2, y2 = self.getCellCoords(row, col)
         w = x2 - x1
-        txtvar = StringVar()
+        txtvar = tk.StringVar()
         txtvar.set(text)
+        self.F_stack = str(text)
         # 代入テキストウィンドウの作成-------------------------------------------------------
-        self.cellentry = Entry(
+        self.cellentry = tk.Entry(
             self.parentframe,
             width=20,
             textvariable=txtvar,
             takefocus=1,
             font=self.thefont,
         )
-        self.cellentry.insert(END, text)
-        self.cellentry.icursor(END)
+        self.cellentry.delete(0, tk.END)
+        self.cellentry.insert(0, text)
+        self.cellentry.icursor(tk.END)
         self.cellentry.focus_set()
         self.cellentry.bind("<Return>", lambda x: self.HCE(row, col))
+
         self.entrywin = self.create_window(
             x1, y1, width=w, height=h, window=self.cellentry, anchor="nw", tag="entry"
         )
@@ -659,9 +1209,9 @@ class MyTable3(Table):
     def importCSV(self, filename=None, dialog=False, **kwargs):
         """Import from csv file"""
 
-        if self.importpath == None:
+        if self.importpath is None:
             self.importpath = os.getcwd()
-        if filename == None:
+        if filename is None:
             filename = self.model.filedialog.askopenfilename(
                 parent=self.master,
                 defaultextension=".csv",
@@ -675,7 +1225,7 @@ class MyTable3(Table):
             )
         if not filename:
             return
-        if dialog == True:
+        if dialog is True:
             impdialog = self.model.ImportDialog(self, filename=filename)
             df = impdialog.df
             if df is None:
@@ -690,24 +1240,148 @@ class MyTable3(Table):
         return
 
     # --------------------------------------------------------------------
+    def childrenSearch_sub(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.OCR_dbname)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.OCR_dbname)
+                        f = True
+                        m = rm
+                        break
+                    except:
+                        print("next")
+        return m
 
+    # --------------------------------------------------------------------
+    def childrenSearch(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
+    def childrenSearch_sub2(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.RView)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.RView)
+                        f = True
+                        rm = rm.RView.children["!frame"]
+                        rm = rm.children["!frame2"]
+                        m = rm.children["!mytablesql"]
+                        break
+                    except:
+                        print("next")
+        return m
+
+    # --------------------------------------------------------------------
+    def childrenSearch2(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub2(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub2(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
     def HCE(self, row, col):
         """Callback for cell entry"""
         value = self.cellentry.get()
+        m = self.childrenSearch()
+        try:
+            R_DF = CreateDB.readsql(self, m.OCR_dbname, m.OCR_tbname)
+        except:
+            R_DF = None
         if self.filtered == 1:
             df = self.dataframe
         else:
             df = None
         self.model.setValueAt(value, row, col, df=df)
+        self.L_stack = value
         self.drawText(row, col, value, align=self.align)
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        enc = getFileEncoding(self.importFilePath)
-        self.model.df.to_csv(
-            self.importFilePath, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC
-        )
+        if self.F_stack != self.L_stack:
+            if R_DF is None:
+                R_DF = CreateDB.CreateDF(
+                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
+                )
+                self.HCE_sub(m, R_DF)
+            else:
+                self.HCE_sub(m, R_DF)
         return
+
+    # --------------------------------------------------------------------
+    def HCE_sub(self, m, R_DF):
+        print(m.pt_bln.get())
+        if m.pt_bln.get() is True:
+            R_DF = R_DF.drop_duplicates()
+            R_DF = CreateDB.pdinsert(
+                self,
+                m.OCR_dbname,
+                m.OCR_tbname,
+                self.F_stack,
+                self.L_stack,
+                R_DF,
+            )
+            CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+            R_m = self.childrenSearch2()
+            R_m.model.df = R_DF
+            R_m.update()
+            R_m.show()
+        else:
+            enc = MyTable.getFileEncoding(self.importFilePath)
+            self.model.df.to_csv(
+                self.importFilePath,
+                index=False,
+                encoding=enc,
+                quoting=QUOTE_NONNUMERIC,
+            )
 
     # --------------------------------------------------------------------
     def handle_left_click(self, event):
@@ -718,7 +1392,7 @@ class MyTable3(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
-        if colclicked == None:
+        if colclicked is None:
             return
         self.focus_set()
 
@@ -748,8 +1422,147 @@ class MyTable3(Table):
             self.cellentry.destroy()
         return
 
+    # --------------------------------------------------------------------
+    def handle_double_click(self, event):
+        """Do double click stuff. Selected row/cols will already have
+        been set with single click binding"""
+        # "比較ファイルMain"
+        if event.widget._name == "OCR抽出結果表Main":
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            if event.widget.model.df.columns[col] == "比較対象行番号":
+                # 比較対象DF検索--------------------------------------
+                Dif_t = event.widget
+                for i in range(100):
+                    Dif_t = Dif_t.master
+                    try:
+                        print(Dif_t._name)
+                    except:
+                        Dif_t = Dif_t.children["!application"]
+                        Dif_t = Dif_t.pt2
+                        break
+                # ---------------------------------------------------
+                ewm = event.widget.model.df.iloc[row]
+                ewm = int(ewm["比較対象行番号"]) - 1
+                Dif_t.setSelectedRow(ewm)
+                Dif_t.setSelectedCol(0)
+                Dif_t.drawSelectedRect(ewm, 0)
+                Dif_t.drawSelectedRow()
+                return
+            else:
+                self.drawCellEntry(self.currentrow, self.currentcol)
+                return
+        else:
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            self.drawCellEntry(self.currentrow, self.currentcol)
+            return
 
-####################################################################################
+    # --------------------------------------------------------------------
+    def handle_left_release(self, event):
+        """Handle left mouse button release event"""
+
+        self.endrow = self.get_row_clicked(event)
+        # df = self.model.df
+        # colname = df.columns[self.currentcol]
+        # dtype = df.dtypes[colname]
+
+        # if dtype.name == "category":
+        #     # drop down menu for category entry
+        #     row = self.get_row_clicked(event)
+        #     col = self.get_col_clicked(event)
+        #     x1, y1, x2, y2 = self.getCellCoords(row, col)
+        #     self.dropvar = tk.StringVar()
+        #     val = self.model.getValueAt(row, col)
+        #     # get categories
+        #     optionlist = list(df[colname].cat.categories[:50])
+        #     dropmenu = tk.OptionMenu(self, self.dropvar, val, *optionlist)
+        #     self.dropvar.trace("w", self.handleEntryMenu)
+        #     self.create_window(
+        #         x1, y1, width=120, height=30, window=dropmenu, anchor="nw", tag="entry"
+        #     )
+        return
+
+    # --------------------------------------------------------------------
+
+    # def set_xviews(self, *args):
+    #     """Set the xview of table and col header"""
+
+    #     self.xview(*args)
+    #     self.colheader.xview(*args)
+    #     self.redrawVisible()
+    #     return
+
+    # -------------------------------------------------------------------------------------
+    def Pandas_mem_usage(self):
+        """
+        Pandasデータフレームのメモリ最適化
+        """
+        start_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage of dataframe is {:.2f} MB".format(start_mem))
+
+        for col in self.model.df.columns:
+            col_type = self.model.df[col].dtype
+
+            if col_type != object:
+                c_min = self.model.df[col].min()
+                c_max = self.model.df[col].max()
+                if str(col_type)[:3] == "int":
+                    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                        self.model.df[col] = self.model.df[col].astype(np.int8)
+                    elif (
+                        c_min > np.iinfo(np.int16).min
+                        and c_max < np.iinfo(np.int16).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int16)
+                    elif (
+                        c_min > np.iinfo(np.int32).min
+                        and c_max < np.iinfo(np.int32).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int32)
+                    elif (
+                        c_min > np.iinfo(np.int64).min
+                        and c_max < np.iinfo(np.int64).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int64)
+                else:
+                    if (
+                        c_min > np.finfo(np.float16).min
+                        and c_max < np.finfo(np.float16).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float16)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    elif (
+                        c_min > np.finfo(np.float32).min
+                        and c_max < np.finfo(np.float32).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float32)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    else:
+                        # self.model.df[col] = self.model.df[col].astype(np.float64)
+                        self.model.df[col] = self.model.df[col].astype("object")
+            else:
+                # self.model.df[col] = self.model.df[col].astype("category")
+                self.model.df[col] = self.model.df[col].astype("object")
+
+        end_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage after optimization is: {:.2f} MB".format(end_mem))
+        print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
+
+        return
+
+    # -------------------------------------------------------------------------------------------------------------------------------
+    def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+        detector = UniversalDetector()
+        with open(file_path, mode="rb") as f:
+            for binary in f:
+                detector.feed(binary)
+                if detector.done:
+                    break
+        detector.close()
+        return detector.result["encoding"]
+
+
 class MyTable4(Table):
     """
     pandastableのTableクラスの継承サブクラス設定
@@ -790,6 +1603,7 @@ class MyTable4(Table):
         self.bind("<Control-v>", self.paste)
         self.bind("<Control-a>", self.selectAll)
         self.bind("<Control-f>", self.findText)
+        self.bind("<Control-z>", self.undo)
 
         self.bind("<Right>", self.handle_arrow_keys)
         self.bind("<Left>", self.handle_arrow_keys)
@@ -810,8 +1624,8 @@ class MyTable4(Table):
         """Handle arrow keys press"""
         # print event.keysym
 
-        row = self.get_row_clicked(event)
-        col = self.get_col_clicked(event)
+        self.hand_row = self.get_row_clicked(event)
+        self.hand_col = self.get_col_clicked(event)
         x, y = self.getCanvasPos(self.currentrow, self.currentcol - 1)
         rmin = self.visiblerows[0]
         rmax = self.visiblerows[-1] - 2
@@ -819,7 +1633,7 @@ class MyTable4(Table):
         cmin = self.visiblecols[0]
         FirstPos = self.currentrow
 
-        if x == None:
+        if x is None:
             return
 
         if event.keysym == "Up":
@@ -839,16 +1653,20 @@ class MyTable4(Table):
                 if self.currentrow < self.rows - 1:
                     self.currentcol = 0
                     self.currentrow = self.currentrow + 1
+                    x = 0
                 else:
                     return
             else:
                 self.currentcol = self.currentcol + 1
         elif event.keysym == "Left":
-            if self.currentcol > 0:
+            if self.currentcol == 0:
+                self.currentcol = self.cols - 1
+                if self.currentrow != 0:
+                    self.currentrow = self.currentrow - 1
+            else:
                 self.currentcol = self.currentcol - 1
 
-        if self.currentcol > cmax or self.currentcol <= cmin:
-            # print (self.currentcol, self.visiblecols)
+        if self.currentcol > cmax or self.currentcol < cmin:
             self.xview("moveto", x)
             self.colheader.xview("moveto", x)
             self.redraw()
@@ -864,36 +1682,39 @@ class MyTable4(Table):
             self.redraw()
 
         self.drawSelectedRect(self.currentrow, self.currentcol)
-        coltype = self.model.getColumnType(self.currentcol)
+        self.hand_coltype = self.model.getColumnType(self.currentcol)
         return
 
     # --------------------------------------------------------------------
     def drawCellEntry(self, row, col, text=None):
         """When the user single/double clicks on a text/number cell,
         bring up entry window and allow edits."""
-        if self.editable == False:
+        if self.editable is False:
             return
         h = self.rowheight
-        model = self.model
+        self.draw_model = self.model
         text = self.model.getValueAt(row, col)
         if pd.isnull(text):
             text = ""
         x1, y1, x2, y2 = self.getCellCoords(row, col)
         w = x2 - x1
-        txtvar = StringVar()
+        txtvar = tk.StringVar()
         txtvar.set(text)
+        self.F_stack = str(text)
         # 代入テキストウィンドウの作成-------------------------------------------------------
-        self.cellentry = Entry(
+        self.cellentry = tk.Entry(
             self.parentframe,
             width=20,
             textvariable=txtvar,
             takefocus=1,
             font=self.thefont,
         )
-        self.cellentry.insert(END, text)
-        self.cellentry.icursor(END)
+        self.cellentry.delete(0, tk.END)
+        self.cellentry.insert(0, text)
+        self.cellentry.icursor(tk.END)
         self.cellentry.focus_set()
         self.cellentry.bind("<Return>", lambda x: self.HCE(row, col))
+
         self.entrywin = self.create_window(
             x1, y1, width=w, height=h, window=self.cellentry, anchor="nw", tag="entry"
         )
@@ -904,9 +1725,9 @@ class MyTable4(Table):
     def importCSV(self, filename=None, dialog=False, **kwargs):
         """Import from csv file"""
 
-        if self.importpath == None:
+        if self.importpath is None:
             self.importpath = os.getcwd()
-        if filename == None:
+        if filename is None:
             filename = self.model.filedialog.askopenfilename(
                 parent=self.master,
                 defaultextension=".csv",
@@ -920,7 +1741,7 @@ class MyTable4(Table):
             )
         if not filename:
             return
-        if dialog == True:
+        if dialog is True:
             impdialog = self.model.ImportDialog(self, filename=filename)
             df = impdialog.df
             if df is None:
@@ -935,24 +1756,148 @@ class MyTable4(Table):
         return
 
     # --------------------------------------------------------------------
+    def childrenSearch_sub(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.OCR_dbname)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.OCR_dbname)
+                        f = True
+                        m = rm
+                        break
+                    except:
+                        print("next")
+        return m
 
+    # --------------------------------------------------------------------
+    def childrenSearch(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
+    def childrenSearch_sub2(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.RView)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.RView)
+                        f = True
+                        rm = rm.RView.children["!frame"]
+                        rm = rm.children["!frame2"]
+                        m = rm.children["!mytablesql"]
+                        break
+                    except:
+                        print("next")
+        return m
+
+    # --------------------------------------------------------------------
+    def childrenSearch2(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub2(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub2(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
     def HCE(self, row, col):
         """Callback for cell entry"""
         value = self.cellentry.get()
+        m = self.childrenSearch()
+        try:
+            R_DF = CreateDB.readsql(self, m.OCR_dbname, m.OCR_tbname)
+        except:
+            R_DF = None
         if self.filtered == 1:
             df = self.dataframe
         else:
             df = None
         self.model.setValueAt(value, row, col, df=df)
+        self.L_stack = value
         self.drawText(row, col, value, align=self.align)
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        enc = getFileEncoding(self.importFilePath)
-        self.model.df.to_csv(
-            self.importFilePath, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC
-        )
+        if self.F_stack != self.L_stack:
+            if R_DF is None:
+                R_DF = CreateDB.CreateDF(
+                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
+                )
+                self.HCE_sub(m, R_DF)
+            else:
+                self.HCE_sub(m, R_DF)
         return
+
+    # --------------------------------------------------------------------
+    def HCE_sub(self, m, R_DF):
+        print(m.pt_bln.get())
+        if m.pt_bln.get() is True:
+            R_DF = R_DF.drop_duplicates()
+            R_DF = CreateDB.pdinsert(
+                self,
+                m.OCR_dbname,
+                m.OCR_tbname,
+                self.F_stack,
+                self.L_stack,
+                R_DF,
+            )
+            CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+            R_m = self.childrenSearch2()
+            R_m.model.df = R_DF
+            R_m.update()
+            R_m.show()
+        else:
+            enc = MyTable.getFileEncoding(self.importFilePath)
+            self.model.df.to_csv(
+                self.importFilePath,
+                index=False,
+                encoding=enc,
+                quoting=QUOTE_NONNUMERIC,
+            )
 
     # --------------------------------------------------------------------
     def handle_left_click(self, event):
@@ -963,7 +1908,7 @@ class MyTable4(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
-        if colclicked == None:
+        if colclicked is None:
             return
         self.focus_set()
 
@@ -993,8 +1938,147 @@ class MyTable4(Table):
             self.cellentry.destroy()
         return
 
+    # --------------------------------------------------------------------
+    def handle_double_click(self, event):
+        """Do double click stuff. Selected row/cols will already have
+        been set with single click binding"""
+        # "比較ファイルMain"
+        if event.widget._name == "OCR抽出結果表Main":
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            if event.widget.model.df.columns[col] == "比較対象行番号":
+                # 比較対象DF検索--------------------------------------
+                Dif_t = event.widget
+                for i in range(100):
+                    Dif_t = Dif_t.master
+                    try:
+                        print(Dif_t._name)
+                    except:
+                        Dif_t = Dif_t.children["!application"]
+                        Dif_t = Dif_t.pt2
+                        break
+                # ---------------------------------------------------
+                ewm = event.widget.model.df.iloc[row]
+                ewm = int(ewm["比較対象行番号"]) - 1
+                Dif_t.setSelectedRow(ewm)
+                Dif_t.setSelectedCol(0)
+                Dif_t.drawSelectedRect(ewm, 0)
+                Dif_t.drawSelectedRow()
+                return
+            else:
+                self.drawCellEntry(self.currentrow, self.currentcol)
+                return
+        else:
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            self.drawCellEntry(self.currentrow, self.currentcol)
+            return
 
-####################################################################################
+    # --------------------------------------------------------------------
+    def handle_left_release(self, event):
+        """Handle left mouse button release event"""
+
+        self.endrow = self.get_row_clicked(event)
+        # df = self.model.df
+        # colname = df.columns[self.currentcol]
+        # dtype = df.dtypes[colname]
+
+        # if dtype.name == "category":
+        #     # drop down menu for category entry
+        #     row = self.get_row_clicked(event)
+        #     col = self.get_col_clicked(event)
+        #     x1, y1, x2, y2 = self.getCellCoords(row, col)
+        #     self.dropvar = tk.StringVar()
+        #     val = self.model.getValueAt(row, col)
+        #     # get categories
+        #     optionlist = list(df[colname].cat.categories[:50])
+        #     dropmenu = tk.OptionMenu(self, self.dropvar, val, *optionlist)
+        #     self.dropvar.trace("w", self.handleEntryMenu)
+        #     self.create_window(
+        #         x1, y1, width=120, height=30, window=dropmenu, anchor="nw", tag="entry"
+        #     )
+        return
+
+    # --------------------------------------------------------------------
+
+    # def set_xviews(self, *args):
+    #     """Set the xview of table and col header"""
+
+    #     self.xview(*args)
+    #     self.colheader.xview(*args)
+    #     self.redrawVisible()
+    #     return
+
+    # -------------------------------------------------------------------------------------
+    def Pandas_mem_usage(self):
+        """
+        Pandasデータフレームのメモリ最適化
+        """
+        start_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage of dataframe is {:.2f} MB".format(start_mem))
+
+        for col in self.model.df.columns:
+            col_type = self.model.df[col].dtype
+
+            if col_type != object:
+                c_min = self.model.df[col].min()
+                c_max = self.model.df[col].max()
+                if str(col_type)[:3] == "int":
+                    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                        self.model.df[col] = self.model.df[col].astype(np.int8)
+                    elif (
+                        c_min > np.iinfo(np.int16).min
+                        and c_max < np.iinfo(np.int16).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int16)
+                    elif (
+                        c_min > np.iinfo(np.int32).min
+                        and c_max < np.iinfo(np.int32).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int32)
+                    elif (
+                        c_min > np.iinfo(np.int64).min
+                        and c_max < np.iinfo(np.int64).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int64)
+                else:
+                    if (
+                        c_min > np.finfo(np.float16).min
+                        and c_max < np.finfo(np.float16).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float16)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    elif (
+                        c_min > np.finfo(np.float32).min
+                        and c_max < np.finfo(np.float32).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float32)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    else:
+                        # self.model.df[col] = self.model.df[col].astype(np.float64)
+                        self.model.df[col] = self.model.df[col].astype("object")
+            else:
+                # self.model.df[col] = self.model.df[col].astype("category")
+                self.model.df[col] = self.model.df[col].astype("object")
+
+        end_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage after optimization is: {:.2f} MB".format(end_mem))
+        print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
+
+        return
+
+    # -------------------------------------------------------------------------------------------------------------------------------
+    def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+        detector = UniversalDetector()
+        with open(file_path, mode="rb") as f:
+            for binary in f:
+                detector.feed(binary)
+                if detector.done:
+                    break
+        detector.close()
+        return detector.result["encoding"]
+
+
 class MyTable5(Table):
     """
     pandastableのTableクラスの継承サブクラス設定
@@ -1035,6 +2119,7 @@ class MyTable5(Table):
         self.bind("<Control-v>", self.paste)
         self.bind("<Control-a>", self.selectAll)
         self.bind("<Control-f>", self.findText)
+        self.bind("<Control-z>", self.undo)
 
         self.bind("<Right>", self.handle_arrow_keys)
         self.bind("<Left>", self.handle_arrow_keys)
@@ -1055,8 +2140,8 @@ class MyTable5(Table):
         """Handle arrow keys press"""
         # print event.keysym
 
-        row = self.get_row_clicked(event)
-        col = self.get_col_clicked(event)
+        self.hand_row = self.get_row_clicked(event)
+        self.hand_col = self.get_col_clicked(event)
         x, y = self.getCanvasPos(self.currentrow, self.currentcol - 1)
         rmin = self.visiblerows[0]
         rmax = self.visiblerows[-1] - 2
@@ -1064,7 +2149,7 @@ class MyTable5(Table):
         cmin = self.visiblecols[0]
         FirstPos = self.currentrow
 
-        if x == None:
+        if x is None:
             return
 
         if event.keysym == "Up":
@@ -1084,16 +2169,20 @@ class MyTable5(Table):
                 if self.currentrow < self.rows - 1:
                     self.currentcol = 0
                     self.currentrow = self.currentrow + 1
+                    x = 0
                 else:
                     return
             else:
                 self.currentcol = self.currentcol + 1
         elif event.keysym == "Left":
-            if self.currentcol > 0:
+            if self.currentcol == 0:
+                self.currentcol = self.cols - 1
+                if self.currentrow != 0:
+                    self.currentrow = self.currentrow - 1
+            else:
                 self.currentcol = self.currentcol - 1
 
-        if self.currentcol > cmax or self.currentcol <= cmin:
-            # print (self.currentcol, self.visiblecols)
+        if self.currentcol > cmax or self.currentcol < cmin:
             self.xview("moveto", x)
             self.colheader.xview("moveto", x)
             self.redraw()
@@ -1109,36 +2198,39 @@ class MyTable5(Table):
             self.redraw()
 
         self.drawSelectedRect(self.currentrow, self.currentcol)
-        coltype = self.model.getColumnType(self.currentcol)
+        self.hand_coltype = self.model.getColumnType(self.currentcol)
         return
 
     # --------------------------------------------------------------------
     def drawCellEntry(self, row, col, text=None):
         """When the user single/double clicks on a text/number cell,
         bring up entry window and allow edits."""
-        if self.editable == False:
+        if self.editable is False:
             return
         h = self.rowheight
-        model = self.model
+        self.draw_model = self.model
         text = self.model.getValueAt(row, col)
         if pd.isnull(text):
             text = ""
         x1, y1, x2, y2 = self.getCellCoords(row, col)
         w = x2 - x1
-        txtvar = StringVar()
+        txtvar = tk.StringVar()
         txtvar.set(text)
+        self.F_stack = str(text)
         # 代入テキストウィンドウの作成-------------------------------------------------------
-        self.cellentry = Entry(
+        self.cellentry = tk.Entry(
             self.parentframe,
             width=20,
             textvariable=txtvar,
             takefocus=1,
             font=self.thefont,
         )
-        self.cellentry.insert(END, text)
-        self.cellentry.icursor(END)
+        self.cellentry.delete(0, tk.END)
+        self.cellentry.insert(0, text)
+        self.cellentry.icursor(tk.END)
         self.cellentry.focus_set()
         self.cellentry.bind("<Return>", lambda x: self.HCE(row, col))
+
         self.entrywin = self.create_window(
             x1, y1, width=w, height=h, window=self.cellentry, anchor="nw", tag="entry"
         )
@@ -1149,9 +2241,9 @@ class MyTable5(Table):
     def importCSV(self, filename=None, dialog=False, **kwargs):
         """Import from csv file"""
 
-        if self.importpath == None:
+        if self.importpath is None:
             self.importpath = os.getcwd()
-        if filename == None:
+        if filename is None:
             filename = self.model.filedialog.askopenfilename(
                 parent=self.master,
                 defaultextension=".csv",
@@ -1165,7 +2257,7 @@ class MyTable5(Table):
             )
         if not filename:
             return
-        if dialog == True:
+        if dialog is True:
             impdialog = self.model.ImportDialog(self, filename=filename)
             df = impdialog.df
             if df is None:
@@ -1180,24 +2272,148 @@ class MyTable5(Table):
         return
 
     # --------------------------------------------------------------------
+    def childrenSearch_sub(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.OCR_dbname)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.OCR_dbname)
+                        f = True
+                        m = rm
+                        break
+                    except:
+                        print("next")
+        return m
 
+    # --------------------------------------------------------------------
+    def childrenSearch(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
+    def childrenSearch_sub2(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.RView)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.RView)
+                        f = True
+                        rm = rm.RView.children["!frame"]
+                        rm = rm.children["!frame2"]
+                        m = rm.children["!mytablesql"]
+                        break
+                    except:
+                        print("next")
+        return m
+
+    # --------------------------------------------------------------------
+    def childrenSearch2(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub2(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub2(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
     def HCE(self, row, col):
         """Callback for cell entry"""
         value = self.cellentry.get()
+        m = self.childrenSearch()
+        try:
+            R_DF = CreateDB.readsql(self, m.OCR_dbname, m.OCR_tbname)
+        except:
+            R_DF = None
         if self.filtered == 1:
             df = self.dataframe
         else:
             df = None
         self.model.setValueAt(value, row, col, df=df)
+        self.L_stack = value
         self.drawText(row, col, value, align=self.align)
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        enc = getFileEncoding(self.importFilePath)
-        self.model.df.to_csv(
-            self.importFilePath, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC
-        )
+        if self.F_stack != self.L_stack:
+            if R_DF is None:
+                R_DF = CreateDB.CreateDF(
+                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
+                )
+                self.HCE_sub(m, R_DF)
+            else:
+                self.HCE_sub(m, R_DF)
         return
+
+    # --------------------------------------------------------------------
+    def HCE_sub(self, m, R_DF):
+        print(m.pt_bln.get())
+        if m.pt_bln.get() is True:
+            R_DF = R_DF.drop_duplicates()
+            R_DF = CreateDB.pdinsert(
+                self,
+                m.OCR_dbname,
+                m.OCR_tbname,
+                self.F_stack,
+                self.L_stack,
+                R_DF,
+            )
+            CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+            R_m = self.childrenSearch2()
+            R_m.model.df = R_DF
+            R_m.update()
+            R_m.show()
+        else:
+            enc = MyTable.getFileEncoding(self.importFilePath)
+            self.model.df.to_csv(
+                self.importFilePath,
+                index=False,
+                encoding=enc,
+                quoting=QUOTE_NONNUMERIC,
+            )
 
     # --------------------------------------------------------------------
     def handle_left_click(self, event):
@@ -1208,7 +2424,7 @@ class MyTable5(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
-        if colclicked == None:
+        if colclicked is None:
             return
         self.focus_set()
 
@@ -1238,8 +2454,147 @@ class MyTable5(Table):
             self.cellentry.destroy()
         return
 
+    # --------------------------------------------------------------------
+    def handle_double_click(self, event):
+        """Do double click stuff. Selected row/cols will already have
+        been set with single click binding"""
+        # "比較ファイルMain"
+        if event.widget._name == "OCR抽出結果表Main":
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            if event.widget.model.df.columns[col] == "比較対象行番号":
+                # 比較対象DF検索--------------------------------------
+                Dif_t = event.widget
+                for i in range(100):
+                    Dif_t = Dif_t.master
+                    try:
+                        print(Dif_t._name)
+                    except:
+                        Dif_t = Dif_t.children["!application"]
+                        Dif_t = Dif_t.pt2
+                        break
+                # ---------------------------------------------------
+                ewm = event.widget.model.df.iloc[row]
+                ewm = int(ewm["比較対象行番号"]) - 1
+                Dif_t.setSelectedRow(ewm)
+                Dif_t.setSelectedCol(0)
+                Dif_t.drawSelectedRect(ewm, 0)
+                Dif_t.drawSelectedRow()
+                return
+            else:
+                self.drawCellEntry(self.currentrow, self.currentcol)
+                return
+        else:
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            self.drawCellEntry(self.currentrow, self.currentcol)
+            return
 
-####################################################################################
+    # --------------------------------------------------------------------
+    def handle_left_release(self, event):
+        """Handle left mouse button release event"""
+
+        self.endrow = self.get_row_clicked(event)
+        # df = self.model.df
+        # colname = df.columns[self.currentcol]
+        # dtype = df.dtypes[colname]
+
+        # if dtype.name == "category":
+        #     # drop down menu for category entry
+        #     row = self.get_row_clicked(event)
+        #     col = self.get_col_clicked(event)
+        #     x1, y1, x2, y2 = self.getCellCoords(row, col)
+        #     self.dropvar = tk.StringVar()
+        #     val = self.model.getValueAt(row, col)
+        #     # get categories
+        #     optionlist = list(df[colname].cat.categories[:50])
+        #     dropmenu = tk.OptionMenu(self, self.dropvar, val, *optionlist)
+        #     self.dropvar.trace("w", self.handleEntryMenu)
+        #     self.create_window(
+        #         x1, y1, width=120, height=30, window=dropmenu, anchor="nw", tag="entry"
+        #     )
+        return
+
+    # --------------------------------------------------------------------
+
+    # def set_xviews(self, *args):
+    #     """Set the xview of table and col header"""
+
+    #     self.xview(*args)
+    #     self.colheader.xview(*args)
+    #     self.redrawVisible()
+    #     return
+
+    # -------------------------------------------------------------------------------------
+    def Pandas_mem_usage(self):
+        """
+        Pandasデータフレームのメモリ最適化
+        """
+        start_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage of dataframe is {:.2f} MB".format(start_mem))
+
+        for col in self.model.df.columns:
+            col_type = self.model.df[col].dtype
+
+            if col_type != object:
+                c_min = self.model.df[col].min()
+                c_max = self.model.df[col].max()
+                if str(col_type)[:3] == "int":
+                    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                        self.model.df[col] = self.model.df[col].astype(np.int8)
+                    elif (
+                        c_min > np.iinfo(np.int16).min
+                        and c_max < np.iinfo(np.int16).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int16)
+                    elif (
+                        c_min > np.iinfo(np.int32).min
+                        and c_max < np.iinfo(np.int32).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int32)
+                    elif (
+                        c_min > np.iinfo(np.int64).min
+                        and c_max < np.iinfo(np.int64).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int64)
+                else:
+                    if (
+                        c_min > np.finfo(np.float16).min
+                        and c_max < np.finfo(np.float16).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float16)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    elif (
+                        c_min > np.finfo(np.float32).min
+                        and c_max < np.finfo(np.float32).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float32)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    else:
+                        # self.model.df[col] = self.model.df[col].astype(np.float64)
+                        self.model.df[col] = self.model.df[col].astype("object")
+            else:
+                # self.model.df[col] = self.model.df[col].astype("category")
+                self.model.df[col] = self.model.df[col].astype("object")
+
+        end_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage after optimization is: {:.2f} MB".format(end_mem))
+        print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
+
+        return
+
+    # -------------------------------------------------------------------------------------------------------------------------------
+    def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+        detector = UniversalDetector()
+        with open(file_path, mode="rb") as f:
+            for binary in f:
+                detector.feed(binary)
+                if detector.done:
+                    break
+        detector.close()
+        return detector.result["encoding"]
+
+
 class MyTable6(Table):
     """
     pandastableのTableクラスの継承サブクラス設定
@@ -1280,6 +2635,7 @@ class MyTable6(Table):
         self.bind("<Control-v>", self.paste)
         self.bind("<Control-a>", self.selectAll)
         self.bind("<Control-f>", self.findText)
+        self.bind("<Control-z>", self.undo)
 
         self.bind("<Right>", self.handle_arrow_keys)
         self.bind("<Left>", self.handle_arrow_keys)
@@ -1300,8 +2656,8 @@ class MyTable6(Table):
         """Handle arrow keys press"""
         # print event.keysym
 
-        row = self.get_row_clicked(event)
-        col = self.get_col_clicked(event)
+        self.hand_row = self.get_row_clicked(event)
+        self.hand_col = self.get_col_clicked(event)
         x, y = self.getCanvasPos(self.currentrow, self.currentcol - 1)
         rmin = self.visiblerows[0]
         rmax = self.visiblerows[-1] - 2
@@ -1309,7 +2665,7 @@ class MyTable6(Table):
         cmin = self.visiblecols[0]
         FirstPos = self.currentrow
 
-        if x == None:
+        if x is None:
             return
 
         if event.keysym == "Up":
@@ -1329,16 +2685,20 @@ class MyTable6(Table):
                 if self.currentrow < self.rows - 1:
                     self.currentcol = 0
                     self.currentrow = self.currentrow + 1
+                    x = 0
                 else:
                     return
             else:
                 self.currentcol = self.currentcol + 1
         elif event.keysym == "Left":
-            if self.currentcol > 0:
+            if self.currentcol == 0:
+                self.currentcol = self.cols - 1
+                if self.currentrow != 0:
+                    self.currentrow = self.currentrow - 1
+            else:
                 self.currentcol = self.currentcol - 1
 
-        if self.currentcol > cmax or self.currentcol <= cmin:
-            # print (self.currentcol, self.visiblecols)
+        if self.currentcol > cmax or self.currentcol < cmin:
             self.xview("moveto", x)
             self.colheader.xview("moveto", x)
             self.redraw()
@@ -1354,36 +2714,39 @@ class MyTable6(Table):
             self.redraw()
 
         self.drawSelectedRect(self.currentrow, self.currentcol)
-        coltype = self.model.getColumnType(self.currentcol)
+        self.hand_coltype = self.model.getColumnType(self.currentcol)
         return
 
     # --------------------------------------------------------------------
     def drawCellEntry(self, row, col, text=None):
         """When the user single/double clicks on a text/number cell,
         bring up entry window and allow edits."""
-        if self.editable == False:
+        if self.editable is False:
             return
         h = self.rowheight
-        model = self.model
+        self.draw_model = self.model
         text = self.model.getValueAt(row, col)
         if pd.isnull(text):
             text = ""
         x1, y1, x2, y2 = self.getCellCoords(row, col)
         w = x2 - x1
-        txtvar = StringVar()
+        txtvar = tk.StringVar()
         txtvar.set(text)
+        self.F_stack = str(text)
         # 代入テキストウィンドウの作成-------------------------------------------------------
-        self.cellentry = Entry(
+        self.cellentry = tk.Entry(
             self.parentframe,
             width=20,
             textvariable=txtvar,
             takefocus=1,
             font=self.thefont,
         )
-        self.cellentry.insert(END, text)
-        self.cellentry.icursor(END)
+        self.cellentry.delete(0, tk.END)
+        self.cellentry.insert(0, text)
+        self.cellentry.icursor(tk.END)
         self.cellentry.focus_set()
         self.cellentry.bind("<Return>", lambda x: self.HCE(row, col))
+
         self.entrywin = self.create_window(
             x1, y1, width=w, height=h, window=self.cellentry, anchor="nw", tag="entry"
         )
@@ -1394,9 +2757,9 @@ class MyTable6(Table):
     def importCSV(self, filename=None, dialog=False, **kwargs):
         """Import from csv file"""
 
-        if self.importpath == None:
+        if self.importpath is None:
             self.importpath = os.getcwd()
-        if filename == None:
+        if filename is None:
             filename = self.model.filedialog.askopenfilename(
                 parent=self.master,
                 defaultextension=".csv",
@@ -1410,7 +2773,7 @@ class MyTable6(Table):
             )
         if not filename:
             return
-        if dialog == True:
+        if dialog is True:
             impdialog = self.model.ImportDialog(self, filename=filename)
             df = impdialog.df
             if df is None:
@@ -1425,24 +2788,148 @@ class MyTable6(Table):
         return
 
     # --------------------------------------------------------------------
+    def childrenSearch_sub(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.OCR_dbname)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.OCR_dbname)
+                        f = True
+                        m = rm
+                        break
+                    except:
+                        print("next")
+        return m
 
+    # --------------------------------------------------------------------
+    def childrenSearch(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
+    def childrenSearch_sub2(self, m):
+        f = False
+        while f is False:
+            m = m.master
+            if m.master is None:
+                m_child = m.children
+                break
+        f = False
+        while f is False:
+            for m_cItem in m_child:
+                try:
+                    rm = m.children[m_cItem]
+                    rm = rm.children["!application"]
+                    print(rm.RView)
+                    f = True
+                    m = rm
+                    break
+                except:
+                    try:
+                        rm = m.children[m_cItem]
+                        print(rm.RView)
+                        f = True
+                        rm = rm.RView.children["!frame"]
+                        rm = rm.children["!frame2"]
+                        m = rm.children["!mytablesql"]
+                        break
+                    except:
+                        print("next")
+        return m
+
+    # --------------------------------------------------------------------
+    def childrenSearch2(self):
+        try:
+            mf = False
+            m = self.master
+            mf = True
+            m = self.childrenSearch_sub2(m)
+            return m
+        except:
+            if mf is True:
+                m = self.childrenSearch_sub2(m)
+            else:
+                return self
+
+    # --------------------------------------------------------------------
     def HCE(self, row, col):
         """Callback for cell entry"""
         value = self.cellentry.get()
+        m = self.childrenSearch()
+        try:
+            R_DF = CreateDB.readsql(self, m.OCR_dbname, m.OCR_tbname)
+        except:
+            R_DF = None
         if self.filtered == 1:
             df = self.dataframe
         else:
             df = None
         self.model.setValueAt(value, row, col, df=df)
+        self.L_stack = value
         self.drawText(row, col, value, align=self.align)
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        enc = getFileEncoding(self.importFilePath)
-        self.model.df.to_csv(
-            self.importFilePath, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC
-        )
+        if self.F_stack != self.L_stack:
+            if R_DF is None:
+                R_DF = CreateDB.CreateDF(
+                    self, m.OCR_dbname, m.OCR_tbname, self.F_stack, self.L_stack
+                )
+                self.HCE_sub(m, R_DF)
+            else:
+                self.HCE_sub(m, R_DF)
         return
+
+    # --------------------------------------------------------------------
+    def HCE_sub(self, m, R_DF):
+        print(m.pt_bln.get())
+        if m.pt_bln.get() is True:
+            R_DF = R_DF.drop_duplicates()
+            R_DF = CreateDB.pdinsert(
+                self,
+                m.OCR_dbname,
+                m.OCR_tbname,
+                self.F_stack,
+                self.L_stack,
+                R_DF,
+            )
+            CreateDB.EntDF(self, m.OCR_dbname, m.OCR_tbname, R_DF)
+            R_m = self.childrenSearch2()
+            R_m.model.df = R_DF
+            R_m.update()
+            R_m.show()
+        else:
+            enc = MyTable.getFileEncoding(self.importFilePath)
+            self.model.df.to_csv(
+                self.importFilePath,
+                index=False,
+                encoding=enc,
+                quoting=QUOTE_NONNUMERIC,
+            )
 
     # --------------------------------------------------------------------
     def handle_left_click(self, event):
@@ -1453,7 +2940,7 @@ class MyTable6(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
-        if colclicked == None:
+        if colclicked is None:
             return
         self.focus_set()
 
@@ -1482,3 +2969,261 @@ class MyTable6(Table):
         if hasattr(self, "cellentry"):
             self.cellentry.destroy()
         return
+
+    # --------------------------------------------------------------------
+    def handle_double_click(self, event):
+        """Do double click stuff. Selected row/cols will already have
+        been set with single click binding"""
+        # "比較ファイルMain"
+        if event.widget._name == "OCR抽出結果表Main":
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            if event.widget.model.df.columns[col] == "比較対象行番号":
+                # 比較対象DF検索--------------------------------------
+                Dif_t = event.widget
+                for i in range(100):
+                    Dif_t = Dif_t.master
+                    try:
+                        print(Dif_t._name)
+                    except:
+                        Dif_t = Dif_t.children["!application"]
+                        Dif_t = Dif_t.pt2
+                        break
+                # ---------------------------------------------------
+                ewm = event.widget.model.df.iloc[row]
+                ewm = int(ewm["比較対象行番号"]) - 1
+                Dif_t.setSelectedRow(ewm)
+                Dif_t.setSelectedCol(0)
+                Dif_t.drawSelectedRect(ewm, 0)
+                Dif_t.drawSelectedRow()
+                return
+            else:
+                self.drawCellEntry(self.currentrow, self.currentcol)
+                return
+        else:
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            self.drawCellEntry(self.currentrow, self.currentcol)
+            return
+
+    # --------------------------------------------------------------------
+    def handle_left_release(self, event):
+        """Handle left mouse button release event"""
+
+        self.endrow = self.get_row_clicked(event)
+        # df = self.model.df
+        # colname = df.columns[self.currentcol]
+        # dtype = df.dtypes[colname]
+
+        # if dtype.name == "category":
+        #     # drop down menu for category entry
+        #     row = self.get_row_clicked(event)
+        #     col = self.get_col_clicked(event)
+        #     x1, y1, x2, y2 = self.getCellCoords(row, col)
+        #     self.dropvar = tk.StringVar()
+        #     val = self.model.getValueAt(row, col)
+        #     # get categories
+        #     optionlist = list(df[colname].cat.categories[:50])
+        #     dropmenu = tk.OptionMenu(self, self.dropvar, val, *optionlist)
+        #     self.dropvar.trace("w", self.handleEntryMenu)
+        #     self.create_window(
+        #         x1, y1, width=120, height=30, window=dropmenu, anchor="nw", tag="entry"
+        #     )
+        return
+
+    # --------------------------------------------------------------------
+
+    # def set_xviews(self, *args):
+    #     """Set the xview of table and col header"""
+
+    #     self.xview(*args)
+    #     self.colheader.xview(*args)
+    #     self.redrawVisible()
+    #     return
+
+    # -------------------------------------------------------------------------------------
+    def Pandas_mem_usage(self):
+        """
+        Pandasデータフレームのメモリ最適化
+        """
+        start_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage of dataframe is {:.2f} MB".format(start_mem))
+
+        for col in self.model.df.columns:
+            col_type = self.model.df[col].dtype
+
+            if col_type != object:
+                c_min = self.model.df[col].min()
+                c_max = self.model.df[col].max()
+                if str(col_type)[:3] == "int":
+                    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                        self.model.df[col] = self.model.df[col].astype(np.int8)
+                    elif (
+                        c_min > np.iinfo(np.int16).min
+                        and c_max < np.iinfo(np.int16).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int16)
+                    elif (
+                        c_min > np.iinfo(np.int32).min
+                        and c_max < np.iinfo(np.int32).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int32)
+                    elif (
+                        c_min > np.iinfo(np.int64).min
+                        and c_max < np.iinfo(np.int64).max
+                    ):
+                        self.model.df[col] = self.model.df[col].astype(np.int64)
+                else:
+                    if (
+                        c_min > np.finfo(np.float16).min
+                        and c_max < np.finfo(np.float16).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float16)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    elif (
+                        c_min > np.finfo(np.float32).min
+                        and c_max < np.finfo(np.float32).max
+                    ):
+                        # self.model.df[col] = self.model.df[col].astype(np.float32)
+                        self.model.df[col] = self.model.df[col].astype("object")
+                    else:
+                        # self.model.df[col] = self.model.df[col].astype(np.float64)
+                        self.model.df[col] = self.model.df[col].astype("object")
+            else:
+                # self.model.df[col] = self.model.df[col].astype("category")
+                self.model.df[col] = self.model.df[col].astype("object")
+
+        end_mem = self.model.df.memory_usage().sum() / 1024**2
+        print("Memory usage after optimization is: {:.2f} MB".format(end_mem))
+        print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
+
+        return
+
+    # -------------------------------------------------------------------------------------------------------------------------------
+    def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+        detector = UniversalDetector()
+        with open(file_path, mode="rb") as f:
+            for binary in f:
+                detector.feed(binary)
+                if detector.done:
+                    break
+        detector.close()
+        return detector.result["encoding"]
+
+
+class CreateDB:
+    """
+    dbを作成する
+    """
+
+    def __init__(self, dbname, tbname):
+        # すでに存在していれば、それにアスセスする。
+        conn = sql.connect(dbname)
+
+        # データベースへのコネクションを閉じる。(必須)
+        conn.close()
+
+    def CreateTable(self, dbname, tbname):
+
+        conn = sql.connect(dbname)
+        # sqliteを操作するカーソルオブジェクトを作成
+        cur = conn.cursor()
+
+        # personsというtableを作成してみる
+        # 大文字部はSQL文。小文字でも問題ない。
+        cur.execute("CREATE TABLE IF NOT EXISTS " + tbname + "(変更前 STRING,変更後 STRING)")
+
+        # データベースへコミット。これで変更が反映される。
+        conn.commit()
+        conn.close()
+
+    def CreateDF(self, dbname, tbname, F_stack, L_stack):
+        List = [F_stack, L_stack]
+        dfList = []
+        dfList.append(List)
+        df = pd.DataFrame(dfList, columns=["変更前", "変更後"])
+        CreateDB.EntDF(self, dbname, tbname, df)
+        return df
+
+    def TableInsert(self, dbname, tbname, text):
+
+        conn = sql.connect(dbname)
+        cur = conn.cursor()
+
+        # Insert文
+        cur.execute("INSERT INTO " + tbname + "(変更前, 変更後) values(" + text + ")")
+        # 同様に
+        conn.commit()
+
+        cur.close()
+        conn.close()
+
+    def CheckTable(self, dbname, tbname):
+
+        conn = sql.connect(dbname)
+        cur = conn.cursor()
+
+        # terminalで実行したSQL文と同じようにexecute()に書く
+        cur.execute("SELECT * FROM " + tbname)
+
+        # 中身を全て取得するfetchall()を使って、printする。
+        print(cur.fetchall())
+
+        cur.close()
+        conn.close()
+
+    def readsql(self, dbname, tbname):
+
+        conn = sql.connect(dbname)
+        cur = conn.cursor()
+
+        # terminalで実行したSQL文と同じようにexecute()に書く
+        df = pd.read_sql_query("SELECT * FROM " + tbname, conn)
+
+        cur.close()
+        conn.close()
+
+        return df
+
+    def EntDF(self, dbname, tbname, df):
+
+        conn = sql.connect(dbname)
+        cur = conn.cursor()
+
+        # データの投入
+        df.to_sql(tbname, conn, if_exists="replace", index=False)
+        cur.close()
+        conn.close()
+
+    def pdinsert(self, dbname, tbname, F_stack, L_stack, R_DF):
+        List = [F_stack, L_stack]
+        dfList = []
+        dfList.append(List)
+        df = pd.DataFrame(dfList, columns=["変更前", "変更後"])
+        df_conc = pd.concat([R_DF, df], axis=0)
+        return df_conc
+
+    def CsvConvert(self, csv_url, dbname, tbname):
+        # pandasでカレントディレクトリにあるcsvファイルを読み込む
+        # csvには、1列目にyear, 2列目にmonth, 3列目にdayが入っているとする。
+        enc = MyTable.getFileEncoding(csv_url)
+        df = pd.read_csv(csv_url, encoding=enc)
+
+        # カラム名（列ラベル）を作成。csv file内にcolumn名がある場合は、下記は不要
+        # pandasが自動で1行目をカラム名として認識してくれる。
+        # df.columns = ["year", "month", "day"]
+
+        conn = sql.connect(dbname)
+        cur = conn.cursor()
+
+        # dbのnameをsampleとし、読み込んだcsvファイルをsqlに書き込む
+        # if_existsで、もしすでにexpenseが存在していたら、書き換えるように指示
+        df.to_sql(tbname, conn, if_exists="replace", index=False)
+
+        # 作成したデータベースを1行ずつ見る
+        select_sql = "SELECT * FROM " + tbname
+        for row in cur.execute(select_sql):
+            print(row)
+
+        cur.close()
+        conn.close()

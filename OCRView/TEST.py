@@ -1,9 +1,10 @@
 import pandas as pd
-import sqlite3 as sql
+import numpy as np
 
-dbname = "ReplaceView.db"
-conn = sql.connect(dbname)
-cur = conn.cursor()
-
-df = pd.read_sql_query("SELECT * FROM 1869_7page_merge", conn)
+dl = [["OCRテキスト", "元帳テキスト"]]
+df = pd.DataFrame(
+    dl,
+    columns=["OCRテキスト", "元帳テキスト"],
+    index=None,
+)
 print(df)

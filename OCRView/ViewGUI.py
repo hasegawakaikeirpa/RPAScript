@@ -21,6 +21,7 @@ from P_Table import Main as ptMain
 # pyinstaller ViewGUI.py --onefile --onedir --noconsole --clean --icon=hasegawa.ico
 # 上記コマンドでできた[dist]→[ViewGUI]フォルダ内に
 # [poppler-22.01.0フォルダ]・[Tesseract-OCRフォルダ]・[StraightListTate.csv]・[StraightListYoko.csv]・[key.json]
+# customtkinterフォルダ・LogConfフォルダ・Logフォルダ・CompanyDataフォルダ・D_curcle_a.png・D_curcle_b.png
 # をコピーして完了
 
 """
