@@ -939,7 +939,7 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
         # lis = list(self.pt3.colheader.columnlabels)
         # txtxt.insert(0, lis[next])
         # lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
-        txtxt.insert(0, "摘要")
+        txtxt.insert(0, "抽出文字列")
     # コールバック---------------------------------------------------
     txtxt.bind("<Key>", RetuenTabFunction)
     # ---------------------------------------------------------------
@@ -967,7 +967,7 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
         # lis = list(self.pt3.colheader.columnlabels)
         # txtxt.insert(0, lis[next])
         # lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
-        txtxt.insert(0, "摘要")
+        txtxt.insert(0, "抽出文字列")
     # コールバック---------------------------------------------------
     txtxt.bind("<Key>", RetuenTabFunction)
     # ---------------------------------------------------------------

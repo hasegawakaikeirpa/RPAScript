@@ -37,12 +37,7 @@ class DataGrid(tk.Toplevel):
         self.AJSeturl = A_File
         self.Roolurl = R_Url
         self.ChangeTxtURL = C_Url
-        if self.ChangeTxtURL != "":
-            enc = CSVO.getFileEncoding(self.ChangeTxtURL)  # 摘要変換ルールエンコード
-            pt4df = pd.read_csv(self.ChangeTxtURL, encoding=enc)  # 摘要変換ルール読込
-            self.ChangeTxtColumns = list(pt4df.columns)  # 摘要変換ルール列名
-        else:
-            self.ChangeTxtColumns = []
+        self.setctxt()
         # customtkスタイル
         ck.set_appearance_mode("System")  # Modes: system (default), light, dark
         ck.set_default_color_theme(
@@ -101,6 +96,23 @@ class DataGrid(tk.Toplevel):
         DG_DGF.create_Frame4(self, self.t_font)  # サブフレーム(変換ルール表示)
         # -------------------------------------------------------------------------------------
         ########################################################################################
+        self.setRool()
+        # ツリービューを配置
+        tke.treeviewEntries(self)
+        # -------------------------------------------------------------------------------------
+        # テキスト変換設定フレームを配置(サブメニューにもコピー配置)
+        tke.FrameChangeEntries(self)
+        # tomlListを配置
+        tke.tomlEntries(self)
+        # フレーム7を配置
+        tke.Frame7Entries(self)
+        # フレーム7のスクロールバー再設定
+        DG_DGF.s_bar_Reset(self)
+
+    #############################################################################################
+    # 以下self関数
+    #############################################################################################
+    def setRool(self):
         if self.Roolurl != "":
             if os.path.isfile(self.Roolurl) is True:
                 enc = CSVO.getFileEncoding(self.Roolurl)
@@ -134,22 +146,29 @@ class DataGrid(tk.Toplevel):
                         )
                         self.Moto_Tekiyou_No = A
                     A += 1
+        return
         # ---------------------------------------------------------------------------------------
-        # ツリービューを配置
-        tke.treeviewEntries(self)
-        # -------------------------------------------------------------------------------------
-        # テキスト変換設定フレームを配置(サブメニューにもコピー配置)
-        tke.FrameChangeEntries(self)
-        # tomlListを配置
-        tke.tomlEntries(self)
-        # フレーム7を配置
-        tke.Frame7Entries(self)
-        # フレーム7のスクロールバー再設定
-        DG_DGF.s_bar_Reset(self)
 
-    #############################################################################################
-    # 以下self関数
-    #############################################################################################
+    def setctxt(self):
+        try:
+            enc = CSVO.getFileEncoding(self.ChangeTxtURL)  # 摘要変換ルールエンコード
+            pt4df = pd.read_csv(self.ChangeTxtURL, encoding=enc)  # 摘要変換ルール読込
+            self.ChangeTxtColumns = list(pt4df.columns)  # 摘要変換ルール列名
+        except:
+            dl = [["OCRテキスト", "元帳テキスト"]]
+            df = pd.DataFrame(
+                dl,
+                columns=["OCRテキスト", "元帳テキスト"],
+                index=None,
+            )
+            print(df)
+            try:
+                df.to_csv(self.ChangeTxtURL, index=None, encoding=enc)
+            except:
+                df.to_csv(self.ChangeTxtURL, index=None, encoding="cp932")
+            pt4df = pd.read_csv(self.ChangeTxtURL, encoding=enc)  # 摘要変換ルール読込
+            self.ChangeTxtColumns = list(pt4df.columns)  # 摘要変換ルール列名
+
     # -------------------------------------------------------------------------------------
     def click_close(self):
         """
@@ -540,6 +559,7 @@ class DataGrid(tk.Toplevel):
             self.Roolurl = tk.filedialog.askopenfilename(
                 filetypes=typ, initialdir=dir
             )  # ファイル指定ダイアログ
+            self.setRool()
             try:
                 enc = CSVO.getFileEncoding(self.Roolurl)
                 self.pt3.importCSV(self.Roolurl, encoding=enc)
