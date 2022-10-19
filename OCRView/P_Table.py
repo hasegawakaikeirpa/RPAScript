@@ -104,12 +104,13 @@ class Application(tk.Toplevel):
         """
         try:
             self.master.withdraw()
+            self.AJset = os.path.dirname(self.FileName) + r"\AJSet.csv"
             DG.Main(
                 self,
                 self.master,
                 self.FileName,
                 self.AJ_u,
-                "",
+                self.AJset,
                 "",
                 self.changetxturl,
                 self.Banktoml,
@@ -1123,7 +1124,7 @@ def Main(MUI, US, logger, MT, TP, imgu, BT, BTURL):
     # -----------------------------------------------------------
     # root = tk.Tk()  # Window生成
     root = tk.Toplevel()  # Window生成
-    root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
+    # root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
     app = Application(
         csvurl=csv_u, imgurl=imgurl, Banktoml=BT, BanktomlUrl=BTURL, master=root
     )
@@ -1142,11 +1143,11 @@ if __name__ == "__main__":
     global tomlurl, PlusCol
     URL = os.getcwd()
     BTURL = r"D:\PythonScript\RPAScript\OCRView\Setting.toml"
-    # imgurl = r"D:\PythonScript\RPAScript\OCRView\CompanyData\1869\1869_7page.png"
-    imgurl = r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRView\CompanyData\1869/1869_7page.png"
+    imgurl = r"D:\PythonScript\RPAScript\OCRView\CompanyData\1869\1869_7page.png"
+    # imgurl = r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRView\CompanyData\1869/1869_7page.png"
     tomlurl = tomlread()
-    # csv_u = r"D:\PythonScript\RPAScript\OCRView\CompanyData\1869\1869_7page_merge.csv"
-    csv_u = r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRView\CompanyData\1869/1869_7page_merge.csv"
+    csv_u = r"D:\PythonScript\RPAScript\OCRView\CompanyData\1869\1869_7page_merge.csv"
+    # csv_u = r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRView\CompanyData\1869/1869_7page_merge.csv"
     PlusCol = "比較対象行番号"
     # toml読込------------------------------------------------------------------------------
     with open(tomlurl, encoding="utf-8") as f:

@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import numpy as np
 
 # from tkinter import messagebox
@@ -568,6 +569,7 @@ class DataGrid(tk.Toplevel):
                 # --------------------------------------
                 options = {"fontsize": self.t_font[1]}
                 config.apply_options(options, self.pt3)
+                self.motoDF = self.pt3.model.df
                 self.pt3.update()
                 self.pt3.show()
                 self.Label_ChangeURL.delete(0, tk.END)
@@ -577,7 +579,7 @@ class DataGrid(tk.Toplevel):
                 self.Label_ChangeURL.delete(0, tk.END)
                 self.Label_ChangeURL.insert(0, self.Roolurl)  # ミロク元帳CSVURL
         except:
-            tk.messagebox.showinfo("確認", "OCR抽出結果CSVの出力に失敗しました。\n参照先のURLが正しいか確認してください。")
+            tk.messagebox.showinfo("確認", "ミロク元帳CSVの出力に失敗しました。\n参照先のURLが正しいか確認してください。")
 
     # -------------------------------------------------------------------------------------
     def OCR_Open(self):
@@ -632,6 +634,7 @@ class DataGrid(tk.Toplevel):
             # --------------------------------------
             options = {"fontsize": self.t_font[1]}
             config.apply_options(options, self.pt3)
+            self.motoDF = self.pt3.model.df
             self.pt3.update()
             self.pt3.show()
         except:
@@ -988,7 +991,7 @@ class DataGrid(tk.Toplevel):
                     OCRList,
                     MJSList,
                     sv,
-                    self.pt6.model.df,
+                    self.motoDF,
                     self.PBAR,
                 )  # 仕訳候補を抽出
                 PT_ColList = np.array(self.pt.model.df.columns)  # OCR抽出結果表の列名リスト
@@ -1331,7 +1334,7 @@ class DataGrid(tk.Toplevel):
                             OCRList,
                             MJSList,
                             sv,
-                            self.pt6.model.df,
+                            self.motoDF,
                         )  # 仕訳候補を抽出
 
                         PT_ColList = np.array(
@@ -1675,13 +1678,13 @@ class DataGrid(tk.Toplevel):
                                 # ------------------------------------------------------------------
                                 AJDF = pd.DataFrame(FinalList)
                                 AJDF.to_csv(
-                                    AJSeturl,
+                                    self.AJSeturl,
                                     index=False,
                                     header=False,
                                     quoting=QUOTE_NONNUMERIC,
                                 )
-                                enc = CSVO.getFileEncoding(AJSeturl)
-                                self.pt3.importCSV(AJSeturl, encoding=enc)
+                                enc = CSVO.getFileEncoding(self.AJSeturl)
+                                self.pt3.importCSV(self.AJSeturl, encoding=enc)
                                 # DF型変換------------------------------
                                 PandasAstype(self.pt3.model.df)
                                 # --------------------------------------
@@ -1833,6 +1836,7 @@ def BeforeNGFT(url, enc):
         ReturnList = np.vstack((pdHeaders, prcList))  # ヘッダーと結合
         return ReturnList
     except:
+        tk.messagebox.showinfo("確認", "元帳読込エラーです。\n文字列がクォーテーションで囲まれているか確認してください。")
         return ""
 
 

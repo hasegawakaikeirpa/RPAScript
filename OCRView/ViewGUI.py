@@ -41,8 +41,8 @@ class ViewGUI:
     """
 
     def __init__(self, window_root, title_n, default_path):
-        global SideWidth, SideHeight, LabelWidth
-        global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
+        # global SideWidth, SideHeight, LabelWidth
+        # global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
         print("#########################################################")
         print(os.getcwd())
         print("#########################################################")
@@ -80,12 +80,17 @@ class ViewGUI:
         self.height_of_window = int(int(self.window_root.winfo_screenheight()) * 0.85)
         self.wid_Par = self.width_of_window / 1459
         self.hei_Par = self.height_of_window / 820
-        x_coodinate = self.width_of_window * 0.01
-        y_coodinate = self.height_of_window * 0.01
+        self.x_coodinate = self.width_of_window * 0.01
+        self.y_coodinate = self.height_of_window * 0.01
         # 　メインウィンドウサイズ指定
         self.window_root.geometry(
             "%dx%d+%d+%d"
-            % (self.width_of_window, self.height_of_window, x_coodinate, y_coodinate)
+            % (
+                self.width_of_window,
+                self.height_of_window,
+                self.x_coodinate,
+                self.y_coodinate,
+            )
         )
         self.window_root.minsize(self.width_of_window, self.height_of_window)
         # 　メインウィンドウタイトル
@@ -268,48 +273,48 @@ class ViewGUI:
         """
         SubMenu起動ボタン関数
         """
-        # menu作成######################################################################
-        self.logger.debug("SubMenuOpen関数起動")  # Log出力
-        # サブフレーム起動確認
-        try:
-            if self.menuwin.widgetName == "toplevel":
-                SMW = True
-            else:
-                SMW = False
-        except:
-            SMW = False
-        # -------------------------------------------------------------------------------
-        if SMW is False:
-            self.menuwin = tk.Toplevel()  # サブWindow作成
-            self.menuwin.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
-            self.menuwin.geometry("360x180+0+0")  # トップWindow表示位置指定
-            # フレーム作成
-            self.menuwinFrame = tk.Frame(self.menuwin, height=360, width=180)
-            self.menuwinFrame.pack(fill=tk.BOTH, expand=True)
-            # 　ラベル生成--------------------------------------------------------------------
-            label_tb1 = ck.CTkLabel(
-                master=self.menuwinFrame,
-                text="[ノイズ除去値]",
-                width=LabelWidth,
-                height=LabelHeight,
-                corner_radius=8,
-            )
-            label_tb1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-            # ------------------------------------------------------------------------------
-            # 　テキストボックス生成---------------------------------------------------------
-            textbox1 = tk.Entry(self.menuwinFrame, text="ノイズ除去値(奇数)", width=15)
-            textbox1.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
-            # ------------------------------------------------------------------------------
-            # 　ボタン生成------------------------------------------------------------------
-            menubutton2 = tk.Button(
-                self.menuwinFrame,
-                text="ノイズ除去",
-                width=20,
-                command=lambda: self.menubutton2_click(textbox1),
-            )
-            menubutton2.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
+        # # menu作成######################################################################
+        # self.logger.debug("SubMenuOpen関数起動")  # Log出力
+        # # サブフレーム起動確認
+        # try:
+        #     if self.menuwin.widgetName == "toplevel":
+        #         SMW = True
+        #     else:
+        #         SMW = False
+        # except:
+        #     SMW = False
+        # # -------------------------------------------------------------------------------
+        # if SMW is False:
+        #     self.menuwin = tk.Toplevel()  # サブWindow作成
+        #     self.menuwin.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
+        #     self.menuwin.geometry("360x180+0+0")  # トップWindow表示位置指定
+        #     # フレーム作成
+        #     self.menuwinFrame = tk.Frame(self.menuwin, height=360, width=180)
+        #     self.menuwinFrame.pack(fill=tk.BOTH, expand=True)
+        #     # 　ラベル生成--------------------------------------------------------------------
+        #     label_tb1 = ck.CTkLabel(
+        #         master=self.menuwinFrame,
+        #         text="[ノイズ除去値]",
+        #         width=LabelWidth,
+        #         height=LabelHeight,
+        #         corner_radius=8,
+        #     )
+        #     label_tb1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+        #     # ------------------------------------------------------------------------------
+        #     # 　テキストボックス生成---------------------------------------------------------
+        #     textbox1 = tk.Entry(self.menuwinFrame, text="ノイズ除去値(奇数)", width=15)
+        #     textbox1.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+        #     # ------------------------------------------------------------------------------
+        #     # 　ボタン生成------------------------------------------------------------------
+        #     menubutton2 = tk.Button(
+        #         self.menuwinFrame,
+        #         text="ノイズ除去",
+        #         width=20,
+        #         command=lambda: self.menubutton2_click(textbox1),
+        #     )
+        #     menubutton2.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
 
-        # ##############################################################################
+        # # ##############################################################################
 
     # ----------------------------------------------------------------------------------
     def Resize(self, Resizewidth, Resizeheight):
@@ -366,7 +371,7 @@ class ViewGUI:
             msg = messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
 
     # ----------------------------------------------------------------------------------
-    def button_LeftLotate(self, event=None):
+    def button_LeftLotate_func(self, event=None):
         """
         左回転ボタン処理
         """
@@ -376,7 +381,7 @@ class ViewGUI:
         self.control.EditImage(cmd)
 
     # ----------------------------------------------------------------------------------
-    def button_RightLotate(self, event=None):
+    def button_RightLotate_func(self, event=None):
         """
         右回転ボタン処理
         """

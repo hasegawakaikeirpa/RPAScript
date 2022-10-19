@@ -6,12 +6,12 @@ def ElementCreate(self):
     try:
         # SideWidth = int(100 * self.wid_Par)
         # SideHeight = int(50 * self.hei_Par)
-        LabelWidth = int(50 * self.wid_Par)
-        LabelHeight = int(20 * self.hei_Par)
-        BtnWidth = int(140 * self.wid_Par)
-        BtnHeight = int(20 * self.hei_Par)
-        EntWidth = int(300 * self.hei_Par)
-        EntHeight = int(20 * self.wid_Par)
+        self.LabelWidth = int(50 * self.wid_Par)
+        self.LabelHeight = int(20 * self.hei_Par)
+        self.BtnWidth = int(140 * self.wid_Par)
+        self.BtnHeight = int(20 * self.hei_Par)
+        self.EntWidth = int(300 * self.hei_Par)
+        self.EntHeight = int(20 * self.wid_Par)
         # t_font = (1, int(8 * self.wid_Par))
 
         # フォルダー・ファイル選択を配置
@@ -26,8 +26,8 @@ def ElementCreate(self):
             master=self.window_sub_ctrl1,
             text="フォルダ選択",
             command=self.event_set_folder,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
@@ -36,38 +36,38 @@ def ElementCreate(self):
         )
         # 前画像ボタン生成
         self.button_setdir.grid(row=1, column=1, padx=5, pady=5, sticky=W)
-        button_prev = CTkButton(
+        self.button_prev = CTkButton(
             master=self.window_sub_ctrl1,
             text="前画像<<",
             command=self.event_prev,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
         )
-        button_prev.grid(row=1, column=2, padx=5, pady=5, sticky=W)
+        self.button_prev.grid(row=1, column=2, padx=5, pady=5, sticky=W)
         # 切替ボタン生成
-        button_next = CTkButton(
+        self.button_next = CTkButton(
             master=self.window_sub_ctrl1,
             text=">>次画像",
             command=self.event_next,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
         )
-        button_next.grid(row=1, column=3, padx=5, pady=5, sticky=W)
+        self.button_next.grid(row=1, column=3, padx=5, pady=5, sticky=W)
         # 　テキストエントリ生成
         self.entry_dir = CTkEntry(
             master=self.window_sub_ctrl1,
             placeholder_text="entry_dir",
             textvariable=self.str_dir,
-            width=EntWidth,
-            height=EntHeight,
+            width=self.EntWidth,
+            height=self.EntHeight,
             border_width=2,
             corner_radius=8,
             text_color="black",
@@ -75,14 +75,14 @@ def ElementCreate(self):
         )
         self.entry_dir.grid(row=2, column=1, columnspan=4, padx=5, pady=5, sticky=W)
         # ラベル
-        label_target = CTkLabel(
+        self.label_target = CTkLabel(
             master=self.window_sub_ctrl1,
             text="[ファイル]",
-            width=LabelWidth,
-            height=LabelHeight,
+            width=self.LabelWidth,
+            height=self.LabelHeight,
             corner_radius=8,
         )
-        label_target.grid(row=3, column=0, columnspan=4, padx=5, pady=5, sticky=W)
+        self.label_target.grid(row=3, column=0, columnspan=4, padx=5, pady=5, sticky=W)
         # コンボBOX生成
         self.combo_file = CTkComboBox(
             master=self.window_sub_ctrl1,
@@ -100,8 +100,8 @@ def ElementCreate(self):
             master=self.window_sub_ctrl1,
             text="ファイル削除",
             command=self.FileDelete,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
@@ -111,24 +111,24 @@ def ElementCreate(self):
         self.Delete_button.grid(row=5, column=1, padx=5, pady=5, sticky=W)
         # #############################################################################
         # window_sub_ctrl2#############################################################
-        label_rotate = CTkLabel(
+        self.label_rotate = CTkLabel(
             master=self.window_sub_ctrl2,
             text="[画像回転]",
-            width=LabelWidth,
-            height=LabelHeight,
+            width=self.LabelWidth,
+            height=self.LabelHeight,
             corner_radius=8,
         )
-        label_rotate.grid(row=1, column=1, padx=5, pady=5, sticky=W)
+        self.label_rotate.grid(row=1, column=1, padx=5, pady=5, sticky=W)
         # 回転角度ラジオボックス生成
         self.radio_intvar1 = IntVar()
         self.radio_intvar2 = IntVar()
         self.radio_intvar1.set(0)  # 0:No select
         self.radio_intvar2.set(0)  # 0:No select
-        radio_rotate = []
+        self.radio_rotate = []
         for val, text in enumerate(
             ["90°", "180°", "270°"]
         ):  # 1:rot90 2:rot180 3:rot270
-            radio_rotate.append(
+            self.radio_rotate.append(
                 Radiobutton(
                     self.window_sub_ctrl2,
                     text=text,
@@ -138,48 +138,48 @@ def ElementCreate(self):
                     bg="#60cad1",
                 )
             )
-        radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=W)
-        radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=W)
-        radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=W)
+        self.radio_rotate[0].grid(row=2, column=1, padx=5, pady=5, sticky=W)
+        self.radio_rotate[1].grid(row=2, column=2, padx=5, pady=5, sticky=W)
+        self.radio_rotate[2].grid(row=2, column=3, padx=5, pady=5, sticky=W)
         # 左回転ボタン生成
-        button_LeftLotate = CTkButton(
+        self.button_LeftLotate = CTkButton(
             master=self.window_sub_ctrl2,
             text="左回転",
-            command=self.button_LeftLotate,
-            width=BtnWidth,
-            height=BtnHeight,
+            command=self.button_LeftLotate_func,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
             fg_color="Orange",
         )
-        button_LeftLotate.grid(row=4, column=1, padx=5, pady=5, sticky=W)
+        self.button_LeftLotate.grid(row=4, column=1, padx=5, pady=5, sticky=W)
         # 右回転ボタン生成
-        button_RightLotate = CTkButton(
+        self.button_RightLotate = CTkButton(
             master=self.window_sub_ctrl2,
             text="右回転",
-            command=self.button_RightLotate,
-            width=BtnWidth,
-            height=BtnHeight,
+            command=self.button_RightLotate_func,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
             fg_color="Orange",
         )
-        button_RightLotate.grid(row=4, column=2, padx=5, pady=5, sticky=W)
-        label_flip = CTkLabel(
+        self.button_RightLotate.grid(row=4, column=2, padx=5, pady=5, sticky=W)
+        self.label_flip = CTkLabel(
             master=self.window_sub_ctrl2,
             text="[反転]",
-            width=LabelWidth,
-            height=LabelHeight,
+            width=self.LabelWidth,
+            height=self.LabelHeight,
             corner_radius=8,
         )
-        label_flip.grid(row=5, column=1, padx=5, pady=5, sticky=W)
-        radio_flip = []
+        self.label_flip.grid(row=5, column=1, padx=5, pady=5, sticky=W)
+        self.radio_flip = []
         for val, text in enumerate(["U/D", "L/R"]):  # 1:Flip U/L 2:Flip L/R
-            radio_flip.append(
+            self.radio_flip.append(
                 Radiobutton(
                     self.window_sub_ctrl2,
                     text=text,
@@ -189,148 +189,148 @@ def ElementCreate(self):
                     bg="#60cad1",
                 )
             )
-        radio_flip[0].grid(row=6, column=1, padx=5, pady=5, sticky=W)
-        radio_flip[1].grid(row=6, column=2, padx=5, pady=5, sticky=W)
+        self.radio_flip[0].grid(row=6, column=1, padx=5, pady=5, sticky=W)
+        self.radio_flip[1].grid(row=6, column=2, padx=5, pady=5, sticky=W)
         # #############################################################################
         # window_sub_ctrl4#############################################################
-        label_clip = CTkLabel(
+        self.label_clip = CTkLabel(
             master=self.window_sub_ctrl4,
             text="[トリミング・削除]",
-            width=LabelWidth,
-            height=LabelHeight,
+            width=self.LabelWidth,
+            height=self.LabelHeight,
             corner_radius=8,
         )
-        label_clip.grid(row=0, column=1, padx=5, pady=5, sticky=W)
+        self.label_clip.grid(row=0, column=1, padx=5, pady=5, sticky=W)
         # クリップボタン生成
-        button_clip_start = CTkButton(
+        self.button_clip_start = CTkButton(
             master=self.window_sub_ctrl4,
             text="選択開始",
             command=self.event_clip_try,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
             fg_color="#7eb000",
         )
-        button_clip_start.grid(row=1, column=1, padx=5, pady=5, sticky=W)
-        button_clip_done = CTkButton(
+        self.button_clip_start.grid(row=1, column=1, padx=5, pady=5, sticky=W)
+        self.button_clip_done = CTkButton(
             master=self.window_sub_ctrl4,
             text="範囲トリミング",
             command=self.event_clip_done,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
             fg_color="#6100b0",
         )
-        button_clip_done.grid(row=1, column=2, padx=5, pady=5, sticky=W)
-        button_clip_Erace = CTkButton(
+        self.button_clip_done.grid(row=1, column=2, padx=5, pady=5, sticky=W)
+        self.button_clip_Erace = CTkButton(
             master=self.window_sub_ctrl4,
             text="範囲削除",
             command=self.event_clip_Erace,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
             fg_color="#c7048c",
         )
-        button_clip_Erace.grid(row=1, column=3, padx=5, pady=5, sticky=W)
-        label_run = CTkLabel(
+        self.button_clip_Erace.grid(row=1, column=3, padx=5, pady=5, sticky=W)
+        self.label_run = CTkLabel(
             master=self.window_sub_ctrl4,
             text="[編集確定]",
-            width=LabelWidth,
-            height=LabelHeight,
+            width=self.LabelWidth,
+            height=self.LabelHeight,
             corner_radius=8,
         )
-        label_run.grid(row=2, column=1, columnspan=2, padx=5, pady=5, sticky=W)
+        self.label_run.grid(row=2, column=1, columnspan=2, padx=5, pady=5, sticky=W)
         # Save/Undoボタン生成
-        button_Oversave = CTkButton(
+        self.button_Oversave = CTkButton(
             master=self.window_sub_ctrl4,
             text="上書保存",
             command=self.event_Oversave,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
             fg_color="#cf94ff",
         )
-        button_Oversave.grid(row=3, column=1, padx=5, pady=5, sticky=W)
-        button_undo = CTkButton(
+        self.button_Oversave.grid(row=3, column=1, padx=5, pady=5, sticky=W)
+        self.button_undo = CTkButton(
             master=self.window_sub_ctrl4,
             text="編集取消",
             command=self.event_undo,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
             fg_color="gray",
         )
-        button_undo.grid(row=3, column=2, padx=5, pady=5, sticky=W)
-        button_save = CTkButton(
+        self.button_undo.grid(row=3, column=2, padx=5, pady=5, sticky=W)
+        self.button_save = CTkButton(
             master=self.window_sub_ctrl4,
             text="別名保存",
             command=self.event_save,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
             fg_color="hotpink1",
         )
-        button_save.grid(row=3, column=3, padx=5, pady=5, sticky=W)
+        self.button_save.grid(row=3, column=3, padx=5, pady=5, sticky=W)
         # label_Line = CTkLabel(
         #     master=self.window_sub_ctrl2,
         #     text="[サブメニュー]",
-        #     width=LabelWidth,
-        #     height=LabelHeight,
+        #     width=self.LabelWidth,
+        #     height=self.LabelHeight,
         #     corner_radius=8,
         # )
         # label_Line.grid(row=4, column=1, columnspan=2, padx=5, pady=5, sticky=W)
         # LineOCR起動ボタン生成
-        button_LinOCR = CTkButton(
+        self.button_LinOCR = CTkButton(
             master=self.window_sub_ctrl4,
             text="OCR起動",
             command=self.LinOCROpen,
-            width=BtnWidth,
-            height=BtnHeight,
+            width=self.BtnWidth,
+            height=self.BtnHeight,
             border_width=2,
             corner_radius=8,
             text_color="snow",
             border_color="snow",
             fg_color="tomato",
         )
-        button_LinOCR.grid(row=5, column=1, padx=5, pady=5, sticky=W)
-        button_PTable = CTkButton(
-            master=self.window_sub_ctrl4,
-            text="比較ウィンドウ起動",
-            command=self.Open_pt,
-            width=BtnWidth,
-            height=BtnHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="snow",
-            border_color="snow",
-            fg_color="lightpink",
-        )
-        button_PTable.grid(row=5, column=2, padx=5, pady=5, sticky=W)
+        self.button_LinOCR.grid(row=5, column=1, padx=5, pady=5, sticky=W)
+        # self.button_PTable = CTkButton(
+        #     master=self.window_sub_ctrl4,
+        #     text="比較ウィンドウ起動",
+        #     command=self.Open_pt,
+        #     width=self.BtnWidth,
+        #     height=self.BtnHeight,
+        #     border_width=2,
+        #     corner_radius=8,
+        #     text_color="snow",
+        #     border_color="snow",
+        #     fg_color="lightpink",
+        # )
+        # self.button_PTable.grid(row=5, column=2, padx=5, pady=5, sticky=W)
         # SubMenu起動ボタン生成
         # button_SubMenu = CTkButton(
         #     master=self.window_sub_ctrl4,
         #     text="サブメニュー",
         #     command=self.event_menu,
-        #     width=BtnWidth,
-        #     height=BtnHeight,
+        #     width=self.BtnWidth,
+        #     height=self.BtnHeight,
         #     border_width=2,
         #     corner_radius=8,
         #     text_color="snow",

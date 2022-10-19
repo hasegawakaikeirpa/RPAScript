@@ -75,7 +75,7 @@ def create_Frame2(self, t_font):
     self.tree2_frame.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     # df = TableModel.getSampleData()
     # pt2 = Table(self.tree2_frame)
-    pt2 = MT.MyTable2(
+    pt2 = MT.MyTable(
         self.tree2_frame, width=650, height=400, sticky=tk.N + tk.S + tk.W + tk.E
     )  # テーブルをサブクラス化
     self.pt2 = pt2
@@ -114,7 +114,7 @@ def create_Frame3(self, t_font):
         row=0, column=0, sticky=tk.W
     )  # 位置指定
     self.frame5.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
-    pt3 = MT.MyTable3(
+    pt3 = MT.MyTable(
         self.frame5, width=650, height=150, sticky=tk.N + tk.S + tk.W + tk.E
     )  # テーブルをサブクラス化
     self.pt3 = pt3
@@ -444,7 +444,7 @@ def create_SettingFrame(self):
     self.AJ_set.grid(row=0, column=0, columnspan=4, sticky=tk.N)  # 位置指定
     # -------------------------------------------------------------------------------------
 
-    # 列名設定フレーム################################################################
+    # # 列名設定フレーム################################################################
     # tk.Label(self.frame8, text="摘要置換設定").grid(row=1, column=0)  # フレームテキスト
     ck.CTkLabel(
         master=self.frame8,
@@ -469,7 +469,7 @@ def create_SettingFrame(self):
     # self.createEntry(0, bar_x=False)
     # 摘要置換設定作成
     RepcreateEntry(self, 0, bar_x=False)
-    #################################################################################
+    # #################################################################################
 
 
 # ----------------------------------------------------------------------------
@@ -717,7 +717,7 @@ def create_Frame4(self, t_font):
     self.AJsetOCRFrameDG_Sub_Frame.grid(
         row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
     )
-    pt5 = MT.MyTable4(
+    pt5 = MT.MyTable(
         self.AJsetOCRFrameDG_Sub_Frame,
         width=650,
         height=150,
@@ -760,7 +760,7 @@ def create_Frame4(self, t_font):
     self.AJsetOCRFrameDG_Sub_Frame2.grid(
         row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
     )
-    pt6 = MT.MyTable5(
+    pt6 = MT.MyTable(
         self.AJsetOCRFrameDG_Sub_Frame2,
         width=650,
         height=150,
@@ -801,7 +801,7 @@ def create_Frame4(self, t_font):
     self.AJsetDG_Sub_Frame.grid(
         row=1, column=0, columnspan=5, sticky=tk.N + tk.S + tk.W + tk.E
     )
-    pt4 = MT.MyTable6(
+    pt4 = MT.MyTable(
         self.AJsetDG_Sub_Frame, width=650, height=150, sticky=tk.N + tk.S + tk.W + tk.E
     )  # テーブルをサブクラス化
     self.pt4 = pt4
