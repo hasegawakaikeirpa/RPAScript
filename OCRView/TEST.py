@@ -111,6 +111,15 @@ def LearnPrediction(vect, clf, df_rs):
         print(tests[i], "\t[", df_rs.loc[result[i]], "]")
 
 
+def CreateIndice(y, y_train):
+    Ind = [np.where(y == y_item)[0] for y_item in y_train]
+    Ind = np.array(Ind)
+    return Ind
+    # for y_item in y_train:
+    #     ans = np.where(y == y_item)
+    #     Ind.append()
+
+
 ###############################################################################
 def LearnJournal(df, columns, Key, ind, tests):
     """
@@ -170,7 +179,9 @@ def LearnJournal(df, columns, Key, ind, tests):
 
     X = vect.transform(notes)
     X_trainDF = np.array(df)
-    X_trainDF = X_trainDF[y_train, :]
+    # インダイス取得
+    y_ind = CreateIndice(y, y_train)
+    X_trainDF = X_trainDF[y_ind, :]
 
     result = clf.predict_proba(X)
     df_rs = df_counts[columns]
@@ -187,6 +198,7 @@ def LearnJournal(df, columns, Key, ind, tests):
                 df_rs_loc = df_rs.iloc[result[i][res_c]]
                 l_words = ""
                 New_df_row = []  # 新DF格納用行
+                New_df_row.append(tests[i])
                 for c in range(len(df_rs_loc)):
                     New_df_row.append(str(df_rs_loc[c]))
                     l_words += "," + str(df_rs_loc[c])
@@ -194,11 +206,34 @@ def LearnJournal(df, columns, Key, ind, tests):
                         l_words = l_words[1:]
                 New_df.append(New_df_row)
                 print(tests[i], "\t[", l_words, "]")
-        New_df = pd.DataFrame(New_df, columns=columns)
+        # New_df = pd.DataFrame(New_df, columns=columns)
     return New_df
 
 
 ###############################################################################
+def LearnJournalMoney(df, columns, Key, ind, tests):
+    """
+    単回帰分析
+    csvurl:解析するCSVURL
+    columns:抽出する列名
+    Key:摘要欄列名
+    ind:抽出時検索として利用する列名
+    tests:予測したい文字列が入ったリスト
+    """
+    # Pandasデータセット
+    df = df.fillna("文字無")
+    # 利用データの絞り込み
+
+    X = df[Key]
+    Y = df[ind]
+    model = LinearRegression()
+    model.fit(X, Y)
+    print("")
+
+
+###############################################################################
+
+
 def LearnJournalDays(df, columns, Key, ind, tests):
     """
     単回帰分析
@@ -257,7 +292,9 @@ def LearnJournalDays(df, columns, Key, ind, tests):
 
     X = vect.transform(notes)
     X_trainDF = np.array(df)
-    X_trainDF = X_trainDF[y_train, :]
+    # インダイス取得
+    y_ind = CreateIndice(y, y_train)
+    X_trainDF = X_trainDF[y_ind, :]
 
     result = clf.predict_proba(X)
     df_rs = df_counts[columns]
@@ -282,6 +319,9 @@ def LearnJournalDays(df, columns, Key, ind, tests):
                 New_df.append(New_df_row)
                 print(tests[i], "\t[", l_words, "]")
         New_df = pd.DataFrame(New_df, columns=columns)
+        Key = "（借）金額"
+        ind = "行数"
+        LearnJournalMoney(LJ, columns, Key, ind, moneys)
 
 
 ###############################################################################
@@ -335,6 +375,7 @@ if __name__ == "__main__":
     df = pd.read_csv(csvurl, encoding="cp932")
     LJ = LearnJournal(df, columns, Key, ind, tests)
     ###########################################################################
+
     Key = "伝票日付"
     ind = "行数"
     LJ = LearnJournalDays(LJ, columns, Key, ind, days)
