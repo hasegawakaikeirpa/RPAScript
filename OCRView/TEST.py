@@ -337,4 +337,4 @@ if __name__ == "__main__":
     ###########################################################################
     Key = "伝票日付"
     ind = "行数"
-    LJ = LearnJournal(LJ, columns, Key, ind, days)
+    LJ = LearnJournalDays(LJ, columns, Key, ind, days)
