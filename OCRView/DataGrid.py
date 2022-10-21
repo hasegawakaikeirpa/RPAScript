@@ -22,6 +22,8 @@ import IconCode
 import customtkinter as ck
 import os
 from pandastable import config
+import scikit
+import datetime
 
 # class DataGrid:
 class DataGrid(tk.Toplevel):
@@ -684,8 +686,8 @@ class DataGrid(tk.Toplevel):
         仕訳候補の転記(Sub)
         """
         try:
-            self.HidukeColNo  # 日付列番号
-            HidukeColNostr = str(self.HidukeColNo).replace("['", "").replace("']", "")
+            # self.HidukeColNo  # 日付列番号
+            HidukeColNostr = str(self.HidukeColNo.get()).replace("['", "").replace("']", "")
             self.HidukeColName  # 日付列名
             self.AJL  # インポート用変換列名
             self.AJR  # OCR表変換列名
@@ -932,7 +934,7 @@ class DataGrid(tk.Toplevel):
                 elif stom == "出金列名":
                     Out_var = st
                 st += 1
-            # ------------------------------------------------------------------------
+            # --------------------------------------------------------------------------
             FileNameenc = CSVO.getFileEncoding(self.FileName)
             Roolurlenc = CSVO.getFileEncoding(self.Roolurl)
             ChangeTxtURLenc = CSVO.getFileEncoding(self.ChangeTxtURL)
@@ -1845,6 +1847,8 @@ def Main(self, Mas, filename, J_File, A_File, R_Url, C_Url, BT, BTURL):
     # root = tk.Tk()  # Window生成
     global Master
     Master = Mas
+    # scikit設定フォルダ検索
+    scikit.dirserch(filename)
     root = tk.Toplevel()  # Window生成
     data = IconCode.icondata()
     root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
@@ -1888,7 +1892,16 @@ if __name__ == "__main__":
     main_window = tk.Tk()
     main_window.withdraw()
     # Viewクラス生成
-    DataGrid(main_window, "./")
+    DataGrid(
+        csvurl,
+        AJurl,
+        AJSeturl,
+        Roolurl,
+        ChangeTxtURL,
+        Banktoml,
+        BanktomlUrl,
+        master=root,
+    )
 
     # 　フレームループ処理
     main_window.mainloop()

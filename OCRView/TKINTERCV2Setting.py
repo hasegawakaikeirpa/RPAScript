@@ -76,6 +76,7 @@ class Application(tk.Toplevel):
         )
         self.top.resizable(0, 0)
         self.top.minsize(width_of_window, height_of_window)
+        self.top.bind_all("<Delete>", LineDelete)
         # 透過キャンバスフレーム##########################################################
         self.topFrame = tk.Frame(
             self.top,
@@ -91,8 +92,6 @@ class Application(tk.Toplevel):
         )  # 透過キャンバス作成
         self.top.forward.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.top.forward.bind("Enter", self.change)
-        # キャンバス内ダブルクリックイベントに関数バインド
-        self.top.forward.bind("<Double-1>", lambda: self.RedLine(self, CW, CH))
         # ##############################################################################
         # 配置
         # サイドメニューフレーム##########################################################
@@ -225,7 +224,7 @@ class Application(tk.Toplevel):
             row=0, column=0, sticky=tk.W + tk.E
         )  # フレームテキスト
         thread1 = threading.Thread(target=self.createSC(Tframe2))
-        thread1.start()
+        # thread1.start()
         #################################################################################
         # サイドメニュー内変換設定フレーム#################################################
         Setframe = tk.Frame(
@@ -306,39 +305,39 @@ class Application(tk.Toplevel):
         )
         # frame.grid(row=0, column=4, sticky=tk.N)
         frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        # 縦直線追加ボタン---------------------------------------------------------------
-        button = ck.CTkButton(
-            master=frame,
-            text="縦直線追加",
-            command=lambda: StLine(self.top.forward, CW, CH),
-            width=BtnWidth,
-            height=BtnHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="snow",
-            border_color="snow",
-            fg_color="tomato",
-        )
-        button.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
-        # 横直線追加ボタン---------------------------------------------------------------
-        button2 = ck.CTkButton(
-            master=frame,
-            text="横直線追加",
-            command=lambda: StWLine(self.top.forward, CW, CH),
-            width=BtnWidth,
-            height=BtnHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="snow",
-            border_color="snow",
-            fg_color="seagreen3",
-        )
-        button2.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
+        # # 縦直線追加ボタン---------------------------------------------------------------
+        # button = ck.CTkButton(
+        #     master=frame,
+        #     text="縦直線追加",
+        #     command=lambda: StLine(self.top.forward, CW, CH),
+        #     width=BtnWidth,
+        #     height=BtnHeight,
+        #     border_width=2,
+        #     corner_radius=8,
+        #     text_color="snow",
+        #     border_color="snow",
+        #     fg_color="tomato",
+        # )
+        # button.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
+        # # 横直線追加ボタン---------------------------------------------------------------
+        # button2 = ck.CTkButton(
+        #     master=frame,
+        #     text="横直線追加",
+        #     command=lambda: StWLine(self.top.forward, CW, CH),
+        #     width=BtnWidth,
+        #     height=BtnHeight,
+        #     border_width=2,
+        #     corner_radius=8,
+        #     text_color="snow",
+        #     border_color="snow",
+        #     fg_color="seagreen3",
+        # )
+        # button2.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
         # 削除ボタン---------------------------------------------------------------
         button5 = ck.CTkButton(
             master=frame,
-            text="選択直線削除",
-            command=lambda: LineDelete(self.top.forward),
+            text="全直線削除",
+            command=lambda: AllLineDelete(self, self.top.forward),
             width=BtnWidth,
             height=BtnHeight,
             border_width=2,
@@ -347,7 +346,7 @@ class Application(tk.Toplevel):
             border_color="snow",
             fg_color="Orange",
         )
-        button5.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
+        button5.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # 新規直線描画ボタン---------------------------------------------------------------
         button3 = ck.CTkButton(
             master=frame,
@@ -361,7 +360,7 @@ class Application(tk.Toplevel):
             border_color="snow",
             fg_color="mediumPurple",
         )
-        button3.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
+        button3.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
         # # 置換ボタン---------------------------------------------------------------
         # button7 = ck.CTkButton(
         #     master=frame,
@@ -389,7 +388,7 @@ class Application(tk.Toplevel):
             border_color="snow",
             fg_color="#2b5cff",
         )
-        button3.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
+        button3.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
         # サイドメニュー内ボタンフレーム2###################################################
         frame2 = tk.Frame(
             self.frame0,
@@ -432,12 +431,12 @@ class Application(tk.Toplevel):
         # ##############################################################################
         thread2 = threading.Thread(
             target=Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)
-        )
-        thread2.start()  # 透過キャンバスに罫線描画
+        )  # 透過キャンバスに罫線描画
+        # thread2.start()  # 透過キャンバスに罫線描画
         self.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
         # 下Windowのキャンバス作成
         # 画像の配置#####################################################################
-        self.InportIMG()
+        self.ImportIMG()
         # ##############################################################################
         Entries = self.Entries
         self.master.attributes("-topmost", True)
@@ -450,27 +449,73 @@ class Application(tk.Toplevel):
         print("インスタンスが破棄されました")
 
     # 以下self関数##################################################################################
-    def RedLine(self, CW, CH):
+    def blankno(self):
+        if len(tagsList) != 0:
+            TN_List = [int(str(t[0][0]).replace("Line", "")) for t in tagsList]
+            TN_List.sort()
+            N_TN_r = 0
+            for TN_r in TN_List:
+                if N_TN_r == 0:
+                    N_TN_r = TN_r + 1
+                else:
+                    if N_TN_r == TN_r:
+                        N_TN_r = TN_r + 1
+                    else:
+                        return N_TN_r
+            N_TN_r = TN_r + 1
+            return N_TN_r
+        else:
+            return 1
+
+    def backbind(self, event):
         """
-        縦直線追加ボタン処理
+        縦直線追加ダブルクリック処理
         """
-        TName = "Line" + str(len(tagsList) + 1)
+        global tagsList
+        TName = "Line" + str(self.blankno())
         G_logger.debug("縦直線追加ボタン処理開始")  # Log出力
-        self.create_line(
-            CW - 50,
+        sm = self.topFrame.children["!canvas"]
+        sm.create_line(
+            event.x,
             0,
-            CW - 50,
+            event.x,
             CH,
             tags=TName,
             width=7,
             fill="#FF0000",
             activefill="#DBDD6F",
         )
-        self.tag_bind(TName, "<ButtonPress-1>", click1)
-        self.tag_bind(TName, "<Double-1>", EventDelete)
-        self.tag_bind(TName, "<B1-Motion>", drag1)
+        sm.tag_bind(TName, "<ButtonPress-1>", click1)
+        sm.tag_bind(TName, "<Control-Double-1>", EventDelete)
+        sm.tag_bind(TName, "<B1-Motion>", drag1)
         BSS = [0, 0, 0, 0]
-        TSS = [TName, CW - 50, 0, CW - 50, CH, "Yoko"]
+        TSS = [TName, event.x, 0, event.x, CH, "Yoko"]
+        tagsList.append([TSS, BSS])
+
+    # ---------------------------------------------------------------------------------------------
+    def Right_backbind(self, event):
+        """
+        横直線追加ボタン処理
+        """
+        global tagsList
+        TName = "Line" + str(self.blankno())
+        G_logger.debug("横直線追加ボタン処理開始")  # Log出力
+        sm = self.topFrame.children["!canvas"]
+        sm.create_line(
+            0,
+            event.y,
+            CW,
+            event.y,
+            tags=TName,
+            width=7,
+            fill="#00FF40",
+            activefill="#DBDD6F",
+        )
+        sm.tag_bind(TName, "<ButtonPress-1>", click1)
+        sm.tag_bind(TName, "<Control-Double-1>", EventDelete)
+        sm.tag_bind(TName, "<B1-Motion>", drag1)
+        TSS = [TName, 0, event.y, CW, event.y, "Tate"]
+        BSS = [0, 0, 0, 0]
         tagsList.append([TSS, BSS])
 
     # ---------------------------------------------------------------------------------------------
@@ -548,7 +593,7 @@ class Application(tk.Toplevel):
         Ent.insert(0, l_s)
 
     # ---------------------------------------------------------------------------------------------
-    def InportIMG(self):
+    def ImportIMG(self):
         """
         下ウィンドウに画像をリサイズして配置
         """
@@ -566,6 +611,8 @@ class Application(tk.Toplevel):
         self.bind("<Configure>", self.change)
         self.back.bind("<Unmap>", self.unmap)
         self.back.bind("<Map>", self.map)
+        self.back.bind("<Double-1>", self.backbind)  # 下ウィンドウにダブルクリックbind
+        self.back.bind("<Double-3>", self.Right_backbind)  # 下ウィンドウにダブルクリックbind
 
     # ---------------------------------------------------------------------------------------------
     def unmap(self, event):
@@ -788,6 +835,8 @@ class Application(tk.Toplevel):
                 F_N = os.path.splitext(os.path.basename(imgurl))[0]
                 Yoko_N = F_N + "_Yoko"
                 Tate_N = F_N + "_Tate"
+                AL[1].sort()
+                AL[2].sort(key=lambda x: x[1])
                 Banktoml["LineSetting"][Yoko_N] = AL[1]
                 Banktoml["LineSetting"][Tate_N] = AL[2]
                 toml_c.dump_toml(Banktoml, tomlurl)
@@ -797,6 +846,8 @@ class Application(tk.Toplevel):
                 map(self)
             else:
                 MSG = messagebox.showinfo("確認", "自動直線描画に失敗しました。")
+        else:
+            map(self)
 
     # ---------------------------------------------------------------------------------------------
     # 以下関数######################################################################################
@@ -902,6 +953,8 @@ def NewLineCreate(self, selfC, HCW, HCH):
             F_N = os.path.splitext(os.path.basename(imgurl))[0]
             Yoko_N = F_N + "_Yoko"
             Tate_N = F_N + "_Tate"
+            SLS[1].sort()
+            SLS[2].sort(key=lambda x: x[1])
             Banktoml["LineSetting"][Yoko_N] = SLS[1]
             Banktoml["LineSetting"][Tate_N] = SLS[2]
             toml_c.dump_toml(Banktoml, tomlurl)
@@ -915,6 +968,8 @@ def NewLineCreate(self, selfC, HCW, HCH):
                 "直線描画失敗", "直線描画に失敗しました。画像ファイル名に日本語が混じっている可能性があります。"
             )
             map(self)
+    else:
+        map(self)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -951,53 +1006,55 @@ def LoadImg(Wwidth, Wheight):
 
 
 # ---------------------------------------------------------------------------------------------
-def StLine(canvastop, CW, CH):
-    """
-    縦直線追加ボタン処理
-    """
-    TName = "Line" + str(len(tagsList) + 1)
-    G_logger.debug("縦直線追加ボタン処理開始")  # Log出力
-    canvastop.create_line(
-        CW - 50,
-        0,
-        CW - 50,
-        CH,
-        tags=TName,
-        width=7,
-        fill="#FF0000",
-        activefill="#DBDD6F",
-    )
-    canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
-    canvastop.tag_bind(TName, "<Double-1>", EventDelete)
-    canvastop.tag_bind(TName, "<B1-Motion>", drag1)
-    BSS = [0, 0, 0, 0]
-    TSS = [TName, CW - 50, 0, CW - 50, CH, "Yoko"]
-    tagsList.append([TSS, BSS])
+# def StLine(canvastop, CW, CH):
+#     """
+#     縦直線追加ボタン処理
+#     """
+#     TName = "Line" + str(len(tagsList) + 1)
+#     G_logger.debug("縦直線追加ボタン処理開始")  # Log出力
+#     canvastop.create_line(
+#         CW - 50,
+#         0,
+#         CW - 50,
+#         CH,
+#         tags=TName,
+#         width=7,
+#         fill="#FF0000",
+#         activefill="#DBDD6F",
+#     )
+#     canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
+#     canvastop.tag_bind(TName, "<Control-Double-1>", EventDelete)
+#     canvastop.tag_bind(TName, "<B1-Motion>", drag1)
+
+#     BSS = [0, 0, 0, 0]
+#     TSS = [TName, CW - 50, 0, CW - 50, CH, "Yoko"]
+#     tagsList.append([TSS, BSS])
 
 
 # ---------------------------------------------------------------------------------------------
-def StWLine(canvastop, CW, CH):
-    """
-    横直線追加ボタン処理
-    """
-    TName = "Line" + str(len(tagsList) + 1)
-    G_logger.debug("横直線追加ボタン処理開始")  # Log出力
-    canvastop.create_line(
-        0,
-        CH - 50,
-        CW,
-        CH - 50,
-        tags=TName,
-        width=7,
-        fill="#00FF40",
-        activefill="#DBDD6F",
-    )
-    canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
-    canvastop.tag_bind(TName, "<Double-1>", EventDelete)
-    canvastop.tag_bind(TName, "<B1-Motion>", drag1)
-    TSS = [TName, 0, CH - 50, CW, CH - 50, "Tate"]
-    BSS = [0, 0, 0, 0]
-    tagsList.append([TSS, BSS])
+# def StWLine(canvastop, CW, CH):
+#     """
+#     横直線追加ボタン処理
+#     """
+#     TName = "Line" + str(len(tagsList) + 1)
+#     G_logger.debug("横直線追加ボタン処理開始")  # Log出力
+#     canvastop.create_line(
+#         0,
+#         CH - 50,
+#         CW,
+#         CH - 50,
+#         tags=TName,
+#         width=7,
+#         fill="#00FF40",
+#         activefill="#DBDD6F",
+#     )
+#     canvastop.tag_bind(TName, "<ButtonPress-1>", click1)
+#     canvastop.tag_bind(TName, "<Control-Double-1>", EventDelete)
+#     canvastop.tag_bind(TName, "<B1-Motion>", drag1)
+
+#     TSS = [TName, 0, CH - 50, CW, CH - 50, "Tate"]
+#     BSS = [0, 0, 0, 0]
+#     tagsList.append([TSS, BSS])
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1012,10 +1069,10 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
     ri = 0
     for readcsv1Item in readcsv1:
         ri += 1
-        ripar0 = readcsv1Item[0] * HCW  # * CHh
-        ripar1 = readcsv1Item[1] * HCH  # * CWw
-        ripar2 = readcsv1Item[2] * HCW  # * CHh
-        ripar3 = readcsv1Item[3] * HCH  # * CWw
+        ripar0 = round(readcsv1Item[0] * HCW, 0)  # * CHh
+        ripar1 = round(readcsv1Item[1] * HCH, 0)  # * CWw
+        ripar2 = round(readcsv1Item[2] * HCW, 0)  # * CHh
+        ripar3 = round(readcsv1Item[3] * HCH, 0)  # * CWw
         TName = "Line" + str(ri)
         try:
             canvas.dtag(TName, TName)
@@ -1032,16 +1089,17 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
             activefill="#DBDD6F",
         )
         canvas.tag_bind(TName, "<ButtonPress-1>", click1)
-        canvas.tag_bind(TName, "<Double-1>", EventDelete)
+        canvas.tag_bind(TName, "<Control-Double-1>", EventDelete)
         canvas.tag_bind(TName, "<B1-Motion>", drag1)
+
         canvas.place(x=0, y=0)
         BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Yoko"])
     for readcsv2Item in readcsv2:
         ri += 1
-        ripar0 = readcsv2Item[0] * HCW  # * CHh
-        ripar1 = readcsv2Item[1] * HCH  # * CWw
-        ripar2 = readcsv2Item[2] * HCW  # * CHh
-        ripar3 = readcsv2Item[3] * HCH  # * CWw
+        ripar0 = round(readcsv2Item[0] * HCW, 0)  # * CHh
+        ripar1 = round(readcsv2Item[1] * HCH, 0)  # * CWw
+        ripar2 = round(readcsv2Item[2] * HCW, 0)  # * CHh
+        ripar3 = round(readcsv2Item[3] * HCH, 0)  # * CWw
         TName = "Line" + str(ri)
         canvas.create_line(
             ripar0,
@@ -1054,8 +1112,9 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
             activefill="#DBDD6F",
         )
         canvas.tag_bind(TName, "<ButtonPress-1>", click1)
-        canvas.tag_bind(TName, "<Double-1>", EventDelete)
+        canvas.tag_bind(TName, "<Control-Double-1>", EventDelete)
         canvas.tag_bind(TName, "<B1-Motion>", drag1)
+
         canvas.place(x=0, y=0)
         BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Tate"])
     TL = len(BtagsList)
@@ -1136,14 +1195,20 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
     # ------------------------------------------------------
     # 条件テキストボックスの内容で処理分け-------------------------------------------------------------------
     if listintCheck(DaySet) is False:
+        unmap(selfmother)
         messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
+        map(selfmother)
     elif listintCheck(MoneySet) is False:
+        unmap(selfmother)
         messagebox.showinfo("エラー", "金額表示列番号が不正です。数値以外を指定していないか確認してください。")
+        map(selfmother)
     # elif listintCheck(ReplaceSet) is False:
     #     messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
     else:
         if len(tagsList) == 0:
+            unmap(selfmother)
             messagebox.showinfo("エラー", "軸が設定されていません。")
+            map(selfmother)
         else:
             for tagsListItem in tagsList:
                 BB = self.bbox(tagsListItem[0][0])
@@ -1152,6 +1217,20 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                     FList.append([tagsListItem[0], tagsListItem[1], BBS])
                 except:
                     print("BBSErr")
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
+            ###################################################################################
             for FListItem in FList:
                 FSSC1 = round((FListItem[1][0] + FListItem[2][0]) / HCW)
                 FSSC2 = round((FListItem[1][1] + FListItem[2][1]) / HCH)
@@ -1180,9 +1259,13 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                     FTateList.append(FSS)
                 print(FSS)
             if len(FTateList) == 0:
+                unmap(selfmother)
                 messagebox.showinfo("エラー", "横軸が設定されていません。")
+                map(selfmother)
             elif len(FYokoList) == 0:
+                unmap(selfmother)
                 messagebox.showinfo("エラー", "縦軸が設定されていません。")
+                map(selfmother)
             else:
                 # メッセージボックス（OK・キャンセル）
                 unmap(selfmother)
@@ -1203,6 +1286,8 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                             F_N = os.path.splitext(os.path.basename(imgurl))[0]
                             Yoko_N = F_N + "_Yoko"
                             Tate_N = F_N + "_Tate"
+                            FYokoList.sort()
+                            FTateList.sort(key=lambda x: x[1])
                             Banktoml["LineSetting"][Yoko_N] = FYokoList
                             Banktoml["LineSetting"][Tate_N] = FTateList
                             toml_c.dump_toml(Banktoml, tomlurl)
@@ -1324,27 +1409,34 @@ def LineDelete(self):
     global id1
     global tagsList
     # TName = "Line" + str(id1[0])
+
     TName = str(txt.get())
-    self.delete(TName)
-    G_logger.debug(TName + "_削除完了")  # Log出力
-    r = 0
-    for tagsListItem in tagsList:
-        if TName == tagsListItem[0][0]:
-            tagsList.pop(r)
-            break
-        r += 1
-    nptag_L = LineTomlOut(tagsList, HCW, HCH)
-    if nptag_L[0] is True:
-        ####################################################################################
-        F_N = os.path.splitext(os.path.basename(imgurl))[0]
-        Yoko_N = F_N + "_Yoko"
-        Tate_N = F_N + "_Tate"
-        Banktoml["LineSetting"][Yoko_N] = nptag_L[1]
-        Banktoml["LineSetting"][Tate_N] = nptag_L[2]
-        toml_c.dump_toml(Banktoml, tomlurl)
-        ####################################################################################
-    else:
-        print("Err")
+    if TName != "":
+        sc = self.widget.children["!frame"].children["!canvas"]
+        sc.delete(TName)
+        sc.dtag(TName, TName)
+        G_logger.debug(f"{TName}_削除完了")  # Log出力
+        txt.delete(0, tk.END)
+        r = 0
+        for tagsListItem in tagsList:
+            if TName == tagsListItem[0][0]:
+                tagsList.pop(r)
+                break
+            r += 1
+        nptag_L = LineTomlOut(tagsList, HCW, HCH)
+        if nptag_L[0] is True:
+            ####################################################################################
+            F_N = os.path.splitext(os.path.basename(imgurl))[0]
+            Yoko_N = F_N + "_Yoko"
+            Tate_N = F_N + "_Tate"
+            nptag_L[1].sort()
+            nptag_L[2].sort(key=lambda x: x[1])
+            Banktoml["LineSetting"][Yoko_N] = nptag_L[1]
+            Banktoml["LineSetting"][Tate_N] = nptag_L[2]
+            toml_c.dump_toml(Banktoml, tomlurl)
+            ####################################################################################
+        else:
+            print("Err")
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1370,13 +1462,32 @@ def click1(event):
     global x1
     global y1
     global id1
+
     txt.delete(0, tk.END)
     x2 = event.x
     y2 = event.y
     id1 = event.widget.find_closest(x2, y2)
     TName = event.widget.gettags(id1[0])[0]
-    G_logger.debug(TName + "_縦直線描画処理完了")  # Log出力
     txt.insert(tk.END, TName)
+    x1 = x2
+    y1 = y2
+
+
+# ---------------------------------------------------------------------------------------------
+def drag1(event):
+    """
+    縦直線移動処理(ドラッグ)
+    """
+    global x1
+    global y1
+    global id1
+
+    x2 = event.x
+    y2 = event.y
+    del_x1 = x2 - x1
+    del_y1 = y2 - y1
+    x0, y0, x1, y1 = event.widget.coords(id1)
+    event.widget.coords(id1, x0 + del_x1, y0 + del_y1, x1 + del_x1, y1 + del_y1)
     x1 = x2
     y1 = y2
 
@@ -1384,11 +1495,19 @@ def click1(event):
 # ---------------------------------------------------------------------------------------------
 def EventDelete(event):
     """
-    縦直線描画処理(画面ダブルクリック)
+    線削除処理(画面ダブルクリック)
     """
     global x1
     global y1
     global id1
+
+    print(event.widget.find_all())
+    # print(event.widget.itemcget(obj, "tags"))
+    # l = [
+    #     event.widget.itemcget(obj, "tags")
+    #     for obj in event.widget.find_overlapping(x, y, x, y)
+    # ]
+    # print(l)  # ['en_1 current']など
 
     x2 = event.x
     y2 = event.y
@@ -1408,6 +1527,8 @@ def EventDelete(event):
         F_N = os.path.splitext(os.path.basename(imgurl))[0]
         Yoko_N = F_N + "_Yoko"
         Tate_N = F_N + "_Tate"
+        nptag_L[1].sort()
+        nptag_L[2].sort(key=lambda x: x[1])
         Banktoml["LineSetting"][Yoko_N] = nptag_L[1]
         Banktoml["LineSetting"][Tate_N] = nptag_L[2]
         toml_c.dump_toml(Banktoml, tomlurl)
@@ -1415,26 +1536,6 @@ def EventDelete(event):
     else:
         print("Err")
     txt.delete(0, tk.END)
-
-
-# ---------------------------------------------------------------------------------------------
-def drag1(event):
-    """
-    縦直線移動処理(ドラッグ)
-    """
-    global x1
-    global y1
-
-    global id1
-    x2 = event.x
-    y2 = event.y
-    id1 = event.widget.find_closest(x2, y2)
-    del_x1 = x2 - x1
-    del_y1 = y2 - y1
-    x0, y0, x1, y1 = event.widget.coords(id1)
-    event.widget.coords(id1, x0 + del_x1, y0 + del_y1, x1 + del_x1, y1 + del_y1)
-    x1 = x2
-    y1 = y2
 
 
 # ---------------------------------------------------------------------------------------------

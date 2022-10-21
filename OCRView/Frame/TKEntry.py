@@ -930,11 +930,11 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
         fg_color="snow",
     )
 
-    if "OCRテキスト" in self.ColumnName[next]:
-        lis = list(self.pt.colheader.columnlabels)
-        txtxt.insert(0, lis[next])
-        # lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
-        # txtxt.insert(0, "摘要")
+    if "OCRテキスト" != ColNameItem:
+        # lis = list(self.pt.colheader.columnlabels)
+        # txtxt.insert(0, lis[next])
+        # # lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
+        txtxt.insert(0, "摘要")
     else:
         # lis = list(self.pt3.colheader.columnlabels)
         # txtxt.insert(0, lis[next])
@@ -958,11 +958,11 @@ def createFrameChangeEntry(self, next, ColNameItem):  # , tomltitle):
         fg_color="snow",
     )
 
-    if "OCRテキスト" in self.ColumnName[next]:
-        lis = list(self.pt.colheader.columnlabels)
-        txtxt.insert(0, lis[next])
+    if "OCRテキスト" != ColNameItem:
+        # lis = list(self.pt.colheader.columnlabels)
+        # txtxt.insert(0, lis[next])
         # lis = ["摘要", "摘要", "出金", "摘要", "入金", "摘要"]
-        # txtxt.insert(0, "摘要")
+        txtxt.insert(0, "摘要")
     else:
         # lis = list(self.pt3.colheader.columnlabels)
         # txtxt.insert(0, lis[next])

@@ -5,6 +5,7 @@ import tkinter as tk
 # from pandastable import Table, TableModel, config
 
 from pandastable import Table, TableModel
+from pandastable.dialogs import applyStyle
 from csv import QUOTE_NONNUMERIC
 
 # import DataGrid as DG
@@ -70,6 +71,128 @@ class MyTable(Table):
         self.bind("<Button-5>", self.mouse_wheel)
         self.focus_set()
         return
+
+    # --------------------------------------------------------------------
+    def popupMenu(self, event, rows=None, cols=None, outside=None):
+        """Add left and right click behaviour for canvas, should not have to override
+        this function, it will take its values from defined dicts in constructor"""
+
+        defaultactions = {
+            "コピー": lambda: self.copy(rows, cols),
+            "編集取消": lambda: self.undo(),
+            "貼付": lambda: self.paste(),
+            "塗潰し": lambda: self.fillDown(rows, cols),
+            # "Fill Right" : lambda: self.fillAcross(cols, rows),
+            "行挿入": lambda: self.addRows(),
+            # "Delete Row(s)" : lambda: self.deleteRow(),
+            "列挿入": lambda: self.addColumn(),
+            "列削除": lambda: self.deleteColumn(),
+            "データ削除": lambda: self.deleteCells(rows, cols),
+            "全選択": self.selectAll,
+            # "Auto Fit Columns" : self.autoResizeColumns,
+            "テーブル情報": self.showInfo,
+            "色選択": self.setRowColors,
+            "テキスト情報を開く": self.showasText,
+            "行フィルタ": self.queryBar,
+            "新規": self.new,
+            "開く": self.load,
+            "上書保存": self.save,
+            "名前を付けて保存": self.saveAs,
+            "Import Text/CSV": lambda: self.importCSV(dialog=True),
+            # "Import hdf5": lambda: self.importHDF(dialog=True),
+            "Export": self.doExport,
+            # "Plot Selected": self.plotSelected,
+            # "Hide plot": self.hidePlot,
+            # "Show plot": self.showPlot,
+            "Preferences": self.showPreferences,
+            # "Table to Text": self.showasText,
+            # "Clean Data": self.cleanData,
+            # "Clear Formatting": self.clearFormatting,
+            # "Undo Last Change": self.undo,
+            # "Copy Table": self.copyTable,
+            "検索/置換": self.findText,
+        }
+
+        main = ["コピー", "貼付", "編集取消", "塗潰し", "データ削除", "色選択"]
+        general = [
+            "全選択",
+            "行フィルタ",
+            "テキスト情報を開く",
+            "テーブル情報",
+            "Preferences",
+        ]
+
+        filecommands = [
+            "開く",
+            "Import Text/CSV",
+            # "Import hdf5",
+            "上書保存",
+            "名前を付けて保存",
+            "Export",
+        ]
+        editcommands = ["検索/置換"]  # ["Undo Last Change", "Copy Table", "検索/置換"]
+        # plotcommands = ["Plot Selected", "Hide plot", "Show plot"]
+        # tablecommands = ["Table to Text", "Clean Data", "Clear Formatting"]
+
+        def createSubMenu(parent, label, commands):
+            menu = tk.Menu(parent, tearoff=0)
+            popupmenu.add_cascade(label=label, menu=menu)
+            for action in commands:
+                menu.add_command(label=action, command=defaultactions[action])
+            applyStyle(menu)
+            return menu
+
+        def add_commands(fieldtype):
+            """Add commands to popup menu for column type and specific cell"""
+            functions = self.columnactions[fieldtype]
+            for f in list(functions.keys()):
+                func = getattr(self, functions[f])
+                popupmenu.add_command(label=f, command=lambda: func(row, col))
+            return
+
+        popupmenu = tk.Menu(self, tearoff=0)
+
+        def popupFocusOut(event):
+            popupmenu.unpost()
+
+        if outside is None:
+            # if outside table, just show general items
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            coltype = self.model.getColumnType(col)
+
+            def add_defaultcommands():
+                """now add general actions for all cells"""
+                for action in main:
+                    if action == "Fill Down" and (rows == None or len(rows) <= 1):
+                        continue
+                    if action == "Fill Right" and (cols == None or len(cols) <= 1):
+                        continue
+                    if action == "Undo" and self.prevdf is None:
+                        continue
+                    else:
+                        popupmenu.add_command(
+                            label=action, command=defaultactions[action]
+                        )
+                return
+
+            if coltype in self.columnactions:
+                add_commands(coltype)
+            add_defaultcommands()
+
+        for action in general:
+            popupmenu.add_command(label=action, command=defaultactions[action])
+
+        popupmenu.add_separator()
+        createSubMenu(popupmenu, "File", filecommands)
+        createSubMenu(popupmenu, "Edit", editcommands)
+        # createSubMenu(popupmenu, "Plot", plotcommands)
+        # createSubMenu(popupmenu, "Table", tablecommands)
+        popupmenu.bind("<FocusOut>", popupFocusOut)
+        popupmenu.focus_set()
+        popupmenu.post(event.x_root, event.y_root)
+        applyStyle(popupmenu)
+        return popupmenu
 
     # --------------------------------------------------------------------
     def handle_arrow_keys(self, event):

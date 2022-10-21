@@ -75,6 +75,68 @@ class MyTableSQL(Table):
         return
 
     # --------------------------------------------------------------------
+    def popupMenu(self, event, rows=None, cols=None, outside=None):
+        """Add left and right click behaviour for canvas, should not have to override
+        this function, it will take its values from defined dicts in constructor"""
+
+        defaultactions = {
+            "コピー": lambda: self.copy(rows, cols),
+            "編集取消": lambda: self.undo(),
+            "貼付": lambda: self.paste(),
+            "塗潰し": lambda: self.fillDown(rows, cols),
+            # "Fill Right" : lambda: self.fillAcross(cols, rows),
+            "行挿入": lambda: self.addRows(),
+            # "Delete Row(s)" : lambda: self.deleteRow(),
+            "列挿入": lambda: self.addColumn(),
+            "列削除": lambda: self.deleteColumn(),
+            "データ削除": lambda: self.deleteCells(rows, cols),
+            "全選択": self.selectAll,
+            # "Auto Fit Columns" : self.autoResizeColumns,
+            "テーブル情報": self.showInfo,
+            "色選択": self.setRowColors,
+            "テキスト情報を開く": self.showasText,
+            "行フィルタ": self.queryBar,
+            "新規": self.new,
+            "開く": self.load,
+            "上書保存": self.save,
+            "名前を付けて保存": self.saveAs,
+            "Import Text/CSV": lambda: self.importCSV(dialog=True),
+            # "Import hdf5": lambda: self.importHDF(dialog=True),
+            "Export": self.doExport,
+            # "Plot Selected": self.plotSelected,
+            # "Hide plot": self.hidePlot,
+            # "Show plot": self.showPlot,
+            "Preferences": self.showPreferences,
+            # "Table to Text": self.showasText,
+            # "Clean Data": self.cleanData,
+            # "Clear Formatting": self.clearFormatting,
+            # "Undo Last Change": self.undo,
+            # "Copy Table": self.copyTable,
+            "検索/置換": self.findText,
+        }
+
+        main = ["コピー", "貼付", "編集取消", "塗潰し", "データ削除", "色選択"]
+        general = [
+            "全選択",
+            "行フィルタ",
+            "テキスト情報を開く",
+            "テーブル情報",
+            "Preferences",
+        ]
+
+        filecommands = [
+            "開く",
+            "Import Text/CSV",
+            # "Import hdf5",
+            "上書保存",
+            "名前を付けて保存",
+            "Export",
+        ]
+        editcommands = ["検索/置換"]  # ["Undo Last Change", "Copy Table", "検索/置換"]
+        # plotcommands = ["Plot Selected", "Hide plot", "Show plot"]
+        # tablecommands = ["Table to Text", "Clean Data", "Clear Formatting"]
+
+    # --------------------------------------------------------------------
     def handle_arrow_keys(self, event):
         """Handle arrow keys press"""
         # print event.keysym
