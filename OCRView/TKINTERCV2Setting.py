@@ -76,7 +76,6 @@ class Application(tk.Toplevel):
         )
         self.top.resizable(0, 0)
         self.top.minsize(width_of_window, height_of_window)
-        self.top.bind_all("<Delete>", LineDelete)
         # 透過キャンバスフレーム##########################################################
         self.topFrame = tk.Frame(
             self.top,
@@ -92,6 +91,7 @@ class Application(tk.Toplevel):
         )  # 透過キャンバス作成
         self.top.forward.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.top.forward.bind("Enter", self.change)
+        self.top.forward.bind_all("<Delete>", LineDelete)
         # ##############################################################################
         # 配置
         # サイドメニューフレーム##########################################################
@@ -144,7 +144,7 @@ class Application(tk.Toplevel):
             border_color="snow",
             fg_color="snow",
         )
-        txt.grid(row=0, column=1, pady=5)
+        txt.grid(row=0, column=1, pady=5, sticky=tk.W)
         # テキスト変換一致率
         ck.CTkLabel(
             master=Tframe,
@@ -166,7 +166,7 @@ class Application(tk.Toplevel):
             fg_color="snow",
         )
         self.ChangeVar.insert(0, 50)
-        self.ChangeVar.grid(row=1, column=1, pady=5)
+        self.ChangeVar.grid(row=1, column=1, pady=5, sticky=tk.W)
         # 行数表示テキスト
         ck.CTkLabel(
             master=Tframe,
@@ -178,7 +178,7 @@ class Application(tk.Toplevel):
         ).grid(row=3, column=0, pady=5)
         self.tomlurl = ck.CTkEntry(
             master=Tframe,
-            width=EntWidth,
+            width=(EntWidth * 3),
             height=EntHeight,
             border_width=2,
             corner_radius=8,
@@ -187,7 +187,7 @@ class Application(tk.Toplevel):
             fg_color="snow",
         )
         self.tomlurl.insert(0, tomlurl)
-        self.tomlurl.grid(row=3, column=1, pady=5)
+        self.tomlurl.grid(row=3, column=1, pady=5, sticky=tk.W)
         # 行数表示テキスト
         # 設定ファイル変更ボタン--------------------------------------------------------
         self.tomlbutton = ck.CTkButton(
@@ -296,15 +296,15 @@ class Application(tk.Toplevel):
         self.MoneySet.bind("<Tab>", tomlreturn)
         self.MoneySet.grid(row=1, column=1, padx=5, pady=5)
         # サイドメニュー内ボタンフレーム###################################################
-        frame = tk.Frame(
-            self.frame0,
-            bg="#ecb5f5",
-            relief=tk.GROOVE,
-            width=int(5 * wid_Par),
-            bd=2,
-        )
-        # frame.grid(row=0, column=4, sticky=tk.N)
-        frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # frame = tk.Frame(
+        #     self.frame0,
+        #     bg="#ecb5f5",
+        #     relief=tk.GROOVE,
+        #     width=int(5 * wid_Par),
+        #     bd=2,
+        # )
+        # # frame.grid(row=0, column=4, sticky=tk.N)
+        # frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # # 縦直線追加ボタン---------------------------------------------------------------
         # button = ck.CTkButton(
         #     master=frame,
@@ -333,34 +333,6 @@ class Application(tk.Toplevel):
         #     fg_color="seagreen3",
         # )
         # button2.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
-        # 削除ボタン---------------------------------------------------------------
-        button5 = ck.CTkButton(
-            master=frame,
-            text="全直線削除",
-            command=lambda: AllLineDelete(self, self.top.forward),
-            width=BtnWidth,
-            height=BtnHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="snow",
-            border_color="snow",
-            fg_color="Orange",
-        )
-        button5.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
-        # 新規直線描画ボタン---------------------------------------------------------------
-        button3 = ck.CTkButton(
-            master=frame,
-            text="新規直線描画",
-            command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
-            width=BtnWidth,
-            height=BtnHeight,
-            border_width=2,
-            corner_radius=8,
-            text_color="snow",
-            border_color="snow",
-            fg_color="mediumPurple",
-        )
-        button3.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
         # # 置換ボタン---------------------------------------------------------------
         # button7 = ck.CTkButton(
         #     master=frame,
@@ -375,9 +347,18 @@ class Application(tk.Toplevel):
         #     fg_color="hotpink1",
         # )
         # button7.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
+        # サイドメニュー内ボタンフレーム2###################################################
+        frame2 = tk.Frame(
+            self.frame0,
+            bg="#ecb5f5",
+            relief=tk.GROOVE,
+            width=int(5 * wid_Par),
+            bd=2,
+        )
+        frame2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # 自動直線描画ボタン---------------------------------------------------------------
         button3 = ck.CTkButton(
-            master=frame,
+            master=frame2,
             text="自動直線描画",
             command=lambda: self.AutoNewLineCreate(self.top.forward, HCW, HCH),
             width=BtnWidth,
@@ -388,16 +369,35 @@ class Application(tk.Toplevel):
             border_color="snow",
             fg_color="#2b5cff",
         )
-        button3.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
-        # サイドメニュー内ボタンフレーム2###################################################
-        frame2 = tk.Frame(
-            self.frame0,
-            bg="#ecb5f5",
-            relief=tk.GROOVE,
-            width=int(5 * wid_Par),
-            bd=2,
+        button3.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
+        # 削除ボタン---------------------------------------------------------------
+        button5 = ck.CTkButton(
+            master=frame2,
+            text="全直線削除",
+            command=lambda: AllLineDelete(self, self.top.forward),
+            width=BtnWidth,
+            height=BtnHeight,
+            border_width=2,
+            corner_radius=8,
+            text_color="snow",
+            border_color="snow",
+            fg_color="Orange",
         )
-        frame2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        button5.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
+        # # 新規直線描画ボタン---------------------------------------------------------------
+        # button3 = ck.CTkButton(
+        #     master=frame2,
+        #     text="新規直線描画",
+        #     command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
+        #     width=BtnWidth,
+        #     height=BtnHeight,
+        #     border_width=2,
+        #     corner_radius=8,
+        #     text_color="snow",
+        #     border_color="snow",
+        #     fg_color="mediumPurple",
+        # )
+        # button3.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
         # 確定ボタン---------------------------------------------------------------
         button4 = ck.CTkButton(
             master=frame2,
@@ -413,7 +413,7 @@ class Application(tk.Toplevel):
             border_color="snow",
             fg_color="steelblue3",
         )
-        button4.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
+        button4.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # 戻るボタン---------------------------------------------------------------
         button6 = ck.CTkButton(
             master=frame2,
@@ -427,12 +427,12 @@ class Application(tk.Toplevel):
             border_color="snow",
             fg_color="gray",
         )
-        button6.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
+        button6.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
         # ##############################################################################
         thread2 = threading.Thread(
             target=Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)
         )  # 透過キャンバスに罫線描画
-        # thread2.start()  # 透過キャンバスに罫線描画
+        thread2.start()  # 透過キャンバスに罫線描画
         self.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
         # 下Windowのキャンバス作成
         # 画像の配置#####################################################################
@@ -828,8 +828,9 @@ class Application(tk.Toplevel):
         MSG = messagebox.askokcancel("確認", "自動直線描画しますか？")
         if MSG is True:
             G_logger.debug("新規直線描画処理開始")  # Log出力
+            PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
             selfC = self.top.forward
-            AL = AutoLine(imgurl, 1)
+            AL = AutoLine(imgurl, 1, PBAR)
             if AL[0] is True:
                 ####################################################################################
                 F_N = os.path.splitext(os.path.basename(imgurl))[0]
@@ -842,7 +843,11 @@ class Application(tk.Toplevel):
                 toml_c.dump_toml(Banktoml, tomlurl)
                 ####################################################################################
                 AllLineDelete(self, selfC)
+                PBAR._target.step(10)
                 Gra(selfC, AL[1], AL[2], HCW, HCH)  # 透過キャンバスに罫線描画
+                PBAR._target.step(30)
+                MSG = messagebox.showinfo("確認", "自動直線描画完了")
+                PBAR._target.master.destroy()
                 map(self)
             else:
                 MSG = messagebox.showinfo("確認", "自動直線描画に失敗しました。")
@@ -1069,10 +1074,10 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
     ri = 0
     for readcsv1Item in readcsv1:
         ri += 1
-        ripar0 = round(readcsv1Item[0] * HCW, 0)  # * CHh
-        ripar1 = round(readcsv1Item[1] * HCH, 0)  # * CWw
-        ripar2 = round(readcsv1Item[2] * HCW, 0)  # * CHh
-        ripar3 = round(readcsv1Item[3] * HCH, 0)  # * CWw
+        ripar0 = readcsv1Item[0] * HCW  # * CHh
+        ripar1 = readcsv1Item[1] * HCH  # * CWw
+        ripar2 = readcsv1Item[2] * HCW  # * CHh
+        ripar3 = readcsv1Item[3] * HCH  # * CWw
         TName = "Line" + str(ri)
         try:
             canvas.dtag(TName, TName)
@@ -1096,10 +1101,10 @@ def Gra(canvas, readcsv1, readcsv2, HCW, HCH):
         BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Yoko"])
     for readcsv2Item in readcsv2:
         ri += 1
-        ripar0 = round(readcsv2Item[0] * HCW, 0)  # * CHh
-        ripar1 = round(readcsv2Item[1] * HCH, 0)  # * CWw
-        ripar2 = round(readcsv2Item[2] * HCW, 0)  # * CHh
-        ripar3 = round(readcsv2Item[3] * HCH, 0)  # * CWw
+        ripar0 = readcsv2Item[0] * HCW  # * CHh
+        ripar1 = readcsv2Item[1] * HCH  # * CWw
+        ripar2 = readcsv2Item[2] * HCW  # * CHh
+        ripar3 = readcsv2Item[3] * HCH  # * CWw
         TName = "Line" + str(ri)
         canvas.create_line(
             ripar0,
@@ -1232,10 +1237,31 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
             ###################################################################################
             ###################################################################################
             for FListItem in FList:
-                FSSC1 = round((FListItem[1][0] + FListItem[2][0]) / HCW)
-                FSSC2 = round((FListItem[1][1] + FListItem[2][1]) / HCH)
-                FSSC3 = round((FListItem[1][2] + FListItem[2][2]) / HCW)
-                FSSC4 = round((FListItem[1][3] + FListItem[2][3]) / HCH)
+                # FSSC1 = round((FListItem[1][0] + FListItem[2][0]) / HCW)
+                # FSSC2 = round((FListItem[1][1] + FListItem[2][1]) / HCH)
+                # FSSC3 = round((FListItem[1][2] + FListItem[2][2]) / HCW)
+                # FSSC4 = round((FListItem[1][3] + FListItem[2][3]) / HCH)
+                if FListItem[2][0] < 0:
+                    FSSC1 = 0
+                else:
+                    FSSC1 = int(round((FListItem[2][0] / HCW), 0))
+                if FListItem[2][1] < 0:
+                    FSSC2 = 0
+                else:
+                    FSSC2 = int(round((FListItem[2][1] / HCH), 0))
+                if FListItem[2][2] < 0:
+
+                    FSSC3 = 0
+                else:
+                    FSSC3 = int(round((FListItem[2][0] / HCW), 0))
+                if FListItem[2][3] < 0:
+                    FSSC4 = 0
+                else:
+                    FSSC4 = int(round((FListItem[2][1] / HCH), 0))
+                # FSSC1 = FListItem[0][1] / HCW
+                # FSSC2 = FListItem[0][2] / HCH
+                # FSSC3 = FListItem[0][3] / HCW
+                # FSSC4 = FListItem[0][4] / HCH
                 if FSSC1 < 0 and FSSC1 < MaxW:
                     FSSC1 = 0
                 elif FSSC1 > MaxW:
