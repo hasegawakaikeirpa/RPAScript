@@ -1,22 +1,48 @@
 import os
-
-# from ModelImage import ModelImage
+from ModelImage import ModelImage
+import sqlite3 as sql
+from pandas import DataFrame
+import toml
+from tkinter import font
 
 # from tkinter import messagebox
 
 
 class ControlGUI:
     def __init__(self, default_path):
+
+        # Model Class生成
+        self.model = ModelImage()
         self.dir_path = default_path
         self.ext_keys = [".png", ".jpg", ".jpeg", ".JPG", ".PNG", "PDF", "pdf"]
         self.target_files = []
         self.file_pos = 0
-
+        self.tomlsetting = self.tomlread()
+        self.Toptitle = self.tomlsetting["Title"]["title"]
+        self.Kanyosaki_name = ""
         self.clip_sx = 0
         self.clip_sy = 0
         self.clip_ex = 0
         self.clip_ey = 0
         self.canvas = None
+        self.DefDB_name = "OCR_DB"
+        self.CreateDB(self.DefDB_name)
+        self.btn_font = ("", 50)
+
+    def tomlread(self):
+        """
+        tomlリード
+        """
+        try:
+            r_toml = os.getcwd() + r"\OCRViewFromMenu\Setting.toml"
+            with open(r_toml, encoding="utf-8") as f:
+                Banktoml = toml.load(f)
+            return Banktoml
+        except:
+            r_toml = os.getcwd() + r"\Setting.toml"
+            with open(r_toml, encoding="utf-8") as f:
+                Banktoml = toml.load(f)
+            return Banktoml
 
     def is_target(self, name, key_list):
         """
@@ -285,3 +311,51 @@ class ControlGUI:
         """
         fname = self.get_file("current")
         self.model.DrawImage(fname, self.canvas, command)
+
+    def CreateDB(self, dbname):
+        """
+        dbを作成する
+        """
+        conn = sql.connect(dbname)
+        conn.close()
+
+    def CreateTable(self, dbname, tbname):
+        """
+        テーブルを作成する
+        """
+        conn = sql.connect(dbname)
+        cur = conn.cursor()
+        cur.execute("CREATE TABLE IF NOT EXISTS " + tbname + "(変更前 STRING,変更後 STRING)")
+        conn.commit()
+        conn.close()
+
+    def TableInsert(self, dbname, tbname, text):
+        """
+        テーブルにデータ追加
+        """
+        conn = sql.connect(dbname)
+        cur = conn.cursor()
+
+        # Insert文
+        cur.execute("INSERT INTO " + tbname + "(変更前, 変更後) values(" + text + ")")
+        # 同様に
+        conn.commit()
+
+        cur.close()
+        conn.close()
+
+    def CheckTable(self, dbname, tbname):
+        """
+        テーブルの中身を確認
+        """
+        conn = sql.connect(dbname)
+        cur = conn.cursor()
+
+        # terminalで実行したSQL文と同じようにexecute()に書く
+        cur.execute("SELECT * FROM " + tbname)
+
+        # 中身を全て取得するfetchall()を使って、printする。
+        print(cur.fetchall())
+
+        cur.close()
+        conn.close()

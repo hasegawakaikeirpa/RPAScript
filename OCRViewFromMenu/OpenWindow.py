@@ -2,7 +2,6 @@ import tkinter as tk
 from PIL import ImageTk, Image
 import time
 import os
-import threading
 
 
 class Open_Win:
@@ -39,14 +38,18 @@ class Open_Win:
         label2.place(x=10, y=200)
         try:
             image_a = ImageTk.PhotoImage(
-                Image.open(os.getcwd() + r"\OCRView\D_curcle_a.png")
+                Image.open(os.getcwd() + r"\OCRView\D_curcle_a.png"), master=w
             )
             image_b = ImageTk.PhotoImage(
-                Image.open(os.getcwd() + r"\OCRView\D_curcle_b.png")
+                Image.open(os.getcwd() + r"\OCRView\D_curcle_b.png"), master=w
             )
         except:
-            image_a = ImageTk.PhotoImage(Image.open(os.getcwd() + r"\D_curcle_a.png"))
-            image_b = ImageTk.PhotoImage(Image.open(os.getcwd() + r"\D_curcle_b.png"))
+            image_a = ImageTk.PhotoImage(
+                Image.open(os.getcwd() + r"\D_curcle_a.png"), master=w
+            )
+            image_b = ImageTk.PhotoImage(
+                Image.open(os.getcwd() + r"\D_curcle_b.png"), master=w
+            )
 
         for i in range(3):
             l1 = tk.Label(w, image=image_a, border=0, relief=tk.SUNKEN).place(
@@ -112,8 +115,8 @@ class Open_Win:
 
 
 def RoundButton(w, img1, img2, cmd):
-    image_a = ImageTk.PhotoImage(Image.open(img1))
-    image_b = ImageTk.PhotoImage(Image.open(img2))
+    image_a = ImageTk.PhotoImage(Image.open(img1), master=w)
+    image_b = ImageTk.PhotoImage(Image.open(img2), master=w)
 
     def on_enter(e):
         btn["image"] = image_b
@@ -134,7 +137,7 @@ def Open(title_n):
     # Viewクラス生成
     Open_Win(main_window, title_n)
     # 　フレームループ処理
-    main_window.mainloop()
+    # main_window.mainloop()
     return
 
 
