@@ -52,10 +52,8 @@ from page_view import LanguagePage, AudioPage
 #     return _log_decorator
 
 
-# ###############################################################################################
-
-
-class SettingView(ttk.Frame):
+# ############################################################################################
+class SettingsView(ttk.Frame):
     def __init__(self, master, **kw):
         super().__init__(master, **kw)
         self.pages = {}
@@ -73,7 +71,7 @@ class SettingView(ttk.Frame):
         return:ttk.Frame
         """
 
-        self.frame_page = ttk.Frame(self)
+        self.frame_page = ttk.Frame(master=self)
 
         return self.frame_page
 
@@ -82,10 +80,11 @@ class SettingView(ttk.Frame):
         設定ツリービューフレームクラスの作成、インスタンス化
         return:ttk.Frame
         """
-        self.frame_treeview = ttk.Frame(self)
+        self.frame_treeview = ttk.Frame(master=self)
+
         self.treeview_settings = SettingsTreeview(self.frame_treeview)
-        self.treeview_settings.bind(
-            "<<TreeViewSelect>>", self.on_treeview_selection_changed
+        self.treeview_settings.bind_all(
+            "<<TreeviewSelect>>", self.on_treeview_selection_changed
         )
         self.treeview_settings.pack(fill=tk.BOTH, expand=True)
 
@@ -115,7 +114,7 @@ class SettingView(ttk.Frame):
         ページフレームをインスタンス化し、ディクショナリ追加
         """
         with Image.open(image_path) as img:
-            photo_image = ImageTk.PhotoImage(img)
+            photo_image = ImageTk.PhotoImage(img.resize((200, 20)))
 
         self.pages[setting_name] = page(self.frame_page)
         self.pages[setting_name].image = photo_image
@@ -124,6 +123,7 @@ class SettingView(ttk.Frame):
         self.pages[setting_name].pack(fill=tk.BOTH, expand=True)
 
 
+# ###########################################################################################
 class SettingsTreeview(ttk.Treeview):
     def _init(self, master, **kw):
         super().__init__(master, **kw)
@@ -152,16 +152,16 @@ if __name__ == "__main__":
     )
     style.configure("TLabel", font=("tkDefaultFont", 18))
 
-    settings = SettingView(root, relief="flat")
-    # settings = SettingView(root)
+    settings = SettingsView(root, relief="flat")
+    # settings = SettingsView(root)
 
     settings.add_page(
-        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\OCR.png",
+        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",
         setting_name="Language",
         page=LanguagePage,
     )
     settings.add_page(
-        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\OCR.png",
+        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",
         setting_name="Audio",
         page=AudioPage,
     )

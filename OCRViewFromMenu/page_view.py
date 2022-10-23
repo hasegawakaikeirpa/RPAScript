@@ -3,7 +3,7 @@ from tkinter import ttk
 
 
 class Page(ttk.Frame):
-    def _init(self, master, **kw):
+    def __init__(self, master, **kw):
         super().__init__(master, **kw)
 
     def verify(self):
@@ -11,7 +11,7 @@ class Page(ttk.Frame):
 
 
 class LanguagePage(Page):
-    def _init(self, master, **kw):
+    def __init__(self, master, **kw):
         super().__init__(master, **kw)
         self.create_frame_content().pack(fill=tk.BOTH, expand=True)
 
@@ -27,7 +27,7 @@ class LanguagePage(Page):
 
 
 class AudioPage(Page):
-    def _init(self, master, **kw):
+    def __init__(self, master, **kw):
         super().__init__(master, **kw)
         self.create_frame_content().pack(fill=tk.BOTH, expand=True)
 
@@ -40,3 +40,12 @@ class AudioPage(Page):
         lbl_title.pack()
 
         return self.frame_content
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.geometry("640x480")
+
+    LanguagePage(root)
+
+    root.mainloop()
