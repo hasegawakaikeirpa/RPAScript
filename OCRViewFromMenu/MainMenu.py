@@ -11,6 +11,7 @@ from PIL import Image, ImageTk
 import ViewGUI
 import IconCode
 import Functions
+from functools import wraps
 
 # from line_profiler import LineProfiler
 
@@ -20,6 +21,40 @@ import Functions
 # [poppler-22.01.0フォルダ]・[Tesseract-OCRフォルダ]・[StraightListTate.csv]・[StraightListYoko.csv]・[key.json]
 # customtkinterフォルダ・LogConfフォルダ・Logフォルダ・CompanyDataフォルダ・D_curcle_a.png・D_curcle_b.png
 # をコピーして完了
+# ロガー########################################################################################
+logging.config.fileConfig(os.getcwd() + r"\LogConf\logging_debug.conf")
+logger = logging.getLogger(__name__)
+logger.debug(f"Network: {node()}")  # ネットワーク名
+logger.debug(f"Machine: {machine()}")  # 機種
+logger.debug(f"Processor: {processor()}")  # プロセッサ名 (CPU)
+logger.debug(f"Platform: {platform() }")  # プラットフォーム (OS) 情報
+logger.debug(f"System: {system() }")  # OS名
+logger.debug(f"Release: {release()}")  # リリース情報
+logger.debug(f"Version: {version()}")  # バージョン情報
+logger.debug(f"MAC Address: {getnode():_X}")  # MACアドレス
+logger.debug(f"Host name: {gethostname()}")  # ホスト名
+logger.debug(f"IP Address: {gethostbyname(gethostname())}")  # IPアドレス
+# デコレーター##################################################################################
+def log_decorator():
+    def _log_decorator(func):
+        def wrapper(*args, **kwargs):
+            try:
+                logger.info("処理を開始します")
+                return func(*args, **kwargs)
+
+            except Exception as e:
+                logger.error("エラーが発生しました")
+                raise e
+
+            finally:
+                logger.info("処理を終了します")
+
+        return wrapper
+
+    return _log_decorator
+
+
+# ###############################################################################################
 
 
 class MainMenu(tk.Frame):
@@ -28,21 +63,7 @@ class MainMenu(tk.Frame):
     """
 
     def __init__(self, window_root):
-        self.control = ControlGUI("./")  # セルフコントローラー
-        # logger設定------------------------------------------------------------------
-        logging.config.fileConfig(os.getcwd() + r"\LogConf\logging_debug.conf")
-        self.logger = logging.getLogger(__name__)
-        self.logger.debug(f"Network: {node()}")  # ネットワーク名
-        self.logger.debug(f"Machine: {machine()}")  # 機種
-        self.logger.debug(f"Processor: {processor()}")  # プロセッサ名 (CPU)
-        self.logger.debug(f"Platform: {platform() }")  # プラットフォーム (OS) 情報
-        self.logger.debug(f"System: {system() }")  # OS名
-        self.logger.debug(f"Release: {release()}")  # リリース情報
-        self.logger.debug(f"Version: {version()}")  # バージョン情報
-        self.logger.debug(f"MAC Address: {getnode():_X}")  # MACアドレス
-        self.logger.debug(f"Host name: {gethostname()}")  # ホスト名
-        self.logger.debug(f"IP Address: {gethostbyname(gethostname())}")  # IPアドレス
-        self.logger.debug(f"{self.control.Toptitle}起動")  # Log出力
+        self.control = ControlGUI("./", self.logger)  # セルフコントローラー
         # ルートウィンドウ設定----------------------------------------------------------
         self.window_root = window_root
         self.width_of_window = int(int(self.window_root.winfo_screenwidth()) * 0.5)
@@ -98,7 +119,7 @@ class MainMenu(tk.Frame):
             width=int(self.width_of_window / 8),
             height=40,
             compound="left",
-            command=lambda: Functions.event_set_file(self),
+            command=lambda: Functions.event_set_folder(self),
             border_width=2,
             corner_radius=8,
             border_color="snow",
@@ -137,16 +158,13 @@ class MainMenu(tk.Frame):
         """
         メニューバー作成
         """
-        try:
-            self.window_root.config(bg="#60cad1")
-            self.men = tk.Menu(self.window_root, tearoff=0)
-            self.window_root.config(menu=self.men)
-            self.menu_file = tk.Menu(self.men)
-            self.men.add_command(
-                label="フォルダ", command=lambda: Functions.event_set_file(self)
-            )
-        except:
-            self.logger.debug("メニューバー作成失敗")  # Log出力
+        self.window_root.config(bg="#60cad1")
+        self.men = tk.Menu(self.window_root, tearoff=0)
+        self.window_root.config(menu=self.men)
+        self.menu_file = tk.Menu(self.men)
+        self.men.add_command(
+            label="フォルダ", command=lambda: Functions.event_set_file(self)
+        )
 
     # セルフ関数#####################################################################################
     def Open_View(self):
@@ -177,6 +195,7 @@ class MainMenu(tk.Frame):
     ################################################################################################
 
 
+@log_decorator()
 def Open():
     main_window = tk.Tk()
     data = IconCode.icondata()

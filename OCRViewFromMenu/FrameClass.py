@@ -8,10 +8,11 @@ class Frame(tk.Toplevel):
     概要: TKinterメインWindowクラス
     """
 
-    def __init__(self, window_root, Title):
+    def __init__(self, window_root, Title, control):
         # super().__init__(window_root)
         # メインウィンドウ
         self.window_root = window_root
+        self.control = control
         self.width_of_window = int(int(self.window_root.winfo_screenwidth()) * 0.95)
         self.height_of_window = int(int(self.window_root.winfo_screenheight()) * 0.85)
         self.x_coodinate = self.width_of_window / 2
@@ -67,12 +68,8 @@ class Frame(tk.Toplevel):
             self.savemenu.add_command(
                 label="別名保存", command=lambda: Functions.event_Searchsave(self)
             )
-
-            # OCRメニューを作成する
-            self.OCR_men = tk.Menu(self.men)
-            self.men.add_command(label="OCR起動", command=self.LinOCROpen)
         except:
-            self.logger.debug("メニューバー作成失敗")  # Log出力
+            self.control.logger.debug("メニューバー作成失敗")  # Log出力
 
     # セルフ関数#####################################################################################
     def click_close(self):

@@ -9,25 +9,35 @@ from tkinter import font
 
 
 class ControlGUI:
-    def __init__(self, default_path):
+    def __init__(self, default_path, logger):
 
         # Model Class生成
         self.model = ModelImage()
         self.dir_path = default_path
+        if os.path.isfile(os.getcwd() + r"\OCR.png") is True:
+            self.imgurl = os.getcwd() + r"\OCR.png"
+        else:
+            self.imgurl = os.getcwd() + r"\OCRViewFromMenu\OCR.png"
+        self.img_name = os.path.splitext(os.path.basename(self.imgurl))[0]
         self.ext_keys = [".png", ".jpg", ".jpeg", ".JPG", ".PNG", "PDF", "pdf"]
         self.target_files = []
         self.file_pos = 0
+        self.file_list = ["..[select file]"]
         self.tomlsetting = self.tomlread()
+        self.ReadtomlLine()
         self.Toptitle = self.tomlsetting["Title"]["title"]
         self.Kanyosaki_name = ""
         self.clip_sx = 0
         self.clip_sy = 0
         self.clip_ex = 0
         self.clip_ey = 0
+        self.HCW = 1
+        self.HCH = 1
         self.canvas = None
         self.DefDB_name = "OCR_DB"
         self.CreateDB(self.DefDB_name)
         self.btn_font = ("", 50)
+        self.logger = logger
 
     def tomlread(self):
         """
@@ -37,12 +47,25 @@ class ControlGUI:
             r_toml = os.getcwd() + r"\OCRViewFromMenu\Setting.toml"
             with open(r_toml, encoding="utf-8") as f:
                 Banktoml = toml.load(f)
+            self.tomlurl = r_toml
             return Banktoml
         except:
             r_toml = os.getcwd() + r"\Setting.toml"
             with open(r_toml, encoding="utf-8") as f:
                 Banktoml = toml.load(f)
+            self.tomlurl = r_toml
             return Banktoml
+
+    def ReadtomlLine(self):
+        """
+        tomlからtoml線軸リストを取得
+        """
+        try:
+            self.YokoList = self.tomlsetting["LineSetting"][self.Yoko_N]
+            self.TateList = self.tomlsetting["LineSetting"][self.Tate_N]
+        except:
+            self.YokoList = self.tomlsetting["LineSetting"]["Nomal_Yoko"]
+            self.TateList = self.tomlsetting["LineSetting"]["Nomal_Tate"]
 
     def is_target(self, name, key_list):
         """
