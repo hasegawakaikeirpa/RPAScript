@@ -1,6 +1,6 @@
 import tkinter as tk
+from tkinter import ttk
 import customtkinter as ck
-import FrameClass
 import Functions
 from tkinter import filedialog, messagebox
 import ImageViewer
@@ -34,19 +34,16 @@ def log_decorator():
 # ###############################################################################################
 
 
-class ViewGUI(tk.Toplevel):
+class ViewGUI(ttk.Frame):
     """
     概要: TKinterメインWindowクラス
     """
 
-    def __init__(self, window_root, control):
+    def __init__(self, master, control):
+        super().__init__(master)
         self.control = control
-        self.window_root = FrameClass.Frame(
-            window_root, f"{control.Toptitle}-画像編集-", self.control
-        )
-        # self.MenuCreate()
-        self.FCW = int(self.window_root.width_of_window * 0.4)
-        self.FCH = int(self.window_root.height_of_window * 0.4)
+        self.FCW = int(control.width_of_window * 0.95)
+        self.FCH = int(control.height_of_window * 0.7)
         self.FrameCreate()  # フレーム作成
 
     # 要素作成######################################################################################
@@ -55,27 +52,31 @@ class ViewGUI(tk.Toplevel):
         Frame作成
         """
         try:
-            # Frame = tk.Frame(
-            #     self.window_root.window_rootFrame,
-            #     bg="#60cad1",
-            #     relief=tk.GROOVE,
-            #     bd=1,
-            #     height=self.FCH,
-            #     width=self.FCW,
-            # )
-
+            self.Frame = tk.Frame(
+                self,
+                bg="#60cad1",
+                relief=tk.GROOVE,
+                bd=1,
+                height=self.FCH,
+                width=self.FCW,
+            )
+            self.CanvasCreate()
+            self.Frame.pack(fill=tk.BOTH, expand=True)
             # ImageViewer.call("", Frame)
 
-            self.window_sub_FrameCanvas = ImageViewer.Application(
-                tk.Frame(
-                    master=self.window_root.window_rootFrame,
-                    height=self.FCH,
-                    width=self.FCW,
-                )
-            )
-            self.window_sub_FrameCanvas.master.pack(
-                side=tk.TOP, fill="both", expand=True
-            )
+            # self.control.window_sub_FrameCanvas = ImageViewer.Application(
+            #     tk.Frame(
+            #         master=self,
+            #         height=self.FCH,
+            #         # width=self.FCW,
+            #         width=3000,
+            #     ),
+            #     self.control,
+            # )
+
+            # self.control.window_sub_FrameCanvas.master.pack(
+            #     side=tk.TOP, fill="both", expand=True
+            # )
             # フォルダ・ファイル選択
             self.window_sub_ctrl1 = self.SubFrame1()
             # 画像加工
@@ -86,45 +87,45 @@ class ViewGUI(tk.Toplevel):
             return
 
     # ----------------------------------------------------------------------------------
-    # def CanvasCreate(self):
-    #     """
-    #     キャンバス作成
-    #     """
-    #     try:
-    #         # キャンバス
-    #         self.window_sub_canvas = tk.Canvas(
-    #             self.window_root.window_rootFrame,
-    #             height=self.FCH,
-    #             width=self.FCW,
-    #             bg="gray",
-    #         )
-    #         # キャンバス内クリック開始イベントに関数バインド
-    #         self.window_sub_canvas.bind("<ButtonPress-1>", Functions.event_clip_start)
-    #         # キャンバス内ドラッグイベントに関数バインド
-    #         self.window_sub_canvas.bind("<Button1-Motion>", Functions.event_clip_keep)
-    #         # キャンバス内クリック終了イベントに関数バインド
-    #         self.window_sub_canvas.bind("<ButtonRelease-1>", Functions.event_clip_end)
-    #         # キャンバスを配置
-    #         self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
-    #         self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
-    #     except:
-    #         self.control.logger.debug("キャンバス作成失敗")  # Log出力
+    def CanvasCreate(self):
+        """
+        キャンバス作成
+        """
+        try:
+            # キャンバス
+            self.window_sub_canvas = tk.Canvas(
+                self.Frame,
+                height=self.FCH,
+                width=self.FCW,
+                bg="gray",
+            )
+            # キャンバス内クリック開始イベントに関数バインド
+            self.window_sub_canvas.bind("<ButtonPress-1>", self.event_clip_start)
+            # キャンバス内ドラッグイベントに関数バインド
+            self.window_sub_canvas.bind("<Button1-Motion>", self.event_clip_keep)
+            # キャンバス内クリック終了イベントに関数バインド
+            self.window_sub_canvas.bind("<ButtonRelease-1>", self.event_clip_end)
+            # キャンバスを配置
+            self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
+            self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
+        except:
+            self.control.logger.debug("キャンバス作成失敗")  # Log出力
 
     # ------------------------------------------------------------------------------------
     def SubFrame1(self):
         """
         フレーム1作成
         """
-        BtnWidth, BtnHeight = 50, 50
-        EntWidth, EntHeight = 50, 50
-        LabelWidth, LabelHeight = 50, 50
+        BtnWidth, BtnHeight = 70, 20
+        EntWidth, EntHeight = 70, 20
+        LabelWidth, LabelHeight = 70, 20
         self.str_dir = tk.StringVar()
         # IntVar生成
         self.radio_intvar1 = tk.IntVar()
         self.radio_intvar2 = tk.IntVar()
 
         Frame = tk.Frame(
-            self.window_root.window_rootFrame,
+            self,
             height=300,
             width=300,
             bg="#60cad1",
@@ -151,7 +152,7 @@ class ViewGUI(tk.Toplevel):
         self.button_prev = ck.CTkButton(
             master=Frame,
             text="前画像<<",
-            command=Functions.event_prev,
+            command=self.event_prev,
             width=BtnWidth,
             height=BtnHeight,
             border_width=2,
@@ -164,7 +165,7 @@ class ViewGUI(tk.Toplevel):
         self.button_next = ck.CTkButton(
             master=Frame,
             text=">>次画像",
-            command=Functions.event_next,
+            command=self.event_next,
             width=BtnWidth,
             height=BtnHeight,
             border_width=2,
@@ -207,7 +208,7 @@ class ViewGUI(tk.Toplevel):
             values=self.control.file_list,
             state="readonly",
             width=EntWidth,
-            command=Functions.event_updatefile,
+            command=self.event_updatefile,
         )
         self.combo_file.set(self.control.file_list[0])
         self.combo_file.grid(
@@ -219,11 +220,11 @@ class ViewGUI(tk.Toplevel):
         """
         フレーム2作成
         """
-        BtnWidth, BtnHeight = 50, 50
-        EntWidth, EntHeight = 50, 50
-        LabelWidth, LabelHeight = 50, 50
+        BtnWidth, BtnHeight = 70, 20
+        EntWidth, EntHeight = 70, 20
+        LabelWidth, LabelHeight = 70, 20
         Frame = tk.Frame(
-            self.window_root.window_rootFrame,
+            self,
             height=300,
             width=300,
             bg="#60cad1",
@@ -254,7 +255,7 @@ class ViewGUI(tk.Toplevel):
                     text=text,
                     value=val + 1,
                     variable=self.radio_intvar1,
-                    command=Functions.event_rotate,
+                    command=self.event_rotate,
                     bg="#60cad1",
                 )
             )
@@ -278,7 +279,7 @@ class ViewGUI(tk.Toplevel):
                     text=text,
                     value=val + 1,
                     variable=self.radio_intvar2,
-                    command=Functions.event_flip,
+                    command=self.event_flip,
                     bg="#60cad1",
                 )
             )
@@ -290,11 +291,11 @@ class ViewGUI(tk.Toplevel):
         """
         フレーム2作成
         """
-        BtnWidth, BtnHeight = 50, 50
-        EntWidth, EntHeight = 50, 50
-        LabelWidth, LabelHeight = 50, 50
+        BtnWidth, BtnHeight = 70, 20
+        EntWidth, EntHeight = 70, 20
+        LabelWidth, LabelHeight = 70, 20
         Frame = tk.Frame(
-            self.window_root.window_rootFrame,
+            self,
             height=300,
             width=300,
             bg="#60cad1",
@@ -314,7 +315,7 @@ class ViewGUI(tk.Toplevel):
         self.button_clip_start = ck.CTkButton(
             master=Frame,
             text="選択開始",
-            command=Functions.event_clip_try,
+            command=self.event_clip_try,
             width=BtnWidth,
             height=BtnHeight,
             border_width=2,
@@ -327,7 +328,7 @@ class ViewGUI(tk.Toplevel):
         self.button_clip_done = ck.CTkButton(
             master=Frame,
             text="範囲トリミング",
-            command=Functions.event_clip_done,
+            command=self.event_clip_done,
             width=BtnWidth,
             height=BtnHeight,
             border_width=2,
@@ -340,7 +341,7 @@ class ViewGUI(tk.Toplevel):
         self.button_clip_Erace = ck.CTkButton(
             master=Frame,
             text="範囲削除",
-            command=Functions.event_clip_Erace,
+            command=self.event_clip_Erace,
             width=BtnWidth,
             height=BtnHeight,
             border_width=2,
@@ -362,7 +363,7 @@ class ViewGUI(tk.Toplevel):
         self.button_Oversave = ck.CTkButton(
             master=Frame,
             text="上書保存",
-            command=Functions.event_Oversave,
+            command=self.event_Oversave,
             width=BtnWidth,
             height=BtnHeight,
             border_width=2,
@@ -375,7 +376,7 @@ class ViewGUI(tk.Toplevel):
         self.button_undo = ck.CTkButton(
             master=Frame,
             text="編集取消",
-            command=Functions.event_undo,
+            command=self.event_undo,
             width=BtnWidth,
             height=BtnHeight,
             border_width=2,
@@ -388,7 +389,7 @@ class ViewGUI(tk.Toplevel):
         self.button_save = ck.CTkButton(
             master=Frame,
             text="別名保存",
-            command=Functions.event_save,
+            command=self.event_save,
             width=BtnWidth,
             height=BtnHeight,
             border_width=2,
@@ -417,7 +418,7 @@ class ViewGUI(tk.Toplevel):
         #     if event_type == "Expose":
         #         event_seq = "<" + event_type + ">"
         #         try:
-        #             self.window_root.window_rootFrame.bind_all(
+        #             self.bind_all(
         #                 event_seq, self.event_handler
         #             )
         #             # print(event_type)
@@ -436,8 +437,31 @@ class ViewGUI(tk.Toplevel):
             initialdir=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRView\CompanyData\1869",
         )
         self.control.Kanyosaki_name = os.path.basename(self.control.dir_path)
-        self.Dir.insert(0, self.control.dir_path)
+        self.entry_dir.insert(0, self.control.dir_path)
         self.control.file_list = self.control.SetDirlist(self.control.dir_path)
+        self.combo_file.configure(values=self.control.file_list)
+
+    # ----------------------------------------------------------------------------------
+    def event_updatefile(self, event):
+        """
+        ファイル選択ウィンドウクリックイベント
+        """
+        self.control.file_list = self.control.SetDirlist(self.control.dir_path)
+        self.combo_file["value"] = self.control.file_list
+        self.control.imgurl = self.control.dir_path + r"/" + self.combo_file.get()
+
+        self.control.img_name = os.path.splitext(os.path.basename(self.control.imgurl))[
+            0
+        ]
+
+        FN = os.path.basename(self.control.imgurl)
+        f_r = 0
+        for f_l in self.control.file_list:
+            if f_l == FN:
+                set_pos = f_r
+                break
+            f_r += 1
+        self.control.DrawImage("set", set_pos=set_pos)
 
     # ----------------------------------------------------------------------------------
     def event_save(self):
@@ -453,7 +477,9 @@ class ViewGUI(tk.Toplevel):
                     filetypes=[("PNG", ".png"), ("JPEG", ".jpg")]
                 )
                 self.control.SaveImage(self.Newfilename)
-                self.file_list = self.control.SetDirlist(self.dir_path)  # ファイルリストリロード
+                self.file_list = self.control.SetDirlist(
+                    self.control.dir_path
+                )  # ファイルリストリロード
                 for F_r in range(len(self.file_list)):
                     if self.file_list[F_r] in self.Newfilename:
                         self.control.model.stock_url = ""
@@ -462,6 +488,107 @@ class ViewGUI(tk.Toplevel):
                 messagebox.showinfo("確認", "画像ファイルが選択されていません。")
         except:
             messagebox.showinfo("確認", "画像ファイルが選択されていません。")
+
+    def event_Searchsave(self):
+        """
+        編集履歴確認イベント
+        """
+        try:
+            # 一時保存ファイルを確認
+            if self.control.model.stock_url != "":
+                if messagebox.askokcancel("確認", "編集履歴が残っています。上書きしますか？"):
+                    os.remove(self.control.model.stock_url)
+                    self.control.model.stock_url = ""
+                    self.control.OverSaveImage()
+        except:
+            messagebox.showinfo("確認", "編集履歴確認でエラーが起きました。")
+
+    def event_prev(self):
+        """
+        prevボタンクリックイベント
+        """
+        pos = int(self.control.DrawImage("prev")[0])
+        self.combo_file.set(self.control.file_list[pos])
+
+    def event_next(self):
+        """
+        nextボタンクリックイベント
+        """
+        pos = int(self.control.DrawImage("next")[0])
+        self.combo_file.set(self.control.file_list[pos])
+
+    def event_rotate(self):
+        """
+        画像回転変更イベント
+        """
+        val = self.radio_intvar1.get()
+        cmd = "rotate-" + str(val)
+        self.control.EditImage(cmd)
+
+    def event_flip(self):
+        """
+        画像反転イベント
+        """
+        val = self.radio_intvar2.get()
+        cmd = "flip-" + str(val)
+        self.control.EditImage(cmd)
+
+    def event_clip_try(self):
+        """
+        Tryボタンイベント
+        """
+        self.clip_enable = True
+
+    def event_clip_done(self):
+        """
+        Doneボタンイベント
+        """
+        if self.clip_enable:
+            self.control.EditImage("clip_done")
+            self.clip_enable = False
+
+    def event_clip_Erace(self):
+        """
+        Eraceボタンイベント
+        """
+        if self.clip_enable:
+            self.control.EditImage("clip_Erace")
+            self.clip_enable = False
+
+    def event_clip_start(self, event):
+        """
+        画像処理Saveイベント
+        """
+        if self.clip_enable:
+            self.control.DrawRectangle("clip_start", event.y, event.x)
+
+    def event_clip_keep(self, event):
+        """
+        画像処理Undoイベント
+        """
+        if self.clip_enable:
+            self.control.DrawRectangle("clip_keep", event.y, event.x)
+
+    def event_clip_end(self, event):
+        """
+        キャンバス画像左クリック範囲指定で終端まで確定後
+        """
+        if self.clip_enable:
+            self.control.DrawRectangle("clip_end", event.y, event.x)
+
+    def event_Oversave(self):
+        """
+        OverSaveボタンクリックイベント
+        """
+        self.control.OverSaveImage()
+
+    def event_undo(self):
+        """
+        Undoボタンクリックイベント
+        """
+        self.control.UndoImage("None")
+        self.radio_intvar1.set(0)
+        self.radio_intvar2.set(0)
 
     # #######################################################################################
 

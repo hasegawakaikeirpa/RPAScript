@@ -9,10 +9,18 @@ from tkinter import font
 
 
 class ControlGUI:
-    def __init__(self, default_path, logger):
+    def __init__(self, root, default_path):
 
         # Model Class生成
         self.model = ModelImage()
+
+        self.width_of_window = int(int(root.winfo_screenwidth()) * 0.95)
+        self.height_of_window = int(int(root.winfo_screenheight()) * 0.85)
+        self.x_coodinate = self.width_of_window / 2
+        self.y_coodinate = self.height_of_window / 2
+        self.padx = self.x_coodinate / 4
+        self.pady = self.y_coodinate / 4
+
         self.dir_path = default_path
         if os.path.isfile(os.getcwd() + r"\OCR.png") is True:
             self.imgurl = os.getcwd() + r"\OCR.png"
@@ -37,7 +45,6 @@ class ControlGUI:
         self.DefDB_name = "OCR_DB"
         self.CreateDB(self.DefDB_name)
         self.btn_font = ("", 50)
-        self.logger = logger
 
     def tomlread(self):
         """

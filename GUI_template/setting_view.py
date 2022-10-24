@@ -9,7 +9,6 @@ from socket import gethostbyname, gethostname
 from uuid import getnode
 
 import ControlGUI
-import Functions
 
 # 自作のページビューをインポート
 from page_view import LanguagePage, AudioPage
@@ -66,23 +65,7 @@ class SettingsView(ttk.Frame):
         # サイドツリーフレームを作成
         self.create_frame_treeview().grid(row=0, column=0, sticky="ens")
         # フレーム作成
-        self.create_frame_page().grid(row=0, column=1, sticky=tk.NSEW)
-
-        self.control = ControlGUI.ControlGUI(master, os.getcwd())
-
-        # ######################################################################
-        master.geometry(
-            "%dx%d+%d+%d"
-            % (
-                self.control.width_of_window,
-                self.control.height_of_window,
-                self.control.x_coodinate,
-                self.control.y_coodinate,
-            )
-        )
-        # root.minsize(control.width_of_window, control.height_of_window)
-        # 　メインウィンドウタイトル
-        master.title(self.control.Toptitle)
+        self.create_frame_page().grid(row=0, column=1)
 
     def create_frame_page(self) -> ttk.Frame:
         """
@@ -156,43 +139,10 @@ class SettingsTreeview(ttk.Treeview):
         self.insert(parent="", index=tk.END, image=image, text=section_text)
 
 
-# ###########################################################################################
-def MenuCreate(self):
-    """
-    メニューバー作成
-    """
-    try:
-        self.config(bg="#60cad1")
-        # メニューバー作成
-        self.men = tk.Menu(self, tearoff=0)
-        # メニューバーを画面にセット
-        self.config(menu=self.men)
-        # ファイルメニューを作成する
-        self.menu_file = tk.Menu(self.men)
-        self.men.add_command(
-            label="ファイル", command=lambda: Functions.event_set_file(self)
-        )
-        # 保存メニューを作成する
-        self.savemenu = tk.Menu(self, tearoff=False)
-        self.men.add_cascade(label="保存", menu=self.savemenu)
-        self.savemenu.add_command(
-            label="上書保存", command=lambda: Functions.event_save(self)
-        )
-        self.savemenu.add_separator()  # 仕切り線
-        self.savemenu.add_command(
-            label="別名保存", command=lambda: Functions.event_Searchsave(self)
-        )
-    except:
-        print("メニューバー作成失敗")  # Log出力
-
-
 if __name__ == "__main__":
     # ルート作成
     root = tk.Tk()
     root.geometry("640x480")
-    MenuCreate(root)  # メニューバー配置
-    # ######################################################################
-
     # ttk.style設定
     style = ttk.Style()
     style.configure("Treeview.Heading", relief="flat", background="white")
@@ -207,10 +157,12 @@ if __name__ == "__main__":
     settings = SettingsView(root, relief="flat")
     # settings = SettingsView(root)
 
+    control = ControlGUI
+
     settings.add_page(
         image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",
         setting_name="Language",
-        page=LanguagePage,
+        page=LanguagePage(master=root, control=control),
     )
     settings.add_page(
         image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",

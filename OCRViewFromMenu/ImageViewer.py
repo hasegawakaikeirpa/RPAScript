@@ -6,37 +6,16 @@ import IconCode
 
 
 class Application(tk.Frame):
-    # def __init__(self, master=None):
-    # super().__init__(master)
-    # self.pack()
+    def __init__(self, Frame, control, master=None):
 
-    # self.pil_image = None  # 表示する画像データ
-    # self.my_title = "画像ビューワー"  # タイトル
-    # self.back_color = "#60cad1"  # 背景色
+        self.control = control
 
-    # # ウィンドウの設定
-    # self.master.title(self.my_title)  # タイトル
-
-    # width_of_window = int(int(self.master.winfo_screenwidth()) * 0.5)
-    # height_of_window = int(int(self.master.winfo_screenheight()) * 0.5)
-    # # wid_Par = width_of_window / 1459
-    # # hei_Par = height_of_window / 820
-    # x_coodinate = width_of_window * 0.9
-    # y_coodinate = height_of_window * 0.01
-    # # 　メインウィンドウサイズ指定
-    # self.master.geometry(
-    #     "%dx%d+%d+%d"
-    #     % (width_of_window, height_of_window, x_coodinate, y_coodinate)
-    # )
-
-    # self.create_menu()  # メニューの作成
-    # self.create_widget()  # ウィジェットの作成
-    def __init__(self, Frame, master=None):
         self.master = Frame
         self.pil_image = None  # 表示する画像データ
         # self.back_color = "#60cad1"  # 背景色
         self.back_color = "gray"  # 背景色
         self.create_widget_forFrame()  # ウィジェットの作成
+
         # self.set_image(imgurl)
         # self.update()
 
@@ -121,8 +100,8 @@ class Application(tk.Frame):
         self.statusbar.pack(side=tk.BOTTOM, fill=tk.X)
 
         # Canvas
-        self.canvas = tk.Canvas(self.master, background=self.back_color)
-        self.canvas.pack(expand=True, fill=tk.BOTH)  # この両方でDock.Fillと同じ
+        self.control.canvas = tk.Canvas(self.master, background=self.back_color)
+        self.control.canvas.pack(expand=True, fill=tk.BOTH)  # この両方でDock.Fillと同じ
 
         # マウスイベント
         self.master.bind("<Motion>", self.mouse_move)  # MouseMove
@@ -141,6 +120,7 @@ class Application(tk.Frame):
 
         # # ステータスバー相当(親に追加)
         self.statusbar = tk.Frame(self.master)
+
         # self.mouse_position = tk.Label(
         #     self.statusbar, relief=tk.SUNKEN, text="mouse position"
         # )  # マウスの座標
@@ -166,20 +146,24 @@ class Application(tk.Frame):
         # self.statusbar.pack(side=tk.BOTTOM, fill=tk.X)
 
         # Canvas
-        self.canvas = tk.Canvas(self.master, background=self.back_color)
-        self.canvas.pack(side=tk.TOP, expand=True, fill=tk.BOTH)  # この両方でDock.Fillと同じ
+        self.control.canvas = tk.Canvas(self.master, background=self.back_color)
+        self.control.canvas.pack(
+            side=tk.TOP, expand=True, fill=tk.BOTH
+        )  # この両方でDock.Fillと同じ
 
         # マウスイベント
-        # self.canvas.bind("<Motion>", self.mouse_move)  # MouseMove
-        self.canvas.bind("<B1-Motion>", self.mouse_move_left)  # MouseMove（左ボタンを押しながら移動）
+        # self.control.canvas.bind("<Motion>", self.mouse_move)  # MouseMove
+        self.control.canvas.bind(
+            "<B1-Motion>", self.mouse_move_left
+        )  # MouseMove（左ボタンを押しながら移動）
         # self.master.bind(
         #     "<Shift-B1-Motion>", self.Shift_mouse_move_left
         # )  # MouseMove（左ボタンを押しながら移動）
-        self.canvas.bind("<Button-1>", self.mouse_down_left)  # MouseDown（左ボタン）
-        self.canvas.bind(
+        self.control.canvas.bind("<Button-1>", self.mouse_down_left)  # MouseDown（左ボタン）
+        self.control.canvas.bind(
             "<Double-Button-1>", self.mouse_double_click_left
         )  # MouseDoubleClick（左ボタン）
-        self.canvas.bind("<MouseWheel>", self.mouse_wheel)  # MouseWheel
+        self.control.canvas.bind("<MouseWheel>", self.mouse_wheel)  # MouseWheel
 
     def set_image(self, filename):
         """画像ファイルを開く"""
@@ -312,8 +296,8 @@ class Application(tk.Frame):
         """画像をウィジェット全体に表示させる"""
 
         # キャンバスのサイズ
-        canvas_width = self.canvas.winfo_width()
-        canvas_height = self.canvas.winfo_height()
+        canvas_width = self.control.canvas.winfo_width()
+        canvas_height = self.control.canvas.winfo_height()
 
         if (image_width * image_height <= 0) or (canvas_width * canvas_height <= 0):
             return
@@ -350,11 +334,11 @@ class Application(tk.Frame):
         if pil_image is None:
             return
 
-        self.canvas.delete("all")
+        self.control.canvas.delete("all")
 
         # キャンバスのサイズ
-        canvas_width = self.canvas.winfo_width()
-        canvas_height = self.canvas.winfo_height()
+        canvas_width = self.control.canvas.winfo_width()
+        canvas_height = self.control.canvas.winfo_height()
 
         # キャンバスから画像データへのアフィン変換行列を求める
         # （表示用アフィン変換行列の逆行列を求める）
@@ -373,7 +357,7 @@ class Application(tk.Frame):
         self.image = ImageTk.PhotoImage(image=dst, master=self.master)
 
         # 画像の描画
-        self.canvas.create_image(
+        self.control.canvas.create_image(
             0,
             0,  # 画像表示位置(左上の座標)
             anchor="nw",  # アンカー、左上が原点
