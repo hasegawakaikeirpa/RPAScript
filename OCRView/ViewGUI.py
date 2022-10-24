@@ -1,29 +1,3 @@
-import sys
-import ProgressBar as PB
-import tkinter as tk
-import os
-from tkinter import filedialog, messagebox
-import OpenWindow as OW
-from ControlGUI import ControlGUI
-from TKINTERCV2Setting import Main as CSVSetMain
-import customtkinter as ck
-import logging.config
-from platform import machine, node, platform, processor, release, system, version
-from socket import gethostbyname, gethostname
-from uuid import getnode
-import IconCode
-import ViewGUI_obj as V_obj
-from P_Table import Main as ptMain
-
-# from line_profiler import LineProfiler
-
-# exe化コマンド↓
-# pyinstaller ViewGUI.py --onefile --onedir --noconsole --clean --icon=hasegawa.ico
-# 上記コマンドでできた[dist]→[ViewGUI]フォルダ内に
-# [poppler-22.01.0フォルダ]・[Tesseract-OCRフォルダ]・[StraightListTate.csv]・[StraightListYoko.csv]・[key.json]
-# customtkinterフォルダ・LogConfフォルダ・Logフォルダ・CompanyDataフォルダ・D_curcle_a.png・D_curcle_b.png
-# をコピーして完了
-
 """
 関数別行単位の処理速度計測
 """
@@ -41,8 +15,8 @@ class ViewGUI:
     """
 
     def __init__(self, window_root, title_n, default_path):
-        # global SideWidth, SideHeight, LabelWidth
-        # global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
+        global SideWidth, SideHeight, LabelWidth
+        global LabelHeight, BtnWidth, BtnHeight, EntHeight, EntWidth
         print("#########################################################")
         print(os.getcwd())
         print("#########################################################")
@@ -80,17 +54,12 @@ class ViewGUI:
         self.height_of_window = int(int(self.window_root.winfo_screenheight()) * 0.85)
         self.wid_Par = self.width_of_window / 1459
         self.hei_Par = self.height_of_window / 820
-        self.x_coodinate = self.width_of_window * 0.01
-        self.y_coodinate = self.height_of_window * 0.01
+        x_coodinate = self.width_of_window * 0.01
+        y_coodinate = self.height_of_window * 0.01
         # 　メインウィンドウサイズ指定
         self.window_root.geometry(
             "%dx%d+%d+%d"
-            % (
-                self.width_of_window,
-                self.height_of_window,
-                self.x_coodinate,
-                self.y_coodinate,
-            )
+            % (self.width_of_window, self.height_of_window, x_coodinate, y_coodinate)
         )
         self.window_root.minsize(self.width_of_window, self.height_of_window)
         # 　メインウィンドウタイトル
@@ -273,48 +242,48 @@ class ViewGUI:
         """
         SubMenu起動ボタン関数
         """
-        # # menu作成######################################################################
-        # self.logger.debug("SubMenuOpen関数起動")  # Log出力
-        # # サブフレーム起動確認
-        # try:
-        #     if self.menuwin.widgetName == "toplevel":
-        #         SMW = True
-        #     else:
-        #         SMW = False
-        # except:
-        #     SMW = False
-        # # -------------------------------------------------------------------------------
-        # if SMW is False:
-        #     self.menuwin = tk.Toplevel()  # サブWindow作成
-        #     self.menuwin.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
-        #     self.menuwin.geometry("360x180+0+0")  # トップWindow表示位置指定
-        #     # フレーム作成
-        #     self.menuwinFrame = tk.Frame(self.menuwin, height=360, width=180)
-        #     self.menuwinFrame.pack(fill=tk.BOTH, expand=True)
-        #     # 　ラベル生成--------------------------------------------------------------------
-        #     label_tb1 = ck.CTkLabel(
-        #         master=self.menuwinFrame,
-        #         text="[ノイズ除去値]",
-        #         width=LabelWidth,
-        #         height=LabelHeight,
-        #         corner_radius=8,
-        #     )
-        #     label_tb1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        #     # ------------------------------------------------------------------------------
-        #     # 　テキストボックス生成---------------------------------------------------------
-        #     textbox1 = tk.Entry(self.menuwinFrame, text="ノイズ除去値(奇数)", width=15)
-        #     textbox1.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
-        #     # ------------------------------------------------------------------------------
-        #     # 　ボタン生成------------------------------------------------------------------
-        #     menubutton2 = tk.Button(
-        #         self.menuwinFrame,
-        #         text="ノイズ除去",
-        #         width=20,
-        #         command=lambda: self.menubutton2_click(textbox1),
-        #     )
-        #     menubutton2.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
+        # menu作成######################################################################
+        self.logger.debug("SubMenuOpen関数起動")  # Log出力
+        # サブフレーム起動確認
+        try:
+            if self.menuwin.widgetName == "toplevel":
+                SMW = True
+            else:
+                SMW = False
+        except:
+            SMW = False
+        # -------------------------------------------------------------------------------
+        if SMW is False:
+            self.menuwin = tk.Toplevel()  # サブWindow作成
+            self.menuwin.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
+            self.menuwin.geometry("360x180+0+0")  # トップWindow表示位置指定
+            # フレーム作成
+            self.menuwinFrame = tk.Frame(self.menuwin, height=360, width=180)
+            self.menuwinFrame.pack(fill=tk.BOTH, expand=True)
+            # 　ラベル生成--------------------------------------------------------------------
+            label_tb1 = ck.CTkLabel(
+                master=self.menuwinFrame,
+                text="[ノイズ除去値]",
+                width=LabelWidth,
+                height=LabelHeight,
+                corner_radius=8,
+            )
+            label_tb1.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+            # ------------------------------------------------------------------------------
+            # 　テキストボックス生成---------------------------------------------------------
+            textbox1 = tk.Entry(self.menuwinFrame, text="ノイズ除去値(奇数)", width=15)
+            textbox1.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+            # ------------------------------------------------------------------------------
+            # 　ボタン生成------------------------------------------------------------------
+            menubutton2 = tk.Button(
+                self.menuwinFrame,
+                text="ノイズ除去",
+                width=20,
+                command=lambda: self.menubutton2_click(textbox1),
+            )
+            menubutton2.grid(row=1, column=3, padx=5, pady=5, sticky=tk.W)
 
-        # # ##############################################################################
+        # ##############################################################################
 
     # ----------------------------------------------------------------------------------
     def Resize(self, Resizewidth, Resizeheight):
@@ -371,7 +340,7 @@ class ViewGUI:
             msg = messagebox.showinfo("確認", "ノイズ除去値を入力してください。")
 
     # ----------------------------------------------------------------------------------
-    def button_LeftLotate_func(self, event=None):
+    def button_LeftLotate(self, event=None):
         """
         左回転ボタン処理
         """
@@ -381,7 +350,7 @@ class ViewGUI:
         self.control.EditImage(cmd)
 
     # ----------------------------------------------------------------------------------
-    def button_RightLotate_func(self, event=None):
+    def button_RightLotate(self, event=None):
         """
         右回転ボタン処理
         """

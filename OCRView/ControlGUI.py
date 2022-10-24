@@ -14,7 +14,7 @@ class ControlGUI:
         self.ext_keys = [".png", ".jpg", ".jpeg", ".JPG", ".PNG", "PDF", "pdf"]
         self.target_files = []
         self.file_pos = 0
-
+        self.file_list = ["..[select file]"]
         self.clip_sx = 0
         self.clip_sy = 0
         self.clip_ex = 0

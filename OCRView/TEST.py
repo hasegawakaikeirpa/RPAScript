@@ -1,45 +1,38 @@
-import tkinter as tk
+from functools import wraps
+import traceback
 
 
-class Application(tk.Frame):
-    def __init__(self, master):
-        super().__init__(master)
-        self.pack()
-        master.geometry("300x300")
-        master.title("ベースウィンドウ")
+def Err_Check(*args, **kwargs):
+    def _my_decorator(func):
+        # _my_decorator_body() を定義する前に必要な処理があれば、ここに書く
+        @wraps(func)
+        def _my_decorator_body(*body_args, **body_kwargs):
+            # 前処理はここで実行
+            try:
+                # デコレートした本体の実行
+                ret = func(*body_args, **body_kwargs)
+            except Exception as e:
+                tp = traceback.print_exc()
+                print("")
+                raise
+            # 後処理はここで実行
+            return ret
 
-        self.window = []
-        self.user = []
+        # デコレータが記載された時に処理が必要な場合にはここに書く #2
+        return _my_decorator_body
 
-        self.button = tk.Button(
-            master, text="ウィンドウ作成", command=self.buttonClick, width=10
-        )
-        self.button.place(x=110, y=150)
-        self.button.config(fg="black", bg="skyblue")
+    # デコレータが記載された時に処理が必要な場合にはここに書く #1
 
-    def buttonClick(self):
-        self.window.append(tk.Toplevel())
-        self.user.append(User(self.window[len(self.window) - 1], len(self.window)))
+    if len(args) == 1 and callable(args[0]):
+        # 引数無しでデコレータが呼ばれた場合はここで処理
+        return _my_decorator(args[0])
 
-
-class User(tk.Frame):
-    def __init__(self, master, num):
-        super().__init__(master)
-        self.pack()
-        self.num = num
-        master.geometry("300x300")
-        master.title(str(self.num) + "つ目に作成されたウィンドウ")
-
-        self.button = tk.Button(
-            master, text="コンソール上での確認", command=self.buttonClick, width=20
-        )
-        self.button.place(x=70, y=150)
-        self.button.config(fg="black", bg="pink")
-
-    def buttonClick(self):
-        print("こちらは" + str(self.num) + "つ目に作成されたウィンドウです。")
+    else:
+        # 引数ありでデコレータが呼ばれた場合はここで処理
+        return _my_decorator
 
 
+@Err_Check
 def main():
     win = tk.Tk()
     app = Application(win)
