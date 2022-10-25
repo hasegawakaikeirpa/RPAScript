@@ -66,8 +66,8 @@ class Application(ttk.Frame):
         self.control.hei_Par = self.control.height_of_window / 820
         # # ルートウィンドウ
         self.master.window_rootFrame = tk.Frame(master=master)
-
-        self.control.top = tk.Toplevel()
+        self.master.window_rootFrame.pack(fill=tk.BOTH, expand=True)
+        self.control.top = tk.Toplevel(master=master)
 
         self.control.top.geometry(
             "%dx%d+%d+%d"
@@ -231,6 +231,10 @@ class Application(ttk.Frame):
         )  # 下Windowのキャンバスに画像挿入
         self.back.pack(side=tk.TOP, fill=tk.BOTH, expand=True)  # 下Windowを配置
 
+        self.backBottom = tk.Frame(
+            self.master.window_rootFrame, height=self.control.Bottom_Column
+        )
+        self.backBottom.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         self.master.window_rootFrame.bind("<Configure>", self.change)
 
         self.back.bind("<Unmap>", self.unmap)
@@ -280,16 +284,16 @@ class Application(ttk.Frame):
         """
         上下ウィンドウ連携処理(上を隠す)
         """
-        self.control.top.master.withdraw()
+        # self.control.top.master.withdraw()
 
     # ---------------------------------------------------------------------------------------------
     def map(self, event):
         """
         上下ウィンドウ連携処理(上を表示)
         """
-        self.lift()
-        self.control.top.master.wm_deiconify()
-        self.control.top.master.attributes("-topmost", True)
+        # self.lift()
+        # self.control.top.master.wm_deiconify()
+        # self.control.top.master.attributes("-topmost", True)
 
     # ---------------------------------------------------------------------------------------------
     def change(self, event):

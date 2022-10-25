@@ -231,14 +231,14 @@ if __name__ == "__main__":
     # settings = SettingsView(root)
 
     settings.add_page(
-        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",
-        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Language",
         page=ViewGUIPage,
     )
     settings.add_page(
-        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",
-        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Audio",
         page=LineEditPage,
     )
