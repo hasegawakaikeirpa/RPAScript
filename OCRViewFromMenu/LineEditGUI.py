@@ -66,16 +66,10 @@ class Application(ttk.Frame):
         self.control.hei_Par = self.control.height_of_window / 820
         # # ルートウィンドウ
         self.master.window_rootFrame = tk.Frame(master=master)
-        # self.master = FrameClass.Frame(
-        #     window_root, f"{control.Toptitle}-表形式抽出-", self.control
-        # )
-        # # 透過キャンバスウィンドウ
-        # self.top = FrameClass.Frame(
-        #     tk.Toplevel(), f"{control.Toptitle}-表形式抽出-", self.control
-        # )
-        self.top = tk.Toplevel()
 
-        self.top.geometry(
+        self.control.top = tk.Toplevel()
+
+        self.control.top.geometry(
             "%dx%d+%d+%d"
             % (
                 self.control.width_of_window,
@@ -84,57 +78,65 @@ class Application(ttk.Frame):
                 self.control.y_coodinate,
             )
         )
-        self.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
-        self.top.window_rootFrame = tk.Frame(master=self.top)
-        self.top.window_rootFrame.pack(fill=tk.BOTH, expand=True)
-        Functions.MenuCreate(self.top)  # メニューバー作成
+        self.control.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
+        self.control.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
+        self.control.top.window_rootFrame = tk.Frame(master=self.control.top)
+        self.control.top.window_rootFrame.pack(fill=tk.BOTH, expand=True)
+        self.control.top.bind("<Motion>", self.change)  # 透過ウィンドウにマウス移動関数bind
+        self.master.window_rootFrame.bind("<Motion>", self.change)  # 下ウィンドウにマウス移動関数bind
+        Functions.MenuCreate(self.control.top)  # メニューバー作成
         self.FrameCreate()  # フレーム作成
+        self.control.top.withdraw()
 
     # 要素作成######################################################################################
     def FrameCreate(self):
         # サイドメニュー作成
         self.SideFrame = tk.Frame(
-            self.top.window_rootFrame,
-            width=100,
+            self.control.top.window_rootFrame,
+            width=200,
             height=self.control.height_of_window,
-            bg="#ecb5f5",
+            bg="white",
             relief=tk.GROOVE,
         )
-        self.SideFrame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # self.SideFrame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.SideFrame.grid(row=0, column=0, rowspan=2, sticky=tk.N + tk.S)
         # 透過キャンバスフレーム
-        self.topFrame = tk.Frame(
-            self.top.window_rootFrame,
+        self.control.topFrame = tk.Frame(
+            self.control.top.window_rootFrame,
             bg="snow",
             width=self.control.FCW,
             height=self.control.FCH,
             relief=tk.GROOVE,
             bd=2,
         )
-        self.topFrame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        # self.control.topFrame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.control.topFrame.grid(row=0, column=1, sticky=tk.NSEW)
         # 透過キャンバス作成
-        self.top.forward = tk.Canvas(
-            self.topFrame,
+        self.control.top.forward = tk.Canvas(
+            self.control.topFrame,
             background="white",
             width=self.control.FCW,
             height=self.control.FCH,
         )
-        self.top.forward.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-        self.top.forward.bind("Enter", self.change)
+        self.control.top.forward.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.control.top.forward.bind("Enter", self.change)
         self.Transparent_Create()  # 透過キャンバス描画
         # ボトムメニュー作成
         self.bottumFrame = tk.Frame(
-            self.top.window_rootFrame,
+            self.control.top.window_rootFrame,
             width=self.control.width_of_window,
-            height=self.control.height_of_window,
-            bg="#ecb5f5",
+            height=150,
+            bg="black",
             relief=tk.GROOVE,
         )
-        self.bottumFrame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        # self.bottumFrame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.bottumFrame.grid(row=1, column=1, sticky=tk.NSEW)
         self.bottumFrame.propagate(0)
         #################################################################################
         self.ImportIMG()
-        # LineEditGUI_Frame.Frame1(self)
+        LineEditGUI_Frame.Frame1(self)
         LineEditGUI_Frame.Frame2(self)
+        LineEditGUI_Frame.Frame3(self)
 
     def Transparent_Create(self):
         """
@@ -152,10 +154,10 @@ class Application(ttk.Frame):
             ripar3 = round(readcsv1Item[3] * self.control.HCH, 0)  # * CWw
             TName = "Line" + str(ri)
             try:
-                self.top.forward.dtag(TName, TName)
+                self.control.top.forward.dtag(TName, TName)
             except:
                 print("dtagErr")
-            self.top.forward.create_line(
+            self.control.top.forward.create_line(
                 ripar0,
                 ripar1,
                 ripar2,
@@ -165,11 +167,11 @@ class Application(ttk.Frame):
                 fill="#FF0000",
                 activefill="#DBDD6F",
             )
-            self.top.forward.tag_bind(TName, "<ButtonPress-1>", click1)
-            self.top.forward.tag_bind(TName, "<Control-Double-1>", EventDelete)
-            self.top.forward.tag_bind(TName, "<B1-Motion>", drag1)
+            self.control.top.forward.tag_bind(TName, "<ButtonPress-1>", click1)
+            self.control.top.forward.tag_bind(TName, "<Control-Double-1>", EventDelete)
+            self.control.top.forward.tag_bind(TName, "<B1-Motion>", drag1)
 
-            self.top.forward.place(x=0, y=0)
+            self.control.top.forward.place(x=0, y=0)
             BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Yoko"])
         for readcsv2Item in self.control.TateList:
             ri += 1
@@ -178,7 +180,7 @@ class Application(ttk.Frame):
             ripar2 = round(readcsv2Item[2] * self.control.HCW, 0)  # * CHh
             ripar3 = round(readcsv2Item[3] * self.control.HCH, 0)  # * CWw
             TName = "Line" + str(ri)
-            self.top.forward.create_line(
+            self.control.top.forward.create_line(
                 ripar0,
                 ripar1,
                 ripar2,
@@ -188,16 +190,16 @@ class Application(ttk.Frame):
                 fill="#00FF40",
                 activefill="#DBDD6F",
             )
-            self.top.forward.tag_bind(TName, "<ButtonPress-1>", click1)
-            self.top.forward.tag_bind(TName, "<Control-Double-1>", EventDelete)
-            self.top.forward.tag_bind(TName, "<B1-Motion>", drag1)
+            self.control.top.forward.tag_bind(TName, "<ButtonPress-1>", click1)
+            self.control.top.forward.tag_bind(TName, "<Control-Double-1>", EventDelete)
+            self.control.top.forward.tag_bind(TName, "<B1-Motion>", drag1)
 
-            self.top.forward.place(x=0, y=0)
+            self.control.top.forward.place(x=0, y=0)
             BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Tate"])
         TL = len(BtagsList)
         for TTL in range(TL):
             tagsListItem = BtagsList[TTL]
-            BB = self.top.forward.bbox(tagsListItem[0])
+            BB = self.control.top.forward.bbox(tagsListItem[0])
             BSS = [
                 tagsListItem[1] - BB[0],
                 tagsListItem[2] - BB[1],
@@ -229,14 +231,25 @@ class Application(ttk.Frame):
         )  # 下Windowのキャンバスに画像挿入
         self.back.pack(side=tk.TOP, fill=tk.BOTH, expand=True)  # 下Windowを配置
 
-        # self.master.window_rootFrame.bind("<Configure>", self.change)
+        self.master.window_rootFrame.bind("<Configure>", self.change)
 
-        # self.back.bind("<Unmap>", self.unmap)
-        # self.back.bind("<Map>", self.map)
-        # self.back.bind("<Double-1>", self.backbind)  # 下ウィンドウにダブルクリックbind
-        # self.back.bind("<Double-3>", self.Right_backbind)  # 下ウィンドウにダブルクリックbind
+        self.back.bind("<Unmap>", self.unmap)
+        self.back.bind("<Map>", self.map)
+        self.back.bind("<Double-1>", self.backbind)  # 下ウィンドウにダブルクリックbind
+        self.back.bind("<Double-3>", self.Right_backbind)  # 下ウィンドウにダブルクリックbind
 
     # 関数##############################################################################
+    def serchmaster(self):
+        sm = False
+        m = self.master
+        while sm is False:
+            m = m.master
+            if m is not None:
+                Em = m
+            else:
+                sm = True
+        return Em
+
     def ReadtomlLine(self):
         """
         画像名からtoml線軸リストを取得
@@ -267,7 +280,7 @@ class Application(ttk.Frame):
         """
         上下ウィンドウ連携処理(上を隠す)
         """
-        self.top.master.withdraw()
+        self.control.top.master.withdraw()
 
     # ---------------------------------------------------------------------------------------------
     def map(self, event):
@@ -275,16 +288,17 @@ class Application(ttk.Frame):
         上下ウィンドウ連携処理(上を表示)
         """
         self.lift()
-        self.top.master.wm_deiconify()
-        self.top.master.attributes("-topmost", True)
+        self.control.top.master.wm_deiconify()
+        self.control.top.master.attributes("-topmost", True)
 
     # ---------------------------------------------------------------------------------------------
     def change(self, event):
         """
         上下ウィンドウ連携処理(ウィンドウサイズ変更)
         """
-        top_geometry = self.top.master.geometry()
-        self.master.master.geometry(top_geometry)
+        top_geometry = self.control.top.geometry()
+        sm = self.serchmaster()
+        sm.geometry(top_geometry)
 
     # ---------------------------------------------------------------------------------------------
     def ChangeToml(self):
@@ -293,11 +307,11 @@ class Application(ttk.Frame):
         """
         try:
             typ = [("tomlファイル", "*.toml")]
-            self.top.withdraw()
+            self.control.top.withdraw()
             tomlurl = filedialog.askopenfilename(filetypes=typ)
             if tomlurl != "":
                 try:
-                    self.top.destroy()
+                    self.control.top.destroy()
                     self.master.destroy()
                 except:
                     print("")
@@ -307,10 +321,10 @@ class Application(ttk.Frame):
                 self.control.debug("tomlファイル再読込完了")  # Log出力
             else:
                 messagebox.showinfo("確認", "設定ファイルを指定してください。")
-                self.top.deiconify()
+                self.control.top.deiconify()
         except:
             self.control.debug("tomlファイル変更Err")  # Log出力
-            self.top.deiconify()
+            self.control.top.deiconify()
 
     # ---------------------------------------------------------------------------------------------
     def backbind(self, event):
@@ -319,7 +333,7 @@ class Application(ttk.Frame):
         """
         global tagsList
         TName = "Line" + str(self.blankno())
-        sm = self.topFrame.children["!canvas"]
+        sm = self.control.topFrame.children["!canvas"]
         sm.create_line(
             event.x,
             0,
@@ -344,7 +358,7 @@ class Application(ttk.Frame):
         """
         global tagsList
         TName = "Line" + str(self.blankno())
-        sm = self.topFrame.children["!canvas"]
+        sm = self.control.topFrame.children["!canvas"]
         sm.create_line(
             0,
             event.y,
@@ -489,7 +503,7 @@ def LoadImg(self, Wwidth, Wheight):
     #         # button = ck.CTkButton(
     #         #     master=frame,
     #         #     text="縦直線追加",
-    #         #     command=lambda: StLine(self.top.forward, CW, CH),
+    #         #     command=lambda: StLine(self.control.top.forward, CW, CH),
     #         #     width=BtnWidth,
     #         #     height=BtnHeight,
     #         #     border_width=2,
@@ -503,7 +517,7 @@ def LoadImg(self, Wwidth, Wheight):
     #         # button2 = ck.CTkButton(
     #         #     master=frame,
     #         #     text="横直線追加",
-    #         #     command=lambda: StWLine(self.top.forward, CW, CH),
+    #         #     command=lambda: StWLine(self.control.top.forward, CW, CH),
     #         #     width=BtnWidth,
     #         #     height=BtnHeight,
     #         #     border_width=2,
@@ -517,7 +531,7 @@ def LoadImg(self, Wwidth, Wheight):
     #         button5 = ck.CTkButton(
     #             master=frame,
     #             text="全直線削除",
-    #             command=lambda: AllLineDelete(self, self.top.forward),
+    #             command=lambda: AllLineDelete(self, self.control.top.forward),
     #             width=BtnWidth,
     #             height=BtnHeight,
     #             border_width=2,
@@ -531,7 +545,7 @@ def LoadImg(self, Wwidth, Wheight):
     #         button3 = ck.CTkButton(
     #             master=frame,
     #             text="新規直線描画",
-    #             command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
+    #             command=lambda: NewLineCreate(self, self.control.top.forward, HCW, HCH),
     #             width=BtnWidth,
     #             height=BtnHeight,
     #             border_width=2,
@@ -559,7 +573,7 @@ def LoadImg(self, Wwidth, Wheight):
     #         button3 = ck.CTkButton(
     #             master=frame,
     #             text="自動直線描画",
-    #             command=lambda: self.AutoNewLineCreate(self.top.forward, HCW, HCH),
+    #             command=lambda: self.AutoNewLineCreate(self.control.top.forward, HCW, HCH),
     #             width=BtnWidth,
     #             height=BtnHeight,
     #             border_width=2,
@@ -583,7 +597,7 @@ def LoadImg(self, Wwidth, Wheight):
     #             master=frame2,
     #             text="確定",
     #             command=lambda: EnterP(
-    #                 self.top.forward, HCW, HCH, self, self.master, self.top, self.ChangeVar
+    #                 self.control.top.forward, HCW, HCH, self, self.master, self.control.top, self.ChangeVar
     #             ),
     #             width=BtnWidth,
     #             height=BtnHeight,
@@ -610,10 +624,10 @@ def LoadImg(self, Wwidth, Wheight):
     #         button6.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
     #         # ##############################################################################
     #         thread2 = threading.Thread(
-    #             target=Gra(self.top.forward, readcsv1, readcsv2, HCW, HCH)
+    #             target=Gra(self.control.top.forward, readcsv1, readcsv2, HCW, HCH)
     #         )  # 透過キャンバスに罫線描画
     #         # thread2.start()  # 透過キャンバスに罫線描画
-    #         self.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
+    #         self.control.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
     #         # 下Windowのキャンバス作成
     #         # 画像の配置#####################################################################
     #         self.ImportIMG()
@@ -621,7 +635,7 @@ def LoadImg(self, Wwidth, Wheight):
     #         Entries = self.Entries
     #         self.master.attributes("-topmost", True)
     #         self.master.attributes("-topmost", False)
-    #         self.top.attributes("-topmost", True)
+    #         self.control.top.attributes("-topmost", True)
     #         G_logger.debug("TKINTERCV2Setting_Application起動完了")  # Log出力
 
     #     # ----------------------------------------------------------------------------------
@@ -654,7 +668,7 @@ def LoadImg(self, Wwidth, Wheight):
     #         global tagsList
     #         TName = "Line" + str(self.blankno())
     #         G_logger.debug("縦直線追加ボタン処理開始")  # Log出力
-    #         sm = self.topFrame.children["!canvas"]
+    #         sm = self.control.topFrame.children["!canvas"]
     #         sm.create_line(
     #             event.x,
     #             0,
@@ -680,7 +694,7 @@ def LoadImg(self, Wwidth, Wheight):
     #         global tagsList
     #         TName = "Line" + str(self.blankno())
     #         G_logger.debug("横直線追加ボタン処理開始")  # Log出力
-    #         sm = self.topFrame.children["!canvas"]
+    #         sm = self.control.topFrame.children["!canvas"]
     #         sm.create_line(
     #             0,
     #             event.y,
@@ -731,7 +745,7 @@ def LoadImg(self, Wwidth, Wheight):
     #         toml_c.dump_toml(Banktoml, tomlurl)
     #         self.TomlInsert(self.ReplaceStr, Banktoml["LineSetting"][rep_N])
     #         self.bottumFrame.grid()
-    #         self.topRepFrame.grid_forget()
+    #         self.control.topRepFrame.grid_forget()
     #         G_logger.debug("SideMenutoml変換設定の更新完了")  # Log出力
 
     #     # ---------------------------------------------------------------------------------------------
@@ -743,11 +757,11 @@ def LoadImg(self, Wwidth, Wheight):
     #         """
     #         try:
     #             typ = [("tomlファイル", "*.toml")]
-    #             self.top.withdraw()
+    #             self.control.top.withdraw()
     #             tomlurl = filedialog.askopenfilename(filetypes=typ)
     #             if tomlurl != "":
     #                 try:
-    #                     self.top.destroy()
+    #                     self.control.top.destroy()
     #                     self.master.destroy()
     #                 except:
     #                     print("")
@@ -758,10 +772,10 @@ def LoadImg(self, Wwidth, Wheight):
     #                 print("toml変更")
     #             else:
     #                 messagebox.showinfo("確認", "設定ファイルを指定してください。")
-    #                 self.top.deiconify()
+    #                 self.control.top.deiconify()
     #         except:
     #             G_logger.debug("tomlファイル変更Err")  # Log出力
-    #             self.top.deiconify()
+    #             self.control.top.deiconify()
 
     #     # ---------------------------------------------------------------------------------------------
     # def TomlInsert(self, Ent, List):
@@ -800,7 +814,7 @@ def LoadImg(self, Wwidth, Wheight):
 #         """
 #         上下ウィンドウ連携処理(上を隠す)
 #         """
-#         self.top.withdraw()
+#         self.control.top.withdraw()
 
 #     # ---------------------------------------------------------------------------------------------
 #     def map(self, event):
@@ -808,15 +822,15 @@ def LoadImg(self, Wwidth, Wheight):
 #         上下ウィンドウ連携処理(上を表示)
 #         """
 #         self.lift()
-#         self.top.wm_deiconify()
-#         self.top.attributes("-topmost", True)
+#         self.control.top.wm_deiconify()
+#         self.control.top.attributes("-topmost", True)
 
 #     # ---------------------------------------------------------------------------------------------
 #     def change(self, event):
 #         """
 #         上下ウィンドウ連携処理(ウィンドウサイズ変更)
 #         """
-#         top_geometry = self.top.geometry()
+#         top_geometry = self.control.top.geometry()
 #         self.master.geometry(top_geometry)
 
 #     # -------------------------------------------------------------------------------------
@@ -991,13 +1005,13 @@ def LoadImg(self, Wwidth, Wheight):
 #         """
 #         ウィンドウ×ボタンクリック
 #         """
-#         self.top.withdraw()
+#         self.control.top.withdraw()
 #         if messagebox.askokcancel("確認", "終了しますか？"):
-#             self.top.destroy()
+#             self.control.top.destroy()
 #             self.master.destroy()
 #             G_logger.debug("TKINTERCV2SettingClose完了")  # Log出力
 #         else:
-#             self.top.deiconify()
+#             self.control.top.deiconify()
 #             G_logger.debug("TKINTERCV2SettingClose失敗")  # Log出力
 
 #     # ---------------------------------------------------------------------------------------------
@@ -1009,7 +1023,7 @@ def LoadImg(self, Wwidth, Wheight):
 #         MSG = messagebox.askokcancel("確認", "自動直線描画しますか？")
 #         if MSG is True:
 #             G_logger.debug("新規直線描画処理開始")  # Log出力
-#             selfC = self.top.forward
+#             selfC = self.control.top.forward
 #             AL = AutoLine(imgurl, 1)
 #             if AL[0] is True:
 #                 ####################################################################################
@@ -1103,7 +1117,7 @@ def LoadImg(self, Wwidth, Wheight):
 #     """
 #     次UI起動
 #     """
-#     self.top.withdraw()
+#     self.control.top.withdraw()
 #     self.master.withdraw()
 
 
@@ -1112,7 +1126,7 @@ def LoadImg(self, Wwidth, Wheight):
 #     """
 #     前UI起動
 #     """
-#     self.top.destroy()
+#     self.control.top.destroy()
 #     self.master.destroy()
 #     Master.deiconify()
 
@@ -1569,17 +1583,17 @@ def LoadImg(self, Wwidth, Wheight):
 #     """
 #     最上部ウィンドウを非表示
 #     """
-#     self.top.withdraw()
+#     self.control.top.withdraw()
 
 
 # # ---------------------------------------------------------------------------------------------
 # def map(self):
 #     """
-#     self.topを最上部へ
+#     self.control.topを最上部へ
 #     """
 #     self.lift()
-#     self.top.wm_deiconify()
-#     self.top.attributes("-topmost", True)
+#     self.control.top.wm_deiconify()
+#     self.control.top.attributes("-topmost", True)
 
 
 # # ---------------------------------------------------------------------------------------------

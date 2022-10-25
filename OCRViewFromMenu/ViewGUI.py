@@ -104,7 +104,7 @@ class ViewGUI(ttk.Frame):
             # キャンバス内クリック終了イベントに関数バインド
             self.window_sub_canvas.bind("<ButtonRelease-1>", self.event_clip_end)
             # キャンバスを配置
-            self.window_sub_canvas.pack(side=tk.TOP, fill="both", expand=True)
+            self.window_sub_canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.control.SetCanvas(self.window_sub_canvas)  # キャンバスをセット
         except:
             self.control.logger.debug("キャンバス作成失敗")  # Log出力
@@ -123,7 +123,7 @@ class ViewGUI(ttk.Frame):
         self.radio_intvar2 = tk.IntVar()
 
         Frame = tk.Frame(
-            self,
+            self.Frame,
             height=300,
             width=300,
             bg="#60cad1",
@@ -222,7 +222,7 @@ class ViewGUI(ttk.Frame):
         EntWidth, EntHeight = 70, 20
         LabelWidth, LabelHeight = 70, 20
         Frame = tk.Frame(
-            self,
+            self.Frame,
             height=300,
             width=300,
             bg="#60cad1",
@@ -293,7 +293,7 @@ class ViewGUI(ttk.Frame):
         EntWidth, EntHeight = 70, 20
         LabelWidth, LabelHeight = 70, 20
         Frame = tk.Frame(
-            self,
+            self.Frame,
             height=300,
             width=300,
             bg="#60cad1",

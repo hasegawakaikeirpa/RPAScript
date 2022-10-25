@@ -127,7 +127,13 @@ class SettingsView(ttk.Frame):
         for page_name in self.pages.keys():
             self.pages[page_name].pack_forget()
 
-        self.pages[setting_name].pack(fill=tk.BOTH, expand=True)
+        if setting_name == "Audio":
+            self.pages[setting_name].pack(fill=tk.BOTH, expand=True)
+            self.control.top.deiconify()
+            self.control.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
+        else:
+            self.pages[setting_name].pack(fill=tk.BOTH, expand=True)
+            self.control.top.withdraw()
 
     def add_page(self, image_path: str, setting_name: str, page):
         """
@@ -194,7 +200,7 @@ if __name__ == "__main__":
 
     # ルート作成
     root = tk.Tk()
-    root.geometry("640x480")
+    # root.geometry("640x480")
     data = IconCode.icondata()
     root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data))
 

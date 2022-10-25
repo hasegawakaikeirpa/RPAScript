@@ -16,8 +16,8 @@ class ControlGUI:
         # Model Class生成
         self.model = ModelImage()
         # ディスプレイサイズ
-        self.width_of_window = int(int(root.winfo_screenwidth()) * 0.95)
-        self.height_of_window = int(int(root.winfo_screenheight()) * 0.85)
+        self.width_of_window = int(int(root.winfo_screenwidth()) * 0.98)
+        self.height_of_window = int(int(root.winfo_screenheight()) * 0.9)
         # ディスプレイ初期表示位置
         self.x_coodinate = 0  # self.width_of_window / 4
         self.y_coodinate = 0  # self.height_of_window / 4
@@ -25,7 +25,7 @@ class ControlGUI:
         self.padx = self.x_coodinate / 4
         self.pady = self.y_coodinate / 4
         # 各キャンバスサイズ
-        self.FCW = int(self.width_of_window * 0.95)
+        self.FCW = int(self.width_of_window * 0.98)
         self.FCH = int(self.height_of_window * 0.8)
         # 各リサイズ比率
         self.HCW = 1
@@ -38,6 +38,19 @@ class ControlGUI:
             self.imgurl = os.getcwd() + r"\OCR.png"
         else:
             self.imgurl = os.getcwd() + r"\OCRViewFromMenu\OCR.png"
+        # 設定CSVファイルパス初期設定
+        if os.path.isfile(os.getcwd() + r"\ListSetting.csv") is True:
+            self.SettingCsvurl = os.getcwd() + r"\ListSetting.csv"
+        else:
+            self.SettingCsvurl = os.getcwd() + r"\OCRViewFromMenu\ListSetting.csv"
+        # 設定CSVファイル2パス初期設定
+        if os.path.isfile(os.getcwd() + r"\ColumnSetting.csv") is True:
+            self.SettingCsvurl_column = os.getcwd() + r"\ColumnSetting.csv"
+        else:
+            self.SettingCsvurl_column = (
+                os.getcwd() + r"\OCRViewFromMenu\ColumnSetting.csv"
+            )
+
         # 画像ファイル名称
         self.img_name = os.path.splitext(os.path.basename(self.imgurl))[0]
         # 画像ファイルから抽出した関与先名
@@ -61,7 +74,8 @@ class ControlGUI:
         self.canvas = None
         self.DefDB_name = "OCR_DB"
         self.CreateDB(self.DefDB_name)
-        self.btn_font = ("", 50)
+        self.btn_font = ("", 50)  # ボタンフォントサイズ
+        self.t_font = (1, int(8))  # テーブルフォントサイズ
 
     def tomlread(self):
         """
