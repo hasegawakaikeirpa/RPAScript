@@ -461,74 +461,7 @@ class MyTable(Table):
     #     self.redrawVisible()
     #     return
 
-    # -------------------------------------------------------------------------------------
-    def Pandas_mem_usage(self):
-        """
-        Pandasデータフレームのメモリ最適化
-        """
-        start_mem = self.model.df.memory_usage().sum() / 1024**2
-        print("Memory usage of dataframe is {:.2f} MB".format(start_mem))
-
-        for col in self.model.df.columns:
-            col_type = self.model.df[col].dtype
-
-            if col_type != object:
-                c_min = self.model.df[col].min()
-                c_max = self.model.df[col].max()
-                if str(col_type)[:3] == "int":
-                    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
-                        self.model.df[col] = self.model.df[col].astype(np.int8)
-                    elif (
-                        c_min > np.iinfo(np.int16).min
-                        and c_max < np.iinfo(np.int16).max
-                    ):
-                        self.model.df[col] = self.model.df[col].astype(np.int16)
-                    elif (
-                        c_min > np.iinfo(np.int32).min
-                        and c_max < np.iinfo(np.int32).max
-                    ):
-                        self.model.df[col] = self.model.df[col].astype(np.int32)
-                    elif (
-                        c_min > np.iinfo(np.int64).min
-                        and c_max < np.iinfo(np.int64).max
-                    ):
-                        self.model.df[col] = self.model.df[col].astype(np.int64)
-                else:
-                    if (
-                        c_min > np.finfo(np.float16).min
-                        and c_max < np.finfo(np.float16).max
-                    ):
-                        # self.model.df[col] = self.model.df[col].astype(np.float16)
-                        self.model.df[col] = self.model.df[col].astype("object")
-                    elif (
-                        c_min > np.finfo(np.float32).min
-                        and c_max < np.finfo(np.float32).max
-                    ):
-                        # self.model.df[col] = self.model.df[col].astype(np.float32)
-                        self.model.df[col] = self.model.df[col].astype("object")
-                    else:
-                        # self.model.df[col] = self.model.df[col].astype(np.float64)
-                        self.model.df[col] = self.model.df[col].astype("object")
-            else:
-                # self.model.df[col] = self.model.df[col].astype("category")
-                self.model.df[col] = self.model.df[col].astype("object")
-
-        end_mem = self.model.df.memory_usage().sum() / 1024**2
-        print("Memory usage after optimization is: {:.2f} MB".format(end_mem))
-        print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
-
-        return
-
     # -------------------------------------------------------------------------------------------------------------------------------
-    def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
-        detector = UniversalDetector()
-        with open(file_path, mode="rb") as f:
-            for binary in f:
-                detector.feed(binary)
-                if detector.done:
-                    break
-        detector.close()
-        return detector.result["encoding"]
 
 
 class CreateDB:

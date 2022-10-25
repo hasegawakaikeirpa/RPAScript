@@ -10,9 +10,10 @@ from uuid import getnode
 
 import ControlGUI
 import Functions
+import IconCode
 
 # 自作のページビューをインポート
-from page_view import LanguagePage, AudioPage
+from page_view import ViewGUIPage, LineEditPage
 
 # from line_profiler import LineProfiler
 
@@ -67,7 +68,7 @@ class SettingsView(ttk.Frame):
         self.create_frame_treeview().grid(row=0, column=0, sticky="ens")
         # フレーム作成
         self.create_frame_page().grid(row=0, column=1, sticky=tk.NSEW)
-
+        # 共通設定読込
         self.control = ControlGUI.ControlGUI(master, os.getcwd())
 
         # ######################################################################
@@ -133,7 +134,7 @@ class SettingsView(ttk.Frame):
         ページフレームをインスタンス化し、ディクショナリ追加
         """
         with Image.open(image_path) as img:
-            photo_image = ImageTk.PhotoImage(img.resize((200, 20)))
+            photo_image = ImageTk.PhotoImage(img.resize((50, 10)))
 
         self.pages[setting_name] = page(self.frame_page)
         self.pages[setting_name].image = photo_image
@@ -144,9 +145,12 @@ class SettingsView(ttk.Frame):
 
 # ###########################################################################################
 class SettingsTreeview(ttk.Treeview):
+    """
+    サイドメニューに要素挿入
+    """
+
     def _init(self, master, **kw):
         super().__init__(master, **kw)
-
         self.heading("#0", text="Settings")
 
     def add_setting(self, image, section_text: str):
@@ -157,65 +161,80 @@ class SettingsTreeview(ttk.Treeview):
 
 
 # ###########################################################################################
-def MenuCreate(self):
-    """
-    メニューバー作成
-    """
-    try:
-        self.config(bg="#60cad1")
-        # メニューバー作成
-        self.men = tk.Menu(self, tearoff=0)
-        # メニューバーを画面にセット
-        self.config(menu=self.men)
-        # ファイルメニューを作成する
-        self.menu_file = tk.Menu(self.men)
-        self.men.add_command(
-            label="ファイル", command=lambda: Functions.event_set_file(self)
-        )
-        # 保存メニューを作成する
-        self.savemenu = tk.Menu(self, tearoff=False)
-        self.men.add_cascade(label="保存", menu=self.savemenu)
-        self.savemenu.add_command(
-            label="上書保存", command=lambda: Functions.event_save(self)
-        )
-        self.savemenu.add_separator()  # 仕切り線
-        self.savemenu.add_command(
-            label="別名保存", command=lambda: Functions.event_Searchsave(self)
-        )
-    except:
-        print("メニューバー作成失敗")  # Log出力
+# def MenuCreate(self):
+#     """
+#     メニューバー作成
+#     """
+#     try:
+#         self.config(bg="#60cad1")
+#         # メニューバー作成
+#         self.men = tk.Menu(self, tearoff=0)
+#         # メニューバーを画面にセット
+#         self.config(menu=self.men)
+#         # ファイルメニューを作成する
+#         self.menu_file = tk.Menu(self.men)
+#         self.men.add_command(
+#             label="ファイル", command=lambda: Functions.event_set_file(self)
+#         )
+#         # 保存メニューを作成する
+#         self.savemenu = tk.Menu(self, tearoff=False)
+#         self.men.add_cascade(label="保存", menu=self.savemenu)
+#         self.savemenu.add_command(
+#             label="上書保存", command=lambda: Functions.event_save(self)
+#         )
+#         self.savemenu.add_separator()  # 仕切り線
+#         self.savemenu.add_command(
+#             label="別名保存", command=lambda: Functions.event_Searchsave(self)
+#         )
+#     except:
+#         print("メニューバー作成失敗")  # Log出力
 
 
 if __name__ == "__main__":
+
     # ルート作成
     root = tk.Tk()
     root.geometry("640x480")
-    MenuCreate(root)  # メニューバー配置
+    data = IconCode.icondata()
+    root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data))
+
+    Functions.MenuCreate(root)  # メニューバー作成
     # ######################################################################
 
     # ttk.style設定
     style = ttk.Style()
-    style.configure("Treeview.Heading", relief="flat", background="white")
+    style.theme_use("clam")
+    # ツリービューヘッダーカラー設定
+    style.configure(
+        "Treeview.Heading",
+        relief="flat",
+        background="#CCFFFF",
+    )
+    # ツリービューメニュースタイル設定
     style.configure("Treeview", rowheight=28)
+    # ツリービューメニュー外スタイル設定
+    style.configure("Treeview", fieldbackground="#CCFFFF")
+    # ツリービューホバーカラー設定
     style.map(
         "Treeview",
-        foreground=[("selected", "darkgreen")],
-        background=[("selected", "lightgreen")],
+        foreground=[("disabled", "#CCFFFF"), ("selected", "darkgreen")],
+        background=[("disabled", "#CCFFFF"), ("selected", "lightgreen")],
     )
     style.configure("TLabel", font=("tkDefaultFont", 18))
-
     settings = SettingsView(root, relief="flat")
     # settings = SettingsView(root)
 
     settings.add_page(
-        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",
+        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",
+        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Language",
-        page=LanguagePage,
+        page=ViewGUIPage,
     )
     settings.add_page(
-        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",
+        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageEdit_btn.png",
+        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Audio",
-        page=AudioPage,
+        page=LineEditPage,
     )
     settings.pack(fill=tk.BOTH, expand=True)
 

@@ -42,8 +42,6 @@ class ViewGUI(ttk.Frame):
     def __init__(self, master, control):
         super().__init__(master)
         self.control = control
-        self.FCW = int(control.width_of_window * 0.95)
-        self.FCH = int(control.height_of_window * 0.7)
         self.FrameCreate()  # フレーム作成
 
     # 要素作成######################################################################################
@@ -57,8 +55,8 @@ class ViewGUI(ttk.Frame):
                 bg="#60cad1",
                 relief=tk.GROOVE,
                 bd=1,
-                height=self.FCH,
-                width=self.FCW,
+                height=self.control.FCH,
+                width=self.control.FCW,
             )
             self.CanvasCreate()
             self.Frame.pack(fill=tk.BOTH, expand=True)
@@ -67,8 +65,8 @@ class ViewGUI(ttk.Frame):
             # self.control.window_sub_FrameCanvas = ImageViewer.Application(
             #     tk.Frame(
             #         master=self,
-            #         height=self.FCH,
-            #         # width=self.FCW,
+            #         height=self.control.FCH,
+            #         # width=self.control.FCW,
             #         width=3000,
             #     ),
             #     self.control,
@@ -95,8 +93,8 @@ class ViewGUI(ttk.Frame):
             # キャンバス
             self.window_sub_canvas = tk.Canvas(
                 self.Frame,
-                height=self.FCH,
-                width=self.FCW,
+                height=self.control.FCH,
+                width=self.control.FCW,
                 bg="gray",
             )
             # キャンバス内クリック開始イベントに関数バインド

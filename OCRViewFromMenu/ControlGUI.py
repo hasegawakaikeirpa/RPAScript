@@ -10,37 +10,54 @@ from tkinter import font
 
 class ControlGUI:
     def __init__(self, root, default_path):
-
+        """
+        初期設定
+        """
         # Model Class生成
         self.model = ModelImage()
-
+        # ディスプレイサイズ
         self.width_of_window = int(int(root.winfo_screenwidth()) * 0.95)
         self.height_of_window = int(int(root.winfo_screenheight()) * 0.85)
-        self.x_coodinate = self.width_of_window / 2
-        self.y_coodinate = self.height_of_window / 2
+        # ディスプレイ初期表示位置
+        self.x_coodinate = 0  # self.width_of_window / 4
+        self.y_coodinate = 0  # self.height_of_window / 4
+        # 各オブジェクト配置間隔
         self.padx = self.x_coodinate / 4
         self.pady = self.y_coodinate / 4
+        # 各キャンバスサイズ
+        self.FCW = int(self.width_of_window * 0.95)
+        self.FCH = int(self.height_of_window * 0.8)
+        # 各リサイズ比率
+        self.HCW = 1
+        self.HCH = 1
 
+        # ディレクトリパス
         self.dir_path = default_path
+        # 画像ファイルパス初期設定
         if os.path.isfile(os.getcwd() + r"\OCR.png") is True:
             self.imgurl = os.getcwd() + r"\OCR.png"
         else:
             self.imgurl = os.getcwd() + r"\OCRViewFromMenu\OCR.png"
+        # 画像ファイル名称
         self.img_name = os.path.splitext(os.path.basename(self.imgurl))[0]
+        # 画像ファイルから抽出した関与先名
+        self.Kanyosaki_name = ""
+        # 取扱画像ファイル指定
         self.ext_keys = [".png", ".jpg", ".jpeg", ".JPG", ".PNG", "PDF", "pdf"]
+
         self.target_files = []
         self.file_pos = 0
         self.file_list = ["..[select file]"]
+        # tomlファイルオブジェクト
         self.tomlsetting = self.tomlread()
         self.ReadtomlLine()
         self.Toptitle = self.tomlsetting["Title"]["title"]
-        self.Kanyosaki_name = ""
+
         self.clip_sx = 0
         self.clip_sy = 0
         self.clip_ex = 0
         self.clip_ey = 0
-        self.HCW = 1
-        self.HCH = 1
+
         self.canvas = None
         self.DefDB_name = "OCR_DB"
         self.CreateDB(self.DefDB_name)
