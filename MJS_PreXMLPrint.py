@@ -362,9 +362,14 @@ def DataOpen(FolURL2, PreListItem):
         pg.keyUp("alt")
         while pg.locateOnScreen(FolURL2 + "/" + "FileOut.png", confidence=0.9) is None:
             time.sleep(1)
-            PC = ImgCheck(FolURL2 + "/" + "FileOut.png", 0.9,10)
+            PC = ImgCheck(FolURL2 ,"NoPreData.png", 0.9,10)
             if PC[0] is True:
                 print("表示できないプレデータ")
+                time.sleep(1)
+                pg.keyDown("alt")
+                pg.press("x")
+                pg.keyUp("alt")
+                time.sleep(1)                
                 return False
         ImgClick(FolURL2, "FileOut.png", 0.9, 1)
         time.sleep(1)
