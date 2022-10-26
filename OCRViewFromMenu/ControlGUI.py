@@ -18,6 +18,10 @@ class ControlGUI:
         # ディスプレイサイズ
         self.width_of_window = int(int(root.winfo_screenwidth()) * 0.98)
         self.height_of_window = int(int(root.winfo_screenheight()) * 0.9)
+        # グリッドサイズ
+        self.Left_Column = int(int(root.winfo_screenwidth()) * 0.2)
+        self.Bottom_Column = int(int(root.winfo_screenheight()) * 0.3)
+
         # ディスプレイ初期表示位置
         self.x_coodinate = 0  # self.width_of_window / 4
         self.y_coodinate = 0  # self.height_of_window / 4

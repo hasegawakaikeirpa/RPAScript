@@ -124,7 +124,7 @@ class ViewGUI(ttk.Frame):
 
         Frame = tk.Frame(
             self.Frame,
-            height=300,
+            height=self.control.Bottom_Column,
             width=300,
             bg="#60cad1",
             relief=tk.GROOVE,
@@ -223,7 +223,7 @@ class ViewGUI(ttk.Frame):
         LabelWidth, LabelHeight = 70, 20
         Frame = tk.Frame(
             self.Frame,
-            height=300,
+            height=self.control.Bottom_Column,
             width=300,
             bg="#60cad1",
             relief=tk.GROOVE,
@@ -294,7 +294,7 @@ class ViewGUI(ttk.Frame):
         LabelWidth, LabelHeight = 70, 20
         Frame = tk.Frame(
             self.Frame,
-            height=300,
+            height=self.control.Bottom_Column,
             width=300,
             bg="#60cad1",
             relief=tk.GROOVE,
