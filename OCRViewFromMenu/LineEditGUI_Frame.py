@@ -20,60 +20,51 @@ from pandastable import config
 def Frame1(self):
     # 配置
     # ボトムメニューフレーム##########################################################
-    SideWidth = 100
-    SideHeight = 10
-    LabelWidth = 100
-    LabelHeight = 10
-    BtnWidth = 100
-    BtnHeight = 10
-    EntWidth = 100
-    EntHeight = 10
-    t_font = 4
+    t_font = (1, int(8))
 
-    # ボトムメニュー内フレーム########################################################
     Tframe = tk.Frame(
         self.bottumFrame,
-        width=SideWidth,
-        height=SideHeight,
+        width=self.control.SideWidth,
+        height=self.control.SideHeight,
         bg="#ecb5f5",
         relief=tk.GROOVE,
     )
-    Tframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    Tframe.pack(side=tk.LEFT, fill=tk.Y)  # , fill=tk.BOTH, expand=True)
     # LineNo表示テキスト
     ck.CTkLabel(
         master=Tframe,
         text="選択ライン名",
-        width=LabelWidth,
-        height=LabelHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         corner_radius=8,
         text_font=t_font,
-    ).grid(row=0, column=0, pady=5)
+    ).grid(row=0, column=0, pady=5, sticky=tk.W)
     # テキストボックスの作成と配置
-    txt = ck.CTkEntry(
+    self.Line_txt = ck.CTkEntry(
         master=Tframe,
-        width=EntWidth,
-        height=EntHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         border_width=2,
         corner_radius=8,
         text_color="black",
         border_color="snow",
         fg_color="snow",
     )
-    txt.grid(row=0, column=1, pady=5)
+    self.Line_txt.grid(row=0, column=1, pady=5, sticky=tk.W)
     # テキスト変換一致率
     ck.CTkLabel(
         master=Tframe,
         text="テキスト変換一致率",
-        width=LabelWidth,
-        height=LabelHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         corner_radius=8,
         text_font=t_font,
-    ).grid(row=1, column=0, pady=5)
+    ).grid(row=1, column=0, pady=5, sticky=tk.W)
     # テキストボックスの作成と配置
     self.ChangeVar = ck.CTkEntry(
         master=Tframe,
-        width=EntWidth,
-        height=EntHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         border_width=2,
         corner_radius=8,
         text_color="black",
@@ -81,20 +72,20 @@ def Frame1(self):
         fg_color="snow",
     )
     self.ChangeVar.insert(0, 50)
-    self.ChangeVar.grid(row=1, column=1, pady=5)
+    self.ChangeVar.grid(row=1, column=1, pady=5, sticky=tk.W)
     # 行数表示テキスト
     ck.CTkLabel(
         master=Tframe,
         text="設定ファイル",
-        width=LabelWidth,
-        height=LabelHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         corner_radius=8,
         text_font=t_font,
-    ).grid(row=3, column=0, pady=5)
+    ).grid(row=3, column=0, pady=5, sticky=tk.W)
     self.tomlurl = ck.CTkEntry(
         master=Tframe,
-        width=EntWidth,
-        height=EntHeight,
+        width=int(self.control.Btn_width * 1.5),
+        height=self.control.Btn_height,
         border_width=2,
         corner_radius=8,
         text_color="black",
@@ -102,47 +93,34 @@ def Frame1(self):
         fg_color="snow",
     )
     self.tomlurl.insert(0, self.control.tomlurl)
-    self.tomlurl.grid(row=3, column=1, pady=5)
+    self.tomlurl.grid(row=3, column=1, pady=5, sticky=tk.W)
     # 行数表示テキスト
     # 設定ファイル変更ボタン--------------------------------------------------------
     self.tomlbutton = ck.CTkButton(
         master=Tframe,
         text="設定ファイル変更",
         command=self.ChangeToml,
-        width=BtnWidth,
-        height=BtnHeight,
+        width=int(self.control.Btn_width * 1.5),
+        height=self.control.Btn_height,
         border_width=2,
         corner_radius=8,
         text_color="snow",
         border_color="snow",
     )
-    self.tomlbutton.grid(row=4, column=0, columnspan=2, sticky=tk.N)
+    self.tomlbutton.grid(row=4, column=1, columnspan=2, sticky=tk.W)
 
 
+# ------------------------------------------------------------------------------------
 def Frame2(self):
-    #################################################################################
-    # 列名設定フレーム################################################################
-    # ボトムメニュー内フレーム########################################################
-    # 配置
-    # ボトムメニューフレーム##########################################################
-    SideWidth = 100
-    SideHeight = 10
-    LabelWidth = 100
-    LabelHeight = 10
-    BtnWidth = 100
-    BtnHeight = 10
-    EntWidth = 100
-    EntHeight = 10
-    t_font = 8
-
+    # ボトムメニュー内フレーム2########################################################
     Tframe2 = tk.Frame(
         self.bottumFrame,
-        width=SideWidth,
-        height=SideHeight,
+        width=self.control.SideWidth,
+        height=self.control.SideHeight,
         bg="#ecb5f5",
         relief=tk.GROOVE,
     )
-    Tframe2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    Tframe2.pack(side=tk.LEFT, fill=tk.Y)  # , fill=tk.BOTH, expand=True)
     create_table(
         self,
         Tframe2,
@@ -161,6 +139,78 @@ def Frame2(self):
     )
 
 
+# ------------------------------------------------------------------------------------
+def Frame3(self):
+    # ボトムメニュー内ボタンフレーム3###################################################
+    Tframe3 = tk.Frame(
+        self.bottumFrame,
+        width=self.control.SideWidth,
+        height=self.control.SideHeight,
+        bg="#ecb5f5",
+        relief=tk.GROOVE,
+    )
+    Tframe3.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    # 自動直線描画ボタン---------------------------------------------------------------
+    button3 = ck.CTkButton(
+        master=Tframe3,
+        text="自動直線描画",
+        command=lambda: AutoNewLineCreate(self.top.forward, 400, 400),
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
+        border_width=2,
+        corner_radius=8,
+        text_color="snow",
+        border_color="snow",
+        fg_color="#2b5cff",
+    )
+    button3.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W + tk.E)
+    # 削除ボタン---------------------------------------------------------------
+    button5 = ck.CTkButton(
+        master=Tframe3,
+        text="全直線削除",
+        command=lambda: AllLineDelete(self, self.top.forward),
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
+        border_width=2,
+        corner_radius=8,
+        text_color="snow",
+        border_color="snow",
+        fg_color="Orange",
+    )
+    button5.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W + tk.E)
+    # # 新規直線描画ボタン---------------------------------------------------------------
+    # button3 = ck.CTkButton(
+    #     master=frame2,
+    #     text="新規直線描画",
+    #     command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
+    #     width=self.control.Btn_width,
+    #     height=self.control.Btn_height,
+    #     border_width=2,
+    #     corner_radius=8,
+    #     text_color="snow",
+    #     border_color="snow",
+    #     fg_color="mediumPurple",
+    # )
+    # button3.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
+    # 確定ボタン---------------------------------------------------------------
+    button4 = ck.CTkButton(
+        master=Tframe3,
+        text="確定",
+        command=lambda: EnterP(
+            self.top.forward, HCW, HCH, self, self.master, self.top, self.ChangeVar
+        ),
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
+        border_width=2,
+        corner_radius=8,
+        text_color="snow",
+        border_color="snow",
+        fg_color="steelblue3",
+    )
+    button4.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W + tk.E)
+
+
+# ------------------------------------------------------------------------------------
 def create_table(self, frame, t_title, csvurl, wid, hei):
     """
     csv読込テーブル
@@ -227,90 +277,7 @@ def create_table(self, frame, t_title, csvurl, wid, hei):
     return f
 
 
-def Frame3(self):
-    #################################################################################
-    # 列名設定フレーム################################################################
-    # ボトムメニュー内フレーム########################################################
-    # 配置
-    # ボトムメニューフレーム##########################################################
-    SideWidth = 100
-    SideHeight = 10
-    LabelWidth = 100
-    LabelHeight = 10
-    BtnWidth = 100
-    BtnHeight = 10
-    EntWidth = 100
-    EntHeight = 10
-    t_font = 8
-    # ボトムメニュー内ボタンフレーム2###################################################
-    Tframe3 = tk.Frame(
-        self.bottumFrame,
-        width=SideWidth,
-        height=SideHeight,
-        bg="#ecb5f5",
-        relief=tk.GROOVE,
-    )
-    Tframe3.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-    # 自動直線描画ボタン---------------------------------------------------------------
-    button3 = ck.CTkButton(
-        master=Tframe3,
-        text="自動直線描画",
-        command=lambda: AutoNewLineCreate(self.top.forward, 400, 400),
-        width=BtnWidth,
-        height=BtnHeight,
-        border_width=2,
-        corner_radius=8,
-        text_color="snow",
-        border_color="snow",
-        fg_color="#2b5cff",
-    )
-    button3.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
-    # 削除ボタン---------------------------------------------------------------
-    button5 = ck.CTkButton(
-        master=Tframe3,
-        text="全直線削除",
-        command=lambda: AllLineDelete(self, self.top.forward),
-        width=BtnWidth,
-        height=BtnHeight,
-        border_width=2,
-        corner_radius=8,
-        text_color="snow",
-        border_color="snow",
-        fg_color="Orange",
-    )
-    button5.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
-    # # 新規直線描画ボタン---------------------------------------------------------------
-    # button3 = ck.CTkButton(
-    #     master=frame2,
-    #     text="新規直線描画",
-    #     command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
-    #     width=BtnWidth,
-    #     height=BtnHeight,
-    #     border_width=2,
-    #     corner_radius=8,
-    #     text_color="snow",
-    #     border_color="snow",
-    #     fg_color="mediumPurple",
-    # )
-    # button3.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
-    # 確定ボタン---------------------------------------------------------------
-    button4 = ck.CTkButton(
-        master=Tframe3,
-        text="確定",
-        command=lambda: EnterP(
-            self.top.forward, HCW, HCH, self, self.master, self.top, self.ChangeVar
-        ),
-        width=BtnWidth,
-        height=BtnHeight,
-        border_width=2,
-        corner_radius=8,
-        text_color="snow",
-        border_color="snow",
-        fg_color="steelblue3",
-    )
-    button4.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
-
-
+# ------------------------------------------------------------------------------------
 def AutoNewLineCreate(self, selfC, HCW, HCH):
     """
     自動直線描画ボタン処理

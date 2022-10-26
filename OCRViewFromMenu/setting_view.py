@@ -140,7 +140,7 @@ class SettingsView(ttk.Frame):
         ページフレームをインスタンス化し、ディクショナリ追加
         """
         with Image.open(image_path) as img:
-            photo_image = ImageTk.PhotoImage(img.resize((50, 10)))
+            photo_image = ImageTk.PhotoImage(img.resize((100, 20)), master=self)
 
         self.pages[setting_name] = page(self.frame_page)
         self.pages[setting_name].image = photo_image
@@ -202,7 +202,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     # root.geometry("640x480")
     data = IconCode.icondata()
-    root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data))
+    root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
 
     Functions.MenuCreate(root)  # メニューバー作成
     # ######################################################################
@@ -231,14 +231,14 @@ if __name__ == "__main__":
     # settings = SettingsView(root)
 
     settings.add_page(
-        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
-        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Language",
         page=ViewGUIPage,
     )
     settings.add_page(
-        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
-        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Audio",
         page=LineEditPage,
     )
