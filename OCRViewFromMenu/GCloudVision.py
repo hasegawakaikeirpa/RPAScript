@@ -431,16 +431,35 @@ def Bankrentxtver(filein, YokoList, TateList):  # 自作関数一文字づつの
         return False, e
 
 
-def AutoLine(imgurl, mag):
+def TESSERACT_Check():
+    """
+    TESSERACTエンジンのパス設定
+    """
     try:
         # Pah設定
         TESSERACT_PATH = (
-            os.getcwd() + r"\OCRView\Tesseract-OCR"
+            os.getcwd() + r"\OCRViewFromMenu\Tesseract-OCR"
         )  # インストールしたTesseract-OCRのpath
         TESSDATA_PATH = TESSERACT_PATH + r"\tessdata"  # tessdataのpath
         os.environ["PATH"] += os.pathsep + TESSERACT_PATH
         os.environ["TESSDATA_PREFIX"] = TESSDATA_PATH
+        return
+    except:
+        # Pah設定
+        TESSERACT_PATH = os.getcwd() + r"\Tesseract-OCR"  # インストールしたTesseract-OCRのpath
+        TESSDATA_PATH = TESSERACT_PATH + r"\tessdata"  # tessdataのpath
+        os.environ["PATH"] += os.pathsep + TESSERACT_PATH
+        os.environ["TESSDATA_PREFIX"] = TESSDATA_PATH
+        return
 
+
+def AutoLine(imgurl, mag):
+    """
+    自動罫線軸取得
+    """
+    try:
+        # TESSERACTエンジンのパス設定
+        TESSERACT_Check()
         # OCRエンジン取得
         tools = pyocr.get_available_tools()
         tool = tools[0]

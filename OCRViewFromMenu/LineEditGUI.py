@@ -65,9 +65,10 @@ class Application(ttk.Frame):
         self.control.wid_Par = self.control.width_of_window / 1459
         self.control.hei_Par = self.control.height_of_window / 820
         # # ルートウィンドウ
-        self.master.window_rootFrame = tk.Frame(master=master)
-        self.master.window_rootFrame.pack(fill=tk.BOTH, expand=True)
+        self.control.LineEdit_root = tk.Frame(master=master)
+        self.control.LineEdit_root.pack(fill=tk.BOTH, expand=True)
         self.control.top = tk.Toplevel(master=master)
+        self.control.top._name = "TOP_Main"
         data = IconCode.icondata()
         self.control.top.tk.call(
             "wm",
@@ -85,13 +86,13 @@ class Application(ttk.Frame):
                 self.control.y_coodinate,
             )
         )
-        self.control.top.wm_attributes("-transparentcolor", "white")  # トップWindowの白色を透過
+        self.control.top.wm_attributes("-transparentcolor", "snow")  # トップWindowの白色を透過
         self.control.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
         self.control.top.window_rootFrame = tk.Frame(master=self.control.top)
         self.control.top.window_rootFrame.pack(fill=tk.BOTH, expand=True)
         self.control.top.bind("<Motion>", self.change)  # 透過ウィンドウにマウス移動関数bind
-        self.master.window_rootFrame.bind("<Motion>", self.change)  # 下ウィンドウにマウス移動関数bind
-        Functions.MenuCreate(self.control.top)  # メニューバー作成
+        self.control.LineEdit_root.bind("<Motion>", self.change)  # 下ウィンドウにマウス移動関数bind
+        self.control.MenuCreate(self.control.top)  # メニューバー作成
         self.FrameCreate()  # フレーム作成
         self.control.top.withdraw()
 
@@ -102,7 +103,7 @@ class Application(ttk.Frame):
             self.control.top.window_rootFrame,
             width=200,
             height=self.control.height_of_window,
-            bg="white",
+            bg="snow",
             relief=tk.GROOVE,
         )
         # self.SideFrame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -110,7 +111,7 @@ class Application(ttk.Frame):
         # 透過キャンバスフレーム
         self.control.topFrame = tk.Frame(
             self.control.top.window_rootFrame,
-            bg="snow",
+            bg="white",
             width=self.control.FCW,
             height=self.control.FCH,
             relief=tk.GROOVE,
@@ -121,7 +122,7 @@ class Application(ttk.Frame):
         # 透過キャンバス作成
         self.control.top.forward = tk.Canvas(
             self.control.topFrame,
-            background="white",
+            background="snow",
             width=self.control.FCW,
             height=self.control.FCH,
         )
@@ -140,7 +141,28 @@ class Application(ttk.Frame):
         self.bottumFrame.grid(row=1, column=1, sticky=tk.NSEW)
         self.bottumFrame.propagate(0)
         #################################################################################
-        self.ImportIMG()
+
+        self.control.back = tk.Canvas(
+            self.control.LineEdit_root,
+            background="snow",
+            width=self.control.FCW,
+            height=self.control.FCH,
+        )
+
+        self.control.back.pack(side=tk.TOP, fill=tk.BOTH, expand=True)  # 下Windowを配置
+
+        self.backBottom = tk.Frame(
+            self.control.LineEdit_root, height=self.control.Bottom_Column
+        )
+        self.backBottom.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+        self.control.ImportIMG()
+        self.control.LineEdit_root.bind("<Configure>", self.change)
+        # self.control.LineEdit_root.bind("<Unmap>", self.unmap)
+        # self.control.LineEdit_root.bind("<Map>", self.map)
+        self.control.back.bind("<Double-1>", self.backbind)  # 下ウィンドウにダブルクリックbind
+        self.control.back.bind("<Double-3>", self.Right_backbind)  # 下ウィンドウにダブルクリックbind
+        self.control.back.bind("<Motion>", self.change)  # 透過ウィンドウにマウス移動関数bind
         LineEditGUI_Frame.Frame1(self)
         LineEditGUI_Frame.Frame2(self)
         LineEditGUI_Frame.Frame3(self)
@@ -160,9 +182,9 @@ class Application(ttk.Frame):
             ripar1 = round(readcsv1Item[1] * self.control.HCH, 0)  # * CWw
             ripar2 = round(readcsv1Item[2] * self.control.HCW, 0)  # * CHh
             ripar3 = round(readcsv1Item[3] * self.control.HCH, 0)  # * CWw
-            TName = "Line" + str(ri)
+            self.TName = "Line" + str(ri)
             try:
-                self.control.top.forward.dtag(TName, TName)
+                self.control.top.forward.dtag(self.TName, self.TName)
             except:
                 print("dtagErr")
             self.control.top.forward.create_line(
@@ -170,44 +192,48 @@ class Application(ttk.Frame):
                 ripar1,
                 ripar2,
                 ripar3,
-                tags=TName,
+                tags=self.TName,
                 width=7,
                 fill="#FF0000",
                 activefill="#DBDD6F",
             )
-            self.control.top.forward.tag_bind(TName, "<ButtonPress-1>", self.click1)
             self.control.top.forward.tag_bind(
-                TName, "<Control-Double-1>", self.EventDelete
+                self.TName, "<ButtonPress-1>", self.click1
             )
-            self.control.top.forward.tag_bind(TName, "<B1-Motion>", drag1)
+            self.control.top.forward.tag_bind(
+                self.TName, "<Control-Double-1>", self.EventDelete
+            )
+            self.control.top.forward.tag_bind(self.TName, "<B1-Motion>", self.drag1)
 
             self.control.top.forward.place(x=0, y=0)
-            BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Yoko"])
+            BtagsList.append([self.TName, ripar0, ripar1, ripar2, ripar3, "Yoko"])
         for readcsv2Item in self.control.TateList:
             ri += 1
             ripar0 = round(readcsv2Item[0] * self.control.HCW, 0)  # * CHh
             ripar1 = round(readcsv2Item[1] * self.control.HCH, 0)  # * CWw
             ripar2 = round(readcsv2Item[2] * self.control.HCW, 0)  # * CHh
             ripar3 = round(readcsv2Item[3] * self.control.HCH, 0)  # * CWw
-            TName = "Line" + str(ri)
+            self.TName = "Line" + str(ri)
             self.control.top.forward.create_line(
                 ripar0,
                 ripar1,
                 ripar2,
                 ripar3,
-                tags=TName,
+                tags=self.TName,
                 width=7,
                 fill="#00FF40",
                 activefill="#DBDD6F",
             )
-            self.control.top.forward.tag_bind(TName, "<ButtonPress-1>", self.click1)
             self.control.top.forward.tag_bind(
-                TName, "<Control-Double-1>", self.EventDelete
+                self.TName, "<ButtonPress-1>", self.click1
             )
-            self.control.top.forward.tag_bind(TName, "<B1-Motion>", drag1)
+            self.control.top.forward.tag_bind(
+                self.TName, "<Control-Double-1>", self.EventDelete
+            )
+            self.control.top.forward.tag_bind(self.TName, "<B1-Motion>", self.drag1)
 
             self.control.top.forward.place(x=0, y=0)
-            BtagsList.append([TName, ripar0, ripar1, ripar2, ripar3, "Tate"])
+            BtagsList.append([self.TName, ripar0, ripar1, ripar2, ripar3, "Tate"])
         TL = len(BtagsList)
         for TTL in range(TL):
             tagsListItem = BtagsList[TTL]
@@ -219,41 +245,6 @@ class Application(ttk.Frame):
                 tagsListItem[4] - BB[3],
             ]
             self.tagsList.append([tagsListItem, BSS])
-
-    # ------------------------------------------------------------------------------------
-    def ImportIMG(self):
-        """
-        下ウィンドウに画像をリサイズして配置
-        """
-
-        self.control.img = Image.open(self.control.imgurl)
-        self.control.img = self.control.img.resize(
-            (self.control.FCW, self.control.FCH)
-        )  # 画像リサイズ
-        self.back = tk.Canvas(
-            self.master.window_rootFrame,
-            background="white",
-            width=self.control.FCW,
-            height=self.control.FCH,
-        )
-        self.control.TkPhoto = ImageTk.PhotoImage(
-            self.control.img, master=self.back
-        )  # 下Windowに表示する画像オブジェクト
-        self.back.create_image(
-            0, 0, image=self.control.TkPhoto, anchor=tk.NW
-        )  # 下Windowのキャンバスに画像挿入
-        self.back.pack(side=tk.TOP, fill=tk.BOTH, expand=True)  # 下Windowを配置
-
-        self.backBottom = tk.Frame(
-            self.master.window_rootFrame, height=self.control.Bottom_Column
-        )
-        self.backBottom.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        self.master.window_rootFrame.bind("<Configure>", self.change)
-
-        self.back.bind("<Unmap>", self.unmap)
-        self.back.bind("<Map>", self.map)
-        self.back.bind("<Double-1>", self.backbind)  # 下ウィンドウにダブルクリックbind
-        self.back.bind("<Double-3>", self.Right_backbind)  # 下ウィンドウにダブルクリックbind
 
     # 関数##############################################################################
     # 円、矩形、直線を描画＆ドラッグできるようにする【tkinter】
@@ -289,14 +280,13 @@ class Application(ttk.Frame):
         nptag_L = LineTomlOut(self.tagsList, self.control.HCW, self.control.HCH)
         if nptag_L[0] is True:
             ####################################################################################
-            F_N = os.path.splitext(os.path.basename(self.control.imgurl))[0]
-            self.control.Yoko_N = F_N + "_Yoko"
-            self.control.Tate_N = F_N + "_Tate"
+            self.control.Yoko_N = self.control.img_name + "_Yoko"
+            self.control.Tate_N = self.control.img_name + "_Tate"
             nptag_L[1].sort()
             nptag_L[2].sort(key=lambda x: x[1])
             self.control.tomlsetting["LineSetting"][self.control.Yoko_N] = nptag_L[1]
             self.control.tomlsetting["LineSetting"][self.control.Tate_N] = nptag_L[2]
-            Functions.dump_toml(self.tomlsetting, self.control.tomlurl)
+            Functions.dump_toml(self.control.tomlsetting, self.control.tomlurl)
             ####################################################################################
         else:
             print("Err")
@@ -314,6 +304,7 @@ class Application(ttk.Frame):
                 sm = True
         return Em
 
+    # ---------------------------------------------------------------------------------------------
     def ReadtomlLine(self):
         """
         画像名からtoml線軸リストを取得
@@ -340,27 +331,12 @@ class Application(ttk.Frame):
             ]
 
     # ---------------------------------------------------------------------------------------------
-    def unmap(self, event):
-        """
-        上下ウィンドウ連携処理(上を隠す)
-        """
-        # self.control.top.master.withdraw()
-
-    # ---------------------------------------------------------------------------------------------
-    def map(self, event):
-        """
-        上下ウィンドウ連携処理(上を表示)
-        """
-        # self.lift()
-        # self.control.top.master.wm_deiconify()
-        # self.control.top.master.attributes("-topmost", True)
-
-    # ---------------------------------------------------------------------------------------------
     def change(self, event):
         """
         上下ウィンドウ連携処理(ウィンドウサイズ変更)
         """
         top_geometry = self.control.top.geometry()
+        self.control.top.attributes("-topmost", True)
         sm = self.serchmaster()
         sm.geometry(top_geometry)
 
@@ -391,28 +367,49 @@ class Application(ttk.Frame):
             self.control.top.deiconify()
 
     # ---------------------------------------------------------------------------------------------
+    def blankno(self):
+        if len(self.tagsList) != 0:
+            TN_List = [int(str(t[0][0]).replace("Line", "")) for t in self.tagsList]
+            TN_List.sort()
+            N_TN_r = 0
+            for TN_r in TN_List:
+                if N_TN_r == 0:
+                    N_TN_r = TN_r + 1
+                else:
+                    if N_TN_r == TN_r:
+                        N_TN_r = TN_r + 1
+                    else:
+                        return N_TN_r
+            N_TN_r = TN_r + 1
+            return N_TN_r
+        else:
+            return 1
+
+    # ---------------------------------------------------------------------------------------------
     def backbind(self, event):
         """
         縦直線追加ダブルクリック処理
         """
 
-        TName = "Line" + str(self.blankno())
-        sm = self.control.topFrame.children["!canvas"]
-        sm.create_line(
+        self.TName = "Line" + str(self.blankno())
+        # sm = self.control.topFrame.children["!canvas"]
+        self.control.top.forward.create_line(
             event.x,
             0,
             event.x,
             self.control.FCH,
-            tags=TName,
+            tags=self.TName,
             width=7,
             fill="#FF0000",
             activefill="#DBDD6F",
         )
-        sm.tag_bind(TName, "<ButtonPress-1>", self.click1)
-        sm.tag_bind(TName, "<Control-Double-1>", self.EventDelete)
-        sm.tag_bind(TName, "<B1-Motion>", drag1)
+        self.control.top.forward.tag_bind(self.TName, "<ButtonPress-1>", self.click1)
+        self.control.top.forward.tag_bind(
+            self.TName, "<Control-Double-1>", self.EventDelete
+        )
+        self.control.top.forward.tag_bind(self.TName, "<B1-Motion>", self.drag1)
         BSS = [0, 0, 0, 0]
-        TSS = [TName, event.x, 0, event.x, self.control.FCH, "Yoko"]
+        TSS = [self.TName, event.x, 0, event.x, self.control.FCH, "Yoko"]
         self.tagsList.append([TSS, BSS])
 
     # ---------------------------------------------------------------------------------------------
@@ -421,61 +418,46 @@ class Application(ttk.Frame):
         横直線追加ボタン処理
         """
 
-        TName = "Line" + str(self.blankno())
+        self.TName = "Line" + str(self.blankno())
         sm = self.control.topFrame.children["!canvas"]
         sm.create_line(
             0,
             event.y,
             self.control.FCW,
             event.y,
-            tags=TName,
+            tags=self.TName,
             width=7,
             fill="#00FF40",
             activefill="#DBDD6F",
         )
-        sm.tag_bind(TName, "<ButtonPress-1>", self.click1)
-        sm.tag_bind(TName, "<Control-Double-1>", self.EventDelete)
-        sm.tag_bind(TName, "<B1-Motion>", drag1)
-        TSS = [TName, 0, event.y, self.control.FCW, event.y, "Tate"]
+        sm.tag_bind(self.TName, "<ButtonPress-1>", self.click1)
+        sm.tag_bind(self.TName, "<Control-Double-1>", self.EventDelete)
+        sm.tag_bind(self.TName, "<B1-Motion>", self.drag1)
+        TSS = [self.TName, 0, event.y, self.control.FCW, event.y, "Tate"]
         BSS = [0, 0, 0, 0]
         self.tagsList.append([TSS, BSS])
 
+    # ---------------------------------------------------------------------------------------------
+    def drag1(self, event):
+        """
+        縦直線移動処理(ドラッグ)
+        """
+        self.x2 = event.x
+        self.y2 = event.y
+        self.del_x1 = self.x2 - self.x1
+        self.del_y1 = self.y2 - self.y1
+        self.x0, self.y0, self.x1, self.y1 = event.widget.coords(self.id1)
+        event.widget.coords(
+            self.id1,
+            self.x0 + self.del_x1,
+            self.y0 + self.del_y1,
+            self.x1 + self.del_x1,
+            self.y1 + self.del_y1,
+        )
+        self.x1 = self.x2
+        self.y1 = self.y2
 
-def LoadImg(self, Wwidth, Wheight):
-    """
-    画像ファイル読込
-    """
-    self.control.img = Image.open(self.control.imgurl)
-    self.control.MaxW, self.control.MaxH = (
-        self.control.img.width,
-        self.control.img.height,
-    )
-    CW, CH = int(Wwidth), int(Wheight)
-    self.control.HCW, self.control.HCH = (
-        CW / self.control.MaxW,
-        CH / self.control.MaxH,
-    )  # リサイズ比率
-    self.control.img = self.control.img.resize((CW, CH))  # 画像リサイズ
-    self.control.TkPhoto = ImageTk.PhotoImage(self.control.img)  # 下Windowに表示する画像オブジェクト
-
-
-# ---------------------------------------------------------------------------------------------
-def drag1(event):
-    """
-    縦直線移動処理(ドラッグ)
-    """
-    global x1
-    global y1
-    global id1
-
-    x2 = event.x
-    y2 = event.y
-    del_x1 = x2 - x1
-    del_y1 = y2 - y1
-    x0, y0, x1, y1 = event.widget.coords(id1)
-    event.widget.coords(id1, x0 + del_x1, y0 + del_y1, x1 + del_x1, y1 + del_y1)
-    x1 = x2
-    y1 = y2
+    # ---------------------------------------------------------------------------------------------
 
 
 @log_decorator()

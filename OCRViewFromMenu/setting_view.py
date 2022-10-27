@@ -70,7 +70,8 @@ class SettingsView(ttk.Frame):
         self.create_frame_page().grid(row=0, column=1, sticky=tk.NSEW)
         # 共通設定読込
         self.control = ControlGUI.ControlGUI(master, os.getcwd())
-
+        master._name = "BOTTOM_Main"
+        self.control.MenuCreate(master)  # メニューバー作成
         # ######################################################################
         master.geometry(
             "%dx%d+%d+%d"
@@ -128,9 +129,29 @@ class SettingsView(ttk.Frame):
             self.pages[page_name].pack_forget()
 
         if setting_name == "Audio":
+            self.re_geometry(self.master)
             self.pages[setting_name].pack(fill=tk.BOTH, expand=True)
+            self.master.geometry(
+                "%dx%d+%d+%d"
+                % (
+                    self.control.width_of_window,
+                    self.control.height_of_window,
+                    self.control.x_coodinate,
+                    self.control.y_coodinate,
+                )
+            )
             self.control.top.deiconify()
+            self.control.top.geometry(
+                "%dx%d+%d+%d"
+                % (
+                    self.control.width_of_window,
+                    self.control.height_of_window,
+                    self.control.x_coodinate,
+                    self.control.y_coodinate,
+                )
+            )
             self.control.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
+
         else:
             self.pages[setting_name].pack(fill=tk.BOTH, expand=True)
             self.control.top.withdraw()
@@ -147,6 +168,18 @@ class SettingsView(ttk.Frame):
         self.treeview_settings.add_setting(image=photo_image, section_text=setting_name)
 
         self.pages[setting_name].pack(fill=tk.BOTH, expand=True)
+
+    def re_geometry(self, master):
+        """
+        toplevel再表示
+        """
+        geo = master.geometry()
+        geo = geo.split("x")
+        geo2 = geo[1].split("+")
+        self.control.width_of_window = int(geo[0])
+        self.control.height_of_window = int(geo2[0])
+        self.control.x_coodinate = int(geo2[1])
+        self.control.y_coodinate = int(geo2[2])
 
 
 # ###########################################################################################
@@ -167,33 +200,6 @@ class SettingsTreeview(ttk.Treeview):
 
 
 # ###########################################################################################
-# def MenuCreate(self):
-#     """
-#     メニューバー作成
-#     """
-#     try:
-#         self.config(bg="#60cad1")
-#         # メニューバー作成
-#         self.men = tk.Menu(self, tearoff=0)
-#         # メニューバーを画面にセット
-#         self.config(menu=self.men)
-#         # ファイルメニューを作成する
-#         self.menu_file = tk.Menu(self.men)
-#         self.men.add_command(
-#             label="ファイル", command=lambda: Functions.event_set_file(self)
-#         )
-#         # 保存メニューを作成する
-#         self.savemenu = tk.Menu(self, tearoff=False)
-#         self.men.add_cascade(label="保存", menu=self.savemenu)
-#         self.savemenu.add_command(
-#             label="上書保存", command=lambda: Functions.event_save(self)
-#         )
-#         self.savemenu.add_separator()  # 仕切り線
-#         self.savemenu.add_command(
-#             label="別名保存", command=lambda: Functions.event_Searchsave(self)
-#         )
-#     except:
-#         print("メニューバー作成失敗")  # Log出力
 
 
 if __name__ == "__main__":
@@ -203,8 +209,6 @@ if __name__ == "__main__":
     # root.geometry("640x480")
     data = IconCode.icondata()
     root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
-
-    Functions.MenuCreate(root)  # メニューバー作成
     # ######################################################################
 
     # ttk.style設定
