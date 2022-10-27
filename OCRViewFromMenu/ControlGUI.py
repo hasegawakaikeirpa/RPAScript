@@ -20,8 +20,12 @@ class ControlGUI:
         # ディスプレイサイズ
         self.width_of_window = int(int(root.winfo_screenwidth()) * 0.98)
         self.height_of_window = int(int(root.winfo_screenheight()) * 0.9)
+        # ディスプレイ初期表示位置
+        self.x_coodinate = 0  # self.width_of_window / 4
+        self.y_coodinate = 0  # self.height_of_window / 4
+
         # グリッドサイズ
-        self.Left_Column = int(int(root.winfo_screenwidth()) * 0.2)
+        self.Left_Column = int(int(root.winfo_screenwidth()) * 0.105)
         self.Bottom_Column = int(int(root.winfo_screenheight()) * 0.3)
         self.SideWidth = int(self.width_of_window / 7)
         self.SideHeight = int(self.height_of_window / 90)
@@ -30,15 +34,12 @@ class ControlGUI:
         self.Btn_width = int(self.width_of_window / 10)
         self.Btn_height = int(self.height_of_window / 70)
 
-        # ディスプレイ初期表示位置
-        self.x_coodinate = 0  # self.width_of_window / 4
-        self.y_coodinate = 0  # self.height_of_window / 4
         # 各オブジェクト配置間隔
         self.padx = self.x_coodinate / 4
         self.pady = self.y_coodinate / 4
         # 各キャンバスサイズ
         self.FCW = int(self.width_of_window * 0.98)
-        self.FCH = int(self.height_of_window * 0.75)
+        self.FCH = int(self.height_of_window * 0.82)
         # 各リサイズ比率
         self.HCW = 1
         self.HCH = 1

@@ -164,6 +164,7 @@ def Frame3(self):
         border_color="white",
         fg_color="#2b5cff",
     )
+    # button3.pack(side=tk.TOP, fill=tk.X, expand=True)
     button3.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W + tk.E)
     # 削除ボタン---------------------------------------------------------------
     button5 = ck.CTkButton(
@@ -178,6 +179,7 @@ def Frame3(self):
         border_color="white",
         fg_color="Orange",
     )
+    # button5.pack(side=tk.TOP, fill=tk.X, expand=True)
     button5.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W + tk.E)
     # 確定ボタン---------------------------------------------------------------
     button4 = ck.CTkButton(
@@ -192,6 +194,7 @@ def Frame3(self):
         border_color="white",
         fg_color="steelblue3",
     )
+    # button4.pack(side=tk.TOP, fill=tk.X, expand=True)
     button4.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W + tk.E)
 
 

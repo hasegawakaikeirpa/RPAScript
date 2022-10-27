@@ -88,7 +88,11 @@ class Application(ttk.Frame):
         )
         self.control.top.wm_attributes("-transparentcolor", "snow")  # トップWindowの白色を透過
         self.control.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
-        self.control.top.window_rootFrame = tk.Frame(master=self.control.top)
+        self.control.top.window_rootFrame = tk.Frame(
+            master=self.control.top,
+            width=self.control.width_of_window,
+            height=self.control.height_of_window,
+        )
         self.control.top.window_rootFrame.pack(fill=tk.BOTH, expand=True)
         self.control.top.bind("<Motion>", self.change)  # 透過ウィンドウにマウス移動関数bind
         self.control.LineEdit_root.bind("<Motion>", self.change)  # 下ウィンドウにマウス移動関数bind
@@ -101,7 +105,7 @@ class Application(ttk.Frame):
         # サイドメニュー作成
         self.SideFrame = tk.Frame(
             self.control.top.window_rootFrame,
-            width=200,
+            width=self.control.Left_Column,
             height=self.control.height_of_window,
             bg="snow",
             relief=tk.GROOVE,
@@ -132,7 +136,7 @@ class Application(ttk.Frame):
         # ボトムメニュー作成
         self.bottumFrame = tk.Frame(
             self.control.top.window_rootFrame,
-            width=self.control.width_of_window,
+            width=self.control.FCW,
             height=self.control.Bottom_Column,
             bg="black",
             relief=tk.GROOVE,
@@ -336,9 +340,11 @@ class Application(ttk.Frame):
         上下ウィンドウ連携処理(ウィンドウサイズ変更)
         """
         top_geometry = self.control.top.geometry()
-        self.control.top.attributes("-topmost", True)
-        sm = self.serchmaster()
-        sm.geometry(top_geometry)
+        w_diff = self.control.width_of_window - int(top_geometry.split("x")[0])
+        if w_diff <= 1500:
+            self.control.top.attributes("-topmost", True)
+            sm = self.serchmaster()
+            sm.geometry(top_geometry)
 
     # ---------------------------------------------------------------------------------------------
     def ChangeToml(self):

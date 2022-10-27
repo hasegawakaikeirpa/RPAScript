@@ -206,7 +206,10 @@ if __name__ == "__main__":
 
     # ルート作成
     root = tk.Tk()
-    # root.geometry("640x480")
+
+    width_of_window = int(int(root.winfo_screenwidth()) * 0.98)
+    height_of_window = int(int(root.winfo_screenheight()) * 0.9)
+
     data = IconCode.icondata()
     root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(data=data, master=root))
     # ######################################################################
@@ -235,17 +238,16 @@ if __name__ == "__main__":
     # settings = SettingsView(root)
 
     settings.add_page(
-        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
-        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Language",
         page=ViewGUIPage,
     )
     settings.add_page(
-        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
-        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Audio",
         page=LineEditPage,
     )
     settings.pack(fill=tk.BOTH, expand=True)
-
     root.mainloop()
