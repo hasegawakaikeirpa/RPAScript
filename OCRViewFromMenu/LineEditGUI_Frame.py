@@ -15,159 +15,197 @@ import os
 import MyTable as MT
 import Functions
 from pandastable import config
+import numpy as np
 
 # 要素作成######################################################################################
 def Frame1(self):
     # 配置
     # ボトムメニューフレーム##########################################################
-    SideWidth = 100
-    SideHeight = 10
-    LabelWidth = 100
-    LabelHeight = 10
-    BtnWidth = 100
-    BtnHeight = 10
-    EntWidth = 100
-    EntHeight = 10
-    t_font = 4
+    t_font = (1, int(8))
 
-    # ボトムメニュー内フレーム########################################################
     Tframe = tk.Frame(
         self.bottumFrame,
-        width=SideWidth,
-        height=SideHeight,
+        width=self.control.SideWidth,
+        height=self.control.SideHeight,
         bg="#ecb5f5",
         relief=tk.GROOVE,
     )
-    Tframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    Tframe.pack(side=tk.LEFT, fill=tk.Y)  # , fill=tk.BOTH, expand=True)
     # LineNo表示テキスト
     ck.CTkLabel(
         master=Tframe,
         text="選択ライン名",
-        width=LabelWidth,
-        height=LabelHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         corner_radius=8,
         text_font=t_font,
-    ).grid(row=0, column=0, pady=5)
+    ).grid(row=0, column=0, pady=5, sticky=tk.W)
     # テキストボックスの作成と配置
-    txt = ck.CTkEntry(
+    self.Line_txt = ck.CTkEntry(
         master=Tframe,
-        width=EntWidth,
-        height=EntHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         border_width=2,
         corner_radius=8,
         text_color="black",
-        border_color="snow",
-        fg_color="snow",
+        border_color="white",
+        fg_color="white",
     )
-    txt.grid(row=0, column=1, pady=5)
+    self.Line_txt.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
     # テキスト変換一致率
     ck.CTkLabel(
         master=Tframe,
         text="テキスト変換一致率",
-        width=LabelWidth,
-        height=LabelHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         corner_radius=8,
         text_font=t_font,
-    ).grid(row=1, column=0, pady=5)
+    ).grid(row=1, column=0, pady=5, sticky=tk.W)
     # テキストボックスの作成と配置
     self.ChangeVar = ck.CTkEntry(
         master=Tframe,
-        width=EntWidth,
-        height=EntHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         border_width=2,
         corner_radius=8,
         text_color="black",
-        border_color="snow",
-        fg_color="snow",
+        border_color="white",
+        fg_color="white",
     )
     self.ChangeVar.insert(0, 50)
-    self.ChangeVar.grid(row=1, column=1, pady=5)
+    self.ChangeVar.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
     # 行数表示テキスト
     ck.CTkLabel(
         master=Tframe,
         text="設定ファイル",
-        width=LabelWidth,
-        height=LabelHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         corner_radius=8,
         text_font=t_font,
-    ).grid(row=3, column=0, pady=5)
+    ).grid(row=3, column=0, pady=5, sticky=tk.W)
     self.tomlurl = ck.CTkEntry(
         master=Tframe,
-        width=EntWidth,
-        height=EntHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         border_width=2,
         corner_radius=8,
         text_color="black",
-        border_color="snow",
-        fg_color="snow",
+        border_color="white",
+        fg_color="white",
     )
     self.tomlurl.insert(0, self.control.tomlurl)
-    self.tomlurl.grid(row=3, column=1, pady=5)
+    self.tomlurl.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
     # 行数表示テキスト
     # 設定ファイル変更ボタン--------------------------------------------------------
     self.tomlbutton = ck.CTkButton(
         master=Tframe,
         text="設定ファイル変更",
         command=self.ChangeToml,
-        width=BtnWidth,
-        height=BtnHeight,
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
         border_width=2,
         corner_radius=8,
-        text_color="snow",
-        border_color="snow",
+        text_color="white",
+        border_color="white",
     )
-    self.tomlbutton.grid(row=4, column=0, columnspan=2, sticky=tk.N)
+    self.tomlbutton.grid(row=4, column=0, columnspan=2, padx=5, sticky=tk.W + tk.E)
 
 
+# ------------------------------------------------------------------------------------
 def Frame2(self):
-    #################################################################################
-    # 列名設定フレーム################################################################
-    # ボトムメニュー内フレーム########################################################
-    # 配置
-    # ボトムメニューフレーム##########################################################
-    SideWidth = 100
-    SideHeight = 10
-    LabelWidth = 100
-    LabelHeight = 10
-    BtnWidth = 100
-    BtnHeight = 10
-    EntWidth = 100
-    EntHeight = 10
-    t_font = 8
-
+    # ボトムメニュー内フレーム2########################################################
     Tframe2 = tk.Frame(
         self.bottumFrame,
-        width=SideWidth,
-        height=SideHeight,
+        width=self.control.SideWidth,
+        height=self.control.SideHeight,
         bg="#ecb5f5",
         relief=tk.GROOVE,
     )
-    Tframe2.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-    create_table(
+    Tframe2.pack(side=tk.LEFT, fill=tk.Y)  # , fill=tk.BOTH, expand=True)
+    self.control.SettingTB = create_table(
         self,
         Tframe2,
         "各列指定",
-        self.control.SettingCsvurl,
-        int(self.control.width_of_window / 5),
+        self.control.LineEditGUI_df,
+        int(self.control.width_of_window / 6),
         int(self.control.height_of_window / 10),
     )
-    create_table(
+    self.control.SettingTB2 = create_table(
         self,
         Tframe2,
         "列名変換",
-        self.control.SettingCsvurl_column,
-        int(self.control.width_of_window / 8),
+        self.control.LineEditGUI_CS__df,
+        int(self.control.width_of_window / 9),
         int(self.control.height_of_window / 10),
     )
 
 
-def create_table(self, frame, t_title, csvurl, wid, hei):
+# ------------------------------------------------------------------------------------
+def Frame3(self):
+    # ボトムメニュー内ボタンフレーム3###################################################
+    Tframe3 = tk.Frame(
+        self.bottumFrame,
+        width=self.control.SideWidth,
+        height=self.control.SideHeight,
+        bg="#ecb5f5",
+        relief=tk.GROOVE,
+    )
+    Tframe3.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    # 自動直線描画ボタン---------------------------------------------------------------
+    button3 = ck.CTkButton(
+        master=Tframe3,
+        text="自動直線描画",
+        command=lambda: AutoNewLineCreate(self),
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
+        border_width=2,
+        corner_radius=8,
+        text_color="white",
+        border_color="white",
+        fg_color="#2b5cff",
+    )
+    # button3.pack(side=tk.TOP, fill=tk.X, expand=True)
+    button3.grid(row=0, column=0, padx=10, pady=5, sticky=tk.W + tk.E)
+    # 削除ボタン---------------------------------------------------------------
+    button5 = ck.CTkButton(
+        master=Tframe3,
+        text="全直線削除",
+        command=lambda: AllLineDelete(self, self.control.top.forward),
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
+        border_width=2,
+        corner_radius=8,
+        text_color="white",
+        border_color="white",
+        fg_color="Orange",
+    )
+    # button5.pack(side=tk.TOP, fill=tk.X, expand=True)
+    button5.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W + tk.E)
+    # 確定ボタン---------------------------------------------------------------
+    button4 = ck.CTkButton(
+        master=Tframe3,
+        text="確定",
+        command=lambda: EnterP(self, self.control.top.forward),
+        width=self.control.Btn_width,
+        height=self.control.Btn_height,
+        border_width=2,
+        corner_radius=8,
+        text_color="white",
+        border_color="white",
+        fg_color="steelblue3",
+    )
+    # button4.pack(side=tk.TOP, fill=tk.X, expand=True)
+    button4.grid(row=2, column=0, padx=10, pady=5, sticky=tk.W + tk.E)
+
+
+# ------------------------------------------------------------------------------------
+def create_table(self, frame, t_title, df, wid, hei):
     """
     csv読込テーブル
     arg:self
     arg:tk.frame
     arg:str(title)
-    arg:str(csvurl)
+    arg:df
     return:tk.Frame
     """
     # ツリーフレーム設定---------------------------------------------------------------------
@@ -179,7 +217,6 @@ def create_table(self, frame, t_title, csvurl, wid, hei):
         bg="#fce4d2",
         relief=tk.RIDGE,
     )  # 親フレーム
-    # self.OCR_frame.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
     f.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
     f_tree = tk.Frame(
         f,
@@ -193,146 +230,60 @@ def create_table(self, frame, t_title, csvurl, wid, hei):
     tk.Label(f, text=t_title, bg="#fce4d2").grid(
         row=0, column=0, sticky=tk.N + tk.W
     )  # 位置指定
-
-    # self.pt_bln = tk.BooleanVar()
-    # self.pt_bln.set(False)
-    # self.pt_chk = tk.Checkbutton(
-    #     self.OCR_frame,
-    #     bg="#fce4d2",
-    #     text="変更を記録する",
-    #     command=lambda: self.chk_click(self.pt_bln),
-    # )
-    # self.pt_chk.grid(row=1, column=0, sticky=tk.N + tk.W)
-
     f_tree.grid(row=2, column=0, padx=30, sticky=tk.N + tk.S + tk.W + tk.E)
-    # df = TableModel.getSampleData()
-    # pt = Table(self.tree_frame)
     pt = MT.MyTable(
         f_tree,
         width=wid,
         height=hei,
         sticky=tk.N + tk.S + tk.W + tk.E,
     )  # テーブルをサブクラス化
-    enc = Functions.getFileEncoding(csvurl)
-    pt.importCSV(csvurl, encoding=enc)
+    # df変換
+    c_df = df
+    c_df = c_df.fillna("Nan")  # nanを文字列で置換
+    c_df = c_df.astype("str")  # df型変換
+    c_df = c_df.replace("Nan", "", regex=True).replace(".0", "", regex=True)  # 文字列を置換
+    # DF型変換------------------------------
+    Functions.Pandas_mem_usage(c_df)
+    # --------------------------------------
+    pt.model.df = c_df
     pt._name = t_title
     # options is a dict that you can set yourself
     options = {"fontsize": self.control.t_font[1]}
     config.apply_options(options, pt)
-    # DF型変換------------------------------
-    Functions.Pandas_mem_usage(pt.model.df)
     # --------------------------------------
-    pt.resized
-    pt.show()
-    return f
+    # 列幅設定
+    # pt.columnwidths['Peak Frequency (Hz)'] = 225
+    # pt.columnwidths['Channel'] = 25
+
+    # pt.resized
+    pt.show()  # テーブルモデルを一旦フレーム配置
+    pt.showIndex()  # インデックス表示設定をオン
+    pt.redraw()  # テーブル再表示
+    return pt
 
 
-def Frame3(self):
-    #################################################################################
-    # 列名設定フレーム################################################################
-    # ボトムメニュー内フレーム########################################################
-    # 配置
-    # ボトムメニューフレーム##########################################################
-    SideWidth = 100
-    SideHeight = 10
-    LabelWidth = 100
-    LabelHeight = 10
-    BtnWidth = 100
-    BtnHeight = 10
-    EntWidth = 100
-    EntHeight = 10
-    t_font = 8
-    # ボトムメニュー内ボタンフレーム2###################################################
-    Tframe3 = tk.Frame(
-        self.bottumFrame,
-        width=SideWidth,
-        height=SideHeight,
-        bg="#ecb5f5",
-        relief=tk.GROOVE,
-    )
-    Tframe3.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-    # 自動直線描画ボタン---------------------------------------------------------------
-    button3 = ck.CTkButton(
-        master=Tframe3,
-        text="自動直線描画",
-        command=lambda: AutoNewLineCreate(self.top.forward, 400, 400),
-        width=BtnWidth,
-        height=BtnHeight,
-        border_width=2,
-        corner_radius=8,
-        text_color="snow",
-        border_color="snow",
-        fg_color="#2b5cff",
-    )
-    button3.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
-    # 削除ボタン---------------------------------------------------------------
-    button5 = ck.CTkButton(
-        master=Tframe3,
-        text="全直線削除",
-        command=lambda: AllLineDelete(self, self.top.forward),
-        width=BtnWidth,
-        height=BtnHeight,
-        border_width=2,
-        corner_radius=8,
-        text_color="snow",
-        border_color="snow",
-        fg_color="Orange",
-    )
-    button5.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
-    # # 新規直線描画ボタン---------------------------------------------------------------
-    # button3 = ck.CTkButton(
-    #     master=frame2,
-    #     text="新規直線描画",
-    #     command=lambda: NewLineCreate(self, self.top.forward, HCW, HCH),
-    #     width=BtnWidth,
-    #     height=BtnHeight,
-    #     border_width=2,
-    #     corner_radius=8,
-    #     text_color="snow",
-    #     border_color="snow",
-    #     fg_color="mediumPurple",
-    # )
-    # button3.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W + tk.E)
-    # 確定ボタン---------------------------------------------------------------
-    button4 = ck.CTkButton(
-        master=Tframe3,
-        text="確定",
-        command=lambda: EnterP(
-            self.top.forward, HCW, HCH, self, self.master, self.top, self.ChangeVar
-        ),
-        width=BtnWidth,
-        height=BtnHeight,
-        border_width=2,
-        corner_radius=8,
-        text_color="snow",
-        border_color="snow",
-        fg_color="steelblue3",
-    )
-    button4.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W + tk.E)
-
-
-def AutoNewLineCreate(self, selfC, HCW, HCH):
+# ------------------------------------------------------------------------------------
+def AutoNewLineCreate(self):
     """
     自動直線描画ボタン処理
     """
     unmap(self)
     MSG = messagebox.askokcancel("確認", "自動直線描画しますか？")
     if MSG is True:
-
-        selfC = self.top.forward
         AL = AutoLine(self.control.imgurl, 1)
         if AL[0] is True:
             ####################################################################################
-            F_N = os.path.splitext(os.path.basename(self.control.imgurl))[0]
-            Yoko_N = F_N + "_Yoko"
-            Tate_N = F_N + "_Tate"
+            self.control.Yoko_N = self.control.img_name + "_Yoko"
+            self.control.Tate_N = self.control.img_name + "_Tate"
             AL[1].sort()
             AL[2].sort(key=lambda x: x[1])
-            self.tomlsetting["LineSetting"][Yoko_N] = AL[1]
-            self.tomlsetting["LineSetting"][Tate_N] = AL[2]
-            Functions.dump_toml(self.tomlsetting, self.control.tomlurl)
+            self.control.YokoList = AL[1]
+            self.control.TateList = AL[2]
+            self.control.tomlsetting["LineSetting"][self.control.Yoko_N] = AL[1]
+            self.control.tomlsetting["LineSetting"][self.control.Tate_N] = AL[2]
+            Functions.dump_toml(self.control.tomlsetting, self.control.tomlurl)
             ####################################################################################
-            AllLineDelete(self, selfC)
+            AllLineDelete(self, self.control.top.forward)
             self.Transparent_Create()  # 透過キャンバスに罫線描画
 
             MSG = messagebox.showinfo("確認", "自動直線描画完了")
@@ -348,85 +299,74 @@ def AllLineDelete(self, selfC):
     """
     選択直線の削除
     """
-    global tagsList
-    r = len(tagsList) - 1
+    r = len(self.tagsList) - 1
     selfC.delete("all")
-    for tagsListItem in reversed(tagsList):
+    for tagsListItem in reversed(self.tagsList):
         selfC.delete(tagsListItem[0][0])
-        tagsList.pop(r)
+        self.tagsList.pop(r)
         r -= 1
 
 
 # ---------------------------------------------------------------------------------------------
-def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
+def DFget(self, df):
+    """
+    設定DFから必要項目取得
+    """
+    Daydf = df.loc["日付列"]
+    Moneydf = df.loc["金額列"]
+    Changedf = df.loc["変換対象列"]
+
+    # 条件テキストボックスのリスト化---------------------------
+    self.control.DaySet = [a for a in list(Daydf) if a != ""]
+    self.control.MoneySet = [a for a in list(Moneydf) if a != ""]
+    self.control.ChangeSet = [a for a in list(Changedf) if a != ""]
+    return
+
+
+# ---------------------------------------------------------------------------------------------
+def listintCheck(list):
+    """
+    条件DFの型チェック
+    """
+    for listItem in list:
+        try:
+            int(listItem)
+        except:
+            return False
+    return True
+
+
+# ---------------------------------------------------------------------------------------------
+def EnterP(self, selfC):
     """
     確定ボタンクリック
     """
-    global tagsList
-    global MaxW, MaxH
 
     FList = []
     FYokoList = []
     FTateList = []
-    SGEL = selfmother.GetEntryTextButton_click()  # OCR出力列名
-    # 条件テキストボックスの値格納---------------------------
-    DaySet = selfmother.DaySet.get()
-    MoneySet = selfmother.MoneySet.get()
-    # ReplaceSet = selfmother.ReplaceSet.get()
-    # ReplaceStr = selfmother.ReplaceStr.get()
+    # 各列指定設定テーブル#####################################
+    DFget(self, self.control.SettingTB.model.df)
+
     # ------------------------------------------------------
-    # 条件テキストボックスのリスト化---------------------------
-    if "," in DaySet:
-        DaySet = DaySet.split(",")
-    elif " " in DaySet:
-        DaySet = DaySet.split(" ")
-    else:
-        DaySet = list(DaySet)
-    # --------------------------------------------------------
-    if "," in MoneySet:
-        MoneySet = MoneySet.split(",")
-    elif " " in MoneySet:
-        MoneySet = MoneySet.split(" ")
-    else:
-        MoneySet = list(MoneySet)
+    # SGEL = selfmother.GetEntryTextButton_click()  # OCR出力列名
+
     # 条件テキストボックスの内容で処理分け-------------------------------------------------------------------
-    if listintCheck(DaySet) is False:
-        unmap(selfmother)
+    if listintCheck(self.control.DaySet) is False:
         messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
-        map(selfmother)
-    elif listintCheck(MoneySet) is False:
-        unmap(selfmother)
+    elif listintCheck(self.control.MoneySet) is False:
         messagebox.showinfo("エラー", "金額表示列番号が不正です。数値以外を指定していないか確認してください。")
-        map(selfmother)
-    # elif listintCheck(ReplaceSet) is False:
-    #     messagebox.showinfo("エラー", "置換対象列番号が不正です。数値以外を指定していないか確認してください。")
     else:
-        if len(tagsList) == 0:
-            unmap(selfmother)
+        if len(self.tagsList) == 0:
             messagebox.showinfo("エラー", "軸が設定されていません。")
-            map(selfmother)
         else:
-            for tagsListItem in tagsList:
+            for tagsListItem in self.tagsList:
                 BB = self.bbox(tagsListItem[0][0])
                 try:
                     BBS = [BB[0], BB[1], BB[2], BB[3]]
                     FList.append([tagsListItem[0], tagsListItem[1], BBS])
                 except:
                     print("BBSErr")
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
-            ###################################################################################
             for FListItem in FList:
                 # FSSC1 = round((FListItem[1][0] + FListItem[2][0]) / HCW)
                 # FSSC2 = round((FListItem[1][1] + FListItem[2][1]) / HCH)
@@ -435,20 +375,20 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                 if FListItem[2][0] < 0:
                     FSSC1 = 0
                 else:
-                    FSSC1 = int(round((FListItem[2][0] / HCW), 0))
+                    FSSC1 = int(round((FListItem[2][0] / self.control.HCW), 0))
                 if FListItem[2][1] < 0:
                     FSSC2 = 0
                 else:
-                    FSSC2 = int(round((FListItem[2][1] / HCH), 0))
+                    FSSC2 = int(round((FListItem[2][1] / self.control.HCH), 0))
                 if FListItem[2][2] < 0:
 
                     FSSC3 = 0
                 else:
-                    FSSC3 = int(round((FListItem[2][0] / HCW), 0))
+                    FSSC3 = int(round((FListItem[2][0] / self.control.HCW), 0))
                 if FListItem[2][3] < 0:
                     FSSC4 = 0
                 else:
-                    FSSC4 = int(round((FListItem[2][1] / HCH), 0))
+                    FSSC4 = int(round((FListItem[2][1] / self.control.HCH), 0))
                 # FSSC1 = FListItem[0][1] / HCW
                 # FSSC2 = FListItem[0][2] / HCH
                 # FSSC3 = FListItem[0][3] / HCW
@@ -476,16 +416,16 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                     FTateList.append(FSS)
                 print(FSS)
             if len(FTateList) == 0:
-                unmap(selfmother)
+
                 messagebox.showinfo("エラー", "横軸が設定されていません。")
-                map(selfmother)
+
             elif len(FYokoList) == 0:
-                unmap(selfmother)
+
                 messagebox.showinfo("エラー", "縦軸が設定されていません。")
-                map(selfmother)
+
             else:
                 # メッセージボックス（OK・キャンセル）
-                unmap(selfmother)
+
                 if len(FYokoList) == len(SGEL):
                     # --------------------------------------------------------------
                     if Master.HeaderCol_c == len(SGEL) or Master.HeaderCol_c == 0:
@@ -493,21 +433,24 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                             ChangeVar = int(ChangeVar.get())
                         except:
                             MSG = messagebox.showinfo("エラー", "テキスト変換一致率に数値以外が入力されています。")
-                            map(selfmother)
+
                             return
                         MSG = messagebox.askokcancel("確認", str(SGEL) + "の列名で出力します。")
                         if MSG is True:
-                            map(selfmother)
-                            PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
                             ####################################################################################
-                            F_N = os.path.splitext(os.path.basename(imgurl))[0]
-                            Yoko_N = F_N + "_Yoko"
-                            Tate_N = F_N + "_Tate"
+                            self.control.Yoko_N = self.control.img_name + "_Yoko"
+                            self.control.Tate_N = self.control.img_name + "_Tate"
                             FYokoList.sort()
                             FTateList.sort(key=lambda x: x[1])
-                            Banktoml["LineSetting"][Yoko_N] = FYokoList
-                            Banktoml["LineSetting"][Tate_N] = FTateList
-                            toml_c.dump_toml(Banktoml, tomlurl)
+                            self.control.tomlsetting["LineSetting"][
+                                self.control.Yoko_N
+                            ] = FYokoList
+                            self.control.tomlsetting["LineSetting"][
+                                self.control.Tate_N
+                            ] = FTateList
+                            Functions.dump_toml(
+                                self.control.tomlsetting, self.control.tomlurl
+                            )
                             ####################################################################################
                             print("csv保存完了")
                             OM = OCRF.Main(
@@ -546,8 +489,6 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                 else:
                                     FUL.append(Read_Url)  # 書出しCSVURLリスト
                                     if len(FUL) == 1:
-                                        selfmother.top.withdraw()  # 透過ウィンドウ最小化
-                                        selfmother.master.withdraw()  # 下ウィンドウ最小化
 
                                         PT.Main(
                                             self,
@@ -563,8 +504,6 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                         RU = OCRF.JoinCSV(FUL)
                                         if RU[0] is True:
                                             Read_Url = RU[1]
-                                            selfmother.top.withdraw()  # 透過ウィンドウ最小化
-                                            selfmother.master.withdraw()  # 下ウィンドウ最小化
 
                                             PT.Main(
                                                 self,
@@ -579,22 +518,13 @@ def EnterP(self, HCW, HCH, selfmother, Mter, Top, ChangeVar):
                                         else:
                                             print("")
                             else:
-
-                                unmap(selfmother)
                                 MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
-                                map(selfmother)
                         else:
-
                             messagebox.showinfo("中断", "処理を中断します。")
-                            map(selfmother)
                     else:
-
                         messagebox.showinfo("エラー", "先頭ページの列数と設定列名の数が一致しません。再確認してください。")
-                        map(selfmother)
                 else:
-
                     messagebox.showinfo("確認", "縦軸数と設定列名の数が一致しません。再確認してください。")
-                    map(selfmother)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -602,7 +532,7 @@ def unmap(self):
     """
     最上部ウィンドウを非表示
     """
-    self.top.withdraw()
+    self.control.top.withdraw()
 
 
 # ---------------------------------------------------------------------------------------------
@@ -611,5 +541,5 @@ def map(self):
     self.topを最上部へ
     """
     self.lift()
-    self.top.wm_deiconify()
-    self.top.attributes("-topmost", True)
+    self.control.top.wm_deiconify()
+    self.control.top.attributes("-topmost", True)

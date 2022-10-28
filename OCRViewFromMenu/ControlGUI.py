@@ -4,8 +4,10 @@ import sqlite3 as sql
 from pandas import DataFrame
 import toml
 from tkinter import font
-
-# from tkinter import messagebox
+from PIL import Image, ImageTk
+import tkinter as tk
+from Functions import dump_toml
+from tkinter import messagebox, filedialog
 
 
 class ControlGUI:
@@ -18,19 +20,26 @@ class ControlGUI:
         # ディスプレイサイズ
         self.width_of_window = int(int(root.winfo_screenwidth()) * 0.98)
         self.height_of_window = int(int(root.winfo_screenheight()) * 0.9)
-        # グリッドサイズ
-        self.Left_Column = int(int(root.winfo_screenwidth()) * 0.2)
-        self.Bottom_Column = int(int(root.winfo_screenheight()) * 0.3)
-
         # ディスプレイ初期表示位置
         self.x_coodinate = 0  # self.width_of_window / 4
         self.y_coodinate = 0  # self.height_of_window / 4
+
+        # グリッドサイズ
+        self.Left_Column = int(int(root.winfo_screenwidth()) * 0.105)
+        self.Bottom_Column = int(int(root.winfo_screenheight()) * 0.3)
+        self.SideWidth = int(self.width_of_window / 7)
+        self.SideHeight = int(self.height_of_window / 90)
+
+        # 標準ボタンサイズ
+        self.Btn_width = int(self.width_of_window / 10)
+        self.Btn_height = int(self.height_of_window / 70)
+
         # 各オブジェクト配置間隔
         self.padx = self.x_coodinate / 4
         self.pady = self.y_coodinate / 4
         # 各キャンバスサイズ
         self.FCW = int(self.width_of_window * 0.98)
-        self.FCH = int(self.height_of_window * 0.8)
+        self.FCH = int(self.height_of_window * 0.82)
         # 各リサイズ比率
         self.HCW = 1
         self.HCH = 1
@@ -42,21 +51,10 @@ class ControlGUI:
             self.imgurl = os.getcwd() + r"\OCR.png"
         else:
             self.imgurl = os.getcwd() + r"\OCRViewFromMenu\OCR.png"
-        # 設定CSVファイルパス初期設定
-        if os.path.isfile(os.getcwd() + r"\ListSetting.csv") is True:
-            self.SettingCsvurl = os.getcwd() + r"\ListSetting.csv"
-        else:
-            self.SettingCsvurl = os.getcwd() + r"\OCRViewFromMenu\ListSetting.csv"
-        # 設定CSVファイル2パス初期設定
-        if os.path.isfile(os.getcwd() + r"\ColumnSetting.csv") is True:
-            self.SettingCsvurl_column = os.getcwd() + r"\ColumnSetting.csv"
-        else:
-            self.SettingCsvurl_column = (
-                os.getcwd() + r"\OCRViewFromMenu\ColumnSetting.csv"
-            )
 
         # 画像ファイル名称
         self.img_name = os.path.splitext(os.path.basename(self.imgurl))[0]
+        self.tomlTitle = self.img_name.split(".")[0]
         # 画像ファイルから抽出した関与先名
         self.Kanyosaki_name = ""
         # 取扱画像ファイル指定
@@ -66,7 +64,12 @@ class ControlGUI:
         self.file_pos = 0
         self.file_list = ["..[select file]"]
         # tomlファイルオブジェクト
-        self.tomlsetting = self.tomlread()
+        self.tomlsetting = self.tomlread("Setting.toml")
+        # LinEditGUItomlファイルオブジェクト
+        self.LineEditGUISetting = self.tomlread("LineEditGUISetting.toml")
+        # LinEditGUI設定をdf化
+        self.LineEditGUI_df = self.toml_LGUI_todf("_ListSetting")
+        self.LineEditGUI_CS__df = self.toml_LGUI_todf("_ColumnSetting")
         self.ReadtomlLine()
         self.Toptitle = self.tomlsetting["Title"]["title"]
 
@@ -81,23 +84,225 @@ class ControlGUI:
         self.btn_font = ("", 50)  # ボタンフォントサイズ
         self.t_font = (1, int(8))  # テーブルフォントサイズ
 
-    def tomlread(self):
+    # ----------------------------------------------------------------------------------
+    def MenuCreate(self, master):
+        """
+        メニューバー作成
+        """
+        try:
+            # メニューバー作成
+            self.men = tk.Menu(master, background="blue", tearoff=0)
+            # ファイルメニューを作成する
+            self.menu_file = tk.Menu(
+                self.men,
+                background="blue",
+            )
+            self.men.add_command(
+                label="ファイル", command=lambda: self.event_set_file(master._name)
+            )
+            # 保存メニューを作成する
+            self.savemenu = tk.Menu(master, background="blue", tearoff=False)
+            self.men.add_cascade(label="保存", menu=self.savemenu)
+            self.savemenu.add_command(label="上書保存", command=self.event_save)
+            self.savemenu.add_separator()  # 仕切り線
+            # self.savemenu.add_command(label="別名保存", command=lambda: event_Searchsave(self))
+            # メニューバーを画面にセット
+            master.config(menu=self.men)
+        except:
+            print("メニューバー作成失敗")  # Log出力
+
+    # ----------------------------------------------------------------------------------
+    def event_set_folder(self):
+        """
+        フォルダ選択ボタンクリックイベント
+        """
+        self.control.dir_path = filedialog.askdirectory(
+            title="関与先フォルダを開く",
+            initialdir=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRView\CompanyData\1869",
+        )
+        self.control.Kanyosaki_name = os.path.basename(self.control.dir_path)
+        self.entry_dir.insert(0, self.control.dir_path)
+        self.control.file_list = self.control.SetDirlist(self.control.dir_path)
+        self.combo_file.configure(values=self.control.file_list)
+
+    # ----------------------------------------------------------------------------------
+    def event_set_file(self, name):
+        """
+        ファイル選択ボタンクリックイベント
+        """
+        # event_Searchsave(self)  # 編集履歴判定後上書き
+        if name != "BOTTOM_Main":  # 呼出元がトップフレームなら閉じる
+            self.top.withdraw()
+        typ = [("PNG", "*.png"), ("PDF", "*.pdf")]
+        self.imgurl = filedialog.askopenfilename(
+            title="画像ファイルを開く", filetypes=typ, initialdir="./"
+        )
+        self.dir_path = os.path.dirname(self.imgurl)
+        self.img_name = os.path.basename(self.imgurl)
+        self.tomlTitle = self.img_name.split(".")[0]
+        self.file_list = self.SetDirlist(self.dir_path)
+
+        if (
+            ".PDF" == os.path.splitext(os.path.basename(self.img_name))[1]
+            or ".pdf" == os.path.splitext(os.path.basename(self.img_name))[1]
+        ):
+            msg = messagebox.askokcancel(
+                "確認", "PDFが選択されています。PNGに変換しますか？\n10ページ以上の処理は処理時間が長時間になる可能性があります。"
+            )
+            if msg is True:
+                # プログレスバーの起動
+                # PBAR = PB.Open(tk.Toplevel())  # サブWindow作成
+                PBAR = ""
+                spd = self.pdf_image(self.img_name, "png", 300, PBAR)
+                if spd is True:
+                    f_r = 0
+                    for f_l in self.file_list:
+                        if f_l == self.img_name:
+                            set_pos = f_r
+                            break
+                        f_r += 1
+                    msg = messagebox.askokcancel("確認", "PNG変換完了しました。")
+                    self.DrawImage("set", set_pos=set_pos)
+                else:
+                    f_r = 0
+                    for f_l in self.file_list:
+                        if f_l == self.img_name:
+                            set_pos = f_r
+                            break
+                        f_r += 1
+                    msg = messagebox.askokcancel(
+                        "確認", "PNG変換に失敗しました。指定DPIが高すぎる可能性があります。"
+                    )
+                    self.DrawImage("set", set_pos=set_pos)
+        else:
+            f_r = 0
+            for f_l in self.file_list:
+                if f_l == self.img_name:
+                    set_pos = f_r
+                    break
+                f_r += 1
+            self.DrawImage("set", set_pos=set_pos)
+
+        if name != "BOTTOM_Main":  # 呼出元がトップフレームなら開く
+            self.top.deiconify()
+
+    # ----------------------------------------------------------------------------------
+    def event_save(self):
+        """
+        Saveボタンクリックイベント
+        """
+        try:
+            if self.Kanyosaki_name != "":
+                self.logger.debug("Saveボタン起動")  # Log出力
+                # 一時保存ファイルを確認
+                if self.model.stock_url != "":
+                    os.remove(self.model.stock_url)
+                self.Newfilename = filedialog.asksaveasfilename(
+                    filetypes=[("PNG", ".png"), ("JPEG", ".jpg")]
+                )
+                self.SaveImage(self.Newfilename)
+                self.file_list = self.SetDirlist(self.dir_path)  # ファイルリストリロード
+                for F_r in range(len(self.file_list)):
+                    if self.file_list[F_r] in self.Newfilename:
+                        self.model.stock_url = ""
+                        self.combo_file.set(self.file_list[F_r])
+            else:
+                messagebox.showinfo("確認", "画像ファイルが選択されていません。")
+        except:
+            messagebox.showinfo("確認", "画像ファイルが選択されていません。")
+
+    # ----------------------------------------------------------------------------------
+    def tomlread(self, filename):
         """
         tomlリード
         """
         try:
-            r_toml = os.getcwd() + r"\OCRViewFromMenu\Setting.toml"
+            r_toml = os.getcwd() + r"\\OCRViewFromMenu\\" + filename
             with open(r_toml, encoding="utf-8") as f:
                 Banktoml = toml.load(f)
             self.tomlurl = r_toml
             return Banktoml
         except:
-            r_toml = os.getcwd() + r"\Setting.toml"
+            r_toml = os.getcwd() + r"\\" + filename
             with open(r_toml, encoding="utf-8") as f:
                 Banktoml = toml.load(f)
             self.tomlurl = r_toml
             return Banktoml
 
+    # ----------------------------------------------------------------------------------
+    def DF_to_toml(self, df, title):
+        """
+        df→toml
+        """
+        t_columns = list(df.columns)
+        t_Index = list(df.index)
+
+        # tomlファイルがない場合コピーして結合
+        NewDict = {
+            self.tomlTitle
+            + title: {
+                "Columns": t_columns,
+                "Index": t_Index,
+            }
+        }
+        r = 0
+        for t_IndexItem in t_Index:
+            dfseries = df.iloc[r].dropna()
+            # 条件テキストボックスのリスト化---------------------------
+            row_list = [a for a in list(dfseries) if a != "" or a is not None]
+            In_Dict = {t_IndexItem: row_list}
+            NewDict[self.tomlTitle + title].update(In_Dict)
+            r += 1
+        MergeDict = dict(**self.LineEditGUISetting, **NewDict)  # 辞書を結合
+        self.LineEditGUISetting = MergeDict
+        dump_toml(MergeDict, self.tomlurl)  # 辞書を保存
+
+    # ----------------------------------------------------------------------------------
+    def toml_LGUI_todf(self, title):
+        """
+        tomlリード→df
+        """
+        try:
+            t_columns = self.LineEditGUISetting[self.tomlTitle + title]["Columns"]
+            t_Index = self.LineEditGUISetting[self.tomlTitle + title]["Index"]
+            list = []
+
+            for ii in t_Index:
+                list_c = []
+                for iii in self.LineEditGUISetting[self.tomlTitle + title][ii]:
+                    list_c.append(iii)
+                list.append(list_c)
+
+            df = DataFrame(
+                list,
+                columns=t_columns,
+                index=t_Index,
+            )
+            return df
+        except:
+            Dandtitle = title.replace("_", "")
+            if "ListSetting" in title:
+                t_columns = self.LineEditGUISetting[Dandtitle]["Columns"]
+            else:
+                t_columns = ["列名"]
+            t_Index = self.LineEditGUISetting[Dandtitle]["Index"]
+            list = []
+
+            for ii in t_Index:
+                list_c = []
+                for iii in self.LineEditGUISetting[Dandtitle][ii]:
+                    list_c.append(iii)
+                list.append(list_c)
+            # DF化
+            df = DataFrame(
+                list,
+                columns=t_columns,
+                index=t_Index,
+            )
+            self.DF_to_toml(df, title)
+            return df
+
+    # ----------------------------------------------------------------------------------
     def ReadtomlLine(self):
         """
         tomlからtoml線軸リストを取得
@@ -109,6 +314,7 @@ class ControlGUI:
             self.YokoList = self.tomlsetting["LineSetting"]["Nomal_Yoko"]
             self.TateList = self.tomlsetting["LineSetting"]["Nomal_Tate"]
 
+    # ----------------------------------------------------------------------------------
     def is_target(self, name, key_list):
         """
         self.ext_keysで指定した拡張子のみリスト化
@@ -120,6 +326,7 @@ class ControlGUI:
 
         return valid
 
+    # ----------------------------------------------------------------------------------
     def get_file(self, command, set_pos=-1):
         """
         画像プレビュー機能の設定
@@ -145,6 +352,7 @@ class ControlGUI:
 
     # Public
 
+    # ----------------------------------------------------------------------------------
     def SetDirlist(self, dir_path):
         """
         フォルダー内画像ファイルをリスト化
@@ -165,12 +373,14 @@ class ControlGUI:
 
         return self.target_files
 
+    # ----------------------------------------------------------------------------------
     def SetCanvas(self, window_canvas):
         """
         キャンバス配置
         """
         self.canvas = window_canvas
 
+    # ----------------------------------------------------------------------------------
     def DrawImage(self, command, set_pos=-1):
         """
         キャンバスに画像を読込む
@@ -179,11 +389,49 @@ class ControlGUI:
             fname = self.get_file(command, set_pos)
             if command == "Map":
                 self.model.DrawImage(fname, self.canvas, "Map")
+                self.ImportIMG()
+                self.ImportIMG_readtoml()
             else:
                 self.model.DrawImage(fname, self.canvas, "None")
+                self.ImportIMG()
+                self.ImportIMG_readtoml()
             return self.file_pos, self.model
         except:
             print("DrawImageSkip")
+
+    # ----------------------------------------------------------------------------------
+    def ImportIMG(self):
+        """
+        LinEditGUI下ウィンドウに画像をリサイズして配置
+        """
+        self.img = Image.open(self.imgurl)
+        if self.back.winfo_width() >= 50:
+            self.FCW = self.back.winfo_width()
+            self.FCH = self.back.winfo_height()
+
+        self.HCW = self.FCW / self.img.width  # 幅リサイズ比率
+        self.HCH = self.FCH / self.img.height  # 高さリサイズ比率
+
+        self.img = self.img.resize((self.FCW, self.FCH))  # 画像リサイズ
+
+        self.TkPhoto = ImageTk.PhotoImage(
+            self.img, master=self.back
+        )  # 下Windowに表示する画像オブジェクト
+        self.back.create_image(
+            0, 0, image=self.TkPhoto, anchor=tk.NW
+        )  # 下Windowのキャンバスに画像挿入
+
+    # ----------------------------------------------------------------------------------
+    def ImportIMG_readtoml(self):
+        """
+        LinEditGUI下ウィンドウに画像をリサイズして配置
+        """
+        self.Kanyosaki_name = os.path.basename(self.dir_path)
+        self.tomlTitle = self.img_name.split(".")[0]
+        self.toml_LGUI_todf("_ListSetting")
+        self.toml_LGUI_todf("_ColumnSetting")
+
+    # ----------------------------------------------------------------------------------
 
     def pdf_image(self, pdf_file, fmtt, dpi, PBAR):
         mpd = self.model.pdf_image(pdf_file, fmtt, dpi, PBAR)
@@ -192,6 +440,7 @@ class ControlGUI:
         else:
             return False
 
+    # ----------------------------------------------------------------------------------
     def MenuFuncRun(self, command, whlist, set_pos=-1):
         """
         menuボタンクリック
@@ -240,12 +489,14 @@ class ControlGUI:
             except:
                 return "Err"
 
+    # ----------------------------------------------------------------------------------
     # def ResizeRun(self, command, set_pos=-1):
     #     """
     #     resizeボタンクリック
     #     """
     #     fname = self.get_file(command, set_pos)
 
+    # ----------------------------------------------------------------------------------
     def DrawRectangle(self, command, pos_y, pos_x):
         """
         キャンバス画像クリックで範囲指定完了後
@@ -270,6 +521,7 @@ class ControlGUI:
             self.canvas, self.clip_sy, self.clip_sx, self.clip_ey, self.clip_ex
         )
 
+    # ----------------------------------------------------------------------------------
     def EditImage(self, command):
         """
         画像トリミング
@@ -356,6 +608,7 @@ class ControlGUI:
         fname = self.get_file("current")
         self.model.DrawImage(fname, self.canvas, command, args=args)
 
+    # ----------------------------------------------------------------------------------
     def SaveImage(self, fname):
         """
         画像ファイル名日付追加保存
@@ -363,6 +616,7 @@ class ControlGUI:
 
         self.model.SaveImage(fname)
 
+    # ----------------------------------------------------------------------------------
     def OverSaveImage(self):
         """
         画像上書き保存
@@ -370,6 +624,7 @@ class ControlGUI:
         fname = self.get_file("current")
         self.model.OverSaveImage(fname)
 
+    # ----------------------------------------------------------------------------------
     def UndoImage(self, command):
         """
         画像編集復元
@@ -377,6 +632,7 @@ class ControlGUI:
         fname = self.get_file("current")
         self.model.DrawImage(fname, self.canvas, command)
 
+    # ----------------------------------------------------------------------------------
     def CreateDB(self, dbname):
         """
         dbを作成する
@@ -384,6 +640,7 @@ class ControlGUI:
         conn = sql.connect(dbname)
         conn.close()
 
+    # ----------------------------------------------------------------------------------
     def CreateTable(self, dbname, tbname):
         """
         テーブルを作成する
@@ -394,6 +651,7 @@ class ControlGUI:
         conn.commit()
         conn.close()
 
+    # ----------------------------------------------------------------------------------
     def TableInsert(self, dbname, tbname, text):
         """
         テーブルにデータ追加
@@ -409,6 +667,7 @@ class ControlGUI:
         cur.close()
         conn.close()
 
+    # ----------------------------------------------------------------------------------
     def CheckTable(self, dbname, tbname):
         """
         テーブルの中身を確認

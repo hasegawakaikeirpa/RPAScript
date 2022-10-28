@@ -136,6 +136,66 @@ class MyTableSQL(Table):
         # plotcommands = ["Plot Selected", "Hide plot", "Show plot"]
         # tablecommands = ["Table to Text", "Clean Data", "Clear Formatting"]
 
+        def createSubMenu(parent, label, commands):
+            menu = tk.Menu(parent, tearoff=0)
+            popupmenu.add_cascade(label=label, menu=menu)
+            for action in commands:
+                menu.add_command(label=action, command=defaultactions[action])
+            applyStyle(menu)
+            return menu
+
+        def add_commands(fieldtype):
+            """Add commands to popup menu for column type and specific cell"""
+            functions = self.columnactions[fieldtype]
+            for f in list(functions.keys()):
+                func = getattr(self, functions[f])
+                popupmenu.add_command(label=f, command=lambda: func(row, col))
+            return
+
+        popupmenu = tk.Menu(self, tearoff=0)
+
+        def popupFocusOut(event):
+            popupmenu.unpost()
+
+        if outside is None:
+            # if outside table, just show general items
+            row = self.get_row_clicked(event)
+            col = self.get_col_clicked(event)
+            coltype = self.model.getColumnType(col)
+
+            def add_defaultcommands():
+                """now add general actions for all cells"""
+                for action in main:
+                    if action == "Fill Down" and (rows == None or len(rows) <= 1):
+                        continue
+                    if action == "Fill Right" and (cols == None or len(cols) <= 1):
+                        continue
+                    if action == "Undo" and self.prevdf is None:
+                        continue
+                    else:
+                        popupmenu.add_command(
+                            label=action, command=defaultactions[action]
+                        )
+                return
+
+            if coltype in self.columnactions:
+                add_commands(coltype)
+            add_defaultcommands()
+
+        for action in general:
+            popupmenu.add_command(label=action, command=defaultactions[action])
+
+        popupmenu.add_separator()
+        createSubMenu(popupmenu, "File", filecommands)
+        createSubMenu(popupmenu, "Edit", editcommands)
+        # createSubMenu(popupmenu, "Plot", plotcommands)
+        # createSubMenu(popupmenu, "Table", tablecommands)
+        popupmenu.bind("<FocusOut>", popupFocusOut)
+        popupmenu.focus_set()
+        popupmenu.post(event.x_root, event.y_root)
+        applyStyle(popupmenu)
+        return popupmenu
+
     # --------------------------------------------------------------------
     def handle_arrow_keys(self, event):
         """Handle arrow keys press"""

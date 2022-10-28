@@ -52,12 +52,23 @@ class ViewGUI(ttk.Frame):
         try:
             self.Frame = tk.Frame(
                 self,
+                # bg="#60cad1",
+                bg="black",
+                relief=tk.GROOVE,
+                bd=1,
+                height=self.control.height_of_window,
+                width=self.control.width_of_window,
+            )
+            self.BOTTOM = tk.Frame(
+                master=self.Frame,
+                # master=self,
                 bg="#60cad1",
                 relief=tk.GROOVE,
                 bd=1,
-                height=self.control.FCH,
-                width=self.control.FCW,
+                height=self.control.Bottom_Column,
+                width=self.control.width_of_window,
             )
+            self.BOTTOM.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
             self.CanvasCreate()
             self.Frame.pack(fill=tk.BOTH, expand=True)
             # ImageViewer.call("", Frame)
@@ -92,7 +103,8 @@ class ViewGUI(ttk.Frame):
         try:
             # キャンバス
             self.window_sub_canvas = tk.Canvas(
-                self.Frame,
+                master=self.Frame,
+                # self,
                 height=self.control.FCH,
                 width=self.control.FCW,
                 bg="gray",
@@ -123,7 +135,7 @@ class ViewGUI(ttk.Frame):
         self.radio_intvar2 = tk.IntVar()
 
         Frame = tk.Frame(
-            self.Frame,
+            master=self.BOTTOM,
             height=self.control.Bottom_Column,
             width=300,
             bg="#60cad1",
@@ -222,7 +234,7 @@ class ViewGUI(ttk.Frame):
         EntWidth, EntHeight = 70, 20
         LabelWidth, LabelHeight = 70, 20
         Frame = tk.Frame(
-            self.Frame,
+            master=self.BOTTOM,
             height=self.control.Bottom_Column,
             width=300,
             bg="#60cad1",
@@ -293,7 +305,7 @@ class ViewGUI(ttk.Frame):
         EntWidth, EntHeight = 70, 20
         LabelWidth, LabelHeight = 70, 20
         Frame = tk.Frame(
-            self.Frame,
+            master=self.BOTTOM,
             height=self.control.Bottom_Column,
             width=300,
             bg="#60cad1",

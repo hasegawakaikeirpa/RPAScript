@@ -42,6 +42,7 @@ class LineEditPage(Page):
         # 共通設定読込
         self.control = controlSerach(self)
         self.create_frame_content().pack(fill=tk.BOTH, expand=True)
+        self.control.First = False
 
     def create_frame_content(self) -> ttk.Frame:
         """
