@@ -333,6 +333,51 @@ def MasterCSVGet(FolURL2):
     return C_df
 
 
+def DataOpenRet(FolURL2, PreListItem):
+    print("表示できないプレデータ")
+    time.sleep(1)
+    pg.keyDown("alt")
+    pg.press("x")
+    pg.keyUp("alt")
+    time.sleep(1)
+    TyouList = ["TyouhyouList.png", "TyouhyouList2.png"]
+    Imc = ImgCheckForList(FolURL2, TyouList, 0.9, 2)
+    if Imc[0] is True:
+        ImgClick(FolURL2, Imc[1], 0.9, 1)
+    while (
+        pg.locateOnScreen(FolURL2 + "/" + "FOTitle.png", confidence=0.9) is None
+    ):
+        time.sleep(1)
+    pyperclip.copy(str(PreListItem[0]))
+    pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
+    time.sleep(1)
+    pg.press(["return"])
+    time.sleep(2)
+    WY = WarekiHenkan.Wareki.from_ad(int(TaisyouNen))
+    WY = str(WY).replace("令和", "").replace("年", "")
+    pg.write(WY, interval=0.01)
+    time.sleep(1)
+    pg.press("return")
+    time.sleep(1)
+    pg.press("return")
+    time.sleep(1)
+    while (
+        pg.locateOnScreen(FolURL2 + "/" + "PreCheckBar.png", confidence=0.9) is None
+    ):
+        time.sleep(1)
+    time.sleep(2)
+    pg.keyDown("alt")
+    pg.press("p")
+    time.sleep(1)
+    pg.press("k")
+    pg.keyUp("alt")
+    while pg.locateOnScreen(FolURL2 + "/" + "FileOut.png", confidence=0.9) is None:
+        time.sleep(1)
+        PC = ImgCheck(FolURL2 ,"NoPreData.png", 0.9,10)
+        if PC[0] is True:
+            return False
+    return True         
+
 # -------------------------------------------------------------------------------------------------------------------------------
 def DataOpen(FolURL2, PreListItem):
     try:
@@ -364,13 +409,11 @@ def DataOpen(FolURL2, PreListItem):
             time.sleep(1)
             PC = ImgCheck(FolURL2 ,"NoPreData.png", 0.9,10)
             if PC[0] is True:
-                print("表示できないプレデータ")
-                time.sleep(1)
-                pg.keyDown("alt")
-                pg.press("x")
-                pg.keyUp("alt")
-                time.sleep(1)                
-                return False
+                DOR = DataOpenRet(FolURL2, PreListItem)
+                if DOR is False:
+                    return False
+                else:
+                    break
         ImgClick(FolURL2, "FileOut.png", 0.9, 1)
         time.sleep(1)
         ImgClick(FolURL2, "FTypeSelect.png", 0.9, 1)

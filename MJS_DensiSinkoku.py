@@ -423,6 +423,9 @@ def PrintAct(FolURL2, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui):
             pg.locateOnScreen(FolURL2 + "/" + "UnderArrow.png", confidence=0.9) is None
         ):
             time.sleep(1)
+            FO = ImgCheck(FolURL2, "FIleOver.png", 0.9, 10)
+            if FO[0] is True:
+                pg.press(["y"])
         time.sleep(3)
         ImgClick(FolURL2, "FallEnd.png", 0.9, 10)
         time.sleep(3)
