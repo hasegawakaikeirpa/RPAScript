@@ -61,14 +61,28 @@ def log_decorator():
 class Application(ttk.Frame):
     def __init__(self, master, control):
         super().__init__(master)
+
+        # ルートフレームの行列制限
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+
+        # コントロール
         self.control = control
+        self.control.App = self
         self.control.wid_Par = self.control.width_of_window / 1459
         self.control.hei_Par = self.control.height_of_window / 820
-        # # ルートウィンドウ
+
+        # ルートウィンドウ#########################################################################
         self.control.LineEdit_root = tk.Frame(master=master)
         self.control.LineEdit_root.pack(fill=tk.BOTH, expand=True)
+        self.control.LineEdit_root.bind("<Motion>", self.change)  # 下ウィンドウにマウス移動関数bind
+
+        # トップウィンドウ#########################################################################
         self.control.top = tk.Toplevel(master=master)
         self.control.top._name = "TOP_Main"
+        # トップウィンドウの行列制限
+        self.control.top.grid_rowconfigure(1, weight=1)
+        self.control.top.grid_columnconfigure(1, weight=1)
         data = IconCode.icondata()
         self.control.top.tk.call(
             "wm",
@@ -76,7 +90,6 @@ class Application(ttk.Frame):
             self.control.top._w,
             tk.PhotoImage(data=data, master=self.control.top),
         )
-
         self.control.top.geometry(
             "%dx%d+%d+%d"
             % (
@@ -88,21 +101,23 @@ class Application(ttk.Frame):
         )
         self.control.top.wm_attributes("-transparentcolor", "snow")  # トップWindowの白色を透過
         self.control.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
+        self.control.top.bind("<Motion>", self.change)  # 透過ウィンドウにマウス移動関数bind
+        self.control.MenuCreate(self.control.top)  # メニューバー作成
+
+        # トップウィンドウフレーム##################################################################
         self.control.top.window_rootFrame = tk.Frame(
             master=self.control.top,
             width=self.control.width_of_window,
             height=self.control.height_of_window,
         )
         self.control.top.window_rootFrame.pack(fill=tk.BOTH, expand=True)
-        self.control.top.bind("<Motion>", self.change)  # 透過ウィンドウにマウス移動関数bind
-        self.control.LineEdit_root.bind("<Motion>", self.change)  # 下ウィンドウにマウス移動関数bind
-        self.control.MenuCreate(self.control.top)  # メニューバー作成
+
         self.FrameCreate()  # フレーム作成
         self.control.top.withdraw()
 
     # 要素作成######################################################################################
     def FrameCreate(self):
-        # サイドメニュー作成
+        # # サイドメニュー作成
         self.SideFrame = tk.Frame(
             self.control.top.window_rootFrame,
             width=self.control.Left_Column,
@@ -112,6 +127,22 @@ class Application(ttk.Frame):
         )
         # self.SideFrame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.SideFrame.grid(row=0, column=0, rowspan=2, sticky=tk.N + tk.S)
+
+        # サイドメニュー幅調整の為ツリービュー等挿入
+        tree = ttk.Treeview(self.SideFrame)
+        tree.pack(side=tk.BOTTOM)
+
+        # ボトムメニュー作成
+        self.bottumFrame = tk.Frame(
+            self.control.top.window_rootFrame,
+            width=self.control.FCW,
+            height=self.control.Bottom_Column,
+            bg="black",
+            relief=tk.GROOVE,
+        )
+        # self.bottumFrame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.bottumFrame.grid(row=1, column=1, sticky=tk.N + tk.S)
+
         # 透過キャンバスフレーム
         self.control.topFrame = tk.Frame(
             self.control.top.window_rootFrame,
@@ -123,6 +154,7 @@ class Application(ttk.Frame):
         )
         # self.control.topFrame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         self.control.topFrame.grid(row=0, column=1, sticky=tk.NSEW)
+
         # 透過キャンバス作成
         self.control.top.forward = tk.Canvas(
             self.control.topFrame,
@@ -132,17 +164,8 @@ class Application(ttk.Frame):
         )
         self.control.top.forward.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.control.top.forward.bind("Enter", self.change)
-        self.Transparent_Create()  # 透過キャンバス描画
-        # ボトムメニュー作成
-        self.bottumFrame = tk.Frame(
-            self.control.top.window_rootFrame,
-            width=self.control.FCW,
-            height=self.control.Bottom_Column,
-            bg="black",
-            relief=tk.GROOVE,
-        )
-        # self.bottumFrame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        self.bottumFrame.grid(row=1, column=1, sticky=tk.NSEW)
+        self.control.Transparent_Create(self)  # 透過キャンバス描画
+
         self.bottumFrame.propagate(0)
         #################################################################################
 
@@ -172,83 +195,6 @@ class Application(ttk.Frame):
         LineEditGUI_Frame.Frame3(self)
 
     # ------------------------------------------------------------------------------------
-    def Transparent_Create(self):
-        """
-        透過キャンバス(上ウィンドウ)に罫線描画処理
-        """
-        # .create_line(Ⅹ座標（始点）, Ｙ座標（始点）,Ⅹ座標（終点）, Ｙ座標（終点）)
-        BtagsList = []
-        self.tagsList = []
-        ri = 0
-        for readcsv1Item in self.control.YokoList:
-            ri += 1
-            ripar0 = round(readcsv1Item[0] * self.control.HCW, 0)  # * CHh
-            ripar1 = round(readcsv1Item[1] * self.control.HCH, 0)  # * CWw
-            ripar2 = round(readcsv1Item[2] * self.control.HCW, 0)  # * CHh
-            ripar3 = round(readcsv1Item[3] * self.control.HCH, 0)  # * CWw
-            self.TName = "Line" + str(ri)
-            try:
-                self.control.top.forward.dtag(self.TName, self.TName)
-            except:
-                print("dtagErr")
-            self.control.top.forward.create_line(
-                ripar0,
-                ripar1,
-                ripar2,
-                ripar3,
-                tags=self.TName,
-                width=7,
-                fill="#FF0000",
-                activefill="#DBDD6F",
-            )
-            self.control.top.forward.tag_bind(
-                self.TName, "<ButtonPress-1>", self.click1
-            )
-            self.control.top.forward.tag_bind(
-                self.TName, "<Control-Double-1>", self.EventDelete
-            )
-            self.control.top.forward.tag_bind(self.TName, "<B1-Motion>", self.drag1)
-
-            self.control.top.forward.place(x=0, y=0)
-            BtagsList.append([self.TName, ripar0, ripar1, ripar2, ripar3, "Yoko"])
-        for readcsv2Item in self.control.TateList:
-            ri += 1
-            ripar0 = round(readcsv2Item[0] * self.control.HCW, 0)  # * CHh
-            ripar1 = round(readcsv2Item[1] * self.control.HCH, 0)  # * CWw
-            ripar2 = round(readcsv2Item[2] * self.control.HCW, 0)  # * CHh
-            ripar3 = round(readcsv2Item[3] * self.control.HCH, 0)  # * CWw
-            self.TName = "Line" + str(ri)
-            self.control.top.forward.create_line(
-                ripar0,
-                ripar1,
-                ripar2,
-                ripar3,
-                tags=self.TName,
-                width=7,
-                fill="#00FF40",
-                activefill="#DBDD6F",
-            )
-            self.control.top.forward.tag_bind(
-                self.TName, "<ButtonPress-1>", self.click1
-            )
-            self.control.top.forward.tag_bind(
-                self.TName, "<Control-Double-1>", self.EventDelete
-            )
-            self.control.top.forward.tag_bind(self.TName, "<B1-Motion>", self.drag1)
-
-            self.control.top.forward.place(x=0, y=0)
-            BtagsList.append([self.TName, ripar0, ripar1, ripar2, ripar3, "Tate"])
-        TL = len(BtagsList)
-        for TTL in range(TL):
-            tagsListItem = BtagsList[TTL]
-            BB = self.control.top.forward.bbox(tagsListItem[0])
-            BSS = [
-                tagsListItem[1] - BB[0],
-                tagsListItem[2] - BB[1],
-                tagsListItem[3] - BB[2],
-                tagsListItem[4] - BB[3],
-            ]
-            self.tagsList.append([tagsListItem, BSS])
 
     # 関数##############################################################################
     # 円、矩形、直線を描画＆ドラッグできるようにする【tkinter】
@@ -276,16 +222,16 @@ class Application(ttk.Frame):
         self.TName = event.widget.gettags(self.id1[0])[0]
         event.widget.delete(self.TName)
         r = 0
-        for tagsListItem in self.tagsList:
+        for tagsListItem in self.control.tagsList:
             if self.TName == tagsListItem[0][0]:
-                self.tagsList.pop(r)
+                self.control.tagsList.pop(r)
                 break
             r += 1
-        nptag_L = LineTomlOut(self.tagsList, self.control.HCW, self.control.HCH)
+        nptag_L = LineTomlOut(self.control.tagsList, self.control.HCW, self.control.HCH)
         if nptag_L[0] is True:
             ####################################################################################
-            self.control.Yoko_N = self.control.img_name + "_Yoko"
-            self.control.Tate_N = self.control.img_name + "_Tate"
+            self.control.Yoko_N = self.control.tomlTitle + "_Yoko"
+            self.control.Tate_N = self.control.tomlTitle + "_Tate"
             nptag_L[1].sort()
             nptag_L[2].sort(key=lambda x: x[1])
             self.control.tomlsetting["LineSetting"][self.control.Yoko_N] = nptag_L[1]
@@ -317,9 +263,9 @@ class Application(ttk.Frame):
             self.control.img_name = os.path.splitext(
                 os.path.basename(self.control.imgurl)
             )[0]
-            self.control.Yoko_N = self.control.img_name + "_Yoko"
-            self.control.Tate_N = self.control.img_name + "_Tate"
-            self.control.rep_N = self.control.img_name + "_ReplaceStr"
+            self.control.Yoko_N = self.control.tomlTitle + "_Yoko"
+            self.control.Tate_N = self.control.tomlTitle + "_Tate"
+
             self.control.YokoList = self.control.tomlsetting["LineSetting"][
                 self.control.Yoko_N
             ]
@@ -374,8 +320,10 @@ class Application(ttk.Frame):
 
     # ---------------------------------------------------------------------------------------------
     def blankno(self):
-        if len(self.tagsList) != 0:
-            TN_List = [int(str(t[0][0]).replace("Line", "")) for t in self.tagsList]
+        if len(self.control.tagsList) != 0:
+            TN_List = [
+                int(str(t[0][0]).replace("Line", "")) for t in self.control.tagsList
+            ]
             TN_List.sort()
             N_TN_r = 0
             for TN_r in TN_List:
@@ -416,7 +364,7 @@ class Application(ttk.Frame):
         self.control.top.forward.tag_bind(self.TName, "<B1-Motion>", self.drag1)
         BSS = [0, 0, 0, 0]
         TSS = [self.TName, event.x, 0, event.x, self.control.FCH, "Yoko"]
-        self.tagsList.append([TSS, BSS])
+        self.control.tagsList.append([TSS, BSS])
 
     # ---------------------------------------------------------------------------------------------
     def Right_backbind(self, event):
@@ -441,7 +389,7 @@ class Application(ttk.Frame):
         sm.tag_bind(self.TName, "<B1-Motion>", self.drag1)
         TSS = [self.TName, 0, event.y, self.control.FCW, event.y, "Tate"]
         BSS = [0, 0, 0, 0]
-        self.tagsList.append([TSS, BSS])
+        self.control.tagsList.append([TSS, BSS])
 
     # ---------------------------------------------------------------------------------------------
     def drag1(self, event):

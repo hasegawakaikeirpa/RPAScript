@@ -14,6 +14,8 @@ import numpy as np
 from chardet.universaldetector import UniversalDetector
 import sqlite3 as sql
 from Functions import dump_toml
+import ControlGUI
+
 
 class MyTable(Table):
     """
@@ -23,6 +25,7 @@ class MyTable(Table):
 
     def __init__(self, parent=None, **kwargs):
         Table.__init__(self, parent, **kwargs)
+        self.control = kwargs["control"]
         return
 
     # --------------------------------------------------------------------
@@ -288,11 +291,42 @@ class MyTable(Table):
         self.cellentry.icursor(tk.END)
         self.cellentry.focus_set()
         self.cellentry.bind("<Return>", lambda x: self.HCE(row, col))
-
+        self.cellentry.bind("<Control-z>", self.CellTextReturn)
         self.entrywin = self.create_window(
             x1, y1, width=w, height=h, window=self.cellentry, anchor="nw", tag="entry"
         )
         # ---------------------------------------------------------------------------------
+        return
+
+    # --------------------------------------------------------------------
+    def HCE(self, row, col):
+        """Callback for cell entry"""
+        value = self.cellentry.get()
+        # m = self.childrenSearch()
+
+        if self.filtered == 1:
+            df = self.dataframe
+        else:
+            df = None
+        self.model.setValueAt(value, row, col, df=df)
+        self.L_stack = value
+        self.drawText(row, col, value, align=self.align)
+        # self.delete("entry")
+        self.gotonextCell()
+        self.focus_set()
+        if self._name == "各列指定":
+            title = "_ListSetting"
+        else:
+            title = "_ColumnSetting"
+        self.control.DF_to_toml(self.model.df, title)
+
+        return
+
+    # --------------------------------------------------------------------
+    def CellTextReturn(self, event):
+        self.cellentry.delete(0, tk.END)
+        self.cellentry.insert(0, self.F_stack)
+        self.cellentry.icursor(tk.END)
         return
 
     # --------------------------------------------------------------------
@@ -328,54 +362,6 @@ class MyTable(Table):
         self.importpath = os.path.dirname(filename)
         self.importFilePath = filename
         return
-
-    # --------------------------------------------------------------------
-    def HCE(self, row, col):
-        """Callback for cell entry"""
-        value = self.cellentry.get()
-        # m = self.childrenSearch()
-
-        if self.filtered == 1:
-            df = self.dataframe
-        else:
-            df = None
-        self.model.setValueAt(value, row, col, df=df)
-        self.L_stack = value
-        self.drawText(row, col, value, align=self.align)
-        # self.delete("entry")
-        self.gotonextCell()
-        self.focus_set()
-        self.DF_to_toml()
-
-        return
-
-    # --------------------------------------------------------------------
-    def DF_to_toml(self, df):
-        """
-        df→toml
-        """
-        t_columns = list(df.columns)
-        t_Index = list(df.index)
-
-        # tomlファイルがない場合コピーして結合
-        NewDict = {
-            self.tomlTitle
-            + title: {
-                "Columns": t_columns,
-                "Index": t_Index,
-            }
-        }
-        r = 0
-        for t_IndexItem in t_Index:
-            dfseries = df.iloc[r].dropna()
-            # 条件テキストボックスのリスト化---------------------------
-            row_list = [a for a in list(dfseries) if a != "" or a is not None]
-            In_Dict = {t_IndexItem: row_list}
-            NewDict[self.tomlTitle + title].update(In_Dict)
-            r += 1
-        MergeDict = dict(**self.LineEditGUISetting, **NewDict)  # 辞書を結合
-        self.LineEditGUISetting = MergeDict
-        dump_toml(MergeDict, self.tomlurl)  # 辞書を保存
 
     # --------------------------------------------------------------------
     def handle_left_click(self, event):

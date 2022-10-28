@@ -60,6 +60,7 @@ from page_view import ViewGUIPage, LineEditPage
 class SettingsView(ttk.Frame):
     def __init__(self, master, **kw):
         super().__init__(master, **kw)
+        self.control = ControlGUI.ControlGUI(master, os.getcwd())
         self.pages = {}
         # ルートフレームの行列制限
         self.grid_rowconfigure(0, weight=1)
@@ -69,7 +70,6 @@ class SettingsView(ttk.Frame):
         # フレーム作成
         self.create_frame_page().grid(row=0, column=1, sticky=tk.NSEW)
         # 共通設定読込
-        self.control = ControlGUI.ControlGUI(master, os.getcwd())
         master._name = "BOTTOM_Main"
         self.control.MenuCreate(master)  # メニューバー作成
         # ######################################################################
@@ -101,7 +101,7 @@ class SettingsView(ttk.Frame):
         設定ツリービューフレームクラスの作成、インスタンス化
         return:ttk.Frame
         """
-        self.frame_treeview = ttk.Frame(master=self)
+        self.frame_treeview = ttk.Frame(master=self, width=self.control.Left_Column)
 
         self.treeview_settings = SettingsTreeview(self.frame_treeview)
         self.treeview_settings.bind_all(
@@ -125,31 +125,17 @@ class SettingsView(ttk.Frame):
         """
         引数ページ名から該当のページを読み込む
         """
+        # アクティブウィンドウサイズを取得
+        pm = self.master.geometry()
+
         for page_name in self.pages.keys():
             self.pages[page_name].pack_forget()
 
         if setting_name == "Audio":
-            self.re_geometry(self.master)
             self.pages[setting_name].pack(fill=tk.BOTH, expand=True)
-            self.master.geometry(
-                "%dx%d+%d+%d"
-                % (
-                    self.control.width_of_window,
-                    self.control.height_of_window,
-                    self.control.x_coodinate,
-                    self.control.y_coodinate,
-                )
-            )
+            self.master.geometry(pm)
+            self.control.top.geometry(pm)
             self.control.top.deiconify()
-            self.control.top.geometry(
-                "%dx%d+%d+%d"
-                % (
-                    self.control.width_of_window,
-                    self.control.height_of_window,
-                    self.control.x_coodinate,
-                    self.control.y_coodinate,
-                )
-            )
             self.control.top.wm_attributes("-topmost", True)  # 常に一番上のウィンドウに指定
 
         else:
@@ -168,18 +154,6 @@ class SettingsView(ttk.Frame):
         self.treeview_settings.add_setting(image=photo_image, section_text=setting_name)
 
         self.pages[setting_name].pack(fill=tk.BOTH, expand=True)
-
-    def re_geometry(self, master):
-        """
-        toplevel再表示
-        """
-        geo = master.geometry()
-        geo = geo.split("x")
-        geo2 = geo[1].split("+")
-        self.control.width_of_window = int(geo[0])
-        self.control.height_of_window = int(geo2[0])
-        self.control.x_coodinate = int(geo2[1])
-        self.control.y_coodinate = int(geo2[2])
 
 
 # ###########################################################################################
@@ -238,14 +212,14 @@ if __name__ == "__main__":
     # settings = SettingsView(root)
 
     settings.add_page(
-        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
-        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Language",
         page=ViewGUIPage,
     )
     settings.add_page(
-        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
-        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Audio",
         page=LineEditPage,
     )

@@ -25,7 +25,7 @@ class ControlGUI:
         self.y_coodinate = 0  # self.height_of_window / 4
 
         # グリッドサイズ
-        self.Left_Column = int(int(root.winfo_screenwidth()) * 0.105)
+        self.Left_Column = int(int(root.winfo_screenwidth()) * 0.105)  # 0.105)
         self.Bottom_Column = int(int(root.winfo_screenheight()) * 0.3)
         self.SideWidth = int(self.width_of_window / 7)
         self.SideHeight = int(self.height_of_window / 90)
@@ -39,7 +39,7 @@ class ControlGUI:
         self.pady = self.y_coodinate / 4
         # 各キャンバスサイズ
         self.FCW = int(self.width_of_window * 0.98)
-        self.FCH = int(self.height_of_window * 0.82)
+        self.FCH = int(self.height_of_window * 0.75)
         # 各リサイズ比率
         self.HCW = 1
         self.HCH = 1
@@ -116,14 +116,14 @@ class ControlGUI:
         """
         フォルダ選択ボタンクリックイベント
         """
-        self.control.dir_path = filedialog.askdirectory(
+        self.dir_path = filedialog.askdirectory(
             title="関与先フォルダを開く",
             initialdir=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRView\CompanyData\1869",
         )
-        self.control.Kanyosaki_name = os.path.basename(self.control.dir_path)
-        self.entry_dir.insert(0, self.control.dir_path)
-        self.control.file_list = self.control.SetDirlist(self.control.dir_path)
-        self.combo_file.configure(values=self.control.file_list)
+        self.Kanyosaki_name = os.path.basename(self.dir_path)
+        self.entry_dir.insert(0, self.dir_path)
+        self.file_list = self.SetDirlist(self.dir_path)
+        self.combo_file.configure(values=self.file_list)
 
     # ----------------------------------------------------------------------------------
     def event_set_file(self, name):
@@ -186,6 +186,112 @@ class ControlGUI:
         if name != "BOTTOM_Main":  # 呼出元がトップフレームなら開く
             self.top.deiconify()
 
+    # ------------------------------------------------------------------------------------
+    def Transparent_Create(self, master):
+        """
+        透過キャンバス(上ウィンドウ)に罫線描画処理
+        """
+        # .create_line(Ⅹ座標（始点）, Ｙ座標（始点）,Ⅹ座標（終点）, Ｙ座標（終点）)
+        self.AllLineDelete(master)
+        BtagsList = []
+        self.tagsList = []
+        ri = 0
+        for readcsv1Item in self.YokoList:
+            ri += 1
+            ripar0, ripar1, ripar2, ripar3 = self.Zero_Check(readcsv1Item)
+            master.TName = "Line" + str(ri)
+            try:
+                self.top.forward.dtag(master.TName, master.TName)
+            except:
+                print("dtagErr")
+            self.top.forward.create_line(
+                ripar0,
+                ripar1,
+                ripar2,
+                ripar3,
+                tags=master.TName,
+                width=7,
+                fill="#FF0000",
+                activefill="#DBDD6F",
+            )
+            self.top.forward.tag_bind(master.TName, "<ButtonPress-1>", master.click1)
+            self.top.forward.tag_bind(
+                master.TName, "<Control-Double-1>", master.EventDelete
+            )
+            self.top.forward.tag_bind(master.TName, "<B1-Motion>", master.drag1)
+
+            self.top.forward.place(x=0, y=0)
+            BtagsList.append([master.TName, ripar0, ripar1, ripar2, ripar3, "Yoko"])
+        for readcsv2Item in self.TateList:
+            ri += 1
+            ripar0, ripar1, ripar2, ripar3 = self.Zero_Check(readcsv2Item)
+            master.TName = "Line" + str(ri)
+            self.top.forward.create_line(
+                ripar0,
+                ripar1,
+                ripar2,
+                ripar3,
+                tags=master.TName,
+                width=7,
+                fill="#00FF40",
+                activefill="#DBDD6F",
+            )
+            self.top.forward.tag_bind(master.TName, "<ButtonPress-1>", master.click1)
+            self.top.forward.tag_bind(
+                master.TName, "<Control-Double-1>", master.EventDelete
+            )
+            self.top.forward.tag_bind(master.TName, "<B1-Motion>", master.drag1)
+
+            self.top.forward.place(x=0, y=0)
+            BtagsList.append([master.TName, ripar0, ripar1, ripar2, ripar3, "Tate"])
+        TL = len(BtagsList)
+        for TTL in range(TL):
+            tagsListItem = BtagsList[TTL]
+            BB = self.top.forward.bbox(tagsListItem[0])
+            BSS = [
+                tagsListItem[1] - BB[0],
+                tagsListItem[2] - BB[1],
+                tagsListItem[3] - BB[2],
+                tagsListItem[4] - BB[3],
+            ]
+            self.tagsList.append([tagsListItem, BSS])
+        return
+
+    # ------------------------------------------------------------------------------------
+    def Zero_Check(self, readcsv1Item):
+        """
+        軸値が0なら1に
+        """
+        ripar0 = round(readcsv1Item[0] * self.HCW, 0)  # * CHh
+        if ripar0 == 0:
+            ripar0 = 1
+        ripar1 = round(readcsv1Item[1] * self.HCH, 0)  # * CWw
+        if ripar1 == 0:
+            ripar1 = 1
+        ripar2 = round(readcsv1Item[2] * self.HCW, 0)  # * CHh
+        if ripar2 == 0:
+            ripar2 = 1
+        ripar3 = round(readcsv1Item[3] * self.HCH, 0)  # * CWw
+        if ripar3 == 0:
+            ripar3 = 1
+        return ripar0, ripar1, ripar2, ripar3
+
+    # ----------------------------------------------------------------------------------
+    def AllLineDelete(self, selfC):
+        """
+        選択直線の削除
+        """
+        try:
+            r = len(self.tagsList) - 1
+            self.top.forward.delete("all")
+            for tagsListItem in reversed(self.tagsList):
+                self.top.forward.delete(tagsListItem[0][0])
+                self.tagsList.pop(r)
+                r -= 1
+            return
+        except:
+            return
+
     # ----------------------------------------------------------------------------------
     def event_save(self):
         """
@@ -220,13 +326,21 @@ class ControlGUI:
             r_toml = os.getcwd() + r"\\OCRViewFromMenu\\" + filename
             with open(r_toml, encoding="utf-8") as f:
                 Banktoml = toml.load(f)
-            self.tomlurl = r_toml
+            if "LineEditGUISetting.toml" in filename:
+                self.Linetomlurl = r_toml
+            else:
+                self.tomlurl = r_toml
+
             return Banktoml
         except:
             r_toml = os.getcwd() + r"\\" + filename
             with open(r_toml, encoding="utf-8") as f:
                 Banktoml = toml.load(f)
-            self.tomlurl = r_toml
+            if "LineEditGUISetting.toml" in filename:
+                self.Linetomlurl = r_toml
+            else:
+                self.tomlurl = r_toml
+
             return Banktoml
 
     # ----------------------------------------------------------------------------------
@@ -241,21 +355,34 @@ class ControlGUI:
         NewDict = {
             self.tomlTitle
             + title: {
-                "Columns": t_columns,
-                "Index": t_Index,
+                "Columns": str(t_columns),
+                "Index": str(t_Index),
             }
         }
         r = 0
         for t_IndexItem in t_Index:
             dfseries = df.iloc[r].dropna()
             # 条件テキストボックスのリスト化---------------------------
-            row_list = [a for a in list(dfseries) if a != "" or a is not None]
-            In_Dict = {t_IndexItem: row_list}
+            row_list = [str(a) for a in list(dfseries) if a != "" or a is not None]
+            In_Dict = {str(t_IndexItem): row_list}
             NewDict[self.tomlTitle + title].update(In_Dict)
             r += 1
-        MergeDict = dict(**self.LineEditGUISetting, **NewDict)  # 辞書を結合
-        self.LineEditGUISetting = MergeDict
-        dump_toml(MergeDict, self.tomlurl)  # 辞書を保存
+
+        self.LineEditGUISetting.update(NewDict)  # 辞書を結合
+
+        dump_toml(self.LineEditGUISetting, self.Linetomlurl)  # 辞書を保存
+
+    # ----------------------------------------------------------------------------------
+    def str_to_list(self, t_str):
+        t_str = (
+            t_str.replace("[", "").replace("]", "").replace("'", "").replace(" ", "")
+        )
+        try:
+            r = t_str.split(",")
+            return r
+        except:
+            r = list(t_str)
+            return r
 
     # ----------------------------------------------------------------------------------
     def toml_LGUI_todf(self, title):
@@ -264,7 +391,12 @@ class ControlGUI:
         """
         try:
             t_columns = self.LineEditGUISetting[self.tomlTitle + title]["Columns"]
+            if type(t_columns) == str:
+                t_columns = self.str_to_list(t_columns)
             t_Index = self.LineEditGUISetting[self.tomlTitle + title]["Index"]
+            if type(t_Index) == str:
+                t_Index = self.str_to_list(t_Index)
+
             list = []
 
             for ii in t_Index:
@@ -278,6 +410,14 @@ class ControlGUI:
                 columns=t_columns,
                 index=t_Index,
             )
+            try:
+                if "ListSetting" in title:
+                    self.SettingTB.model.df = df
+                else:
+                    self.SettingTB2.model.df = df
+            except:
+                print("NoTable")
+
             return df
         except:
             Dandtitle = title.replace("_", "")
@@ -285,7 +425,13 @@ class ControlGUI:
                 t_columns = self.LineEditGUISetting[Dandtitle]["Columns"]
             else:
                 t_columns = ["列名"]
+            if type(t_columns) == str:
+                t_columns = self.str_to_list(t_columns)
+
             t_Index = self.LineEditGUISetting[Dandtitle]["Index"]
+            if type(t_Index) == str:
+                t_Index = self.str_to_list(t_Index)
+
             list = []
 
             for ii in t_Index:
@@ -293,12 +439,21 @@ class ControlGUI:
                 for iii in self.LineEditGUISetting[Dandtitle][ii]:
                     list_c.append(iii)
                 list.append(list_c)
+
             # DF化
             df = DataFrame(
                 list,
                 columns=t_columns,
                 index=t_Index,
             )
+            try:
+                if "ListSetting" in title:
+                    self.SettingTB.model.df = df
+                else:
+                    self.SettingTB2.model.df = df
+            except:
+                print("NoTable")
+
             self.DF_to_toml(df, title)
             return df
 
@@ -387,14 +542,20 @@ class ControlGUI:
         """
         try:
             fname = self.get_file(command, set_pos)
+            self.Yoko_N = self.tomlTitle + "_Yoko"
+            self.Tate_N = self.tomlTitle + "_Tate"
             if command == "Map":
                 self.model.DrawImage(fname, self.canvas, "Map")
                 self.ImportIMG()
                 self.ImportIMG_readtoml()
+                self.ReadtomlLine()
+                self.Transparent_Create(self.App)
             else:
                 self.model.DrawImage(fname, self.canvas, "None")
                 self.ImportIMG()
                 self.ImportIMG_readtoml()
+                self.ReadtomlLine()
+                self.Transparent_Create(self.App)
             return self.file_pos, self.model
         except:
             print("DrawImageSkip")
