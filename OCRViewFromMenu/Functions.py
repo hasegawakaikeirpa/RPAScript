@@ -1,9 +1,98 @@
 from tkinter import filedialog, messagebox
-import tkinter as tk
+import pandas as pd
 import os
 import numpy as np
 from chardet.universaldetector import UniversalDetector
 import tomli_w
+import sqlite3 as sql
+
+# -----------------------------------------------------------------------------------
+class CreateDB:
+    """
+    dbを作成する
+    """
+
+    def __init__(self, dbname, tbname=None):
+        # すでに存在していれば、それにアスセスする。
+        self.dbname = dbname
+        conn = sql.connect(self.dbname)
+
+        # データベースへのコネクションを閉じる。(必須)
+        conn.close()
+
+    def TableUpdate(self, tbname):
+        try:
+            conn = sql.connect(self.dbname)
+            cur = conn.cursor()
+            # データの投入
+            self.df.to_sql(tbname, conn, if_exists="replace", index=False)
+        finally:
+            cur.close()
+            conn.close()
+
+    def readsql_to_df(self, tbname):
+        try:
+            conn = sql.connect(self.dbname)
+            cur = conn.cursor()
+
+            # terminalで実行したSQL文と同じようにexecute()に書く
+            self.df = pd.read_sql_query("SELECT * FROM " + tbname, conn)
+        except:
+            print("sqlReadErr")
+            raise
+        finally:
+            cur.close()
+            conn.close()
+
+    def df_replace_to_sql(self, tbname, df):
+        try:
+            conn = sql.connect(self.dbname)
+            cur = conn.cursor()
+            # データの投入
+            # df = df.reset_index()
+            df.to_sql(tbname, conn, if_exists="replace", index=True)
+            self.df = df
+        except:
+            print("sqlimportErr")
+            raise
+        finally:
+            cur.close()
+            conn.close()
+
+    def list_to_df_replace_to_sql(self, tbname, in_list):
+        """
+        listを成型してDF保存
+        """
+        try:
+            ind = [x for x in range(len(in_list))]
+            column_list = ["x1", "y1", "x2", "y2", "LineName"]
+            df = pd.DataFrame(
+                data=in_list,
+                columns=column_list,
+                index=ind,
+            )
+            df[["x1", "y1", "x2", "y2"]].astype(int)
+            self.df_replace_to_sql(tbname, df)
+        except:
+            print("Err")
+
+    def replaceText_to_sql(self, tbname, in_list):
+        """
+        listを成型してDF保存
+        """
+        try:
+            ind = [x for x in range(len(in_list))]
+            column_list = ["変更前", "変更後"]
+            df = pd.DataFrame(
+                data=in_list,
+                columns=column_list,
+                index=ind,
+            )
+            df[["変更前", "変更後"]].astype(str)
+            self.df_replace_to_sql(tbname, df)
+        except:
+            print("Err")
+
 
 # -----------------------------------------------------------------------------------
 def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
@@ -103,20 +192,23 @@ def dump_toml(toml_dict, path):
         print("Err")
 
 
-# def LinOCROpen(self):
-#     """
-#     OCROpenボタンクリックイベント
-#     """
-#     typ = [("tomlファイル", "*.toml")]
-#     self.tomlPath = tk.filedialog.askopenfilename(
-#         filetypes=typ, initialdir=self.dir_path
-#     )
+if __name__ == "__main__":
 
-#     FDir = self.entry_dir.get()
-#     FN = self.combo_file.get()
-#     Imgurl = FDir + r"\\" + FN
-#     Imgurl = Imgurl.replace("/", r"\\")
-#     if "[select file]" in Imgurl:
-#         tk.messagebox.showinfo("確認", "画像ファイルを選択してください。")
-#     else:
-#         Main(main_window, Imgurl, self.tomlPath)
+    db = CreateDB("LineSettingData.db", tbname=None)
+    l = np.array(
+        [
+            [0, 0, 0, 0, "Tate"],
+            [0, 0, 0, 0, "Yoko"],
+            [1, 1, 1, 1, "Tate"],
+            [1, 1, 1, 1, "Yoko"],
+        ]
+    )
+    ind = [x for x in range(l.shape[0])]
+    df = pd.DataFrame(
+        data=l,
+        columns=["x1", "y1", "x2", "y2", "LineName"],
+        index=ind,
+    )
+    df[["x1", "y1", "x2", "y2"]].astype(int)
+    db.df_replace_to_sql("OCR", df)
+    print(db.df)

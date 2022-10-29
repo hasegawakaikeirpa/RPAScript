@@ -255,32 +255,6 @@ class Application(ttk.Frame):
         return Em
 
     # ---------------------------------------------------------------------------------------------
-    def ReadtomlLine(self):
-        """
-        画像名からtoml線軸リストを取得
-        """
-        try:
-            self.control.img_name = os.path.splitext(
-                os.path.basename(self.control.imgurl)
-            )[0]
-            self.control.Yoko_N = self.control.tomlTitle + "_Yoko"
-            self.control.Tate_N = self.control.tomlTitle + "_Tate"
-
-            self.control.YokoList = self.control.tomlsetting["LineSetting"][
-                self.control.Yoko_N
-            ]
-            self.control.TateList = self.control.tomlsetting["LineSetting"][
-                self.control.Tate_N
-            ]
-        except:
-            self.control.YokoList = self.control.tomlsetting["LineSetting"][
-                "Nomal_Yoko"
-            ]
-            self.control.TateList = self.control.tomlsetting["LineSetting"][
-                "Nomal_Tate"
-            ]
-
-    # ---------------------------------------------------------------------------------------------
     def change(self, event):
         """
         上下ウィンドウ連携処理(ウィンドウサイズ変更)

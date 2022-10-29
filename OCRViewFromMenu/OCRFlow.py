@@ -111,19 +111,7 @@ def DayCheck(GFTable, DaySet):
 
 
 # ----------------------------------------------------------------------------
-def DiffListCreate(
-    FileURL,
-    Yoko,
-    Tate,
-    Banktoml,
-    ColList,
-    DaySet,
-    MoneySet,
-    ReplaceSet,
-    ReplaceStr,
-    PBAR,
-    ChangeVar,
-):
+def DiffListCreate(self):
     """
     概要: GoogleVisionApiを実行し、結果をCSV化
     @param FileURL : 画像URL(str)
@@ -138,20 +126,16 @@ def DiffListCreate(
     @return : bool,CSVURL(str)
     """
     # ####################################################################################
-    readcsv1 = Yoko
-    readcsv2 = Tate
+    readcsv1 = self.control.YokoList
+    readcsv2 = self.control.TateList
     COLArray = True, readcsv1, readcsv2
     # ####################################################################################
     if COLArray[0] is True:
-        G_logger.debug("Bankrentxtver起動")  # Log出力
-
         GF = Bankrentxtver(
-            FileURL,
+            self.control.imgurl,
             COLArray[1],
             COLArray[2],
         )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
-        G_logger.debug("Bankrentxtver完了")  # Log出力
-        PBAR._target.step(20)
         print(GF[0])
         code_regex = re.compile(
             "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
@@ -159,7 +143,7 @@ def DiffListCreate(
         if GF[0] is True:
             GFTable = GF[1]
             # 設定日付列番号に応じて日付書式変換------------------------------
-            DayCheck(GFTable, DaySet)
+            DayCheck(GFTable, self.control.DaySet)
             # --------------------------------------------------------------
             GFRow = len(GFTable)
             GFCol = len(GFTable[0])
@@ -169,7 +153,7 @@ def DiffListCreate(
             for g in range(GFRow):
                 try:
                     # toml設定の列数以上の列を削除-----------------------------------------------
-                    lentoml = len(ColList)
+                    lentoml = len(self.control.OutColumn)
                     lenGT = len(GFTable[g])
                     if lentoml < lenGT:
                         for c in range(lenGT - lentoml):
@@ -177,9 +161,7 @@ def DiffListCreate(
                     # -------------------------------------------------------------------------
                 except:
                     print("toml設定の列数以上の列を削除エラー")
-                if "," in MoneySet:
-                    MoneySet = MoneySet.split(",")
-                for c in MoneySet:
+                for c in self.control.MoneySet:
                     c = int(c)
                     # 指定列がデータフレーム列数未満なら------------------------------------------
                     if c <= GFCol:
@@ -197,7 +179,7 @@ def DiffListCreate(
                         elif len(ints) == 0:
                             GFTable[g][c - 1] = strs
                     # -------------------------------------------------------------------------
-                PBAR._target.step(PB_v)
+
                 # -------------------------------------------------------------------------
             # 入出金列の数値以外を分別------------------------------------------------------
             Replist = [
@@ -225,7 +207,7 @@ def DiffListCreate(
             # Check = [True for i in Replist if strs == i]
             for g in range(GFRow):
                 strs = ""
-                for c in MoneySet:
+                for c in self.control.MoneySet:
                     ints = ""
                     c = int(c)
                     S = GFTable[g][c - 1]
@@ -235,7 +217,9 @@ def DiffListCreate(
                         else:
                             ints += S[y]
                     if strs == "":
-                        if c == int(MoneySet[len(MoneySet) - 1]):
+                        if c == int(
+                            self.control.MoneySet[len(self.control.MoneySet) - 1]
+                        ):
                             strsList.append("")
                         if ints != "":
                             GFTable[g][c - 1] = int(ints)
@@ -245,7 +229,13 @@ def DiffListCreate(
                             # GFTable[g][c - 1] = ints
                             if ints != "":
                                 GFTable[g][c - 1] = int(ints)
-                        if c == int(MoneySet[len(MoneySet) - 1]) and strs != "":
+                        if (
+                            c
+                            == int(
+                                self.control.MoneySet[len(self.control.MoneySet) - 1]
+                            )
+                            and strs != ""
+                        ):
                             if True not in Check:
                                 strsList.append(strs)
                             else:
@@ -256,12 +246,18 @@ def DiffListCreate(
                             # GFTable[g][c - 1] = ints
                     else:
                         GFTable[g][c - 1] = ""
-                        if c == int(MoneySet[len(MoneySet) - 1]) and strs != "":
+                        if (
+                            c
+                            == int(
+                                self.control.MoneySet[len(self.control.MoneySet) - 1]
+                            )
+                            and strs != ""
+                        ):
                             strsList.append(strs)
             # -----------------------------------------------------------------------------
-            G_logger.debug("GoogleAPI後編集処理完了")  # Log出力
             # DataFrame作成
             # 分割文字列リストを結合---------------------------------------------------------
+            ColList = self.control.OutColumn
             if len(strsList) == 0:
                 df = DataFrame(GFTable, columns=ColList)
                 DiffCheck(df, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
@@ -276,38 +272,30 @@ def DiffListCreate(
                 GFTable.columns = ColList
                 df = GFTable
             # -----------------------------------------------------------------------------
-            FU = FileURL.split("\\")
-            FN = FU[len(FU) - 1].replace(".png", ".csv")
-            FDir = FileURL.replace(FU[len(FU) - 1], "")
-            FileName = FDir + r"\\" + FN
-            ChangeTxtUrl = FDir + r"\\OCRChangeList.csv"
-            if os.path.isfile(ChangeTxtUrl) is True:
-                enc = Functions.getFileEncoding(ChangeTxtUrl)  # 摘要変換ルールエンコード
-            else:
-                enc = "cp932"
-            if os.path.isfile(FileName) is True:
-                enc = Functions.getFileEncoding(FileName)  # 摘要変換ルールエンコード
-            else:
-                enc = "cp932"
+            self.control.OCR_outcsv = (
+                os.path.dirname(self.control.imgurl)
+                + r"/"
+                + self.control.tomlTitle
+                + ".csv"
+            )
+
             try:
-                G_logger.debug("GoogleAPI後dfto_csv開始")  # Log出力
-                df.to_csv(FileName, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC)
+                df.to_csv(
+                    self.control.OCR_outcsv,
+                    index=False,
+                    encoding="cp932",
+                    quoting=QUOTE_NONNUMERIC,
+                )
             except:
-                G_logger.debug("GoogleAPI後dfto_csvエラー後開始")  # Log出力
                 with open(
-                    FileName,
+                    self.control.OCR_outcsv,
                     mode="w",
                     encoding="cp932",
                     errors="ignore",
                     newline="",
                 ) as f:
                     df.to_csv(f, index=False, quoting=QUOTE_NONNUMERIC)
-                # df.to_csv(FileName, index=False, encoding="utf8")
-            G_logger.debug("GoogleAPI後csv処理完了")  # Log出力
-            return True, FileName
-    # except:
-    #     print("ループ内エラー抽出失敗")
-    #     return False, ""
+            return True, self.control.OCR_outcsv
 
 
 # -------------------------------------------------------------------------------------

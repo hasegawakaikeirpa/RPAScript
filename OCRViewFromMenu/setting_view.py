@@ -13,7 +13,7 @@ import Functions
 import IconCode
 
 # 自作のページビューをインポート
-from page_view import ViewGUIPage, LineEditPage
+from page_view import ViewGUIPage, LineEditPage, P_TablePage
 
 # from line_profiler import LineProfiler
 
@@ -210,18 +210,23 @@ if __name__ == "__main__":
     style.configure("TLabel", font=("tkDefaultFont", 18))
     settings = SettingsView(root, relief="flat")
     # settings = SettingsView(root)
-
     settings.add_page(
-        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
-        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Language",
         page=ViewGUIPage,
     )
     settings.add_page(
-        # image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
-        image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
         setting_name="Audio",
         page=LineEditPage,
+    )
+    settings.add_page(
+        image_path=r"C:\Users\もちねこ\Desktop\GitHub\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        # image_path=r"D:\PythonScript\RPAScript\OCRViewFromMenu\ImageCreate_btn.png",
+        setting_name="P_Table",
+        page=P_TablePage,
     )
     settings.pack(fill=tk.BOTH, expand=True)
     root.mainloop()

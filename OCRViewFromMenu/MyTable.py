@@ -12,9 +12,8 @@ import pandas as pd
 import os
 import numpy as np
 from chardet.universaldetector import UniversalDetector
-import sqlite3 as sql
+
 from Functions import dump_toml
-import ControlGUI
 
 
 class MyTable(Table):
@@ -372,6 +371,8 @@ class MyTable(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
+        self.control.activetable_row = rowclicked
+        self.control.activetable_column = colclicked
         if colclicked is None:
             return
         self.focus_set()
@@ -474,121 +475,3 @@ class MyTable(Table):
     #     return
 
     # -------------------------------------------------------------------------------------------------------------------------------
-
-
-class CreateDB:
-    """
-    dbを作成する
-    """
-
-    def __init__(self, dbname, tbname):
-        # すでに存在していれば、それにアスセスする。
-        conn = sql.connect(dbname)
-
-        # データベースへのコネクションを閉じる。(必須)
-        conn.close()
-
-    def CreateTable(self, dbname, tbname):
-
-        conn = sql.connect(dbname)
-        # sqliteを操作するカーソルオブジェクトを作成
-        cur = conn.cursor()
-
-        # personsというtableを作成してみる
-        # 大文字部はSQL文。小文字でも問題ない。
-        cur.execute("CREATE TABLE IF NOT EXISTS " + tbname + "(変更前 STRING,変更後 STRING)")
-
-        # データベースへコミット。これで変更が反映される。
-        conn.commit()
-        conn.close()
-
-    def CreateDF(self, dbname, tbname, F_stack, L_stack):
-        List = [F_stack, L_stack]
-        dfList = []
-        dfList.append(List)
-        df = pd.DataFrame(dfList, columns=["変更前", "変更後"])
-        CreateDB.EntDF(self, dbname, tbname, df)
-        return df
-
-    def TableInsert(self, dbname, tbname, text):
-
-        conn = sql.connect(dbname)
-        cur = conn.cursor()
-
-        # Insert文
-        cur.execute("INSERT INTO " + tbname + "(変更前, 変更後) values(" + text + ")")
-        # 同様に
-        conn.commit()
-
-        cur.close()
-        conn.close()
-
-    def CheckTable(self, dbname, tbname):
-
-        conn = sql.connect(dbname)
-        cur = conn.cursor()
-
-        # terminalで実行したSQL文と同じようにexecute()に書く
-        cur.execute("SELECT * FROM " + tbname)
-
-        # 中身を全て取得するfetchall()を使って、printする。
-        print(cur.fetchall())
-
-        cur.close()
-        conn.close()
-
-    def readsql(self, dbname, tbname):
-
-        conn = sql.connect(dbname)
-        cur = conn.cursor()
-
-        # terminalで実行したSQL文と同じようにexecute()に書く
-        df = pd.read_sql_query("SELECT * FROM " + tbname, conn)
-
-        cur.close()
-        conn.close()
-
-        return df
-
-    def EntDF(self, dbname, tbname, df):
-
-        conn = sql.connect(dbname)
-        cur = conn.cursor()
-
-        # データの投入
-        df.to_sql(tbname, conn, if_exists="replace", index=False)
-        cur.close()
-        conn.close()
-
-    def pdinsert(self, dbname, tbname, F_stack, L_stack, R_DF):
-        List = [F_stack, L_stack]
-        dfList = []
-        dfList.append(List)
-        df = pd.DataFrame(dfList, columns=["変更前", "変更後"])
-        df_conc = pd.concat([R_DF, df], axis=0)
-        return df_conc
-
-    def CsvConvert(self, csv_url, dbname, tbname):
-        # pandasでカレントディレクトリにあるcsvファイルを読み込む
-        # csvには、1列目にyear, 2列目にmonth, 3列目にdayが入っているとする。
-        enc = MyTable.getFileEncoding(csv_url)
-        df = pd.read_csv(csv_url, encoding=enc)
-
-        # カラム名（列ラベル）を作成。csv file内にcolumn名がある場合は、下記は不要
-        # pandasが自動で1行目をカラム名として認識してくれる。
-        # df.columns = ["year", "month", "day"]
-
-        conn = sql.connect(dbname)
-        cur = conn.cursor()
-
-        # dbのnameをsampleとし、読み込んだcsvファイルをsqlに書き込む
-        # if_existsで、もしすでにexpenseが存在していたら、書き換えるように指示
-        df.to_sql(tbname, conn, if_exists="replace", index=False)
-
-        # 作成したデータベースを1行ずつ見る
-        select_sql = "SELECT * FROM " + tbname
-        for row in cur.execute(select_sql):
-            print(row)
-
-        cur.close()
-        conn.close()

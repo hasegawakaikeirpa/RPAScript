@@ -279,11 +279,20 @@ def AutoNewLineCreate(self):
             self.control.Tate_N = self.control.tomlTitle + "_Tate"
             AL[1].sort()
             AL[2].sort(key=lambda x: x[1])
-            self.control.YokoList = AL[1]
-            self.control.TateList = AL[2]
-            self.control.tomlsetting["LineSetting"][self.control.Yoko_N] = AL[1]
-            self.control.tomlsetting["LineSetting"][self.control.Tate_N] = AL[2]
-            Functions.dump_toml(self.control.tomlsetting, self.control.tomlurl)
+
+            YokoList = []
+            for A in AL[1]:
+                A.append("Yoko")
+                YokoList.append(A)
+
+            TateList = []
+            for A in AL[2]:
+                A.append("Tate")
+                TateList.append(A)
+
+            YokoList.extend(TateList)
+            self.control.DB.list_to_df_replace_to_sql(self.control.table_name, YokoList)
+            self.control.ReadDB()
             ####################################################################################
             self.control.Transparent_Create(self)  # 透過キャンバスに罫線描画
 
@@ -291,6 +300,7 @@ def AutoNewLineCreate(self):
             map(self)
         else:
             MSG = messagebox.showinfo("確認", "自動直線描画に失敗しました。")
+            map(self)
     else:
         map(self)
 
@@ -354,8 +364,6 @@ def EnterP(self, selfC):
     DFget(self, self.control.SettingTB)
     DFget(self, self.control.SettingTB2)
     # ------------------------------------------------------
-    SGEL = len(self.control.OutColumn)
-
     # 条件テキストボックスの内容で処理分け-------------------------------------------------------------------
     if listintCheck(self.control.DaySet) is False:
         messagebox.showinfo("エラー", "日付列番号が不正です。数値以外を指定していないか確認してください。")
@@ -392,74 +400,20 @@ def EnterP(self, selfC):
                         ####################################################################################
                         self.control.Yoko_N = self.control.tomlTitle + "_Yoko"
                         self.control.Tate_N = self.control.tomlTitle + "_Tate"
+
                         FYokoList.sort()
                         FTateList.sort(key=lambda x: x[1])
-                        self.control.tomlsetting["LineSetting"][
-                            self.control.Yoko_N
-                        ] = FYokoList
-                        self.control.tomlsetting["LineSetting"][
-                            self.control.Tate_N
-                        ] = FTateList
-                        Functions.dump_toml(
-                            self.control.tomlsetting, self.control.tomlurl
+                        FYokoList.extend(FTateList)
+
+                        self.control.DB.list_to_df_replace_to_sql(
+                            self.control.table_name, FYokoList
                         )
                         ####################################################################################
                         print("Line_toml保存完了")
                         OM = OCRF.Main(self)
                         if OM[0] is True:
-                            Read_Url = str(OM[1])
-                            PBAR._target.step(10)
-                            PBAR._target.master.destroy()
-
-                            unmap(selfmother)
-                            MSG = messagebox.showinfo("抽出完了", Read_Url + "_に保存しました。")
-                            MSG = messagebox.askokcancel(
-                                "確認", "次ページ読込を行いますか？\nキャンセルで比較ウィンドウを起動します。"
-                            )
-                            if MSG is True:
-                                Master.HeaderCol_c = len(SGEL)
-                                if "抽出文字列" in SGEL:
-                                    Master.HeaderCol_c = Master.HeaderCol_c - 1
-                                if "抽出数値" in SGEL:
-                                    Master.HeaderCol_c = Master.HeaderCol_c - 1
-
-                                FUL.append(Read_Url)  # 書出しCSVURLリスト
-                                ReturnBack(selfmother)
-                            else:
-                                FUL.append(Read_Url)  # 書出しCSVURLリスト
-                                if len(FUL) == 1:
-
-                                    PT.Main(
-                                        self,
-                                        Read_Url,
-                                        G_logger,
-                                        Mter,
-                                        Top,
-                                        imgurl,
-                                        Banktoml,
-                                        tomlurl,
-                                    )
-                                else:
-                                    RU = OCRF.JoinCSV(FUL)
-                                    if RU[0] is True:
-                                        Read_Url = RU[1]
-
-                                        PT.Main(
-                                            self,
-                                            Read_Url,
-                                            G_logger,
-                                            Mter,
-                                            Top,
-                                            imgurl,
-                                            Banktoml,
-                                            tomlurl,
-                                        )
-                                    else:
-                                        print("")
-                            # else:
-                            #     MSG = messagebox.showinfo("抽出失敗", "エラーにより抽出に失敗しました。")
-                        else:
-                            messagebox.showinfo("中断", "処理を中断します。")
+                            MSG = messagebox.showinfo("抽出完了", str(OM[1]) + "_に保存しました。")
+                        self.control.top.deiconify()
                     else:
                         messagebox.showinfo("エラー", "先頭ページの列数と設定列名の数が一致しません。再確認してください。")
                 else:
@@ -474,31 +428,31 @@ def EnterP_LineCalc(self, FList):
     FYokoList, FTateList = [], []
     for FListItem in FList:
 
-        if FListItem[2][0] < 0:
+        if FListItem[2][0] <= 0:
             FSSC1 = 0
         else:
-            FSSC1 = int(round((FListItem[2][0] / self.control.HCW), 0))
+            FSSC1 = int(round(FListItem[2][0] / self.control.HCW, 0))
 
-        if FListItem[2][1] < 0:
+        if FListItem[2][1] <= 0:
             FSSC2 = 0
         else:
-            FSSC2 = int(round((FListItem[2][1] / self.control.HCH), 0))
+            FSSC2 = int(round(FListItem[2][1] / self.control.HCH, 0))
 
-        if FListItem[2][2] < 0:
+        if FListItem[2][2] <= 0:
             FSSC3 = 0
         else:
             if FListItem[0][5] == "Tate":
-                FSSC3 = int(round((FListItem[2][2] / self.control.HCW), 0))
+                FSSC3 = int(round(FListItem[2][2] / self.control.HCW, 0))
             else:
-                FSSC3 = int(round((FListItem[2][0] / self.control.HCW), 0))            
+                FSSC3 = int(round(FListItem[2][0] / self.control.HCW, 0))
 
-        if FListItem[2][3] < 0:
+        if FListItem[2][3] <= 0:
             FSSC4 = 0
         else:
             if FListItem[0][5] == "Yoko":
-                FSSC4 = int(round((FListItem[2][3] / self.control.HCH), 0))
+                FSSC4 = int(round(FListItem[2][3] / self.control.HCH, 0))
             else:
-                FSSC4 = int(round((FListItem[2][1] / self.control.HCH), 0))
+                FSSC4 = int(round(FListItem[2][1] / self.control.HCH, 0))
 
         if FSSC1 < 0 and FSSC1 < self.control.model.original_width:
             FSSC1 = 0
@@ -516,7 +470,7 @@ def EnterP_LineCalc(self, FList):
             FSSC4 = 0
         elif FSSC4 > self.control.model.original_height:
             FSSC4 = self.control.model.original_height
-        FSS = [FSSC1, FSSC2, FSSC3, FSSC4]
+        FSS = [FSSC1, FSSC2, FSSC3, FSSC4, FListItem[0][5]]
         if FListItem[0][5] == "Yoko":
             FYokoList.append(FSS)
         else:

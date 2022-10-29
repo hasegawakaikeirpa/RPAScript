@@ -6,8 +6,9 @@ import toml
 from tkinter import font
 from PIL import Image, ImageTk
 import tkinter as tk
-from Functions import dump_toml
+from Functions import dump_toml, CreateDB
 from tkinter import messagebox, filedialog
+from numpy import where
 
 
 class ControlGUI:
@@ -17,6 +18,8 @@ class ControlGUI:
         """
         # Model Class生成
         self.model = ModelImage()
+        self.DB = CreateDB("LineSettingData.db")
+        self.Rep_DB = CreateDB("ReplaceData.db")
         # ディスプレイサイズ
         self.width_of_window = int(int(root.winfo_screenwidth()) * 0.98)
         self.height_of_window = int(int(root.winfo_screenheight()) * 0.9)
@@ -51,10 +54,19 @@ class ControlGUI:
             self.imgurl = os.getcwd() + r"\OCR.png"
         else:
             self.imgurl = os.getcwd() + r"\OCRViewFromMenu\OCR.png"
+        # 初期化CSVURL
+        if os.path.isfile(os.getcwd() + r"\First.csv") is True:
+            self.Reset_csv = os.getcwd() + r"\First.csv"
+        else:
+            self.Reset_csv = os.getcwd() + r"\OCRViewFromMenu\First.csv"
+        # OCR出力CCSV
+        self.OCR_outcsv = self.Reset_csv
 
         # 画像ファイル名称
         self.img_name = os.path.splitext(os.path.basename(self.imgurl))[0]
         self.tomlTitle = self.img_name.split(".")[0]
+        # Table名
+        self.table_name = f"TB_{self.tomlTitle}"
         # 画像ファイルから抽出した関与先名
         self.Kanyosaki_name = ""
         # 取扱画像ファイル指定
@@ -70,7 +82,7 @@ class ControlGUI:
         # LinEditGUI設定をdf化
         self.LineEditGUI_df = self.toml_LGUI_todf("_ListSetting")
         self.LineEditGUI_CS__df = self.toml_LGUI_todf("_ColumnSetting")
-        self.ReadtomlLine()
+        self.ReadDB()
         self.Toptitle = self.tomlsetting["Title"]["title"]
 
         self.clip_sx = 0
@@ -78,9 +90,13 @@ class ControlGUI:
         self.clip_ex = 0
         self.clip_ey = 0
 
+        self.DaySet = []  # 日付列番号
+        self.MoneySet = []  # 金額列番号
+        self.OutColumn = []  # 出力列名
+
         self.canvas = None
         self.DefDB_name = "OCR_DB"
-        self.CreateDB(self.DefDB_name)
+        CreateDB(self.DefDB_name)
         self.btn_font = ("", 50)  # ボタンフォントサイズ
         self.t_font = (1, int(8))  # テーブルフォントサイズ
 
@@ -140,6 +156,7 @@ class ControlGUI:
         self.dir_path = os.path.dirname(self.imgurl)
         self.img_name = os.path.basename(self.imgurl)
         self.tomlTitle = self.img_name.split(".")[0]
+        self.table_name = f"TB_{self.tomlTitle}"
         self.file_list = self.SetDirlist(self.dir_path)
 
         if (
@@ -458,16 +475,29 @@ class ControlGUI:
             return df
 
     # ----------------------------------------------------------------------------------
-    def ReadtomlLine(self):
+    def ReadDB(self):
         """
         tomlからtoml線軸リストを取得
         """
+
         try:
-            self.YokoList = self.tomlsetting["LineSetting"][self.Yoko_N]
-            self.TateList = self.tomlsetting["LineSetting"][self.Tate_N]
+            self.DB.readsql_to_df(self.table_name)
+            asdf = self.DB.df[["x1", "y1", "x2", "y2"]].astype("int")
+            self.YokoList = list(
+                asdf.values[where(self.DB.df.values[:, 5] == "Yoko")].tolist()
+            )
+            self.TateList = list(
+                asdf.values[where(self.DB.df.values[:, 5] == "Tate")].tolist()
+            )
         except:
-            self.YokoList = self.tomlsetting["LineSetting"]["Nomal_Yoko"]
-            self.TateList = self.tomlsetting["LineSetting"]["Nomal_Tate"]
+            self.DB.readsql_to_df("OCR")
+
+            self.YokoList = list(
+                self.DB.df.values[where(self.DB.df.values[:, 4] == "Yoko")]
+            )
+            self.TateList = list(
+                self.DB.df.values[where(self.DB.df.values[:, 4] == "Tate")]
+            )
 
     # ----------------------------------------------------------------------------------
     def is_target(self, name, key_list):
@@ -548,13 +578,13 @@ class ControlGUI:
                 self.model.DrawImage(fname, self.canvas, "Map")
                 self.ImportIMG()
                 self.ImportIMG_readtoml()
-                self.ReadtomlLine()
+                self.ReadDB()
                 self.Transparent_Create(self.App)
             else:
                 self.model.DrawImage(fname, self.canvas, "None")
                 self.ImportIMG()
                 self.ImportIMG_readtoml()
-                self.ReadtomlLine()
+                self.ReadDB()
                 self.Transparent_Create(self.App)
             return self.file_pos, self.model
         except:
@@ -570,8 +600,8 @@ class ControlGUI:
             self.FCW = self.back.winfo_width()
             self.FCH = self.back.winfo_height()
 
-        self.HCW = self.FCW / self.img.width  # 幅リサイズ比率
-        self.HCH = self.FCH / self.img.height  # 高さリサイズ比率
+        self.HCW = self.back.winfo_width() / self.img.width  # 幅リサイズ比率
+        self.HCH = self.back.winfo_height() / self.img.height  # 高さリサイズ比率
 
         self.img = self.img.resize((self.FCW, self.FCH))  # 画像リサイズ
 
@@ -589,6 +619,7 @@ class ControlGUI:
         """
         self.Kanyosaki_name = os.path.basename(self.dir_path)
         self.tomlTitle = self.img_name.split(".")[0]
+        self.table_name = f"TB_{self.tomlTitle}"
         self.toml_LGUI_todf("_ListSetting")
         self.toml_LGUI_todf("_ColumnSetting")
 
@@ -794,53 +825,3 @@ class ControlGUI:
         self.model.DrawImage(fname, self.canvas, command)
 
     # ----------------------------------------------------------------------------------
-    def CreateDB(self, dbname):
-        """
-        dbを作成する
-        """
-        conn = sql.connect(dbname)
-        conn.close()
-
-    # ----------------------------------------------------------------------------------
-    def CreateTable(self, dbname, tbname):
-        """
-        テーブルを作成する
-        """
-        conn = sql.connect(dbname)
-        cur = conn.cursor()
-        cur.execute("CREATE TABLE IF NOT EXISTS " + tbname + "(変更前 STRING,変更後 STRING)")
-        conn.commit()
-        conn.close()
-
-    # ----------------------------------------------------------------------------------
-    def TableInsert(self, dbname, tbname, text):
-        """
-        テーブルにデータ追加
-        """
-        conn = sql.connect(dbname)
-        cur = conn.cursor()
-
-        # Insert文
-        cur.execute("INSERT INTO " + tbname + "(変更前, 変更後) values(" + text + ")")
-        # 同様に
-        conn.commit()
-
-        cur.close()
-        conn.close()
-
-    # ----------------------------------------------------------------------------------
-    def CheckTable(self, dbname, tbname):
-        """
-        テーブルの中身を確認
-        """
-        conn = sql.connect(dbname)
-        cur = conn.cursor()
-
-        # terminalで実行したSQL文と同じようにexecute()に書く
-        cur.execute("SELECT * FROM " + tbname)
-
-        # 中身を全て取得するfetchall()を使って、printする。
-        print(cur.fetchall())
-
-        cur.close()
-        conn.close()
