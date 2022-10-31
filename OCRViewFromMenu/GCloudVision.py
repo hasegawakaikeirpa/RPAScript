@@ -121,7 +121,9 @@ def get_document_bounds_BANK(image_file, feature):
 
         image = vision.Image(content=content)
 
-        response = client.document_text_detection(image=image)
+        response = client.document_text_detection(
+            image=image, image_context={"language_hints": ["ja"]}
+        )
         document = response.full_text_annotation
         print("GoogleVisionAPIclient接続完了")
         # Collect specified feature bounds by enumerating all document features

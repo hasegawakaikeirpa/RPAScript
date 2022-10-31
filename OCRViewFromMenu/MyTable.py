@@ -371,8 +371,8 @@ class MyTable(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
-        self.control.activetable_row = rowclicked
-        self.control.activetable_column = colclicked
+        # self.control.activetable_row = rowclicked
+        self.control.activetable_column = self.model.df.columns[colclicked]
         if colclicked is None:
             return
         self.focus_set()
@@ -408,7 +408,7 @@ class MyTable(Table):
         """Do double click stuff. Selected row/cols will already have
         been set with single click binding"""
         # "比較ファイルMain"
-        if event.widget._name == "OCR抽出結果表Main":
+        if event.widget._name == "OCR抽出表":
             row = self.get_row_clicked(event)
             col = self.get_col_clicked(event)
             if event.widget.model.df.columns[col] == "比較対象行番号":

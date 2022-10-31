@@ -15,7 +15,7 @@ def CreateBOTTOM_Frame(self) -> tk.Frame:
     # ボトムフレーム
     BOTTOM_Frame = tk.Frame(
         self.control.P_Table_root,
-        width=int(self.control.width_of_window / 4),
+        width=int(self.control.width_of_window / 2),
         height=int(self.control.height_of_window * 0.8),
         bd=2,
         bg="#fabd91",
@@ -416,6 +416,7 @@ def CreateBOTTOM_Frame(self) -> tk.Frame:
     ).grid(row=0, column=0)
     self.OCR_url = ck.CTkEntry(
         master=self.BOTTOM_Sub4,
+        textvariable=self.control.OCR_outcsv,
         width=int(EntWidth * 3),
         height=EntHeight,
         border_width=2,
@@ -424,7 +425,7 @@ def CreateBOTTOM_Frame(self) -> tk.Frame:
         border_color="snow",
         text_font=self.control.t_font,
     )
-    self.OCR_url.insert(0, self.control.OCR_outcsv)
+
     self.OCR_url.grid(
         row=0, column=1, padx=5, pady=5, sticky=tk.W
     )  # OCR抽出結果表列名テキストボックス配置
@@ -495,6 +496,7 @@ def CreateBOTTOM_Frame(self) -> tk.Frame:
     ).grid(row=3, column=0)
     self.Img_url = ck.CTkEntry(
         master=self.BOTTOM_Sub4,
+        textvariable=self.control.imgurl,
         width=int(EntWidth * 3),
         height=EntHeight,
         border_width=2,
@@ -503,7 +505,6 @@ def CreateBOTTOM_Frame(self) -> tk.Frame:
         border_color="snow",
         text_font=self.control.t_font,
     )
-    self.Img_url.insert(0, self.control.imgurl)
     self.Img_url.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)  # 入金列名テキストボックス配置
     # #######################################################################################
     # Side_Sub5##############################################################################

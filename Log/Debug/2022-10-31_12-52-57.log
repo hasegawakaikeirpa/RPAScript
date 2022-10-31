@@ -1,0 +1,3 @@
+[2022/10/31 12:53:24][DEBUG](GCloudVision.py:109) get_document_bounds(GoogleVisionAPI)開始: debug level log get_document_bounds_BANK d:\PythonScript\RPAScript\OCRViewFromMenu\GCloudVision.py
+[2022/10/31 12:53:24][DEBUG](GCloudVision.py:149) get_document_bounds(GoogleVisionAPI)終了: debug level log get_document_bounds_BANK d:\PythonScript\RPAScript\OCRViewFromMenu\GCloudVision.py
+[2022/10/31 12:53:24][DEBUG](GCloudVision.py:419) rentxtver(OCR結果を整形eTax以外)成功: debug level log Bankrentxtver d:\PythonScript\RPAScript\OCRViewFromMenu\GCloudVision.py

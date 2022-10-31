@@ -1,19 +1,9 @@
-# import GCloudVision as GCV
 from GCloudVision import Bankrentxtver
 import os
 import toml
-
-# import pandas as pd
-from pandas import DataFrame, read_csv, concat
+from pandas import DataFrame
 from csv import reader, QUOTE_NONNUMERIC
-
-# import numpy as np
 from numpy import asarray
-
-# from difflib import SequenceMatcher
-import Functions
-import re
-import numpy as np
 
 # ----------------------------------------------------------------------------
 def getNearestValue(list, num):
@@ -55,62 +45,6 @@ def DiffCheck(GFTable, ColList):
 
 
 # ----------------------------------------------------------------------------
-def JoinCSV(CSVList):
-    """
-    概要: 引数リストのURLから連結CSVを作成
-    @param CSVList: CSVURLリスト
-    @return 連結CSVURL
-    """
-    try:
-        r = 0
-        CSVList = set(CSVList)
-        for CSVListItem in CSVList:
-            enc = Functions.getFileEncoding(CSVListItem)  # 摘要変換ルールエンコード
-            if r == 0:
-                m_csv = read_csv(CSVListItem, encoding=enc)
-                F_File = CSVListItem.split(".")[0] + "_merge" + ".csv"
-                os.remove(CSVListItem)
-                G_logger.debug(CSVListItem + "_先頭ページ連結完了")  # Log出力
-            else:
-                r_csv = read_csv(CSVListItem, encoding=enc)
-                os.remove(CSVListItem)
-                G_logger.debug(CSVListItem + "_" + str(r) + "ページ連結完了")  # Log出力
-                m_csv = concat([m_csv, r_csv])
-            r += 1
-        try:
-            G_logger.debug("ページ連結後dfto_csv開始")  # Log出力
-            m_csv.to_csv(F_File, index=False, encoding=enc, quoting=QUOTE_NONNUMERIC)
-        except:
-            G_logger.debug("GoogleAPI後dfto_csvエラー後開始")  # Log出力
-            with open(
-                F_File,
-                mode="w",
-                encoding="cp932",
-                errors="ignore",
-                newline="",
-            ) as f:
-                m_csv.to_csv(f, index=False, quoting=QUOTE_NONNUMERIC)
-        G_logger.debug("GoogleAPI後csv処理完了")  # Log出力
-        return True, F_File
-    except:
-        G_logger.debug("GoogleAPI後csv処理失敗")  # Log出力
-        return False, ""
-
-
-# ----------------------------------------------------------------------------
-def DayCheck(GFTable, DaySet):
-    """
-    概要: 設定日付列番号に応じて日付書式変換
-    @param GFTable: データ配列
-    @param DaySet: 設定日付列番号
-    """
-
-    # 設定日付列番号に応じて日付書式変換------------------------------
-    # DS = int(DaySet[0]) - 1
-    # G_list = array(GFTable)[:, DS]
-
-
-# ----------------------------------------------------------------------------
 def DiffListCreate(self):
     """
     概要: GoogleVisionApiを実行し、結果をCSV化
@@ -137,142 +71,17 @@ def DiffListCreate(self):
             COLArray[2],
         )  # 画像URL,横軸閾値,縦軸閾値,ラベル配置間隔,etax横軸閾値,etax縦軸閾値,etaxラベル配置間隔,ラベル(str),同行として扱う縦間隔
         print(GF[0])
-        code_regex = re.compile(
-            "[!\"#$%&'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]"
-        )
+
         if GF[0] is True:
             GFTable = GF[1]
-            # 設定日付列番号に応じて日付書式変換------------------------------
-            DayCheck(GFTable, self.control.DaySet)
             # --------------------------------------------------------------
-            GFRow = len(GFTable)
-            GFCol = len(GFTable[0])
-            # ChangeTxtList = []
-            PB_v = int(90 / GFRow)
-            # OCR結果を整形----------------------------------------------------------------
-            for g in range(GFRow):
-                try:
-                    # toml設定の列数以上の列を削除-----------------------------------------------
-                    lentoml = len(self.control.OutColumn)
-                    lenGT = len(GFTable[g])
-                    if lentoml < lenGT:
-                        for c in range(lenGT - lentoml):
-                            GFTable[g].pop(lenGT + c - 1)
-                    # -------------------------------------------------------------------------
-                except:
-                    print("toml設定の列数以上の列を削除エラー")
-                for c in self.control.MoneySet:
-                    c = int(c)
-                    # 指定列がデータフレーム列数未満なら------------------------------------------
-                    if c <= GFCol:
-                        strs = ""
-                        ints = ""
-                        S = GFTable[g][c - 1]
-                        for y in range(len(S)):
-                            if S[y].isdecimal() is False:
-                                strs += S[y]
-                            else:
-                                ints += S[y]
-                        strs = code_regex.sub("", strs)
-                        if len(strs) == 0:
-                            GFTable[g][c - 1] = ints
-                        elif len(ints) == 0:
-                            GFTable[g][c - 1] = strs
-                    # -------------------------------------------------------------------------
-
-                # -------------------------------------------------------------------------
-            # 入出金列の数値以外を分別------------------------------------------------------
-            Replist = [
-                ",",
-                "*",
-                "'",
-                "○",
-                "×",
-                "✓",
-                "¥",
-                "´",
-                "=",
-                "串",
-                "第",
-                "$",
-                "〒",
-                ".",
-                "|",
-                "-",
-                "･",
-                "!",
-                ":",
-            ]
-            strsList = []
-            # Check = [True for i in Replist if strs == i]
-            for g in range(GFRow):
-                strs = ""
-                for c in self.control.MoneySet:
-                    ints = ""
-                    c = int(c)
-                    S = GFTable[g][c - 1]
-                    for y in range(len(S)):
-                        if S[y].isdecimal() is False:
-                            strs += S[y]
-                        else:
-                            ints += S[y]
-                    if strs == "":
-                        if c == int(
-                            self.control.MoneySet[len(self.control.MoneySet) - 1]
-                        ):
-                            strsList.append("")
-                        if ints != "":
-                            GFTable[g][c - 1] = int(ints)
-                    elif ints != "":
-                        Check = [True if strs == i else False for i in Replist]
-                        if True not in Check:
-                            # GFTable[g][c - 1] = ints
-                            if ints != "":
-                                GFTable[g][c - 1] = int(ints)
-                        if (
-                            c
-                            == int(
-                                self.control.MoneySet[len(self.control.MoneySet) - 1]
-                            )
-                            and strs != ""
-                        ):
-                            if True not in Check:
-                                strsList.append(strs)
-                            else:
-                                strsList.append("")
-                        else:
-                            if ints != "":
-                                GFTable[g][c - 1] = int(ints)
-                            # GFTable[g][c - 1] = ints
-                    else:
-                        GFTable[g][c - 1] = ""
-                        if (
-                            c
-                            == int(
-                                self.control.MoneySet[len(self.control.MoneySet) - 1]
-                            )
-                            and strs != ""
-                        ):
-                            strsList.append(strs)
-            # -----------------------------------------------------------------------------
             # DataFrame作成
             # 分割文字列リストを結合---------------------------------------------------------
             ColList = self.control.OutColumn
-            if len(strsList) == 0:
-                df = DataFrame(GFTable, columns=ColList)
-                DiffCheck(df, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
-            else:
-                DF_strsList = DataFrame(strsList, columns=["抽出文字列"])
-                # DF_intsList = DataFrame(intsList, columns=["抽出数値"])
-                GFTable = DataFrame(GFTable)
-                GFTable = concat([GFTable, DF_strsList], axis=1)
-                # GFTable = concat([GFTable, DF_intsList], axis=1)
-                ColList.append("抽出文字列")
-                # ColList.append("抽出数値")
-                GFTable.columns = ColList
-                df = GFTable
+            df = DataFrame(GFTable, columns=ColList)
+            DiffCheck(df, ColList)  # データフレームの列数にあわせて列名リスト要素数を変更
             # -----------------------------------------------------------------------------
-            self.control.OCR_outcsv = (
+            self.control.OCR_outcsv.set(
                 os.path.dirname(self.control.imgurl)
                 + r"/"
                 + self.control.tomlTitle
@@ -281,21 +90,21 @@ def DiffListCreate(self):
 
             try:
                 df.to_csv(
-                    self.control.OCR_outcsv,
+                    self.control.OCR_outcsv.get(),
                     index=False,
                     encoding="cp932",
                     quoting=QUOTE_NONNUMERIC,
                 )
             except:
                 with open(
-                    self.control.OCR_outcsv,
+                    self.control.OCR_outcsv.get(),
                     mode="w",
                     encoding="cp932",
                     errors="ignore",
                     newline="",
                 ) as f:
                     df.to_csv(f, index=False, quoting=QUOTE_NONNUMERIC)
-            return True, self.control.OCR_outcsv
+            return True, self.control.OCR_outcsv.get()
 
 
 # -------------------------------------------------------------------------------------

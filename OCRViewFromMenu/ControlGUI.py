@@ -29,7 +29,7 @@ class ControlGUI:
 
         # グリッドサイズ
         self.Left_Column = int(int(root.winfo_screenwidth()) * 0.105)  # 0.105)
-        self.Bottom_Column = int(int(root.winfo_screenheight()) * 0.3)
+        self.Bottom_Column = int(int(root.winfo_screenheight()) * 0.2)
         self.SideWidth = int(self.width_of_window / 7)
         self.SideHeight = int(self.height_of_window / 90)
 
@@ -50,20 +50,23 @@ class ControlGUI:
         # ディレクトリパス
         self.dir_path = default_path
         # 画像ファイルパス初期設定
+        self.imgurl = tk.StringVar()
         if os.path.isfile(os.getcwd() + r"\OCR.png") is True:
-            self.imgurl = os.getcwd() + r"\OCR.png"
+            self.imgurl.set(os.getcwd() + r"\OCR.png")
         else:
-            self.imgurl = os.getcwd() + r"\OCRViewFromMenu\OCR.png"
+            self.imgurl.set(os.getcwd() + r"\OCRViewFromMenu\OCR.png")
         # 初期化CSVURL
         if os.path.isfile(os.getcwd() + r"\First.csv") is True:
             self.Reset_csv = os.getcwd() + r"\First.csv"
         else:
             self.Reset_csv = os.getcwd() + r"\OCRViewFromMenu\First.csv"
         # OCR出力CCSV
-        self.OCR_outcsv = self.Reset_csv
+        # self.OCR_outcsv = self.Reset_csv
+        self.OCR_outcsv = tk.StringVar()
+        self.OCR_outcsv.set(self.Reset_csv)
 
         # 画像ファイル名称
-        self.img_name = os.path.splitext(os.path.basename(self.imgurl))[0]
+        self.img_name = os.path.splitext(os.path.basename(self.imgurl.get()))[0]
         self.tomlTitle = self.img_name.split(".")[0]
         # Table名
         self.table_name = f"TB_{self.tomlTitle}"
@@ -84,6 +87,7 @@ class ControlGUI:
         self.LineEditGUI_CS__df = self.toml_LGUI_todf("_ColumnSetting")
         self.ReadDB()
         self.Toptitle = self.tomlsetting["Title"]["title"]
+        self.PlusCol = "比較対象行番号"
 
         self.clip_sx = 0
         self.clip_sy = 0
@@ -150,11 +154,13 @@ class ControlGUI:
         if name != "BOTTOM_Main":  # 呼出元がトップフレームなら閉じる
             self.top.withdraw()
         typ = [("PNG", "*.png"), ("PDF", "*.pdf")]
-        self.imgurl = filedialog.askopenfilename(
-            title="画像ファイルを開く", filetypes=typ, initialdir="./"
+        self.imgurl.set(
+            filedialog.askopenfilename(
+                title="画像ファイルを開く", filetypes=typ, initialdir="./"
+            )
         )
-        self.dir_path = os.path.dirname(self.imgurl)
-        self.img_name = os.path.basename(self.imgurl)
+        self.dir_path = os.path.dirname(self.imgurl.get())
+        self.img_name = os.path.basename(self.imgurl.get())
         self.tomlTitle = self.img_name.split(".")[0]
         self.table_name = f"TB_{self.tomlTitle}"
         self.file_list = self.SetDirlist(self.dir_path)
@@ -595,7 +601,10 @@ class ControlGUI:
         """
         LinEditGUI下ウィンドウに画像をリサイズして配置
         """
-        self.img = Image.open(self.imgurl)
+        self.img = Image.open(self.imgurl.get())
+        print(self.back.winfo_width())
+        print(self.back.winfo_height())
+
         if self.back.winfo_width() >= 50:
             self.FCW = self.back.winfo_width()
             self.FCH = self.back.winfo_height()

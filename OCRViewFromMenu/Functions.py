@@ -5,6 +5,7 @@ import numpy as np
 from chardet.universaldetector import UniversalDetector
 import tomli_w
 import sqlite3 as sql
+from pandas import read_csv, concat
 
 # -----------------------------------------------------------------------------------
 class CreateDB:
@@ -158,17 +159,20 @@ def Pandas_mem_usage(df):
                     c_min > np.finfo(np.float16).min
                     and c_max < np.finfo(np.float16).max
                 ):
+                    df[col] = df[col].astype("object")
                     # df[col] = df[col].astype(np.float16)
-                    df[col] = df[col].astype(np.int16)
+                    # df[col] = df[col].astype(np.int16)
                 elif (
                     c_min > np.finfo(np.float32).min
                     and c_max < np.finfo(np.float32).max
                 ):
+                    df[col] = df[col].astype("object")
                     # df[col] = df[col].astype(np.float32)
-                    df[col] = df[col].astype(np.int32)
+                    # df[col] = df[col].astype(np.int32)
                 else:
+                    df[col] = df[col].astype("object")
                     # df[col] = df[col].astype(np.float64)
-                    df[col] = df[col].astype(np.int64)
+                    # df[col] = df[col].astype(np.int64)
         else:
             df[col] = df[col].astype("object")
             # df[col] = df[col].astype("category")
@@ -178,6 +182,29 @@ def Pandas_mem_usage(df):
     print("Decreased by {:.1f}%".format(100 * (start_mem - end_mem) / start_mem))
 
     return df
+
+
+# -------------------------------------------------------------------------------------
+def JoinCSV(CSVList):
+    """
+    概要: 引数リストのURLから連結CSVを作成
+    @param CSVList: CSVURLリスト
+    @return 連結CSVURL
+    """
+    try:
+        r = 0
+        for CSVListItem in CSVList:
+            if r == 0:
+                enc = getFileEncoding(CSVListItem)
+                m_csv = read_csv(CSVListItem, encoding=enc)
+            else:
+                enc = getFileEncoding(CSVListItem)
+                r_csv = read_csv(CSVListItem, encoding=enc)
+                m_csv = concat([m_csv, r_csv])
+            r += 1
+        return True, m_csv
+    except:
+        return False, ""
 
 
 # -------------------------------------------------------------------------------------

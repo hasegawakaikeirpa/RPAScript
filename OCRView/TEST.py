@@ -1,43 +1,23 @@
-from functools import wraps
-import traceback
+import pandas as pd
+import numpy as np
 
+l = np.array(
+    [
+        [0, 0, 0, 0, "Tate"],
+        [0, 0, 0, 0, "Yoko"],
+        [1, 1, 1, 1, "Tate"],
+        [1, 1, 1, 1, "Yoko"],
+    ]
+)
+ind = [x for x in range(l.shape[0])]
+df = pd.DataFrame(
+    data=l,
+    columns=["x1", "y1", "x2", "y2", "LineName"],
+    index=ind,
+)
 
-def Err_Check(*args, **kwargs):
-    def _my_decorator(func):
-        # _my_decorator_body() を定義する前に必要な処理があれば、ここに書く
-        @wraps(func)
-        def _my_decorator_body(*body_args, **body_kwargs):
-            # 前処理はここで実行
-            try:
-                # デコレートした本体の実行
-                ret = func(*body_args, **body_kwargs)
-            except Exception as e:
-                tp = traceback.print_exc()
-                print("")
-                raise
-            # 後処理はここで実行
-            return ret
+ExtractColumn = np.full(df.shape[0], "")
+ExtractColumn.astype(str)
+print(ExtractColumn[0])
 
-        # デコレータが記載された時に処理が必要な場合にはここに書く #2
-        return _my_decorator_body
-
-    # デコレータが記載された時に処理が必要な場合にはここに書く #1
-
-    if len(args) == 1 and callable(args[0]):
-        # 引数無しでデコレータが呼ばれた場合はここで処理
-        return _my_decorator(args[0])
-
-    else:
-        # 引数ありでデコレータが呼ばれた場合はここで処理
-        return _my_decorator
-
-
-@Err_Check
-def main():
-    win = tk.Tk()
-    app = Application(win)
-    app.mainloop()
-
-
-if __name__ == "__main__":
-    main()
+ExtractColumn[0] = ""

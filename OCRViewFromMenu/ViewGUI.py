@@ -458,13 +458,13 @@ class ViewGUI(ttk.Frame):
         """
         self.control.file_list = self.control.SetDirlist(self.control.dir_path)
         self.combo_file["value"] = self.control.file_list
-        self.control.imgurl = self.control.dir_path + r"/" + self.combo_file.get()
+        self.control.imgurl.set(self.control.dir_path + r"/" + self.combo_file.get())
 
-        self.control.img_name = os.path.splitext(os.path.basename(self.control.imgurl))[
-            0
-        ]
+        self.control.img_name = os.path.splitext(
+            os.path.basename(self.control.imgurl.get())
+        )[0]
 
-        FN = os.path.basename(self.control.imgurl)
+        FN = os.path.basename(self.control.imgurl.get())
         f_r = 0
         for f_l in self.control.file_list:
             if f_l == FN:

@@ -125,8 +125,8 @@ class Application(ttk.Frame):
             bg="snow",
             relief=tk.GROOVE,
         )
-        # self.SideFrame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        self.SideFrame.grid(row=0, column=0, rowspan=2, sticky=tk.N + tk.S)
+        self.SideFrame.pack(side=tk.LEFT, fill=tk.Y)
+        # self.SideFrame.grid(row=0, column=0, rowspan=2, sticky=tk.N + tk.S)
 
         # サイドメニュー幅調整の為ツリービュー等挿入
         tree = ttk.Treeview(self.SideFrame)
@@ -140,8 +140,8 @@ class Application(ttk.Frame):
             bg="black",
             relief=tk.GROOVE,
         )
-        # self.bottumFrame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        self.bottumFrame.grid(row=1, column=1, sticky=tk.N + tk.S)
+        self.bottumFrame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        # self.bottumFrame.grid(row=1, column=1, sticky=tk.N + tk.S)
 
         # 透過キャンバスフレーム
         self.control.topFrame = tk.Frame(
@@ -152,8 +152,8 @@ class Application(ttk.Frame):
             relief=tk.GROOVE,
             bd=2,
         )
-        # self.control.topFrame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-        self.control.topFrame.grid(row=0, column=1, sticky=tk.NSEW)
+        self.control.topFrame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        # self.control.topFrame.grid(row=0, column=1, sticky=tk.NSEW)
 
         # 透過キャンバス作成
         self.control.top.forward = tk.Canvas(
