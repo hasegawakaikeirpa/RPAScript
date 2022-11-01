@@ -2061,6 +2061,17 @@ def SyotokuzeiUpdate(FolURL, TFolURL, ExRow, driver):
                         time.sleep(1)
                         pg.press("return")
                         time.sleep(1)
+                    SCH = ImgCheck(
+                        TFolURL,
+                        r"SyotokuCheck.png",
+                        0.9,
+                        10,
+                    )
+                    if SCH[0] is True:
+                        pg.press("return")
+                        time.sleep(1)
+                        pg.press("return")
+                        time.sleep(1)
                     time.sleep(3)
                     pg.keyDown("alt")
                     pg.press("x")
@@ -3111,41 +3122,58 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                     # -----------------------------------
                     IUD = "当年"
                 else:
-                    ImgClick(TFolURL, r"\PrintOutTab.png", 0.9, 10)  # 2印刷タブクリック
-                    # 6月次締めが表示されるまで待機--------------------------
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\SimeIcon.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    ImgClick(TFolURL, r"\SimeIcon.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
-                    while (
-                        pg.locateOnScreen(TFolURL + r"\GetujiIcon.png", confidence=0.9)
-                        is None
-                    ):
-                        time.sleep(1)
-                    ImgClick(TFolURL, r"\GetujiIcon.png", 0.9, 10)  # 月次処理アイコンをクリック
-                    # 月次確定済みか判定して処理分け-------------------------------------------------------
-                    # 月次処理解除-----------------------------------------------------------------------
-                    KUL = ImgCheck(
-                        TFolURL, r"\KakuteUnLock.png", 0.9, 10
-                    )  # 月次処理解除アイコンを検索
-                    if KUL[0] is True:
-                        ImgClick(
-                            TFolURL, r"\KakuteUnLock.png", 0.9, 10
-                        )  # 月次処理アイコンをクリック
-                        time.sleep(2)
-                        pg.press("y")
-                        while (
-                            pg.locateOnScreen(
-                                TFolURL + r"\GetusjiKakutei.png", confidence=0.9
-                            )
-                            is None
-                        ):
-                            time.sleep(1)
-                        pg.press("return")
-                        time.sleep(1)
-                    # ---------------------------------------------------------------------------------
+                    IUD = IkkatuUpDate(FolURL, TFolURL, ExRow, driver)
+                    time.sleep(3)
+                    pg.keyDown("alt")
+                    pg.press("x")
+                    pg.keyUp("alt")
+                    # --------------------------------------------------------------------
+                    ME = ImgCheckForList(
+                        TFolURL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
+                    )
+                    if ME[0] is True:
+                        ImgClick(TFolURL, ME[1], 0.9, 10)  # 終了アイコンをクリック
+                    # --------------------------------------------------------------------
+                    # 閉じる処理--------------------------
+                    pg.keyDown("alt")
+                    pg.press("f4")
+                    pg.keyUp("alt")
+                    # -----------------------------------                    
+                    # ImgClick(TFolURL, r"\PrintOutTab.png", 0.9, 10)  # 2印刷タブクリック
+                    # # 6月次締めが表示されるまで待機--------------------------
+                    # while (
+                    #     pg.locateOnScreen(TFolURL + r"\SimeIcon.png", confidence=0.9)
+                    #     is None
+                    # ):
+                    #     time.sleep(1)
+                    # ImgClick(TFolURL, r"\SimeIcon.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
+                    # while (
+                    #     pg.locateOnScreen(TFolURL + r"\GetujiIcon.png", confidence=0.9)
+                    #     is None
+                    # ):
+                    #     time.sleep(1)
+                    # ImgClick(TFolURL, r"\GetujiIcon.png", 0.9, 10)  # 月次処理アイコンをクリック
+                    # # 月次確定済みか判定して処理分け-------------------------------------------------------
+                    # # 月次処理解除-----------------------------------------------------------------------
+                    # KUL = ImgCheck(
+                    #     TFolURL, r"\KakuteUnLock.png", 0.9, 10
+                    # )  # 月次処理解除アイコンを検索
+                    # if KUL[0] is True:
+                    #     ImgClick(
+                    #         TFolURL, r"\KakuteUnLock.png", 0.9, 10
+                    #     )  # 月次処理アイコンをクリック
+                    #     time.sleep(2)
+                    #     pg.press("y")
+                    #     while (
+                    #         pg.locateOnScreen(
+                    #             TFolURL + r"\GetusjiKakutei.png", confidence=0.9
+                    #         )
+                    #         is None
+                    #     ):
+                    #         time.sleep(1)
+                    #     pg.press("return")
+                    #     time.sleep(1)
+                    # # ---------------------------------------------------------------------------------
                     time.sleep(3)
                     pg.keyDown("alt")
                     pg.press("x")
@@ -3560,7 +3588,10 @@ def KessanKakuteiErr(FolURL, TFolURL, ExRow, driver):
                 pg.keyDown("alt")
                 pg.press("x")
                 pg.keyUp("alt")
-
+                RPQ = ImgCheck(TFolURL, r"\Replace_Q.png", 0.9, 10)
+                if RPQ[0] is True:
+                    pg.press("n")
+                time.sleep(1)
                 # マスター更新------------------------------------------------------------------------
                 ImgClick(TFolURL, r"\MasterUp.png", 0.9, 10)  # マスター更新をクリック
                 while (
