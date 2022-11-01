@@ -3131,6 +3131,10 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
                         is None
                     ):
                         time.sleep(1)
+                        KKE = ImgCheck(TFolURL, r"\KessanKakuteiErr.png", 0.9, 10)  # 月次処理確定アイコンを検索
+                        if KKE[0] is True:
+                            D_KKE = KessanKakuteiErr(FolURL, TFolURL, ExRow, driver)
+
                     pg.press("y")
                     while (
                         pg.locateOnScreen(
@@ -3290,6 +3294,25 @@ def KaikeiUpDate(FolURL, TFolURL, ExRow, driver):
             return False, "会計大将起動失敗", "", ""
     except:
         return False, "exceptエラー", "", ""
+
+def KessanKakuteiErr(FolURL, TFolURL, ExRow, driver):
+    pg.press("return")    
+    time.sleep(1)
+    p = pyautogui.locateOnScreen(TFolURL + r"\KessanKey.png", confidence=0.9) # 決算月の画像
+    K_x, K_y = pyautogui.center(p)
+    while ImgCheck(TFolURL, r"\UnsettledBox.png", 0.9, 10)[0] is True:
+        try:
+            p = pyautogui.locateOnScreen(TFolURL + r"\UnsettledBox.png", confidence=0.9)
+            x, y = pyautogui.center(p)
+            if y < K_y: # チェックボックスが決算月より上なら
+                pyautogui.click(x, y)
+                BR = ImgCheck(TFolURL, r"\BranceErr.png", 0.9, 10)  # 終了確認が表示されたら
+                if BR[0] is True:
+                    return False                    
+        except:
+            print("失敗")
+    return True 
+
 
 
 # ------------------------------------------------------------------------------------------------------------------

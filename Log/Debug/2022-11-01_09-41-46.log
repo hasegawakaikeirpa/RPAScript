@@ -1,0 +1,7 @@
+[2022/11/01 09:41:46][DEBUG](MJSOpen.py:110) Bat起動: debug level log MainFlow c:\Users\soumu\Desktop\RPAScript\MJSOpen.py
+[2022/11/01 09:41:46][DEBUG](MJSOpen.py:116) Appiumサーバー起動: debug level log MainFlow c:\Users\soumu\Desktop\RPAScript\MJSOpen.py
+[2022/11/01 09:41:46][DEBUG](MJSOpen.py:122) MJS起動: debug level log MainFlow c:\Users\soumu\Desktop\RPAScript\MJSOpen.py
+[2022/11/01 09:41:48][DEBUG](MJSOpen.py:137) Pass入力開始: debug level log MainFlow c:\Users\soumu\Desktop\RPAScript\MJSOpen.py
+[2022/11/01 09:41:59][DEBUG](MJS_DensiSinkoku.py:846) MJS操作画面へ偏移 MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/11/01 09:42:12][DEBUG](MJS_DensiSinkoku.py:848) CSVをDataFrameに MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
+[2022/11/01 09:42:13][DEBUG](MJS_DensiSinkoku.py:851) FindIcon.pngをクリック MainFlow c:\Users\soumu\Desktop\RPAScript\MJS_DensiSinkoku.py
