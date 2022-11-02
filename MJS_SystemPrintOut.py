@@ -15,8 +15,6 @@ import numpy as np
 # osインポート
 import os
 
-# datetimeインポート
-
 # 例外処理判定の為のtracebackインポート
 import traceback
 
