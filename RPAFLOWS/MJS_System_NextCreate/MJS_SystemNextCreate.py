@@ -28,7 +28,7 @@ import ExcelFileAction as EFA
 import datetime
 import openpyxl
 
-from ctypes import windll
+
 import WarekiHenkan as WH
 import RPA_Function as RPA
 
@@ -75,6 +75,7 @@ class Job:
         # RPA用画像フォルダの作成
         self.FolURL = os.getcwd().replace("\\", "/")  # 先
         self.TFolURL = RPA.My_Dir("MJS_System_NextCreate")  # 先
+        self.imgdir_url = self.TFolURL + r"\\img"  # 先
         self.XLSDir = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\一括更新申請"
         self.first_csv = self.XLSDir + r"\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
         self.BatUrl = (
@@ -85,30 +86,87 @@ class Job:
         )  # MJSを起動しログイン後インスタンス化
         log_out("Jobクラス読込終了")
 
-    # ------------------------------------------------------------------------------------------------
-    def MainFlow(self, Exlsx):
+    def MainFlow(self, Exc):
         """
         概要: メイン処理
         @param FolURL : ミロク起動関数のフォルダ(str)
         @param TFolURL : このpyファイルのフォルダ(str)
-        @param Exlsx : Excel指示シート(obj)
+        @param Exc : Excel指示シート(obj)
         @return : bool
         """
         try:
             log_out("xlsxをDataFrameに")
             open(LURL, "w").close()
-            for isnItem in Exlsx.input_sheet_name:
+            for Exc.Title in Exc.input_sheet_name:
                 # DataFrameとしてsheetのデータ読込み
-                if "更新申請" in isnItem:
-                    Exlsx.Read_sheet(isnItem, self.first_csv)
+                if "更新申請" in Exc.Title:
+                    Exc.Read_sheet(Exc.Title, self.first_csv)
                     MainStarter(
                         self,
-                        Exlsx,
-                        isnItem,
+                        Exc,
                     )  # データ送信画面までの関数
                     print("")
         except Exception as e:
             log_out(e)
+
+    def KomonUpdate(self, ExRow):
+        """
+        MJSの顧問先情報更新
+        """
+        log_out("_顧問先情報更新開始")
+        # 関与先コード入力ボックスをクリック------------------------------------
+        RPA.ImgClick(self.imgdir_url, r"\Komonsaki_Icon.png", 0.9, 10)
+        while (
+            pg.locateOnScreen(self.imgdir_url + r"\Komonsaki_Open.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+
+        p = pyautogui.locateOnScreen(
+            self.imgdir_url + r"\Komonsaki_CodeTxt.png", confidence=0.9
+        )
+        x, y = pyautogui.center(p)
+        pyautogui.click(x + 100, y)
+        pg.press("delete")
+        pyperclip.copy(str(ExRow["関与先番号"]))
+        pg.hotkey("ctrl", "v")
+        pg.press(["return", "return"])
+
+        time.sleep(1)
+
+        p = pyautogui.locateOnScreen(
+            self.imgdir_url + r"\RensaouMeisyou.png", confidence=0.9
+        )
+        x, y = pyautogui.center(p)
+        pyautogui.click(x + 100, y)
+        pg.press("up")
+        pg.press("down")
+        pg.press("delete")
+        pyperclip.copy(str(ExRow["関与先番号"]))
+        pg.hotkey("ctrl", "v")
+        pg.press(["return", "return"])
+
+        pg.keyDown("alt")
+        pg.press("u")
+        pg.keyUp("alt")
+
+        time.sleep(3)
+
+        pg.keyDown("alt")
+        pg.press("x")
+        pg.keyUp("alt")
+
+        while (
+            pg.locateOnScreen(self.imgdir_url + r"\SyonaiKanri.png", confidence=0.9)
+            is None
+        ):
+            time.sleep(1)
+
+        pg.keyDown("alt")
+        pg.press("f4")
+        pg.keyUp("alt")
+        time.sleep(1)
+        log_out("_顧問先情報更新完了")
 
 
 # ------------------------------------------------------------------------------------------------
@@ -119,6 +177,8 @@ class Sheet:
 
     def __init__(self, XLSURL, **kw):
         log_out("_Excelブック読込開始")
+        self.mybook_url = XLSURL
+        self.sheet_title = ""
         Ex_file = EFA.XlsmRead(XLSURL)
         if Ex_file[0] is True:
             # エクセルブック
@@ -149,9 +209,9 @@ class Sheet:
             encoding="cp932",
             index=False,
         )
-        # ----------------------------------------
-        self.sheet_columns = np.array(self.sheet_df).shape[1]  # 列数
-        for Ex in range(self.sheet_columns):
+        # 列名整理--------------------------------
+        self.sheet_column_count = self.sheet_df.shape[1]  # 列数
+        for Ex in range(self.sheet_column_count):
             ExRow = ExSheet.iloc[0]  # 列名
             ExSecondRow = ExSheet.iloc[1]  # 列名2
             if ExRow[Ex] == ExRow[Ex]:  # nan判定
@@ -171,7 +231,32 @@ class Sheet:
                 else:
                     # nanの場合
                     self.sheet_header.append(Txt)
+        # データ整理--------------------------------
+        # Df作成
+        ExDf = pd.DataFrame(self.sheet_df.values[3:, :], columns=self.sheet_header)
+        # Dfnan処理
+        ExDf.dropna(how="all", inplace=True)
+        print(ExDf)
+        self.sheet_df = ExDf
+        self.sheet_column_count = self.sheet_df.shape[1]  # 列数
+        self.sheet_row_count = self.sheet_df.shape[0]  # 行数
+
         log_out("_Excelシート読込完了")
+
+    def WriteExcel(self):
+        """
+        エクセルシート入力
+        """
+        dt_now = datetime.datetime.now()
+        dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
+        WriteEx = openpyxl.load_workbook(self.mybook_url, keep_vba=True)
+        WriteExSheet = WriteEx[self.sheet_title]
+        WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
+        WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
+        print("シート書き込み完了")
+        print(WriteEx)
+        WriteEx.save(XLSURL)
+        WriteEx.close
 
 
 # ------------------------------------------------------------------------------------------------
@@ -211,6 +296,7 @@ def NameSearch(NameDF, Rno):
             .replace("]", "")
             .replace("'", "")
             .replace('"', "")
+            .replace("\u3000", "")
         )
         print(N_L)
         return N_L
@@ -219,155 +305,96 @@ def NameSearch(NameDF, Rno):
 
 
 # ------------------------------------------------------------------------------------------------
-def KomonUpdate(TFolURL, ExRow):
-
-    # 関与先コード入力ボックスをクリック------------------------------------
-    RPA.ImgClick(TFolURL, r"\Komonsaki_Icon.png", 0.9, 10)
-    while pg.locateOnScreen(TFolURL + r"\Komonsaki_Open.png", confidence=0.9) is None:
-        time.sleep(1)
-
-    p = pyautogui.locateOnScreen(TFolURL + r"\Komonsaki_CodeTxt.png", confidence=0.9)
-    x, y = pyautogui.center(p)
-    pyautogui.click(x + 100, y)
-    pg.press("delete")
-    pyperclip.copy(str(ExRow["関与先番号"]))
-    pg.hotkey("ctrl", "v")
-    pg.press(["return", "return"])
-
-    time.sleep(1)
-
-    p = pyautogui.locateOnScreen(TFolURL + r"\RensaouMeisyou.png", confidence=0.9)
-    x, y = pyautogui.center(p)
-    pyautogui.click(x + 100, y)
-    pg.press("up")
-    pg.press("down")
-    pg.press("delete")
-    pyperclip.copy(str(ExRow["関与先番号"]))
-    pg.hotkey("ctrl", "v")
-    pg.press(["return", "return"])
-
-    pg.keyDown("alt")
-    pg.press("u")
-    pg.keyUp("alt")
-
-    time.sleep(3)
-
-    pg.keyDown("alt")
-    pg.press("x")
-    pg.keyUp("alt")
-
-    while pg.locateOnScreen(TFolURL + r"\SyonaiKanri.png", confidence=0.9) is None:
-        time.sleep(1)
-
-    pg.keyDown("alt")
-    pg.press("f4")
-    pg.keyUp("alt")
-    time.sleep(1)
-
-
-# ------------------------------------------------------------------------------------------------
-def ChildFlow(
-    FolURL,
-    TFolURL,
-    ExRow,
-    Ex,
-    Eh,
-    ExrcHeader,
-    isnItem,
-    Title,
-    driver,
-    Rno,
-    Rn,
-):
-    if "会計大将" == Title:
+def ChildFlow(Job, Exc):
+    if "会計大将" == Exc.Title:
         # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理開始")
-        with open(LURL, "a") as f:
-            print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新処理開始"], file=f)
+        msg = (
+            "_関与先番号:"
+            + str(Exc.row_kanyo_no)
+            + ":"
+            + str(Exc.row_kanyo_name)
+            + "_会計大将更新処理開始"
+        )
+        log_out(msg)
+        logcsv_out(msg)
         # ------------------------------------------------------------------------------------------
-        SystemUp = KaikeiUpDate.KaikeiUpDate(FolURL, TFolURL, ExRow, driver)
-        # Excel書き込み--------------------------------------------------
-        if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
-            print("シート書き込み完了")
-            print(WriteEx)
-            WriteEx.save(XLSURL)
-            WriteEx.closey
-            # ---------------------------------------------------------------
-            # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理終了")
-            with open(LURL, "a") as f:
-                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新処理終了"], file=f)
-            # ------------------------------------------------------------------------------------------
-        else:
-            if SystemUp[1] == "当年データ重複エラー":
+        # 会計大将のアイコンを探す-------------------------------------------------
+        ImgList = [r"\K_TaisyouIcon.png", r"\K_TaisyouIcon2.png"]
+        ICFL = RPA.ImgCheckForList(Job.imgdir_url, ImgList, 0.9, 10)
+        if ICFL[0] is True:  # 会計大将のアイコンがあれば
+            RPA.ImgClick(Job.imgdir_url, ICFL[1], 0.9, 10)  # 会計大将のアイコンをクリック
+            SystemUp = KaikeiUpDate.KaikeiUpDate(Job, Exc)
+            # Excel書き込み--------------------------------------------------
+            if SystemUp[0] is True:
+                Exc.WriteExcel()
                 # Log---------------------------------------------------------------------------------------
-                dt_s = datetime.datetime.now()
-                dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-                logger.debug(
-                    dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将当年データ重複エラー"
+                msg = (
+                    "_関与先番号:"
+                    + str(Exc.row_kanyo_no)
+                    + ":"
+                    + str(Exc.row_kanyo_name)
+                    + "_会計大将更新処理終了"
                 )
-                with open(LURL, "a") as f:
-                    print(
-                        [dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将当年データ重複エラー"], file=f
-                    )
-                dt_now = datetime.datetime.now()
-                dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-                WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-                WriteExSheet = WriteEx[isnItem]
-                WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-                WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "会計大将当年データ重複エラー"
-                print("シート書き込み完了")
-                WriteEx.save(XLSURL)
-                WriteEx.close
+                log_out(msg)
+                logcsv_out(msg)
+                # ------------------------------------------------------------------------------------------
             else:
-                logger.debug(
-                    dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_会計大将更新処理エラー中断"
-                )
-                with open(LURL, "a") as f:
-                    print([dt_s, "関与先番号:" + str(Rno), str(Rn), "会計大将更新エラー中断"], file=f)
+                if SystemUp[1] == "当年データ重複エラー":
+                    # Log---------------------------------------------------------------------------------------
+                    msg = (
+                        "_関与先番号:"
+                        + str(Exc.row_kanyo_no)
+                        + ":"
+                        + str(Exc.row_kanyo_name)
+                        + "_会計大将当年データ重複エラー"
+                    )
+                    log_out(msg)
+                    logcsv_out(msg)
+                    # ------------------------------------------------------------------------------------------
+                else:
+                    # Log---------------------------------------------------------------------------------------
+                    msg = (
+                        "_関与先番号:"
+                        + str(Exc.row_kanyo_no)
+                        + ":"
+                        + str(Exc.row_kanyo_name)
+                        + "_会計大将更新処理エラー中断"
+                    )
+                    log_out(msg)
+                    logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
-    elif "決算内訳書" == Title:
+    elif "決算内訳書" == Exc.Title:
         # Log---------------------------------------------------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理開始")
-        with open(LURL, "a") as f:
-            print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理開始"], file=f)
+        msg = (
+            "_関与先番号:"
+            + str(Exc.row_kanyo_no)
+            + ":"
+            + str(Exc.row_kanyo_name)
+            + "_決算内訳書更新処理開始"
+        )
+        log_out(msg)
+        logcsv_out(msg)
         # ------------------------------------------------------------------------------------------
-        SystemUp = KessanUpDate.KessanUpDate(FolURL, TFolURL, ExRow, driver)
+        SystemUp = KessanUpDate.KessanUpDate(Job, Exc)
         # Excel書き込み--------------------------------------------------
         if SystemUp[0] is True:
-            dt_now = datetime.datetime.now()
-            dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
-            WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
-            WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
-            print("シート書き込み完了")
-            WriteEx.save(XLSURL)
-            WriteEx.close
+            Exc.WriteExcel()
             # Log---------------------------------------------------------------------------------------
-            dt_s = datetime.datetime.now()
-            dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-            logger.debug(dt_s + "_関与先番号:" + str(Rno) + ":" + str(Rn) + "_決算内訳書更新処理終了")
-            with open(LURL, "a") as f:
-                print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理終了"], file=f)
+            msg = (
+                "_関与先番号:"
+                + str(Exc.row_kanyo_no)
+                + ":"
+                + str(Exc.row_kanyo_name)
+                + "_決算内訳書更新処理終了"
+            )
+            log_out(msg)
+            logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
         elif SystemUp[1] == "Noren":
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "連動対象無エラー"
             print("シート書き込み完了")
@@ -380,7 +407,7 @@ def ChildFlow(
             with open(LURL, "a") as f:
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "決算内訳書更新処理終了"], file=f)
             # ------------------------------------------------------------------------------------------
-    elif "減価償却" == Title:
+    elif "減価償却" == Exc.Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
@@ -396,7 +423,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
             print("シート書き込み完了")
@@ -413,7 +440,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "決算未確定更新"
             print("シート書き込み完了")
@@ -431,7 +458,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "減価償却当年データ重複エラー"
             print("シート書き込み完了")
@@ -450,7 +477,7 @@ def ChildFlow(
                 )
             # ------------------------------------------------------------------------------------------
         # ---------------------------------------------------------------
-    elif "法人税申告書" == Title:
+    elif "法人税申告書" == Exc.Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
@@ -464,7 +491,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
             print("シート書き込み完了")
@@ -481,7 +508,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "要データ再計算"
             print("シート書き込み完了")
@@ -498,7 +525,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "要申告指定"
             print("シート書き込み完了")
@@ -516,7 +543,7 @@ def ChildFlow(
                     file=f,
                 )
             # ------------------------------------------------------------------------------------------
-    elif "所得税確定申告" == Title:
+    elif "所得税確定申告" == Exc.Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
@@ -530,7 +557,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
             print("シート書き込み完了")
@@ -552,7 +579,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "所得税当年データ重複エラー"
             print("シート書き込み完了")
@@ -562,7 +589,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "計算未処理更新"
             print("シート書き込み完了")
@@ -580,14 +607,14 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "関与先無"
             print("シート書き込み完了")
             WriteEx.save(XLSURL)
             WriteEx.close
             # -------------------------------------------
-    elif "財産評価明細書" == Title:
+    elif "財産評価明細書" == Exc.Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
@@ -601,7 +628,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
             print("シート書き込み完了")
@@ -618,7 +645,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "更新対象年度無し"
             print("シート書き込み完了")
@@ -637,7 +664,7 @@ def ChildFlow(
                 )
             # ------------------------------------------------------------------------------------------
         # ---------------------------------------------------------------
-    elif "年末調整" == Title:
+    elif "年末調整" == Exc.Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
@@ -651,7 +678,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
             print("シート書き込み完了")
@@ -668,7 +695,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
             print("シート書き込み完了")
@@ -684,7 +711,7 @@ def ChildFlow(
                 print([dt_s, "関与先番号:" + str(Rno), str(Rn), "年末調整更新次年度あり処理終了"], file=f)
             # ------------------------------------------------------------------------------------------
         # ---------------------------------------------------------------
-    elif "法定調書" == Title:
+    elif "法定調書" == Exc.Title:
         # Log---------------------------------------------------------------------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
@@ -698,7 +725,7 @@ def ChildFlow(
             dt_now = datetime.datetime.now()
             dt_now = dt_now.strftime("%Y/%m/%d %H:%M:%S")
             WriteEx = openpyxl.load_workbook(XLSURL, keep_vba=True)
-            WriteExSheet = WriteEx[isnItem]
+            WriteExSheet = WriteEx[Title]
             WriteExSheet.cell(row=Ex + 5, column=Eh + 2).value = dt_now
             WriteExSheet.cell(row=Ex + 5, column=Eh + 1).value = "○"
             print("シート書き込み完了")
@@ -717,136 +744,16 @@ def ChildFlow(
 
 
 # ------------------------------------------------------------------------------------------------
-def KessanKakuteiErr(FolURL, TFolURL, ExRow, driver):
-    time.sleep(1)
-    pg.press("return")
-    time.sleep(1)
-
-    p = pyautogui.locateOnScreen(TFolURL + r"\KessanKey.png", confidence=0.9)  # 決算月の画像
-    K_x, K_y = pyautogui.center(p)
-    OverCount = 0
-    while OverCount <= 6:
-        try:
-            # マスター更新後月次確定コメントがでたら
-            MR = RPA.ImgCheck(TFolURL, r"\MasterRecalcQ2.png", 0.9, 10)
-            if MR[0] is True:
-                while RPA.ImgCheck(TFolURL, r"\GetusjiKakutei.png", 0.9, 10)[0] is True:
-                    time.sleep(1)
-                pg.press("return")
-                time.sleep(3)
-                pg.keyDown("alt")
-                pg.press("x")
-                pg.keyUp("alt")
-                RPQ = RPA.ImgCheck(TFolURL, r"\Replace_Q.png", 0.9, 10)
-                if RPQ[0] is True:
-                    pg.press("n")
-                time.sleep(1)
-                # マスター更新------------------------------------------------------------------------
-                RPA.ImgClick(TFolURL, r"\MasterUp.png", 0.9, 10)  # マスター更新をクリック
-                while (
-                    RPA.ImgCheckForList(
-                        TFolURL,
-                        [r"MasterUpStart.png", r"MasterUpStart2.png"],
-                        0.9,
-                        10,
-                    )[0]
-                    is True
-                ):
-                    time.sleep(1)
-                    TL = RPA.ImgCheckForList(
-                        TFolURL,
-                        [r"MasterUpStart.png", r"MasterUpStart2.png"],
-                        0.9,
-                        10,
-                    )
-                    RPA.ImgClick(TFolURL, TL[1], 0.9, 10)  # マスター更新開始をクリック
-                    break
-                time.sleep(3)
-                pg.press("y")
-                time.sleep(3)
-                pg.press("return")
-                time.sleep(3)
-                pg.keyDown("alt")
-                pg.press("x")
-                pg.keyUp("alt")
-                return "Master"
-            else:
-                p = pyautogui.locateOnScreen(
-                    TFolURL + r"\UnsettledBox.png", confidence=0.8
-                )
-                x, y = pyautogui.center(p)
-                try:
-                    # 確定取消判定
-                    ka_p = pyautogui.locateOnScreen(
-                        TFolURL + r"\UnsettledBox2.png", confidence=0.8
-                    )
-                    ka_x, ka_y = pyautogui.center(ka_p)
-                    KakuteiFlag = True
-                except:
-                    KakuteiFlag = False
-
-                if KakuteiFlag is False:
-                    if y <= (K_y + (OverCount * 2)):  # チェックボックスが決算月より上なら
-                        pyautogui.click(x, y)
-                        BR = RPA.ImgCheck(
-                            TFolURL, r"\BranceErr.png", 0.9, 10
-                        )  # バランスエラーが表示されたら
-                        if BR[0] is True:
-                            return False
-                    else:
-                        OverCount += 1
-                else:
-                    if ka_y <= (K_y + (OverCount * 2)):  # チェックボックスが決算月より上なら
-                        pyautogui.click(ka_x, ka_y)
-                        BR = RPA.ImgCheck(
-                            TFolURL, r"\BranceErr.png", 0.9, 10
-                        )  # バランスエラーが表示されたら
-                        if BR[0] is True:
-                            return False
-                    else:
-                        OverCount += 1
-        except:
-            print("失敗")
-            OverCount += 1
-    GK = False
-    RPA.ImgClick(TFolURL, r"\KakuteiLock.png", 0.9, 10)  # 月次処理確定アイコンをクリック
-    time.sleep(1)
-    pg.press("y")
-    while pg.locateOnScreen(TFolURL + r"\KessanKQ.png", confidence=0.9) is None:
-        if GK is True:
-            break
-        time.sleep(2)
-        pg.press("y")
-        while (
-            pg.locateOnScreen(TFolURL + r"\GetusjiKakutei.png", confidence=0.9) is None
-        ):
-            time.sleep(1)
-            pg.press("return")
-            while (
-                pg.locateOnScreen(TFolURL + r"\GetusjiKakutei.png", confidence=0.9)
-                is None
-            ):
-                time.sleep(1)
-                pg.press("return")
-                GK = True
-                break
-        if GK is True:
-            break
-
-    return True
-
-
-# ------------------------------------------------------------------------------------------------
-def MainStarter(Job, Exc, isnItem):
+def MainStarter(Job, Exc):
     try:
-        ExDf = pd.DataFrame(Exc.sheet_df.values[3, :], columns=Exc.sheet_header)
-        print(ExDf)
-        Exrc = np.array(ExDf).shape[0]  # 行数
-        for Ex in range(1, Exrc):
-            Exc.row_data = ExDf.iloc[Ex]
+        for Ex in range(Exc.sheet_row_count):
+            Exc.row_data = Exc.sheet_df.iloc[Ex]
             if Exc.row_data["関与先番号"] == Exc.row_data["関与先番号"]:  # nan判定
                 # nanでない場合
-                OpenSystem(Job, Exc, isnItem)
+                Exc.row_kanyo_no = Exc.row_data["関与先番号"]
+                Exc.row_kanyo_name = NameSearch(Exc.name_df, Exc.row_kanyo_no)
+                Job.KomonUpdate(Exc.row_data)  # 顧問先情報更新
+                OpenSystem(Job, Exc)
                 print("")
             else:
                 # nanの場合
@@ -857,180 +764,69 @@ def MainStarter(Job, Exc, isnItem):
 
 
 # ------------------------------------------------------------------------------------------------
-def OpenSystem(Job, Exc, isnItem):
+def OpenSystem(Job, Exc):
     try:
         Eh = 0
-        for ExrcHeaderItem in Exc.ExrcHeader:
-            if Eh < (len(Exc.ExrcHeader) - 1):
+        for ExrcHeaderItem in Exc.sheet_header:
+            if Eh < (len(Exc.sheet_header) - 1):
                 if "_繰越対象" in ExrcHeaderItem:
                     SysN = ExrcHeaderItem.split("_")
-                    Title = str(SysN[0])
+                    Exc.Title = str(SysN[0])
                     if (
-                        not Exc.row_data[Title + "_繰越対象"] == "-"
-                        and str(Exc.row_data[Title + "_繰越対象"]) == "1"
+                        not Exc.row_data[Exc.Title + "_繰越対象"] == "-"
+                        and str(Exc.row_data[Exc.Title + "_繰越対象"]) == "1"
                     ):
-                        if "::" not in Title:
+                        if "::" not in Exc.Title:
                             if (
-                                Exc.row_data[Title + "_繰越対象"]
-                                == Exc.row_data[Title + "_繰越対象"]
+                                Exc.row_data[Exc.Title + "_繰越対象"]
+                                == Exc.row_data[Exc.Title + "_繰越対象"]
                             ):
                                 # nanでない場合
                                 if (
-                                    Exc.row_data[Title + "_繰越処理日"]
-                                    == Exc.row_data[Title + "_繰越処理日"]
+                                    Exc.row_data[Exc.Title + "_繰越処理日"]
+                                    == Exc.row_data[Exc.Title + "_繰越処理日"]
                                 ):
                                     # nanでない場合
-                                    print(Exc.row_data[Title + "_繰越処理日"])
+                                    print(Exc.row_data[Exc.Title + "_繰越処理日"])
                                 else:
                                     # nanの場合
                                     # Log--------------------------------------------
-                                    dt_s = datetime.datetime.now()
-                                    dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-                                    Rno = Exc.row_data["関与先番号"]
-                                    Rn = NameSearch(Exc.NameDF, Rno)
-                                    Rn = Rn.replace("\u3000", "")
-                                    KomonUpdate(Job.TFolURL, Exc.row_data)  # 顧問先情報更新
-                                    logger.debug(
-                                        dt_s
-                                        + "_関与先番号:"
-                                        + str(Rno)
+                                    msg = (
+                                        "_関与先番号:"
+                                        + str(Exc.row_kanyo_no)
                                         + ":"
-                                        + str(Rn)
+                                        + str(Exc.row_kanyo_name)
                                         + "_メイン処理開始"
                                     )
-                                    with open(LURL, "a") as f:
-                                        print(
-                                            [
-                                                dt_s,
-                                                "関与先番号:" + str(Rno),
-                                                str(Rn),
-                                                "メイン処理開始",
-                                            ],
-                                            file=f,
-                                        )
+                                    log_out(msg)
+                                    logcsv_out(msg)
                                     # -----------------------------------------------
-                                    ChildFlow(
-                                        FolURL,
-                                        TFolURL,
-                                        Exc.row_data,
-                                        Ex,
-                                        Eh,
-                                        ExrcHeader,
-                                        isnItem,
-                                        Title,
-                                        driver,
-                                        Rno,
-                                        Rn,
-                                    )
+                                    ChildFlow(Job, Exc)
                             else:
                                 # nanでない場合
                                 if (
-                                    Exc.row_data[Title + "_繰越処理日"]
-                                    == Exc.row_data[Title + "_繰越処理日"]
+                                    Exc.row_data[Exc.Title + "_繰越処理日"]
+                                    == Exc.row_data[Exc.Title + "_繰越処理日"]
                                 ):
                                     # nanでない場合
                                     print("スタート")
                                 else:
                                     # nanの場合
                                     # Log--------------------------------------------
-                                    dt_s = datetime.datetime.now()
-                                    dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-                                    Rno = Exc.row_data["関与先番号"]
-                                    Rn = NameSearch(Exc.NameDF, Rno)
-                                    Rn = Rn.replace("\u3000", "")
-                                    KomonUpdate(Job.TFolURL, Exc.row_data)  # 顧問先情報更新
-                                    logger.debug(
-                                        dt_s
-                                        + "_関与先番号:"
-                                        + str(Rno)
+                                    msg = (
+                                        "_関与先番号:"
+                                        + str(Exc.row_kanyo_no)
                                         + ":"
-                                        + str(Rn)
+                                        + str(Exc.row_kanyo_name)
                                         + "_メイン処理開始"
                                     )
-                                    with open(LURL, "a") as f:
-                                        print(
-                                            [
-                                                dt_s,
-                                                "関与先番号:" + str(Rno),
-                                                str(Rn),
-                                                "メイン処理開始",
-                                            ],
-                                            file=f,
-                                        )
+                                    log_out(msg)
+                                    logcsv_out(msg)
                                     # -----------------------------------------------
-                                    ChildFlow(
-                                        FolURL,
-                                        TFolURL,
-                                        Exc.row_data,
-                                        Ex,
-                                        Eh,
-                                        ExrcHeader,
-                                        isnItem,
-                                        Title,
-                                        driver,
-                                        Rno,
-                                        Rn,
-                                    )
-                Eh += 1
+                                    ChildFlow(Job, Exc)
         return True
     except:
         print("TEST")
-        return False
-
-
-def Main(FolURL, TFolURL, XLSDir, LURL):
-    try:
-        # Log--------------------------------------------
-        dt_s = datetime.datetime.now()
-        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(dt_s + "_MJSシステム更新開始")
-        # -----------------------------------------------
-        BatUrl = FolURL + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
-        driver = MJSOpen.MainFlow(
-            BatUrl, FolURL, "RPAPhoto/MJS_DensiSinkoku"
-        )  # MJSを起動しログイン後インスタンス化
-        # driver = []
-        FolURL = FolURL + "/RPAPhoto/MJS_DensiSinkoku"
-        for fd_path, sb_folder, sb_file in os.walk(XLSDir):
-            FDP = fd_path
-            if not len(sb_folder) == 0:
-                for sb_fileItem in sb_file:
-                    print(sb_fileItem)
-                    if (
-                        "一括更新申請ミロク" in sb_fileItem
-                        and not "一括更新申請ミロク(原本).xlsm" == sb_fileItem
-                    ):
-                        XLSURL = (
-                            FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-                        )
-                        MoveXLSURL = (
-                            FDP
-                            + r"\\MJSLog\\"
-                            + sb_fileItem.replace("~", "").replace("$", "")
-                        )
-                        os.rename(XLSURL, MoveXLSURL)
-                        MoveXLSURL = (
-                            FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-                        )
-                        XLSURL = (
-                            FDP
-                            + r"\\MJSLog\\"
-                            + sb_fileItem.replace("~", "").replace("$", "")
-                        )
-                        open(LURL, "w").close()
-                        Exlsx = EFA.XlsmRead(XLSURL)
-                        if Exlsx[0] is True:
-                            try:
-                                MainFlow(FolURL, TFolURL, Exlsx[1], driver, XLSURL)
-                            except:
-                                traceback.print_exc()
-                            Exlsx = "閉じろや"
-                            os.rename(XLSURL, MoveXLSURL)
-                        else:
-                            print("Excel読み込みエラー")
-                            logger.debug("Excel読み込みエラー")
-        return True
-    except:
         return False
 
 
@@ -1072,5 +868,5 @@ if __name__ == "__main__":
                         j.MainFlow(Ex_File)
                     except:
                         traceback.print_exc()
-                    Exlsx = "閉じろや"
+
                     os.rename(XLSURL, MoveXLSURL)
