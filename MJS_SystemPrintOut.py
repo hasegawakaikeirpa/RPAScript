@@ -904,6 +904,9 @@ def HoujinzeiUpdateSinkokuItiran(
                 SRCCCCCC = ImgCheck(CFolURL, r"\Houjinzei\S_RendouCheck3.png", 0.9, 10)
                 if SRCCCCCC[0] is True:
                     pg.press("return")
+                SRCCCCCCC = ImgCheck(CFolURL, r"\Houjinzei\S_RendouCheck4.png", 0.9, 10)
+                if SRCCCCCCC[0] is True:
+                    pg.press("return")
                 SRCC = ImgCheck(CFolURL, r"\Houjinzei\S_Rendou2.png", 0.9, 10)
                 if SRCC[0] is True:
                     pg.press("n")
@@ -3887,7 +3890,10 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         if SKQ[0] is True:
                             pg.press("return")
                         time.sleep(1)
-                        ImgClick(CFolURL, r"\KTaisyou\SyouhiPrint.png", 0.9, 10)
+                        SP_l = [r"\KTaisyou\SyouhiPrint.png",r"\KTaisyou\SyouhiPrint2.png"]
+                        SP = ImgCheckForList(CFolURL, SP_l, 0.9, 10)
+                        ImgClick(CFolURL, SP[1], 0.9, 10)
+                        c = 0
                         # 確認ウィンドウが表示されるまで待機-------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -3904,6 +3910,11 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             KN = ImgCheck(CFolURL, r"\KTaisyou\S_Humei.png", 0.9, 10)
                             if KN[0] is True:
                                 pg.press("y")
+                            c += 1
+                            if c == 5:
+                                SP = ImgCheckForList(CFolURL, SP_l, 0.9, 10)
+                                ImgClick(CFolURL, SP[1], 0.9, 10)
+                                c = 0                                
                         # --------------------------------------------------------------------
                         pg.press("p")  # 決定
                         time.sleep(1)
@@ -4857,6 +4868,55 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                 is None
             ):
                 time.sleep(1)
+                RNO = ImgCheck(CFolURL,r"\Houjinzei\RiyouNodata.png",0.9,10)
+                if RNO[0] is True:
+
+                    time.sleep(1)
+                    #  確実に閉じる--------------------------------------------
+                    DED = ImgCheck(CFolURL, r"\Densi\14D_End.png", 0.9, 10)
+                    if DED[0] is True:
+                        ImgClick(CFolURL, r"\Densi\14D_End.png", 0.9, 10)
+                    else:
+                        pg.keyDown("alt")
+                        pg.press("x")
+                        pg.keyUp("alt")
+                    # ---------------------------------------------------------
+                    time.sleep(1)
+                    while (
+                        ImgCheckForList(
+                            CFolURL,
+                            [
+                                r"\Densi\14Doui.png",
+                                r"\Densi\14Doui2.png",
+                            ],
+                            0.9,
+                            10,
+                        )[0]
+                        is False
+                    ):
+                        time.sleep(1)
+                    # 閉じる処理--------------------------
+                    pg.keyDown("alt")
+                    pg.press("f4")
+                    pg.keyUp("alt")
+                    # -----------------------------------
+                    # 電子申告フラグが表示されるまで待機------------------------------------
+                    while (
+                        ImgCheckForList(
+                            CFolURL,
+                            [
+                                r"\Densi\DensiIcon.png",
+                                r"\Densi\DensiIcon2.png",
+                            ],
+                            0.9,
+                            10,
+                        )[0]
+                        is False
+                    ):
+                        time.sleep(1)
+                    # ------------------------------------------------------------------
+
+                    return False, "電子申告起動失敗", "", ""
             # --------------------------------------------------------------------
             # 申告税一覧表印刷処理----------------------------------------------------
             FO = ImgCheckForList(
