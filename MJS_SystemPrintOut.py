@@ -955,7 +955,9 @@ def HoujinzeiUpdateSinkokuItiran(
             pg.press("return")
             pg.press("delete")
             pg.press("backspace")
+            time.sleep(1)
             pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+            time.sleep(1)
             pg.hotkey("ctrl", "v")
             pg.press("return")
             time.sleep(1)
@@ -1040,11 +1042,18 @@ def HoujinzeiUpdateSinkokuItiran(
             pg.press("f4")
             pg.keyUp("alt")
             # -----------------------------------
+            f = 0
             # 法人税フラグが表示されるまで待機-------------------------------------
             while (
                 pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None
             ):
                 time.sleep(1)
+                f += 1
+                if f == 5:
+                    pg.keyDown("alt")
+                    pg.press("f4")
+                    pg.keyUp("alt")
+                    f = 0
             # --------------------------------------------------------------------
             # 初期画面で開封された法人税項目を閉じる----------------------------------
             HoujinList = [
@@ -1154,7 +1163,9 @@ def HoujinzeiUpdateSinkokuItiran(
                         time.sleep(1)
                         ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
                     # --------------------------------------------------------------------
+                    time.sleep(1)
                     pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                    time.sleep(1)
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
                     # 印刷完了まで待機----------------------------------------------------
@@ -1251,9 +1262,11 @@ def HoujinzeiUpdateSinkokuItiran(
                                 ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
                             # --------------------------------------------------------------------
                             Fname = Fname.replace(".pdf", "") + str(CNo) + ".pdf"
+                            time.sleep(1)
                             pyperclip.copy(
                                 Fname.replace("\\\\", "\\").replace("/", "\\")
                             )
+                            time.sleep(1)
                             pg.hotkey("ctrl", "v")
                             pg.press("return")
                             # 印刷完了まで待機----------------------------------------------------
@@ -1334,12 +1347,19 @@ def HoujinzeiUpdateSinkokuItiran(
                 pg.press("f4")
                 pg.keyUp("alt")
                 # -----------------------------------
+                f = 0
                 # 法人税フラグが表示されるまで待機-------------------------------------
                 while (
                     pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9)
                     is None
                 ):
                     time.sleep(1)
+                    f += 1
+                    if f == 5:
+                        pg.keyDown("alt")
+                        pg.press("f4")
+                        pg.keyUp("alt")
+                        f = 0
                 # --------------------------------------------------------------------
                 # 初期画面で開封された法人税項目を閉じる----------------------------------
                 HoujinList = [
@@ -1396,7 +1416,9 @@ def HoujinzeiUpdateSinkokuItiran(
                         time.sleep(1)
                         ImgClick(CFolURL, TPI[1], 0.9, 10)  # 現在項印刷アイコンをクリック
                     # --------------------------------------------------------------------
+                    time.sleep(1)
                     pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                    time.sleep(1)
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
                     # 印刷完了まで待機----------------------------------------------------
@@ -1480,12 +1502,19 @@ def HoujinzeiUpdateSinkokuItiran(
                     pg.press("f4")
                     pg.keyUp("alt")
                     # -----------------------------------
+                    f = 0
                     # 法人税フラグが表示されるまで待機-------------------------------------
                     while (
                         pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9)
                         is None
                     ):
                         time.sleep(1)
+                        f += 1
+                        if f == 5:
+                            pg.keyDown("alt")
+                            pg.press("f4")
+                            pg.keyUp("alt")
+                            f = 0
                     # --------------------------------------------------------------------
                     # 初期画面で開封された法人税項目を閉じる----------------------------------
                     HoujinList = [
@@ -1551,7 +1580,9 @@ def HoujinzeiUpdateZeimuDairi(
         pg.press("return")
         pg.press("delete")
         pg.press("backspace")
+        time.sleep(1)
         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+        time.sleep(1)
         pg.hotkey("ctrl", "v")
         pg.press("return")
         time.sleep(1)
@@ -1615,9 +1646,16 @@ def HoujinzeiUpdateZeimuDairi(
         pg.press("f4")
         pg.keyUp("alt")
         # -----------------------------------
+        f = 0
         # 法人税フラグが表示されるまで待機-------------------------------------
         while pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None:
             time.sleep(1)
+            f += 1
+            if f == 5:
+                pg.keyDown("alt")
+                pg.press("f4")
+                pg.keyUp("alt")
+                f = 0
         # --------------------------------------------------------------------
         # 初期画面で開封された法人税項目を閉じる----------------------------------
         HoujinList = [
@@ -1701,7 +1739,9 @@ def HoujinzeiUpdateSyomen(
         pg.press("return")
         pg.press("delete")
         pg.press("backspace")
+        time.sleep(1)
         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+        time.sleep(1)
         pg.hotkey("ctrl", "v")
         pg.press("return")
         time.sleep(1)
@@ -1761,9 +1801,16 @@ def HoujinzeiUpdateSyomen(
         pg.press("f4")
         pg.keyUp("alt")
         # -----------------------------------
+        f = 0
         # 法人税フラグが表示されるまで待機-------------------------------------
         while pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None:
             time.sleep(1)
+            f += 1
+            if f == 5:
+                pg.keyDown("alt")
+                pg.press("f4")
+                pg.keyUp("alt")
+                f = 0
         # --------------------------------------------------------------------
         # 初期画面で開封された法人税項目を閉じる----------------------------------
         HoujinList = [
@@ -1917,7 +1964,9 @@ def HoujinzeiUpdateBeppyou(
         pg.press("return")
         pg.press("delete")
         pg.press("backspace")
+        time.sleep(1)
         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+        time.sleep(1)
         pg.hotkey("ctrl", "v")
         pg.press("return")
         time.sleep(1)
@@ -2010,9 +2059,16 @@ def HoujinzeiUpdateBeppyou(
         pg.press("f4")
         pg.keyUp("alt")
         # -----------------------------------
+        f = 0
         # 法人税フラグが表示されるまで待機-------------------------------------
         while pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None:
             time.sleep(1)
+            f += 1
+            if f == 5:
+                pg.keyDown("alt")
+                pg.press("f4")
+                pg.keyUp("alt")
+                f = 0
         # --------------------------------------------------------------------
         # 初期画面で開封された法人税項目を閉じる----------------------------------
         HoujinList = [
@@ -2133,7 +2189,9 @@ def HoujinzeiUpdateGaikyou(
         pg.press("return")
         pg.press("delete")
         pg.press("backspace")
+        time.sleep(1)
         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+        time.sleep(1)
         pg.hotkey("ctrl", "v")
         pg.press("return")
         time.sleep(1)
@@ -2222,9 +2280,16 @@ def HoujinzeiUpdateGaikyou(
         pg.press("f4")
         pg.keyUp("alt")
         # -----------------------------------
+        f = 0
         # 法人税フラグが表示されるまで待機-------------------------------------
         while pg.locateOnScreen(TFolURL + r"\HoujinFlag.png", confidence=0.9) is None:
             time.sleep(1)
+            f += 1
+            if f == 5:
+                pg.keyDown("alt")
+                pg.press("f4")
+                pg.keyUp("alt")
+                f = 0
         # --------------------------------------------------------------------
         # 初期画面で開封された法人税項目を閉じる----------------------------------
         HoujinList = [
@@ -2600,7 +2665,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             )
                             is None
                         ):
-                            time.sleep(1)                        
+                            time.sleep(1)
                 # --------------------------------------------------------------------
                 ImgClick(
                     CFolURL, r"\GenkaSyoukyaku\G_Insatu.png", 0.9, 10
@@ -2696,7 +2761,9 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         pg.press("delete")
                         pg.press("backspace")
+                        time.sleep(1)
                         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                        time.sleep(1)
                         pg.hotkey("ctrl", "v")
                         pg.press("return")
                         time.sleep(1)
@@ -2743,6 +2810,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 減価償却フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -2751,6 +2819,12 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return True, ThisNo, ThisYear, ThisMonth
                     else:
@@ -2759,6 +2833,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 減価償却フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -2767,6 +2842,12 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return False, "物件無し", "", ""
                 elif PN == "一括償却資産":
@@ -2863,7 +2944,9 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         pg.press("delete")
                         pg.press("backspace")
+                        time.sleep(1)
                         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                        time.sleep(1)
                         pg.hotkey("ctrl", "v")
                         pg.press("return")
                         time.sleep(1)
@@ -2910,6 +2993,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 減価償却フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -2918,6 +3002,12 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return True, ThisNo, ThisYear, ThisMonth
                     else:
@@ -2939,6 +3029,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 減価償却フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -2947,6 +3038,12 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return False, ThisNo, ThisYear, Nod
                 elif PN == "少額償却資産":
@@ -3030,7 +3127,9 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         pg.press("delete")
                         pg.press("backspace")
+                        time.sleep(1)
                         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                        time.sleep(1)
                         pg.hotkey("ctrl", "v")
                         pg.press("return")
                         time.sleep(1)
@@ -3077,6 +3176,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 減価償却フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -3085,6 +3185,12 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return True, ThisNo, ThisYear, ThisMonth
                     else:
@@ -3106,6 +3212,7 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 減価償却フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -3114,6 +3221,12 @@ def GenkasyoukyakuUpdate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return False, ThisNo, ThisYear, Nod
             else:
@@ -3231,7 +3344,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             )
                             is None
                         ):
-                            time.sleep(1)                        
+                            time.sleep(1)
                 # --------------------------------------------------------------------
                 # 内訳書印刷メニューが表示されるまで待機----------------------------------
                 while (
@@ -3292,7 +3405,9 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("return")
                     pg.press("delete")
                     pg.press("backspace")
+                    time.sleep(1)
                     pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                    time.sleep(1)
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
                     time.sleep(1)
@@ -3359,6 +3474,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("f4")
                     pg.keyUp("alt")
                     # -----------------------------------
+                    f = 0
                     # 決算内訳書フラグが表示されるまで待機------------------------------------
                     while (
                         pg.locateOnScreen(
@@ -3367,6 +3483,12 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
+                        f += 1
+                        if f == 5:
+                            pg.keyDown("alt")
+                            pg.press("f4")
+                            pg.keyUp("alt")
+                            f = 0
                     # ------------------------------------------------------------------
                     return True, ThisNo, ThisYear, ThisMonth
                 else:
@@ -3398,6 +3520,7 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("f4")
                     pg.keyUp("alt")
                     # -----------------------------------
+                    f = 0
                     # 決算内訳書フラグが表示されるまで待機------------------------------------
                     while (
                         pg.locateOnScreen(
@@ -3406,6 +3529,12 @@ def KessanUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
+                        f += 1
+                        if f == 5:
+                            pg.keyDown("alt")
+                            pg.press("f4")
+                            pg.keyUp("alt")
+                            f = 0
                     # ------------------------------------------------------------------
                     return False, "印刷様式未設定", "", ""
             else:
@@ -3992,7 +4121,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         pg.press("delete")
                         pg.press("backspace")
+                        time.sleep(1)
                         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                        time.sleep(1)
                         pg.hotkey("ctrl", "v")
                         pg.press("return")
                         time.sleep(1)
@@ -4094,6 +4225,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 会計大将フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -4102,6 +4234,12 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return True, ThisNo, ThisYear, ThisMonth
                     else:
@@ -4110,6 +4248,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 会計大将フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -4118,6 +4257,12 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return False, "要消費税基本情報登録", "", ""
                 elif PN == "書面添付　消費税":
@@ -4248,7 +4393,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         pg.press("delete")
                         pg.press("backspace")
+                        time.sleep(1)
                         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                        time.sleep(1)
                         pg.hotkey("ctrl", "v")
                         pg.press("return")
                         time.sleep(1)
@@ -4301,6 +4448,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 会計大将フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -4309,6 +4457,12 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return True, ThisNo, ThisYear, ThisMonth
                     elif NOD[0] is True:
@@ -4317,6 +4471,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 終了確認が表示されるまで待機---------------------------------
                         while (
                             pg.locateOnScreen(
@@ -4325,6 +4480,12 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # --------------------------------------------------------------------
                         pg.press("y")
                         # ------------------------------------------------------------------
@@ -4421,7 +4582,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("return")
                         pg.press("delete")
                         pg.press("backspace")
+                        time.sleep(1)
                         pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                        time.sleep(1)
                         pg.hotkey("ctrl", "v")
                         pg.press("return")
                         time.sleep(1)
@@ -4466,6 +4629,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 会計大将フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -4474,6 +4638,12 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         PDFM.BeppyouPDFSplit(
                             Fname.replace("\\\\", "\\").replace("/", "\\"),
@@ -4491,6 +4661,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         pg.press("f4")
                         pg.keyUp("alt")
                         # -----------------------------------
+                        f = 0
                         # 会計大将フラグが表示されるまで待機------------------------------------
                         while (
                             pg.locateOnScreen(
@@ -4499,6 +4670,12 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                             is None
                         ):
                             time.sleep(1)
+                            f += 1
+                            if f == 5:
+                                pg.keyDown("alt")
+                                pg.press("f4")
+                                pg.keyUp("alt")
+                                f = 0
                         # ------------------------------------------------------------------
                         return False, "決算順序未設定", "", ""
                 elif PN == "株主（社員）資本変動計算書":
@@ -4572,7 +4749,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ):
                         time.sleep(1)
                     # ---------------------------------------------------------------------
+                    time.sleep(1)
                     pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                    time.sleep(1)
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
                     time.sleep(1)
@@ -4640,6 +4819,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("f4")
                     pg.keyUp("alt")
                     # -----------------------------------
+                    f = 0
                     # 会計大将フラグが表示されるまで待機------------------------------------
                     while (
                         pg.locateOnScreen(
@@ -4648,6 +4828,12 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
+                        f += 1
+                        if f == 5:
+                            pg.keyDown("alt")
+                            pg.press("f4")
+                            pg.keyUp("alt")
+                            f = 0
                     # ------------------------------------------------------------------
                     if CalcErr == "":
                         return True, ThisNo, ThisYear, ThisMonth
@@ -4723,7 +4909,9 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     ):
                         time.sleep(1)
                     # ---------------------------------------------------------------------
+                    time.sleep(1)
                     pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+                    time.sleep(1)
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
                     time.sleep(1)
@@ -4791,6 +4979,7 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("f4")
                     pg.keyUp("alt")
                     # -----------------------------------
+                    f = 0
                     # 会計大将フラグが表示されるまで待機------------------------------------
                     while (
                         pg.locateOnScreen(
@@ -4799,6 +4988,12 @@ def KaikeiUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is None
                     ):
                         time.sleep(1)
+                        f += 1
+                        if f == 5:
+                            pg.keyDown("alt")
+                            pg.press("f4")
+                            pg.keyUp("alt")
+                            f = 0
                     # ------------------------------------------------------------------
                     if CalcErr == "":
                         return True, ThisNo, ThisYear, ThisMonth
@@ -4884,8 +5079,10 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
             kno = str(ExRow["関与先番号_関与先番号"])
             pyperclip.copy(kno)
             pg.press("tab")
+            time.sleep(1)
             pg.hotkey("ctrl", "v")
             pg.press("return")
+            time.sleep(1)
             pg.hotkey("ctrl", "v")
             pg.press("return")
             ImgClick(CFolURL, r"\Densi\14D_SearchOK.png", 0.9, 10)  # OKボタンをクリック
@@ -4945,6 +5142,7 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                     pg.press("f4")
                     pg.keyUp("alt")
                     # -----------------------------------
+                    f = 0
                     # 電子申告フラグが表示されるまで待機------------------------------------
                     while (
                         ImgCheckForList(
@@ -4959,6 +5157,12 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                         is False
                     ):
                         time.sleep(1)
+                        f += 1
+                        if f == 5:
+                            pg.keyDown("alt")
+                            pg.press("f4")
+                            pg.keyUp("alt")
+                            f = 0
                     # ------------------------------------------------------------------
 
                     return False, "電子申告起動失敗", "", ""
@@ -4979,7 +5183,9 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
             pg.press("return")
             pg.press("delete")
             pg.press("backspace")
+            time.sleep(1)
             pyperclip.copy(Fname.replace("\\\\", "\\").replace("/", "\\"))
+            time.sleep(1)
             pg.hotkey("ctrl", "v")
             pg.press("return")
             time.sleep(1)
@@ -5024,6 +5230,7 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
             pg.press("f4")
             pg.keyUp("alt")
             # -----------------------------------
+            f = 0
             # 電子申告フラグが表示されるまで待機------------------------------------
             while (
                 ImgCheckForList(
@@ -5038,6 +5245,12 @@ def DensisinkokuUpDate(FolURL, TFolURL, CFolURL, ExRow, driver, PN, Fname):
                 is False
             ):
                 time.sleep(1)
+                f += 1
+                if f == 5:
+                    pg.keyDown("alt")
+                    pg.press("f4")
+                    pg.keyUp("alt")
+                    f = 0
             # ------------------------------------------------------------------
             return True, str(ExRow["関与先番号_関与先番号"]), "ThisYear", "ThisMonth"
         else:
@@ -5164,7 +5377,14 @@ def MainStarter(
                 EXNo = int(ExRow["関与先番号_関与先番号"])
                 EXName = NameSearch(NameDF, EXNo)
                 Title = str(EXNo) + "_" + str(EXName) + "_RPA決算書"
-                EXdir = str(ExRow["年度_(保管フォルダ名)"])
+                # 保管フォルダ・年度判定#############################################
+                if "_" in ExRow["年度_(保管フォルダ名)"] is True:
+                    EXdir = str(ExRow["年度_(保管フォルダ名)"]).split("_")[0]
+                    EXyear = int(str(ExRow["年度_(保管フォルダ名)"]).split("_")[1])
+                else:
+                    EXdir = str(ExRow["年度_(保管フォルダ名)"]).split("_")[0]
+                    EXyear = 4
+                # #################################################################
                 if ExRow["関与先番号_関与先番号"] == ExRow["関与先番号_関与先番号"]:  # nan判定
                     # nanでない場合
                     OSM = OpenSystem(

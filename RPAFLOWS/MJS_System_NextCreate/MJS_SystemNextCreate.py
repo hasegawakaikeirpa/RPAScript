@@ -615,16 +615,17 @@ def ChildFlow(Job, Exc):
 def MainStarter(Job, Exc):
     try:
         for Exc.this_row_count in range(Exc.sheet_row_count):
-            Exc.row_data = Exc.sheet_df.iloc[Exc.this_row_count]
-            if Exc.row_data["関与先番号"] == Exc.row_data["関与先番号"]:  # nan判定
-                # nanでない場合
-                Exc.row_kanyo_no = Exc.row_data["関与先番号"]
-                Exc.row_kanyo_name = NameSearch(Exc.name_df, Exc.row_kanyo_no)
-                OpenSystem(Job, Exc)
-                print("")
-            else:
-                # nanの場合
-                print("nan")
+            if Exc.this_row_count != 0:
+                Exc.row_data = Exc.sheet_df.iloc[Exc.this_row_count]
+                if Exc.row_data["関与先番号"] == Exc.row_data["関与先番号"]:  # nan判定
+                    # nanでない場合
+                    Exc.row_kanyo_no = Exc.row_data["関与先番号"]
+                    Exc.row_kanyo_name = NameSearch(Exc.name_df, Exc.row_kanyo_no)
+                    OpenSystem(Job, Exc)
+                    print("")
+                else:
+                    # nanの場合
+                    print("nan")
         return True, ""
     except:
         return False, ""
