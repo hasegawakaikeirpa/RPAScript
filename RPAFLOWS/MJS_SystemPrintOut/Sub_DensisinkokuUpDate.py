@@ -21,7 +21,7 @@ def DensisinkokuUpDate(Job, Exc):
         while pg.locateOnScreen(URL + r"\DensiFlag.png", confidence=0.9) is None:
             time.sleep(1)
             UPT = RPA.ImgCheck(
-                URL, r"\14D_UpDateText.png", 0.9, 10
+                URL, r"\14D_UpDateText.png", 0.9, 1
             )  # アップデート情報ウィンドウがあるかチェック
             if UPT[0] is True:
                 RPA.ImgClick(URL, r"\14D_UDTClose.png", 0.9, 10)  # 閉じるをクリック
@@ -95,7 +95,7 @@ def DensisinkokuUpDate(Job, Exc):
                             r"\14Doui2.png",
                         ],
                         0.9,
-                        10,
+                        1,
                     )[0]
                     is False
                 ):
@@ -115,7 +115,7 @@ def DensisinkokuUpDate(Job, Exc):
                             r"\DensiIcon2.png",
                         ],
                         0.9,
-                        10,
+                        1,
                     )[0]
                     is False
                 ):
@@ -138,7 +138,7 @@ def DensisinkokuUpDate(Job, Exc):
                 r"\FileOut2.png",
             ],
             0.9,
-            10,
+            1,
         )
         if FO[0] is True:
             RPA.ImgClick(URL, FO[1], 0.9, 10)
@@ -157,7 +157,7 @@ def DensisinkokuUpDate(Job, Exc):
         #  印刷設定が表示されなくなるまで待機---------------------------------
         while pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9) is not None:
             time.sleep(1)
-            FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 10)
+            FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 1)
             if FO[0] is True:
                 pg.press("y")
         # --------------------------------------------------------------------
@@ -180,7 +180,7 @@ def DensisinkokuUpDate(Job, Exc):
                     r"\14Doui2.png",
                 ],
                 0.9,
-                10,
+                1,
             )[0]
             is False
         ):
@@ -200,7 +200,7 @@ def DensisinkokuUpDate(Job, Exc):
                     r"\DensiIcon2.png",
                 ],
                 0.9,
-                10,
+                1,
             )[0]
             is False
         ):

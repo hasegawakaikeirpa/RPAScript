@@ -34,6 +34,7 @@ def KaikeiUpDate(Job, Exc):
             RPA.ImgClick(URL, Nob[1], 0.9, 10)
             while pg.locateOnScreen(URL + r"\K_AfterNoBox.png", confidence=0.9) is None:
                 time.sleep(1)
+        time.sleep(1)
         pg.write(str(Exc.row_kanyo_no))
         pg.press("return")
         pg.write(str(int(Exc.year) - 1))
@@ -49,6 +50,7 @@ def KaikeiUpDate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             pg.press("return")
@@ -61,6 +63,7 @@ def KaikeiUpDate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -69,6 +72,7 @@ def KaikeiUpDate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             pg.press("return")
@@ -88,7 +92,7 @@ def KaikeiUpDate(Job, Exc):
             ):
                 time.sleep(1)
                 # 顧問先情報更新ダイアログ確認------------------------------------------
-                KK = RPA.ImgCheck(URL, r"\KomonKoushin.png", 0.9, 10)
+                KK = RPA.ImgCheck(URL, r"\KomonKoushin.png", 0.9, 1)
                 if KK[0] is True:
                     pg.press("y")
                     while (
@@ -152,11 +156,11 @@ def KaikeiUpDate(Job, Exc):
                 ):
                     time.sleep(1)
                     # 申告回数設定ウィンドウがひょうじされたら
-                    SCQ = RPA.ImgCheck(URL, r"\ScountQ.png", 0.9, 10)
+                    SCQ = RPA.ImgCheck(URL, r"\ScountQ.png", 0.9, 1)
                     if SCQ[0] is True:
                         pg.press("n")  # nでいいえ
                     # 基本情報登録誘導ウィンドウがひょうじされたら
-                    KKS = RPA.ImgCheck(URL, r"\KihonKoushin.png", 0.9, 10)
+                    KKS = RPA.ImgCheck(URL, r"\KihonKoushin.png", 0.9, 1)
                     if KKS[0] is True:
                         pg.press("return")  # nでいいえ
                         break
@@ -183,18 +187,18 @@ def KaikeiUpDate(Job, Exc):
                         is None
                     ):
                         time.sleep(1)
-                        SIQ = RPA.ImgCheck(URL, r"\SiwakeInputQ.png", 0.9, 10)
+                        SIQ = RPA.ImgCheck(URL, r"\SiwakeInputQ.png", 0.9, 1)
                         if SIQ[0] is True:
                             pg.press("y")
                         # 再計算確認ウィンドウがあるか確認
-                        RCQ = RPA.ImgCheck(URL, r"\ReCalcQ.png", 0.9, 10)
+                        RCQ = RPA.ImgCheck(URL, r"\ReCalcQ.png", 0.9, 1)
                         if RCQ[0] is True:
                             pg.press("n")
                         # 消費税不明取引確認ウィンドウがあるか確認
-                        KN = RPA.ImgCheck(URL, r"\S_Humei.png", 0.9, 10)
+                        KN = RPA.ImgCheck(URL, r"\S_Humei.png", 0.9, 1)
                         if KN[0] is True:
                             pg.press("y")
-                        DIN = RPA.ImgCheck(URL, r"\Din.png", 0.9, 10)
+                        DIN = RPA.ImgCheck(URL, r"\Din.png", 0.9, 1)
                         if DIN[0] is True:
                             pg.press("y")
                     # --------------------------------------------------------------------
@@ -217,16 +221,16 @@ def KaikeiUpDate(Job, Exc):
                     ):
                         time.sleep(1)
                         # 再計算確認ウィンドウがあるか確認
-                        RCQ = RPA.ImgCheck(URL, r"\ReCalcQ.png", 0.9, 10)
+                        RCQ = RPA.ImgCheck(URL, r"\ReCalcQ.png", 0.9, 1)
                         if RCQ[0] is True:
                             pg.press("n")
                         # 消費税不明取引確認ウィンドウがあるか確認
-                        KN = RPA.ImgCheck(URL, r"\S_Humei.png", 0.9, 10)
+                        KN = RPA.ImgCheck(URL, r"\S_Humei.png", 0.9, 1)
                         if KN[0] is True:
                             pg.press("y")
                         c += 1
                         if c == 5:
-                            SP = RPA.ImgCheckForList(URL, SP_l, 0.9, 10)
+                            SP = RPA.ImgCheckForList(URL, SP_l, 0.9, 1)
                             RPA.ImgClick(URL, SP[1], 0.9, 10)
                             c = 0
                     # --------------------------------------------------------------------
@@ -280,7 +284,7 @@ def KaikeiUpDate(Job, Exc):
                         if IC == 5:
                             pg.press("tab")
                             break
-                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 10)
+                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 1)
                         if FO[0] is True:
                             pg.press("y")
                             while (
@@ -360,7 +364,7 @@ def KaikeiUpDate(Job, Exc):
                     is None
                 ):
                     time.sleep(1)
-                    NOD = RPA.ImgCheck(URL, r"\NoSinkoku.png", 0.9, 10)
+                    NOD = RPA.ImgCheck(URL, r"\NoSinkoku.png", 0.9, 1)
                     if NOD[0] is True:
                         pg.press("return")
                         break
@@ -410,7 +414,7 @@ def KaikeiUpDate(Job, Exc):
                                 r"\FileOut2.png",
                             ],
                             0.9,
-                            10,
+                            1,
                         )
                         if FO[0] is True:
                             break
@@ -460,7 +464,7 @@ def KaikeiUpDate(Job, Exc):
                         if IC == 5:
                             pg.press("tab")
                             break
-                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 10)
+                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 1)
                         if FO[0] is True:
                             pg.press("y")
                     # --------------------------------------------------------------------
@@ -516,12 +520,12 @@ def KaikeiUpDate(Job, Exc):
                     ):
                         time.sleep(1)
                         # 金額エラーが表示されていないか確認
-                        KCE = RPA.ImgCheck(URL, r"\K_CalcErr.png", 0.9, 10)
+                        KCE = RPA.ImgCheck(URL, r"\K_CalcErr.png", 0.9, 1)
                         if KCE[0] is True:
                             CalcErr = "Err"  # 金額エラーフラグを立てる
                             pg.press("y")  # 金額エラー無視で印刷
                         # 貸借エラーが表示されていないか確認
-                        CE = RPA.ImgCheck(URL, r"\CalcErr.png", 0.9, 10)
+                        CE = RPA.ImgCheck(URL, r"\CalcErr.png", 0.9, 1)
                         if CE[0] is True:
                             CalcErr = "T_Err"  # 金額エラーフラグを立てる
                             pg.press("y")  # 金額エラー無視で印刷
@@ -560,7 +564,7 @@ def KaikeiUpDate(Job, Exc):
                         is not None
                     ):
                         time.sleep(1)
-                        KOW = RPA.ImgCheck(URL, r"\K_OverWrite2.png", 0.9, 10)
+                        KOW = RPA.ImgCheck(URL, r"\K_OverWrite2.png", 0.9, 1)
                         if KOW[0] is True:
                             pg.press("y")
                     # --------------------------------------------------------------------
@@ -609,7 +613,7 @@ def KaikeiUpDate(Job, Exc):
                 ):
                     time.sleep(1)
                     # 金額エラーが表示されていないか確認
-                    KCE = RPA.ImgCheck(URL, r"\K_CalcErr.png", 0.9, 10)
+                    KCE = RPA.ImgCheck(URL, r"\K_CalcErr.png", 0.9, 1)
                     if KCE[0] is True:
                         CalcErr = "Err"  # 金額エラーフラグを立てる
                         pg.press("y")  # 金額エラー無視で印刷
@@ -641,7 +645,7 @@ def KaikeiUpDate(Job, Exc):
                     is not None
                 ):
                     time.sleep(1)
-                    OVC = RPA.ImgCheck(URL, r"\K_OverWrite.png", 0.9, 10)
+                    OVC = RPA.ImgCheck(URL, r"\K_OverWrite.png", 0.9, 1)
                     if OVC[0] is True:
                         pg.press("y")
                 # ---------------------------------------------------------------------
@@ -694,7 +698,7 @@ def KaikeiUpDate(Job, Exc):
                     is not None
                 ):
                     time.sleep(1)
-                    OVC = RPA.ImgCheck(URL, r"\K_OverWrite.png", 0.9, 10)
+                    OVC = RPA.ImgCheck(URL, r"\K_OverWrite.png", 0.9, 1)
                     if OVC[0] is True:
                         pg.press("y")
                 # ---------------------------------------------------------------------
@@ -738,19 +742,28 @@ def kessansinkoku():
 
 # ---------------------------------------------------------------------------------
 def lastclose():
+    LE = False
     time.sleep(1)    
-    while RPA.ImgCheck(URL, r"\HomeIcon.png", 0.9, 1)[0] is False: 
+    while RPA.ImgCheck(URL, r"\HomeIcon.png", 0.9, 1)[0] is False:
+        if LE is True:
+            return 
         time.sleep(1)
         # 閉じる処理--------------------------
         pg.keyDown("alt")
         pg.press("f4")
         pg.keyUp("alt")
         # -----------------------------------
+        if RPA.ImgCheck(URL, r"\Last_End.png", 0.9, 10)[0] is True:
+            pg.press("n")
+            LE = True
+            break
         f = 0
         # 会計大将フラグが表示されるまで待機------------------------------------
-        while RPA.ImgCheck(URL, r"\EndWindow.png", 0.9, 10)[0] is False:
+        while RPA.ImgCheck(URL, r"\EndWindow.png", 0.9, 1)[0] is False:
+            if LE is True:
+                return
             f += 1
-            if RPA.ImgCheck(URL,r"\CallErr.png",0.9,10)[0] is True:
+            if RPA.ImgCheck(URL,r"\CallErr.png",0.9,1)[0] is True:
                 pg.press("return")
                 break
             if RPA.ImgCheck(URL, r"\HomeIcon.png", 0.9, 1)[0] is True:
@@ -760,6 +773,10 @@ def lastclose():
                 pg.keyDown("alt")
                 pg.press("f4")
                 pg.keyUp("alt")
+                if RPA.ImgCheck(URL, r"\Last_End.png", 0.9, 10)[0] is True:
+                    pg.press("n")
+                    LE = True
+                    break
                 f += 1
                 # -----------------------------------                     
         pg.press("y")
@@ -768,3 +785,6 @@ def lastclose():
             pg.press("y")
     if RPA.ImgCheck(URL,r"\CallErr.png",0.9,10)[0] is True:
         pg.press("return")
+        return
+    if LE is True:
+        return        

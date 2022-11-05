@@ -41,9 +41,10 @@ def GenkasyoukyakuUpdate(Job, Exc):
             is None
         ):
             time.sleep(1)
+        time.sleep(1)
         pg.write(str(Exc.row_kanyo_no))
         pg.press("return")
-        pg.write(str(Exc.year))
+        pg.write(str(int(Exc.year)-1))
         pg.press(["return","return","return"])
         pg.keyDown("shift")
         pg.press(["tab", "tab"])
@@ -55,6 +56,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisNo = pyperclip.paste()
         pg.press("return")
@@ -67,6 +69,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisYear = pyperclip.paste()
         # -----------------------------------
@@ -75,13 +78,14 @@ def GenkasyoukyakuUpdate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisMonth = pyperclip.paste()
         pg.press("return")
         # -----------------------------
         time.sleep(1)
         if str(Exc.row_kanyo_no) == ThisNo:
-            if str(Exc.year) != ThisYear:
+            if str(int(Exc.year)-1) != ThisYear:
                 return False, "年度なし", ThisYear, "NoData"
             print("関与先あり")
             pg.press(["return", "return", "return"])
@@ -95,7 +99,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                 time.sleep(1)
                 # アップデート情報画面が出たら閉じる-------------------------------
                 GSUM = RPA.ImgCheck(
-                    URL, r"\G_SyoukyakuUpMsg.png", 0.9, 10
+                    URL, r"\G_SyoukyakuUpMsg.png", 0.9, 1
                 )
                 if GSUM[0] is True:
                     RPA.ImgClick(
@@ -243,7 +247,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                         is not None
                     ):
                         time.sleep(1)
-                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 10)
+                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 1)
                         if FO[0] is True:
                             pg.press("y")
                     # --------------------------------------------------------------------
@@ -266,7 +270,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                                 r"\01G_Uchiwake2.png",
                             ],
                             0.9,
-                            10,
+                            1,
                         )[0]
                         is False
                     ):
@@ -341,7 +345,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                 ):
                     time.sleep(1)
                     GN = RPA.ImgCheck(
-                        URL, r"\03G_Nodata.png", 0.9, 10
+                        URL, r"\03G_Nodata.png", 0.9, 1
                     )
                     if GN[0] is True:
                         pg.press("return")
@@ -380,7 +384,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                             URL,
                             [r"\Nodata.png", r"\NodataQ.png"],
                             0.9,
-                            10,
+                            1,
                         )
                         if SJS[0] is True:
                             if "NodataQ.png" in SJS[1] is True:
@@ -430,7 +434,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                         is not None
                     ):
                         time.sleep(1)
-                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 10)
+                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 1)
                         if FO[0] is True:
                             pg.press("y")
                     # --------------------------------------------------------------------
@@ -453,7 +457,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                                 r"\01G_Uchiwake2.png",
                             ],
                             0.9,
-                            10,
+                            1,
                         )[0]
                         is False
                     ):
@@ -490,7 +494,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                                 r"\01G_Uchiwake2.png",
                             ],
                             0.9,
-                            10,
+                            1,
                         )[0]
                         is False
                     ):
@@ -617,7 +621,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                         is not None
                     ):
                         time.sleep(1)
-                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 10)
+                        FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 1)
                         if FO[0] is True:
                             pg.press("y")
                     # --------------------------------------------------------------------
@@ -640,7 +644,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                                 r"\01G_Uchiwake2.png",
                             ],
                             0.9,
-                            10,
+                            1,
                         )[0]
                         is False
                     ):
@@ -677,7 +681,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                                 r"\01G_Uchiwake2.png",
                             ],
                             0.9,
-                            10,
+                            1,
                         )[0]
                         is False
                     ):

@@ -38,6 +38,7 @@ def KessanUpDate(Job, Exc):
             RPA.ImgClick(URL, Nob[1], 0.9, 10)
             while pg.locateOnScreen(URL + r"\K_AfterNoBox.png", confidence=0.9) is None:
                 time.sleep(1)
+        time.sleep(1)
         pg.write(str(Exc.row_kanyo_no))
         pg.press("return")
         pg.write(str(int(Exc.year) - 1))
@@ -53,6 +54,7 @@ def KessanUpDate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             pg.press("return")
@@ -65,6 +67,7 @@ def KessanUpDate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -73,6 +76,7 @@ def KessanUpDate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             pg.press("return")
@@ -95,7 +99,7 @@ def KessanUpDate(Job, Exc):
             ):
                 time.sleep(1)
                 # 顧問先情報更新ダイアログ確認------------------------------------------
-                KK = RPA.ImgCheck(URL, r"\KomonKoushin.png", 0.9, 10)
+                KK = RPA.ImgCheck(URL, r"\KomonKoushin.png", 0.9, 1)
                 if KK[0] is True:
                     pg.press("y")
                     while (
@@ -153,7 +157,7 @@ def KessanUpDate(Job, Exc):
                 is None
             ):
                 time.sleep(1)
-                PSQ = RPA.ImgCheck(URL, r"\PrintStyleQ.png", 0.9, 10)
+                PSQ = RPA.ImgCheck(URL, r"\PrintStyleQ.png", 0.9, 1)
                 if PSQ[0] is True:
                     pg.press("return")
                     break
@@ -191,7 +195,7 @@ def KessanUpDate(Job, Exc):
                     is not None
                 ):
                     time.sleep(1)
-                    FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 10)
+                    FO = RPA.ImgCheck(URL, r"\FileOver.png", 0.9, 1)
                     if FO[0] is True:
                         pg.press("y")
                 # --------------------------------------------------------------------
@@ -234,7 +238,7 @@ def KessanUpDate(Job, Exc):
                             r"\11U_Uchiwake2.png",
                         ],
                         0.9,
-                        10,
+                        1,
                     )[0]
                     is False
                 ):
@@ -280,7 +284,7 @@ def KessanUpDate(Job, Exc):
                             r"\11U_Uchiwake2.png",
                         ],
                         0.9,
-                        10,
+                        1,
                     )[0]
                     is False
                 ):

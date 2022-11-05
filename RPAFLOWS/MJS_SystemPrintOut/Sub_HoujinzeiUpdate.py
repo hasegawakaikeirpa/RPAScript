@@ -35,6 +35,7 @@ def HoujinzeiUpdate(Job, Exc):
             RPA.ImgClick(URL, Nob[1], 0.9, 10)
             while pg.locateOnScreen(URL + r"\K_AfterNoBox.png", confidence=0.9) is None:
                 time.sleep(1)
+        time.sleep(1)
         pg.write(str(Exc.row_kanyo_no))
         pg.press("return")
         pg.write(str(Exc.year))
@@ -45,7 +46,7 @@ def HoujinzeiUpdate(Job, Exc):
         # 申告種類が確定申告になっているか確認-----------------------------------
         KF = RPA.ImgCheck(URL, r"\\KakuteiFlag.png", 0.9, 10)
         if KF[0] is False:
-            while RPA.ImgCheck(URL, r"\\KakuteiFlag.png", 0.9, 10)[0] is False:
+            while RPA.ImgCheck(URL, r"\\KakuteiFlag.png", 0.9, 1)[0] is False:
                 RPA.ImgClick(URL, r"\\SinkokuArrow.png", 0.9, 10)
                 pg.press("down")
                 pg.press("return")
@@ -59,6 +60,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             pg.press("return")
@@ -71,6 +73,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -79,6 +82,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             pg.press("return")
@@ -92,6 +96,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             pg.press("return")
@@ -99,6 +104,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -107,6 +113,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             pg.press("return")
@@ -122,11 +129,11 @@ def HoujinzeiUpdate(Job, Exc):
                 pg.locateOnScreen(URL + r"\HoujinzeiMenu.png", confidence=0.9) is None
             ):
                 time.sleep(1)
-                HQ = RPA.ImgCheck(URL, r"\HoujinOpenQ.png", 0.9, 10)
+                HQ = RPA.ImgCheck(URL, r"\HoujinOpenQ.png", 0.9, 1)
                 if HQ[0] is True:
                     RPA.ImgClick(URL, r"\HoujinOpenQCansel.png", 0.9, 10)
                 # 顧問先情報更新ダイアログ確認------------------------------------------
-                KK = RPA.ImgCheck(URL, r"\KomonKoushin.png", 0.9, 10)
+                KK = RPA.ImgCheck(URL, r"\KomonKoushin.png", 0.9, 1)
                 if KK[0] is True:
                     pg.press("y")
                     while (
@@ -198,21 +205,21 @@ def HoujinzeiUpdateSinkokuItiran(Job, Exc):
         # 法人税メニューが表示されるまで待機------------------------------------
         while pg.locateOnScreen(URL + r"\\SinkokuTab.png", confidence=0.9) is None:
             time.sleep(1)
-            SYB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 10)
+            SYB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 1)
             if SYB[0] is True:
                 time.sleep(1)
                 SBP = RPA.ImgCheckForList(
                     URL,
                     [r"\\Saiyou_Btn.png", r"\\Saiyou_Btn2.png"],
                     0.9,
-                    10,
+                    1,
                 )
                 if SBP[0] is True:
-                    RPA.ImgClick(URL, SBP[1], 0.9, 10)
+                    RPA.ImgClick(URL, SBP[1], 0.9, 1)
                     # 確実に閉じる---------------------------------------------------------
                     close()
             Nodatacheck()
-            SCB = RPA.ImgCheck(URL, r"\\Saiyou_Check.png", 0.9, 10)
+            SCB = RPA.ImgCheck(URL, r"\\Saiyou_Check.png", 0.9, 1)
             if SCB[0] is True:
                 pg.press("y")
                 while (
@@ -228,29 +235,29 @@ def HoujinzeiUpdateSinkokuItiran(Job, Exc):
             # 一覧表メニューが表示されるまで待機------------------------------------
             while pg.locateOnScreen(URL + r"\\ItiranFlag.png", confidence=0.9) is None:
                 time.sleep(1)
-                SRC = RPA.ImgCheck(URL, r"\\S_RendouCheck.png", 0.9, 10)
+                SRC = RPA.ImgCheck(URL, r"\\S_RendouCheck.png", 0.9, 1)
                 if SRC[0] is True:
                     pg.press("return")
-                SRCCCCC = RPA.ImgCheck(URL, r"\\S_RendouCheck2.png", 0.9, 10)
+                SRCCCCC = RPA.ImgCheck(URL, r"\\S_RendouCheck2.png", 0.9, 1)
                 if SRCCCCC[0] is True:
                     pg.press("return")
-                SRCCCCCC = RPA.ImgCheck(URL, r"\\S_RendouCheck3.png", 0.9, 10)
+                SRCCCCCC = RPA.ImgCheck(URL, r"\\S_RendouCheck3.png", 0.9, 1)
                 if SRCCCCCC[0] is True:
                     pg.press("return")
-                SRCCCCCCC = RPA.ImgCheck(URL, r"\\S_RendouCheck4.png", 0.9, 10)
+                SRCCCCCCC = RPA.ImgCheck(URL, r"\\S_RendouCheck4.png", 0.9, 1)
                 if SRCCCCCCC[0] is True:
                     pg.press("return")
-                SRCC = RPA.ImgCheck(URL, r"\\S_Rendou2.png", 0.9, 10)
+                SRCC = RPA.ImgCheck(URL, r"\\S_Rendou2.png", 0.9, 1)
                 if SRCC[0] is True:
                     pg.press("n")
-                SRCCC = RPA.ImgCheck(URL, r"\\S_Rendou3.png", 0.9, 10)
+                SRCCC = RPA.ImgCheck(URL, r"\\S_Rendou3.png", 0.9, 1)
                 if SRCCC[0] is True:
                     pg.press("n")
-                SRCCCC = RPA.ImgCheck(URL, r"\\S_Rendou4.png", 0.9, 10)
+                SRCCCC = RPA.ImgCheck(URL, r"\\S_Rendou4.png", 0.9, 1)
                 if SRCCCC[0] is True:
                     pg.press("y")
                 # 新規別表追加選択-------------------------------------------------
-                SB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 10)
+                SB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 1)
                 if SB[0] is True:
                     RPA.ImgClick(URL, r"\\SBKousin.png", 0.9, 10)
             # --------------------------------------------------------------------
@@ -297,7 +304,7 @@ def HoujinzeiUpdateSinkokuItiran(Job, Exc):
                 if IC == 5:
                     pg.press("tab")
                     break
-                FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 10)
+                FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 1)
                 if FO[0] is True:
                     pg.press("y")
             # --------------------------------------------------------------------
@@ -322,7 +329,7 @@ def HoujinzeiUpdateSinkokuItiran(Job, Exc):
                         r"\\01SinkokuNyuuryoku2.png",
                     ],
                     0.9,
-                    10,
+                    1,
                 )[0]
                 is False
             ):
@@ -376,12 +383,12 @@ def HoujinzeiUpdateSinkokuItiran(Job, Exc):
                 SSN = "20ScreenShot.png"
                 SSN2 = "20ScreenShot2.png"
                 Win = "Window.png"
-                while RPA.ImgCheck(URL, r"\\All\\" + Win, 0.9, 10)[0] is True:
+                while RPA.ImgCheck(URL, r"\\All\\" + Win, 0.9, 1)[0] is True:
                     WC = RPA.ImgCheck(URL, r"\\All\\" + Win, 0.9, 10)
                     pg.click(WC[1], WC[2], button="right")
                     pg.press("x")
                 time.sleep(1)
-                RPA.ImgClick(URL, r"\\PreviewIcon.png", 0.9, 10)
+                RPA.ImgClick(URL, r"\\PreviewIcon.png", 0.9, 1)
                 # プレビュー画面が表示されるまで待機------------------------------------
                 while (
                     pg.locateOnScreen(URL + r"\\HoujinOpen.png", confidence=0.9) is None
@@ -613,7 +620,7 @@ def HoujinzeiUpdateSinkokuItiran(Job, Exc):
                         is not None
                     ):
                         time.sleep(1)
-                        TPOQ = RPA.ImgCheck(URL, r"\\ThisPOverQ.png", 0.9, 10)  # 上書き確認
+                        TPOQ = RPA.ImgCheck(URL, r"\\ThisPOverQ.png", 0.9, 1)  # 上書き確認
                         if TPOQ[0] is True:
                             pg.press("y")  # yで上書き
                     # -------------------------------------------------------------------
@@ -663,7 +670,7 @@ def HoujinzeiUpdateZeimuDairi(Job, Exc):
         while pg.locateOnScreen(URL + r"\\HoujinOpen.png", confidence=0.9) is None:
             time.sleep(1)
             # 新規別表追加選択-------------------------------------------------
-            SB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 10)
+            SB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 1)
             if SB[0] is True:
                 RPA.ImgClick(URL, r"\\SBKousin.png", 0.9, 10)
         # --------------------------------------------------------------------
@@ -702,7 +709,7 @@ def HoujinzeiUpdateZeimuDairi(Job, Exc):
             pg.locateOnScreen(URL + r"\\ZeimuPrintFlag.png", confidence=0.9) is not None
         ):
             time.sleep(1)
-            FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 10)
+            FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 1)
             if FO[0] is True:
                 pg.press("y")
                 time.sleep(2)
@@ -747,7 +754,7 @@ def HoujinzeiUpdateSyomen(Job, Exc):
         while pg.locateOnScreen(URL + r"\\HoujinOpen.png", confidence=0.9) is None:
             time.sleep(1)
             # 新規別表追加選択-------------------------------------------------
-            SB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 10)
+            SB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 1)
             if SB[0] is True:
                 RPA.ImgClick(URL, r"\\SBKousin.png", 0.9, 10)
         # --------------------------------------------------------------------
@@ -768,7 +775,7 @@ def HoujinzeiUpdateSyomen(Job, Exc):
                     r"\\FileOut2.png",
                 ],
                 0.9,
-                10,
+                1,
             )
             if FO[0] is True:
                 break
@@ -802,7 +809,7 @@ def HoujinzeiUpdateSyomen(Job, Exc):
         # 操作ガイドが表示されなくなるまで待機---------------------------------
         while pg.locateOnScreen(URL + r"\\HPCFlag.png", confidence=0.9) is not None:
             time.sleep(1)
-            FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 10)
+            FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 1)
             if FO[0] is True:
                 pg.press("y")
         time.sleep(1)
@@ -816,7 +823,7 @@ def HoujinzeiUpdateSyomen(Job, Exc):
                     r"\\16TenpuSyomen2.png",
                 ],
                 0.9,
-                10,
+                1,
             )[0]
             is False
         ):
@@ -844,7 +851,7 @@ def HoujinzeiUpdateBeppyou(Job, Exc):
         while pg.locateOnScreen(URL + r"\\SinkokuTab.png", confidence=0.9) is None:
             Nodatacheck()
             # 新規別表追加選択-------------------------------------------------
-            SB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 10)
+            SB = RPA.ImgCheck(URL, r"\\SaiyouBeppyou.png", 0.9, 1)
             if SB[0] is True:
                 RPA.ImgClick(URL, r"\\SBKousin.png", 0.9, 10)
         # --------------------------------------------------------------------
@@ -854,10 +861,10 @@ def HoujinzeiUpdateBeppyou(Job, Exc):
         # 一覧表メニューが表示されるまで待機------------------------------------
         while pg.locateOnScreen(URL + r"\\SItiranFlag.png", confidence=0.9) is None:
             time.sleep(1)
-            HEQ = RPA.ImgCheck(URL, r"\\HNoEntryQ.png", 0.9, 10)
+            HEQ = RPA.ImgCheck(URL, r"\\HNoEntryQ.png", 0.9, 1)
             if HEQ[0] is True:  # 法人番号未登録ダイアログが表示されていたら
                 pg.press("y")  # yで確定
-            SSL = RPA.ImgCheck(URL, r"\\S_Rendou4.png", 0.9, 10)
+            SSL = RPA.ImgCheck(URL, r"\\S_Rendou4.png", 0.9, 1)
             if SSL[0] is True:  # 法人番号未登録ダイアログが表示されていたら
                 pg.press("y")  # yで確定
         # --------------------------------------------------------------------
@@ -906,7 +913,7 @@ def HoujinzeiUpdateBeppyou(Job, Exc):
             if IC == 5:
                 pg.press("tab")
                 break
-            FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 10)
+            FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 1)
             if FO[0] is True:
                 pg.press("y")
                 while (
@@ -933,7 +940,7 @@ def HoujinzeiUpdateBeppyou(Job, Exc):
                     r"\\01SinkokuNyuuryoku2.png",
                 ],
                 0.9,
-                10,
+                1,
             )[0]
             is False
         ):
@@ -974,15 +981,15 @@ def HoujinzeiUpdateGaikyou(Job, Exc):
         while pg.locateOnScreen(URL + r"\\PrintBar.png", confidence=0.9) is None:
             time.sleep(1)
             # 印刷条件設定----------------------------------------------------------
-            GP = RPA.ImgCheck(URL, r"\\GPMenu.png", 0.9, 10)
+            GP = RPA.ImgCheck(URL, r"\\GPMenu.png", 0.9, 1)
             if GP[0] is True:
                 # 白紙チェックボックス確認
-                HP = RPA.ImgCheck(URL, r"\\HPCheck.png", 0.9, 10)
+                HP = RPA.ImgCheck(URL, r"\\HPCheck.png", 0.9, 1)
                 if HP[0] is True:
                     # 白紙チェックボックスが未指定ならクリック
                     RPA.ImgClick(URL, r"\\HPCheck.png", 0.9, 10)
                     # 両面チェックボックス確認
-                    RM = RPA.ImgCheck(URL, r"\\Ryoumen.png", 0.9, 10)
+                    RM = RPA.ImgCheck(URL, r"\\Ryoumen.png", 0.9, 1)
                     if RM[0] is True:
                         # 両面チェックボックスが未指定ならクリック
                         RPA.ImgClick(URL, r"\\Ryoumen.png", 0.9, 10)
@@ -995,7 +1002,7 @@ def HoujinzeiUpdateGaikyou(Job, Exc):
                 else:
                     # 白紙チェックボックスが指定済の場合
                     # 両面チェックボックス確認
-                    RM = RPA.ImgCheck(URL, r"\\Ryoumen.png", 0.9, 10)
+                    RM = RPA.ImgCheck(URL, r"\\Ryoumen.png", 0.9, 1)
                     if RM[0] is True:
                         # 両面チェックボックスが未指定ならクリック
                         RPA.ImgClick(URL, r"\\Ryoumen.png", 0.9, 10)
@@ -1037,7 +1044,7 @@ def HoujinzeiUpdateGaikyou(Job, Exc):
             if IC == 5:
                 pg.press("tab")
                 break
-            FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 10)
+            FO = RPA.ImgCheck(URL, r"\\FileOver.png", 0.9, 1)
             if FO[0] is True:
                 pg.press("y")
         # --------------------------------------------------------------------
@@ -1056,7 +1063,7 @@ def HoujinzeiUpdateGaikyou(Job, Exc):
                     r"\\02JigyouGaikyou2.png",
                 ],
                 0.9,
-                10,
+                1,
             )[0]
             is False
         ):
@@ -1091,7 +1098,7 @@ def close():
             URL,
             [r"\MenuEnd.png", r"\MenuEnd2.png", r"\MenuEnd3.png", r"\MenuEnd4.png"],
             0.9,
-            10,
+            2,
         )[0]
         is True
     ):
@@ -1103,7 +1110,7 @@ def close():
                 URL,
                 [r"\MenuEnd.png", r"\MenuEnd2.png", r"\MenuEnd3.png", r"\MenuEnd4.png"],
                 0.9,
-                10,
+                2,
             )
             if KME[0] is True:
                 RPA.ImgClick(URL, KME[1], 0.9, 10)
@@ -1117,7 +1124,7 @@ def close():
                         URL,
                         [r"\HoujinOpen.png", r"\HoujinzeiMenu.png"],
                         0.9,
-                        10,
+                        2,
                     )
                     if HM[0] is True:
                         if RPA.ImgCheck(URL, r"\SinkokuPrint.png", 0.9, 10)[0] is True:
@@ -1129,7 +1136,7 @@ def close():
                                 URL,
                                 r"\GaikyouEnd.png",
                                 0.9,
-                                10,
+                                2,
                             )
                             if GE[0] is True:
                                 HM = False,False
@@ -1154,7 +1161,7 @@ def close():
                         URL,
                         [r"\HoujinOpen.png", r"\HoujinzeiMenu.png"],
                         0.9,
-                        10,
+                        2,
                     )
                     if HM[0] is True:
                         if RPA.ImgCheck(URL, r"\SinkokuPrint.png", 0.9, 10)[0] is True:
@@ -1166,7 +1173,7 @@ def close():
                                 URL,
                                 r"\GaikyouEnd.png",
                                 0.9,
-                                10,
+                                2,
                             )
                             if GE[0] is True:
                                 HM = False,False
