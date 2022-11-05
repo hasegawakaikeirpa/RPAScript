@@ -38,7 +38,10 @@ def HoujinzeiUpdate(Job, Exc):
         pg.write(str(Exc.row_kanyo_no))
         pg.press("return")
         pg.write(str(Exc.year))
-        pg.press("return")
+        pg.press(["return","return","return"])
+        pg.keyDown("shift")
+        pg.press(["tab", "tab"])
+        pg.keyUp("shift") 
         # 申告種類が確定申告になっているか確認-----------------------------------
         KF = RPA.ImgCheck(URL, r"\\KakuteiFlag.png", 0.9, 10)
         if KF[0] is False:
@@ -110,6 +113,8 @@ def HoujinzeiUpdate(Job, Exc):
             # -----------------------------------
         # 他システムとメニューが違う-------------------------------------------------------
         if str(Exc.row_kanyo_no) == ThisNo:
+            if str(Exc.year) != ThisYear:
+                return False, "年度なし", ThisYear, "NoData"
             print("関与先あり")
             pg.press(["return", "return", "return"])
             # 法人税メニューが表示されるまで待機------------------------------------
@@ -936,7 +941,7 @@ def HoujinzeiUpdateBeppyou(Job, Exc):
         sinkokuend(Job)
         # --------------------------------------------------------------------
         PDFM.BeppyouPDFSplit(
-            Exc.Fname.replace("\\\\", "\\").replace("/", "\\"), URL + r"\PDF"
+            Exc.Fname.replace("\\\\", "\\").replace("/", "\\"), Job.Img_dir + r"\PDF"
         )
         return True, ThisNo, ThisYear, ThisMonth
 
@@ -1079,7 +1084,7 @@ def Nodatacheck():
             time.sleep(1)
 
 
-def close():
+def close():               
     cl = False
     while (
         RPA.ImgCheckForList(
@@ -1119,8 +1124,19 @@ def close():
                             pg.keyDown("alt")
                             pg.press("x")
                             pg.keyUp("alt")
-                        else:
-                            break
+                        else:                            
+                            GE = RPA.ImgCheck(
+                                URL,
+                                r"\GaikyouEnd.png",
+                                0.9,
+                                10,
+                            )
+                            if GE[0] is True:
+                                HM = False,False
+                                break
+                            else:
+                                break                        
+
                 if HM[0] is False:
                     pg.press("y")
                     cl = True
@@ -1145,8 +1161,18 @@ def close():
                             pg.keyDown("alt")
                             pg.press("x")
                             pg.keyUp("alt")
-                        else:
-                            break
+                        else:                            
+                            GE = RPA.ImgCheck(
+                                URL,
+                                r"\GaikyouEnd.png",
+                                0.9,
+                                10,
+                            )
+                            if GE[0] is True:
+                                HM = False,False
+                                break
+                            else:
+                                break                         
                 if HM[0] is False:
                     pg.press("y")
                     cl = True

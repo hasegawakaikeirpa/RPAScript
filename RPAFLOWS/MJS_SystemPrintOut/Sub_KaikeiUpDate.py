@@ -37,7 +37,10 @@ def KaikeiUpDate(Job, Exc):
         pg.write(str(Exc.row_kanyo_no))
         pg.press("return")
         pg.write(str(int(Exc.year) - 1))
-        pg.press("return")
+        pg.press(["return","return","return"])
+        pg.keyDown("shift")
+        pg.press(["tab", "tab"])
+        pg.keyUp("shift")        
         if RPA.ImgCheck(URL, r"\NotData.png", 0.9, 10)[0] is False:
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
@@ -75,6 +78,8 @@ def KaikeiUpDate(Job, Exc):
             return False, "NoData", ThisYear, "NoData"
 
         if str(Exc.row_kanyo_no) == ThisNo:
+            if str(int(Exc.year) - 1) != ThisYear:
+                return False, "年度なし", ThisYear, "NoData"
             print("関与先あり")
             pg.press(["return", "return", "return"])
             # 会計大将メニューが表示されるまで待機------------------------------------
@@ -116,7 +121,10 @@ def KaikeiUpDate(Job, Exc):
             # --------------------------------------------------------------------
             # 指示内容で処理分け----------------------------------------------------------
             if Exc.PN == "消費税確定申告書":
-                kessansinkoku()  # 決算申告書が表示されるまで待機
+                RPA.ImgClick(URL, r"\KessanSinkoku.png", 0.9, 10)  # 決算申告書アイコンをクリック
+                # 決算申告書が表示されるまで待機----------------------------------
+                while pg.locateOnScreen(URL + r"\KessanFlag.png", confidence=0.9) is None:
+                    time.sleep(1)
                 # サイドメニューより消費税申告書を確認------------------------------------------
                 SSM = RPA.ImgCheckForList(
                     URL,
@@ -320,7 +328,10 @@ def KaikeiUpDate(Job, Exc):
                     # ------------------------------------------------------------------
                     return False, "要消費税基本情報登録", "", ""
             elif Exc.PN == "書面添付　消費税":
-                kessansinkoku()  # 決算申告書が表示されるまで待機
+                RPA.ImgClick(URL, r"\KessanSinkoku.png", 0.9, 10)  # 決算申告書アイコンをクリック
+                # 決算申告書が表示されるまで待機----------------------------------
+                while pg.locateOnScreen(URL + r"\KessanFlag.png", confidence=0.9) is None:
+                    time.sleep(1)
                 # サイドメニューより消費税申告書を確認------------------------------------------
                 SSM = RPA.ImgCheckForList(
                     URL,
@@ -559,7 +570,7 @@ def KaikeiUpDate(Job, Exc):
                     # ------------------------------------------------------------------
                     PDFM.BeppyouPDFSplit(
                         Exc.Fname.replace("\\\\", "\\").replace("/", "\\"),
-                        URL + r"\PDF",
+                        Job.Img_dir + r"\PDF",
                     )
                     if CalcErr == "":
                         return True, ThisNo, ThisYear, ThisMonth
@@ -708,117 +719,52 @@ def kessansinkoku():
     # 決算申告書が表示されるまで待機----------------------------------
     while pg.locateOnScreen(URL + r"\KessanFlag.png", confidence=0.9) is None:
         time.sleep(1)
-        # 01決算書アイコンを確認------------------------------------------
-        KSP = RPA.ImgCheckForList(
-            URL,
-            [r"\01Kessansyo.png", r"\01Kessansyo2.png"],
-            0.9,
-            10,
-        )
-        if KSP[0] is True:  # 01決算書アイコンがあれば
-            RPA.ImgClick(URL, KSP[1], 0.9, 10)  # 01決算書アイコンをクリック
-            time.sleep(2)
+    # 01決算書アイコンを確認------------------------------------------
+    KSP = RPA.ImgCheckForList(
+        URL,
+        [r"\01Kessansyo.png", r"\01Kessansyo2.png"],
+        0.9,
+        10,
+    )
+    if KSP[0] is True:  # 01決算書アイコンがあれば
+        l = 0
+        RPA.ImgClick(URL, KSP[1], 0.9, 10)  # 01決算書アイコンをクリック
+        while pg.locateOnScreen(URL + r"\K_PreviewFlag.png", confidence=0.9) is None:
+            time.sleep(1)
+            l += 1
+            if l == 5:
+                RPA.ImgClick(URL, KSP[1], 0.9, 10)  # 01決算書アイコンをクリック
 
 
 # ---------------------------------------------------------------------------------
 def lastclose():
-    cl = False
-    while pg.locateOnScreen(URL + r"\KessanFlag.png", confidence=0.9) is None:
-        while (
-            RPA.ImgCheckForList(
-                URL,
-                [r"\MenuEnd.png", r"\MenuEnd2.png", r"\MenuEnd3.png", r"\MenuEnd4.png"],
-                0.9,
-                10,
-            )[0]
-            is True
-        ):
-            # 確実に閉じる---------------------------------------------------------------------------------
-            if cl is True:
-                break
-            else:
-                KME = RPA.ImgCheckForList(
-                    URL,
-                    [
-                        r"\MenuEnd.png",
-                        r"\MenuEnd2.png",
-                        r"\MenuEnd3.png",
-                        r"\MenuEnd4.png",
-                    ],
-                    0.9,
-                    10,
-                )
-                if KME[0] is True:
-                    RPA.ImgClick(URL, KME[1], 0.9, 10)
-                    while pg.locateOnScreen(URL + r"\EndQ.png", confidence=0.9) is None:
-                        KME = RPA.ImgCheckForList(
-                            URL,
-                            [
-                                r"\MenuEnd.png",
-                                r"\MenuEnd2.png",
-                                r"\MenuEnd3.png",
-                                r"\MenuEnd4.png",
-                            ],
-                            0.9,
-                            10,
-                        )
-                        if KME[0] is True:
-                            RPA.ImgClick(URL, KME[1], 0.9, 10)
-                        else:
-                            if (
-                                RPA.ImgCheck(URL, r"\KessansyoFlag.png", 0.9, 10)[0]
-                                is True
-                            ):
-                                break
-                    if RPA.ImgCheck(URL, r"\KessansyoFlag.png", 0.9, 10)[0] is True:
-                        break
-                    else:
-                        time.sleep(1)
-                        pg.press("y")
-                        cl = True
-                else:
-                    pg.keyDown("alt")
-                    pg.press("x")
-                    pg.keyUp("alt")
-                    while pg.locateOnScreen(URL + r"\EndQ.png", confidence=0.9) is None:
-                        KME = RPA.ImgCheckForList(
-                            URL,
-                            [
-                                r"\MenuEnd.png",
-                                r"\MenuEnd2.png",
-                                r"\MenuEnd3.png",
-                                r"\MenuEnd4.png",
-                            ],
-                            0.9,
-                            10,
-                        )
-                        if KME[0] is True:
-                            RPA.ImgClick(URL, KME[1], 0.9, 10)
-                        else:
-                            if (
-                                RPA.ImgCheck(URL, r"\KessansyoFlag.png", 0.9, 10)[0]
-                                is True
-                            ):
-                                break
-                    if RPA.ImgCheck(URL, r"\KessansyoFlag.png", 0.9, 10)[0] is True:
-                        break
-                    else:
-                        time.sleep(1)
-                        pg.press("y")
-                        cl = True
-    # 閉じる処理--------------------------
-    pg.keyDown("alt")
-    pg.press("f4")
-    pg.keyUp("alt")
-    # -----------------------------------
-    f = 0
-    # 会計大将フラグが表示されるまで待機------------------------------------
-    while pg.locateOnScreen(URL + r"\Kaikei_CFlag.png", confidence=0.9) is None:
+    time.sleep(1)    
+    while RPA.ImgCheck(URL, r"\HomeIcon.png", 0.9, 1)[0] is False: 
         time.sleep(1)
-        f += 1
-        if f == 5:
-            pg.keyDown("alt")
-            pg.press("f4")
-            pg.keyUp("alt")
-            f = 0
-    # ------------------------------------------------------------------
+        # 閉じる処理--------------------------
+        pg.keyDown("alt")
+        pg.press("f4")
+        pg.keyUp("alt")
+        # -----------------------------------
+        f = 0
+        # 会計大将フラグが表示されるまで待機------------------------------------
+        while RPA.ImgCheck(URL, r"\EndWindow.png", 0.9, 10)[0] is False:
+            f += 1
+            if RPA.ImgCheck(URL,r"\CallErr.png",0.9,10)[0] is True:
+                pg.press("return")
+                break
+            if RPA.ImgCheck(URL, r"\HomeIcon.png", 0.9, 1)[0] is True:
+                break            
+            if f == 10:
+                # 閉じる処理--------------------------
+                pg.keyDown("alt")
+                pg.press("f4")
+                pg.keyUp("alt")
+                f += 1
+                # -----------------------------------                     
+        pg.press("y")
+        if RPA.ImgCheck(URL,r"\EndCheck.png",0.9,10)[0] is True:
+            time.sleep(1)
+            pg.press("y")
+    if RPA.ImgCheck(URL,r"\CallErr.png",0.9,10)[0] is True:
+        pg.press("return")
