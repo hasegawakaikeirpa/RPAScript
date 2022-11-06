@@ -30,6 +30,7 @@ import re
 
 import WarekiHenkan as WH
 import RPA_Function as RPA
+import threading
 import Control
 import Sub_GenkasyoukyakuUpdate as GenkasyoukyakuUpdate
 import Sub_HoujinzeiUpdate as HoujinzeiUpdate
@@ -60,9 +61,6 @@ class Job:
         self.dir = RPA.My_Dir("MJS_SystemPrintOut")
         # 画像のDir(str)
         self.Img_dir = self.dir + r"\\img"
-        # コントロール(class)
-        self.control = Control.control()
-
         self.FolURL = os.getcwd().replace("\\", "/")  # 先
         # 当年(int)
         self.Start_Year = WH.Wareki.from_ad(datetime.datetime.today().year).year
@@ -666,7 +664,8 @@ def MainStarter(Job, Exc):
 
 
 # ------------------------------------------------------------------------------------------------------------------
-if __name__ == "__main__":
+# def call():
+if __name__ == "__main__":    
     global Start_Year  # 当年
     j = Job()
 
@@ -706,3 +705,11 @@ if __name__ == "__main__":
                         traceback.print_exc()
                     finally:
                         os.rename(XLSURL, MoveXLSURL)
+
+# ------------------------------------------------------------------------------------------------------------------
+# if __name__ == "__main__":
+#     call()
+#     print("")
+    # try:
+    #     con =Control.control()
+    # except:

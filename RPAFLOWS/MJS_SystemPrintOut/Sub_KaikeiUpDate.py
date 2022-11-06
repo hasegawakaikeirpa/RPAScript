@@ -735,6 +735,8 @@ def kessansinkoku():
         RPA.ImgClick(URL, KSP[1], 0.9, 10)  # 01決算書アイコンをクリック
         while pg.locateOnScreen(URL + r"\K_PreviewFlag.png", confidence=0.9) is None:
             time.sleep(1)
+            if RPA.ImgCheck(URL,r"\Kessankakutei.png",0.9,1)[0] is True:
+                pg.press("return")
             l += 1
             if l == 5:
                 RPA.ImgClick(URL, KSP[1], 0.9, 10)  # 01決算書アイコンをクリック

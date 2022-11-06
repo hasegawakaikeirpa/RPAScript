@@ -116,13 +116,7 @@ def KessanUpDate(Job, Exc):
                 DL = RPA.ImgCheck(URL, r"\DLCheck.png", 0.9, 10)
                 if DL[0] is True:
                     pg.press("return")
-                    while (
-                        pg.locateOnScreen(
-                            URL + r"\K_TaisyouMenu.png", confidence=0.9
-                        )
-                        is None
-                    ):
-                        time.sleep(1)
+
             # --------------------------------------------------------------------
             # 内訳書印刷メニューが表示されるまで待機----------------------------------
             while (
