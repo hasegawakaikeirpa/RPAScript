@@ -218,6 +218,7 @@ class Sheet:
         WriteEx.save(XLSURL)
         WriteEx.close
 
+
 # ------------------------------------------------------------------------------------------------
 def log_out(txt):
     """
@@ -275,7 +276,7 @@ def ChildFlow_sub(Job, Exc, txt):
     msg = "_関与先番号:" + str(Exc.row_kanyo_no) + ":" + str(Exc.row_kanyo_name) + txt + "開始"
     log_out(msg)
     logcsv_out(msg)
-    
+
     if "会計大将" == Exc.Title:
         # 会計大将のアイコンを探す
         ImgList = [r"\K_TaisyouIcon.png", r"\K_TaisyouIcon2.png"]
@@ -284,9 +285,16 @@ def ChildFlow_sub(Job, Exc, txt):
             RPA.ImgClick(Job.All_url, ICFL[1], 0.9, 10)  # 会計大将のアイコンをクリック
             ret = KaikeiUpDate.KaikeiUpDate(Job, Exc)
             # Log
-            msg = "_関与先番号:" + str(Exc.row_kanyo_no) + ":" + str(Exc.row_kanyo_name) + txt + "終了"
+            msg = (
+                "_関与先番号:"
+                + str(Exc.row_kanyo_no)
+                + ":"
+                + str(Exc.row_kanyo_name)
+                + txt
+                + "終了"
+            )
             log_out(msg)
-            logcsv_out(msg)            
+            logcsv_out(msg)
             return ret
 
     elif "決算内訳書" == Exc.Title:
@@ -297,9 +305,16 @@ def ChildFlow_sub(Job, Exc, txt):
             RPA.ImgClick(Job.All_url, ICFL[1], 0.9, 10)  # 決算内訳書のアイコンをクリック
             ret = KessanUpDate.KessanUpDate(Job, Exc)
             # Log
-            msg = "_関与先番号:" + str(Exc.row_kanyo_no) + ":" + str(Exc.row_kanyo_name) + txt + "終了"
+            msg = (
+                "_関与先番号:"
+                + str(Exc.row_kanyo_no)
+                + ":"
+                + str(Exc.row_kanyo_name)
+                + txt
+                + "終了"
+            )
             log_out(msg)
-            logcsv_out(msg)                        
+            logcsv_out(msg)
             return ret
 
     elif "減価償却" == Exc.Title:
@@ -311,9 +326,16 @@ def ChildFlow_sub(Job, Exc, txt):
             RPA.ImgClick(Job.All_url, ICFL[1], 0.9, 10)  # 減価償却のアイコンをクリック
             ret = GenkasyoukyakuUpdate.GenkasyoukyakuUpdate(Job, Exc)
             # Log
-            msg = "_関与先番号:" + str(Exc.row_kanyo_no) + ":" + str(Exc.row_kanyo_name) + txt + "終了"
+            msg = (
+                "_関与先番号:"
+                + str(Exc.row_kanyo_no)
+                + ":"
+                + str(Exc.row_kanyo_name)
+                + txt
+                + "終了"
+            )
             log_out(msg)
-            logcsv_out(msg)                        
+            logcsv_out(msg)
             return ret
 
     elif "法人税申告書" == Exc.Title:
@@ -324,9 +346,16 @@ def ChildFlow_sub(Job, Exc, txt):
             RPA.ImgClick(Job.All_url, ICFL[1], 0.9, 10)  # 法人税のアイコンをクリック
             ret = HoujinzeiUpdate.HoujinzeiUpdate(Job, Exc)
             # Log
-            msg = "_関与先番号:" + str(Exc.row_kanyo_no) + ":" + str(Exc.row_kanyo_name) + txt + "終了"
+            msg = (
+                "_関与先番号:"
+                + str(Exc.row_kanyo_no)
+                + ":"
+                + str(Exc.row_kanyo_name)
+                + txt
+                + "終了"
+            )
             log_out(msg)
-            logcsv_out(msg)                        
+            logcsv_out(msg)
             return ret
 
     elif "電子申告" == Exc.Title:
@@ -340,10 +369,18 @@ def ChildFlow_sub(Job, Exc, txt):
             pg.keyUp("alt")
             ret = DensisinkokuUpDate.DensisinkokuUpDate(Job, Exc)
             # Log
-            msg = "_関与先番号:" + str(Exc.row_kanyo_no) + ":" + str(Exc.row_kanyo_name) + txt + "終了"
+            msg = (
+                "_関与先番号:"
+                + str(Exc.row_kanyo_no)
+                + ":"
+                + str(Exc.row_kanyo_name)
+                + txt
+                + "終了"
+            )
             log_out(msg)
-            logcsv_out(msg)                        
+            logcsv_out(msg)
             return ret
+
 
 # ------------------------------------------------------------------------------------------------------------------
 def ChildFlow(Job, Exc):
@@ -355,13 +392,13 @@ def ChildFlow(Job, Exc):
             Exc.Fname = Job.Img_dir + r"\PDF\\" + Exc.PN + ".pdf"
             # 処理
             SystemUp = ChildFlow_sub(Job, Exc, Exc.Title + Exc.PN + "_印刷処理")
-            ChildFlow_err(Job, Exc,SystemUp)
+            ChildFlow_err(Job, Exc, SystemUp)
             return True
         elif "決算内訳書" == Exc.Title:
             Exc.Fname = Job.Img_dir + r"\PDF\\" + Exc.PN + ".pdf"
             # 処理
             SystemUp = ChildFlow_sub(Job, Exc, Exc.Title + Exc.PN + "_印刷処理")
-            ChildFlow_err(Job, Exc,SystemUp)
+            ChildFlow_err(Job, Exc, SystemUp)
             return True
         elif "減価償却" == Exc.Title:
             Exc.Fname = Job.Img_dir + r"\PDF\\" + Exc.PN + ".pdf"
@@ -396,7 +433,7 @@ def ChildFlow(Job, Exc):
                 )
                 log_out(msg)
                 logcsv_out(msg)
-                return True                
+                return True
             elif SystemUp[1] == "物件無し":
                 Exc.WriteExcel("物件無し")  # シート書き込み
                 # Log
@@ -431,22 +468,23 @@ def ChildFlow(Job, Exc):
             Exc.Fname = Job.Img_dir + r"\PDF\\" + Exc.PN + ".pdf"
             # 処理
             SystemUp = ChildFlow_sub(Job, Exc, Exc.Title + Exc.PN + "_印刷処理")
-            ChildFlow_err(Job, Exc,SystemUp)
+            ChildFlow_err(Job, Exc, SystemUp)
             return True
         elif "電子申告" == Exc.Title:
             Exc.Fname = Job.Img_dir + r"\PDF\\" + Exc.PN + ".pdf"
             # 処理
             SystemUp = ChildFlow_sub(Job, Exc, Exc.Title + Exc.PN + "_印刷処理")
-            ChildFlow_err(Job, Exc,SystemUp)
+            ChildFlow_err(Job, Exc, SystemUp)
             return True
     except:
         return False
 
+
 # ------------------------------------------------------------------------------------------------------------------
-def ChildFlow_err(Job, Exc,SystemUp):
+def ChildFlow_err(Job, Exc, SystemUp):
     """
     エラー処理
-    """    
+    """
     if SystemUp[0] is True:
         Exc.WriteExcel("○")  # シート書き込み
         # Log
@@ -544,7 +582,7 @@ def ChildFlow_err(Job, Exc,SystemUp):
             + "_年度なし"
         )
         log_out(msg)
-        logcsv_out(msg)        
+        logcsv_out(msg)
     elif SystemUp[0] is False:
         Exc.WriteExcel("計算エラー")  # シート書き込み
         # Log
@@ -574,11 +612,12 @@ def ChildFlow_err(Job, Exc,SystemUp):
         log_out(msg)
         logcsv_out(msg)
 
+
 # ------------------------------------------------------------------------------------------------------------------
 def OpenSystem(Job, Exc):
     """
     列ループ
-    """    
+    """
     try:
         Exc.this_col_count = 0
         # 列名からMJSシステムリストを作成------------------------------------------------
@@ -612,7 +651,7 @@ def OpenSystem(Job, Exc):
                             and Exc.Title != "繰越対象"
                             and "::" not in Exc.Title
                         ):
-                            CF = ChildFlow(Job, Exc)                            
+                            CF = ChildFlow(Job, Exc)
                             if CF is True:
                                 Exc.CFFlag = True
             Exc.this_col_count += 1
@@ -620,6 +659,7 @@ def OpenSystem(Job, Exc):
     except:
         print("TEST")
         return False
+
 
 # ------------------------------------------------------------------------------------------------------------------
 def MainStarter(Job, Exc):
@@ -634,7 +674,12 @@ def MainStarter(Job, Exc):
                     # nanでない場合
                     Exc.row_kanyo_no = Exc.row_data["関与先番号_関与先番号"]
                     Exc.row_kanyo_name = NameSearch(Exc.name_df, Exc.row_kanyo_no)
-                    Exc.row_PDFTitle = str(Exc.row_kanyo_no) + "_" + str(Exc.row_kanyo_name) + "_RPA決算書"
+                    Exc.row_PDFTitle = (
+                        str(Exc.row_kanyo_no)
+                        + "_"
+                        + str(Exc.row_kanyo_name)
+                        + "_RPA決算書"
+                    )
                     Exc.row_savedir = Exc.row_data["年度_(保管フォルダ名)"]
                     # マージPDFの保存先・対象システム年度をエクセルから抽出
                     if "_" in Exc.row_savedir:
@@ -665,7 +710,7 @@ def MainStarter(Job, Exc):
 
 # ------------------------------------------------------------------------------------------------------------------
 # def call():
-if __name__ == "__main__":    
+if __name__ == "__main__":
     global Start_Year  # 当年
     j = Job()
 
@@ -710,6 +755,6 @@ if __name__ == "__main__":
 # if __name__ == "__main__":
 #     call()
 #     print("")
-    # try:
-    #     con =Control.control()
-    # except:
+# try:
+#     con =Control.control()
+# except:

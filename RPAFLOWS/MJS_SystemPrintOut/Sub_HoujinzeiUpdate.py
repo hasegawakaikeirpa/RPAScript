@@ -39,10 +39,10 @@ def HoujinzeiUpdate(Job, Exc):
         pg.write(str(Exc.row_kanyo_no))
         pg.press("return")
         pg.write(str(Exc.year))
-        pg.press(["return","return","return"])
+        pg.press(["return", "return", "return"])
         pg.keyDown("shift")
         pg.press(["tab", "tab"])
-        pg.keyUp("shift") 
+        pg.keyUp("shift")
         # 申告種類が確定申告になっているか確認-----------------------------------
         KF = RPA.ImgCheck(URL, r"\\KakuteiFlag.png", 0.9, 10)
         if KF[0] is False:
@@ -1094,14 +1094,14 @@ def Nodatacheck():
         pg.press("y")
         while pg.locateOnScreen(URL + r"\\NoDataInQ_K.png", confidence=0.9) is not None:
             time.sleep(1)
-    NDY = RPA.ImgCheck(URL,r"\NoDataYear.png",0.9,2)
+    NDY = RPA.ImgCheck(URL, r"\NoDataYear.png", 0.9, 2)
     if NDY[0] is True:
         pg.press("return")
         while pg.locateOnScreen(URL + r"\\NoDataInQ_K.png", confidence=0.9) is not None:
             time.sleep(1)
 
-def close():               
-    cl = False
+
+def close():
     while (
         RPA.ImgCheckForList(
             URL,
@@ -1112,13 +1112,13 @@ def close():
         is True
     ):
         KME = RPA.ImgCheckForList(
-                URL,
-                [r"\MenuEnd.png", r"\MenuEnd2.png", r"\MenuEnd3.png", r"\MenuEnd4.png"],
-                0.9,
-                2,
-            )
+            URL,
+            [r"\MenuEnd.png", r"\MenuEnd2.png", r"\MenuEnd3.png", r"\MenuEnd4.png"],
+            0.9,
+            2,
+        )
         if KME[0] is True:
-            RPA.ImgClick(URL,KME[1],0.9,2)
+            RPA.ImgClick(URL, KME[1], 0.9, 2)
         HM = RPA.ImgCheckForList(
             URL,
             [r"\HoujinOpen.png", r"\HoujinzeiMenu.png"],
@@ -1130,10 +1130,10 @@ def close():
                 pg.keyDown("alt")
                 pg.press("x")
                 pg.keyUp("alt")
-        TS = RPA.ImgCheck(URL,r"\TaxSet.png",0.9,2)
+        TS = RPA.ImgCheck(URL, r"\TaxSet.png", 0.9, 2)
         if TS[0] is True:
             pg.press("return")
-        if RPA.ImgCheck(URL,r"\EndCheck.png",0.9,2)[0] is True:
+        if RPA.ImgCheck(URL, r"\EndCheck.png", 0.9, 2)[0] is True:
             pg.press("return")
         GE = RPA.ImgCheck(
             URL,
@@ -1143,115 +1143,12 @@ def close():
         )
         if GE[0] is True:
             pg.press("y")
-        TS = RPA.ImgCheck(URL,r"\TaxSet.png",0.9,2)
+        TS = RPA.ImgCheck(URL, r"\TaxSet.png", 0.9, 2)
         if TS[0] is True:
-            pg.press("return")           
-        if RPA.ImgCheck(URL,r"\TaxEnd.png",0.9,2)[0] is True:
-            RPA.ImgClick(URL,r"\TaxEnd.png",0.9,2)                     
+            pg.press("return")
+        if RPA.ImgCheck(URL, r"\TaxEnd.png", 0.9, 2)[0] is True:
+            RPA.ImgClick(URL, r"\TaxEnd.png", 0.9, 2)
     return
-                                              
-    # cl = False
-    # while (
-    #     RPA.ImgCheckForList(
-    #         URL,
-    #         [r"\MenuEnd.png", r"\MenuEnd2.png", r"\MenuEnd3.png", r"\MenuEnd4.png"],
-    #         0.9,
-    #         2,
-    #     )[0]
-    #     is True
-    # ):
-    #     # 確実に閉じる---------------------------------------------------------------------------------
-    #     if cl is True:
-    #         break
-    #     else:
-    #         KME = RPA.ImgCheckForList(
-    #             URL,
-    #             [r"\MenuEnd.png", r"\MenuEnd2.png", r"\MenuEnd3.png", r"\MenuEnd4.png"],
-    #             0.9,
-    #             2,
-    #         )
-    #         if KME[0] is True:
-    #             if RPA.ImgCheck(URL,r"\TaxEnd.png",0.9,2)[0] is True:
-    #                 RPA.ImgClick(URL,r"\TaxEnd.png",0.9,2)
-    #                 break                    
-    #             RPA.ImgClick(URL, KME[1], 0.9, 10)
-    #             HM = False, False
-    #             while (
-    #                 pg.locateOnScreen(URL + r"\\SinkokuEndQ.png", confidence=0.9)
-    #                 is None
-    #             ):
-    #                 time.sleep(1)
-    #                 HM = RPA.ImgCheckForList(
-    #                     URL,
-    #                     [r"\HoujinOpen.png", r"\HoujinzeiMenu.png"],
-    #                     0.9,
-    #                     2,
-    #                 )
-    #                 if HM[0] is True:
-    #                     if RPA.ImgCheck(URL, r"\SinkokuPrint.png", 0.9, 10)[0] is True:
-    #                         pg.keyDown("alt")
-    #                         pg.press("x")
-    #                         pg.keyUp("alt")
-    #                     else:                            
-    #                         GE = RPA.ImgCheck(
-    #                             URL,
-    #                             r"\GaikyouEnd.png",
-    #                             0.9,
-    #                             2,
-    #                         )
-    #                         if GE[0] is True:
-    #                             HM = False,False
-    #                             break
-    #                         TS = RPA.ImgCheck(URL,r"\TaxSet.png",0.9,2)
-    #                         if TS[0] is True:
-    #                             pg.press("return")
-    #                             break                              
-    #                         else:
-    #                             break                    
-
-    #             if HM[0] is False:
-    #                 pg.press("y")
-    #                 cl = True
-    #         else:
-    #             pg.keyDown("alt")
-    #             pg.press("x")
-    #             pg.keyUp("alt")
-    #             HM = False, False
-    #             while (
-    #                 pg.locateOnScreen(URL + r"\\SinkokuEndQ.png", confidence=0.9)
-    #                 is None
-    #             ):
-    #                 time.sleep(1)
-    #                 HM = RPA.ImgCheckForList(
-    #                     URL,
-    #                     [r"\HoujinOpen.png", r"\HoujinzeiMenu.png"],
-    #                     0.9,
-    #                     2,
-    #                 )
-    #                 if HM[0] is True:
-    #                     if RPA.ImgCheck(URL, r"\SinkokuPrint.png", 0.9, 10)[0] is True:
-    #                         pg.keyDown("alt")
-    #                         pg.press("x")
-    #                         pg.keyUp("alt")
-    #                     else:                            
-    #                         GE = RPA.ImgCheck(
-    #                             URL,
-    #                             r"\GaikyouEnd.png",
-    #                             0.9,
-    #                             2,
-    #                         )
-    #                         if GE[0] is True:
-    #                             HM = False,False
-    #                             break
-    #                         TS = RPA.ImgCheck(URL,r"\TaxSet.png",0.9,2)
-    #                         if TS[0] is True:
-    #                             pg.press("return")
-    #                             break                             
-    #                         else:
-    #                             break                                                       
-    #             if HM[0] is False:
-    #                 pg.press("y")
-    #                 cl = True
 
 
 # ------------------------------------------------------------------------------------------------------------------
