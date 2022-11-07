@@ -53,9 +53,11 @@ def DensisinkokuUpDate(Job, Exc):
         pg.press("tab")
         time.sleep(1)
         pg.hotkey("ctrl", "v")
+        time.sleep(2)
         pg.press("return")
         time.sleep(1)
         pg.hotkey("ctrl", "v")
+        time.sleep(2)        
         pg.press("return")
         RPA.ImgClick(URL, r"\14D_SearchOK.png", 0.9, 10)  # OKボタンをクリック
         # ------------------------------------------------------------------
