@@ -134,6 +134,14 @@ def GenkasyoukyakuUpdate(Job, Exc):
                         is None
                     ):
                         time.sleep(1)
+                        # アップデート情報画面が出たら閉じる-------------------------------
+                        GSUM = RPA.ImgCheck(
+                            URL, r"\G_SyoukyakuUpMsg.png", 0.9, 1
+                        )
+                        if GSUM[0] is True:
+                            RPA.ImgClick(
+                                URL, r"\G_SyoukyakuUpMsgCansel.png", 0.9, 10
+                            )                        
             # --------------------------------------------------------------------
             RPA.ImgClick(
                 URL, r"\G_Insatu.png", 0.9, 10
