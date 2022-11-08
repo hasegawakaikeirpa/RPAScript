@@ -52,6 +52,7 @@ def KaikeiUpDate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisNo = pyperclip.paste()
         # -----------------------------------
@@ -60,6 +61,7 @@ def KaikeiUpDate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisYear = pyperclip.paste()
         # -----------------------------------
@@ -68,6 +70,7 @@ def KaikeiUpDate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisMonth = pyperclip.paste()
         # -----------------------------------
@@ -95,7 +98,7 @@ def KaikeiUpDate(Job, Exc):
                             URL,
                             [r"ChangeDataBtn.png", r"ChangeDataBtn2.png"],
                             0.9,
-                            10,
+                            1,
                         )[0]
                         is False
                     ):
@@ -465,11 +468,11 @@ def IkkatuUpDate(Job, Exc):
             RPA.ImgClick(URL, FC[1], 0.9, 10)  # 一括更新メニューのアイコンをクリック
 
         # ThisYearKey.pngが表示されるまで繰り返し
-        while RPA.ImgCheck(URL, r"\ThisYearKey.png", 0.9, 10)[0] is False:
+        while RPA.ImgCheck(URL, r"\ThisYearKey.png", 0.9, 1)[0] is False:
             pyperclip.copy(str(Exc.row_data["関与先番号"]))
             pg.hotkey("ctrl", "v")
             # 検索ボタンまでエンター-------------------------------------
-            while RPA.ImgCheck(URL, r"FindFlag.png", 0.9, 10)[0] is False:
+            while RPA.ImgCheck(URL, r"FindFlag.png", 0.9, 1)[0] is False:
                 time.sleep(1)
                 pg.press("return")
             pg.press("return")
@@ -486,7 +489,7 @@ def IkkatuUpDate(Job, Exc):
                         r"HouteiCheck.png",
                     ],
                     0.9,
-                    10,
+                    1,
                 )[0]
                 is False
             ):
@@ -522,12 +525,12 @@ def IkkatuUpDate(Job, Exc):
                         r"HouteiCheck.png",
                     ],
                     0.9,
-                    10,
+                    1,
                 )[0]
                 is True
             ):
                 time.sleep(1)
-            while RPA.ImgCheck(URL, r"\IkkatuUpDateStopFlag.png", 0.9, 10)[0] is False:
+            while RPA.ImgCheck(URL, r"\IkkatuUpDateStopFlag.png", 0.9, 1)[0] is False:
                 pg.press("tab")
             pg.press("tab")
         return True
@@ -551,7 +554,7 @@ def KessanKakuteiErr(Job, Exc):
             # マスター更新後月次確定コメントがでたら
             MR = RPA.ImgCheck(URL, r"\MasterRecalcQ2.png", 0.9, 10)
             if MR[0] is True:
-                while RPA.ImgCheck(URL, r"\GetusjiKakutei.png", 0.9, 10)[0] is True:
+                while RPA.ImgCheck(URL, r"\GetusjiKakutei.png", 0.9, 1)[0] is True:
                     time.sleep(1)
                 pg.press("return")
                 time.sleep(3)
@@ -569,7 +572,7 @@ def KessanKakuteiErr(Job, Exc):
                         URL,
                         [r"MasterUpStart.png", r"MasterUpStart2.png"],
                         0.9,
-                        10,
+                        1,
                     )[0]
                     is True
                 ):

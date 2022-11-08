@@ -58,6 +58,7 @@ def SyotokuzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             pg.press("return")
@@ -70,6 +71,7 @@ def SyotokuzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -78,6 +80,7 @@ def SyotokuzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             pg.press("return")
@@ -91,6 +94,7 @@ def SyotokuzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             pg.press("return")
@@ -98,6 +102,7 @@ def SyotokuzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -106,6 +111,7 @@ def SyotokuzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             pg.press("return")
@@ -127,7 +133,7 @@ def SyotokuzeiUpdate(Job, Exc):
                         URL,
                         r"ChangeDataQ.png",
                         0.9,
-                        10,
+                        1,
                     )
                     if CDQ[0] is True:
                         pg.press("y")  # yで決定
@@ -137,7 +143,7 @@ def SyotokuzeiUpdate(Job, Exc):
                                 URL,
                                 [r"ChangeDataBtn.png", r"ChangeDataBtn2.png"],
                                 0.9,
-                                10,
+                                1,
                             )[0]
                             is False
                         ):
@@ -146,7 +152,7 @@ def SyotokuzeiUpdate(Job, Exc):
                             URL,
                             [r"ChangeDataBtn.png", r"ChangeDataBtn2.png"],
                             0.9,
-                            10,
+                            1,
                         )
                         RPA.ImgClick(URL, CDB[1], 0.9, 10)  # 顧問先情報取込ボタンをクリック
                     # 自治体情報変更ダイアログが表示されたら
@@ -220,7 +226,7 @@ def SyotokuzeiUpdate(Job, Exc):
                 # --------------------------------------------------------------------
                 while (
                     RPA.ImgCheckForList(
-                        URL, [r"IkkatuFind.png", r"IkkatuFind2.png"], 0.9, 10
+                        URL, [r"IkkatuFind.png", r"IkkatuFind2.png"], 0.9, 1
                     )[0]
                     is False
                 ):

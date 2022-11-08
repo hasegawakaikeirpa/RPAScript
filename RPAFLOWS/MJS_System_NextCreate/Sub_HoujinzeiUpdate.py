@@ -58,6 +58,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             pg.press("return")
@@ -70,6 +71,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -78,6 +80,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             pg.press("return")
@@ -91,6 +94,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisNo = pyperclip.paste()
             pg.press("return")
@@ -98,6 +102,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisYear = pyperclip.paste()
             # -----------------------------------
@@ -106,6 +111,7 @@ def HoujinzeiUpdate(Job, Exc):
             if windll.user32.OpenClipboard(None):
                 windll.user32.EmptyClipboard()
                 windll.user32.CloseClipboard()
+            time.sleep(1)
             pg.hotkey("ctrl", "c")
             ThisMonth = pyperclip.paste()
             pg.press("return")
@@ -137,7 +143,7 @@ def HoujinzeiUpdate(Job, Exc):
                             URL,
                             [r"ChangeDataBtn.png", r"ChangeDataBtn2.png"],
                             0.9,
-                            10,
+                            1,
                         )[0]
                         is False
                     ):

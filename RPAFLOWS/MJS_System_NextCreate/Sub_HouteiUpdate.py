@@ -75,6 +75,7 @@ def HouteiUpdate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisNo = pyperclip.paste()
         # -----------------------------------
@@ -83,6 +84,7 @@ def HouteiUpdate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisYear = pyperclip.paste()
         # -----------------------------------
@@ -111,7 +113,7 @@ def HouteiUpdate(Job, Exc):
                             URL,
                             [r"ChangeDataBtn.png", r"ChangeDataBtn2.png"],
                             0.9,
-                            10,
+                            1,
                         )[0]
                         is False
                     ):
@@ -185,7 +187,7 @@ def HouteiUpdate(Job, Exc):
                 pyperclip.copy(str(Exc.row_data["関与先番号"]))
                 pg.hotkey("ctrl", "v")
                 # 検索ボタンまでエンター-------------------------------------
-                while RPA.ImgCheck(URL, r"ZFindFlag2.png", 0.9, 10)[0] is False:
+                while RPA.ImgCheck(URL, r"ZFindFlag2.png", 0.9, 1)[0] is False:
                     time.sleep(1)
                     pg.press("return")
             pg.press("return")
@@ -207,7 +209,7 @@ def HouteiUpdate(Job, Exc):
                             r"HouteiCheck.png",
                         ],
                         0.9,
-                        10,
+                        1,
                     )[0]
                     is False
                 ):

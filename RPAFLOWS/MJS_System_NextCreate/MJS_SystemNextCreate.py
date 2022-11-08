@@ -42,6 +42,7 @@ import Sub_SyotokuzeiUpdate as SyotokuzeiUpdate
 import Sub_ZaisanUpdate as ZaisanUpdate
 
 import Control
+import signal
 
 # logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
@@ -739,5 +740,6 @@ if __name__ == "__main__":
                         j.MainFlow(Ex_File)
                     except:
                         traceback.print_exc()
-                    print("stop")
-                    os.rename(XLSURL, MoveXLSURL)
+                    finally:
+                        del Ex_File  # エクセルブッククラスを解放
+                        os.rename(XLSURL, MoveXLSURL)

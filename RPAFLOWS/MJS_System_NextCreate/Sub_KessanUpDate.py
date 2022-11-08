@@ -55,6 +55,7 @@ def KessanUpDate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisNo = pyperclip.paste()
         # -----------------------------------
@@ -63,6 +64,7 @@ def KessanUpDate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisYear = pyperclip.paste()
         # -----------------------------------
@@ -71,6 +73,7 @@ def KessanUpDate(Job, Exc):
         if windll.user32.OpenClipboard(None):
             windll.user32.EmptyClipboard()
             windll.user32.CloseClipboard()
+        time.sleep(1)
         pg.hotkey("ctrl", "c")
         ThisMonth = pyperclip.paste()
         # -----------------------------------
@@ -96,7 +99,7 @@ def KessanUpDate(Job, Exc):
                             URL,
                             [r"ChangeDataBtn.png", r"ChangeDataBtn2.png"],
                             0.9,
-                            10,
+                            1,
                         )[0]
                         is False
                     ):
