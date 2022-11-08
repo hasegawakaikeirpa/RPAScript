@@ -46,6 +46,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
             time.sleep(1)
         pg.write(str(Exc.row_data["関与先番号"]))
         pg.press(["return", "return", "return"])
+        time.sleep(1)
         # 入力した関与先コードを取得------------
         pg.keyDown("shift")
         pg.press(["tab", "tab", "tab"])
@@ -81,6 +82,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
             print("関与先あり")
             if YearDiff == 1:  # 次年度更新か判定
                 pg.press(["return", "return", "return"])
+                time.sleep(1)
                 # 減価償却メニューが表示されるまで待機------------------------------------
                 while (
                     pg.locateOnScreen(URL + r"\G_SyoukyakuMenu.png", confidence=0.9)
@@ -194,8 +196,8 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     return True, ThisNo, ThisYear, ThisMonth
                 elif ErrStr == "Noren":
                     return False, ErrStr, "", ""
-            elif Job.Start_Year == int(ThisYear):  # 次年度更新か判定
-                return False, "当年データ重複エラー", "", ""
+            elif str(Job.Start_Year) == ThisYear:
+                return False, "該当年度有り", "", ""
             else:
                 IkkatuUpDate(Job, Exc, YearDiff)
         else:
@@ -213,6 +215,7 @@ def IkkatuUpDate(Job, Exc, YearDiff):
     try:
         URL = Job.imgdir_url + r"\\GenkasyoukyakuUpdate"
         pg.press(["return", "return", "return"])
+        time.sleep(1)
         # 減価償却メニューが表示されるまで待機------------------------------------
         while pg.locateOnScreen(URL + r"\G_SyoukyakuMenu.png", confidence=0.9) is None:
             time.sleep(1)

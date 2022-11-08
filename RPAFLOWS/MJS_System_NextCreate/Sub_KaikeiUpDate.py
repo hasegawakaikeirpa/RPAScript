@@ -45,6 +45,7 @@ def KaikeiUpDate(Job, Exc):
             time.sleep(1)
         pg.write(str(Exc.row_data["関与先番号"]))
         pg.press(["return", "return", "return"])
+        time.sleep(1)
         # 入力した関与先コードを取得------------
         pg.keyDown("shift")
         pg.press(["tab", "tab", "tab"])
@@ -78,6 +79,7 @@ def KaikeiUpDate(Job, Exc):
         if str(Exc.row_data["関与先番号"]) == ThisNo:
             print("関与先あり")
             pg.press(["return", "return", "return"])
+            time.sleep(1)
             # 会計大将メニューが表示されるまで待機------------------------------------
             while (
                 pg.locateOnScreen(URL + r"\K_TaisyouMenu.png", confidence=0.9) is None
@@ -430,11 +432,41 @@ def KaikeiUpDate(Job, Exc):
 
 
 # ------------------------------------------------------------------------------------------------------------------
+def CampanyUpDate(Job, Exc):
+    """
+    会計大将:会社情報更新
+    """
+    URL = Job.imgdir_url + r"\\KaikeiUpDate"
+    RPA.ImgClick(URL, r"\D_TourokuTAB.png", 0.9, 10)  # 5.導入登録のアイコンをクリック
+    CamList = [r"\CamIcon.png", r"\CamIcon2.png"]
+    # 会社基本情報アイコンが表示されるまで待機--------------------------------------
+    while RPA.ImgCheckForList(URL, CamList, 0.9, 1)[0] is False:
+        time.sleep(1)
+    CAL = RPA.ImgCheckForList(URL, CamList, 0.9, 1)
+    if CAL[0] is True:
+        RPA.ImgClick(URL, CAL[1], 0.9, 1)  # 会社基本情報アイコンをクリック
+    # 顧問先情報取り込みアイコンが表示されるまで待機--------------------------------
+    while pg.locateOnScreen(URL + r"\DataInIcon.png", confidence=0.9) is None:
+        time.sleep(1)
+    RPA.ImgClick(URL, r"\DataInIcon.png", 0.9, 10)  # 顧問先情報取り込みアイコンをクリック
+    while pg.locateOnScreen(URL + r"\DataInOK.png", confidence=0.9) is None:
+        time.sleep(1)
+    RPA.ImgClick(URL, r"\DataInOK.png", 0.9, 10)  # 取り込むボタンをクリック
+    time.sleep(3)
+    pg.keyDown("alt")
+    pg.press("x")
+    pg.keyUp("alt")
+    time.sleep(1)
+    return
+
+
+# ------------------------------------------------------------------------------------------------------------------
 def IkkatuUpDate(Job, Exc):
     """
     会計大将:その他メニュー一括更新
     """
     try:
+        CampanyUpDate(Job, Exc)  # 会社情報更新
         URL = Job.imgdir_url + r"\\KaikeiUpDate"
         RPA.ImgClick(URL, r"\M_Sonota.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
         # 一括更新のアイコンが表示されるまで待機----------------------------------

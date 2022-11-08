@@ -21,7 +21,8 @@ import os
 import traceback
 
 import pyperclip  # クリップボードへのコピーで使用
-import ExcelFileAction as EFA
+
+# import ExcelFileAction as EFA
 
 import datetime
 import openpyxl
@@ -33,7 +34,8 @@ import RPA_Function as RPA
 import Sub_GenkasyoukyakuUpdate as GenkasyoukyakuUpdate
 import Sub_HoujinzeiUpdate as HoujinzeiUpdate
 import Sub_HouteiUpdate as HouteiUpdate
-import Sub_IkkatuUpDate as IkkatuUpDate
+
+# import Sub_IkkatuUpDate as IkkatuUpDate
 import Sub_KaikeiUpDate as KaikeiUpDate
 import Sub_KessanUpDate as KessanUpDate
 
@@ -42,7 +44,6 @@ import Sub_SyotokuzeiUpdate as SyotokuzeiUpdate
 import Sub_ZaisanUpdate as ZaisanUpdate
 
 import Control
-import signal
 
 # logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
@@ -175,67 +176,137 @@ class Sheet:
     def __init__(self, XLSURL, **kw):
         log_out("_Excelブック読込開始")
         self.mybook_url = XLSURL
-        Ex_file = EFA.XlsmRead(XLSURL)
-        if Ex_file[0] is True:
-            # エクセルブック
-            self.book = Ex_file[1]
-            # 全シート
-            self.input_sheet_name = self.book.sheet_names
-            # 全シート数
-            self.num_sheet = len(self.input_sheet_name)
-            log_out("_Excelブック読込終了")
-        else:
-            log_out("_Excelブック読込失敗")
+        self.book = openpyxl.load_workbook(self.mybook_url, keep_vba=True)
+        # 全シート
+        self.input_sheet_name = self.book.sheetnames
+        # 全シート数
+        self.num_sheet = len(self.input_sheet_name)
+        log_out("_Excelブック読込終了")
 
     def Read_sheet(self, sheet_name, first_csv, **kw):
         log_out("_Excelシート読込開始")
+
         self.sheet_header = []
         ExSheet = ""
         NameSheet = ""
-        ExSheet = self.book.parse(sheet_name, skiprows=0)
-        NameSheet = self.book.parse("関与先一覧")
+        ExSheet = self.book[sheet_name]
+        ExSheetdata = ExSheet.values
+        print(ExSheetdata)
+        ExSheetcolumns = next(ExSheetdata)[0:]
+
+        NameSheet = self.book["関与先一覧"]
+        NameSheetdata = NameSheet.values
+        NameSheetcolumns = next(NameSheetdata)[0:]
+
         print(ExSheet)
         # 初回読込時の保存--------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H-%M-%S")
-        self.sheet_df = pd.DataFrame(ExSheet)
-        self.name_df = pd.DataFrame(NameSheet)
-        self.sheet_df.to_csv(
-            first_csv + dt_s + ".csv",
-            encoding="cp932",
-            index=False,
-        )
+
+        ExSheet = pd.DataFrame(ExSheetdata, columns=ExSheetcolumns)
+        self.name_df = pd.DataFrame(NameSheetdata, columns=NameSheetcolumns)
+
         # 列名整理--------------------------------
-        self.sheet_column_count = self.sheet_df.shape[1]  # 列数
+        self.sheet_column_count = ExSheet.shape[1]  # 列数
         for Ex in range(self.sheet_column_count):
             ExRow = ExSheet.iloc[0]  # 列名
             ExSecondRow = ExSheet.iloc[1]  # 列名2
-            if ExRow[Ex] == ExRow[Ex]:  # nan判定
-                # nanでない場合
-                Txt = ExRow[Ex]
-                if ExSecondRow[Ex] == ExSecondRow[Ex]:  # nan判定
-                    # nanでない場合
-                    self.sheet_header.append(ExRow[Ex] + "_" + ExSecondRow[Ex])
-                else:
-                    # nanの場合
+            if ExRow[Ex] is None:  # None判定
+                # Noneの場合
+                Txt = ExRow[Ex - 1]
+                if ExSecondRow[Ex] is None:  # None判定
+                    # Noneの場合
                     self.sheet_header.append(ExRow[Ex])
-            else:
-                # nanの場合
-                if ExSecondRow[Ex] == ExSecondRow[Ex]:  # nan判定
-                    # nanでない場合
-                    self.sheet_header.append(Txt + "_" + ExSecondRow[Ex])
                 else:
-                    # nanの場合
+                    # Noneでない場合
+                    self.sheet_header.append(Txt + "_" + ExSecondRow[Ex])
+            else:
+                Txt = ExRow[Ex]
+                # Noneでない場合
+                if ExSecondRow[Ex] is None:  # None判定
+                    # Noneの場合
                     self.sheet_header.append(Txt)
+                else:
+                    # Noneでない場合
+                    self.sheet_header.append(Txt + "_" + ExSecondRow[Ex])
         # データ整理--------------------------------
+        self.sheet_header = [e for e in self.sheet_header if e is not None]
         # Df作成
-        ExDf = pd.DataFrame(self.sheet_df.values[3:, :], columns=self.sheet_header)
+        ExDf = pd.DataFrame(
+            ExSheet.values[3:, : len(self.sheet_header)], columns=self.sheet_header
+        )
         # Dfnan処理
         ExDf.dropna(how="all", inplace=True)
         print(ExDf)
         self.sheet_df = ExDf
         self.sheet_column_count = self.sheet_df.shape[1]  # 列数
         self.sheet_row_count = self.sheet_df.shape[0]  # 行数
+        self.sheet_df.to_csv(
+            first_csv + dt_s + ".csv",
+            encoding="cp932",
+            index=False,
+        )
+
+        # self.sheet_header = []
+        # ExSheet = ""
+        # NameSheet = ""
+        # # ExSheet = self.book.parse(sheet_name, skiprows=0)
+        # # NameSheet = self.book.parse("関与先一覧")
+        # ExSheet = self.book[sheet_name]
+        # ExSheetdata = ExSheet.values
+
+        # ExSheetcolumns = next(ExSheetdata)[0:]
+        # ExSheetcolumns = next(ExSheetdata)[1:]
+
+        # NameSheet = self.book["関与先一覧"]
+        # NameSheetdata = NameSheet.values
+        # NameSheetcolumns = next(NameSheetdata)[0:]
+
+        # print(ExSheet)
+        # # 初回読込時の保存--------------------------
+        # dt_s = datetime.datetime.now()
+        # dt_s = dt_s.strftime("%Y-%m-%d %H-%M-%S")
+        # # self.sheet_df = pd.DataFrame(ExSheet)
+        # self.sheet_df = pd.DataFrame(ExSheetdata, columns=ExSheetcolumns)
+        # # self.name_df = pd.DataFrame(NameSheet)
+        # self.name_df = pd.DataFrame(NameSheetdata, columns=NameSheetcolumns)
+
+        # self.sheet_df.to_csv(
+        #     first_csv + dt_s + ".csv",
+        #     encoding="cp932",
+        #     index=False,
+        # )
+        # # 列名整理--------------------------------
+        # self.sheet_column_count = self.sheet_df.shape[1]  # 列数
+        # for Ex in range(self.sheet_column_count):
+        #     ExRow = ExSheet.iloc[0]  # 列名
+        #     ExSecondRow = ExSheet.iloc[1]  # 列名2
+        #     if ExRow[Ex] == ExRow[Ex]:  # nan判定
+        #         # nanでない場合
+        #         Txt = ExRow[Ex]
+        #         if ExSecondRow[Ex] == ExSecondRow[Ex]:  # nan判定
+        #             # nanでない場合
+        #             self.sheet_header.append(ExRow[Ex] + "_" + ExSecondRow[Ex])
+        #         else:
+        #             # nanの場合
+        #             self.sheet_header.append(ExRow[Ex])
+        #     else:
+        #         # nanの場合
+        #         if ExSecondRow[Ex] == ExSecondRow[Ex]:  # nan判定
+        #             # nanでない場合
+        #             self.sheet_header.append(Txt + "_" + ExSecondRow[Ex])
+        #         else:
+        #             # nanの場合
+        #             self.sheet_header.append(Txt)
+        # # データ整理--------------------------------
+        # # Df作成
+        # ExDf = pd.DataFrame(self.sheet_df.values[3:, :], columns=self.sheet_header)
+        # # Dfnan処理
+        # ExDf.dropna(how="all", inplace=True)
+        # print(ExDf)
+        # self.sheet_df = ExDf
+        # self.sheet_column_count = self.sheet_df.shape[1]  # 列数
+        # self.sheet_row_count = self.sheet_df.shape[0]  # 行数
 
         log_out("_Excelシート読込完了")
 
@@ -561,15 +632,15 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
-        elif SystemUp[1] == "更新対象年度無し":
-            Exc.WriteExcel("更新対象年度無し")  # シート書き込み
+        elif SystemUp[1] == "該当年度有り":
+            Exc.WriteExcel("該当年度有り")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
             msg = (
                 "_関与先番号:"
                 + str(Exc.row_kanyo_no)
                 + ":"
                 + str(Exc.row_kanyo_name)
-                + "_財産評価明細書更新処理終了_更新対象年度無し"
+                + "_財産評価明細書更新処理終了_該当年度有り"
             )
             log_out(msg)
             logcsv_out(msg)
@@ -579,15 +650,15 @@ def ChildFlow(Job, Exc):
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             Exc.WriteExcel("○")  # シート書き込み
-        elif SystemUp[1] == "次年度あり":
-            Exc.WriteExcel("次年度あり")  # シート書き込み
+        elif SystemUp[1] == "該当年度有り":
+            Exc.WriteExcel("該当年度有り")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
             msg = (
                 "_関与先番号:"
                 + str(Exc.row_kanyo_no)
                 + ":"
                 + str(Exc.row_kanyo_name)
-                + "_年末調整更新次年度あり処理終了"
+                + "_年末調整更新該当年度有り処理終了"
             )
             log_out(msg)
             logcsv_out(msg)
@@ -597,6 +668,20 @@ def ChildFlow(Job, Exc):
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             Exc.WriteExcel("○")  # シート書き込み
+        elif SystemUp[1] == "該当年度有り":
+            Exc.WriteExcel("該当年度有り")  # シート書き込み
+            # Log---------------------------------------------------------------------------------------
+            msg = (
+                "_関与先番号:"
+                + str(Exc.row_kanyo_no)
+                + ":"
+                + str(Exc.row_kanyo_name)
+                + "_法定調書更新処理該当年度有り処理終了"
+            )
+            log_out(msg)
+            logcsv_out(msg)
+            # ------------------------------------------------------------------------------------------
+
     else:
         # Log---------------------------------------------------------------------------------------
         msg = (
@@ -618,15 +703,15 @@ def MainStarter(Job, Exc):
         for Exc.this_row_count in range(Exc.sheet_row_count):
             if Exc.this_row_count != 0:
                 Exc.row_data = Exc.sheet_df.iloc[Exc.this_row_count]
-                if Exc.row_data["関与先番号"] == Exc.row_data["関与先番号"]:  # nan判定
-                    # nanでない場合
+                if Exc.row_data["関与先番号"] is None:  # nan判定
+                    # Noneでない場合
+                    print("nan")
+                else:
+                    # Noneの場合
                     Exc.row_kanyo_no = Exc.row_data["関与先番号"]
                     Exc.row_kanyo_name = NameSearch(Exc.name_df, Exc.row_kanyo_no)
                     OpenSystem(Job, Exc)
                     print("")
-                else:
-                    # nanの場合
-                    print("nan")
         return True, ""
     except:
         return False, ""
@@ -637,7 +722,7 @@ def OpenSystem(Job, Exc):
     try:
         Exc.this_col_count = 0
         for ExrcHeaderItem in Exc.sheet_header:
-            if Exc.this_col_count < (len(Exc.sheet_header) - 1):
+            if Exc.this_col_count < (len(Exc.sheet_header)):
                 if "_繰越対象" in ExrcHeaderItem:
                     SysN = ExrcHeaderItem.split("_")
                     Exc.Title = str(SysN[0])
@@ -646,19 +731,13 @@ def OpenSystem(Job, Exc):
                         and str(Exc.row_data[Exc.Title + "_繰越対象"]) == "1"
                     ):
                         if "::" not in Exc.Title:
-                            if (
-                                Exc.row_data[Exc.Title + "_繰越対象"]
-                                == Exc.row_data[Exc.Title + "_繰越対象"]
-                            ):
-                                # nanでない場合
-                                if (
-                                    Exc.row_data[Exc.Title + "_繰越処理日"]
-                                    == Exc.row_data[Exc.Title + "_繰越処理日"]
-                                ):
-                                    # nanでない場合
+                            if Exc.row_data[Exc.Title + "_繰越対象"] is None:
+                                # Noneの場合
+                                if Exc.row_data[Exc.Title + "_繰越処理日"] is None:
+                                    # Noneの場合
                                     print(Exc.row_data[Exc.Title + "_繰越処理日"])
                                 else:
-                                    # nanの場合
+                                    # Noneでない場合
                                     # Log--------------------------------------------
                                     msg = (
                                         "_関与先番号:"
@@ -673,15 +752,9 @@ def OpenSystem(Job, Exc):
                                     if str(Exc.row_kanyo_no) != "1":
                                         ChildFlow(Job, Exc)
                             else:
-                                # nanでない場合
-                                if (
-                                    Exc.row_data[Exc.Title + "_繰越処理日"]
-                                    == Exc.row_data[Exc.Title + "_繰越処理日"]
-                                ):
-                                    # nanでない場合
-                                    print("スタート")
-                                else:
-                                    # nanの場合
+                                # Noneでない場合
+                                if Exc.row_data[Exc.Title + "_繰越処理日"] is None:
+                                    # Noneの場合
                                     # Log--------------------------------------------
                                     msg = (
                                         "_関与先番号:"
@@ -695,6 +768,9 @@ def OpenSystem(Job, Exc):
                                     # -----------------------------------------------
                                     if str(Exc.row_kanyo_no) != "1":
                                         ChildFlow(Job, Exc)
+                                else:
+                                    # Noneでない場合
+                                    print("スタート")
             Exc.this_col_count += 1
         return True
     except:

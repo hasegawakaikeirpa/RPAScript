@@ -48,6 +48,7 @@ def SyotokuzeiUpdate(Job, Exc):
             time.sleep(1)
         pg.write(str(Exc.row_data["関与先番号"]))
         pg.press(["return", "return"])
+        time.sleep(1)
         # -----------------------------------
         if RPA.ImgCheck(URL, r"\NotData.png", 0.9, 10)[0] is True:
             # 入力した関与先コードを取得------------
@@ -123,6 +124,7 @@ def SyotokuzeiUpdate(Job, Exc):
                 Job.Start_Year < int(ThisYear) or Job.Start_Year - int(ThisYear) == 1
             ):  # 次年度更新か判定
                 pg.press(["return", "return", "return"])
+                time.sleep(1)
                 # 所得税メニューが表示されるまで待機------------------------------------
                 while (
                     pg.locateOnScreen(URL + r"\SyotokuMenu.png", confidence=0.9) is None

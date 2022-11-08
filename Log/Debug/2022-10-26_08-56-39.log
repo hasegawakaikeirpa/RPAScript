@@ -1,2 +1,0 @@
-[2022/10/26 08:56:40][INFO](utils.py:148) Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8. _init_num_threads d:\PythonScript\RPAScript\OCRFlowVenv\lib\site-packages\numexpr\utils.py
-[2022/10/26 08:56:40][INFO](utils.py:160) NumExpr defaulting to 8 threads. _init_num_threads d:\PythonScript\RPAScript\OCRFlowVenv\lib\site-packages\numexpr\utils.py
