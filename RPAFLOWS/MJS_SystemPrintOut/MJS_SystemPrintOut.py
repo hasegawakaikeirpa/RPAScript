@@ -819,13 +819,13 @@ if __name__ == "__main__":
                                         os.rename(XLSURL, MoveXLSURL)
                                     except:
                                         print("解放済")
-                    # 時間制限でミロクを閉じていた場合
-                    if th.stop_flag is True:
-                        try:
-                            del Ex_File.book  # エクセルブッククラスを解放
-                            os.rename(XLSURL, MoveXLSURL)
-                        except:
-                            print("解放済")
+                        # 時間制限でミロクを閉じていた場合
+                        if th.stop_flag is True:
+                            try:
+                                del Ex_File.book  # エクセルブッククラスを解放
+                                os.rename(XLSURL, MoveXLSURL)
+                            except:
+                                print("解放済")
                 if th.stop_flag is False:
                     th.run_flag = False  # 実行フラグを中断状態に
             except:
