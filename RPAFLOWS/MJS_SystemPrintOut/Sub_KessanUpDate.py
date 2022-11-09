@@ -16,14 +16,9 @@ def KessanUpDate(Job, Exc):
     """
     try:
         global URL, ThisNo, ThisYear, ThisMonth
-        URL = Job.PrintOut_url + r"\\KessanUpDate"        
+        URL = Job.PrintOut_url + r"\\KessanUpDate"
         # 決算内訳書フラグが表示されるまで待機------------------------------------
-        while (
-            pg.locateOnScreen(
-                URL + r"\Kessan_CFlag.png", confidence=0.9
-            )
-            is None
-        ):
+        while pg.locateOnScreen(URL + r"\Kessan_CFlag.png", confidence=0.9) is None:
             time.sleep(1)
         # ------------------------------------------------------------------
         time.sleep(1)
@@ -42,10 +37,10 @@ def KessanUpDate(Job, Exc):
         pg.write(str(Exc.row_kanyo_no))
         pg.press("return")
         pg.write(str(int(Exc.year) - 1))
-        pg.press(["return","return","return"])
+        pg.press(["return", "return", "return"])
         pg.keyDown("shift")
         pg.press(["tab", "tab"])
-        pg.keyUp("shift") 
+        pg.keyUp("shift")
         if RPA.ImgCheck(URL, r"\NotData.png", 0.9, 10)[0] is False:
             # 入力した関与先コードを取得------------
             pg.keyDown("shift")
@@ -91,12 +86,7 @@ def KessanUpDate(Job, Exc):
             print("関与先あり")
             pg.press(["return", "return", "return"])
             # 決算内訳書メニューが表示されるまで待機------------------------------------
-            while (
-                pg.locateOnScreen(
-                    URL + r"\KessanMenu.png", confidence=0.9
-                )
-                is None
-            ):
+            while pg.locateOnScreen(URL + r"\KessanMenu.png", confidence=0.9) is None:
                 time.sleep(1)
                 # 顧問先情報更新ダイアログ確認------------------------------------------
                 KK = RPA.ImgCheck(URL, r"\KomonKoushin.png", 0.9, 1)
@@ -110,19 +100,14 @@ def KessanUpDate(Job, Exc):
                         is None
                     ):
                         time.sleep(1)
-                    RPA.ImgClick(
-                        URL, r"\KomonKoushinInput.png", 0.9, 10
-                    )
+                    RPA.ImgClick(URL, r"\KomonKoushinInput.png", 0.9, 10)
                 DL = RPA.ImgCheck(URL, r"\DLCheck.png", 0.9, 10)
                 if DL[0] is True:
                     pg.press("return")
 
             # --------------------------------------------------------------------
             # 内訳書印刷メニューが表示されるまで待機----------------------------------
-            while (
-                pg.locateOnScreen(URL + r"\11U_Flag.png", confidence=0.9)
-                is None
-            ):
+            while pg.locateOnScreen(URL + r"\11U_Flag.png", confidence=0.9) is None:
                 time.sleep(1)
             # --------------------------------------------------------------------
             # 内訳書印刷のアイコンを探す-------------------------------------------------
@@ -135,21 +120,13 @@ def KessanUpDate(Job, Exc):
             if ICFL[0] is True:
                 RPA.ImgClick(URL, ICFL[1], 0.9, 10)  # 内訳書印刷アイコンをクリック
             # 印刷ボタンが表示されるまで待機---------------------------------
-            while (
-                pg.locateOnScreen(
-                    URL + r"\11U_PrintBtn.png", confidence=0.9
-                )
-                is None
-            ):
+            while pg.locateOnScreen(URL + r"\11U_PrintBtn.png", confidence=0.9) is None:
                 time.sleep(1)
             # --------------------------------------------------------------------
             RPA.ImgClick(URL, r"\11U_PrintBtn.png", 0.9, 10)  # 印刷ボタンをクリック
             PSQ = False, ""
             # 印刷設定が表示されるまで待機---------------------------------
-            while (
-                pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9)
-                is None
-            ):
+            while pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9) is None:
                 time.sleep(1)
                 PSQ = RPA.ImgCheck(URL, r"\PrintStyleQ.png", 0.9, 1)
                 if PSQ[0] is True:
@@ -183,9 +160,7 @@ def KessanUpDate(Job, Exc):
                 time.sleep(2)
                 #  印刷設定が表示されなくなるまで待機---------------------------------
                 while (
-                    pg.locateOnScreen(
-                        URL + r"\PrintBar.png", confidence=0.9
-                    )
+                    pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9)
                     is not None
                 ):
                     time.sleep(1)
@@ -195,12 +170,7 @@ def KessanUpDate(Job, Exc):
                 # --------------------------------------------------------------------
                 #  印刷中が表示されるまで待機-------------------------------------------
                 IC = 0
-                while (
-                    pg.locateOnScreen(
-                        URL + r"\NowPrint.png", confidence=0.9
-                    )
-                    is None
-                ):
+                while pg.locateOnScreen(URL + r"\NowPrint.png", confidence=0.9) is None:
                     time.sleep(1)
                     IC += 1
                     if IC == 5:
@@ -208,9 +178,7 @@ def KessanUpDate(Job, Exc):
                         break
                 #  印刷中が表示されなくなるまで待機-------------------------------------
                 while (
-                    pg.locateOnScreen(
-                        URL + r"\NowPrint.png", confidence=0.9
-                    )
+                    pg.locateOnScreen(URL + r"\NowPrint.png", confidence=0.9)
                     is not None
                 ):
                     time.sleep(1)
@@ -245,9 +213,7 @@ def KessanUpDate(Job, Exc):
                 f = 0
                 # 決算内訳書フラグが表示されるまで待機------------------------------------
                 while (
-                    pg.locateOnScreen(
-                        URL + r"\Kessan_CFlag.png", confidence=0.9
-                    )
+                    pg.locateOnScreen(URL + r"\Kessan_CFlag.png", confidence=0.9)
                     is None
                 ):
                     time.sleep(1)
@@ -291,9 +257,7 @@ def KessanUpDate(Job, Exc):
                 f = 0
                 # 決算内訳書フラグが表示されるまで待機------------------------------------
                 while (
-                    pg.locateOnScreen(
-                        URL + r"\Kessan_CFlag.png", confidence=0.9
-                    )
+                    pg.locateOnScreen(URL + r"\Kessan_CFlag.png", confidence=0.9)
                     is None
                 ):
                     time.sleep(1)

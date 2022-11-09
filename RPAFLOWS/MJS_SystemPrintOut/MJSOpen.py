@@ -14,7 +14,8 @@ logger = getLogger()
 
 
 def ExeOpen(AppURL):  # URL指定でアプリ起動関数
-    subprocess.Popen(AppURL)
+    P = subprocess.Popen(AppURL)
+    return P
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -110,22 +111,22 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
     logger.debug("Bat起動: debug level log")
     MSPDFURL = FolURL2 + "/bat/MSPDFSet.bat"  # 規定プリンターをMSPDFに
     ExeOpen(MSPDFURL)
-    ExeOpen(BatUrl)
-    desired_caps = {}
-    desired_caps["app"] = "Root"  # Rootを指定してDriverTargetをデスクトップに
-    logger.debug("Appiumサーバー起動: debug level log")
-    driver = webdriver.Remote(
-        "http://127.0.0.1:4724", desired_caps, direct_connection=True
-    )  # ポート指定してDriverインスタンス化
+    # ExeOpen(BatUrl)
+    # desired_caps = {}
+    # desired_caps["app"] = "Root"  # Rootを指定してDriverTargetをデスクトップに
+    # logger.debug("Appiumサーバー起動: debug level log")
+    # driver = webdriver.Remote(
+    #     "http://127.0.0.1:4724", desired_caps, direct_connection=True
+    # )  # ポート指定してDriverインスタンス化
     # ----------------------------------------------------------------------------------------------------------------------
     # MJSを起動-------------------------------------------------------------------------------------------------------------
     logger.debug("MJS起動: debug level log")
     try:
         MJSURL = r"C:\Program Files (x86)\MJS\MJSNXSVA\MJSDesktopNX.exe"
-        ExeOpen(MJSURL)
+        P = ExeOpen(MJSURL)
     except:
         MJSURL = r"C:\Program Files (x86)\MJS\MJSNXSVB\MJSDesktopNX.exe"
-        ExeOpen(MJSURL)
+        P = ExeOpen(MJSURL)
 
     # time.sleep(10)
     # 画像が出現するまで待機-------------------------------------------------------------------------------------------
@@ -155,9 +156,9 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
             ImgClick(
                 ImgFolName, r"\MJSOsiraseClose.png", conf, LoopVal
             )  # お知らせ画面があれば閉じるボタンをクリック
-            return driver
+            return P  # driver
         else:
             logger.debug("MJSログイン完了: debug level log")
-            return driver
+            return P  # driver
     time.sleep(1)
     # ----------------------------------------------------------------------------------------------------------------------

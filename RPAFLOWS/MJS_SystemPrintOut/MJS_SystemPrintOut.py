@@ -4,34 +4,25 @@
 # モジュールインポート
 import pyautogui as pg
 import time
-import MJSOpen
-
-# pandasインポート
 import pandas as pd
-
-# 配列計算関数numpyインポート
 import numpy as np
-
-# osインポート
 import os
-
-# 例外処理判定の為のtracebackインポート
+from threading import Thread, Lock
 import traceback
-
-# pandas(pd)で関与先データCSVを取得
-import pyautogui
-import pyperclip  # クリップボードへのコピーで使用
-import ExcelFileAction as EFA
-
-import MJSSPOPDFMarge as PDFM
 import datetime
 import openpyxl
 import re
 
+# pandas(pd)で関与先データCSVを取得
+# import pyautogui
+# import pyperclip  # クリップボードへのコピーで使用
+
+# 自作モジュールインポート
+import MJSOpen
+import MJSSPOPDFMarge as PDFM
+import ExcelFileAction as EFA
 import WarekiHenkan as WH
 import RPA_Function as RPA
-import threading
-import Control
 import Sub_GenkasyoukyakuUpdate as GenkasyoukyakuUpdate
 import Sub_HoujinzeiUpdate as HoujinzeiUpdate
 import Sub_KaikeiUpDate as KaikeiUpDate
@@ -43,7 +34,10 @@ import logging.config
 
 logging.config.fileConfig(r"LogConf\loggingMJSSysUp.conf")
 logger = logging.getLogger(__name__)
-LURL = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\一括更新申請\MJSLog\初回起動_"
+LURL = (
+    r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\製本・電子ファイル印刷申請\MJSLog\MJSSysUpLog.txt"
+)
+open(LURL, "w").close()  # エクセル用実行ログをリセット
 # ----------------------------------------------------------------------------------------------------------------------
 # #######################################################################################################################
 # 一括更新処理の該当年度はThisYearKey.pngなので、年度が変わったらスクリーンショットしなおす事
@@ -70,12 +64,13 @@ class Job:
         self.NextCreate_url = self.Img_dir + r"\\MJS_SystemNextCreate"  # 先
         self.XLSDir = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\製本・電子ファイル印刷申請"
         self.SerchURL = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\03_法人決算"  # 先
-        self.first_csv = self.XLSDir + r"\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
-        self.BatUrl = (
-            os.getcwd() + r"\\bat\\AWADriverOpen.bat"
-        )  # 4724ポート指定でappiumサーバー起動バッチを開く
+        self.Log_dir = self.XLSDir + r"\MJSLog\BackUp"  # 処理状況CSVの保管場所
+        self.filename = ""  # 処理状況CSVの元となるファイル名
+        # self.BatUrl = (
+        #     os.getcwd() + r"\\bat\\AWADriverOpen.bat"
+        # )  # 4724ポート指定でappiumサーバー起動バッチを開く
         self.driver = MJSOpen.MainFlow(
-            self.BatUrl, self.FolURL, self.Img_dir
+            "self.BatUrl", self.FolURL, self.Img_dir
         )  # MJSを起動しログイン後インスタンス化
         log_out("Jobクラス読込終了")
 
@@ -90,11 +85,10 @@ class Job:
         """
         try:
             log_out("xlsxをDataFrameに")
-            open(LURL, "w").close()
             for Exc.sheet_name in Exc.input_sheet_name:
                 # DataFrameとしてsheetのデータ読込み
                 if "印刷申請" in Exc.sheet_name:
-                    Exc.Read_sheet(Exc.sheet_name, self.first_csv)
+                    Exc.Read_sheet(Exc.sheet_name, self.Log_dir + r"\\" + self.filename)
                     MainStarter(
                         self,
                         Exc,
@@ -125,7 +119,7 @@ class Sheet:
         else:
             log_out("_Excelブック読込失敗")
 
-    def Read_sheet(self, sheet_name, first_csv, **kw):
+    def Read_sheet(self, sheet_name, Log_csvurl, **kw):
         log_out("_Excelシート読込開始")
         self.sheet_header = []
         ExSheet = ""
@@ -139,7 +133,7 @@ class Sheet:
         self.sheet_df = pd.DataFrame(ExSheet)
         self.name_df = pd.DataFrame(NameSheet)
         self.sheet_df.to_csv(
-            first_csv + dt_s + ".csv",
+            Log_csvurl + dt_s + ".csv",
             encoding="cp932",
             index=False,
         )
@@ -224,9 +218,7 @@ def log_out(txt):
     """
     logger出力
     """
-    dt_s = datetime.datetime.now()
-    dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-    logger.debug(dt_s + txt)
+    logger.debug(txt)
 
 
 # ------------------------------------------------------------------------------------------------
@@ -709,48 +701,139 @@ def MainStarter(Job, Exc):
 
 
 # ------------------------------------------------------------------------------------------------------------------
+# 排他制御付print
+def print_lock(ctx, str):
+    with ctx["lock"]:
+        print(str)
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# スレッド処理クラス
+class TestThread(Thread):
+    def __init__(self, ctx):
+        super(TestThread, self).__init__()
+        self.ctx = ctx
+        self.run_flag = True  # 実行フラグ
+        self.stop_flag = False  # 中断フラグ
+        self.start()
+
+    def set(self, j, Ex_File):
+        self.j = j
+        self.Ex_File = Ex_File
+
+    def run(self):
+        self.run_flag = True  # 実行フラグ
+        th.stop_flag = False  # 中断フラグ
+        print_lock(self.ctx, "sub loop start---")
+        Count = 0
+        while True:  # 無限ループ
+            if self.ctx["stop"]:  # main側から終了を指示されたら終了
+                break
+            if Count == 3600:  # 3600:  # カウント変数が指定に達したら終了
+                j.driver.kill()
+                self.stop_flag = True  # 中断フラグ
+                break
+            time.sleep(0.5)
+            Count += 0.5
+            if Count % 10 == 0:
+                print(f"{Count}秒経過")
+            # print_lock(self.ctx, "sub  : " + str(datetime.datetime.today()))
+        print_lock(self.ctx, "sub loop end---")
+        return
+
+
+# ------------------------------------------------------------------------------------------------------------------
 # def call():
 if __name__ == "__main__":
     global Start_Year  # 当年
-    j = Job()
+    global XLSURL, MoveXLSURL
+    try:
+        # mainとスレッドで共有するデータ
+        ctx = {"lock": Lock(), "stop": False}
+        th = TestThread(ctx)  # 別スレッドでタイマー起動
+        j = Job()  # JobClass
+        while_count = 0
+        # Log--------------------------------------------595
+        dt_s = datetime.datetime.now()
+        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+        logger.debug(dt_s + "_MJS決算書印刷開始")
+        # -----------------------------------------------
+        while th.run_flag is True and while_count < 2:
+            while_count += 1
+            try:
+                for fd_path, sb_folder, sb_file in os.walk(j.XLSDir):
+                    FDP = fd_path
+                    if not len(sb_folder) == 0:
+                        for sb_fileItem in sb_file:
+                            print(sb_fileItem)
+                            if (
+                                "製本・電子ファイル印刷申請ミロク" in sb_fileItem
+                                and not "製本・電子ファイル印刷申請ミロク(原本).xlsm" == sb_fileItem
+                            ):
+                                XLSURL = (
+                                    FDP
+                                    + r"\\"
+                                    + sb_fileItem.replace("~", "").replace("$", "")
+                                )
+                                MoveXLSURL = (
+                                    FDP
+                                    + r"\\MJSLog\\"
+                                    + sb_fileItem.replace("~", "").replace("$", "")
+                                )
+                                os.rename(XLSURL, MoveXLSURL)
+                                MoveXLSURL = (
+                                    FDP
+                                    + r"\\"
+                                    + sb_fileItem.replace("~", "").replace("$", "")
+                                )
+                                XLSURL = (
+                                    FDP
+                                    + r"\\MJSLog\\"
+                                    + sb_fileItem.replace("~", "").replace("$", "")
+                                )
+                                # フォルダ移動後のエクセル読込
+                                Ex_File = Sheet(XLSURL)
+                                # エクセルファイル名を取得
+                                j.filename = os.path.splitext(os.path.basename(XLSURL))[
+                                    0
+                                ]
 
-    # Log--------------------------------------------
-    dt_s = datetime.datetime.now()
-    dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-    logger.debug(dt_s + "_MJS決算書印刷開始")
-    # -----------------------------------------------
-    for fd_path, sb_folder, sb_file in os.walk(j.XLSDir):
-        FDP = fd_path
-        if not len(sb_folder) == 0:
-            for sb_fileItem in sb_file:
-                print(sb_fileItem)
-                if (
-                    "製本・電子ファイル印刷申請ミロク" in sb_fileItem
-                    and not "製本・電子ファイル印刷申請ミロク(原本).xlsm" == sb_fileItem
-                ):
-                    XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-                    MoveXLSURL = (
-                        FDP
-                        + r"\\MJSLog\\"
-                        + sb_fileItem.replace("~", "").replace("$", "")
-                    )
-                    os.rename(XLSURL, MoveXLSURL)
-                    MoveXLSURL = (
-                        FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-                    )
-                    XLSURL = (
-                        FDP
-                        + r"\\MJSLog\\"
-                        + sb_fileItem.replace("~", "").replace("$", "")
-                    )
-                    Ex_File = Sheet(XLSURL)
-                    try:
-                        j.MainFlow(Ex_File)
-                    except:
-                        traceback.print_exc()
-                    finally:
-                        del Ex_File  # エクセルブッククラスを解放                      
-                        os.rename(XLSURL, MoveXLSURL)
+                                print_lock(ctx, "main loop start---")
+                                # JobClassがなければ
+                                if j.driver.poll() is not None:
+                                    j = Job()  # JobClass
+                                    # mainとスレッドで共有するデータ
+                                    ctx = {"lock": Lock(), "stop": False}
+                                    th = TestThread(ctx)  # 別スレッドでタイマー起動
+                                th.set(j, Ex_File)
+                                # th.run()
+
+                                try:
+                                    j.MainFlow(Ex_File)
+                                except:
+                                    traceback.print_exc()
+                                finally:
+                                    print("")
+                                    try:
+                                        del Ex_File.book  # エクセルブッククラスを解放
+                                        os.rename(XLSURL, MoveXLSURL)
+                                    except:
+                                        print("解放済")
+                    # 時間制限でミロクを閉じていた場合
+                    if th.stop_flag is True:
+                        try:
+                            del Ex_File.book  # エクセルブッククラスを解放
+                            os.rename(XLSURL, MoveXLSURL)
+                        except:
+                            print("解放済")
+                if th.stop_flag is False:
+                    th.run_flag = False  # 実行フラグを中断状態に
+            except:
+                continue
+    finally:
+        print_lock(ctx, "main loop end---")
+        ctx["stop"] = True  # スレッド側に終了を指示
+        # th.join()  # スレッドの終了を待つ
 
 # ------------------------------------------------------------------------------------------------------------------
 # if __name__ == "__main__":

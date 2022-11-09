@@ -1,0 +1,3 @@
+[2022/11/09 14:42:28][DEBUG](MJS_SystemPrintOut.py:220) Jobクラス読込開始 log_out d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJS_SystemPrintOut.py
+[2022/11/09 14:42:28][DEBUG](MJSOpen.py:111) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJSOpen.py
+[2022/11/09 14:42:28][DEBUG](MJSOpen.py:123) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJSOpen.py

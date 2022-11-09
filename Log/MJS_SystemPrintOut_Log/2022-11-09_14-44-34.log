@@ -1,0 +1,10 @@
+[2022/11/09 14:44:34][DEBUG](MJS_SystemPrintOut.py:220) Jobクラス読込開始 log_out d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJS_SystemPrintOut.py
+[2022/11/09 14:44:34][DEBUG](MJSOpen.py:111) Bat起動: debug level log MainFlow d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJSOpen.py
+[2022/11/09 14:44:34][DEBUG](MJSOpen.py:123) MJS起動: debug level log MainFlow d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJSOpen.py
+[2022/11/09 14:44:35][DEBUG](MJSOpen.py:139) Pass入力開始: debug level log MainFlow d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJSOpen.py
+[2022/11/09 14:44:49][DEBUG](MJS_SystemPrintOut.py:220) Jobクラス読込終了 log_out d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJS_SystemPrintOut.py
+[2022/11/09 14:44:49][DEBUG](MJS_SystemPrintOut.py:758) 2022-11-09 14:44:49_MJS決算書印刷開始 <module> d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJS_SystemPrintOut.py
+[2022/11/09 14:45:19][DEBUG](MJS_SystemPrintOut.py:220) _Excelブック読込開始 log_out d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJS_SystemPrintOut.py
+[2022/11/09 14:45:43][DEBUG](MJS_SystemPrintOut.py:220) _Excelブック読込終了 log_out d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJS_SystemPrintOut.py
+[2022/11/09 14:46:20][DEBUG](MJS_SystemPrintOut.py:220) xlsxをDataFrameに log_out d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJS_SystemPrintOut.py
+[2022/11/09 14:46:25][DEBUG](MJS_SystemPrintOut.py:220) _Excelシート読込開始 log_out d:\PythonScript\RPAScript\RPAFLOWS\MJS_SystemPrintOut\MJS_SystemPrintOut.py
