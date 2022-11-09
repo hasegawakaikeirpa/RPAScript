@@ -710,16 +710,18 @@ def print_lock(ctx, str):
 # ------------------------------------------------------------------------------------------------------------------
 # スレッド処理クラス
 class TestThread(Thread):
-    def __init__(self, ctx):
+    def __init__(self, ctx, limit):
         super(TestThread, self).__init__()
         self.ctx = ctx
         self.run_flag = True  # 実行フラグ
         self.stop_flag = False  # 中断フラグ
+        self.limit_time = limit
         self.start()
 
     def set(self, j, Ex_File):
-        self.j = j
+        # self.j = j
         self.Ex_File = Ex_File
+        j.stop_flag = False  # 中断フラグ
 
     def run(self):
         self.run_flag = True  # 実行フラグ
@@ -729,9 +731,10 @@ class TestThread(Thread):
         while True:  # 無限ループ
             if self.ctx["stop"]:  # main側から終了を指示されたら終了
                 break
-            if Count == 3600:  # 3600:  # カウント変数が指定に達したら終了
+            if Count == self.limit_time:  # 3600:  # カウント変数が指定に達したら終了
                 j.driver.kill()
-                self.stop_flag = True  # 中断フラグ
+                # self.stop_flag = True  # 中断フラグ
+                j.stop_flag = True  # 中断フラグ
                 break
             time.sleep(0.5)
             Count += 0.5
@@ -749,8 +752,8 @@ if __name__ == "__main__":
     global XLSURL, MoveXLSURL
     try:
         # mainとスレッドで共有するデータ
-        ctx = {"lock": Lock(), "stop": False}
-        th = TestThread(ctx)  # 別スレッドでタイマー起動
+        # ctx = {"lock": Lock(), "stop": False}
+        # th = TestThread(ctx, 30)  # 別スレッドでタイマー起動
         j = Job()  # JobClass
         while_count = 0
         # Log--------------------------------------------595
@@ -758,81 +761,75 @@ if __name__ == "__main__":
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         logger.debug(dt_s + "_MJS決算書印刷開始")
         # -----------------------------------------------
-        while th.run_flag is True and while_count < 2:
-            while_count += 1
-            try:
-                for fd_path, sb_folder, sb_file in os.walk(j.XLSDir):
-                    FDP = fd_path
-                    if not len(sb_folder) == 0:
-                        for sb_fileItem in sb_file:
-                            print(sb_fileItem)
-                            if (
-                                "製本・電子ファイル印刷申請ミロク" in sb_fileItem
-                                and not "製本・電子ファイル印刷申請ミロク(原本).xlsm" == sb_fileItem
-                            ):
-                                XLSURL = (
-                                    FDP
-                                    + r"\\"
-                                    + sb_fileItem.replace("~", "").replace("$", "")
-                                )
-                                MoveXLSURL = (
-                                    FDP
-                                    + r"\\MJSLog\\"
-                                    + sb_fileItem.replace("~", "").replace("$", "")
-                                )
-                                os.rename(XLSURL, MoveXLSURL)
-                                MoveXLSURL = (
-                                    FDP
-                                    + r"\\"
-                                    + sb_fileItem.replace("~", "").replace("$", "")
-                                )
-                                XLSURL = (
-                                    FDP
-                                    + r"\\MJSLog\\"
-                                    + sb_fileItem.replace("~", "").replace("$", "")
-                                )
-                                # フォルダ移動後のエクセル読込
-                                Ex_File = Sheet(XLSURL)
-                                # エクセルファイル名を取得
-                                j.filename = os.path.splitext(os.path.basename(XLSURL))[
-                                    0
-                                ]
+        # while th.run_flag is True and while_count < 2:
+        #     while_count += 1
+        # try:
+        for fd_path, sb_folder, sb_file in os.walk(j.XLSDir):
+            FDP = fd_path
+            if not len(sb_folder) == 0:
+                for sb_fileItem in sb_file:
+                    print(sb_fileItem)
+                    if (
+                        "製本・電子ファイル印刷申請ミロク" in sb_fileItem
+                        and not "製本・電子ファイル印刷申請ミロク(原本).xlsm" == sb_fileItem
+                    ):
+                        XLSURL = (
+                            FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                        )
+                        MoveXLSURL = (
+                            FDP
+                            + r"\\MJSLog\\"
+                            + sb_fileItem.replace("~", "").replace("$", "")
+                        )
+                        os.rename(XLSURL, MoveXLSURL)
+                        MoveXLSURL = (
+                            FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                        )
+                        XLSURL = (
+                            FDP
+                            + r"\\MJSLog\\"
+                            + sb_fileItem.replace("~", "").replace("$", "")
+                        )
+                        # フォルダ移動後のエクセル読込
+                        Ex_File = Sheet(XLSURL)
+                        # エクセルファイル名を取得
+                        j.filename = os.path.splitext(os.path.basename(XLSURL))[0]
 
-                                print_lock(ctx, "main loop start---")
-                                # JobClassがなければ
-                                if j.driver.poll() is not None:
-                                    j = Job()  # JobClass
-                                    # mainとスレッドで共有するデータ
-                                    ctx = {"lock": Lock(), "stop": False}
-                                    th = TestThread(ctx)  # 別スレッドでタイマー起動
-                                th.set(j, Ex_File)
-                                # th.run()
-
-                                try:
-                                    j.MainFlow(Ex_File)
-                                except:
-                                    traceback.print_exc()
-                                finally:
-                                    print("")
-                                    try:
-                                        del Ex_File.book  # エクセルブッククラスを解放
-                                        os.rename(XLSURL, MoveXLSURL)
-                                    except:
-                                        print("解放済")
-                        # 時間制限でミロクを閉じていた場合
-                        if th.stop_flag is True:
+                        # print_lock(ctx, "main loop start---")
+                        # JobClassがなければ
+                        # if j.driver.poll() is not None:
+                        #     j = Job()  # JobClass
+                        #     # mainとスレッドで共有するデータ
+                        #     ctx = {"lock": Lock(), "stop": False}
+                        #     th = TestThread(ctx, 30)  # 別スレッドでタイマー起動
+                        # メイン処理とエクセルシートクラスをタイマーに格納
+                        # th.set(j, Ex_File)
+                        try:
+                            j.MainFlow(Ex_File)
+                        except:
+                            traceback.print_exc()
+                        finally:
+                            print("")
                             try:
                                 del Ex_File.book  # エクセルブッククラスを解放
                                 os.rename(XLSURL, MoveXLSURL)
                             except:
                                 print("解放済")
-                if th.stop_flag is False:
-                    th.run_flag = False  # 実行フラグを中断状態に
-            except:
-                continue
+                # 時間制限でミロクを閉じていた場合
+                # if th.stop_flag is True:
+                #     try:
+                #         del Ex_File.book  # エクセルブッククラスを解放
+                #         os.rename(XLSURL, MoveXLSURL)
+                #     except:
+                #         print("解放済")
+        # if th.stop_flag is False:
+        #     th.run_flag = False  # 実行フラグを中断状態に
+        # except:
+        #     continue
     finally:
-        print_lock(ctx, "main loop end---")
-        ctx["stop"] = True  # スレッド側に終了を指示
+        print("finally")
+        # print_lock(ctx, "main loop end---")
+        # ctx["stop"] = True  # スレッド側に終了を指示
         # th.join()  # スレッドの終了を待つ
 
 # ------------------------------------------------------------------------------------------------------------------

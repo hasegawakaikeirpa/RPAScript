@@ -18,12 +18,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
         global URL, ThisNo, ThisYear, ThisMonth
         URL = Job.PrintOut_url + r"\\GenkaSyoukyaku"
         # 減価償却フラグが表示されるまで待機------------------------------------
-        while (
-            pg.locateOnScreen(
-                URL + r"\G_SyoukyakuFlag.png", confidence=0.9
-            )
-            is None
-        ):
+        while pg.locateOnScreen(URL + r"\G_SyoukyakuFlag.png", confidence=0.9) is None:
             time.sleep(1)
         # ------------------------------------------------------------------
         time.sleep(1)
@@ -34,21 +29,16 @@ def GenkasyoukyakuUpdate(Job, Exc):
         # ------------------------------------------------------------------
         # 関与先コード入力ボックスをクリック------------------------------------
         RPA.ImgClick(URL, r"\K_NoBox.png", 0.9, 10)
-        while (
-            pg.locateOnScreen(
-                URL + r"\K_AfterNoBox.png", confidence=0.9
-            )
-            is None
-        ):
+        while pg.locateOnScreen(URL + r"\K_AfterNoBox.png", confidence=0.9) is None:
             time.sleep(1)
         time.sleep(1)
         pg.write(str(Exc.row_kanyo_no))
         pg.press("return")
-        pg.write(str(int(Exc.year)-1))
-        pg.press(["return","return","return"])
+        pg.write(str(int(Exc.year) - 1))
+        pg.press(["return", "return", "return"])
         pg.keyDown("shift")
         pg.press(["tab", "tab"])
-        pg.keyUp("shift") 
+        pg.keyUp("shift")
         # 入力した関与先コードを取得------------
         pg.keyDown("shift")
         pg.press(["tab", "tab"])
@@ -85,26 +75,19 @@ def GenkasyoukyakuUpdate(Job, Exc):
         # -----------------------------
         time.sleep(1)
         if str(Exc.row_kanyo_no) == ThisNo:
-            if str(int(Exc.year)-1) != ThisYear:
+            if str(int(Exc.year) - 1) != ThisYear:
                 return False, "年度なし", ThisYear, "NoData"
             print("関与先あり")
             pg.press(["return", "return", "return"])
             # 減価償却メニューが表示されるまで待機------------------------------------
             while (
-                pg.locateOnScreen(
-                    URL + r"\G_SyoukyakuMenu.png", confidence=0.9
-                )
-                is None
+                pg.locateOnScreen(URL + r"\G_SyoukyakuMenu.png", confidence=0.9) is None
             ):
                 time.sleep(1)
                 # アップデート情報画面が出たら閉じる-------------------------------
-                GSUM = RPA.ImgCheck(
-                    URL, r"\G_SyoukyakuUpMsg.png", 0.9, 1
-                )
+                GSUM = RPA.ImgCheck(URL, r"\G_SyoukyakuUpMsg.png", 0.9, 1)
                 if GSUM[0] is True:
-                    RPA.ImgClick(
-                        URL, r"\G_SyoukyakuUpMsgCansel.png", 0.9, 10
-                    )
+                    RPA.ImgClick(URL, r"\G_SyoukyakuUpMsgCansel.png", 0.9, 10)
                 # 顧問先情報更新ダイアログ確認-----------------------------------------
                 KK = RPA.ImgCheck(URL, r"\KomonKoushin.png", 0.9, 10)
                 if KK[0] is True:
@@ -117,9 +100,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                         is None
                     ):
                         time.sleep(1)
-                    RPA.ImgClick(
-                        URL, r"\KomonKoushinInput.png", 0.9, 10
-                    )
+                    RPA.ImgClick(URL, r"\KomonKoushinInput.png", 0.9, 10)
                 # 参照表示確認ダイアログ確認------------------------------------------
                 KK = RPA.ImgCheck(URL, r"\KSansyouQ.png", 0.9, 10)
                 if KK[0] is True:
@@ -128,31 +109,18 @@ def GenkasyoukyakuUpdate(Job, Exc):
                 if DL[0] is True:
                     pg.press("return")
                     while (
-                        pg.locateOnScreen(
-                            URL + r"\K_TaisyouMenu.png", confidence=0.9
-                        )
+                        pg.locateOnScreen(URL + r"\K_TaisyouMenu.png", confidence=0.9)
                         is None
                     ):
                         time.sleep(1)
                         # アップデート情報画面が出たら閉じる-------------------------------
-                        GSUM = RPA.ImgCheck(
-                            URL, r"\G_SyoukyakuUpMsg.png", 0.9, 1
-                        )
+                        GSUM = RPA.ImgCheck(URL, r"\G_SyoukyakuUpMsg.png", 0.9, 1)
                         if GSUM[0] is True:
-                            RPA.ImgClick(
-                                URL, r"\G_SyoukyakuUpMsgCansel.png", 0.9, 10
-                            )                        
+                            RPA.ImgClick(URL, r"\G_SyoukyakuUpMsgCansel.png", 0.9, 10)
             # --------------------------------------------------------------------
-            RPA.ImgClick(
-                URL, r"\G_Insatu.png", 0.9, 10
-            )  # 2.印刷処理アイコンをクリック
+            RPA.ImgClick(URL, r"\G_Insatu.png", 0.9, 10)  # 2.印刷処理アイコンをクリック
             # 印刷処理メニューが表示されるまで待機------------------------------------
-            while (
-                pg.locateOnScreen(
-                    URL + r"\G_InsatuFlag.png", confidence=0.9
-                )
-                is None
-            ):
+            while pg.locateOnScreen(URL + r"\G_InsatuFlag.png", confidence=0.9) is None:
                 time.sleep(1)
             # --------------------------------------------------------------------
             if Exc.PN == "固定資産台帳":
@@ -178,9 +146,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     time.sleep(1)
                 # --------------------------------------------------------------------
                 time.sleep(1)
-                RPA.ImgClick(
-                    URL, r"\01G_PrintOK.png", 0.9, 10
-                )  # 出力条件設定OKをクリック
+                RPA.ImgClick(URL, r"\01G_PrintOK.png", 0.9, 10)  # 出力条件設定OKをクリック
                 # --------------------------------------------------------------------
                 NOB = False, ""
                 NOB = RPA.ImgCheck(URL, r"\G_NOB.png", 0.9, 10)
@@ -209,14 +175,10 @@ def GenkasyoukyakuUpdate(Job, Exc):
                 if NOB[0] is False:
                     time.sleep(3)
                     # --------------------------------------------------------------------
-                    RPA.ImgClick(
-                        URL, r"\01G_PrintBtn.png", 0.9, 10
-                    )  # 印刷ボタンをクリック
+                    RPA.ImgClick(URL, r"\01G_PrintBtn.png", 0.9, 10)  # 印刷ボタンをクリック
                     # 印刷設定が表示されるまで待機---------------------------------
                     while (
-                        pg.locateOnScreen(
-                            URL + r"\PrintBar.png", confidence=0.9
-                        )
+                        pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9)
                         is None
                     ):
                         time.sleep(1)
@@ -238,9 +200,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     pg.press("delete")
                     pg.press("backspace")
                     time.sleep(1)
-                    pyperclip.copy(
-                        Exc.Fname.replace("\\\\", "\\").replace("/", "\\")
-                    )
+                    pyperclip.copy(Exc.Fname.replace("\\\\", "\\").replace("/", "\\"))
                     time.sleep(1)
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
@@ -249,9 +209,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     time.sleep(2)
                     #  印刷設定が表示されなくなるまで待機---------------------------------
                     while (
-                        pg.locateOnScreen(
-                            URL + r"\PrintBar.png", confidence=0.9
-                        )
+                        pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9)
                         is not None
                     ):
                         time.sleep(1)
@@ -352,9 +310,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     is None
                 ):
                     time.sleep(1)
-                    GN = RPA.ImgCheck(
-                        URL, r"\03G_Nodata.png", 0.9, 1
-                    )
+                    GN = RPA.ImgCheck(URL, r"\03G_Nodata.png", 0.9, 1)
                     if GN[0] is True:
                         pg.press("return")
                         Nod = "Nodata"
@@ -363,9 +319,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                 # --------------------------------------------------------------------
                 time.sleep(1)
                 if Nod == "":
-                    RPA.ImgClick(
-                        URL, r"\03G_PrintOK.png", 0.9, 10
-                    )  # 出力条件設定OKをクリック
+                    RPA.ImgClick(URL, r"\03G_PrintOK.png", 0.9, 10)  # 出力条件設定OKをクリック
                     # 出力条件ウィンドウが表示されるなくなるまで待機--------------------------
                     while (
                         pg.locateOnScreen(
@@ -377,14 +331,10 @@ def GenkasyoukyakuUpdate(Job, Exc):
                         time.sleep(1)
                     time.sleep(3)
                     # --------------------------------------------------------------------
-                    RPA.ImgClick(
-                        URL, r"\01G_PrintBtn.png", 0.9, 10
-                    )  # 印刷ボタンをクリック
+                    RPA.ImgClick(URL, r"\01G_PrintBtn.png", 0.9, 10)  # 印刷ボタンをクリック
                     # 印刷設定が表示されるまで待機---------------------------------
                     while (
-                        pg.locateOnScreen(
-                            URL + r"\PrintBar.png", confidence=0.9
-                        )
+                        pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9)
                         is None
                     ):
                         time.sleep(1)
@@ -400,9 +350,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                                 Nod = "Nodata"
                             else:
                                 pg.press("return")
-                                RPA.ImgClick(
-                                    URL, r"\NodataCan.png", 0.9, 10
-                                )
+                                RPA.ImgClick(URL, r"\NodataCan.png", 0.9, 10)
                                 Nod = "Nodata"
                         if Nod == "Nodata":
                             break
@@ -425,9 +373,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     pg.press("delete")
                     pg.press("backspace")
                     time.sleep(1)
-                    pyperclip.copy(
-                        Exc.Fname.replace("\\\\", "\\").replace("/", "\\")
-                    )
+                    pyperclip.copy(Exc.Fname.replace("\\\\", "\\").replace("/", "\\"))
                     time.sleep(1)
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
@@ -436,9 +382,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     time.sleep(2)
                     #  印刷設定が表示されなくなるまで待機---------------------------------
                     while (
-                        pg.locateOnScreen(
-                            URL + r"\PrintBar.png", confidence=0.9
-                        )
+                        pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9)
                         is not None
                     ):
                         time.sleep(1)
@@ -554,9 +498,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     time.sleep(1)
                 # --------------------------------------------------------------------
                 time.sleep(1)
-                RPA.ImgClick(
-                    URL, r"\04G_PrintOK.png", 0.9, 10
-                )  # 出力条件設定OKをクリック
+                RPA.ImgClick(URL, r"\04G_PrintOK.png", 0.9, 10)  # 出力条件設定OKをクリック
                 # 出力条件ウィンドウが表示されるなくなるまで待機--------------------------
                 while (
                     pg.locateOnScreen(
@@ -573,14 +515,10 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     Nod = "Nodata"
                 if Nod == "":
                     # --------------------------------------------------------------------
-                    RPA.ImgClick(
-                        URL, r"\01G_PrintBtn.png", 0.9, 10
-                    )  # 印刷ボタンをクリック
+                    RPA.ImgClick(URL, r"\01G_PrintBtn.png", 0.9, 10)  # 印刷ボタンをクリック
                     # 印刷設定が表示されるまで待機---------------------------------
                     while (
-                        pg.locateOnScreen(
-                            URL + r"\PrintBar.png", confidence=0.9
-                        )
+                        pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9)
                         is None
                     ):
                         time.sleep(1)
@@ -612,9 +550,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     pg.press("delete")
                     pg.press("backspace")
                     time.sleep(1)
-                    pyperclip.copy(
-                        Exc.Fname.replace("\\\\", "\\").replace("/", "\\")
-                    )
+                    pyperclip.copy(Exc.Fname.replace("\\\\", "\\").replace("/", "\\"))
                     time.sleep(1)
                     pg.hotkey("ctrl", "v")
                     pg.press("return")
@@ -623,9 +559,7 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     time.sleep(2)
                     #  印刷設定が表示されなくなるまで待機---------------------------------
                     while (
-                        pg.locateOnScreen(
-                            URL + r"\PrintBar.png", confidence=0.9
-                        )
+                        pg.locateOnScreen(URL + r"\PrintBar.png", confidence=0.9)
                         is not None
                     ):
                         time.sleep(1)

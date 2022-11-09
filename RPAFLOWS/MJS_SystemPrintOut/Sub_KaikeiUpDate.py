@@ -790,5 +790,5 @@ def lastclose():
             f += 1
             # -----------------------------------
     if RPA.ImgCheck(URL, r"\Last_End.png", 0.9, 10)[0] is True:
-        pg.press("n")            
+        pg.press("n")
     return True
