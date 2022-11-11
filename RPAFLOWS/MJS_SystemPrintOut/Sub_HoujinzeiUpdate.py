@@ -4,9 +4,13 @@ import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
 import MJSSPOPDFMarge as PDFM
+import wrapt_timeout_decorator
+
+TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-def HoujinzeiUpdate(Job, Exc):
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 法人税更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -1193,3 +1197,16 @@ def sinkokuend(Job):
     if HLI[0] is True:
         RPA.ImgClick(URL, HLI[1], 0.9, 10)
     # --------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------------------------------------------
+def HoujinzeiUpdate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""

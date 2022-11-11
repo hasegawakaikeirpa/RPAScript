@@ -3,9 +3,13 @@ import pyautogui as pg
 import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
+import wrapt_timeout_decorator
+
+TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-def GenkasyoukyakuUpdate(Job, Exc):
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 減価償却更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -656,3 +660,16 @@ def GenkasyoukyakuUpdate(Job, Exc):
             return False, "関与先なし", "", ""
     except:
         return False, "exceptエラー", "", ""
+
+# ------------------------------------------------------------------------------------------------------------------
+def GenkasyoukyakuUpdate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""

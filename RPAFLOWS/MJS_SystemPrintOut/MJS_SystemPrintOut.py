@@ -74,30 +74,6 @@ class Job:
         )  # MJSを起動しログイン後インスタンス化
         log_out("Jobクラス読込終了")
 
-    def MainFlow(self, Exc):
-
-        """
-        概要: プリントメイン処理
-        @param FolURL : ミロク起動関数のフォルダ(str)
-        @param TFolURL : このpyファイルのフォルダ(str)
-        @param Exlsx : Excel指示シート(obj)
-        @return : bool
-        """
-        try:
-            log_out("xlsxをDataFrameに")
-            for Exc.sheet_name in Exc.input_sheet_name:
-                # DataFrameとしてsheetのデータ読込み
-                if "印刷申請" in Exc.sheet_name:
-                    Exc.Read_sheet(Exc.sheet_name, self.Log_dir + r"\\" + self.filename)
-                    MainStarter(
-                        self,
-                        Exc,
-                    )  # データ送信画面までの関数
-                    print("")
-        except Exception as e:
-            log_out(e)
-
-
 # ------------------------------------------------------------------------------------------------
 class Sheet:
     """
@@ -699,51 +675,29 @@ def MainStarter(Job, Exc):
     except:
         return False, ""
 
-
 # ------------------------------------------------------------------------------------------------------------------
-# 排他制御付print
-def print_lock(ctx, str):
-    with ctx["lock"]:
-        print(str)
+def MainFlow(self, Exc):
 
-
-# ------------------------------------------------------------------------------------------------------------------
-# スレッド処理クラス
-class TestThread(Thread):
-    def __init__(self, ctx, limit):
-        super(TestThread, self).__init__()
-        self.ctx = ctx
-        self.run_flag = True  # 実行フラグ
-        self.stop_flag = False  # 中断フラグ
-        self.limit_time = limit
-        self.start()
-
-    def set(self, j, Ex_File):
-        # self.j = j
-        self.Ex_File = Ex_File
-        j.stop_flag = False  # 中断フラグ
-
-    def run(self):
-        self.run_flag = True  # 実行フラグ
-        th.stop_flag = False  # 中断フラグ
-        print_lock(self.ctx, "sub loop start---")
-        Count = 0
-        while True:  # 無限ループ
-            if self.ctx["stop"]:  # main側から終了を指示されたら終了
-                break
-            if Count == self.limit_time:  # 3600:  # カウント変数が指定に達したら終了
-                j.driver.kill()
-                # self.stop_flag = True  # 中断フラグ
-                j.stop_flag = True  # 中断フラグ
-                break
-            time.sleep(0.5)
-            Count += 0.5
-            if Count % 10 == 0:
-                print(f"{Count}秒経過")
-            # print_lock(self.ctx, "sub  : " + str(datetime.datetime.today()))
-        print_lock(self.ctx, "sub loop end---")
-        return
-
+    """
+    概要: プリントメイン処理
+    @param FolURL : ミロク起動関数のフォルダ(str)
+    @param TFolURL : このpyファイルのフォルダ(str)
+    @param Exlsx : Excel指示シート(obj)
+    @return : bool
+    """
+    try:
+        log_out("xlsxをDataFrameに")
+        for Exc.sheet_name in Exc.input_sheet_name:
+            # DataFrameとしてsheetのデータ読込み
+            if "印刷申請" in Exc.sheet_name:
+                Exc.Read_sheet(Exc.sheet_name, self.Log_dir + r"\\" + self.filename)
+                MainStarter(
+                    self,
+                    Exc,
+                )  # データ送信画面までの関数
+                print("")
+    except Exception as e:
+        log_out(e)
 
 # ------------------------------------------------------------------------------------------------------------------
 # def call():

@@ -3,9 +3,13 @@ import pyautogui as pg
 import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
+import wrapt_timeout_decorator
+
+TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-def DensisinkokuUpDate(Job, Exc):
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 電子申告同意書印刷処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -213,3 +217,17 @@ def DensisinkokuUpDate(Job, Exc):
         return True, str(Exc.row_kanyo_no), "ThisYear", "ThisMonth"
     except:
         return False, "exceptエラー", "", ""
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def DensisinkokuUpDate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""

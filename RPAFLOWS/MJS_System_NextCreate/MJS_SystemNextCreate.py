@@ -83,16 +83,16 @@ class Job:
         # self.BatUrl = (
         #     os.getcwd() + r"\\bat\\AWADriverOpen.bat"
         # )  # 4724ポート指定でappiumサーバー起動バッチを開く
-        # self.driver = MJSOpen.MainFlow(
-        #     "self.BatUrl", self.FolURL, self.Img_dir
-        # )  # MJSを起動しログイン後インスタンス化
+        self.driver = MJSOpen.MainFlow(
+            "self.BatUrl", self.FolURL, self.Img_dir
+        )  # MJSを起動しログイン後インスタンス化
         self.TimeOut = False
-        # if self.driver == "TimeOut":
-        #     log_out("MJSOpen.MainFlowタイムアウト")
-        #     self.TimeOut = True
-        # else:
-        #     log_out("Jobクラス読込終了")
-        #     self.TimeOut = False
+        if self.driver == "TimeOut":
+            log_out("MJSOpen.MainFlowタイムアウト")
+            self.TimeOut = True
+        else:
+            log_out("Jobクラス読込終了")
+            self.TimeOut = False
 
     def KomonUpdate(self, ExRow):
         """
@@ -857,14 +857,12 @@ def Main():
                                 log_out("Excelファイル移動完了")
                                 # TimeOutなら抜ける
                                 return False
-                            else:
-                                del Ex_File  # エクセルブッククラスを解放
-                                log_out("Excel解放")
-                                os.rename(XLSURL, MoveXLSURL)
-                                log_out("Excelファイル移動完了")
                         except:
                             traceback.print_exc()
-            
+                            del Ex_File  # エクセルブッククラスを解放
+                            log_out("Excel解放")
+                            os.rename(XLSURL, MoveXLSURL)
+                            log_out("Excelファイル移動完了")            
         return True
 
 

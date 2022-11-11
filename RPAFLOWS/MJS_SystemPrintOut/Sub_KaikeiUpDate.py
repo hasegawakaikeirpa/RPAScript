@@ -4,9 +4,13 @@ import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
 import MJSSPOPDFMarge as PDFM
+import wrapt_timeout_decorator
+
+TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-def KaikeiUpDate(Job, Exc):
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 会計大将更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -792,3 +796,16 @@ def lastclose():
     if RPA.ImgCheck(URL, r"\Last_End.png", 0.9, 10)[0] is True:
         pg.press("n")
     return True
+
+# ------------------------------------------------------------------------------------------------------------------
+def KaikeiUpDate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""
