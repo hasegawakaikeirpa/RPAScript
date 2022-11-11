@@ -83,16 +83,16 @@ class Job:
         # self.BatUrl = (
         #     os.getcwd() + r"\\bat\\AWADriverOpen.bat"
         # )  # 4724ポート指定でappiumサーバー起動バッチを開く
-        self.driver = MJSOpen.MainFlow(
-            "self.BatUrl", self.FolURL, self.Img_dir
-        )  # MJSを起動しログイン後インスタンス化
+        # self.driver = MJSOpen.MainFlow(
+        #     "self.BatUrl", self.FolURL, self.Img_dir
+        # )  # MJSを起動しログイン後インスタンス化
         self.TimeOut = False
-        if self.driver == "TimeOut":
-            log_out("MJSOpen.MainFlowタイムアウト")
-            self.TimeOut = True
-        else:
-            log_out("Jobクラス読込終了")
-            self.TimeOut = False
+        # if self.driver == "TimeOut":
+        #     log_out("MJSOpen.MainFlowタイムアウト")
+        #     self.TimeOut = True
+        # else:
+        #     log_out("Jobクラス読込終了")
+        #     self.TimeOut = False
 
     def KomonUpdate(self, ExRow):
         """
@@ -816,29 +816,28 @@ def Main():
         dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
         logger.debug(dt_s + "_MJSシステム更新開始")
         # -----------------------------------------------
-        for fd_path, sb_folder, sb_file in os.walk(j.XLSDir):
-            FDP = fd_path
-            if not len(sb_folder) == 0:
-                for sb_fileItem in sb_file:
+        for curDir, dirs, files in os.walk(j.XLSDir):
+            if curDir == j.XLSDir:
+                for sb_fileItem in files:
                     print(sb_fileItem)
                     if (
                         "一括更新申請ミロク" in sb_fileItem
                         and not "一括更新申請ミロク(原本).xlsm" == sb_fileItem
                     ):
                         XLSURL = (
-                            FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                            curDir + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
                         )
                         MoveXLSURL = (
-                            FDP
+                            curDir
                             + r"\\MJSLog\\"
                             + sb_fileItem.replace("~", "").replace("$", "")
                         )
                         os.rename(XLSURL, MoveXLSURL)
                         MoveXLSURL = (
-                            FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                            curDir + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
                         )
                         XLSURL = (
-                            FDP
+                            curDir
                             + r"\\MJSLog\\"
                             + sb_fileItem.replace("~", "").replace("$", "")
                         )
@@ -865,6 +864,7 @@ def Main():
                                 log_out("Excelファイル移動完了")
                         except:
                             traceback.print_exc()
+            
         return True
 
 
