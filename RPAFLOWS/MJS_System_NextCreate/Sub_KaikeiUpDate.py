@@ -3,9 +3,13 @@ import pyautogui as pg
 import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
+import wrapt_timeout_decorator
 
+TIMEOUT = 600
 
-def KaikeiUpDate(Job, Exc):
+# ------------------------------------------------------------------------------------------------------------------
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 会計大将更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -158,265 +162,6 @@ def KaikeiUpDate(Job, Exc):
                 pg.press("f4")
                 pg.keyUp("alt")
                 # -----------------------------------
-            #     # RPA.ImgClick(URL, r"\PrintOutTab.png", 0.9, 10)  # 2印刷タブクリック
-            #     # # 6月次締めが表示されるまで待機--------------------------
-            #     # while (
-            #     #     pg.locateOnScreen(URL + r"\SimeIcon.png", confidence=0.9)
-            #     #     is None
-            #     # ):
-            #     #     time.sleep(1)
-            #     # RPA.ImgClick(URL, r"\SimeIcon.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
-            #     # while (
-            #     #     pg.locateOnScreen(URL + r"\GetujiIcon.png", confidence=0.9)
-            #     #     is None
-            #     # ):
-            #     #     time.sleep(1)
-            #     # RPA.ImgClick(URL, r"\GetujiIcon.png", 0.9, 10)  # 月次処理アイコンをクリック
-            #     # # 月次確定済みか判定して処理分け-------------------------------------------------------
-            #     # # 月次処理解除-----------------------------------------------------------------------
-            #     # KUL = RPA.ImgCheck(
-            #     #     URL, r"\KakuteUnLock.png", 0.9, 10
-            #     # )  # 月次処理解除アイコンを検索
-            #     # if KUL[0] is True:
-            #     #     RPA.ImgClick(
-            #     #         URL, r"\KakuteUnLock.png", 0.9, 10
-            #     #     )  # 月次処理アイコンをクリック
-            #     #     time.sleep(2)
-            #     #     pg.press("y")
-            #     #     while (
-            #     #         pg.locateOnScreen(
-            #     #             URL + r"\GetusjiKakutei.png", confidence=0.9
-            #     #         )
-            #     #         is None
-            #     #     ):
-            #     #         time.sleep(1)
-            #     #     pg.press("return")
-            #     #     time.sleep(1)
-            #     # # ---------------------------------------------------------------------------------
-            #     time.sleep(3)
-            #     pg.keyDown("alt")
-            #     pg.press("x")
-            #     pg.keyUp("alt")
-            #     while pg.locateOnScreen(URL + r"\M_Sonota.png", confidence=0.9) is None:
-            #         time.sleep(1)
-            #     RPA.ImgClick(URL, r"\D_TourokuTAB.png", 0.9, 10)  # 6導入・登録タブクリック
-            #     # 会社基本情報アイコンが表示されるまで待機--------------------------------------
-            #     while pg.locateOnScreen(URL + r"\CamIcon.png", confidence=0.9) is None:
-            #         time.sleep(1)
-            #     RPA.ImgClick(URL, r"\CamIcon.png", 0.9, 10)  # 会社基本情報アイコンをクリック
-            #     # 顧問先情報取り込みアイコンが表示されるまで待機--------------------------------
-            #     while (
-            #         pg.locateOnScreen(URL + r"\DataInIcon.png", confidence=0.9) is None
-            #     ):
-            #         time.sleep(1)
-            #     RPA.ImgClick(URL, r"\DataInIcon.png", 0.9, 10)  # 顧問先情報取り込みアイコンをクリック
-            #     while pg.locateOnScreen(URL + r"\DataInOK.png", confidence=0.9) is None:
-            #         time.sleep(1)
-            #     RPA.ImgClick(URL, r"\DataInOK.png", 0.9, 10)  # 取り込むボタンをクリック
-            #     time.sleep(3)
-            #     pg.keyDown("alt")
-            #     pg.press("x")
-            #     pg.keyUp("alt")
-            #     time.sleep(1)
-            #     # --------------------------------------------------------------------------------
-            #     RPA.ImgClick(URL, r"\PrintOutTab.png", 0.9, 10)  # 2印刷タブクリック
-            #     # マスター更新------------------------------------------------------------------------
-            #     RPA.ImgClick(URL, r"\MasterUp.png", 0.9, 10)  # マスター更新をクリック
-            #     while (
-            #         RPA.ImgCheckForList(
-            #             URL,
-            #             [r"MasterUpStart.png", r"MasterUpStart2.png"],
-            #             0.9,
-            #             10,
-            #         )[0]
-            #         is True
-            #     ):
-            #         time.sleep(1)
-            #         TL = RPA.ImgCheckForList(
-            #             URL,
-            #             [r"MasterUpStart.png", r"MasterUpStart2.png"],
-            #             0.9,
-            #             10,
-            #         )
-            #         RPA.ImgClick(URL, TL[1], 0.9, 10)  # マスター更新開始をクリック
-            #         break
-            #     time.sleep(3)
-            #     pg.press("y")
-            #     time.sleep(3)
-            #     pg.press("return")
-            #     time.sleep(3)
-            #     pg.keyDown("alt")
-            #     pg.press("x")
-            #     pg.keyUp("alt")
-            #     # 月次確定--------------------------------------------------------------------------
-            #     # 月次確定アイコンが表示されるまで待機--------------------------
-            #     while (
-            #         pg.locateOnScreen(URL + r"\AfterGetujiKakutei.png", confidence=0.9)
-            #         is None
-            #     ):
-            #         time.sleep(1)
-            #     RPA.ImgClick(URL, r"\AfterGetujiKakutei.png", 0.9, 10)  # 月次確定アイコンクリック
-            #     KL = RPA.ImgCheck(URL, r"\KakuteiLock.png", 0.9, 10)  # 月次処理確定アイコンを検索
-            #     if KL[0] is True:
-            #         while (
-            #             pg.locateOnScreen(
-            #                 URL + r"\KakuteiKaijyo.png", confidence=0.99999
-            #             )
-            #             is not None
-            #         ):
-            #             RPA.ImgClick(
-            #                 URL, r"\KakuteiKaijyo.png", 0.99999, 10
-            #             )  # 月次未確定チェックボックスをクリック
-            #             time.sleep(1)
-            #         RPA.ImgClick(URL, r"\KakuteiLock.png", 0.9, 10)  # 月次処理確定アイコンをクリック
-            #         time.sleep(1)
-            #         pg.press("y")
-            #         # ---------------------------------------------------------
-            #         while (
-            #             pg.locateOnScreen(URL + r"\KessanKQ.png", confidence=0.9)
-            #             is None
-            #         ):
-            #             time.sleep(1)
-            #             # KessanKakuteiErr(URL, URL, Exc.row_data, driver)
-            #         # ---------------------------------------------------------
-            #     time.sleep(1)
-            #     pg.keyDown("alt")
-            #     pg.press("x")
-            #     pg.keyUp("alt")
-            #     RPA.ImgClick(URL, r"\M_Sonota.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
-            #     # 一括更新のアイコンが表示されるまで待機----------------------------------
-            #     while (
-            #         pg.locateOnScreen(URL + r"\IkkatsuKousin.png", confidence=0.9)
-            #         is None
-            #     ):
-            #         time.sleep(1)
-            #     # --------------------------------------------------------------------
-            #     RPA.ImgClick(URL, r"\IkkatsuKousin.png", 0.9, 10)  # その他メニュ-のアイコンをクリック
-            #     # 一括更新メニューが表示されるまで待機------------------------------------
-            #     while (
-            #         pg.locateOnScreen(URL + r"\IkkatuOpenFlag.png", confidence=0.9)
-            #         is None
-            #     ):
-            #         time.sleep(1)
-            #         # UW = RPA.ImgCheck(URL, r"\Underwindow.png", 0.9, 10)
-            #         # if UW[0] is True:
-            #         #     RPA.ImgClick(URL, r"\Underwindow.png", 0.9, 10)
-            #         #     UW2 = RPA.ImgCheck(URL, r"\Underwindow2.png", 0.9, 10)
-            #         #     if UW2[0] is True:
-            #         #         RPA.ImgClick(URL, r"\Underwindow2.png", 0.9, 10)
-            #     # --------------------------------------------------------------------
-            #     RPA.ImgClick(URL, r"\IkkatuOpenFlag.png", 0.9, 10)  # 一括更新メニューのアイコンをクリック
-            #     while (
-            #         RPA.ImgCheckForList(
-            #             URL, [r"IkkatuFind.png", r"IkkatuFind2.png"], 0.9, 10
-            #         )[0]
-            #         is False
-            #     ):
-            #         time.sleep(1)
-            #     FC = RPA.ImgCheckForList(
-            #         URL,
-            #         [
-            #             r"IkkatuFind.png",
-            #             r"IkkatuFind2.png",
-            #         ],
-            #         0.9,
-            #         10,
-            #     )
-            #     if FC[0] is True:
-            #         RPA.ImgClick(URL, FC[1], 0.9, 10)  # 一括更新メニューのアイコンをクリック
-            #         pyperclip.copy(str(Exc.row_data["関与先番号"]))
-            #         pg.hotkey("ctrl", "v")
-            #         # 検索ボタンまでエンター-------------------------------------
-            #         while RPA.ImgCheck(URL, r"FindFlag.png", 0.9, 10)[0] is False:
-            #             time.sleep(1)
-            #             pg.press("return")
-            #     pg.press("return")
-            #     time.sleep(1)
-            #     pg.press("space")
-            #     # チェックマークが表示されるまで待機-------------------------------------
-            #     while (
-            #         RPA.ImgCheckForList(
-            #             URL,
-            #             [
-            #                 r"IkkatuCheck.png",
-            #                 r"ZaisanCheck.png",
-            #                 r"NendCheck.png",
-            #                 r"HouteiCheck.png",
-            #             ],
-            #             0.9,
-            #             10,
-            #         )[0]
-            #         is False
-            #     ):
-            #         time.sleep(1)
-            #     # --------------------------------------------------------------------
-            #     time.sleep(1)
-            #     RPA.ImgClick(URL, r"\IkkatuStart.png", 0.9, 10)  # 一括更新開始のアイコンをクリック
-            #     # 確認ウィンドウが表示されるまで待機-------------------------------------
-            #     while pg.locateOnScreen(URL + r"\SakuseiQ.png", confidence=0.9) is None:
-            #         time.sleep(1)
-            #     # --------------------------------------------------------------------
-            #     pg.press("y")  # yで決定(nがキャンセル)
-            #     # 確認ウィンドウが表示されるまで待機-------------------------------------
-            #     while (
-            #         pg.locateOnScreen(URL + r"\SakuseiQ2.png", confidence=0.9) is None
-            #     ):
-            #         time.sleep(1)
-            #     # --------------------------------------------------------------------
-            #     pg.press("return")  # 決定
-            #     # 処理終了ウィンドウが表示されるまで待機----------------------------------
-            #     while (
-            #         pg.locateOnScreen(URL + r"\IkkatuEndFlag.png", confidence=0.9)
-            #         is None
-            #     ):
-            #         time.sleep(1)
-            #     # --------------------------------------------------------------------
-            #     pg.press("return")  # 決定
-            #     # チェックマークが表示されなくなるまで待機-------------------------------
-            #     while (
-            #         RPA.ImgCheckForList(
-            #             URL,
-            #             [
-            #                 r"IkkatuCheck.png",
-            #                 r"ZaisanCheck.png",
-            #                 r"NendCheck.png",
-            #                 r"HouteiCheck.png",
-            #             ],
-            #             0.9,
-            #             10,
-            #         )[0]
-            #         is True
-            #     ):
-            #         time.sleep(1)
-            #     # 一括更新のアイコンが表示されるまで待機----------------------------------
-            #     while (
-            #         pg.locateOnScreen(URL + r"\IkkatsuKousin.png", confidence=0.9)
-            #         is None
-            #     ):
-            #         time.sleep(1)
-            #         # --------------------------------------------------------------------
-            #         ME = RPA.ImgCheckForList(
-            #             URL, [r"\MenuEnd.png", r"\MenuEnd2.png"], 0.9, 10
-            #         )
-            #         if ME[0] is True:
-            #             RPA.ImgClick(URL, ME[1], 0.9, 10)  # 終了アイコンをクリック
-            #     # --------------------------------------------------------------------
-            #     # 閉じる処理--------------------------
-            #     pg.keyDown("alt")
-            #     pg.press("f4")
-            #     pg.keyUp("alt")
-            #     # -----------------------------------
-            #     # 会計大将フラグが表示されるまで待機-------------------------------------
-            #     while (
-            #         pg.locateOnScreen(URL + r"\Kaikei_CFlag.png", confidence=0.9)
-            #         is None
-            #     ):
-            #         time.sleep(1)
-            #         al4c = RPA.ImgCheck(URL, r"\altf4Q.png", 0.9, 10)  # 終了確認が表示されたら
-            #         if al4c[0] is True:
-            #             pg.press("y")  # yで決定(nがキャンセル)
-            #     # --------------------------------------------------------------------
-            #     IUD = True
             if IUD is True:
                 print("更新完了")
                 return True, ThisNo, ThisYear, ThisMonth
@@ -685,3 +430,17 @@ def KessanKakuteiErr(Job, Exc):
             break
 
     return True
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def KaikeiUpDate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""

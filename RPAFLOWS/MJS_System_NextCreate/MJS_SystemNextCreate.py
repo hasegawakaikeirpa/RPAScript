@@ -14,6 +14,7 @@ import numpy as np
 
 # osインポート
 import os
+import subprocess
 
 # datetimeインポート
 
@@ -65,49 +66,33 @@ class Job:
     def __init__(self, **kw):
         log_out("Jobクラス読込開始")
         # 自分のDir(str)
-        self.dir = RPA.My_Dir("MJS_System_NextCreate")
+        self.dir = dir
         # 画像のDir(str)
-        self.Img_dir = self.dir + r"\\img"
+        self.Img_dir = Img_dir
         # コントロール(class)
         self.control = Control.control()
         # 当年(int)
         self.Start_Year = WH.Wareki.from_ad(datetime.datetime.today().year).year
         # RPA用画像フォルダの作成
-        self.FolURL = os.getcwd().replace("\\", "/")  # 先
-        self.TFolURL = RPA.My_Dir("MJS_System_NextCreate")  # 先
-        self.imgdir_url = self.TFolURL + r"\\img"  # 先
-        self.XLSDir = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\一括更新申請"
-        self.first_csv = self.XLSDir + r"\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
-        self.BatUrl = (
-            os.getcwd() + r"\\bat\\AWADriverOpen.bat"
-        )  # 4724ポート指定でappiumサーバー起動バッチを開く
-        self.driver = MJSOpen.MainFlow(
-            self.BatUrl, self.FolURL, self.Img_dir
-        )  # MJSを起動しログイン後インスタンス化
-        log_out("Jobクラス読込終了")
+        self.FolURL = FolURL
+        self.TFolURL = TFolURL
+        self.imgdir_url = imgdir_url
+        self.XLSDir = XLSDir
+        self.first_csv = first_csv
 
-    def MainFlow(self, Exc):
-        """
-        概要: メイン処理
-        @param FolURL : ミロク起動関数のフォルダ(str)
-        @param TFolURL : このpyファイルのフォルダ(str)
-        @param Exc : Excel指示シート(obj)
-        @return : bool
-        """
-        try:
-            log_out("xlsxをDataFrameに")
-            open(LURL, "w").close()
-            for Exc.sheet_name in Exc.input_sheet_name:
-                # DataFrameとしてsheetのデータ読込み
-                if "更新申請" in Exc.sheet_name:
-                    Exc.Read_sheet(Exc.sheet_name, self.first_csv)
-                    MainStarter(
-                        self,
-                        Exc,
-                    )  # データ送信画面までの関数
-                    print("")
-        except Exception as e:
-            log_out(e)
+        # self.BatUrl = (
+        #     os.getcwd() + r"\\bat\\AWADriverOpen.bat"
+        # )  # 4724ポート指定でappiumサーバー起動バッチを開く
+        self.driver = MJSOpen.MainFlow(
+            "self.BatUrl", self.FolURL, self.Img_dir
+        )  # MJSを起動しログイン後インスタンス化
+        self.TimeOut = False
+        if self.driver == "TimeOut":
+            log_out("MJSOpen.MainFlowタイムアウト")
+            self.TimeOut = True
+        else:
+            log_out("Jobクラス読込終了")
+            self.TimeOut = False
 
     def KomonUpdate(self, ExRow):
         """
@@ -127,9 +112,11 @@ class Job:
         )
         x, y = pg.center(p)
         pg.click(x + 100, y)
+        time.sleep(1)
         pg.press("delete")
         pyperclip.copy(str(ExRow["関与先番号"]))
         pg.hotkey("ctrl", "v")
+        time.sleep(1)
         pg.press(["return", "return"])
 
         time.sleep(1)
@@ -137,11 +124,13 @@ class Job:
         p = pg.locateOnScreen(self.imgdir_url + r"\RensaouMeisyou.png", confidence=0.9)
         x, y = pg.center(p)
         pg.click(x + 100, y)
+        time.sleep(1)
         pg.press("up")
         pg.press("down")
         pg.press("delete")
         pyperclip.copy(str(ExRow["関与先番号"]))
         pg.hotkey("ctrl", "v")
+        time.sleep(1)
         pg.press(["return", "return"])
 
         pg.keyDown("alt")
@@ -184,6 +173,9 @@ class Sheet:
         log_out("_Excelブック読込終了")
 
     def Read_sheet(self, sheet_name, first_csv, **kw):
+        """
+        エクセルシート読込
+        """
         log_out("_Excelシート読込開始")
 
         self.sheet_header = []
@@ -246,68 +238,6 @@ class Sheet:
             encoding="cp932",
             index=False,
         )
-
-        # self.sheet_header = []
-        # ExSheet = ""
-        # NameSheet = ""
-        # # ExSheet = self.book.parse(sheet_name, skiprows=0)
-        # # NameSheet = self.book.parse("関与先一覧")
-        # ExSheet = self.book[sheet_name]
-        # ExSheetdata = ExSheet.values
-
-        # ExSheetcolumns = next(ExSheetdata)[0:]
-        # ExSheetcolumns = next(ExSheetdata)[1:]
-
-        # NameSheet = self.book["関与先一覧"]
-        # NameSheetdata = NameSheet.values
-        # NameSheetcolumns = next(NameSheetdata)[0:]
-
-        # print(ExSheet)
-        # # 初回読込時の保存--------------------------
-        # dt_s = datetime.datetime.now()
-        # dt_s = dt_s.strftime("%Y-%m-%d %H-%M-%S")
-        # # self.sheet_df = pd.DataFrame(ExSheet)
-        # self.sheet_df = pd.DataFrame(ExSheetdata, columns=ExSheetcolumns)
-        # # self.name_df = pd.DataFrame(NameSheet)
-        # self.name_df = pd.DataFrame(NameSheetdata, columns=NameSheetcolumns)
-
-        # self.sheet_df.to_csv(
-        #     first_csv + dt_s + ".csv",
-        #     encoding="cp932",
-        #     index=False,
-        # )
-        # # 列名整理--------------------------------
-        # self.sheet_column_count = self.sheet_df.shape[1]  # 列数
-        # for Ex in range(self.sheet_column_count):
-        #     ExRow = ExSheet.iloc[0]  # 列名
-        #     ExSecondRow = ExSheet.iloc[1]  # 列名2
-        #     if ExRow[Ex] == ExRow[Ex]:  # nan判定
-        #         # nanでない場合
-        #         Txt = ExRow[Ex]
-        #         if ExSecondRow[Ex] == ExSecondRow[Ex]:  # nan判定
-        #             # nanでない場合
-        #             self.sheet_header.append(ExRow[Ex] + "_" + ExSecondRow[Ex])
-        #         else:
-        #             # nanの場合
-        #             self.sheet_header.append(ExRow[Ex])
-        #     else:
-        #         # nanの場合
-        #         if ExSecondRow[Ex] == ExSecondRow[Ex]:  # nan判定
-        #             # nanでない場合
-        #             self.sheet_header.append(Txt + "_" + ExSecondRow[Ex])
-        #         else:
-        #             # nanの場合
-        #             self.sheet_header.append(Txt)
-        # # データ整理--------------------------------
-        # # Df作成
-        # ExDf = pd.DataFrame(self.sheet_df.values[3:, :], columns=self.sheet_header)
-        # # Dfnan処理
-        # ExDf.dropna(how="all", inplace=True)
-        # print(ExDf)
-        # self.sheet_df = ExDf
-        # self.sheet_column_count = self.sheet_df.shape[1]  # 列数
-        # self.sheet_row_count = self.sheet_df.shape[0]  # 行数
-
         log_out("_Excelシート読込完了")
 
     def WriteExcel(self, txt):
@@ -477,6 +407,7 @@ def ChildFlow(Job, Exc):
         # Excel書き込み--------------------------------------------------
         if SystemUp[0] is True:
             Exc.WriteExcel("○")  # シート書き込み
+            return True
         elif SystemUp[1] == "当年データ重複エラー":
             Exc.WriteExcel("当年データ重複エラー")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -490,6 +421,9 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
+        elif SystemUp[1] == "TimeOut":
+            return False
         else:
             # Log---------------------------------------------------------------------------------------
             msg = (
@@ -501,12 +435,14 @@ def ChildFlow(Job, Exc):
             )
             log_out(msg)
             logcsv_out(msg)
+            return True
     # ------------------------------------------------------------------------------------------
     elif "決算内訳書" == Exc.Title:
         SystemUp = ChildFlow_sub(Job, Exc, "_決算内訳書更新処理")
         # Excel書き込み--------------------------------------------------
         if SystemUp[0] is True:
             Exc.WriteExcel("○")
+            return True
         elif SystemUp[1] == "Noren":
             Exc.WriteExcel("連動対象無エラー")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -520,13 +456,18 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
+        elif SystemUp[1] == "TimeOut":
+            return False
     elif "減価償却" == Exc.Title:
         SystemUp = ChildFlow_sub(Job, Exc, "_減価償却更新処理")
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             Exc.WriteExcel("○")  # シート書き込み
+            return True
         elif SystemUp[1] == "Noren":
             Exc.WriteExcel("決算未確定更新")  # シート書き込み
+            return True
         elif SystemUp[1] == "当年データ重複エラー":
             Exc.WriteExcel("減価償却当年データ重複エラー")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -540,6 +481,9 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
+        elif SystemUp[1] == "TimeOut":
+            return False
         else:
             # Log---------------------------------------------------------------------------------------
             msg = (
@@ -552,11 +496,13 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
     elif "法人税申告書" == Exc.Title:
         SystemUp = ChildFlow_sub(Job, Exc, "_法人税申告書更新処理")
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             Exc.WriteExcel("○")  # シート書き込み
+            return True
         elif SystemUp[1] == "要データ再計算":
             Exc.WriteExcel("要データ再計算")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -570,6 +516,7 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
         elif SystemUp[1] == "要申告指定":
             Exc.WriteExcel("要申告指定")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -583,11 +530,15 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
+        elif SystemUp[1] == "TimeOut":
+            return False
     elif "所得税確定申告" == Exc.Title:
         SystemUp = ChildFlow_sub(Job, Exc, "_所得税更新処理")
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             Exc.WriteExcel("○")  # シート書き込み
+            return True
         elif SystemUp[1] == "当年データ重複エラー":
             Exc.WriteExcel("所得税当年データ重複エラー")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -601,6 +552,7 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
         elif SystemUp[1] == "Nocalc":
             Exc.WriteExcel("計算未処理更新")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -614,8 +566,12 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
         elif SystemUp[0] is False:
             Exc.WriteExcel("関与先無")  # シート書き込み
+            return True
+        elif SystemUp[1] == "TimeOut":
+            return False
     elif "財産評価明細書" == Exc.Title:
         SystemUp = ChildFlow_sub(Job, Exc, "_財産評価明細書更新処理")
         # Excel書き込み---------------------------------------------------
@@ -632,6 +588,7 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
         elif SystemUp[1] == "該当年度有り":
             Exc.WriteExcel("該当年度有り")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -645,11 +602,15 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
+        elif SystemUp[1] == "TimeOut":
+            return False
     elif "年末調整" == Exc.Title:
         SystemUp = ChildFlow_sub(Job, Exc, "_年末調整更新処理")
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             Exc.WriteExcel("○")  # シート書き込み
+            return True
         elif SystemUp[1] == "該当年度有り":
             Exc.WriteExcel("該当年度有り")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -663,11 +624,15 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
+            return True
+        elif SystemUp[1] == "TimeOut":
+            return False
     elif "法定調書" == Exc.Title:
         SystemUp = ChildFlow_sub(Job, Exc, "_法定調書更新処理")
         # Excel書き込み---------------------------------------------------
         if SystemUp[0] is True:
             Exc.WriteExcel("○")  # シート書き込み
+            return True
         elif SystemUp[1] == "該当年度有り":
             Exc.WriteExcel("該当年度有り")  # シート書き込み
             # Log---------------------------------------------------------------------------------------
@@ -681,7 +646,9 @@ def ChildFlow(Job, Exc):
             log_out(msg)
             logcsv_out(msg)
             # ------------------------------------------------------------------------------------------
-
+            return True
+        elif SystemUp[1] == "TimeOut":
+            return False
     else:
         # Log---------------------------------------------------------------------------------------
         msg = (
@@ -695,30 +662,14 @@ def ChildFlow(Job, Exc):
         logcsv_out(msg)
         # ------------------------------------------------------------------------------------------
         print("NoSystem")
-
-
-# ------------------------------------------------------------------------------------------------
-def MainStarter(Job, Exc):
-    try:
-        for Exc.this_row_count in range(Exc.sheet_row_count):
-            if Exc.this_row_count != 0:
-                Exc.row_data = Exc.sheet_df.iloc[Exc.this_row_count]
-                if Exc.row_data["関与先番号"] is None:  # nan判定
-                    # Noneでない場合
-                    print("nan")
-                else:
-                    # Noneの場合
-                    Exc.row_kanyo_no = Exc.row_data["関与先番号"]
-                    Exc.row_kanyo_name = NameSearch(Exc.name_df, Exc.row_kanyo_no)
-                    OpenSystem(Job, Exc)
-                    print("")
-        return True, ""
-    except:
-        return False, ""
+        return True
 
 
 # ------------------------------------------------------------------------------------------------
 def OpenSystem(Job, Exc):
+    """
+    エクセルシート列処理
+    """
     try:
         Exc.this_col_count = 0
         for ExrcHeaderItem in Exc.sheet_header:
@@ -750,7 +701,10 @@ def OpenSystem(Job, Exc):
                                     logcsv_out(msg)
                                     # -----------------------------------------------
                                     if str(Exc.row_kanyo_no) != "1":
-                                        ChildFlow(Job, Exc)
+                                        CF = ChildFlow(Job, Exc)
+                                        # TimeOut処理
+                                        if CF is False:
+                                            return False
                             else:
                                 # Noneでない場合
                                 if Exc.row_data[Exc.Title + "_繰越処理日"] is None:
@@ -767,7 +721,10 @@ def OpenSystem(Job, Exc):
                                     logcsv_out(msg)
                                     # -----------------------------------------------
                                     if str(Exc.row_kanyo_no) != "1":
-                                        ChildFlow(Job, Exc)
+                                        CF = ChildFlow(Job, Exc)
+                                        # TimeOut処理
+                                        if CF is False:
+                                            return "TimeOut"
                                 else:
                                     # Noneでない場合
                                     print("スタート")
@@ -779,44 +736,145 @@ def OpenSystem(Job, Exc):
 
 
 # ------------------------------------------------------------------------------------------------
-if __name__ == "__main__":
-    global Start_Year  # 当年
-    j = Job()
+def MainStarter(Job, Exc):
+    """
+    エクセルシート行処理
+    """
+    try:
+        for Exc.this_row_count in range(Exc.sheet_row_count):
+            if Exc.this_row_count != 0:
+                Exc.row_data = Exc.sheet_df.iloc[Exc.this_row_count]
+                if Exc.row_data["関与先番号"] is None:  # nan判定
+                    # Noneでない場合
+                    print("nan")
+                else:
+                    # Noneの場合
+                    Exc.row_kanyo_no = Exc.row_data["関与先番号"]
+                    Exc.row_kanyo_name = NameSearch(Exc.name_df, Exc.row_kanyo_no)
+                    OS = OpenSystem(Job, Exc)
+                    if OS == "TimeOut":
+                        return False, "TimeOut"
+                    print("")
+        return True, ""
+    except:
+        return False, ""
 
-    # Log--------------------------------------------
-    dt_s = datetime.datetime.now()
-    dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
-    logger.debug(dt_s + "_MJSシステム更新開始")
-    # -----------------------------------------------
-    for fd_path, sb_folder, sb_file in os.walk(j.XLSDir):
-        FDP = fd_path
-        if not len(sb_folder) == 0:
-            for sb_fileItem in sb_file:
-                print(sb_fileItem)
-                if (
-                    "一括更新申請ミロク" in sb_fileItem
-                    and not "一括更新申請ミロク(原本).xlsm" == sb_fileItem
-                ):
-                    XLSURL = FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-                    MoveXLSURL = (
-                        FDP
-                        + r"\\MJSLog\\"
-                        + sb_fileItem.replace("~", "").replace("$", "")
-                    )
-                    os.rename(XLSURL, MoveXLSURL)
-                    MoveXLSURL = (
-                        FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
-                    )
-                    XLSURL = (
-                        FDP
-                        + r"\\MJSLog\\"
-                        + sb_fileItem.replace("~", "").replace("$", "")
-                    )
-                    Ex_File = Sheet(XLSURL)
-                    try:
-                        j.MainFlow(Ex_File)
-                    except:
-                        traceback.print_exc()
-                    finally:
-                        del Ex_File  # エクセルブッククラスを解放
+
+# ------------------------------------------------------------------------------------------------
+def MainFlow(Job, Exc):
+    """
+    エクセルブック内各シート処理
+    """
+    try:
+        log_out("xlsxをDataFrameに")
+        open(LURL, "w").close()
+        for Exc.sheet_name in Exc.input_sheet_name:
+            # DataFrameとしてsheetのデータ読込み
+            if "更新申請" in Exc.sheet_name:
+                Exc.Read_sheet(Exc.sheet_name, Job.first_csv)
+                MS = MainStarter(
+                    Job,
+                    Exc,
+                )  # データ送信画面までの関数
+                if MS[1] == "TimeOut":
+                    return False, "TimeOut"
+    except Exception as e:
+        log_out(e)
+        return False, ""
+
+
+# ------------------------------------------------------------------------------------------------
+def Main():
+    """
+    概要: メイン処理
+    @param FolURL : ミロク起動関数のフォルダ(str)
+    @param TFolURL : このpyファイルのフォルダ(str)
+    @param Exc : Excel指示シート(obj)
+    @return : bool
+    """
+    global dir, Img_dir
+    global FolURL, TFolURL
+    global imgdir_url, XLSDir
+    global first_csv
+    global XLSURL, MoveXLSURL
+
+    dir = RPA.My_Dir("MJS_System_NextCreate")
+    Img_dir = dir + r"\\img"
+    FolURL = os.getcwd().replace("\\", "/")  # 先
+    TFolURL = RPA.My_Dir("MJS_System_NextCreate")  # 先
+    imgdir_url = TFolURL + r"\\img"  # 先
+    XLSDir = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\一括更新申請"
+    first_csv = XLSDir + r"\MJSLog\MJSSysUpLog.txt"  # 処理状況CSVのURL
+
+    j = Job()
+    if j.TimeOut is True:
+        while j.TimeOut is False:
+            j = Job()
+    else:
+        # Log--------------------------------------------
+        dt_s = datetime.datetime.now()
+        dt_s = dt_s.strftime("%Y-%m-%d %H:%M:%S")
+        logger.debug(dt_s + "_MJSシステム更新開始")
+        # -----------------------------------------------
+        for fd_path, sb_folder, sb_file in os.walk(j.XLSDir):
+            FDP = fd_path
+            if not len(sb_folder) == 0:
+                for sb_fileItem in sb_file:
+                    print(sb_fileItem)
+                    if (
+                        "一括更新申請ミロク" in sb_fileItem
+                        and not "一括更新申請ミロク(原本).xlsm" == sb_fileItem
+                    ):
+                        XLSURL = (
+                            FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                        )
+                        MoveXLSURL = (
+                            FDP
+                            + r"\\MJSLog\\"
+                            + sb_fileItem.replace("~", "").replace("$", "")
+                        )
                         os.rename(XLSURL, MoveXLSURL)
+                        MoveXLSURL = (
+                            FDP + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                        )
+                        XLSURL = (
+                            FDP
+                            + r"\\MJSLog\\"
+                            + sb_fileItem.replace("~", "").replace("$", "")
+                        )
+                        Ex_File = Sheet(XLSURL)
+                        try:
+                            MF = MainFlow(j, Ex_File)
+                            # TimeOut処理
+                            if MF[1] == "TimeOut":
+                                killcmd = "taskkill /F /PID {pid} /T".format(
+                                    pid=j.driver.pid
+                                )
+                                subprocess.run(killcmd, shell=True)
+                                log_out("TimeOutによるsubprocess強制終了")
+                                del Ex_File  # エクセルブッククラスを解放
+                                log_out("Excel解放")
+                                os.rename(XLSURL, MoveXLSURL)
+                                log_out("Excelファイル移動完了")
+                                # TimeOutなら抜ける
+                                return False
+                            else:
+                                del Ex_File  # エクセルブッククラスを解放
+                                log_out("Excel解放")
+                                os.rename(XLSURL, MoveXLSURL)
+                                log_out("Excelファイル移動完了")
+                        except:
+                            traceback.print_exc()
+        return True
+
+
+# ------------------------------------------------------------------------------------------------
+if __name__ == "__main__":
+
+    while True:  # 無限ループ
+        M = Main()
+        if M is False:
+            M = Main()
+        else:
+            break
+    print("正常終了")

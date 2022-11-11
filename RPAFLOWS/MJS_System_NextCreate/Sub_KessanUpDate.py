@@ -3,9 +3,13 @@ import pyautogui as pg
 import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
+import wrapt_timeout_decorator
+
+TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-def KessanUpDate(Job, Exc):
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 決算内訳書更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -209,3 +213,14 @@ def KessanUpDate(Job, Exc):
 
 
 # ------------------------------------------------------------------------------------------------------------------
+def KessanUpDate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""

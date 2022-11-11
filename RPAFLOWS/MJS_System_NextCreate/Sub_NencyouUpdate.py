@@ -3,9 +3,13 @@ import pyautogui as pg
 import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
+import wrapt_timeout_decorator
+
+TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-def NencyouUpdate(Job, Exc):
+# @wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 年調更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -71,11 +75,12 @@ def NencyouUpdate(Job, Exc):
         pg.press("return")
         pg.press("return")
         time.sleep(1)
+        YearDiff = Job.Start_Year - int(ThisYear)
+        if abs(YearDiff) > Job.Start_Year:
+            YearDiff = 32 - int(ThisYear) + Job.Start_Year - 2
         # 他システムとメニューが違う-------------------------------------------------------
         if str(Exc.row_data["関与先番号"]) == ThisNo:
-            if str(Job.Start_Year) == ThisYear:
-                return False, "該当年度有り", "", ""
-            else:
+            if YearDiff == 1:  # 次年度更新か判定
                 print("関与先あり")
                 pg.press(["return", "return", "return"])
                 time.sleep(1)
@@ -360,8 +365,34 @@ def NencyouUpdate(Job, Exc):
                         return True, ThisNo, ThisYear, "ThisMonth"
                     else:
                         return False, "該当年度有り", "", ""
+            elif str(Job.Start_Year) == ThisYear:
+                return False, "該当年度有り", "", ""
+            else:
+                ID = IkkatuUpDate(Job, Exc, YearDiff)
+                if ID is True:
+                    return True, ThisNo, ThisYear, "ThisMonth"
+
         else:
             print("関与先なし")
             return False, "関与先なし", "", ""
     except:
         return False, "exceptエラー", "", ""
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def IkkatuUpDate(Job, Exc, YearDiff):
+    print("")
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def NencyouUpdate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""

@@ -3,9 +3,13 @@ import pyautogui as pg
 import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
+import wrapt_timeout_decorator
+
+TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-def GenkasyoukyakuUpdate(Job, Exc):
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 減価償却更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -78,6 +82,8 @@ def GenkasyoukyakuUpdate(Job, Exc):
         # -----------------------------------
         time.sleep(1)
         YearDiff = Job.Start_Year - int(ThisYear)
+        if abs(YearDiff) > Job.Start_Year:
+            YearDiff = 32 - int(ThisYear) + Job.Start_Year - 2
         if str(Exc.row_data["関与先番号"]) == ThisNo:
             print("関与先あり")
             if YearDiff == 1:  # 次年度更新か判定
@@ -163,8 +169,8 @@ def GenkasyoukyakuUpdate(Job, Exc):
                     is None
                 ):
                     time.sleep(1)
-                    Noren = RPA.ImgCheck(URL, r"\No_Rendou.png", 0.9, 10)
-                    if Noren[0] is True:
+                    Nor = RPA.ImgCheck(URL, r"\No_Rendou.png", 0.9, 10)
+                    if Nor[0] is True:
                         ErrStr = "Noren"
                         pg.press("y")  # yで決定(nがキャンセル)
                 # --------------------------------------------------------------------
@@ -193,13 +199,18 @@ def GenkasyoukyakuUpdate(Job, Exc):
                 # --------------------------------------------------------------------
                 print("更新完了")
                 if ErrStr == "":
+                    # with open(Job.taskurl, "w") as f:
+                    #     f.write([ThisNo, ThisYear, ThisMonth])
+                    #     f.close()
                     return True, ThisNo, ThisYear, ThisMonth
                 elif ErrStr == "Noren":
                     return False, ErrStr, "", ""
             elif str(Job.Start_Year) == ThisYear:
                 return False, "該当年度有り", "", ""
             else:
-                IkkatuUpDate(Job, Exc, YearDiff)
+                ID = IkkatuUpDate(Job, Exc, YearDiff)
+                if ID is True:
+                    return True, ThisNo, ThisYear, ThisMonth
         else:
             print("関与先なし")
             return False, "関与先なし", "", ""
@@ -256,7 +267,7 @@ def IkkatuUpDate(Job, Exc, YearDiff):
             RPA.ImgClick(URL, r"\G_SyoukyakuMenu.png", 0.9, 10)  # 減価償却メニューアイコンをクリック
             MGS = RPA.ImgCheck(URL, r"\M_G_Sonota.png", 0.9, 10)
             if MGS[0] is True:
-                RPA.ImgClick(URL, MGS[1], 0.9, 10)  # 4.決算処理アイコンをクリック
+                RPA.ImgClick(URL, r"\M_G_Sonota.png", 0.9, 10)  # 4.決算処理アイコンをクリック
             RPA.ImgClick(URL, r"\DataOpen_btn.png", 0.9, 10)  # データを開くをクリック
             while RPA.ImgCheck(URL, r"\DataOpen_flag.png", 0.9, 1)[0] is False:
                 time.sleep(1)
@@ -297,9 +308,8 @@ def IkkatuUpDate(Job, Exc, YearDiff):
                 pg.locateOnScreen(URL + r"\SakuseiGenkaEnd.png", confidence=0.9) is None
             ):
                 time.sleep(1)
-                Noren = RPA.ImgCheck(URL, r"\No_Rendou.png", 0.9, 10)
-                if Noren[0] is True:
-                    ErrStr = "Noren"
+                Nor = RPA.ImgCheck(URL, r"\No_Rendou.png", 0.9, 10)
+                if Nor[0] is True:
                     pg.press("y")  # yで決定(nがキャンセル)
             # --------------------------------------------------------------------
             pg.press("return")  # 決定
@@ -326,3 +336,17 @@ def IkkatuUpDate(Job, Exc, YearDiff):
         return True
     except:
         return False
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def GenkasyoukyakuUpdate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""

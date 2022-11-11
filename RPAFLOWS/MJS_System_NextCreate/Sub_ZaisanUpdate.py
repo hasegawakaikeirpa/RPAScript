@@ -3,29 +3,12 @@ import pyautogui as pg
 import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
+import wrapt_timeout_decorator
 
+TIMEOUT = 600
 # ------------------------------------------------------------------------------------------------------------------
-def ZaisanUpdate(Job, Exc):
-    """
-    00:"関与先番号"
-    01:"関与先名"
-    02:"担当者_ｺｰﾄﾞ"
-    03:"担当者_担当者名"
-    04:"会計大将_繰越対象"
-    07:"会計大将_繰越処理日"
-    08:"決算内訳書_繰越対象"
-    11:"決算内訳書_繰越処理日"
-    12:"減価償却_繰越対象"
-    15:"減価償却_繰越処理日"
-    16:"法人税申告書_繰越対象"
-    19:"法人税申告書_繰越処理日"
-    20:"財産評価明細書_繰越対象"
-    23:"財産評価明細書_繰越処理日"
-    24:"財産評価明細書"
-    25:"年末調整"
-    26:"法定調書"
-    27:"所得税確定申告"
-    """
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 財産評価更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -405,3 +388,17 @@ def ZaisanUpdate(Job, Exc):
             return False, "関与先なし", "", ""
     except:
         return False, "exceptエラー", "", ""
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def ZaisanUpdate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""

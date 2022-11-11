@@ -3,29 +3,13 @@ import pyautogui as pg
 import time
 import RPA_Function as RPA
 import pyperclip  # クリップボードへのコピーで使用
+import wrapt_timeout_decorator
+
+TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-def HouteiUpdate(Job, Exc):
-    """
-    00:"関与先番号"
-    01:"関与先名"
-    02:"担当者_ｺｰﾄﾞ"
-    03:"担当者_担当者名"
-    04:"会計大将_繰越対象"
-    07:"会計大将_繰越処理日"
-    08:"決算内訳書_繰越対象"
-    11:"決算内訳書_繰越処理日"
-    12:"減価償却_繰越対象"
-    15:"減価償却_繰越処理日"
-    16:"法人税申告書_繰越対象"
-    19:"法人税申告書_繰越処理日"
-    20:"財産評価明細書_繰越対象"
-    23:"財産評価明細書_繰越処理日"
-    24:"財産評価明細書"
-    25:"年末調整"
-    26:"法定調書"
-    27:"所得税確定申告"
-    """
+# @wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(Job, Exc):
     """
     概要: 法定調書更新処理
     @param FolURL : ミロク起動関数のフォルダ(str)
@@ -92,11 +76,12 @@ def HouteiUpdate(Job, Exc):
         pg.press("return")
         pg.press("return")
         time.sleep(1)
+        YearDiff = Job.Start_Year - int(ThisYear)
+        if abs(YearDiff) > Job.Start_Year:
+            YearDiff = 32 - int(ThisYear) + Job.Start_Year - 2
         # 他システムとメニューが違う-------------------------------------------------------
         if str(Exc.row_data["関与先番号"]) == ThisNo:
-            if str(Job.Start_Year) == ThisYear:
-                return False, "該当年度有り", "", ""
-            else:
+            if YearDiff == 1:  # 次年度更新か判定
                 print("関与先あり")
                 pg.press(["return", "return", "return"])
                 time.sleep(1)
@@ -296,8 +281,33 @@ def HouteiUpdate(Job, Exc):
                     print("更新完了")
                     if ErrStr == "":
                         return True, ThisNo, ThisYear, "ThisMonth"
+            elif str(Job.Start_Year) == ThisYear:
+                return False, "該当年度有り", "", ""
+            else:
+                ID = IkkatuUpDate(Job, Exc, YearDiff)
+                if ID is True:
+                    return True, ThisNo, ThisYear, "ThisMonth"
         else:
             print("関与先なし")
             return False, "関与先なし", "", ""
     except:
         return False, "exceptエラー", "", ""
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def IkkatuUpDate(Job, Exc, YearDiff):
+    print("")
+
+
+# ------------------------------------------------------------------------------------------------------------------
+def HouteiUpdate(Job, Exc):
+    """
+    main
+    """
+    try:
+        f = Flow(Job, Exc)
+        # プロセス待機時間
+        time.sleep(3)
+        return f
+    except TimeoutError:
+        return False, "TimeOut", "", ""
