@@ -179,9 +179,16 @@ H_dfCol = np.array(H_df).shape[1]  # 配列列数取得
 OKLog = []
 NGLog = []
 Toyear = str(tdy.year)
-for x in range(12):
-    H_Marges = []
-    s = format(x + 1, "02")
-    dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
-    Tan_path = dir_path + "/担当者別"
-    Flow(Tan_path)
+# # 年間ループ#########################################################################
+# for x in range(12):
+#     H_Marges = []
+#     s = format(x + 1, "02")
+#     dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
+#     Tan_path = dir_path + "/担当者別"
+#     Flow(Tan_path)
+# # #################################################################################
+H_Marges = []
+s = format(10, "02")
+dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
+Tan_path = dir_path + "/担当者別"
+Flow(Tan_path)

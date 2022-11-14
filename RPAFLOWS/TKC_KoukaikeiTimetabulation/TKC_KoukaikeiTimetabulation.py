@@ -16,6 +16,7 @@ import os
 # datetimeインポート
 from datetime import datetime as dt
 
+
 # 例外処理判定の為のtracebackインポート
 import traceback
 
@@ -164,8 +165,8 @@ def DriverClick(Hub, ObjName, driver):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def ImgCheck(FolURL2, FileName, conf, LoopVal):  # 画像があればTrueを返す関数
-    ImgURL = FolURL2 + "/" + FileName
+def ImgCheck(URL, FileName, conf, LoopVal):  # 画像があればTrueを返す関数
+    ImgURL = URL + "/" + FileName
     for x in range(LoopVal):
         try:
             p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
@@ -178,8 +179,8 @@ def ImgCheck(FolURL2, FileName, conf, LoopVal):  # 画像があればTrueを返�
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def ImgNothingCheck(FolURL2, FileName, conf, LoopVal):  # 画像がなければTrueを返す
-    ImgURL = FolURL2 + "/" + FileName
+def ImgNothingCheck(URL, FileName, conf, LoopVal):  # 画像がなければTrueを返す
+    ImgURL = URL + "/" + FileName
     for x in range(LoopVal):
         try:
             p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
@@ -192,10 +193,10 @@ def ImgNothingCheck(FolURL2, FileName, conf, LoopVal):  # 画像がなければT
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def ImgCheckForList(FolURL2, List, conf):  # リスト内の画像があればTrueと画像名を返す
+def ImgCheckForList(URL, List, conf):  # リスト内の画像があればTrueと画像名を返す
     for x in range(10):
         for ListItem in List:
-            ImgURL = FolURL2 + "/" + ListItem
+            ImgURL = URL + "/" + ListItem
             try:
                 p = pyautogui.locateOnScreen(ImgURL, confidence=conf)
                 x, y = pyautogui.center(p)
@@ -208,11 +209,11 @@ def ImgCheckForList(FolURL2, List, conf):  # リスト内の画像があればTr
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリックしてx,y軸を返す
-    ImgURL = FolURL2 + "/" + FileName
+def ImgClick(URL, FileName, conf, LoopVal):  # 画像があればクリックしてx,y軸を返す
+    ImgURL = URL + "/" + FileName
     for x in range(10):
         if (
-            ImgCheck(FolURL2, FileName, conf, LoopVal)[0] is True
+            ImgCheck(URL, FileName, conf, LoopVal)[0] is True
         ):  # OMSメニューの年調起動ボタンを判定して初期処理分け
             # 正常待機後処理
             for y in range(10):
@@ -276,32 +277,31 @@ def CSVCheck(Key, CSVArr, ColName):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def FirstOpen(FolURL2, Tax):
+def FirstOpen(URL, Tax):
+    """
+    初回起動(抽出期間の設定)
+    """
     try:
         time.sleep(1)
-        ImgClick(FolURL2, "TMSOpen.png", 0.9, 2)
-        while (
-            pg.locateOnScreen(FolURL2 + "/GyoumuBunsekiBtn.png", confidence=0.9) is None
-        ):
+        ImgClick(URL, "TMSOpen.png", 0.9, 2)
+        while pg.locateOnScreen(URL + "/GyoumuBunsekiBtn.png", confidence=0.9) is None:
             time.sleep(1)
         time.sleep(1)
-        ImgClick(FolURL2, "GyoumuBunsekiBtn.png", 0.9, 2)
-        # while pg.locateOnScreen(FolURL2 + "/GyoumuBunsekiWin.png" , confidence=0.9) is None:
+        ImgClick(URL, "GyoumuBunsekiBtn.png", 0.9, 2)
+        # while pg.locateOnScreen(URL + "/GyoumuBunsekiWin.png" , confidence=0.9) is None:
         #     time.sleep(1)
-        while (
-            pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9) is not None
-        ):
+        while pg.locateOnScreen(URL + "/Syuukeityuu.png", confidence=0.9) is not None:
             time.sleep(1)
         time.sleep(1)
         pg.press("f7")
         time.sleep(1)
-        while pg.locateOnScreen(FolURL2 + "/SiteiKikanStr.png", confidence=0.9) is None:
+        while pg.locateOnScreen(URL + "/SiteiKikanStr.png", confidence=0.9) is None:
             time.sleep(1)
-        ImgClick(FolURL2, "SiteiKikanStr.png", 0.9, 2)
+        ImgClick(URL, "SiteiKikanStr.png", 0.9, 2)
         time.sleep(1)
-        ImgClick(FolURL2, "SiteiKikanOKBtn.png", 0.9, 2)
+        ImgClick(URL, "SiteiKikanOKBtn.png", 0.9, 2)
         time.sleep(1)
-        ImgClick(FolURL2, "TimeBox.png", 0.9, 2)
+        ImgClick(URL, "TimeBox.png", 0.9, 2)
         time.sleep(1)
         pg.press("return")
         time.sleep(1)
@@ -323,77 +323,73 @@ def FirstOpen(FolURL2, Tax):
         time.sleep(1)
         pg.press("return")
         time.sleep(3)
-        ImgClick(FolURL2, "GyoumubetuTab.png", 0.9, 2)
+        ImgClick(URL, "GyoumubetuTab.png", 0.9, 2)
         time.sleep(1)
-        while (
-            pg.locateOnScreen(FolURL2 + "/TyokusetuOpenFlag.png", confidence=0.9)
-            is None
-        ):
+        while pg.locateOnScreen(URL + "/TyokusetuOpenFlag.png", confidence=0.9) is None:
             time.sleep(1)
         time.sleep(1)
-        ImgClick(FolURL2, "KansetuTab.png", 0.9, 2)
-        Kansetu = TKCCSVOut(FolURL2, "KANSETU")
+        ImgClick(URL, "KansetuTab.png", 0.9, 2)
+        Kansetu = TKCCSVOut(URL, "KANSETU")
         if Kansetu is True:
-            KansetuList = CSVGet(FolURL2 + "/KANSETU.CSV")
+            KansetuList = CSVGet(URL + "/KANSETU.CSV")
             if KansetuList[0] is True:
                 KansetuListRow = CSVCheck("E4移動時間", KansetuList[1], "業務")
                 if KansetuListRow[0] is True:
                     time.sleep(1)
-                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 1)
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 1)
                     for x in range(KansetuListRow[1]):
                         pg.press("down")
                     time.sleep(1)
                     pg.press("return")
                     time.sleep(1)
                     while (
-                        pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
+                        pg.locateOnScreen(URL + "/Syuukeityuu.png", confidence=0.9)
                         is not None
                     ):
                         time.sleep(1)
                     time.sleep(1)
                     while (
-                        pg.locateOnScreen(
-                            FolURL2 + "/TantoubetuFlag.png", confidence=0.9
-                        )
+                        pg.locateOnScreen(URL + "/TantoubetuFlag.png", confidence=0.9)
                         is None
                     ):
                         time.sleep(1)
                     time.sleep(1)
-                    TKCTimeCSVOut(
-                        FolURL2, "移動時間", "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/担当者別", Tax
-                    )
+                    TKCTimeCSVOut(URL, "移動時間", SaveDir, Tax)
                     time.sleep(1)
                     pg.press("f10")
                     time.sleep(1)
                     while (
-                        pg.locateOnScreen(FolURL2 + "/TyokuKanTab.png", confidence=0.9)
+                        pg.locateOnScreen(URL + "/TyokuKanTab.png", confidence=0.9)
                         is None
                     ):
                         time.sleep(1)
                     time.sleep(1)
-                    ImgClick(FolURL2, "TyokusetuTab.png", 0.9, 1)
+                    ImgClick(URL, "TyokusetuTab.png", 0.9, 1)
         return True
     except:
         return False
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def TKCCSVOut(FolURL2, Title):
+def TKCCSVOut(URL, Title):
+    """
+    TKCメニュー設定CSV出力フロー
+    """
     try:
-        ImgClick(FolURL2, "ExcelTab.png", 0.9, 2)
-        while pg.locateOnScreen(FolURL2 + "/KiridasiFlag.png", confidence=0.9) is None:
+        ImgClick(URL, "ExcelTab.png", 0.9, 2)
+        while pg.locateOnScreen(URL + "/KiridasiFlag.png", confidence=0.9) is None:
             time.sleep(1)
         ImgList = ["KiridasiType.png", "KiridasiType2.png"]
-        ImgListAns = ImgCheckForList(FolURL2, ImgList, 0.9)
-        ImgClick(FolURL2, ImgListAns[1], 0.9, 2)
+        ImgListAns = ImgCheckForList(URL, ImgList, 0.9)
+        ImgClick(URL, ImgListAns[1], 0.9, 2)
         time.sleep(1)
         pg.press(["down", "down", "down"])
         pg.press(["return"])
         time.sleep(1)
         pg.press(["tab", "tab", "tab"])
         pg.press("delete")
-        FolURL2 = FolURL2.replace("/", "\\")
-        pyperclip.copy(FolURL2)
+        URL = URL.replace("/", "\\")
+        pyperclip.copy(URL)
         pg.hotkey("ctrl", "v")  # pg日本語不可なのでコピペ
         pg.press(["return"])
         time.sleep(1)
@@ -404,25 +400,28 @@ def TKCCSVOut(FolURL2, Title):
         time.sleep(1)
         pg.press(["return"])
         time.sleep(1)
-        ImgClick(FolURL2, "KiridasiSave.png", 0.9, 2)
+        ImgClick(URL, "KiridasiSave.png", 0.9, 2)
         time.sleep(1)
-        if ImgCheck(FolURL2, "OverFileList.png", 0.9, 1)[0] is True:
+        if ImgCheck(URL, "OverFileList.png", 0.9, 1)[0] is True:
             time.sleep(1)
-            ImgClick(FolURL2, "OverFileListYes.png", 0.9, 2)
+            ImgClick(URL, "OverFileListYes.png", 0.9, 2)
         return True
     except:
         return False
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def TKCB2CSVOut(FolURL2, CSVURL, Title):
+def TKCB2CSVOut(URL, CSVURL, Title):
+    """
+    TKCメニューB2公会計営業CSV出力フロー
+    """
     try:
-        ImgClick(FolURL2, "ExcelTab.png", 0.9, 2)
-        while pg.locateOnScreen(FolURL2 + "/KiridasiFlag.png", confidence=0.9) is None:
+        ImgClick(URL, "ExcelTab.png", 0.9, 2)
+        while pg.locateOnScreen(URL + "/KiridasiFlag.png", confidence=0.9) is None:
             time.sleep(1)
         ImgList = ["KiridasiType.png", "KiridasiType2.png"]
-        ImgListAns = ImgCheckForList(FolURL2, ImgList, 0.9)
-        ImgClick(FolURL2, ImgListAns[1], 0.9, 2)
+        ImgListAns = ImgCheckForList(URL, ImgList, 0.9)
+        ImgClick(URL, ImgListAns[1], 0.9, 2)
         time.sleep(1)
         pg.press(["down", "down", "down"])
         pg.press(["return"])
@@ -442,25 +441,28 @@ def TKCB2CSVOut(FolURL2, CSVURL, Title):
         time.sleep(1)
         pg.press(["return"])
         time.sleep(1)
-        ImgClick(FolURL2, "KiridasiSave.png", 0.9, 2)
+        ImgClick(URL, "KiridasiSave.png", 0.9, 2)
         time.sleep(1)
-        if ImgCheck(FolURL2, "OverFileList.png", 0.9, 1)[0] is True:
+        if ImgCheck(URL, "OverFileList.png", 0.9, 1)[0] is True:
             time.sleep(1)
-            ImgClick(FolURL2, "OverFileListYes.png", 0.9, 2)
+            ImgClick(URL, "OverFileListYes.png", 0.9, 2)
         return True
     except:
         return False
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def TKCTimeCSVOut(FolURL2, Title, FileURL, Tax):
+def TKCTimeCSVOut(URL, Title, FileURL, Tax):
+    """
+    TKCメニューCSV出力フロー
+    """
     try:
-        ImgClick(FolURL2, "ExcelTab.png", 0.9, 2)
-        while pg.locateOnScreen(FolURL2 + "/KiridasiFlag.png", confidence=0.9) is None:
+        ImgClick(URL, "ExcelTab.png", 0.9, 2)
+        while pg.locateOnScreen(URL + "/KiridasiFlag.png", confidence=0.9) is None:
             time.sleep(1)
         ImgList = ["KiridasiType.png", "KiridasiType2.png"]
-        ImgListAns = ImgCheckForList(FolURL2, ImgList, 0.9)
-        ImgClick(FolURL2, ImgListAns[1], 0.9, 2)
+        ImgListAns = ImgCheckForList(URL, ImgList, 0.9)
+        ImgClick(URL, ImgListAns[1], 0.9, 2)
         time.sleep(1)
         pg.press(["down", "down", "down"])
         pg.press(["return"])
@@ -481,35 +483,38 @@ def TKCTimeCSVOut(FolURL2, Title, FileURL, Tax):
         time.sleep(1)
         pg.press(["return"])
         time.sleep(1)
-        ImgClick(FolURL2, "KiridasiSave.png", 0.9, 2)
+        ImgClick(URL, "KiridasiSave.png", 0.9, 2)
         time.sleep(1)
-        if ImgCheck(FolURL2, "OverFileList.png", 0.9, 1)[0] is True:
+        if ImgCheck(URL, "OverFileList.png", 0.9, 1)[0] is True:
             time.sleep(1)
-            ImgClick(FolURL2, "OverFileListYes.png", 0.9, 2)
+            ImgClick(URL, "OverFileListYes.png", 0.9, 2)
         return True
     except:
         return False
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
-    KCSVO = TKCCSVOut(FolURL2, "KANYOSAKIBETU")
+def KanyoScroll(URL, Tax):  # 関与先毎の時間集計操作
+    """
+    関与先毎の集計処理
+    """
+    KCSVO = TKCCSVOut(URL, "KANYOSAKIBETU")
     if KCSVO is True:
-        KanyosakibetuList = ShiftJisCSVGet(FolURL2 + "/KANYOSAKIBETU.CSV")
+        KanyosakibetuList = ShiftJisCSVGet(URL + "/KANYOSAKIBETU.CSV")
         if KanyosakibetuList[0] is True:
             KArr = KanyosakibetuList[1]
             KArrRow = np.array(KArr).shape[0]  # 配列行数取得
             for y in range(KArrRow):
-                if y < KArrRow - 1 and y >= 11:
+                if y <= 11:
                     KArrRowData = KArr.iloc[y, :]
                     KArrName = KArrRowData["関与先"]
                     KArrListRow = CSVCheck(KArrName, KArr, "関与先")
                     if KArrListRow[0] is True:
                         # GList = ["1gyou.png","1gyou2.png"]
-                        # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                        # ImgClick(FolURL2,GL[1],0.99999,1)
+                        # GL = ImgCheckForList(URL,GList,0.99999)
+                        # ImgClick(URL,GL[1],0.99999,1)
                         time.sleep(1)
-                        ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                        ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                         for z in range(KArrListRow[1]):
                             pg.press("down")
                         time.sleep(1)
@@ -517,14 +522,14 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                         time.sleep(1)
                         while (
                             pg.locateOnScreen(
-                                FolURL2 + "/TantoubetuFlag.png", confidence=0.9
+                                URL + "/TantoubetuFlag.png", confidence=0.9
                             )
                             is None
                         ):
                             time.sleep(1)
-                        TantouCSVO = TKCCSVOut(FolURL2, "TANTOUBETU")
+                        TantouCSVO = TKCCSVOut(URL, "TANTOUBETU")
                         if TantouCSVO is True:
-                            TantouList = CSVGet(FolURL2 + "/TANTOUBETU.CSV")
+                            TantouList = CSVGet(URL + "/TANTOUBETU.CSV")
                             if TantouList[0] is True:
                                 TanArr = TantouList[1]
                                 TanArrRow = np.array(TanArr).shape[0]  # 配列行数取得
@@ -541,7 +546,7 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                                             if TanArrRowListRow[0] is True:
                                                 time.sleep(1)
                                                 ImgClick(
-                                                    FolURL2,
+                                                    URL,
                                                     "1gyouUnderArrow.png",
                                                     0.9,
                                                     5,
@@ -553,7 +558,7 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                                                 time.sleep(1)
                                                 while (
                                                     pg.locateOnScreen(
-                                                        FolURL2 + "/KatudouTab.png",
+                                                        URL + "/KatudouTab.png",
                                                         confidence=0.9,
                                                     )
                                                     is None
@@ -561,9 +566,9 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                                                     time.sleep(1)
                                                 FN = KArrName + "_" + TanName
                                                 TKCTimeCSVOut(
-                                                    FolURL2,
+                                                    URL,
                                                     FN,
-                                                    "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/担当者別",
+                                                    SaveDir,
                                                     Tax,
                                                 )
                                                 time.sleep(1)
@@ -571,7 +576,7 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                                                 time.sleep(1)
                                                 while (
                                                     pg.locateOnScreen(
-                                                        FolURL2 + "/TantoubetuFlag.png",
+                                                        URL + "/TantoubetuFlag.png",
                                                         confidence=0.9,
                                                     )
                                                     is None
@@ -579,7 +584,7 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                                                     time.sleep(1)
                                                 time.sleep(1)
                                                 ImgClick(
-                                                    FolURL2,
+                                                    URL,
                                                     "1gyouUnderArrow.png",
                                                     0.9,
                                                     5,
@@ -589,27 +594,20 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                                 time.sleep(1)
                                 while (
                                     pg.locateOnScreen(
-                                        FolURL2 + "/TantoubetuFlag.png", confidence=0.9
+                                        URL + "/TantoubetuFlag.png", confidence=0.9
                                     )
                                     is None
                                 ):
                                     time.sleep(1)
                                 time.sleep(1)
                                 ImgClick(
-                                    FolURL2,
+                                    URL,
                                     "TantoubetuFlag.png",
                                     0.9,
                                     5,
                                 )
                                 pg.press("f10")
                                 time.sleep(1)
-                                # while (
-                                #     pg.locateOnScreen(
-                                #         FolURL2 + "/KousagyouOpen.png", confidence=0.9
-                                #     )
-                                #     is None
-                                # ):
-                                #     time.sleep(1)
                                 KouList = [
                                     "KousagyouOpen.png",
                                     "KousagyouOpen2.png",
@@ -617,12 +615,10 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
                                     "KousagyouOpen4.png",
                                     "KousagyouOpen5.png",
                                 ]
-                                while (
-                                    ImgCheckForList(FolURL2, KouList, 0.9)[0] is False
-                                ):
+                                while ImgCheckForList(URL, KouList, 0.9)[0] is False:
                                     time.sleep(1)
                                 time.sleep(1)
-                                ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                                ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                                 time.sleep(1)
                                 for z in range(KArrListRow[1]):
                                     pg.press("up")
@@ -632,10 +628,13 @@ def KanyoScroll(FolURL2, Tax):  # 関与先毎の時間集計操作
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def EigyouScroll(FolURL2):  # 関与先毎の時間集計操作
-    KCSVO = TKCCSVOut(FolURL2, "KANYOSAKIBETU")
+def EigyouScroll(URL):  # 関与先毎の時間集計操作
+    """
+    B2公会計営業処理
+    """
+    KCSVO = TKCCSVOut(URL, "KANYOSAKIBETU")
     if KCSVO is True:
-        KanyosakibetuList = ShiftJisCSVGet(FolURL2 + "/KANYOSAKIBETU.CSV")
+        KanyosakibetuList = ShiftJisCSVGet(URL + "/KANYOSAKIBETU.CSV")
         if KanyosakibetuList[0] is True:
             KArr = KanyosakibetuList[1]
             KArrRow = np.array(KArr).shape[0]  # 配列行数取得
@@ -647,11 +646,8 @@ def EigyouScroll(FolURL2):  # 関与先毎の時間集計操作
                     if KArrTime != KArrTime is False:
                         KArrListRow = CSVCheck(KArrName, KArr, "関与先")
                         if KArrListRow[0] is True:
-                            # GList = ["1gyou.png","1gyou2.png"]
-                            # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                            # ImgClick(FolURL2,GL[1],0.99999,1)
                             time.sleep(1)
-                            ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                            ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                             for z in range(KArrListRow[1]):
                                 pg.press("down")
                             time.sleep(1)
@@ -660,21 +656,21 @@ def EigyouScroll(FolURL2):  # 関与先毎の時間集計操作
                             time.sleep(1)
                             while (
                                 pg.locateOnScreen(
-                                    FolURL2 + "/TantoubetuFlag.png", confidence=0.9
+                                    URL + "/TantoubetuFlag.png", confidence=0.9
                                 )
                                 is None
                             ):
                                 time.sleep(1)
                             TantouB2CSVO = TKCB2CSVOut(
-                                FolURL2,
-                                "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/担当者別",
+                                URL,
+                                SaveDir,
                                 KArrName + "_B2",
                             )
                             if TantouB2CSVO is True:
                                 time.sleep(1)
                                 pg.press("f10")
                                 time.sleep(1)
-                                ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                                ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                                 for z in reversed(range(KArrListRow[1])):
                                     pg.press("up")
                                 time.sleep(1)
@@ -683,163 +679,151 @@ def EigyouScroll(FolURL2):  # 関与先毎の時間集計操作
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2):
-    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
-    OMSOpen.MainFlow(BatUrl, FolURL2, "RPAPhoto")  # OMSを起動しログイン後インスタンス化
-    FolURL2 = FolURL2 + "/RPAPhoto/TKC_KoukaikeiTimetabulation"
+def MainFlow(URL):
+    """
+    メイン(作業内容別処理)
+    """
+    BatUrl = (
+        os.getcwd().replace("\\", "/") + r"\bat\AWADriverOpen.bat"
+    )  # 4724ポート指定でappiumサーバー起動バッチを開く
+    OMSOpen.MainFlow(
+        BatUrl, os.getcwd().replace("\\", "/"), "RPAPhoto"
+    )  # OMSを起動しログイン後インスタンス化
+    URL = os.getcwd().replace("\\", "/") + r"\RPAFLOWS\TKC_KoukaikeiTimetabulation\img"
     Tax = ""
-    FMO = FirstOpen(FolURL2, Tax)
+    FMO = FirstOpen(URL, Tax)
     if FMO is True:
-        TCSVO = TKCCSVOut(FolURL2, "TGYOUMULIST")
+        TCSVO = TKCCSVOut(URL, "TGYOUMULIST")
         if TCSVO is True:
-            TgyoumuList = CSVGet(FolURL2 + "/TGYOUMULIST.CSV")
+            TgyoumuList = CSVGet(URL + "/TGYOUMULIST.CSV")
             if TgyoumuList[0] is True:
-                # TgyoumuListRow = CSVCheck("B2公会計営業", TgyoumuList[1], "業務")
-                # if TgyoumuListRow[0] is True:
-                #     Tax = "B2"
-                #     # GList = ["1gyou.png","1gyou2.png"]
-                #     # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                #     # ImgClick(FolURL2,GL[1],0.99999,1)
-                #     time.sleep(1)
-                #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
-                #     for x in range(TgyoumuListRow[1]):
-                #         pg.press("down")
-                #     time.sleep(1)
-                #     pg.press("return")
-                #     time.sleep(1)
-                #     while (
-                #         pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
-                #         is not None
-                #     ):
-                #         time.sleep(1)
-                #     while (TANTOUBETU                #         pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
-                #         is None
-                #     ):
-                #         time.sleep(1)
-                #     ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
-                #     time.sleep(1)
-                #     KanyoScroll(FolURL2, Tax)  # 関与先毎の時間集計操作
-                #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
-                #     for x in range(TgyoumuListRow[1]):
-                #         pg.press("up")
-                # # ------------------------------------------------------------------------------
-                # TgyoumuListRow = CSVCheck("A8公会計作業（固定資産台帳）", TgyoumuList[1], "業務")
-                # if TgyoumuListRow[0] is True:
-                #     Tax = "A8"
-                #     # GList = ["1gyou.png","1gyou2.png"]
-                #     # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                #     # ImgClick(FolURL2,GL[1],0.99999,1)
-                #     time.sleep(1)
-                #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
-                #     for x in range(TgyoumuListRow[1]):
-                #         pg.press("down")
-                #     time.sleep(1)
-                #     pg.press("return")
-                #     time.sleep(1)
-                #     while (
-                #         pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
-                #         is not None
-                #     ):
-                #         time.sleep(1)
-                #     while (
-                #         pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
-                #         is None
-                #     ):
-                #         time.sleep(1)
-                #     ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
-                #     time.sleep(1)
-                #     KanyoScroll(FolURL2, Tax)  # 関与先毎の時間集計操作
-                #     ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
-                #     for x in range(TgyoumuListRow[1]):
-                #         pg.press("up")
-                # # ------------------------------------------------------------------------------
-                TgyoumuListRow = CSVCheck("A9公会計作業（財務書類）", TgyoumuList[1], "業務")
+                TgyoumuListRow = CSVCheck("B2公会計営業", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
-                    Tax = "A9"
-                    # GList = ["1gyou.png","1gyou2.png"]
-                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                    # ImgClick(FolURL2,GL[1],0.99999,1)
+                    Tax = "B2"
                     time.sleep(1)
-                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                     for x in range(TgyoumuListRow[1]):
                         pg.press("down")
                     time.sleep(1)
                     pg.press("return")
                     time.sleep(1)
                     while (
-                        pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
+                        pg.locateOnScreen(URL + "/Syuukeityuu.png", confidence=0.9)
                         is not None
                     ):
                         time.sleep(1)
                     while (
-                        pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
-                        is None
+                        pg.locateOnScreen(URL + "/KanyoTab.png", confidence=0.9) is None
                     ):
                         time.sleep(1)
-                    ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
+                    ImgClick(URL, "KanyoTab.png", 0.9, 5)
                     time.sleep(1)
-                    KanyoScroll(FolURL2, Tax)  # 関与先毎の時間集計操作
-                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press("up")
+                # ------------------------------------------------------------------------------
+                TgyoumuListRow = CSVCheck("A8公会計作業（固定資産台帳）", TgyoumuList[1], "業務")
+                if TgyoumuListRow[0] is True:
+                    Tax = "A8"
+                    time.sleep(1)
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press("down")
+                    time.sleep(1)
+                    pg.press("return")
+                    time.sleep(1)
+                    while (
+                        pg.locateOnScreen(URL + "/Syuukeityuu.png", confidence=0.9)
+                        is not None
+                    ):
+                        time.sleep(1)
+                    while (
+                        pg.locateOnScreen(URL + "/KanyoTab.png", confidence=0.9) is None
+                    ):
+                        time.sleep(1)
+                    ImgClick(URL, "KanyoTab.png", 0.9, 5)
+                    time.sleep(1)
+                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press("up")
+                # ------------------------------------------------------------------------------
+                TgyoumuListRow = CSVCheck("A9公会計作業（財務書類）", TgyoumuList[1], "業務")
+                if TgyoumuListRow[0] is True:
+                    Tax = "A9"
+                    time.sleep(1)
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    for x in range(TgyoumuListRow[1]):
+                        pg.press("down")
+                    time.sleep(1)
+                    pg.press("return")
+                    time.sleep(1)
+                    while (
+                        pg.locateOnScreen(URL + "/Syuukeityuu.png", confidence=0.9)
+                        is not None
+                    ):
+                        time.sleep(1)
+                    while (
+                        pg.locateOnScreen(URL + "/KanyoTab.png", confidence=0.9) is None
+                    ):
+                        time.sleep(1)
+                    ImgClick(URL, "KanyoTab.png", 0.9, 5)
+                    time.sleep(1)
+                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                     for x in range(TgyoumuListRow[1]):
                         pg.press("up")
                 # ------------------------------------------------------------------------------
                 TgyoumuListRow = CSVCheck("A10公会計作業（その他）", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
                     Tax = "A10"
-                    # GList = ["1gyou.png","1gyou2.png"]
-                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                    # ImgClick(FolURL2,GL[1],0.99999,1)
                     time.sleep(1)
-                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                     for x in range(TgyoumuListRow[1]):
                         pg.press("down")
                     time.sleep(1)
                     pg.press("return")
                     time.sleep(1)
                     while (
-                        pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
+                        pg.locateOnScreen(URL + "/Syuukeityuu.png", confidence=0.9)
                         is not None
                     ):
                         time.sleep(1)
                     while (
-                        pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
-                        is None
+                        pg.locateOnScreen(URL + "/KanyoTab.png", confidence=0.9) is None
                     ):
                         time.sleep(1)
-                    ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
+                    ImgClick(URL, "KanyoTab.png", 0.9, 5)
                     time.sleep(1)
-                    KanyoScroll(FolURL2, Tax)  # 関与先毎の時間集計操作
-                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                     for x in range(TgyoumuListRow[1]):
                         pg.press("up")
                 # ------------------------------------------------------------------------------
                 TgyoumuListRow = CSVCheck("A11公営作業", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
                     Tax = "A11"
-                    # GList = ["1gyou.png","1gyou2.png"]
-                    # GL = ImgCheckForList(FolURL2,GList,0.99999)
-                    # ImgClick(FolURL2,GL[1],0.99999,1)
                     time.sleep(1)
-                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                     for x in range(TgyoumuListRow[1]):
                         pg.press("down")
                     time.sleep(1)
                     pg.press("return")
                     time.sleep(1)
                     while (
-                        pg.locateOnScreen(FolURL2 + "/Syuukeityuu.png", confidence=0.9)
+                        pg.locateOnScreen(URL + "/Syuukeityuu.png", confidence=0.9)
                         is not None
                     ):
                         time.sleep(1)
                     while (
-                        pg.locateOnScreen(FolURL2 + "/KanyoTab.png", confidence=0.9)
-                        is None
+                        pg.locateOnScreen(URL + "/KanyoTab.png", confidence=0.9) is None
                     ):
                         time.sleep(1)
-                    ImgClick(FolURL2, "KanyoTab.png", 0.9, 5)
+                    ImgClick(URL, "KanyoTab.png", 0.9, 5)
                     time.sleep(1)
-                    KanyoScroll(FolURL2, Tax)  # 関与先毎の時間集計操作
-                    ImgClick(FolURL2, "1gyouUnderArrow.png", 0.9, 5)
+                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                     for x in range(TgyoumuListRow[1]):
                         pg.press("up")
                 # ------------------------------------------------------------------------------
@@ -847,15 +831,37 @@ def MainFlow(FolURL2):
         time.sleep(1)
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = (
-    "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/TKC_KoukaikeiTimetabulation"  # 元
-)
-# FolURL2 = os.getcwd().replace('\\','/') + "/TKC_DensiSinkoku"#先
-FolURL2 = os.getcwd().replace("\\", "/")  # 先
-# --------------------------------------------------------------------------------
-try:
-    MainFlow(FolURL2)
-except:
-    traceback.print_exc()
+def DirSearch(URL):
+    """
+    フォルダチェック・作成
+    """
+    yPar = str(dt.today().year)
+    mPar = str(dt.today().month - 1)
+    URL = URL + r"\\" + yPar + "-" + mPar
+    if os.path.isdir(URL) is True:
+        if os.path.isdir(URL + r"\\BACKUP") is False:
+            os.mkdir(URL + r"\\BACKUP")
+        URL = URL + r"\\担当者別"
+        if os.path.isdir(URL) is False:
+            os.mkdir(URL)
+        return URL
+    else:
+        os.mkdir(URL)
+        if os.path.isdir(URL + r"\\BACKUP") is False:
+            os.mkdir(URL + r"\\BACKUP")
+        URL = URL + r"\\担当者別"
+        if os.path.isdir(URL) is False:
+            os.mkdir(URL)
+        return URL
+
+
+if __name__ == "__main__":
+    global SaveDir
+    # ----------------------------------------------------------------------------------------------------------------------
+    URL = os.getcwd().replace("\\", "/")  # 先
+    SaveDir = DirSearch(r"//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析")
+    # --------------------------------------------------------------------------------
+    try:
+        MainFlow(URL)
+    except:
+        traceback.print_exc()
