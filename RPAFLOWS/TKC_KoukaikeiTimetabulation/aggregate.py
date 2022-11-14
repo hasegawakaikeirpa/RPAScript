@@ -1,19 +1,15 @@
-# pandasインポート
 import pandas as pd
-
-# 配列計算関数numpyインポート
 import numpy as np
-
-# osインポート
 import os
-
-# datetimeインポート
 from datetime import datetime as dt
 import codecs
 from chardet.universaldetector import UniversalDetector
 
 # ----------------------------------------------------------------------------------------------------------------------
-def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+def getFileEncoding(file_path):
+    """
+    引数ファイルのエンコードを調べる
+    """
     detector = UniversalDetector()
     with open(file_path, mode="rb") as f:
         for binary in f:
@@ -25,15 +21,19 @@ def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def Flow(Tan_path):  # .format( getFileEncoding( "sjis.csv" ) )
+def Flow(Tan_path, year):
+    """
+    引数フォルダの担当者別フォルダ内を集計し、引数フォルダ内BACKUPフォルダに集計結果CSVを保存
+    """
     try:
         for current_dir, sub_dirs, files_list in os.walk(Tan_path):
             fn = 0
             for fileobj in files_list:
-                fileurl = Tan_path + "/" + fileobj.replace("\u3000", "　")  # 空白\u3000を置換
-                # ##############################################月指定################################################
-                if "2022-" in fileurl:
-                    # ####################################################################################################
+                # PathとFileNameを結合
+                fileurl = Tan_path + "/" + fileobj.replace("\u3000", "　")
+                # PathとFileNameに当年が含まれていたら
+                if year in fileurl:
+                    # 列名変更してDataFrame化
                     Enc = getFileEncoding(fileurl)
                     if Enc is None:
                         with codecs.open(
@@ -48,10 +48,9 @@ def Flow(Tan_path):  # .format( getFileEncoding( "sjis.csv" ) )
                     H_df = H_df.rename(
                         columns={"実\u3000績(A)": "当  月(A)", "前年実績(B)": "前年同月(B)"}
                     )
-                    H_forCount = 0
-                    H_dfRow = np.array(H_df).shape[0]  # 配列行数取得
-                    H_MdfRow = np.array(H_Mdf).shape[0]  # 配列行数取得
-                    H_dfCol = np.array(H_df).shape[1]  # 配列列数取得
+                    H_dfRow = np.array(H_df).shape[0]  # DataFrame行数取得
+                    H_MdfRow = np.array(H_Mdf).shape[0]  # DataFrame行数取得
+                    # CSV行ループ
                     for x in range(H_dfRow):
                         try:
                             if x >= 0 and not x == H_dfRow - 1:
@@ -94,7 +93,7 @@ def Flow(Tan_path):  # .format( getFileEncoding( "sjis.csv" ) )
                                             H_Tougetu = str(H_dfDataRow["当  月(A)"])
                                             if H_Tougetu == "nan":
                                                 break
-                                            H_ZDougetu = H_dfDataRow["前年同月(B)"]
+
                                             CSVWriteRow = (
                                                 "" + H_TTan + "",
                                                 "" + H_Kanyo + "",
@@ -135,7 +134,7 @@ def Flow(Tan_path):  # .format( getFileEncoding( "sjis.csv" ) )
                                             H_Tougetu = H_dfDataRow["当  月(A)"]
                                             if H_Tougetu == "nan":
                                                 break
-                                            H_ZDougetu = H_dfDataRow["前年同月(B)"]
+
                                             CSVWriteRow = (
                                                 "" + H_TTan + "",
                                                 "" + H_Kanyo + "",
@@ -163,32 +162,44 @@ def Flow(Tan_path):  # .format( getFileEncoding( "sjis.csv" ) )
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-global H_url, Enc, H_df, H_Murl, H_Mdf, H_forCount, tdy, H_dfRow, H_dfCol, OKLog, NGLog, Toyear
+if __name__ == "__main__":
+    global H_url, Enc, H_df, H_Murl, H_Mdf, tdy, H_dfRow, OKLog, NGLog, Toyear
+    # 関与先DBをDataFrameに変換
+    H_url = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/Heidi関与先DB.csv"
+    Enc = getFileEncoding(H_url)
+    H_df = pd.read_csv(H_url, encoding=Enc)
 
+    # 公会計名簿をDataFrameに変換
+    H_Murl = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/公会計名簿.csv"
+    Enc = getFileEncoding(H_Murl)
+    H_Mdf = pd.read_csv(H_Murl, encoding=Enc)
 
-H_url = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/Heidi関与先DB.csv"
-Enc = getFileEncoding(H_url)
-H_df = pd.read_csv(H_url, encoding=Enc)
-H_Murl = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/公会計名簿.csv"
-Enc = getFileEncoding(H_Murl)
-H_Mdf = pd.read_csv(H_Murl, encoding=Enc)
-H_forCount = 0
-tdy = dt.today()
-H_dfRow = np.array(H_df).shape[0]  # 配列行数取得
-H_dfCol = np.array(H_df).shape[1]  # 配列列数取得
-OKLog = []
-NGLog = []
-Toyear = str(tdy.year)
-# # 年間ループ#########################################################################
-# for x in range(12):
-#     H_Marges = []
-#     s = format(x + 1, "02")
-#     dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
-#     Tan_path = dir_path + "/担当者別"
-#     Flow(Tan_path)
-# # #################################################################################
-H_Marges = []
-s = format(10, "02")
-dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
-Tan_path = dir_path + "/担当者別"
-Flow(Tan_path)
+    # 本日の日付
+    tdy = dt.today()
+    # 関与先DBをDataFrame配列行数取得
+    H_dfRow = np.array(H_df).shape[0]
+
+    OKLog = []
+    NGLog = []
+
+    # 本年(str)
+    Toyear = str(tdy.year)
+
+    # # 年間ループ#########################################################################
+    # for x in range(12):
+    #     出力用list
+    #     H_Marges = []
+    #     月指定
+    #     s = format(x + 1, "02")
+    #     dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
+    #     Tan_path = dir_path + "/担当者別"
+    #     Flow(Tan_path)
+    # # #################################################################################
+    # 出力用list
+    H_Marges = []
+    # 月指定
+    s = format(10, "02")
+    dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
+    Tan_path = dir_path + "/担当者別"
+    # 実行
+    Flow(Tan_path, Toyear + "-")

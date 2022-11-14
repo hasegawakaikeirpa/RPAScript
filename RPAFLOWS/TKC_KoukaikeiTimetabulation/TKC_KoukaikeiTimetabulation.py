@@ -1,33 +1,64 @@
-﻿# モジュールインポート
+﻿# インポート
 import pyautogui as pg
 import time
-
-import OMSOpen
-
-# pandasインポート
 import pandas as pd
-
-# 配列計算関数numpyインポート
 import numpy as np
-
-# osインポート
 import os
-
-# datetimeインポート
 from datetime import datetime as dt
-
-
-# 例外処理判定の為のtracebackインポート
 import traceback
-
-# pandas(pd)で関与先データCSVを取得
 import pyautogui
-import pyperclip  # クリップボードへのコピーで使用
-import WarekiHenkan  # WarekiHenkan.SeirekiDate("R",4,1,19) = 返り値2022/1/19(str)
+import pyperclip
 from chardet.universaldetector import UniversalDetector
 
+# 以下は同ディレクトリにpyファイルを保管して下さい。
+import WarekiHenkan  # 西暦変換
+import OMSOpen  # OMS起動処理
+
+"""
+作成者:沖本卓士
+作成日:
+最終更新日:2022/11/14
+稼働設定:解像度 1920*1080 表示スケール125%
+####################################################
+処理の流れ
+####################################################
+1:保存フォルダのチェック
+↓
+2:OMSにログインする
+↓
+3:時間管理TMSを立ち上げる
+↓
+4:時間管理TMSで比較期間を前月で指定する
+↓
+5:間接業務CSVを出力し、業務別データを特定する(順序特定)
+↓
+6:移動時間の集計を行う
+↓
+7:B2・A8・A9・A10・A11の作業ごとに以下の集計を行う
+    ・関与先CSVを出力(順序特定)
+    ・関与先メニュー内へ移動
+    ・担当者CSVを出力(順序特定)
+    ・担当者毎にファイル名を付け保存フォルダに保存
+↓
+8:全作業集計完了後エクセルマクロ読込用のCSVファイル作成
+####################################################
+ディレクトリ
+・__pycache__
+    実行時コンパイルモジュールのキャッシュ
+・img
+    画像フォルダ
+・aggregate.py
+    マクロ集計用CSV作成自作モジュール
+・OMSOpen.py
+    TKCOMS起動自作モジュール
+・WarekiHenkan.py
+    西暦変換自作モジュール
+"""
 # ----------------------------------------------------------------------------------------------------------------------
-def DriverUIWaitXPATH(UIPATH, driver):  # XPATH要素を取得するまで待機
+def DriverUIWaitXPATH(UIPATH, driver):
+    """
+    AppiumDriverからXPATH要素を取得するまで待機
+    """
     for x in range(1000):
         try:
             driver.find_element_by_xpath(UIPATH)
@@ -40,7 +71,10 @@ def DriverUIWaitXPATH(UIPATH, driver):  # XPATH要素を取得するまで待機
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def DriverUIWaitAutomationId(UIPATH, driver):  # XPATH要素を取得するまで待機
+def DriverUIWaitAutomationId(UIPATH, driver):
+    """
+    AppiumDriverからID要素を取得するまで待機
+    """
     for x in range(1000):
         try:
             driver.find_element_by_accessibility_id(UIPATH)
@@ -53,7 +87,10 @@ def DriverUIWaitAutomationId(UIPATH, driver):  # XPATH要素を取得するま�
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def DriverUIWaitName(UIPATH, driver):  # XPATH要素を取得するまで待機
+def DriverUIWaitName(UIPATH, driver):
+    """
+    AppiumDriverからName要素を取得するまで待機
+    """
     for x in range(1000):
         try:
             driver.find_element_by_Name(UIPATH)
@@ -66,7 +103,10 @@ def DriverUIWaitName(UIPATH, driver):  # XPATH要素を取得するまで待機
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def DriverUIWaitclassname(UIPATH, driver):  # XPATH要素を取得するまで待機
+def DriverUIWaitclassname(UIPATH, driver):
+    """
+    AppiumDriverからClassName要素を取得するまで待機
+    """
     for x in range(10000):
         try:
             driver.find_element_by_class_name(UIPATH)
@@ -80,6 +120,9 @@ def DriverUIWaitclassname(UIPATH, driver):  # XPATH要素を取得するまで�
 
 # ----------------------------------------------------------------------------------------------------------------------
 def DriverFindClass(UIPATH, driver):  # XPATH要素を取得するまで待機
+    """
+    AppiumDriverからClassName要素を複数取得する
+    """
     for x in range(10000):
         try:
             elList = driver.find_elements_by_class_name(UIPATH)
@@ -92,7 +135,10 @@ def DriverFindClass(UIPATH, driver):  # XPATH要素を取得するまで待機
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def DriverCheck(Hub, ObjName, driver):  # XPATH要素を取得するまで待機
+def DriverCheck(Hub, ObjName, driver):
+    """
+    AppiumDriver要素を取得する
+    """
     for x in range(1000):
         if Hub == "AutomationID":
             if (
@@ -124,6 +170,9 @@ def DriverCheck(Hub, ObjName, driver):  # XPATH要素を取得するまで待機
 
 # ----------------------------------------------------------------------------------------------------------------------
 def DriverClick(Hub, ObjName, driver):
+    """
+    AppiumDriver要素をクリックする
+    """
     if Hub == "AutomationID":
         if (
             DriverUIWaitAutomationId(ObjName, driver) is True
@@ -165,7 +214,10 @@ def DriverClick(Hub, ObjName, driver):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def ImgCheck(URL, FileName, conf, LoopVal):  # 画像があればTrueを返す関数
+def ImgCheck(URL, FileName, conf, LoopVal):
+    """
+    画像の有無を判定
+    """
     ImgURL = URL + "/" + FileName
     for x in range(LoopVal):
         try:
@@ -179,7 +231,10 @@ def ImgCheck(URL, FileName, conf, LoopVal):  # 画像があればTrueを返す�
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def ImgNothingCheck(URL, FileName, conf, LoopVal):  # 画像がなければTrueを返す
+def ImgNothingCheck(URL, FileName, conf, LoopVal):
+    """
+    画像がなければTrueを返す
+    """
     ImgURL = URL + "/" + FileName
     for x in range(LoopVal):
         try:
@@ -193,7 +248,10 @@ def ImgNothingCheck(URL, FileName, conf, LoopVal):  # 画像がなければTrue�
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def ImgCheckForList(URL, List, conf):  # リスト内の画像があればTrueと画像名を返す
+def ImgCheckForList(URL, List, conf):
+    """
+    複数の画像の有無を判定
+    """
     for x in range(10):
         for ListItem in List:
             ImgURL = URL + "/" + ListItem
@@ -209,7 +267,10 @@ def ImgCheckForList(URL, List, conf):  # リスト内の画像があればTrue�
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def ImgClick(URL, FileName, conf, LoopVal):  # 画像があればクリックしてx,y軸を返す
+def ImgClick(URL, FileName, conf, LoopVal):
+    """
+    画像があればクリックしてx,y軸を返す
+    """
     ImgURL = URL + "/" + FileName
     for x in range(10):
         if (
@@ -231,7 +292,10 @@ def ImgClick(URL, FileName, conf, LoopVal):  # 画像があればクリックし
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+def getFileEncoding(file_path):
+    """
+    引数ファイルのエンコードを調べる
+    """
     detector = UniversalDetector()
     with open(file_path, mode="rb") as f:
         for binary in f:
@@ -244,7 +308,9 @@ def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
 
 # ----------------------------------------------------------------------------------------------------------------------
 def CSVGet(FileUrl):
-    # 出力したCSVを読込み----------------------------------------------------------------------------------------------------------
+    """
+    ファイルのエンコードを調べ、Dataframeにする
+    """
     try:
         SerchEnc = format(getFileEncoding(FileUrl))
         MasterCSV = pd.read_csv(FileUrl, encoding=SerchEnc)
@@ -255,7 +321,9 @@ def CSVGet(FileUrl):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def ShiftJisCSVGet(FileUrl):
-    # 出力したCSVを読込み----------------------------------------------------------------------------------------------------------
+    """
+    ファイルのエンコードを直接SHIFT_JIS指定し、Dataframeにする
+    """
     try:
         MasterCSV = pd.read_csv(FileUrl, encoding="SHIFT_JIS")
         return True, MasterCSV
@@ -265,6 +333,9 @@ def ShiftJisCSVGet(FileUrl):
 
 # ----------------------------------------------------------------------------------------------------------------------
 def CSVCheck(Key, CSVArr, ColName):
+    """
+    指定CSVDataframeから引数KeyのIndexを調べる
+    """
     CSVArrRow = np.array(CSVArr).shape[0]  # 配列行数取得
     try:
         for x in range(CSVArrRow):
@@ -510,9 +581,6 @@ def KanyoScroll(URL, Tax):  # 関与先毎の時間集計操作
                     KArrName = KArrRowData["関与先"]
                     KArrListRow = CSVCheck(KArrName, KArr, "関与先")
                     if KArrListRow[0] is True:
-                        # GList = ["1gyou.png","1gyou2.png"]
-                        # GL = ImgCheckForList(URL,GList,0.99999)
-                        # ImgClick(URL,GL[1],0.99999,1)
                         time.sleep(1)
                         ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                         for z in range(KArrListRow[1]):
@@ -683,20 +751,25 @@ def MainFlow(URL):
     """
     メイン(作業内容別処理)
     """
-    BatUrl = (
-        os.getcwd().replace("\\", "/") + r"\bat\AWADriverOpen.bat"
-    )  # 4724ポート指定でappiumサーバー起動バッチを開く
-    OMSOpen.MainFlow(
-        BatUrl, os.getcwd().replace("\\", "/"), "RPAPhoto"
-    )  # OMSを起動しログイン後インスタンス化
+    # 4724ポート指定でappiumサーバー起動バッチを開く
+    BatUrl = os.getcwd().replace("\\", "/") + r"\bat\AWADriverOpen.bat"
+    # OMSを起動しログイン後インスタンス化
+    OMSOpen.MainFlow(BatUrl, os.getcwd().replace("\\", "/"), "RPAPhoto")
+    # RPA操作用の画像ファイル保管場所
     URL = os.getcwd().replace("\\", "/") + r"\RPAFLOWS\TKC_KoukaikeiTimetabulation\img"
     Tax = ""
+    # 初回起動
     FMO = FirstOpen(URL, Tax)
     if FMO is True:
+        # 業務別CSV出力
         TCSVO = TKCCSVOut(URL, "TGYOUMULIST")
         if TCSVO is True:
+            # 業務別CSV格納
             TgyoumuList = CSVGet(URL + "/TGYOUMULIST.CSV")
+            # 業務別処理#########################################################################
             if TgyoumuList[0] is True:
+                # ------------------------------------------------------------------------------
+                # 業務別CSVから引数1のIndexを取得
                 TgyoumuListRow = CSVCheck("B2公会計営業", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
                     Tax = "B2"
@@ -718,16 +791,19 @@ def MainFlow(URL):
                         time.sleep(1)
                     ImgClick(URL, "KanyoTab.png", 0.9, 5)
                     time.sleep(1)
-                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    # 関与先毎の時間集計操作
+                    KanyoScroll(URL, Tax)
                     ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
                     for x in range(TgyoumuListRow[1]):
                         pg.press("up")
                 # ------------------------------------------------------------------------------
+                # 業務別CSVから引数1のIndexを取得
                 TgyoumuListRow = CSVCheck("A8公会計作業（固定資産台帳）", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
                     Tax = "A8"
                     time.sleep(1)
                     ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    # 目的のIndexまでキー入力
                     for x in range(TgyoumuListRow[1]):
                         pg.press("down")
                     time.sleep(1)
@@ -744,16 +820,20 @@ def MainFlow(URL):
                         time.sleep(1)
                     ImgClick(URL, "KanyoTab.png", 0.9, 5)
                     time.sleep(1)
-                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    # 関与先毎の時間集計操作
+                    KanyoScroll(URL, Tax)
                     ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    # 目的のIndexまでキー入力
                     for x in range(TgyoumuListRow[1]):
                         pg.press("up")
                 # ------------------------------------------------------------------------------
+                # 業務別CSVから引数1のIndexを取得
                 TgyoumuListRow = CSVCheck("A9公会計作業（財務書類）", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
                     Tax = "A9"
                     time.sleep(1)
                     ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    # 目的のIndexまでキー入力
                     for x in range(TgyoumuListRow[1]):
                         pg.press("down")
                     time.sleep(1)
@@ -770,16 +850,20 @@ def MainFlow(URL):
                         time.sleep(1)
                     ImgClick(URL, "KanyoTab.png", 0.9, 5)
                     time.sleep(1)
-                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    # 関与先毎の時間集計操作
+                    KanyoScroll(URL, Tax)
                     ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    # 目的のIndexまでキー入力
                     for x in range(TgyoumuListRow[1]):
                         pg.press("up")
                 # ------------------------------------------------------------------------------
+                # 業務別CSVから引数1のIndexを取得
                 TgyoumuListRow = CSVCheck("A10公会計作業（その他）", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
                     Tax = "A10"
                     time.sleep(1)
                     ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    # 目的のIndexまでキー入力
                     for x in range(TgyoumuListRow[1]):
                         pg.press("down")
                     time.sleep(1)
@@ -796,16 +880,20 @@ def MainFlow(URL):
                         time.sleep(1)
                     ImgClick(URL, "KanyoTab.png", 0.9, 5)
                     time.sleep(1)
-                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    # 関与先毎の時間集計操作
+                    KanyoScroll(URL, Tax)
                     ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    # 目的のIndexまでキー入力
                     for x in range(TgyoumuListRow[1]):
                         pg.press("up")
                 # ------------------------------------------------------------------------------
+                # 業務別CSVから引数1のIndexを取得
                 TgyoumuListRow = CSVCheck("A11公営作業", TgyoumuList[1], "業務")
                 if TgyoumuListRow[0] is True:
                     Tax = "A11"
                     time.sleep(1)
                     ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    # 目的のIndexまでキー入力
                     for x in range(TgyoumuListRow[1]):
                         pg.press("down")
                     time.sleep(1)
@@ -822,20 +910,26 @@ def MainFlow(URL):
                         time.sleep(1)
                     ImgClick(URL, "KanyoTab.png", 0.9, 5)
                     time.sleep(1)
-                    KanyoScroll(URL, Tax)  # 関与先毎の時間集計操作
+                    # 関与先毎の時間集計操作
+                    KanyoScroll(URL, Tax)
                     ImgClick(URL, "1gyouUnderArrow.png", 0.9, 5)
+                    # 目的のIndexまでキー入力
                     for x in range(TgyoumuListRow[1]):
                         pg.press("up")
                 # ------------------------------------------------------------------------------
+            # ###################################################################################
     else:
         time.sleep(1)
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 def DirSearch(URL):
     """
     フォルダチェック・作成
     """
+    # 現在の年度(str)
     yPar = str(dt.today().year)
+    # 先月(str)
     mPar = str(dt.today().month - 1)
     URL = URL + r"\\" + yPar + "-" + mPar
     if os.path.isdir(URL) is True:
@@ -855,12 +949,12 @@ def DirSearch(URL):
         return URL
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     global SaveDir
-    # ----------------------------------------------------------------------------------------------------------------------
-    URL = os.getcwd().replace("\\", "/")  # 先
+
+    URL = os.getcwd().replace("\\", "/")
     SaveDir = DirSearch(r"//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析")
-    # --------------------------------------------------------------------------------
     try:
         MainFlow(URL)
     except:

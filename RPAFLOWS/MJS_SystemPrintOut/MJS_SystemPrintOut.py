@@ -3,11 +3,9 @@
 ###########################################################################################################
 # モジュールインポート
 import pyautogui as pg
-import time
 import pandas as pd
 import numpy as np
 import os
-from threading import Thread, Lock
 import traceback
 import datetime
 import openpyxl
@@ -29,14 +27,67 @@ import Sub_KaikeiUpDate as KaikeiUpDate
 import Sub_KessanUpDate as KessanUpDate
 import Sub_DensisinkokuUpDate as DensisinkokuUpDate
 
+"""
+作成者:沖本卓士
+作成日:
+最終更新日:2022/11/14
+稼働設定:解像度 1920*1080 表示スケール125%
+####################################################
+処理の流れ
+####################################################
+1:MJSにログインする
+↓
+2:[デフォルト:\\NAS-SV\\B_監査etc\\B2_電子ﾌｧｲﾙ\\RPA_ミロクシステム次年更新\\製本・電子ファイル印刷申請]
+    フォルダ内の[製本・電子ファイル印刷申請ミロク.xlsm]シートを
+    [製本・電子ファイル印刷申請]フォルダ内の[MJSLog]フォルダへ移動
+↓
+3:移動したエクセルシートを読取る
+↓
+4:読取った内容に応じて、MJS各システム印刷処理を実行
+↓
+5:[製本・電子ファイル印刷申請]フォルダ内の[ミロク更新状況.xlsx]ファイルで
+    実行ログを表示する為のテキスト[製本・電子ファイル印刷申請\\MJSLog\\MJSSysUpLog.txt]を処理毎に出力
+↓
+6:実行内容に応じてエクセルシートに結果を入力
+####################################################
+ディレクトリ
+・__pycache__
+    実行時コンパイルモジュールのキャッシュ
+・img
+    画像フォルダ
+・Log
+    Log保管フォルダ
+・Control.py
+
+・ExcelFileAction.py
+
+・MJSOpen.py
+
+・MJSSPOPDFMarge.py
+
+・RPA_Function.py
+
+・Sub_DensisinkokuUpDate.py
+
+・Sub_GenkasyoukyakuUpdate.py
+
+・Sub_HoujinzeiUpdate.py
+
+・Sub_KaikeiUpDate.py
+
+・Sub_KessanUpDate.py
+
+・TEST.py
+
+・WarekiHenkan.py
+"""
+
 # logger設定------------------------------------------------------------------------------------------------------------
 import logging.config
 
 logging.config.fileConfig(r"LogConf\loggingMJSSysUp.conf")
 logger = logging.getLogger(__name__)
-LURL = (
-    r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\製本・電子ファイル印刷申請\MJSLog\MJSSysUpLog.txt"
-)
+LURL = r"\\NAS-SV\\B_監査etc\\B2_電子ﾌｧｲﾙ\\RPA_ミロクシステム次年更新\\製本・電子ファイル印刷申請\\MJSLog\\MJSSysUpLog.txt"
 open(LURL, "w").close()  # エクセル用実行ログをリセット
 # ----------------------------------------------------------------------------------------------------------------------
 # #######################################################################################################################
@@ -59,20 +110,21 @@ class Job:
         # 当年(int)
         self.Start_Year = WH.Wareki.from_ad(datetime.datetime.today().year).year
         # RPA用画像フォルダの作成
-        self.PrintOut_url = self.Img_dir + r"\\MJS_SystemPrintOut"  # 先
+        self.PrintOut_url = self.Img_dir + r"\\\MJS_SystemPrintOut"  # 先
         self.All_url = self.PrintOut_url + r"\\All"  # 先
-        self.NextCreate_url = self.Img_dir + r"\\MJS_SystemNextCreate"  # 先
-        self.XLSDir = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\製本・電子ファイル印刷申請"
-        self.SerchURL = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\03_法人決算"  # 先
-        self.Log_dir = self.XLSDir + r"\MJSLog\BackUp"  # 処理状況CSVの保管場所
+        self.NextCreate_url = self.Img_dir + r"\\\MJS_SystemNextCreate"  # 先
+        self.XLSDir = r"\\NAS-SV\\B_監査etc\\B2_電子ﾌｧｲﾙ\\RPA_ミロクシステム次年更新\\製本・電子ファイル印刷申請"
+        self.SerchURL = r"\\NAS-SV\\B_監査etc\\B2_電子ﾌｧｲﾙ\03_法人決算"  # 先
+        self.Log_dir = self.XLSDir + r"\\MJSLog\\BackUp"  # 処理状況CSVの保管場所
         self.filename = ""  # 処理状況CSVの元となるファイル名
         # self.BatUrl = (
-        #     os.getcwd() + r"\\bat\\AWADriverOpen.bat"
+        #     os.getcwd() + r"\\\Bat\\AWADriverOpen.bat"
         # )  # 4724ポート指定でappiumサーバー起動バッチを開く
         self.driver = MJSOpen.MainFlow(
             "self.BatUrl", self.FolURL, self.Img_dir
         )  # MJSを起動しログイン後インスタンス化
         log_out("Jobクラス読込終了")
+
 
 # ------------------------------------------------------------------------------------------------
 class Sheet:
@@ -675,6 +727,7 @@ def MainStarter(Job, Exc):
     except:
         return False, ""
 
+
 # ------------------------------------------------------------------------------------------------------------------
 def MainFlow(self, Exc):
 
@@ -699,6 +752,7 @@ def MainFlow(self, Exc):
     except Exception as e:
         log_out(e)
 
+
 # ------------------------------------------------------------------------------------------------------------------
 # def call():
 if __name__ == "__main__":
@@ -719,7 +773,7 @@ if __name__ == "__main__":
         #     while_count += 1
         # try:
         for curDir, dirs, files in os.walk(j.XLSDir):
-            if curDir == j.XLSDir:        
+            if curDir == j.XLSDir:
                 for sb_fileItem in files:
                     print(sb_fileItem)
                     if (
@@ -727,20 +781,24 @@ if __name__ == "__main__":
                         and not "製本・電子ファイル印刷申請ミロク(原本).xlsm" == sb_fileItem
                     ):
                         XLSURL = (
-                            curDir + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                            curDir
+                            + r"\\"
+                            + sb_fileItem.replace("~", "").replace("$", "")
                         )
                         MoveXLSURL = (
                             curDir
-                            + r"\\MJSLog\\"
+                            + r"\\\MJSLog\\"
                             + sb_fileItem.replace("~", "").replace("$", "")
                         )
                         os.rename(XLSURL, MoveXLSURL)
                         MoveXLSURL = (
-                            curDir + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                            curDir
+                            + r"\\"
+                            + sb_fileItem.replace("~", "").replace("$", "")
                         )
                         XLSURL = (
                             curDir
-                            + r"\\MJSLog\\"
+                            + r"\\\MJSLog\\"
                             + sb_fileItem.replace("~", "").replace("$", "")
                         )
                         # フォルダ移動後のエクセル読込
