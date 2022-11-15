@@ -1,57 +1,58 @@
-###########################################################################################################
-# 稼働設定：解像度 1920*1080 表示スケール125%
-###########################################################################################################
+"""
+作成者:沖本卓士
+作成日:
+最終更新日:2022/11/14
+稼働設定:解像度 1920*1080 表示スケール125%
+####################################################
+処理の流れ
+####################################################
+1:MJSにログインする
+↓
+2:[デフォルト:\\\\NAS-SV\\B_監査etc\\B2_電子ﾌｧｲﾙ\\RPA_ミロクシステム次年更新\\一括更新申請]
+    フォルダ内の[一括更新申請ミロク.xlsm]シートを
+    [一括更新申請]フォルダ内の[MJSLog]フォルダへ移動
+↓
+3:移動したエクセルシートを読取る
+↓
+4:読取った内容に応じて、MJS各システム年度更新を実行
+↓
+5:[一括更新申請]フォルダ内の[ミロク更新状況.xlsx]ファイルで
+    実行ログを表示する為のテキスト[一括更新申請\\MJSLog\\MJSSysUpLog.txt]を処理毎に出力
+↓
+6:実行内容に応じてエクセルシートに結果を入力
+####################################################
+"""
+
 # モジュールインポート
 import pyautogui as pg
 import time
-import MJSOpen
-
-# pandasインポート
 import pandas as pd
-
-# 配列計算関数numpyインポート
 import numpy as np
-
-# osインポート
 import os
 import subprocess
-
-# datetimeインポート
-
-# 例外処理判定の為のtracebackインポート
 import traceback
-
-import pyperclip  # クリップボードへのコピーで使用
-
-# import ExcelFileAction as EFA
-
+import pyperclip
+import logging.config
 import datetime
 import openpyxl
 
-
+# 自作モジュールインポート
 import WarekiHenkan as WH
 import RPA_Function as RPA
-
+import MJSOpen
 import Sub_GenkasyoukyakuUpdate as GenkasyoukyakuUpdate
 import Sub_HoujinzeiUpdate as HoujinzeiUpdate
 import Sub_HouteiUpdate as HouteiUpdate
-
-# import Sub_IkkatuUpDate as IkkatuUpDate
 import Sub_KaikeiUpDate as KaikeiUpDate
 import Sub_KessanUpDate as KessanUpDate
-
 import Sub_NencyouUpdate as NencyouUpdate
 import Sub_SyotokuzeiUpdate as SyotokuzeiUpdate
 import Sub_ZaisanUpdate as ZaisanUpdate
 
-import Control
-
 # logger設定------------------------------------------------------------------------------------------------------------
-import logging.config
-
 logging.config.fileConfig(r"LogConf\loggingMJSSysUp.conf")
 logger = logging.getLogger(__name__)
-LURL = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\一括更新申請\MJSLog\初回起動_"
+LURL = r"\\NAS-SV\B_監査etc\B2_電子ﾌｧｲﾙ\RPA_ミロクシステム次年更新\一括更新申請\MJSLog\MJSSysUpLog.txt"
 # ----------------------------------------------------------------------------------------------------------------------
 # #######################################################################################################################
 # 一括更新処理の該当年度はThisYearKey.pngなので、年度が変わったらスクリーンショットしなおす事
@@ -69,8 +70,6 @@ class Job:
         self.dir = dir
         # 画像のDir(str)
         self.Img_dir = Img_dir
-        # コントロール(class)
-        self.control = Control.control()
         # 当年(int)
         self.Start_Year = WH.Wareki.from_ad(datetime.datetime.today().year).year
         # RPA用画像フォルダの作成
@@ -79,13 +78,8 @@ class Job:
         self.imgdir_url = imgdir_url
         self.XLSDir = XLSDir
         self.first_csv = first_csv
-
-        # self.BatUrl = (
-        #     os.getcwd() + r"\\bat\\AWADriverOpen.bat"
-        # )  # 4724ポート指定でappiumサーバー起動バッチを開く
-        self.driver = MJSOpen.MainFlow(
-            "self.BatUrl", self.FolURL, self.Img_dir
-        )  # MJSを起動しログイン後インスタンス化
+        # MJSを起動しログイン後インスタンス化
+        self.driver = MJSOpen.MainFlow("self.BatUrl", self.FolURL, self.Img_dir)
         self.TimeOut = False
         if self.driver == "TimeOut":
             log_out("MJSOpen.MainFlowタイムアウト")
@@ -185,7 +179,6 @@ class Sheet:
         ExSheetdata = ExSheet.values
         print(ExSheetdata)
         ExSheetcolumns = next(ExSheetdata)[0:]
-
         NameSheet = self.book["関与先一覧"]
         NameSheetdata = NameSheet.values
         NameSheetcolumns = next(NameSheetdata)[0:]
@@ -194,7 +187,6 @@ class Sheet:
         # 初回読込時の保存--------------------------
         dt_s = datetime.datetime.now()
         dt_s = dt_s.strftime("%Y-%m-%d %H-%M-%S")
-
         ExSheet = pd.DataFrame(ExSheetdata, columns=ExSheetcolumns)
         self.name_df = pd.DataFrame(NameSheetdata, columns=NameSheetcolumns)
 
@@ -825,7 +817,9 @@ def Main():
                         and not "一括更新申請ミロク(原本).xlsm" == sb_fileItem
                     ):
                         XLSURL = (
-                            curDir + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                            curDir
+                            + r"\\"
+                            + sb_fileItem.replace("~", "").replace("$", "")
                         )
                         MoveXLSURL = (
                             curDir
@@ -834,7 +828,9 @@ def Main():
                         )
                         os.rename(XLSURL, MoveXLSURL)
                         MoveXLSURL = (
-                            curDir + r"\\" + sb_fileItem.replace("~", "").replace("$", "")
+                            curDir
+                            + r"\\"
+                            + sb_fileItem.replace("~", "").replace("$", "")
                         )
                         XLSURL = (
                             curDir
@@ -862,7 +858,7 @@ def Main():
                             del Ex_File  # エクセルブッククラスを解放
                             log_out("Excel解放")
                             os.rename(XLSURL, MoveXLSURL)
-                            log_out("Excelファイル移動完了")            
+                            log_out("Excelファイル移動完了")
         return True
 
 

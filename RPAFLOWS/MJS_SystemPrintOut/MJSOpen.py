@@ -2,17 +2,19 @@
 # 稼働設定：解像度 1920*1080 表示スケール125%
 ###########################################################################################################
 # モジュールインポート
-from appium import webdriver
+# from appium import webdriver
 import subprocess
 import pyautogui as pg
 import time
+import wrapt_timeout_decorator
 
 # loggerインポート
 from logging import getLogger
 
 logger = getLogger()
 
-
+TIMEOUT = 100
+# ----------------------------------------------------------------------------------------------------------------------
 def ExeOpen(AppURL):  # URL指定でアプリ起動関数
     P = subprocess.Popen(AppURL)
     return P
@@ -28,7 +30,6 @@ def DriverUIWaitXPATH(UIPATH, driver):  # XPATH要素を取得するまで待機
             return False
 
 
-# ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------
 def DriverUIWaitAutomationId(UIPATH, driver):  # XPATH要素を取得するまで待機
     for x in range(1000000):
@@ -106,7 +107,9 @@ def ImgClick(FolURL2, FileName, conf, LoopVal):  # 画像があればクリッ�
             print("要素取得に失敗しました。")
 
 
-def MainFlow(BatUrl, FolURL2, ImgFolName):
+# ----------------------------------------------------------------------------------------------------------------------
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(BatUrl, FolURL2, ImgFolName):
     # WebDriver起動バッチを管理者権限で起動---------------------------------------------------------------------------------
     logger.debug("Bat起動: debug level log")
     MSPDFURL = FolURL2 + "/bat/MSPDFSet.bat"  # 規定プリンターをMSPDFに
@@ -123,12 +126,16 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
     logger.debug("MJS起動: debug level log")
     try:
         MJSURL = r"C:\Program Files (x86)\MJS\MJSNXSVA\MJSDesktopNX.exe"
-        P = ExeOpen(MJSURL)
+        app = ExeOpen(MJSURL)
+        return app
     except:
         MJSURL = r"C:\Program Files (x86)\MJS\MJSNXSVB\MJSDesktopNX.exe"
-        P = ExeOpen(MJSURL)
+        app = ExeOpen(MJSURL)
+        return app
 
-    # time.sleep(10)
+
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def tryFlow(app, ImgFolName):
     # 画像が出現するまで待機-------------------------------------------------------------------------------------------
     ImgFolName = ImgFolName + r"\MJSOpen"
     List = [r"\PassTxtBox.png", r"\PassTxtBox2.png"]
@@ -156,9 +163,23 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
             ImgClick(
                 ImgFolName, r"\MJSOsiraseClose.png", conf, LoopVal
             )  # お知らせ画面があれば閉じるボタンをクリック
-            return P  # driver
+            return app  # driver
         else:
             logger.debug("MJSログイン完了: debug level log")
-            return P  # driver
+            return app  # driver
     time.sleep(1)
     # ----------------------------------------------------------------------------------------------------------------------
+
+
+def MainFlow(BatUrl, FolURL2, ImgFolName):
+    try:
+        app = Flow(BatUrl, FolURL2, ImgFolName)
+        f_app = tryFlow(app, ImgFolName)
+        return f_app
+    except TimeoutError:
+        if app is not None:
+            time.sleep(1)  # 子プロセスが起動していることを確認するまでの時間を確保
+            print("killします")
+            killcmd = "taskkill /F /PID {pid} /T".format(pid=app.pid)
+            subprocess.run(killcmd, shell=True)
+        return "TimeOut"

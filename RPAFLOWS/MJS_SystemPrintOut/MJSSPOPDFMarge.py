@@ -11,6 +11,7 @@ from pdfminer.high_level import extract_text
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfpage import PDFPage
+import Progress
 
 
 def dirCheck(Url):
@@ -131,6 +132,8 @@ def dirMarge(Line, PDFUrl, SerchURL, PDFDir, Title, No, YearT):
 
 
 def PDFMarge(Url, PDFUrl, SerchURL, Title, No, YearT):
+    PB = ProgressBar()
+    PB.start()
     with open(Url, "r", encoding="utf8") as f:
         LM = csv.reader(f)
         Line = [row for row in LM]
@@ -138,6 +141,7 @@ def PDFMarge(Url, PDFUrl, SerchURL, Title, No, YearT):
     PDFDir = dirCheck(PDFUrl)
     print(PDFDir)
     MF = dirMarge(Line, PDFUrl, SerchURL, PDFDir, Title, No, YearT)
+    PB.stop()
     return MF
 
 
@@ -145,6 +149,8 @@ def BeppyouPDFSplit(
     path_pdf,
     PDFDir,
 ):
+    PB = ProgressBar(tk.Tk())
+    PB.start()
     output = PyPDF2.PdfFileWriter()
     output2 = PyPDF2.PdfFileWriter()
     output3 = PyPDF2.PdfFileWriter()
@@ -251,6 +257,15 @@ def BeppyouPDFSplit(
         if not op5 == 0:
             with open(PDFDir + r"\第22号の2様式" + splitext[1], "wb") as output_file:
                 output5.write(output_file)
+        PB.stop()
         return True
     except:
+        PB.stop()
         return False
+
+
+if __name__ == "__main__":
+    PB = Progress.ProgressBar()
+    print("")
+    PB.mainloop()
+    PB.stop()

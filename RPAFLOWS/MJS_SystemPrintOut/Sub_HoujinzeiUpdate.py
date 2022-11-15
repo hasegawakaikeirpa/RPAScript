@@ -6,10 +6,10 @@ import pyperclip  # クリップボードへのコピーで使用
 import MJSSPOPDFMarge as PDFM
 import wrapt_timeout_decorator
 
-TIMEOUT = 600
+# TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+# @wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
 def Flow(Job, Exc):
     """
     概要: 法人税更新処理
@@ -206,7 +206,7 @@ def HoujinzeiUpdateSinkokuItiran(Job, Exc):
     )
     if OP[0] is True:
         RPA.ImgClick(URL, OP[1], 0.9, 10)
-        l = 0
+        ll = 0
         # 法人税メニューが表示されるまで待機------------------------------------
         while pg.locateOnScreen(URL + r"\\SinkokuTab.png", confidence=0.9) is None:
             time.sleep(1)
@@ -232,10 +232,10 @@ def HoujinzeiUpdateSinkokuItiran(Job, Exc):
                     is not None
                 ):
                     time.sleep(1)
-            l += 1
-            if l == 5:
+            ll += 1
+            if ll == 5:
                 RPA.ImgClick(URL, OP[1], 0.9, 10)
-                l = 0
+                ll = 0
         # --------------------------------------------------------------------
         if Exc.PN == "申告税一覧表":
             RPA.ImgClick(URL, r"\\DownPrint.png", 0.9, 10)
@@ -1197,6 +1197,7 @@ def sinkokuend(Job):
     if HLI[0] is True:
         RPA.ImgClick(URL, HLI[1], 0.9, 10)
     # --------------------------------------------------------------------
+
 
 # ------------------------------------------------------------------------------------------------------------------
 def HoujinzeiUpdate(Job, Exc):

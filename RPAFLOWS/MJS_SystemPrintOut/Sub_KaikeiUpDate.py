@@ -6,10 +6,10 @@ import pyperclip  # クリップボードへのコピーで使用
 import MJSSPOPDFMarge as PDFM
 import wrapt_timeout_decorator
 
-TIMEOUT = 600
+# TIMEOUT = 600
 
 # ------------------------------------------------------------------------------------------------------------------
-@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+# @wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
 def Flow(Job, Exc):
     """
     概要: 会計大将更新処理
@@ -747,14 +747,14 @@ def kessansinkoku():
         10,
     )
     if KSP[0] is True:  # 01決算書アイコンがあれば
-        l = 0
+        ll = 0
         RPA.ImgClick(URL, KSP[1], 0.9, 10)  # 01決算書アイコンをクリック
         while pg.locateOnScreen(URL + r"\K_PreviewFlag.png", confidence=0.9) is None:
             time.sleep(1)
             if RPA.ImgCheck(URL, r"\Kessankakutei.png", 0.9, 1)[0] is True:
                 pg.press("return")
-            l += 1
-            if l == 5:
+            ll += 1
+            if ll == 5:
                 RPA.ImgClick(URL, KSP[1], 0.9, 10)  # 01決算書アイコンをクリック
 
 
@@ -796,6 +796,7 @@ def lastclose():
     if RPA.ImgCheck(URL, r"\Last_End.png", 0.9, 10)[0] is True:
         pg.press("n")
     return True
+
 
 # ------------------------------------------------------------------------------------------------------------------
 def KaikeiUpDate(Job, Exc):

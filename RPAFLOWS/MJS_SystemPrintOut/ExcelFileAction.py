@@ -1,14 +1,12 @@
-# ----------------------------------------------------------------------------------------------------------------------
-# pandasインポート
 import pandas as pd
-import openpyxl
-
-# 配列計算関数numpyインポート
 import numpy as np
 from chardet.universaldetector import UniversalDetector
 
 # -------------------------------------------------------------------------------------------------------------------------------
-def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
+def getFileEncoding(file_path):
+    """
+    引数ファイルのエンコードを調べる
+    """
     detector = UniversalDetector()
     with open(file_path, mode="rb") as f:
         for binary in f:
@@ -20,7 +18,10 @@ def getFileEncoding(file_path):  # .format( getFileEncoding( "sjis.csv" ) )
 
 
 # ------------------------------------------------------------------------------------------------------------------------------
-def CsvPlus(URL, LogList, LogMSG):  # 引数指定のCSV最終行に行データ追加
+def CsvPlus(URL, LogList, LogMSG):
+    """
+    引数指定のCSV最終行に行データ追加
+    """
     try:
         SerchEnc = format(getFileEncoding(URL))
         df_shape = LogList.shape
@@ -33,12 +34,12 @@ def CsvPlus(URL, LogList, LogMSG):  # 引数指定のCSV最終行に行データ
 
 
 # -------------------------------------------------------------------------------------------------------------------------------
-def XlsmRead(URL):  # 引数指定のCSVを読みとる
+def XlsmRead(URL):
+    """
+    引数指定のCSVを読みとる
+    """
     try:
         URL = URL.replace("\\", "/")
-        # C_xlsm = openpyxl.reader.excel.load_workbook(
-        #     URL, read_only=False, keep_vba=True, data_only=False, keep_links=True
-        # )
         C_xlsm = pd.ExcelFile(URL, engine="openpyxl")
         return True, C_xlsm
     except:
@@ -46,7 +47,10 @@ def XlsmRead(URL):  # 引数指定のCSVを読みとる
 
 
 # -------------------------------------------------------------------------------------------------------------------------------
-def to_Df(Exf, SName):  # エクセルシートをデータフレームへ
+def to_Df(Exf, SName):
+    """
+    エクセルシートをデータフレームへ
+    """
     try:
         # DataFrameとしてsheet1枚のデータ(2019)を読込み
         C_xlsm = Exf.parse(sheet_name=SName, index_col=None)
@@ -57,6 +61,9 @@ def to_Df(Exf, SName):  # エクセルシートをデータフレームへ
 
 # -------------------------------------------------------------------------------------------------------------------------------
 def to_DfList(URL):
+    """
+    エクセルシートを順々にデータフレーム化しリスト格納
+    """
     try:
         df_list = []
         file = pd.ExcelFile(URL)  # bookを読む
@@ -68,9 +75,10 @@ def to_DfList(URL):
 
 
 # -------------------------------------------------------------------------------------------------------------------------------
-def CsvSortArray(
-    URL, KeyCol, Key, Arg
-):  # dtype={"TKCKokuzeiUserCode": str,"TKCKokuzeiUserCode": str}.........　#引数指定の条件一致行を対象から抽出
+def CsvSortArray(URL, KeyCol, Key, Arg):
+    """
+    引数指定の条件一致行を対象から抽出
+    """
     try:
         Sort_url = URL
         SerchEnc = format(getFileEncoding(Sort_url))

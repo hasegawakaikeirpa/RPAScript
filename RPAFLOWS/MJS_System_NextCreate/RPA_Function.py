@@ -1,6 +1,7 @@
 from pyautogui import locateOnScreen, center, click
 import os
 import time
+from chardet.universaldetector import UniversalDetector
 
 
 def DriverUIWaitXPATH(UIPATH, driver):  # XPATH要素を取得するまで待機
@@ -228,3 +229,15 @@ def My_Dir(Title):
 
 
 # ------------------------------------------------------------------------------------------------------------------
+def getFileEncoding(file_path):
+    if os.path.isfile(file_path) is True:
+        detector = UniversalDetector()
+        with open(file_path, mode="rb") as f:
+            for binary in f:
+                detector.feed(binary)
+                if detector.done:
+                    break
+        detector.close()
+        return detector.result["encoding"]
+    else:
+        return ""
