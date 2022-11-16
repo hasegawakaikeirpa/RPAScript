@@ -348,7 +348,7 @@ def CSVCheck(Key, CSVArr, ColName):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def FirstOpen(URL, Tax):
+def FirstOpen(obj, URL, Tax):
     """
     初回起動(抽出期間の設定)
     """
@@ -376,8 +376,12 @@ def FirstOpen(URL, Tax):
         time.sleep(1)
         pg.press("return")
         time.sleep(1)
-        yPar = str(WarekiHenkan.Wareki.from_ad(dt.today().year).year)
-        mPar = str(dt.today().month - 1)
+        # 現在の年度(str)
+        yPar = str(obj.i_id_txt.get())
+        # 先月(str)
+        mPar = str(obj.i_id_txt2.get())
+        yPar = str(WarekiHenkan.Wareki.from_ad(int(yPar)).year)
+
         pg.write(yPar, interval=0.01)
         pg.press("return")
         time.sleep(1)
@@ -747,19 +751,21 @@ def EigyouScroll(URL):  # 関与先毎の時間集計操作
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def MainFlow(URL):
+def MainFlow(obj):
     """
     メイン(作業内容別処理)
     """
     # 4724ポート指定でappiumサーバー起動バッチを開く
     BatUrl = os.getcwd().replace("\\", "/") + r"\bat\AWADriverOpen.bat"
     # OMSを起動しログイン後インスタンス化
-    OMSOpen.MainFlow(BatUrl, os.getcwd().replace("\\", "/"), "RPAPhoto")
+    driver = OMSOpen.MainFlow(
+        BatUrl, obj.open_dir, "RPAPhoto", obj.id_txt.get(), obj.pass_txt.get()
+    )
     # RPA操作用の画像ファイル保管場所
-    URL = os.getcwd().replace("\\", "/") + r"\RPAFLOWS\TKC_KoukaikeiTimetabulation\img"
+    URL = obj.Img_dir_D
     Tax = ""
     # 初回起動
-    FMO = FirstOpen(URL, Tax)
+    FMO = FirstOpen(obj, URL, Tax)
     if FMO is True:
         # 業務別CSV出力
         TCSVO = TKCCSVOut(URL, "TGYOUMULIST")
@@ -923,15 +929,34 @@ def MainFlow(URL):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def DirSearch(URL):
+def DirSearch(obj):
     """
     フォルダチェック・作成
     """
+    URL = obj.dir_name
     # 現在の年度(str)
-    yPar = str(dt.today().year)
+    yPar = str(obj.i_id_txt.get())
     # 先月(str)
-    mPar = str(dt.today().month - 1)
+    mPar = str(obj.i_id_txt2.get())
+
+    for x in range(100):
+        for y in range(12):
+            yp, mp = int(yPar) + x, int(mPar) + y
+            mp = format(mp, "02")
+            if f"{str(yp)}-{str(mp)}" in URL:
+                Usp = URL.split(f"/{str(yp)}-{str(mp)}")
+                URL = Usp[0]
+                break
+
+            yp, mp = int(yPar) - x, int(mPar) - y
+            mp = format(mp, "02")
+            if f"{str(yp)}-{str(mp)}" in URL:
+                Usp = URL.split(f"/{str(yp)}-{str(mp)}")
+                URL = Usp[0]
+                break
+
     URL = URL + r"\\" + yPar + "-" + mPar
+
     if os.path.isdir(URL) is True:
         if os.path.isdir(URL + r"\\BACKUP") is False:
             os.mkdir(URL + r"\\BACKUP")
@@ -950,12 +975,11 @@ def DirSearch(URL):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-if __name__ == "__main__":
+# if __name__ == "__main__":
+def Main(obj):
     global SaveDir
-
-    URL = os.getcwd().replace("\\", "/")
-    SaveDir = DirSearch(r"//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析")
+    SaveDir = DirSearch(obj)
     try:
-        MainFlow(URL)
+        MainFlow(obj)
     except:
         traceback.print_exc()

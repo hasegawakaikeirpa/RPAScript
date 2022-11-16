@@ -97,6 +97,7 @@ def tryFlow(app, driver, ImgFolName, ID, Pass):
         pg.press(["tab", "tab"])
         pg.keyUp("shift")
         pg.write(ID, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+        pg.press("return")
         OMSPassWindowClc.click()
         pg.write(Pass, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
         pg.press(["return", "return"])

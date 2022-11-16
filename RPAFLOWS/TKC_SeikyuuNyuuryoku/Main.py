@@ -40,23 +40,23 @@ class GUI(tk.Frame):
         self.inner_up1.pack(side=tk.TOP, padx=5, fill=tk.X, expand=True)
 
         self.lb = tk.Label(self.inner_up1, text="ID")
-        self.lb.grid(row=0, column=0, padx=5, sticky=tk.W + tk.E)
+        self.lb.grid(row=0, column=0, padx=5, pady=10, sticky=tk.W + tk.E)
 
         self.id_txt = tk.StringVar(self.inner_up1, ID)
         self.id_ent = tk.Entry(
             self.inner_up1, textvariable=self.id_txt, width=int(self.w / 30)
         )
-        self.id_ent.grid(row=0, column=1, padx=5, sticky=tk.W + tk.E)
+        self.id_ent.grid(row=0, column=1, padx=5, pady=10, sticky=tk.W + tk.E)
         self.widget_list.append(self.id_ent)
 
         self.lb2 = tk.Label(self.inner_up1, text="Pass")
-        self.lb2.grid(row=1, column=0, padx=5, sticky=tk.W + tk.E)
+        self.lb2.grid(row=1, column=0, padx=5, pady=10, sticky=tk.W + tk.E)
 
         self.pass_txt = tk.StringVar(self.inner_up1, Pass)
         self.pass_ent = tk.Entry(
             self.inner_up1, textvariable=self.pass_txt, width=int(self.w / 30)
         )
-        self.pass_ent.grid(row=1, column=1, padx=5, sticky=tk.W + tk.E)
+        self.pass_ent.grid(row=1, column=1, padx=5, pady=10, sticky=tk.W + tk.E)
         self.widget_list.append(self.pass_ent)
 
         # インナーサブフレーム
@@ -72,7 +72,7 @@ class GUI(tk.Frame):
             text="給与計算請求額表選択",
             command=self.xlsx_get,
         )
-        self.bt.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
+        self.bt.pack(side=tk.LEFT, padx=5, pady=10, fill=tk.X, expand=True)
         self.widget_list.append(self.bt)
         # self.bt.grid(row=0,column=0, padx=5, sticky=tk.W + tk.E)
 
@@ -83,7 +83,7 @@ class GUI(tk.Frame):
             textvariable=self.sheet_list_var,
             state="readonly",
         )
-        self.sheet_list.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
+        self.sheet_list.pack(side=tk.LEFT, padx=5, pady=10, fill=tk.X, expand=True)
         self.widget_list.append(self.sheet_list)
         self.sheet_list.bind("<<ComboboxSelected>>", self.change_sheet)
 
@@ -306,7 +306,7 @@ class GUI(tk.Frame):
             self.master.withdraw()
             tk.messagebox.showinfo(
                 "注意",
-                "これよりTKC-FMSを起動し、請求入力をを開始します。\n処理が完了するまで[必ず]PC操作を中断して下さい。",
+                "これよりTKC-FMSを起動し、請求入力を開始します。\n処理が完了するまで[必ず]PC操作を中断して下さい。",
             )
             TKC_Sei_Flag = TKC_Sei.Main(self)
             if TKC_Sei_Flag is True:

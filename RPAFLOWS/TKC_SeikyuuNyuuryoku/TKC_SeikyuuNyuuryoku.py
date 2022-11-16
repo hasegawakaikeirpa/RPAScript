@@ -317,7 +317,7 @@ def FindMenu(driver, FolURL2, xls_cd):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
+def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList, KamokuCD):
     FM = FindMenu(driver, FolURL2, xls_cd)
     if FM is True:
         time.sleep(2)
@@ -451,7 +451,7 @@ def FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
+def OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList, KamokuCD):
     FM = FindMenu(driver, FolURL2, xls_cd)
     if FM is True:
         time.sleep(2)
@@ -556,7 +556,7 @@ def MainFlow(FolURL2, xls_data, KamokuCD, Lyear, Lmonth, Lday, i, p, obj):
         UpList = []
         No = False
         first = False
-        for xls_Item in xls_data.iterrows():
+        for index, xls_Item in xls_data.iterrows():
             xls_cd = str(xls_Item.values[int(obj.i_id_txt4.get())])
             xls_name = xls_Item.values[int(obj.i_name_txt.get())].replace("\u3000", "")
             xls_mn = str(xls_Item.values[int(obj.i_id_txt5.get())])
@@ -570,13 +570,35 @@ def MainFlow(FolURL2, xls_data, KamokuCD, Lyear, Lmonth, Lday, i, p, obj):
             if No is True:
                 if first is False:
                     FirstAction(
-                        driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList
+                        driver,
+                        FolURL2,
+                        xls_cd,
+                        xls_name,
+                        xls_mn,
+                        xls_tx,
+                        UpList,
+                        KamokuCD,
                     )
                     first = True
                 else:
                     OuterAction(
-                        driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList
+                        driver,
+                        FolURL2,
+                        xls_cd,
+                        xls_name,
+                        xls_mn,
+                        xls_tx,
+                        UpList,
+                        KamokuCD,
                     )
+        while pg.locateOnScreen(FolURL2 + r"\wait_menu.png", confidence=0.9) is None:
+            time.sleep(2)
+        pg.press("f10")
+        while pg.locateOnScreen(FolURL2 + r"\CloseBtn.png", confidence=0.9) is None:
+            time.sleep(2)
+        ImgClick(FolURL2, r"\End_Btn.png", 0.9, 10)
+        while pg.locateOnScreen(FolURL2 + r"\CloseBtn.png", confidence=0.9) is not None:
+            time.sleep(2)
         print("処理終了")
         return True
     else:
