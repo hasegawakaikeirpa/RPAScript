@@ -44,7 +44,7 @@ def DriverUIWaitAutomationId(UIPATH, driver):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+# @wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
 def Flow(BatUrl, FolURL2, ImgFolName):
     """
     デフォルトプリンターをMSPDFに変更(./bat/MSPDFSet.batをSubprocess実行)
@@ -61,7 +61,7 @@ def Flow(BatUrl, FolURL2, ImgFolName):
     """
     # WebDriver起動バッチを管理者権限で起動
     logger.debug("Bat起動: debug level log")
-    MSPDFURL = FolURL2 + r"/bat/MSPDFSet.bat"  # 規定プリンターをMSPDFに
+    MSPDFURL = os.getcwd() + r"/bat/MSPDFSet.bat"  # 規定プリンターをMSPDFに
     ExeOpen(MSPDFURL)
     ExeOpen(BatUrl)
     desired_caps = {}
@@ -73,11 +73,12 @@ def Flow(BatUrl, FolURL2, ImgFolName):
     logger.debug("OMS起動: debug level log")
     OMSURL = r"C:\\Program Files (x86)\\TKC\\OMS\\OMS.exe"
     app = ExeOpen(OMSURL)
-    return app,driver
+    return app, driver
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # @wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
-def tryFlow(app,driver, ImgFolName,ID, Pass):
+def tryFlow(app, driver, ImgFolName, ID, Pass):
     # time.sleep(10)
     ImgFolName = os.getcwd().replace("\\", "/")  # 先
     FileName = "OpenWin.png"
@@ -92,9 +93,12 @@ def tryFlow(app,driver, ImgFolName,ID, Pass):
         # 正常待機後処理
         OMSPassWindowClc = driver.find_element_by_accessibility_id("passwordTextBox")
         OMSPassWindowClc.click()
+        pg.keyDown("shift")
+        pg.press(["tab", "tab"])
+        pg.keyUp("shift")
+        pg.write(ID, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+        OMSPassWindowClc.click()
         pg.write(Pass, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
-        # OMSPassOKBtn = driver.find_element_by_accessibility_id("okButton")
-        # OMSPassOKBtn.click()
         pg.press(["return", "return"])
     else:
         # 異常待機後処理
@@ -119,12 +123,13 @@ def tryFlow(app,driver, ImgFolName,ID, Pass):
         print("codeTextBox要素取得に失敗しました。")
     # ----------------------------------------------------------------------------------------------------------------------
 
+
 def MainFlow(BatUrl, FolURL2, ImgFolName, i, p):
     try:
         ret_Flow = Flow(BatUrl, FolURL2, ImgFolName)
         app = ret_Flow[0]
         driver = ret_Flow[1]
-        f_app = tryFlow(app,driver, ImgFolName,i, p)
+        f_app = tryFlow(app, driver, ImgFolName, i, p)
         return f_app
     except TimeoutError:
         if app is not None:

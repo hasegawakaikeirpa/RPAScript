@@ -255,7 +255,7 @@ def SortPDF(PDFName):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def FMSOpen(driver, FolURL2, xls_data, KamokuCD, Lday):
+def FMSOpen(driver, FolURL2, xls_data, KamokuCD, Lyear, Lmonth, Lday):
     # 要素クリック----------------------------------------------------------------------------------------------------------
     Hub = "AutomationID"
     ObjName = "um10PictureButton"
@@ -264,15 +264,15 @@ def FMSOpen(driver, FolURL2, xls_data, KamokuCD, Lday):
     FileName = "TodayTitle.png"
     while pg.locateOnScreen(FolURL2 + "/" + FileName, confidence=0.9) is None:
         time.sleep(2)
+    pg.write(str(Lyear), interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+    pg.press("return")
+    time.sleep(1)
+    pg.write(str(Lmonth), interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+    pg.press("return")
+    time.sleep(1)
+    pg.write(str(Lday), interval=0.01)  # 直接SENDできないのでpyautoguiで入力
     pg.press("return")
     pg.press("return")
-    # pg.write('20')
-    pg.write(str(Lday[1]), interval=0.01)  # 直接SENDできないのでpyautoguiで入力
-    pg.press("return")
-    conf = 0.9
-    LoopVal = 10
-    FileName = "TTOK.png"
-    ImgClick(FolURL2, FileName, conf, LoopVal)
     time.sleep(3)
     conf = 0.9
     # -------------------------------------------
@@ -547,37 +547,62 @@ def OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def MainFlow(FolURL2, xls_data, KamokuCD, Lday):
-    BatUrl = FolURL2 + "/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
-    driver = OMSOpen.MainFlow(BatUrl, FolURL2, "RPAPhoto")  # OMSを起動しログイン後インスタンス化
-    # driver = []
-    FolURL2 = FolURL2 + "/RPAPhoto/TKC_SeikyuuNyuuryoku"
-    FMSOpen(driver, FolURL2, xls_data, KamokuCD, Lday)
-    UpList = []
-    for index, xls_Item in xls_data.iterrows():
-        xls_cd = str(int(xls_Item["ｺｰﾄﾞ"]))
-        xls_name = xls_Item["関与先名"].replace("\u3000", "")
-        xls_mn = str(int(xls_Item["先生値決め"]))
-        xls_tx = str((xls_Item["摘要"]))
-        if index == 0:
-            FirstAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList)
-        else:
-            OuterAction(driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList)
-        # ---------------------------------------------------------------------------------------------------------------------
-    print("処理終了")
+def MainFlow(FolURL2, xls_data, KamokuCD, Lyear, Lmonth, Lday, i, p, obj):
+    BatUrl = os.getcwd() + r"/bat/AWADriverOpen.bat"  # 4724ポート指定でappiumサーバー起動バッチを開く
+    driver = OMSOpen.MainFlow(BatUrl, openurl, "RPAPhoto", i, p)  # OMSを起動しログイン後インスタンス化
+
+    if driver != "TimeOut":
+        FMSOpen(driver, FolURL2, xls_data, KamokuCD, Lyear, Lmonth, Lday)
+        UpList = []
+        No = False
+        first = False
+        for xls_Item in xls_data.iterrows():
+            xls_cd = str(xls_Item.values[int(obj.i_id_txt4.get())])
+            xls_name = xls_Item.values[int(obj.i_name_txt.get())].replace("\u3000", "")
+            xls_mn = str(xls_Item.values[int(obj.i_id_txt5.get())])
+            xls_tx = str(obj.i_id_txt6.get())
+            try:
+                int(xls_cd)
+                int(xls_mn)
+                No = True
+            except:
+                No = False
+            if No is True:
+                if first is False:
+                    FirstAction(
+                        driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList
+                    )
+                    first = True
+                else:
+                    OuterAction(
+                        driver, FolURL2, xls_cd, xls_name, xls_mn, xls_tx, UpList
+                    )
+        print("処理終了")
+        return True
+    else:
+        return False
+
 
 # ----------------------------------------------------------------------------------------------------------------------
-def Main(FolURL2, xls_data, KamokuCD, Lday):
-    # --------------------------------------------------------------------------------
-    KamokuCD = input("科目コードを指定してください。償却資産 = 190 支払調書 = 140\n")
-    # ColName = input("関与先コードが記載されている列名を入力してください\n")
-    # MoneyColN = input("値決め金額が記載されている列名を入力してください\n")
-    # RPA用画像フォルダの作成---------------------------------------------------------
-    FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/TKC_SeikyuuNyuuryoku"  # 元
-    FolURL2 = os.getcwd().replace("\\", "/")  # 先
-    # --------------------------------------------------------------------------------
+def Main(obj):
+    global openurl
+    openurl, FolURL2, xls_data, KamokuCD, Lyear, Lmonth, Lday, i, p = (
+        obj.open_dir,
+        obj.Img_dir_D,
+        obj.table.model.df,
+        obj.code_txt.get(),
+        obj.i_id_txt.get(),
+        obj.i_id_txt2.get(),
+        obj.i_id_txt3.get(),
+        obj.id_txt.get(),
+        obj.pass_txt.get(),
+    )
     try:
-        MainFlow(FolURL2, xls_data, KamokuCD, Lday)
-        EndFlag = False
+        MF = MainFlow(FolURL2, xls_data, KamokuCD, Lyear, Lmonth, Lday, i, p, obj)
+        if MF is True:
+            return True
+        else:
+            return False
     except:
         traceback.print_exc()
+        return False
