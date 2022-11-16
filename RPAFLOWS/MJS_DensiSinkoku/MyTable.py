@@ -1,5 +1,6 @@
 import tkinter as tk
-from pandastable import Table, TableModel, applyStyle
+from pandastable import Table, TableModel, applyStyle, config
+import RPA_Function as RPA
 from csv import QUOTE_NONNUMERIC
 import pandas as pd
 import os
@@ -11,8 +12,12 @@ class MyTable(Table):
     クリックイベント等を書き換える事ができる
     """
 
-    def __init__(self, parent=None, **kwargs):
+    def __init__(self, parent=None, **kwargs):        
         Table.__init__(self, parent, **kwargs)
+        options = config.load_options()
+        #options is a dict that you can set yourself
+        options = {'fontsize': 8}
+        config.apply_options(options, self)        
         return
 
     # --------------------------------------------------------------------
@@ -301,12 +306,8 @@ class MyTable(Table):
         # self.delete("entry")
         self.gotonextCell()
         self.focus_set()
-        if self._name == "各列指定":
-            title = "_ListSetting"
-        else:
-            title = "_ColumnSetting"
-        self.control.DF_to_toml(self.model.df, title)
-
+        enc = RPA.getFileEncoding(self.csv_name)
+        self.model.df.to_csv(self.importFilePath,encoding=enc)        
         return
 
     # --------------------------------------------------------------------
@@ -359,8 +360,7 @@ class MyTable(Table):
         # which row and column is the click inside?
         rowclicked = self.get_row_clicked(event)
         colclicked = self.get_col_clicked(event)
-        # self.control.activetable_row = rowclicked
-        self.control.activetable_column = self.model.df.columns[colclicked]
+
         if colclicked is None:
             return
         self.focus_set()
