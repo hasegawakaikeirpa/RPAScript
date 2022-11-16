@@ -20,8 +20,6 @@ import traceback
 
 # pandas(pd)で関与先データCSVを取得
 import pyautogui
-
-import calendar
 import pyperclip
 import tkinter
 import tkinter.filedialog
@@ -568,31 +566,18 @@ def MainFlow(FolURL2, xls_data, KamokuCD, Lday):
         # ---------------------------------------------------------------------------------------------------------------------
     print("処理終了")
 
-
-if dt.today().day > 15:
-    Lday = calendar.monthrange(dt.today().year, dt.today().month)
-else:
-    Lday = calendar.monthrange(dt.today().year, dt.today().month - 1)
-idir = r"\\nas-sv\K_管理\A1_総務\01_総務"
-file_path = tkinter.filedialog.askopenfilename(initialdir=idir)
-# file_path = file_path.replace("\u3000","\　")
-xls_data = pd.read_excel(file_path, sheet_name=0, engine="openpyxl")
-print(xls_data)
-HeadRow = input("ヘッダー行を指定してください。\n")
-xls_data = pd.read_excel(
-    file_path, sheet_name=0, header=int(HeadRow), engine="openpyxl"
-)
-print(xls_data)
-# --------------------------------------------------------------------------------
-KamokuCD = input("科目コードを指定してください。償却資産 = 190 支払調書 = 140\n")
-# ColName = input("関与先コードが記載されている列名を入力してください\n")
-# MoneyColN = input("値決め金額が記載されている列名を入力してください\n")
-# RPA用画像フォルダの作成---------------------------------------------------------
-FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/TKC_SeikyuuNyuuryoku"  # 元
-FolURL2 = os.getcwd().replace("\\", "/")  # 先
-# --------------------------------------------------------------------------------
-try:
-    MainFlow(FolURL2, xls_data, KamokuCD, Lday)
-    EndFlag = False
-except:
-    traceback.print_exc()
+# ----------------------------------------------------------------------------------------------------------------------
+def Main(FolURL2, xls_data, KamokuCD, Lday):
+    # --------------------------------------------------------------------------------
+    KamokuCD = input("科目コードを指定してください。償却資産 = 190 支払調書 = 140\n")
+    # ColName = input("関与先コードが記載されている列名を入力してください\n")
+    # MoneyColN = input("値決め金額が記載されている列名を入力してください\n")
+    # RPA用画像フォルダの作成---------------------------------------------------------
+    FolURL = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/RPAPhoto/TKC_SeikyuuNyuuryoku"  # 元
+    FolURL2 = os.getcwd().replace("\\", "/")  # 先
+    # --------------------------------------------------------------------------------
+    try:
+        MainFlow(FolURL2, xls_data, KamokuCD, Lday)
+        EndFlag = False
+    except:
+        traceback.print_exc()

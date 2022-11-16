@@ -8,6 +8,7 @@ from tkinter import filedialog, messagebox
 
 class GUI(tk.Frame):
     def __init__(self,root):
+        self.widget_list = []
         self.csv_load = False
         self.table2_load = False
         self.w = int(root.winfo_screenwidth() / 2)
@@ -21,28 +22,60 @@ class GUI(tk.Frame):
 
         # インナーフレーム
         self.inner_upfra = tk.Frame(
-            self.fra, width=self.w, height=(self.h / 2), bd=5, relief=tk.RAISED
+            self.fra, width=self.w, height=(self.h / 2), bd=5, relief=tk.GROOVE
         )
         self.inner_upfra.pack(side=tk.TOP, fill=tk.X, expand=True)
 
+        # インナーサブフレーム
+        self.inner_up1 = tk.Frame(
+            self.inner_upfra, width=self.w, height=(self.h / 2), bd=5, relief=tk.GROOVE
+        )
+        self.inner_up1.pack(side=tk.TOP, padx=5, fill=tk.X, expand=True)
+
+        self.lb = tk.Label(self.inner_up1, text="ID")
+        self.lb.grid(row=0, column=0, padx=5, sticky=tk.W + tk.E)
+
+        self.id_txt = tk.StringVar(self.inner_up1, ID)
+        self.id_ent = tk.Entry(
+            self.inner_up1, textvariable=self.id_txt, width=int(self.w / 30)
+        )
+        self.id_ent.grid(row=0, column=1, padx=5, sticky=tk.W + tk.E)
+        self.widget_list.append(self.id_ent)
+
+        self.lb2 = tk.Label(self.inner_up1, text="Pass")
+        self.lb2.grid(row=1, column=0, padx=5, sticky=tk.W + tk.E)
+
+        self.pass_txt = tk.StringVar(self.inner_up1, Pass)
+        self.pass_ent = tk.Entry(
+            self.inner_up1, textvariable=self.pass_txt, width=int(self.w / 30)
+        )
+        self.pass_ent.grid(row=1, column=1, padx=5, sticky=tk.W + tk.E)
+        self.widget_list.append(self.pass_ent)
+
+        # インナーサブフレーム
+        self.inner_up2 = tk.Frame(
+            self.inner_upfra, width=self.w, height=(self.h / 2), bd=5, relief=tk.GROOVE
+        )
+        self.inner_up2.pack(side=tk.TOP, padx=5, fill=tk.X, expand=True)
+
         # インナーフレーム要素
-        self.bt = tk.Button(self.inner_upfra,width=int(self.w/30), text="保存場所選択", command=self.Set_Dir)
+        self.bt = tk.Button(self.inner_up2,width=int(self.w/30), text="保存場所選択", command=self.Set_Dir)
         self.bt.pack(side=tk.TOP,padx=5, expand=True)
         
-        self.year_lb = tk.Label(self.inner_upfra,text="年")
+        self.year_lb = tk.Label(self.inner_up2,text="年")
         self.year_lb.pack()
-        self.year_txt = tk.StringVar(self.inner_upfra,Year_txt)
-        self.year = tk.Entry(self.inner_upfra,width=int(self.w/5),textvariable=self.year_txt)
+        self.year_txt = tk.StringVar(self.inner_up2,Year_txt)
+        self.year = tk.Entry(self.inner_up2,width=int(self.w/5),textvariable=self.year_txt)
         self.year.pack(side=tk.TOP, fill=tk.X, expand=True)
 
-        self.month_lb = tk.Label(self.inner_upfra,text="月")
+        self.month_lb = tk.Label(self.inner_up2,text="月")
         self.month_lb.pack()
-        self.month_txt = tk.StringVar(self.inner_upfra,Month_txt)        
-        self.month = tk.Entry(self.inner_upfra,width=int(self.w/5),textvariable=self.month_txt)
+        self.month_txt = tk.StringVar(self.inner_up2,Month_txt)        
+        self.month = tk.Entry(self.inner_up2,width=int(self.w/5),textvariable=self.month_txt)
         self.month.pack(side=tk.TOP, fill=tk.X, expand=True)
 
         # インナーフレーム2
-        self.inner_lowerfra = tk.Frame(self.fra, width=self.w, bd=5, relief=tk.RAISED)
+        self.inner_lowerfra = tk.Frame(self.fra, width=self.w, bd=5, relief=tk.GROOVE)
         self.inner_lowerfra.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         self.save_dir = tk.StringVar(self.inner_lowerfra,save_dir)
         self.txt = tk.Entry(self.inner_lowerfra,width=int(self.w/5),textvariable=self.save_dir)
@@ -55,14 +88,25 @@ class GUI(tk.Frame):
         self.bt3.pack(side=tk.TOP,padx=5,fill=tk.X, expand=True)
 
         # # テーブル
-        # self.inner_lo_left_fra = tk.Frame(self.inner_lowerfra, width=int(self.w/1.5), bd=5, relief=tk.RAISED)
+        # self.inner_lo_left_fra = tk.Frame(self.inner_lowerfra, width=int(self.w/1.5), bd=5, relief=tk.GROOVE)
         # self.inner_lo_left_fra.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)   
         # self.table = MyTable.MyTable(self.inner_lo_left_fra, width=int(self.w/1.5))
 
         # # テーブル
-        # self.inner_lo_right_fra = tk.Frame(self.inner_lowerfra, width=int(self.w/4), bd=5, relief=tk.RAISED)
+        # self.inner_lo_right_fra = tk.Frame(self.inner_lowerfra, width=int(self.w/4), bd=5, relief=tk.GROOVE)
         # self.inner_lo_right_fra.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         # self.table2 = MyTable.MyTable(self.inner_lo_right_fra, width=int(self.w/4))
+
+        # ウィジェット配置とキーバインド
+        for w in self.widget_list:
+            w.bind("<Key-Return>", self.on_key)
+
+    # -------------------------------------------------------------------------------------------------------------------------------
+    # キー入力コールバック
+    def on_key(self, event):
+        idx = self.widget_list.index(event.widget)
+        self.widget_list[(idx + 1) % len(self.widget_list)].focus_set()
+
     def Set_Dir(self):
         self.save_dir.set(filedialog.askdirectory(
             title="保存場所を選択",
@@ -137,7 +181,9 @@ class GUI(tk.Frame):
         
 
 if __name__ == "__main__":
-    global dir, Img_dir, Img_dir_D, save_dir,Year_txt,Month_txt  
+    global ID,Pass,dir, Img_dir, Img_dir_D, save_dir,Year_txt,Month_txt  
+    ID = "561"
+    Pass = "051210561111111"    
     Year_txt,Month_txt = str(dt.datetime.today().year),str((dt.datetime.today().month-1))
     root = tk.Tk()
     root.withdraw()

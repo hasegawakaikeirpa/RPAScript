@@ -4,20 +4,7 @@
 最終更新日:2022/11/14
 稼働設定:解像度 1920*1080 表示スケール125%
 ####################################################
-処理の流れ
-####################################################
-1:./bat/MSPDFSet.batで既定プリンターを[Microsoft Print to PDF]に変更(変数TIMEOUTがタイムアウト時間)
-↓
-2:起動後グローバル変数[ID][Pass]でログイン
-↓
-3:移動したエクセルシートを読取る
-↓
-4:読取った内容に応じて、MJS各システム年度更新を実行
-↓
-5:[一括更新申請]フォルダ内の[ミロク更新状況.xlsx]ファイルで
-    実行ログを表示する為のテキスト[一括更新申請\\MJSLog\\MJSSysUpLog.txt]を処理毎に出力
-↓
-6:実行内容に応じてエクセルシートに結果を入力
+注意:バッチファイルを連動起動させるので関連batファイルが必須です。
 ####################################################
 """
 
@@ -153,7 +140,7 @@ def Flow(BatUrl, FolURL2, ImgFolName):
 
 
 @wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
-def tryFlow(app, ImgFolName):
+def tryFlow(app, ImgFolName,ID, Pass):
     # 画像が出現するまで待機-------------------------------------------------------------------------------------------
     ImgFolName = ImgFolName + r"\MJSOpen"
     List = [r"\PassTxtBox.png", r"\PassTxtBox2.png"]
@@ -190,11 +177,9 @@ def tryFlow(app, ImgFolName):
 
 
 def MainFlow(BatUrl, FolURL2, ImgFolName, i, p):
-    global ID, Pass
-    ID, Pass = i, p
     try:
         app = Flow(BatUrl, FolURL2, ImgFolName)
-        f_app = tryFlow(app, ImgFolName)
+        f_app = tryFlow(app, ImgFolName,i, p)
         return f_app
     except TimeoutError:
         if app is not None:

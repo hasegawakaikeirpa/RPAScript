@@ -1,14 +1,3 @@
-# インポート
-from appium import webdriver
-import subprocess
-import pyautogui as pg
-import time
-import os
-
-# loggerインポート
-from logging import getLogger
-
-logger = getLogger()
 """
 作成者:沖本卓士
 作成日:
@@ -18,6 +7,21 @@ logger = getLogger()
 注意:バッチファイルを連動起動させるので関連batファイルが必須です。
 ####################################################
 """
+
+# インポート
+from appium import webdriver
+import subprocess
+import pyautogui as pg
+import time
+import os
+import wrapt_timeout_decorator
+from logging import getLogger
+
+# ロガー設定
+logger = getLogger()
+# タイムアウト
+TIMEOUT = 600
+
 # ----------------------------------------------------------------------------------------------------------------------
 def ExeOpen(AppURL):
     """
@@ -40,7 +44,8 @@ def DriverUIWaitAutomationId(UIPATH, driver):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def MainFlow(BatUrl, FolURL2, ImgFolName):
+@wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def Flow(BatUrl, FolURL2, ImgFolName):
     """
     デフォルトプリンターをMSPDFに変更(./bat/MSPDFSet.batをSubprocess実行)
     ↓
@@ -67,12 +72,17 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
     # OMSを起動
     logger.debug("OMS起動: debug level log")
     OMSURL = r"C:\\Program Files (x86)\\TKC\\OMS\\OMS.exe"
-    ExeOpen(OMSURL)
+    app = ExeOpen(OMSURL)
+    return app,driver
+
+# ----------------------------------------------------------------------------------------------------------------------
+# @wrapt_timeout_decorator.timeout(dec_timeout=TIMEOUT)
+def tryFlow(app,driver, ImgFolName,ID, Pass):
     # time.sleep(10)
-    FolURL2 = os.getcwd().replace("\\", "/")  # 先
+    ImgFolName = os.getcwd().replace("\\", "/")  # 先
     FileName = "OpenWin.png"
     while (
-        pg.locateOnScreen(FolURL2 + r"/RPAPhoto/OMSOpen/" + FileName, confidence=0.9)
+        pg.locateOnScreen(ImgFolName + r"/RPAPhoto/OMSOpen/" + FileName, confidence=0.9)
         is None
     ):
         time.sleep(1)
@@ -82,7 +92,7 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
         # 正常待機後処理
         OMSPassWindowClc = driver.find_element_by_accessibility_id("passwordTextBox")
         OMSPassWindowClc.click()
-        pg.write("051210561111111", interval=0.01)  # 直接SENDできないのでpyautoguiで入力
+        pg.write(Pass, interval=0.01)  # 直接SENDできないのでpyautoguiで入力
         # OMSPassOKBtn = driver.find_element_by_accessibility_id("okButton")
         # OMSPassOKBtn.click()
         pg.press(["return", "return"])
@@ -92,7 +102,7 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
         print("要素取得に失敗しました。")
     while (
         pg.locateOnScreen(
-            FolURL2 + r"/RPAPhoto/OMSOpen/OMSMainMenuBar.png", confidence=0.9
+            ImgFolName + r"/RPAPhoto/OMSOpen/OMSMainMenuBar.png", confidence=0.9
         )
         is None
     ):
@@ -108,3 +118,18 @@ def MainFlow(BatUrl, FolURL2, ImgFolName):
         logger.debug("OMScodeTextBox要素取得に失敗: debug level log")
         print("codeTextBox要素取得に失敗しました。")
     # ----------------------------------------------------------------------------------------------------------------------
+
+def MainFlow(BatUrl, FolURL2, ImgFolName, i, p):
+    try:
+        ret_Flow = Flow(BatUrl, FolURL2, ImgFolName)
+        app = ret_Flow[0]
+        driver = ret_Flow[1]
+        f_app = tryFlow(app,driver, ImgFolName,i, p)
+        return f_app
+    except TimeoutError:
+        if app is not None:
+            time.sleep(1)  # 子プロセスが起動していることを確認するまでの時間を確保
+            print("killします")
+            killcmd = "taskkill /F /PID {pid} /T".format(pid=app.pid)
+            subprocess.run(killcmd, shell=True)
+        return "TimeOut"

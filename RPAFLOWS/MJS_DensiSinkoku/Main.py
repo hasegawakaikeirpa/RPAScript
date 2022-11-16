@@ -848,13 +848,13 @@ class GUI(tk.Frame):
 
         # インナーフレーム
         self.inner_upfra = tk.Frame(
-            self.fra, width=self.w, height=(self.h / 2), bd=5, relief=tk.RAISED
+            self.fra, width=self.w, height=(self.h / 2), bd=5, relief=tk.GROOVE
         )
         self.inner_upfra.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         # インナーサブフレーム
         self.inner_up1 = tk.Frame(
-            self.inner_upfra, width=self.w, height=(self.h / 2), bd=5, relief=tk.RAISED
+            self.inner_upfra, width=self.w, height=(self.h / 2), bd=5, relief=tk.GROOVE
         )
         self.inner_up1.pack(side=tk.TOP, padx=5, fill=tk.X, expand=True)
 
@@ -880,7 +880,7 @@ class GUI(tk.Frame):
 
         # インナーサブフレーム
         self.inner_up2 = tk.Frame(
-            self.inner_upfra, width=self.w, height=(self.h / 2), bd=5, relief=tk.RAISED
+            self.inner_upfra, width=self.w, height=(self.h / 2), bd=5, relief=tk.GROOVE
         )
         self.inner_up2.pack(side=tk.TOP, padx=5, fill=tk.X, expand=True)
 
@@ -922,19 +922,19 @@ class GUI(tk.Frame):
         # self.bt4.grid(row=0,column=3, padx=5, sticky=tk.W + tk.E)
 
         # インナーフレーム2
-        self.inner_lowerfra = tk.Frame(self.fra, width=self.w, bd=5, relief=tk.RAISED)
+        self.inner_lowerfra = tk.Frame(self.fra, width=self.w, bd=5, relief=tk.GROOVE)
         self.inner_lowerfra.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         # テーブル
         self.inner_lo_left_fra = tk.Frame(
-            self.inner_lowerfra, width=int(self.w / 1.5), bd=5, relief=tk.RAISED
+            self.inner_lowerfra, width=int(self.w / 1.5), bd=5, relief=tk.GROOVE
         )
         self.inner_lo_left_fra.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.table = MyTable.MyTable(self.inner_lo_left_fra, width=int(self.w / 1.5))
 
         # テーブル
         self.inner_lo_right_fra = tk.Frame(
-            self.inner_lowerfra, width=int(self.w / 4), bd=5, relief=tk.RAISED
+            self.inner_lowerfra, width=int(self.w / 4), bd=5, relief=tk.GROOVE
         )
         self.inner_lo_right_fra.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         self.table2 = MyTable.MyTable(self.inner_lo_right_fra, width=int(self.w / 4))
