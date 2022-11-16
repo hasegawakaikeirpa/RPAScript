@@ -1,0 +1,50 @@
+[2022/11/16 15:27:05][DEBUG](eucjpprober.py:62) EUC-JP Japanese prober hit error at byte 0 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\eucjpprober.py
+[2022/11/16 15:27:05][DEBUG](mbcharsetprober.py:66) EUC-KR Korean prober hit error at byte 0 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](mbcharsetprober.py:66) CP949 Korean prober hit error at byte 3 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](mbcharsetprober.py:66) Big5 Chinese prober hit error at byte 0 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](mbcharsetprober.py:66) EUC-TW Taiwan prober hit error at byte 0 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](mbcharsetprober.py:66) GB2312 Chinese prober hit error at byte 127 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\mbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](sbcharsetprober.py:132) IBM866 confidence = 0.001045441820641274, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](sbcharsetprober.py:132) ISO-8859-5 confidence = 0.028672678470097985, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](sbcharsetprober.py:132) MacCyrillic confidence = 0.005021583172754119, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](sbcharsetprober.py:132) ISO-8859-5 confidence = 0.029956252375314994, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](sbcharsetprober.py:132) TIS-620 confidence = 0.011444432990887899, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](sbcharsetprober.py:132) ISO-8859-7 confidence = 0.0005883969300126021, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:05][DEBUG](sbcharsetprober.py:132) windows-1253 confidence = 0.0005723695734981218, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:06][DEBUG](sbcharsetprober.py:132) IBM855 confidence = 0.012964675185907418, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:06][DEBUG](sbcharsetprober.py:132) windows-1251 confidence = 0.0, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:06][DEBUG](sbcharsetprober.py:132) windows-1251 confidence = 0.0, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:06][DEBUG](sbcharsetprober.py:132) ISO-8859-9 confidence = 0.019357839293609888, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:06][DEBUG](sbcharsetprober.py:132) windows-1255 confidence = 0.0026689224374600124, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:06][DEBUG](sbcharsetprober.py:132) windows-1255 confidence = 0.0014371120817092376, below negative shortcut threshhold 0.05 feed c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\sbcharsetprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) utf-8 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:101) CP932 Japanese confidence = 0.8523020257826888 get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) EUC-JP not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) GB2312 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) EUC-KR not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) CP949 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) Big5 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) EUC-TW not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) windows-1251 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:101) KOI8-R Russian confidence = 0.07975835401897824 get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) ISO-8859-5 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) MacCyrillic not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) IBM866 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) IBM855 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) ISO-8859-7 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) windows-1253 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) ISO-8859-5 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) windows-1251 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) TIS-620 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) ISO-8859-9 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) windows-1255 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) windows-1255 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) windows-1255 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) utf-8 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:101) CP932 Japanese confidence = 0.8523020257826888 get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) EUC-JP not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) GB2312 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) EUC-KR not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) CP949 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) Big5 not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py
+[2022/11/16 15:27:08][DEBUG](charsetgroupprober.py:98) EUC-TW not active get_confidence c:\Users\soumu\Desktop\RPAScript\ws140RPA.env\lib\site-packages\chardet\charsetgroupprober.py

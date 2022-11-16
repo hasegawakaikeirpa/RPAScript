@@ -33,7 +33,7 @@ import WarekiHenkan
 from chardet.universaldetector import UniversalDetector
 import calendar
 import tkinter
-
+from tkinter import filedialog
 
 def DriverUIWaitXPATH(UIPATH, driver):  # XPATH要素を取得するまで待機
     for x in range(10000):
@@ -398,13 +398,13 @@ def CSVCheck(CsvArr, CodeNo, CodeNendo):
 # -------------------------------------------------------------------------------------------------------------------------------
 def FolCreate(FolURL2):
     idir = r"\\nas-sv\B_監査etc\B0_業務\08_確申・年調・納特・労働保険\03_確申"
-    fol_path = tkinter.filedialog.askdirectory(
+    fol_path = filedialog.askdirectory(
         initialdir=idir, title="確申年度フォルダを指定してください。"
     )
-    file_path = tkinter.filedialog.askopenfilename(
+    file_path = filedialog.askopenfilename(
         initialdir=fol_path, title="確申受付Excelファイルを指定して下さい。"
     )
-    Cxmsl_path = tkinter.filedialog.askopenfilename(
+    Cxmsl_path = filedialog.askopenfilename(
         initialdir=fol_path, title="各関与先フォルダにコピーする医療費控除集計表Excelファイルを指定してください。"
     )
     Cxmsl_Name = Cxmsl_path.replace(fol_path, "")
