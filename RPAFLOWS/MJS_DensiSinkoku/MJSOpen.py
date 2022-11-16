@@ -32,10 +32,6 @@ from logging import getLogger
 logger = getLogger()
 # タイムアウト
 TIMEOUT = 600
-# 社員番号
-ID = "561"
-# パスワード
-Pass = "051210561111111"
 # ----------------------------------------------------------------------------------------------------------------------
 def ExeOpen(AppURL):  # URL指定でアプリ起動関数
     P = subprocess.Popen(AppURL)
@@ -193,7 +189,9 @@ def tryFlow(app, ImgFolName):
     # ----------------------------------------------------------------------------------------------------------------------
 
 
-def MainFlow(BatUrl, FolURL2, ImgFolName):
+def MainFlow(BatUrl, FolURL2, ImgFolName, i, p):
+    global ID, Pass
+    ID, Pass = i, p
     try:
         app = Flow(BatUrl, FolURL2, ImgFolName)
         f_app = tryFlow(app, ImgFolName)

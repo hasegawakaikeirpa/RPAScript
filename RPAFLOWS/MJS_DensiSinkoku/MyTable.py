@@ -12,12 +12,12 @@ class MyTable(Table):
     クリックイベント等を書き換える事ができる
     """
 
-    def __init__(self, parent=None, **kwargs):        
+    def __init__(self, parent=None, **kwargs):
         Table.__init__(self, parent, **kwargs)
         options = config.load_options()
-        #options is a dict that you can set yourself
-        options = {'fontsize': 8}
-        config.apply_options(options, self)        
+        # options is a dict that you can set yourself
+        options = {"fontsize": 8}
+        config.apply_options(options, self)
         return
 
     # --------------------------------------------------------------------
@@ -307,7 +307,7 @@ class MyTable(Table):
         self.gotonextCell()
         self.focus_set()
         enc = RPA.getFileEncoding(self.csv_name)
-        self.model.df.to_csv(self.importFilePath,encoding=enc)        
+        self.model.df.to_csv(self.importFilePath, encoding=enc)
         return
 
     # --------------------------------------------------------------------

@@ -694,7 +694,7 @@ def MasterCSVGet(URL):
         ):
             pg.keyDown("alt")
             pg.press("f4")
-            pg.keyUp("alt")          
+            pg.keyUp("alt")
             time.sleep(1)
         pg.press("y")
         time.sleep(1)
@@ -711,6 +711,7 @@ def MasterCSVGet(URL):
         return True
     except:
         return False
+
 
 # ---------------------------------------------------------------------------------------------------------------------------------
 def MainFirstAction(Img_dir_D, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui):
@@ -830,8 +831,10 @@ def MainFirstAction(Img_dir_D, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui):
         time.sleep(1)
         pg.press("r")
 
+
 class GUI(tk.Frame):
     def __init__(self, root):
+        self.widget_list = []
         self.csv_load = False
         self.table2_load = False
         self.w = int(root.winfo_screenwidth() / 2)
@@ -847,49 +850,116 @@ class GUI(tk.Frame):
         self.inner_upfra = tk.Frame(
             self.fra, width=self.w, height=(self.h / 2), bd=5, relief=tk.RAISED
         )
-        self.inner_upfra.pack(side=tk.TOP, fill=tk.X, expand=True)
+        self.inner_upfra.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        # インナーフレーム要素
-        self.bt = tk.Button(self.inner_upfra,width=int(self.w/30), text="指示CSVダウンロード(RPA)", command=self.csv_get)
-        self.bt.pack(side=tk.LEFT,padx=5,fill=tk.X, expand=True)
+        # インナーサブフレーム
+        self.inner_up1 = tk.Frame(
+            self.inner_upfra, width=self.w, height=(self.h / 2), bd=5, relief=tk.RAISED
+        )
+        self.inner_up1.pack(side=tk.TOP, padx=5, fill=tk.X, expand=True)
+
+        self.lb = tk.Label(self.inner_up1, text="ID")
+        self.lb.grid(row=0, column=0, padx=5, sticky=tk.W + tk.E)
+
+        self.id_txt = tk.StringVar(self.inner_up1, ID)
+        self.id_ent = tk.Entry(
+            self.inner_up1, textvariable=self.id_txt, width=int(self.w / 30)
+        )
+        self.id_ent.grid(row=0, column=1, padx=5, sticky=tk.W + tk.E)
+        self.widget_list.append(self.id_ent)
+
+        self.lb2 = tk.Label(self.inner_up1, text="Pass")
+        self.lb2.grid(row=1, column=0, padx=5, sticky=tk.W + tk.E)
+
+        self.pass_txt = tk.StringVar(self.inner_up1, Pass)
+        self.pass_ent = tk.Entry(
+            self.inner_up1, textvariable=self.pass_txt, width=int(self.w / 30)
+        )
+        self.pass_ent.grid(row=1, column=1, padx=5, sticky=tk.W + tk.E)
+        self.widget_list.append(self.pass_ent)
+
+        # インナーサブフレーム
+        self.inner_up2 = tk.Frame(
+            self.inner_upfra, width=self.w, height=(self.h / 2), bd=5, relief=tk.RAISED
+        )
+        self.inner_up2.pack(side=tk.TOP, padx=5, fill=tk.X, expand=True)
+
+        # インナーサブフレーム要素
+        self.bt = tk.Button(
+            self.inner_up2,
+            width=int(self.w / 30),
+            text="指示CSVダウンロード(RPA)",
+            command=self.csv_get,
+        )
+        self.bt.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
         # self.bt.grid(row=0,column=0, padx=5, sticky=tk.W + tk.E)
 
-        self.bt2 = tk.Button(self.inner_upfra,width=int(self.w/30), text="指示CSV選択", command=self.csv_open)
-        self.bt2.pack(side=tk.LEFT,padx=5,fill=tk.X, expand=True)
+        self.bt2 = tk.Button(
+            self.inner_up2,
+            width=int(self.w / 30),
+            text="指示CSV選択",
+            command=self.csv_open,
+        )
+        self.bt2.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
         # self.bt2.grid(row=0,column=1, padx=5, sticky=tk.W + tk.E)
 
-        self.bt3 = tk.Button(self.inner_upfra,width=int(self.w/30), text="送信不可設定", command=self.no_transmission)
-        self.bt3.pack(side=tk.LEFT,padx=5,fill=tk.X, expand=True)
+        self.bt3 = tk.Button(
+            self.inner_up2,
+            width=int(self.w / 30),
+            text="送信不可設定",
+            command=self.no_transmission,
+        )
+        self.bt3.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
         # self.bt3.grid(row=0,column=2, padx=5, sticky=tk.W + tk.E)
 
-        self.bt4 = tk.Button(self.inner_upfra,width=int(self.w/30), text="電子申告送信開始(RPA)", command=self.transmission)
-        self.bt4.pack(side=tk.LEFT,padx=5,fill=tk.X, expand=True)
+        self.bt4 = tk.Button(
+            self.inner_up2,
+            width=int(self.w / 30),
+            text="電子申告送信開始(RPA)",
+            command=self.transmission,
+        )
+        self.bt4.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
         # self.bt4.grid(row=0,column=3, padx=5, sticky=tk.W + tk.E)
 
         # インナーフレーム2
         self.inner_lowerfra = tk.Frame(self.fra, width=self.w, bd=5, relief=tk.RAISED)
         self.inner_lowerfra.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        
-        # テーブル
-        self.inner_lo_left_fra = tk.Frame(self.inner_lowerfra, width=int(self.w/1.5), bd=5, relief=tk.RAISED)
-        self.inner_lo_left_fra.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)   
-        self.table = MyTable.MyTable(self.inner_lo_left_fra, width=int(self.w/1.5))
 
         # テーブル
-        self.inner_lo_right_fra = tk.Frame(self.inner_lowerfra, width=int(self.w/4), bd=5, relief=tk.RAISED)
+        self.inner_lo_left_fra = tk.Frame(
+            self.inner_lowerfra, width=int(self.w / 1.5), bd=5, relief=tk.RAISED
+        )
+        self.inner_lo_left_fra.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.table = MyTable.MyTable(self.inner_lo_left_fra, width=int(self.w / 1.5))
+
+        # テーブル
+        self.inner_lo_right_fra = tk.Frame(
+            self.inner_lowerfra, width=int(self.w / 4), bd=5, relief=tk.RAISED
+        )
         self.inner_lo_right_fra.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-        self.table2 = MyTable.MyTable(self.inner_lo_right_fra, width=int(self.w/4))
+        self.table2 = MyTable.MyTable(self.inner_lo_right_fra, width=int(self.w / 4))
+
+        # ウィジェット配置とキーバインド
+        for w in self.widget_list:
+            w.bind("<Key-Return>", self.on_key)
 
     # -------------------------------------------------------------------------------------------------------------------------------
+    # キー入力コールバック
+    def on_key(self, event):
+        idx = self.widget_list.index(event.widget)
+        self.widget_list[(idx + 1) % len(self.widget_list)].focus_set()
+
     def MainFlow(self):
         try:
             # NG_Listの読み込み
             try:
                 tb2df = self.table2.model.df[["顧問先コード"]].astype(str)
             except:
-                tb2df = pd.DataFrame(["0"],columns=["顧問先コード"])
+                tb2df = pd.DataFrame(["0"], columns=["顧問先コード"])
 
-            driver = MJSOpen.MainFlow("BatUrl", FolURL, Img_dir)  # MJSを起動しログイン後インスタンス化
+            driver = MJSOpen.MainFlow(
+                "BatUrl", FolURL, Img_dir, self.id_txt.get(), self.pass_txt.get()
+            )  # MJSを起動しログイン後インスタンス化
             logger.debug("MJS操作画面へ偏移")
             MainStarter()  # データ送信画面までの関数
             time.sleep(1)
@@ -915,15 +985,20 @@ class GUI(tk.Frame):
                 C_Name = C_Name.replace("\u3000", " ")
                 C_Nendo = str(C_dfDataRow["年度"]).replace("\\", "-")
                 C_Zeimoku = str(C_dfDataRow["税目"])
-                C_Syurui = str(C_dfDataRow["申告種類"])                
+                C_Syurui = str(C_dfDataRow["申告種類"])
                 if C_SCode not in list(tb2df.values):
                     conf = 0.9
                     LoopVal = 1
                     logger.debug("SinkokuTuuti.pngを元に処理分岐")
-                    if ImgCheck(Img_dir_D, "SinkokuTuuti.png", conf, LoopVal)[0] is True:
+                    if (
+                        ImgCheck(Img_dir_D, "SinkokuTuuti.png", conf, LoopVal)[0]
+                        is True
+                    ):
                         DSEL = ImgCheck(Img_dir_D, "DensiSyomei.png", conf, LoopVal)
                         if DSEL[0] is True:
-                            ImgClick(Img_dir_D, "DensiSyomei.png", 0.9, 1)  # 電子申告・申請タブを押す
+                            ImgClick(
+                                Img_dir_D, "DensiSyomei.png", 0.9, 1
+                            )  # 電子申告・申請タブを押す
                         # 画像が出現するまで待機してクリック
                         List = ["DensiSyomeiOpen.png", "DensiSyomeiOpen2.png"]
                         conf = 0.9  # 画像認識感度
@@ -1002,7 +1077,9 @@ class GUI(tk.Frame):
                     ]
                     conf = 0.9  # 画像認識感度
                     LoopVal = 10  # 検索回数
-                    ListCheck = ImgCheckForList(Img_dir_D, List, conf, LoopVal)  # 画像検索関数
+                    ListCheck = ImgCheckForList(
+                        Img_dir_D, List, conf, LoopVal
+                    )  # 画像検索関数
                     conf = 0.9  # 画像認識感度
                     LoopVal = 10  # 検索回数
                     if ListCheck[0] is True:
@@ -1017,9 +1094,9 @@ class GUI(tk.Frame):
                             else:
                                 time.sleep(1)
                             if (
-                                ImgCheck(Img_dir_D, "FindCheckBoxNext.png", conf, LoopVal)[
-                                    0
-                                ]
+                                ImgCheck(
+                                    Img_dir_D, "FindCheckBoxNext.png", conf, LoopVal
+                                )[0]
                                 is False
                             ):
                                 break
@@ -1028,7 +1105,10 @@ class GUI(tk.Frame):
                         time.sleep(1)
                         ImgClick(Img_dir_D, "SousinBtn.png", 0.9, 3)
                         time.sleep(3)
-                        if ImgCheck(Img_dir_D, "Tetuduki.png", conf, LoopVal)[0] is False:
+                        if (
+                            ImgCheck(Img_dir_D, "Tetuduki.png", conf, LoopVal)[0]
+                            is False
+                        ):
                             time.sleep(1)
                             if (
                                 ImgCheck(
@@ -1045,7 +1125,12 @@ class GUI(tk.Frame):
                                 ImgClick(Img_dir_D, "SetuzokuOK.png", 0.9, 5)
                                 time.sleep(3)
                                 MainFirstAction(
-                                    Img_dir_D, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui
+                                    Img_dir_D,
+                                    C_SCode,
+                                    C_Name,
+                                    C_Nendo,
+                                    C_Zeimoku,
+                                    C_Syurui,
                                 )
                                 time.sleep(1)
                             else:
@@ -1053,7 +1138,9 @@ class GUI(tk.Frame):
                                 conf = 0.9  # 画像認識感度
                                 LoopVal = 10  # 検索回数
                                 if (
-                                    ImgCheck(Img_dir_D, "Tetuduki.png", conf, LoopVal)[0]
+                                    ImgCheck(Img_dir_D, "Tetuduki.png", conf, LoopVal)[
+                                        0
+                                    ]
                                     is True
                                 ):
                                     pg.press("return")
@@ -1074,7 +1161,12 @@ class GUI(tk.Frame):
                                 ImgClick(Img_dir_D, "SetuzokuOK.png", 0.9, 5)
                                 logger.debug("メイン処理開始")
                                 MainFirstAction(
-                                    Img_dir_D, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui
+                                    Img_dir_D,
+                                    C_SCode,
+                                    C_Name,
+                                    C_Nendo,
+                                    C_Zeimoku,
+                                    C_Syurui,
                                 )
                         else:
                             time.sleep(1)
@@ -1140,11 +1232,12 @@ class GUI(tk.Frame):
                         pg.press("r")
             # MJS終了
             while (
-                pg.locateOnScreen(Img_dir_D + "/" + "EndCheck.png", confidence=0.9) is None
+                pg.locateOnScreen(Img_dir_D + "/" + "EndCheck.png", confidence=0.9)
+                is None
             ):
                 pg.keyDown("alt")
                 pg.press("f4")
-                pg.keyUp("alt")            
+                pg.keyUp("alt")
                 time.sleep(1)
             pg.press("y")
             time.sleep(1)
@@ -1182,13 +1275,18 @@ class GUI(tk.Frame):
             initialdir=Img_dir_D,
         )
         self.master.withdraw()
-        if tk.messagebox.askyesno("確認","NX-PROを起動し、電子申告データ送信可能CSVリストをダウンロードしますか？") is True:
+        if (
+            tk.messagebox.askyesno("確認", "NX-PROを起動し、電子申告データ送信可能CSVリストをダウンロードしますか？")
+            is True
+        ):
             tk.messagebox.showinfo(
                 "注意",
                 "これよりNX-PROを起動し、\n電子申告データ送信可能CSVリストをダウンロードします。\n処理が完了するまで[必ず]PC操作を中断して下さい。",
             )
             # MJSを起動しログイン後インスタンス化
-            MJSOpen.MainFlow("BatUrl", FolURL, Img_dir)
+            MJSOpen.MainFlow(
+                "BatUrl", FolURL, Img_dir, self.id_txt.get(), self.pass_txt.get()
+            )
             logger.debug("MJS操作画面へ偏移")
             MainStarter()  # データ送信画面までの関数
             logger.debug("CSVを保存")
@@ -1220,23 +1318,25 @@ class GUI(tk.Frame):
     def no_transmission(self):
         if self.table.startrow is None:
             tk.messagebox.showinfo(
-                    "失敗",
-                    "送信不可にする関与先を選択後、実行してください。",
-                )
+                "失敗",
+                "送信不可にする関与先を選択後、実行してください。",
+            )
             return
 
         table_columns = list(self.table.model.df.columns)
-        table2_columns = ['顧問先コード','顧問先名称']
+        table2_columns = ["顧問先コード", "顧問先名称"]
         col_ind = [table_columns.index(tb2_col) for tb2_col in table2_columns]
-        
+
         if self.table.startrow == self.table.endrow:
-            df = self.table.model.df.values[self.table.startrow,col_ind]
+            df = self.table.model.df.values[self.table.startrow, col_ind]
             df = np.reshape(df, [-1, df.shape[0]])
-            df = pd.DataFrame(df,columns=table2_columns)
+            df = pd.DataFrame(df, columns=table2_columns)
         else:
-            df = self.table.model.df.values[self.table.startrow:self.table.endrow,col_ind]
+            df = self.table.model.df.values[
+                self.table.startrow : self.table.endrow, col_ind
+            ]
             df = np.reshape(df, [-1, df.shape[0]])
-            df = pd.DataFrame(df,columns=table2_columns)
+            df = pd.DataFrame(df, columns=table2_columns)
 
         if self.table2_load is True:
             df = pd.concat([self.table2.model.df, df])
@@ -1250,7 +1350,7 @@ class GUI(tk.Frame):
     def transmission(self):
         if self.csv_load is True:
             self.master.withdraw()
-            if tk.messagebox.askyesno("確認","NX-PROを起動し、電子申告送信を開始しますか？") is True:
+            if tk.messagebox.askyesno("確認", "NX-PROを起動し、電子申告送信を開始しますか？") is True:
                 tk.messagebox.showinfo(
                     "注意",
                     "これよりNX-PROを起動し、電子申告送信を開始します。\n処理が完了するまで[必ず]PC操作を中断して下さい。",
@@ -1267,22 +1367,25 @@ class GUI(tk.Frame):
                         "失敗",
                         "処理が失敗しました。",
                     )
-                    self.master.deiconify()                                          
+                    self.master.deiconify()
             else:
                 tk.messagebox.showinfo(
                     "中断",
                     "処理を中断します。",
                 )
-                self.master.deiconify()      
+                self.master.deiconify()
         else:
             tk.messagebox.showinfo(
                 "失敗",
                 "電子申告データ送信可能CSVリストを選択後、実行してください。",
             )
-            self.master.deiconify()                              
+            self.master.deiconify()
+
 
 if __name__ == "__main__":
-    global dir, Img_dir, Img_dir_D, FolURL, NG_Dir
+    global ID, Pass, dir, Img_dir, Img_dir_D, FolURL, NG_Dir
+    ID = "561"
+    Pass = "051210561111111"
     # RPA用画像フォルダの作成---------------------------------------------------------
     dir = RPA.My_Dir("MJS_DensiSinkoku")
     Img_dir = dir + r"\\img"
