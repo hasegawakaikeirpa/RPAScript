@@ -18,6 +18,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options  # ブラウザオプションを与える
 from selenium.webdriver.support.ui import WebDriverWait  # 読込待機コマンドを与える
 from selenium.webdriver.support import expected_conditions as EC  # 読込待機コマンドに条件式を与える
+from webdriver_manager.chrome import ChromeDriverManager
 
 # jsonインポート
 import json
@@ -97,7 +98,7 @@ class eTaxWeb:
         self.H_options.add_argument("--window-size=1024,768")
         self.H_options.add_argument("--kiosk-printing")
         # ドライバのpathを指定
-        self.H_path = self.H_fold + "/chromedriver"
+        self.H_path = ChromeDriverManager().install()  # self.H_fold + "/chromedriver"
         # WEBURLの指定
         self.H_WEBurl = "https://uketsuke.e-tax.nta.go.jp/UF_APP/lnk/loginCtlKakutei"
         # ブラウザのウィンドウを表すオブジェクト"driver"を作成
