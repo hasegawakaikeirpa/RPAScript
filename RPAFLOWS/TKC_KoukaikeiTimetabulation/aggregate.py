@@ -4,6 +4,7 @@ import os
 from datetime import datetime as dt
 import codecs
 from chardet.universaldetector import UniversalDetector
+import tkinter as tk
 
 # ----------------------------------------------------------------------------------------------------------------------
 def getFileEncoding(file_path):
@@ -162,44 +163,27 @@ def Flow(Tan_path, year):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-if __name__ == "__main__":
-    global H_url, Enc, H_df, H_Murl, H_Mdf, tdy, H_dfRow, OKLog, NGLog, Toyear
-    # 関与先DBをDataFrameに変換
-    H_url = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/Heidi関与先DB.csv"
-    Enc = getFileEncoding(H_url)
-    H_df = pd.read_csv(H_url, encoding=Enc)
+# if __name__ == "__main__":
+def Main(year, month):
+    global H_url, Enc, H_df, H_Murl, H_Mdf, tdy, H_dfRow, OKLog, NGLog, H_Marges, dir_path
+    try:
+        # 関与先DBをDataFrameに変換
+        H_url = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/ALLDataBase/Heidi関与先DB.csv"
+        Enc = getFileEncoding(H_url)
+        H_df = pd.read_csv(H_url, encoding=Enc)
 
-    # 公会計名簿をDataFrameに変換
-    H_Murl = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/公会計名簿.csv"
-    Enc = getFileEncoding(H_Murl)
-    H_Mdf = pd.read_csv(H_Murl, encoding=Enc)
-
-    # 本日の日付
-    tdy = dt.today()
-    # 関与先DBをDataFrame配列行数取得
-    H_dfRow = np.array(H_df).shape[0]
-
-    OKLog = []
-    NGLog = []
-
-    # 本年(str)
-    Toyear = str(tdy.year)
-
-    # # 年間ループ#########################################################################
-    # for x in range(12):
-    #     出力用list
-    #     H_Marges = []
-    #     月指定
-    #     s = format(x + 1, "02")
-    #     dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
-    #     Tan_path = dir_path + "/担当者別"
-    #     Flow(Tan_path)
-    # # #################################################################################
-    # 出力用list
-    H_Marges = []
-    # 月指定
-    s = format(10, "02")
-    dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + Toyear + "-" + s
-    Tan_path = dir_path + "/担当者別"
-    # 実行
-    Flow(Tan_path, Toyear + "-")
+        # 公会計名簿をDataFrameに変換
+        H_Murl = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/公会計名簿.csv"
+        Enc = getFileEncoding(H_Murl)
+        H_Mdf = pd.read_csv(H_Murl, encoding=Enc)
+        # 出力用list
+        H_Marges = []
+        # 月指定
+        month = format(int(month), "02")
+        dir_path = "//nas-sv/A_共通/A8_ｼｽﾃﾑ資料/RPA/公会計時間分析/" + year + "-" + month
+        Tan_path = dir_path + "/担当者別"
+        # 実行
+        Flow(Tan_path, year + "-")
+        return True
+    except:
+        return False

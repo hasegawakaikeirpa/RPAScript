@@ -835,6 +835,12 @@ def MainFirstAction(Img_dir_D, C_SCode, C_Name, C_Nendo, C_Zeimoku, C_Syurui):
 class GUI(tk.Frame):
     def __init__(self, root):
         self.widget_list = []
+        self.dir = dir
+        self.Img_dir = Img_dir
+        self.Img_dir_D = Img_dir_D
+        self.FolURL = FolURL
+        self.NG_Dir = NG_Dir
+
         self.csv_load = False
         self.table2_load = False
         self.w = int(root.winfo_screenwidth() / 2)

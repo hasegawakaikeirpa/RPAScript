@@ -1,0 +1,7 @@
+[2022/11/17 11:41:41][DEBUG](PDFReadForList.py:979) //NAS-SV/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/2022-10/TEST内のPDF抽出開始 Main c:\Users\soumu\Desktop\RPAScript\RPAFLOWS\PDFReadForList\PDFReadForList.py
+[2022/11/17 11:41:41][DEBUG](PDFReadForList.py:879) //NAS-SV/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/2022-10/TEST/受信通知CSV/ErrList.csv_PDFファイル以外の為取得不可 PDFRead c:\Users\soumu\Desktop\RPAScript\RPAFLOWS\PDFReadForList\PDFReadForList.py
+[2022/11/17 11:41:41][DEBUG](PDFReadForList.py:879) //NAS-SV/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/2022-10/TEST/受信通知CSV/etaxList.csv_PDFファイル以外の為取得不可 PDFRead c:\Users\soumu\Desktop\RPAScript\RPAFLOWS\PDFReadForList\PDFReadForList.py
+[2022/11/17 11:41:41][DEBUG](PDFReadForList.py:879) //NAS-SV/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/2022-10/TEST/受信通知CSV/MJS10.csv_PDFファイル以外の為取得不可 PDFRead c:\Users\soumu\Desktop\RPAScript\RPAFLOWS\PDFReadForList\PDFReadForList.py
+[2022/11/17 11:41:41][DEBUG](PDFReadForList.py:879) //NAS-SV/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/2022-10/TEST/受信通知CSV/MJS13.csv_PDFファイル以外の為取得不可 PDFRead c:\Users\soumu\Desktop\RPAScript\RPAFLOWS\PDFReadForList\PDFReadForList.py
+[2022/11/17 11:41:41][DEBUG](PDFReadForList.py:879) //NAS-SV/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/2022-10/TEST/受信通知CSV/MJS3.csv_PDFファイル以外の為取得不可 PDFRead c:\Users\soumu\Desktop\RPAScript\RPAFLOWS\PDFReadForList\PDFReadForList.py
+[2022/11/17 11:41:41][DEBUG](PDFReadForList.py:879) //NAS-SV/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/2022-10/TEST/受信通知CSV/MJS8.csv_PDFファイル以外の為取得不可 PDFRead c:\Users\soumu\Desktop\RPAScript\RPAFLOWS\PDFReadForList\PDFReadForList.py

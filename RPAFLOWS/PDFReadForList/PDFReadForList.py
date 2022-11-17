@@ -9,12 +9,15 @@ from pdfminer.pdfpage import PDFPage
 from PIL import Image
 from collections import OrderedDict
 import ContextTimeOut as CTO
-import Function.CSVOut as FCSV
-import Function.FolderCreate as FC
-import Function.MiniStrChange as MSC
+import CSVOut as FCSV
+import FolderCreate as FC
+import MiniStrChange as MSC
 import toml
-import RPAPhoto.PDFReadForList.CSVSetting as CSVSet  # CSVの設定ファイルの読込
-import Function.PDFCellsImport as FPDF
+import CSVSetting as CSVSet  # CSVの設定ファイルの読込
+import PDFCellsImport as FPDF
+import tkinter as tk
+from tkinter import ttk
+import threading
 
 # logger設定------------------------------------------------------------------------------
 import logging.config
@@ -70,7 +73,7 @@ def DiffListPlus(ColList, ScrList, Ers):
 
                 # ログ追記------------------------------------------------------------------------------
                 with open(
-                    MeUrl + r"/RPAPhoto/PDFReadForList/NoErrLog.CSV",
+                    MeUrl + r"/NoErrLog.CSV",
                     "a",
                     encoding="utf-8",
                 ) as Colup:
@@ -99,7 +102,7 @@ def DiffListPlus(ColList, ScrList, Ers):
 
             # Errログ追記------------------------------------------------------------------------------
             with open(
-                MeUrl + r"/RPAPhoto/PDFReadForList/ErrLog.CSV",
+                MeUrl + r"/ErrLog.CSV",
                 "a",
                 encoding="utf-8",
             ) as Colup:
@@ -115,7 +118,7 @@ def DiffListPlus(ColList, ScrList, Ers):
 
             # 列名追記------------------------------------------------------------------------------
             with open(
-                MeUrl + r"/RPAPhoto/PDFReadForList/ColumnList.CSV",
+                MeUrl + r"/ColumnList.CSV",
                 "a",
                 encoding="utf-8",
             ) as Colup:
@@ -916,7 +919,7 @@ def PDFRead(URL, Settingtoml):
                         else:
                             print(e)
         # ------------------------------------------------------------------------------------
-    ListURL = FC.CreFol("//nas-sv/B_監査etc/B2_電子ﾌｧｲﾙ/ﾒｯｾｰｼﾞﾎﾞｯｸｽ/TEST", "受信通知CSV")
+    ListURL = FC.CreFol(save_dir, "受信通知CSV")
     for f in os.listdir(ListURL):
         if os.path.isfile(os.path.join(ListURL, f)):
             if ".csv" in f:
@@ -958,21 +961,26 @@ def CSVLog(URL, LogURL):
     FCSV.CsvSaveNoHeader(LogURL, ALLList, "cp932")
 
 
-# ------------------------------------------------------------------------------------
-MeUrl = os.getcwd().replace("\\", "/")  # 自分のパス
-# toml読込------------------------------------------------------------------------------
-with open(MeUrl + r"/RPAPhoto/PDFReadForList/Setting.toml", encoding="utf-8") as f:
-    Settingtoml = toml.load(f)
-    print(Settingtoml)
-# ----------------------------------------------------------------------------------------
-CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
-URL = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\2022-10\\送信分受信通知"
-# URL = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\TEST"
-LogURL = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\PDFREADLog"
-try:
-    logger.debug(URL + "内のPDF抽出開始")
-    PDFRead(URL, Settingtoml)
-    # CSVLog(URL, LogURL)
-    logger.debug(URL + "内のPDF抽出完了")
-except Exception as e:
-    logger.debug("エラー終了" + e)
+def Main(obj):
+    global MeUrl, CDict, LogURL, save_dir, Settingtoml
+    # ------------------------------------------------------------------------------------
+    MeUrl = obj.Img_dir_D
+    save_dir = obj.dir_name
+    # toml読込------------------------------------------------------------------------------
+    with open(obj.Img_dir + r"/PDFReadForList/Setting.toml", encoding="utf-8") as f:
+        Settingtoml = toml.load(f)
+        print(Settingtoml)
+    # ----------------------------------------------------------------------------------------
+    CDict = CSVSet.CSVIndexSortFuncArray  # 外部よりdict変数取得
+    URL = obj.dir_name
+    # URL = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\TEST"
+    LogURL = "\\\\nas-sv\\B_監査etc\\B2_電子ﾌｧｲﾙ\\ﾒｯｾｰｼﾞﾎﾞｯｸｽ\\PDFREADLog"
+    try:
+        logger.debug(URL + "内のPDF抽出開始")
+
+        PDFRead(URL, Settingtoml)
+
+        # CSVLog(URL, LogURL)
+        logger.debug(URL + "内のPDF抽出完了")
+    except Exception as e:
+        logger.debug("エラー終了" + e)

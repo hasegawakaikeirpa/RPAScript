@@ -8,6 +8,8 @@ from datetime import datetime as dt
 import traceback
 import pyautogui
 import pyperclip
+import aggregate
+from tkinter import messagebox
 from chardet.universaldetector import UniversalDetector
 
 # 以下は同ディレクトリにpyファイルを保管して下さい。
@@ -924,8 +926,9 @@ def MainFlow(obj):
                         pg.press("up")
                 # ------------------------------------------------------------------------------
             # ###################################################################################
+        return True
     else:
-        time.sleep(1)
+        return False
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -978,8 +981,23 @@ def DirSearch(obj):
 # if __name__ == "__main__":
 def Main(obj):
     global SaveDir
+
     SaveDir = DirSearch(obj)
     try:
-        MainFlow(obj)
+        MF = MainFlow(obj)
+        if MF is True:
+            # 集計結果をBACKUPフォルダにCSV出力
+            AM = aggregate.Main(obj.i_id_txt.get(), obj.i_id_txt2.get())
+            if AM is True:
+                return True
+            else:
+                messagebox.showinfo(
+                    "注意",
+                    "個別データを集計時に失敗しました。",
+                )
+                return False
+        else:
+            return False
     except:
         traceback.print_exc()
+        return False
